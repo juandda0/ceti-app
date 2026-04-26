@@ -20,6 +20,7 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { Typography } from '@shared/constants/typography';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import CetiButton from '@shared/components/CetiButton';
+import LessonTutorialGuide from '@features/learning/components/LessonTutorialGuide';
 
 // ─── Sub-componentes de Pasos ────────────────────────────────────────────────
 
@@ -327,6 +328,11 @@ export default function LessonScreen() {
           </>
         )}
       </View>
+
+      <LessonTutorialGuide 
+        currentStepType={currentStepData?.type} 
+        currentStepIndex={currentStep} 
+      />
     </ScreenWrapper>
   );
 }

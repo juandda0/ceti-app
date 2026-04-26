@@ -29,6 +29,7 @@ interface ChildState {
   savingsHistory: number[];
   educationHistory: number[];
   hasCompletedTutorial: boolean;
+  hasCompletedLessonTutorial: boolean;
 }
 
 interface ChildActions {
@@ -42,6 +43,7 @@ interface ChildActions {
   incrementGoalsCompleted: () => void;
   celebrateLevel: (level: number) => void;
   completeTutorial: () => void;
+  completeLessonTutorial: () => void;
   resetChild: () => void;
 }
 
@@ -68,6 +70,7 @@ const initialState: ChildState = {
   savingsHistory: [],
   educationHistory: [],
   hasCompletedTutorial: false,
+  hasCompletedLessonTutorial: false,
 };
 
 export const useChildStore = create<ChildStore>()(
@@ -151,6 +154,7 @@ export const useChildStore = create<ChildStore>()(
       },
       celebrateLevel: (level) => set({ lastCelebratedLevel: level }),
       completeTutorial: () => set({ hasCompletedTutorial: true }),
+      completeLessonTutorial: () => set({ hasCompletedLessonTutorial: true }),
 
       resetChild: () => set(initialState),
     }),
