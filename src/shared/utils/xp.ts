@@ -1,5 +1,5 @@
 // utils/xp.ts — Cálculos de XP y niveles para Ceti
-import { getLevelForXP, LEVELS } from '@/data/levels';
+import { getLevelForXP, LEVELS } from '@shared/data/levels';
 
 /**
  * XP otorgado por diferentes acciones

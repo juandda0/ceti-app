@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useChildStore } from '@features/auth/store/useChildStore';
 import { useWalletStore } from '@features/savings/store/useWalletStore';
 import { useLessonsStore } from '@features/learning/store/useLessonsStore';
-import { BADGES, Badge, BadgeConditionType } from '@/data/badges';
+import { BADGES, Badge, BadgeConditionType } from '@shared/data/badges';
 
 /**
  * Hook que evalúa y aplica desbloqueos automáticos de badges.

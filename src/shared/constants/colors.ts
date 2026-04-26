@@ -107,4 +107,8 @@ export const LightColors = {
 // Alias para compatibilidad mientras se migran archivos
 export const Colors = DarkColors;
 
-export type ThemeColors = typeof DarkColors;
+type DeepString<T> = {
+  [K in keyof T]: T[K] extends object ? DeepString<T[K]> : string;
+};
+
+export type ThemeColors = DeepString<typeof DarkColors>;
