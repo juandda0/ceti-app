@@ -32,8 +32,9 @@ export default function LessonTutorialGuide({ currentStepType, currentStepIndex 
   const spotlightR = useSharedValue(0);
 
   // Lógica para mostrar el tutorial por primera vez
+  // MODO TEST: Siempre permitimos que se dispare la lógica de mostrar
   useEffect(() => {
-    if (hasCompletedLessonTutorial) return;
+    // if (hasCompletedLessonTutorial) return;
 
     if (currentStepIndex === 0 && currentStepType === 'story') {
       setShow(true);
@@ -42,7 +43,7 @@ export default function LessonTutorialGuide({ currentStepType, currentStepIndex 
       setShow(true);
       setStep(2); // Sección de preguntas
     }
-  }, [currentStepType, currentStepIndex, hasCompletedLessonTutorial]);
+  }, [currentStepType, currentStepIndex]);
 
   useEffect(() => {
     if (step === 1) {
@@ -65,7 +66,7 @@ export default function LessonTutorialGuide({ currentStepType, currentStepIndex 
     }
   }, [step]);
 
-  if (!show || hasCompletedLessonTutorial) return null;
+  if (!show) return null;
 
   const handleNext = () => {
     if (step === 1) {

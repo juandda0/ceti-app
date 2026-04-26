@@ -54,7 +54,7 @@ const STEPS: TutorialStep[] = [
     title: "¡A APRENDER!",
     text: "Este es el botón más importante. Toca aquí para empezar tus misiones de aprendizaje.",
     expression: "sorprendido",
-    highlight: { x: width * 0.5 - 120, y: height - 192, w: 240, h: 72, r: 36 },
+    highlight: { x: width * 0.5 - 130, y: height - 192, w: 260, h: 72, r: 36 },
     ionPos: { bottom: 210 },
     dialogPos: 'top',
   },
@@ -100,7 +100,8 @@ export default function TutorialGuide() {
     }
   }, [currentStep]);
 
-  if (hasCompletedTutorial) return null;
+  // MODO TEST: El tutorial siempre se muestra
+  // if (hasCompletedTutorial) return null;
 
   const handleNext = () => {
     if (currentStep < STEPS.length - 1) {
@@ -140,7 +141,7 @@ export default function TutorialGuide() {
   }));
 
   return (
-    <Modal transparent visible={!hasCompletedTutorial} animationType="fade">
+    <Modal transparent visible={true} animationType="fade">
       <View style={styles.overlay}>
         {/* The "Hole" in the background */}
         <Animated.View style={holeStyle} />
