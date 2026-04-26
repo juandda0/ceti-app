@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, Modal, TouchableOpacity, Dimensions, Platform } from 'react-native';
 import Animated, { FadeIn, FadeOut, useSharedValue, useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
+import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { Typography } from '@shared/constants/typography';
 import { useChildStore } from '@features/auth/store/useChildStore';
+import { useRouter } from 'expo-router';
 
 const { width, height } = Dimensions.get('window');
 const SAFE_TOP = Platform.OS === 'ios' ? 50 : 30;
@@ -59,16 +61,16 @@ const STEPS: TutorialStep[] = [
     dialogPos: 'top',
   },
   {
-    title: "NAVEGACIÓN",
-    text: "Usa estas pestañas para moverte entre tu Mundo, tus Lecciones, tus Metas y tu Perfil.",
+    title: "SECCIÓN DE APRENDER",
+    text: "Aquí encontrarás todas tus lecciones organizadas por mundos. ¡Vamos a echar un vistazo!",
     expression: "feliz",
-    highlight: { x: -20, y: height - 95, w: width + 40, h: 100, r: 0 },
+    highlight: { x: width * 0.25, y: height - 85, w: width * 0.25, h: 85, r: 0 },
     ionPos: { bottom: 120 },
     dialogPos: 'top',
   },
   {
-    title: "¡LISTO!",
-    text: "¡La aventura financiera comienza hoy! Explora los edificios para descubrir más secretos.",
+    title: "¡TODO LISTO!",
+    text: "¡La aventura comienza! Te llevaré a tu primera lección para que veas cómo funciona.",
     expression: "feliz",
     ionPos: { top: height * 0.25 },
     dialogPos: 'bottom',
@@ -79,6 +81,7 @@ export default function TutorialGuide() {
   const [currentStep, setCurrentStep] = useState(0);
   const { hasCompletedTutorial, completeTutorial, nickname } = useChildStore();
   const colors = useThemeColors();
+  const router = useRouter();
   
   const spotlightX = useSharedValue(width / 2);
   const spotlightY = useSharedValue(height / 2);
@@ -100,14 +103,13 @@ export default function TutorialGuide() {
     }
   }, [currentStep]);
 
-  // MODO TEST: El tutorial siempre se muestra
-  // if (hasCompletedTutorial) return null;
 
   const handleNext = () => {
     if (currentStep < STEPS.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
       completeTutorial();
+      router.push('/(child)/learn');
     }
   };
 

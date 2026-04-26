@@ -66,7 +66,6 @@ export default function LessonTutorialGuide({ currentStepType, currentStepIndex 
     }
   }, [step]);
 
-  if (!show) return null;
 
   const handleNext = () => {
     if (step === 1) {
@@ -102,6 +101,8 @@ export default function LessonTutorialGuide({ currentStepType, currentStepIndex 
     borderColor: 'rgba(0,0,0,0.8)',
     borderRadius: spotlightR.value + 2000,
   }));
+
+  if (!show) return null;
 
   return (
     <Modal transparent visible={show} animationType="fade">
