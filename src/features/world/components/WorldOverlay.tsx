@@ -28,8 +28,6 @@ export default function WorldOverlay({
   totalCetis,
   streak,
 }: WorldOverlayProps) {
-  const mode = useThemeStore(s => s.mode);
-  const toggleTheme = useThemeStore(s => s.toggleTheme);
   const colors = useThemeColors();
   const router = useRouter();
   
@@ -82,13 +80,6 @@ export default function WorldOverlay({
 
         {/* CLUSTER DE RECURSOS */}
         <Animated.View entering={FadeInDown.delay(200).springify()} style={styles.resources}>
-          {/* BOTÓN MODO CLARO/OSCURO */}
-          <TouchableOpacity 
-            style={[styles.themeToggle, { backgroundColor: colors.materials.base, borderColor: colors.materials.border }]} 
-            onPress={toggleTheme}
-          >
-            <Ionicons name={mode === 'light' ? 'moon' : 'sunny'} size={18} color={colors.brand.primary} />
-          </TouchableOpacity>
 
           {/* CETIS */}
           <View style={[styles.resourcePill, { borderColor: colors.materials.border, backgroundColor: colors.materials.base }]}>
@@ -123,7 +114,7 @@ export default function WorldOverlay({
 
       {/* ── MENSAJE DE BIENVENIDA (OPCIONAL/SUBTIL) ── */}
       <Animated.View entering={FadeInDown.delay(1000).duration(1000)} style={[styles.floatingHint, { borderColor: colors.materials.border }]}>
-        <BlurView intensity={BLUR_INTENSITY} tint={mode === 'light' ? 'light' : 'dark'} style={styles.hintBlur}>
+        <BlurView intensity={BLUR_INTENSITY} tint="default" style={styles.hintBlur}>
           <Text style={[styles.hintText, { color: colors.text.tertiary }]}>Toca un edificio para explorar</Text>
         </BlurView>
       </Animated.View>
@@ -223,15 +214,6 @@ const styles = StyleSheet.create({
   },
 
   // ── Recursos Cluster ──
-  themeToggle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    marginBottom: 8,
-  },
   resources: {
     gap: 8,
     alignItems: 'flex-end',

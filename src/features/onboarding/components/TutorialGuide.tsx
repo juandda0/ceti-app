@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, Modal, TouchableOpacity, Dimensions, Platform } from 'react-native';
-import Animated, { FadeIn, FadeOut, SlideInUp, SlideInDown } from 'react-native-reanimated';
-import { BlurView } from 'expo-blur';
+import Animated, { FadeIn, FadeOut, useSharedValue, useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { Typography } from '@shared/constants/typography';
 import { useChildStore } from '@features/auth/store/useChildStore';
 
 const { width, height } = Dimensions.get('window');
+const SAFE_TOP = Platform.OS === 'ios' ? 50 : 30;
 
 const ION_ASSETS = {
   feliz: require('../../../../assets/ion/ion feliz.png'),
@@ -18,9 +18,12 @@ const ION_ASSETS = {
 type Expression = keyof typeof ION_ASSETS;
 
 interface TutorialStep {
+  title: string;
   text: string;
   expression: Expression;
-  title: string;
+  highlight?: { x: number; y: number; w: number; h: number; r: number };
+  ionPos: { top?: number; bottom?: number; left?: number; right?: number };
+  dialogPos: 'top' | 'bottom';
 }
 
 const STEPS: TutorialStep[] = [
@@ -28,31 +31,47 @@ const STEPS: TutorialStep[] = [
     title: "¡HOLA EXPLORADOR!",
     text: "¡Bienvenido a Ceti! Soy Ion, tu asistente de bolsillo y guía en este mundo asteroide.",
     expression: "feliz",
+    ionPos: { top: height * 0.15 },
+    dialogPos: 'bottom',
   },
   {
-    title: "TU PROPIO MUNDO",
-    text: "Este asteroide es tuyo. Aquí verás cómo crece tu sabiduría y tus ahorros mientras exploras.",
-    expression: "feliz",
-  },
-  {
-    title: "¿CÓMO APRENDER?",
-    text: "Toca el botón 'APRENDER AHORA' o visita los edificios. Cada lección completada te da XP y Cetis.",
+    title: "TU PROGRESO",
+    text: "Aquí arriba verás tu Nivel y XP. ¡Completa lecciones para ver cómo sube esa barra!",
     expression: "sorprendido",
+    highlight: { x: 12, y: SAFE_TOP - 4, w: width * 0.58, h: 72, r: 36 },
+    ionPos: { top: SAFE_TOP + 80 },
+    dialogPos: 'bottom',
   },
   {
-    title: "LOS CETIS",
-    text: "Los Cetis son la moneda oficial de Ceti. ¡Úsalos para desbloquear logros y personalizar tu aventura!",
+    title: "TUS RECURSOS",
+    text: "Aquí están tus Cetis y tu Racha. ¡No dejes que el fuego se apague!",
     expression: "feliz",
+    highlight: { x: width * 0.68, y: SAFE_TOP - 4, w: width * 0.3, h: 88, r: 25 },
+    ionPos: { top: SAFE_TOP + 100 },
+    dialogPos: 'bottom',
   },
   {
-    title: "METAS DE AHORRO",
-    text: "En la pestaña de 'Metas', puedes guardar dinero real para lo que sueñas. ¡Papá te ayudará a validarlo!",
-    expression: "serio",
+    title: "¡A APRENDER!",
+    text: "Este es el botón más importante. Toca aquí para empezar tus misiones de aprendizaje.",
+    expression: "sorprendido",
+    highlight: { x: width * 0.5 - 120, y: height - 192, w: 240, h: 72, r: 36 },
+    ionPos: { bottom: 210 },
+    dialogPos: 'top',
   },
   {
-    title: "¡EMPECEMOS!",
-    text: "¡La aventura financiera comienza hoy! ¿Estás listo para convertirte en un experto?",
+    title: "NAVEGACIÓN",
+    text: "Usa estas pestañas para moverte entre tu Mundo, tus Lecciones, tus Metas y tu Perfil.",
     expression: "feliz",
+    highlight: { x: -20, y: height - 95, w: width + 40, h: 100, r: 0 },
+    ionPos: { bottom: 120 },
+    dialogPos: 'top',
+  },
+  {
+    title: "¡LISTO!",
+    text: "¡La aventura financiera comienza hoy! Explora los edificios para descubrir más secretos.",
+    expression: "feliz",
+    ionPos: { top: height * 0.25 },
+    dialogPos: 'bottom',
   },
 ];
 
@@ -60,6 +79,26 @@ export default function TutorialGuide() {
   const [currentStep, setCurrentStep] = useState(0);
   const { hasCompletedTutorial, completeTutorial, nickname } = useChildStore();
   const colors = useThemeColors();
+  
+  const spotlightX = useSharedValue(width / 2);
+  const spotlightY = useSharedValue(height / 2);
+  const spotlightW = useSharedValue(0);
+  const spotlightH = useSharedValue(0);
+  const spotlightR = useSharedValue(0);
+
+  useEffect(() => {
+    const step = STEPS[currentStep];
+    if (step.highlight) {
+      spotlightX.value = withSpring(step.highlight.x);
+      spotlightY.value = withSpring(step.highlight.y);
+      spotlightW.value = withSpring(step.highlight.w);
+      spotlightH.value = withSpring(step.highlight.h);
+      spotlightR.value = withSpring(step.highlight.r);
+    } else {
+      spotlightW.value = withTiming(0);
+      spotlightH.value = withTiming(0);
+    }
+  }, [currentStep]);
 
   if (hasCompletedTutorial) return null;
 
@@ -73,101 +112,156 @@ export default function TutorialGuide() {
 
   const step = STEPS[currentStep];
 
+  // Spotlight logic using huge borders to create a hole
+  const holeStyle = useAnimatedStyle(() => ({
+    position: 'absolute',
+    left: spotlightX.value - 2000,
+    top: spotlightY.value - 2000,
+    width: spotlightW.value + 4000,
+    height: spotlightH.value + 4000,
+    borderWidth: 2000,
+    borderColor: 'rgba(0,0,0,0.75)',
+    borderRadius: spotlightR.value + 2000,
+  }));
+
+  const highlightBorder = useAnimatedStyle(() => ({
+    position: 'absolute',
+    left: spotlightX.value,
+    top: spotlightY.value,
+    width: spotlightW.value,
+    height: spotlightH.value,
+    borderRadius: spotlightR.value,
+    borderWidth: 3,
+    borderColor: colors.brand.primary,
+    shadowColor: colors.brand.primary,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius: 15,
+  }));
+
   return (
     <Modal transparent visible={!hasCompletedTutorial} animationType="fade">
       <View style={styles.overlay}>
-        <BlurView intensity={80} tint="dark" style={StyleSheet.absoluteFill} />
+        {/* The "Hole" in the background */}
+        <Animated.View style={holeStyle} />
         
-        <Animated.View entering={FadeIn.duration(500)} style={styles.container}>
+        {/* Bright Border around the highlighted item */}
+        {step.highlight && <Animated.View style={highlightBorder} />}
+
+        <View style={styles.container} pointerEvents="box-none">
           
-          {/* Ion Image */}
           <Animated.View 
-            key={step.expression} 
-            entering={SlideInUp.springify()} 
-            style={styles.ionContainer}
+            key={`step-${currentStep}`}
+            entering={FadeIn.duration(400)}
+            style={[styles.ionWrapper, step.ionPos]}
+            pointerEvents="box-none"
           >
+            {/* Dialog Box (Top or Bottom of Ion) */}
+            {step.dialogPos === 'top' && (
+              <View style={[styles.dialogBox, styles.dialogTop, { backgroundColor: colors.background.secondary, borderColor: colors.brand.primary }]}>
+                <DialogContent step={step} currentStep={currentStep} nickname={nickname} onNext={handleNext} colors={colors} />
+              </View>
+            )}
+
             <Image 
               source={ION_ASSETS[step.expression]} 
               style={styles.ionImage} 
               resizeMode="contain" 
             />
+
+            {step.dialogPos === 'bottom' && (
+              <View style={[styles.dialogBox, styles.dialogBottom, { backgroundColor: colors.background.secondary, borderColor: colors.brand.primary }]}>
+                <DialogContent step={step} currentStep={currentStep} nickname={nickname} onNext={handleNext} colors={colors} />
+              </View>
+            )}
           </Animated.View>
 
-          {/* Dialog Box */}
-          <Animated.View entering={SlideInDown.springify()} style={[styles.dialogBox, { backgroundColor: colors.background.secondary, borderColor: colors.brand.primary }]}>
-            <View style={styles.header}>
-              <Text style={[styles.title, { color: colors.brand.primary }]}>{step.title}</Text>
-              <Text style={[styles.stepCount, { color: colors.text.tertiary }]}>{currentStep + 1}/{STEPS.length}</Text>
-            </View>
-            
-            <Text style={[styles.message, { color: colors.text.primary }]}>
-              {currentStep === 0 ? `¡Hola ${nickname}! ` : ''}{step.text}
-            </Text>
-
-            <TouchableOpacity 
-              onPress={handleNext} 
-              activeOpacity={0.8}
-              style={[styles.button, { backgroundColor: colors.brand.primary }]}
-            >
-              <Text style={[styles.buttonText, { color: colors.text.onBrand }]}>
-                {currentStep === STEPS.length - 1 ? '¡VAMOS!' : 'CONTINUAR'}
-              </Text>
-              <Ionicons name="arrow-forward" size={20} color={colors.text.onBrand} />
-            </TouchableOpacity>
-          </Animated.View>
-
-        </Animated.View>
+        </View>
       </View>
     </Modal>
+  );
+}
+
+function DialogContent({ step, currentStep, nickname, onNext, colors }: any) {
+  return (
+    <>
+      <View style={styles.header}>
+        <Text style={[styles.title, { color: colors.brand.primary }]}>{step.title}</Text>
+        <Text style={[styles.stepCount, { color: colors.text.tertiary }]}>{currentStep + 1}/{STEPS.length}</Text>
+      </View>
+      
+      <Text style={[styles.message, { color: colors.text.primary }]}>
+        {currentStep === 0 ? `¡Hola ${nickname}! ` : ''}{step.text}
+      </Text>
+
+      <TouchableOpacity 
+        onPress={onNext} 
+        activeOpacity={0.8}
+        style={[styles.button, { backgroundColor: colors.brand.primary }]}
+      >
+        <Text style={[styles.buttonText, { color: colors.text.onBrand }]}>
+          {currentStep === STEPS.length - 1 ? '¡LISTO!' : 'ENTENDIDO'}
+        </Text>
+        <Ionicons name="arrow-forward" size={18} color={colors.text.onBrand} />
+      </TouchableOpacity>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    overflow: 'hidden',
   },
   container: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
+    flex: 1,
+    padding: 20,
   },
-  ionContainer: {
-    width: width * 0.8,
-    height: width * 0.8,
-    marginBottom: -40,
-    zIndex: 2,
+  ionWrapper: {
+    position: 'absolute',
+    width: width * 0.65,
+    height: width * 0.65,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
   },
   ionImage: {
     width: '100%',
     height: '100%',
+    zIndex: 5,
   },
   dialogBox: {
-    width: '100%',
-    padding: 32,
-    borderRadius: 40,
+    width: width * 0.85,
+    padding: 20,
+    borderRadius: 28,
     borderWidth: 2,
-    gap: 16,
-    zIndex: 1,
+    gap: 10,
+    zIndex: 10,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
     elevation: 10,
+    position: 'absolute',
+    alignSelf: 'center',
+  },
+  dialogTop: {
+    bottom: '90%',
+  },
+  dialogBottom: {
+    top: '90%',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 4,
   },
   title: {
     ...Typography.title3,
     fontWeight: '900',
-    letterSpacing: 1,
+    fontSize: 16,
+    letterSpacing: 0.5,
   },
   stepCount: {
     ...Typography.caption2,
@@ -175,21 +269,21 @@ const styles = StyleSheet.create({
   },
   message: {
     ...Typography.headline,
-    lineHeight: 28,
-    minHeight: 80,
+    fontSize: 15,
+    lineHeight: 20,
   },
   button: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 18,
-    borderRadius: 20,
-    gap: 12,
-    marginTop: 8,
+    paddingVertical: 12,
+    borderRadius: 14,
+    gap: 8,
+    marginTop: 4,
   },
   buttonText: {
     ...Typography.subheadline,
+    fontSize: 14,
     fontWeight: '900',
-    letterSpacing: 1,
   },
 });

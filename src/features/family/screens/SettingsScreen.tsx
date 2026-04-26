@@ -67,6 +67,28 @@ export default function SettingsScreen() {
           title="Configuración"
           subtitle="Gestión de cuenta y sistema"
         />
+        
+        {/* Sección de Apariencia */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Apariencia</Text>
+          <View style={styles.optionsList}>
+            <TouchableOpacity 
+              style={styles.optionItem} 
+              onPress={() => {
+                useThemeStore.getState().toggleTheme();
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              }}
+            >
+              <View style={[styles.optIcon, { backgroundColor: colors.brand.primary + '15' }]}>
+                <Ionicons name={mode === 'light' ? 'moon-outline' : 'sunny-outline'} size={20} color={colors.brand.primary} />
+              </View>
+              <Text style={styles.optionText}>
+                Cambiar a Modo {mode === 'light' ? 'Oscuro' : 'Claro'}
+              </Text>
+              <Ionicons name="swap-horizontal" size={18} color={colors.text.tertiary} />
+            </TouchableOpacity>
+          </View>
+        </View>
 
         {/* Sección de Cuenta */}
         <View style={styles.section}>
