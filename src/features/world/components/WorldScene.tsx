@@ -627,11 +627,16 @@ export default function WorldScene() {
       }
 
 
+      if (!rendererRef.current || !sceneRef.current || !cameraRef.current || !gl) return;
+
       try {
-        renderer.render(scene, camera);
+        rendererRef.current.render(sceneRef.current, cameraRef.current);
         gl.endFrameEXP();
-      } catch (e) {
-        console.warn('GL Render Error:', e);
+      } catch (e: any) {
+        // Solo logueamos una vez para no saturar la consola si hay un error persistente
+        if (timeRef.current < 0.05) {
+          console.warn('GL Render Error:', e?.message || e);
+        }
       }
     };
     animate();

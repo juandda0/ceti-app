@@ -90,26 +90,30 @@ export default function WorldOverlay({
           </View>
 
           {/* RACHA */}
-          <Animated.View style={[styles.resourcePill, flameStyle, { borderColor: colors.materials.border, backgroundColor: colors.materials.base }]}>
-            <View style={[styles.iconCircle, { backgroundColor: colors.system.orange + '20' }]}>
-              <Ionicons name="flame" size={14} color={colors.system.orange} />
+          <Animated.View style={flameStyle}>
+            <View style={[styles.resourcePill, { borderColor: colors.materials.border, backgroundColor: colors.materials.base }]}>
+              <View style={[styles.iconCircle, { backgroundColor: colors.system.orange + '20' }]}>
+                <Ionicons name="flame" size={14} color={colors.system.orange} />
+              </View>
+              <Text style={[styles.resourceValue, { color: colors.system.orange }]}>{streak}</Text>
             </View>
-            <Text style={[styles.resourceValue, { color: colors.system.orange }]}>{streak}</Text>
           </Animated.View>
         </Animated.View>
 
       </View>
 
       {/* ── BOTÓN DE ACCIÓN PRIMARIA (PROMINTENTE) ── */}
-      <Animated.View entering={FadeInDown.delay(800).springify()} style={[styles.primaryActionContainer, pulseStyle]}>
-        <TouchableOpacity 
-          style={[styles.primaryButton, { backgroundColor: colors.brand.primary, shadowColor: colors.brand.primary }]}
-          onPress={() => router.push('/learn')}
-          activeOpacity={0.8}
-        >
-          <Ionicons name="play" size={24} color={colors.text.onBrand} />
-          <Text style={[styles.primaryButtonText, { color: colors.text.onBrand }]}>APRENDER AHORA</Text>
-        </TouchableOpacity>
+      <Animated.View entering={FadeInDown.delay(800).springify()} style={styles.primaryActionContainer}>
+        <Animated.View style={pulseStyle}>
+          <TouchableOpacity 
+            style={[styles.primaryButton, { backgroundColor: colors.brand.primary, shadowColor: colors.brand.primary }]}
+            onPress={() => router.push('/learn')}
+            activeOpacity={0.8}
+          >
+            <Ionicons name="play" size={24} color={colors.text.onBrand} />
+            <Text style={[styles.primaryButtonText, { color: colors.text.onBrand }]}>APRENDER AHORA</Text>
+          </TouchableOpacity>
+        </Animated.View>
       </Animated.View>
 
       {/* ── MENSAJE DE BIENVENIDA (OPCIONAL/SUBTIL) ── */}
