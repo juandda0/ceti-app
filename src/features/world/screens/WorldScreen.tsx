@@ -10,6 +10,7 @@ import WorldOverlay from '@features/world/components/WorldOverlay';
 import LevelUpModal from '@features/world/components/LevelUpModal';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
+import TutorialGuide from '@features/onboarding/components/TutorialGuide';
 
 const AVATAR_MAP: Record<string, string> = {
   avatar_1: '🦁', avatar_2: '🐸', avatar_3: '🦊', avatar_4: '🐼',
@@ -47,6 +48,8 @@ export default function WorldScreen() {
         isVisible={showLevelUp}
         onClose={() => celebrateLevel(level)}
       />
+
+      <TutorialGuide />
     </ScreenWrapper>
   );
 }

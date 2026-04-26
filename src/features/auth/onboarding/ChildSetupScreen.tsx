@@ -29,10 +29,13 @@ const AVATARS = [
 
 const AGES = [6, 7, 8, 9, 10, 11, 12];
 
+import { useAuthStore } from '@features/auth/store/useAuthStore';
+
 export default function ChildSetupScreen() {
   const router = useRouter();
   const setProfile = useChildStore((s) => s.setProfile);
   const updateStreak = useChildStore((s) => s.updateStreak);
+  const { loginAsChild } = useAuthStore();
   const colors = useThemeColors();
   const mode = useThemeStore(s => s.mode);
   const styles = getStyles(colors, mode);
@@ -57,10 +60,12 @@ export default function ChildSetupScreen() {
     } else {
       setProfile(name.trim(), name.trim(), age, avatarId);
       updateStreak();
+      loginAsChild();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.replace('/(child)/world');
     }
   };
+
 
   return (
     <ScreenWrapper style={styles.container}>

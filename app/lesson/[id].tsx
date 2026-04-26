@@ -1,2 +1,2 @@
-import LessonScreen from '../../src/features/learning/screens/LessonScreen';
+import LessonScreen from '@features/learning/screens/LessonScreen';
 export default LessonScreen;

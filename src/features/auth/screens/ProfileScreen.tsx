@@ -17,12 +17,20 @@ const AVATARS: Record<string, string> = {
   avatar_5: '🐱', avatar_6: '🐶', avatar_7: '🦄', avatar_8: '🐨',
 };
 
+import { useAuthStore } from '@features/auth/store/useAuthStore';
+
 export default function ProfileScreen() {
   const router = useRouter();
   const { nickname, fullName, avatarId, avatarEmoji, xp, streak, totalLessonsCompleted } = useChildStore();
+  const logout = useAuthStore((s) => s.logout);
   const colors = useThemeColors();
   const mode = useThemeStore(s => s.mode);
   const styles = getStyles(colors, mode);
+
+  const handleLogout = () => {
+    logout();
+    router.replace('/(auth)/welcome');
+  };
 
   const level = Math.floor(xp / 100) + 1;
   const xpInLevel = xp % 100;
@@ -59,7 +67,7 @@ export default function ProfileScreen() {
           </View>
           
           <Text style={styles.nameText}>{nickname}</Text>
-          <Text style={styles.levelName}>{fullName}</Text>
+          <Text style={[styles.levelName, { color: colors.brand.primary }]}>Nivel {level}: Aspirante</Text>
 
           <View style={styles.xpSection}>
             <View style={styles.xpHeader}>
@@ -74,21 +82,21 @@ export default function ProfileScreen() {
 
         {/* Stats Amigables (Pocas y claras) */}
         <View style={styles.statsRow}>
-          <View style={styles.statBox}>
-            <Ionicons name="flame" size={24} color={colors.system.orange} />
+          <Animated.View entering={FadeInDown.delay(300).springify()} style={styles.statBox}>
+            <Ionicons name="flame" size={28} color={colors.system.orange} />
             <Text style={styles.statNum}>{streak}</Text>
-            <Text style={styles.statLabel}>Días seguidos</Text>
-          </View>
-          <View style={styles.statBox}>
-            <Ionicons name="book" size={24} color={colors.system.blue} />
+            <Text style={styles.statLabel}>DÍAS SEGUIDOS</Text>
+          </Animated.View>
+          <Animated.View entering={FadeInDown.delay(350).springify()} style={styles.statBox}>
+            <Ionicons name="book" size={28} color={colors.system.blue} />
             <Text style={styles.statNum}>{totalLessonsCompleted}</Text>
-            <Text style={styles.statLabel}>Lecciones</Text>
-          </View>
-          <View style={styles.statBox}>
-            <Ionicons name="sparkles" size={24} color={colors.gold.primary} />
+            <Text style={styles.statLabel}>LECCIONES</Text>
+          </Animated.View>
+          <Animated.View entering={FadeInDown.delay(400).springify()} style={styles.statBox}>
+            <Ionicons name="sparkles" size={28} color={colors.gold.primary} />
             <Text style={styles.statNum}>{xp}</Text>
-            <Text style={styles.statLabel}>Puntos totales</Text>
-          </View>
+            <Text style={styles.statLabel}>XP TOTAL</Text>
+          </Animated.View>
         </View>
 
         {/* Mis Logros (Visual y divertido) */}
@@ -114,11 +122,12 @@ export default function ProfileScreen() {
         {/* Opciones de Salida */}
         <TouchableOpacity 
           style={styles.logoutBtn}
-          onPress={() => router.replace('/(auth)/select-profile')}
+          onPress={handleLogout}
         >
           <Ionicons name="log-out-outline" size={20} color={colors.system.red} />
-          <Text style={styles.logoutText}>Cambiar de cuenta</Text>
+          <Text style={styles.logoutText}>Cerrar Sesión</Text>
         </TouchableOpacity>
+
 
       </ScrollView>
     </ScreenWrapper>
@@ -169,10 +178,10 @@ const getStyles = (colors: any, mode: string) => StyleSheet.create({
     alignItems: 'center', 
     borderWidth: 3 
   },
-  levelNumber: { color: colors.text.onBrand, fontSize: 16, fontWeight: '900' },
+  levelNumber: { color: colors.text.onBrand, fontSize: 18, fontWeight: '900' },
 
-  nameText: { ...Typography.title2, color: colors.text.primary, fontWeight: '800' },
-  levelName: { ...Typography.subheadline, color: colors.text.tertiary, marginBottom: 24 },
+  nameText: { ...Typography.title1, color: colors.text.primary, fontWeight: '900', marginTop: 12 },
+  levelName: { ...Typography.headline, fontWeight: '800', marginTop: 4, textTransform: 'uppercase', letterSpacing: 1 },
 
   xpSection: { width: '100%', gap: 8 },
   xpHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
@@ -192,8 +201,8 @@ const getStyles = (colors: any, mode: string) => StyleSheet.create({
     borderWidth: 1, 
     borderColor: colors.materials.border 
   },
-  statNum: { ...Typography.title3, color: colors.text.primary, fontWeight: '900' },
-  statLabel: { fontSize: 10, color: colors.text.tertiary, fontWeight: '600', textAlign: 'center' },
+  statNum: { ...Typography.title2, color: colors.text.primary, fontWeight: '900' },
+  statLabel: { ...Typography.caption1, color: colors.text.tertiary, fontWeight: '800', textAlign: 'center', fontSize: 10, letterSpacing: 0.5 },
 
   section: { gap: 16 },
   sectionTitle: { ...Typography.title3, color: colors.text.primary, fontWeight: '800' },

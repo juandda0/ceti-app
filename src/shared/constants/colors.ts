@@ -65,10 +65,10 @@ export const LightColors = {
     glow:     'rgba(255, 204, 0, 0.05)',
   },
   background: {
-    base:     '#F2F2F7', // iOS Light background
-    primary:  '#FFFFFF', 
-    secondary:'#F9F9F9', 
-    tertiary: '#E5E5EA', 
+    base:     '#F8F9FA', // Un blanco roto muy suave para evitar fatiga
+    primary:  '#FBFCFD', 
+    secondary:'#F0F2F5', 
+    tertiary: '#E5E7EB', 
     elevated: '#FFFFFF', 
   },
   materials: {

@@ -11,6 +11,7 @@ import CetiButton from '@shared/components/CetiButton';
 import PageHeader from '@shared/components/PageHeader';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useThemeStore } from '@shared/store/useThemeStore';
+import { useWalletStore } from '@features/savings/store/useWalletStore';
 
 // ── Tarjeta de Meta Visual (Sin Iconos) ───────────────────────────────────────
 function VisualGoalCard({ goal, delay, onDeposit }: { goal: SavingsGoal; delay: number; onDeposit: () => void }) {
@@ -58,6 +59,7 @@ export default function GoalsScreen() {
   const colors = useThemeColors();
   const mode = useThemeStore(s => s.mode);
   const styles_dynamic = getStyles(colors, mode);
+  const { totalCetis } = useWalletStore();
 
   const { id: activeChildId, nickname } = useChildStore();
   const [showDeposit, setShowDeposit] = useState(false);
@@ -94,20 +96,30 @@ export default function GoalsScreen() {
           />
         </View>
 
-        {/* Alcancía de Ahorro Verificado */}
-        <Animated.View entering={FadeInDown.delay(200).springify()} style={[styles_dynamic.piggyCard, { backgroundColor: colors.gold.primary + '15', borderColor: colors.gold.primary + '30' }]}>
-          <View style={[styles_dynamic.piggyIcon, { backgroundColor: colors.gold.primary + '20' }]}>
-            <Ionicons name="wallet" size={32} color={colors.gold.primary} />
-          </View>
-          <View>
-            <Text style={[styles_dynamic.piggyLabel, { color: colors.gold.primary }]}>Ahorro Confirmado</Text>
-            <Text style={[styles_dynamic.piggyValue, { color: colors.text.primary }]}>${totalApproved.toLocaleString('es-CO')}</Text>
-            <View style={styles_dynamic.verifyBadge}>
-              <Ionicons name="checkmark-circle" size={12} color={colors.system.green} />
-              <Text style={[styles_dynamic.verifyText, { color: colors.system.green }]}>Confirmado por papá</Text>
+        {/* ECONOMÍA DEL HÉROE: Alcancía y Cetis */}
+        <View style={styles_dynamic.economyRow}>
+          {/* Alcancía (Dinero Real) */}
+          <Animated.View entering={FadeInDown.delay(200).springify()} style={[styles_dynamic.economyCard, { backgroundColor: colors.gold.primary + '10', borderColor: colors.gold.primary + '20' }]}>
+            <View style={[styles_dynamic.economyIcon, { backgroundColor: colors.gold.primary + '20' }]}>
+              <Ionicons name="wallet" size={24} color={colors.gold.primary} />
             </View>
-          </View>
-        </Animated.View>
+            <View>
+              <Text style={[styles_dynamic.economyLabel, { color: colors.gold.primary }]}>Ahorros</Text>
+              <Text style={[styles_dynamic.economyValue, { color: colors.text.primary }]}>${totalApproved.toLocaleString('es-CO')}</Text>
+            </View>
+          </Animated.View>
+
+          {/* Cetis (In-game) */}
+          <Animated.View entering={FadeInDown.delay(250).springify()} style={[styles_dynamic.economyCard, { backgroundColor: colors.brand.primary + '10', borderColor: colors.brand.primary + '20' }]}>
+            <View style={[styles_dynamic.economyIcon, { backgroundColor: colors.brand.primary + '20' }]}>
+              <Ionicons name="sparkles" size={24} color={colors.brand.primary} />
+            </View>
+            <View>
+              <Text style={[styles_dynamic.economyLabel, { color: colors.brand.primary }]}>Cetis</Text>
+              <Text style={[styles_dynamic.economyValue, { color: colors.text.primary }]}>{totalCetis}</Text>
+            </View>
+          </Animated.View>
+        </View>
 
         {/* Botones de Acción */}
         <View style={styles_dynamic.actionsRow}>
@@ -303,12 +315,11 @@ const getStyles = (colors: any, mode: string) => StyleSheet.create({
   
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
 
-  piggyCard: { flexDirection: 'row', alignItems: 'center', borderRadius: 32, padding: 24, gap: 16, borderWidth: 1 },
-  piggyIcon: { width: 64, height: 64, borderRadius: 20, justifyContent: 'center', alignItems: 'center' },
-  piggyLabel: { ...Typography.caption1, marginBottom: 2 },
-  piggyValue: { ...Typography.title1, fontWeight: '900' },
-  verifyBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 },
-  verifyText: { fontSize: 10, fontWeight: '700' },
+  economyRow: { flexDirection: 'row', gap: 12 },
+  economyCard: { flex: 1, flexDirection: 'row', alignItems: 'center', borderRadius: 24, padding: 16, gap: 12, borderWidth: 1 },
+  economyIcon: { width: 44, height: 44, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
+  economyLabel: { ...Typography.caption1, fontSize: 10, marginBottom: 0, fontWeight: '700', textTransform: 'uppercase' },
+  economyValue: { ...Typography.headline, fontWeight: '900', fontSize: 18 },
 
   actionsRow: { flexDirection: 'row', gap: 12 },
   actionBtn: { flex: 1, height: 52, borderRadius: 26, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },

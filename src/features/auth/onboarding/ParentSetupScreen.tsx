@@ -13,9 +13,12 @@ import PageHeader from '@shared/components/PageHeader';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useThemeStore } from '@shared/store/useThemeStore';
 
+import { useAuthStore } from '@features/auth/store/useAuthStore';
+
 export default function ParentSetupScreen() {
   const router = useRouter();
   const { isPinSet, setPin, verifyPin, setParentName } = useParentStore();
+  const { loginAsParent } = useAuthStore();
   const colors = useThemeColors();
   const mode = useThemeStore(s => s.mode);
   const styles = getStyles(colors, mode);
@@ -47,12 +50,14 @@ export default function ParentSetupScreen() {
       return;
     }
     setPin(pin);
+    loginAsParent();
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     router.replace('/(parent)/dashboard');
   };
 
   const handleVerifyPin = () => {
     if (verifyPin(pin)) {
+      loginAsParent();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.replace('/(parent)/dashboard');
     } else {
@@ -61,6 +66,7 @@ export default function ParentSetupScreen() {
       setPinValue('');
     }
   };
+
 
   return (
     <ScreenWrapper style={styles.container}>

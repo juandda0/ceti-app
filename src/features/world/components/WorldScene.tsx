@@ -656,7 +656,7 @@ export default function WorldScene() {
   return (
     <View style={styles.container}>
       <GestureDetector gesture={gesture}>
-        <GLView style={styles.glView} onContextCreate={onContextCreate} />
+        <GLView style={styles.glView} onContextCreate={onContextCreate} enableLogging={false} />
       </GestureDetector>
     </View>
   );

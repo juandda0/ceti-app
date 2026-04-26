@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, Platform, Dimensions, TouchableOpacity } from '
 import Animated, { FadeInDown, useAnimatedStyle, withRepeat, withTiming, withSequence } from 'react-native-reanimated';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { Typography } from '@shared/constants/typography';
 import { useThemeStore } from '@shared/store/useThemeStore';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
@@ -30,6 +31,7 @@ export default function WorldOverlay({
   const mode = useThemeStore(s => s.mode);
   const toggleTheme = useThemeStore(s => s.toggleTheme);
   const colors = useThemeColors();
+  const router = useRouter();
   
   const level = Math.floor(xp / 100) + 1;
   const currentLevelXP = xp % 100;
@@ -37,6 +39,11 @@ export default function WorldOverlay({
   // Animación de pulso para la racha (fuego)
   const flameStyle = useAnimatedStyle(() => ({
     transform: [{ scale: withRepeat(withSequence(withTiming(1.1, { duration: 800 }), withTiming(1, { duration: 800 })), -1, true) }]
+  }));
+
+  // Animación de pulso para el botón principal
+  const pulseStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: withRepeat(withSequence(withTiming(1.05, { duration: 1000 }), withTiming(1, { duration: 1000 })), -1, true) }]
   }));
 
   return (
@@ -102,10 +109,22 @@ export default function WorldOverlay({
 
       </View>
 
+      {/* ── BOTÓN DE ACCIÓN PRIMARIA (PROMINTENTE) ── */}
+      <Animated.View entering={FadeInDown.delay(800).springify()} style={[styles.primaryActionContainer, pulseStyle]}>
+        <TouchableOpacity 
+          style={[styles.primaryButton, { backgroundColor: colors.brand.primary, shadowColor: colors.brand.primary }]}
+          onPress={() => router.push('/learn')}
+          activeOpacity={0.8}
+        >
+          <Ionicons name="play" size={24} color={colors.text.onBrand} />
+          <Text style={[styles.primaryButtonText, { color: colors.text.onBrand }]}>APRENDER AHORA</Text>
+        </TouchableOpacity>
+      </Animated.View>
+
       {/* ── MENSAJE DE BIENVENIDA (OPCIONAL/SUBTIL) ── */}
-      <Animated.View entering={FadeInDown.delay(600).duration(1000)} style={[styles.floatingHint, { borderColor: colors.materials.border }]}>
+      <Animated.View entering={FadeInDown.delay(1000).duration(1000)} style={[styles.floatingHint, { borderColor: colors.materials.border }]}>
         <BlurView intensity={BLUR_INTENSITY} tint={mode === 'light' ? 'light' : 'dark'} style={styles.hintBlur}>
-          <Text style={[styles.hintText, { color: colors.text.secondary }]}>Toca un edificio para interactuar</Text>
+          <Text style={[styles.hintText, { color: colors.text.tertiary }]}>Toca un edificio para explorar</Text>
         </BlurView>
       </Animated.View>
 
@@ -257,5 +276,33 @@ const styles = StyleSheet.create({
   hintText: {
     ...Typography.caption1,
     fontWeight: '600',
+  },
+  primaryActionContainer: {
+    position: 'absolute',
+    bottom: 120,
+    alignSelf: 'center',
+    width: '100%',
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  primaryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 64,
+    paddingHorizontal: 32,
+    borderRadius: 32,
+    gap: 12,
+    elevation: 12,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    minWidth: 220,
+  },
+  primaryButtonText: {
+    fontFamily: Typography.headline.fontFamily,
+    fontSize: 18,
+    fontWeight: '900',
+    letterSpacing: 1,
   },
 });

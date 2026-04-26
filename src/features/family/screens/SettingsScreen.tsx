@@ -14,12 +14,15 @@ import PageHeader from '@shared/components/PageHeader';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useThemeStore } from '@shared/store/useThemeStore';
 
+import { useAuthStore } from '@features/auth/store/useAuthStore';
+
 export default function SettingsScreen() {
   const router = useRouter();
   const colors = useThemeColors();
   const mode = useThemeStore(s => s.mode);
   const styles = getStyles(colors, mode);
 
+  const logout = useAuthStore((s) => s.logout);
   const resetChild = useChildStore((s) => s.resetChild);
   const resetWallet = useWalletStore((s) => s.resetWallet);
   const resetLessons = useLessonsStore((s) => s.resetLessons);
@@ -37,12 +40,22 @@ export default function SettingsScreen() {
           style: 'destructive',
           onPress: () => {
             resetChild(); resetWallet(); resetLessons(); resetParent(); resetWorld();
+            logout();
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             router.replace('/(auth)/welcome');
           },
         },
       ]
     );
+  };
+
+  const handleLogout = () => {
+    logout();
+    router.replace('/(auth)/welcome');
+  };
+
+  const handleChangeProfile = () => {
+    router.replace('/(auth)/select-profile');
   };
 
   return (
@@ -86,6 +99,12 @@ export default function SettingsScreen() {
               </View>
               <Text style={[styles.optionText, { color: colors.system.red }]}>Reiniciar Todo el Ecosistema</Text>
             </TouchableOpacity>
+            <TouchableOpacity style={styles.optionItem} onPress={handleLogout}>
+              <View style={[styles.optIcon, { backgroundColor: colors.text.tertiary + '15' }]}>
+                <Ionicons name="log-out-outline" size={20} color={colors.text.tertiary} />
+              </View>
+              <Text style={styles.optionText}>Cerrar Sesión</Text>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -93,7 +112,7 @@ export default function SettingsScreen() {
         <View style={styles.infoBox}>
           <Text style={styles.version}>Ceti Financial Ecosystem v1.2</Text>
           <Text style={styles.copyright}>© 2024 Ceti Labs. Todos los derechos reservados.</Text>
-          <TouchableOpacity style={styles.logoutBtn} onPress={() => router.replace('/(auth)/select-profile')}>
+          <TouchableOpacity style={styles.logoutBtn} onPress={handleChangeProfile}>
             <Text style={styles.logoutText}>Cambiar de perfil</Text>
           </TouchableOpacity>
         </View>
@@ -102,6 +121,7 @@ export default function SettingsScreen() {
     </ScreenWrapper>
   );
 }
+
 
 const getStyles = (colors: any, mode: string) => StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.background.base },

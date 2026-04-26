@@ -12,11 +12,13 @@ import { useParentStore } from '@features/family/store/useParentStore';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useThemeStore } from '@shared/store/useThemeStore';
+import { useAuthStore } from '@features/auth/store/useAuthStore';
 
 export default function SelectProfileScreen() {
   const router = useRouter();
   const child = useChildStore();
   const { parentName, isPinSet } = useParentStore();
+  const { loginAsParent, loginAsChild } = useAuthStore();
   const getTotalSaved = useSavingsStore(s => s.getTotalSaved);
   
   const colors = useThemeColors();
@@ -25,6 +27,7 @@ export default function SelectProfileScreen() {
 
   const selectChild = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    loginAsChild();
     router.replace('/(child)/world');
   };
 
@@ -33,6 +36,9 @@ export default function SelectProfileScreen() {
     if (!isPinSet) {
       router.replace('/(auth)/onboarding/parent-setup');
     } else {
+      // In a real app, we'd show a PIN prompt here. 
+      // For now, we'll mark as logged in as parent and go to dashboard.
+      loginAsParent();
       router.replace('/(parent)/dashboard');
     }
   };
@@ -41,6 +47,7 @@ export default function SelectProfileScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     router.replace('/(auth)/onboarding/child-setup');
   };
+
 
   return (
     <ScreenWrapper style={styles.root}>

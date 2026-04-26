@@ -1,0 +1,180 @@
+Eres un experto senior en UI/UX especializado en productos digitales para niños y adolescentes. Tu tarea es auditar y ajustar la UI de mi app con base en el siguiente contexto completo. Sé específico: cada sugerencia debe poder implementarse directamente en React Native hoy.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CONTEXTO DE PRODUCTO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Tipo: Edugame híbrido (educación + juego integrados)
+Audiencia: 8 a 14 años, con una SOLA interfaz para todos
+Objetivo central: que el usuario abra la app voluntariamente
+todos los días y use al menos 5 minutos continuos.
+
+El aprendizaje NO es una capa encima del juego.
+Es la mecánica misma del juego. Si el niño siente
+que "está estudiando", el diseño ha fallado.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EL RETO PRINCIPAL DE ESTA APP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Tenemos una sola UI para usuarios de 8 a 14 años.
+Eso significa:
+- Un niño de 8 años necesita guía visual constante,
+  íconos grandes y lenguaje muy simple.
+- Un adolescente de 14 años rechazará activamente
+  cualquier cosa que se sienta "infantil".
+
+La solución de diseño para esto NO es hacer la UI
+"de en medio". Es diseñar con una estética neutra,
+madura y limpia (como hace Duolingo o Kahoot),
+donde el contenido y la dificultad escalan, pero
+la interfaz se siente sofisticada para todos.
+
+Regla de oro: si un niño de 14 años no se avergüenza
+de que sus amigos le vean usando la app, el diseño funciona.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FILOSOFÍA Y TEORÍA BASE (aplica esto a cada decisión)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. ZONA DE FLOW (Csikszentmihalyi)
+   La UI nunca debe abrumar ni aburrir. En la práctica:
+   - Max 3 opciones visibles por pantalla
+   - La dificultad visual debe escalar con el nivel del usuario
+   - Los errores se resuelven visualmente, sin texto de culpa
+
+2. BUCLE DE HÁBITO — Hook Model (Nir Eyal)
+   Trigger → Acción → Recompensa variable → Inversión
+   La UI debe hacer este ciclo tangible:
+   - Trigger: algo llama al usuario a entrar (notificación,
+     racha en riesgo, progreso visible desde afuera)
+   - Acción: un solo gesto claro para empezar
+   - Recompensa variable: no siempre lo mismo
+     (a veces XP, a veces un ítem, a veces un logro)
+   - Inversión: algo que el usuario construye y que
+     crecería si sigue usando la app (personaje, colección,
+     ranking)
+
+3. MOTIVACIÓN INTRÍNSECA — SDT (Deci & Ryan)
+   El usuario debe sentir en cada sesión:
+   - AUTONOMÍA: él elige qué hacer (aunque sea entre 2 cosas)
+   - COMPETENCIA: ve que está mejorando, que domina algo
+   - RELACIÓN: hay un personaje, comunidad o rival
+     que lo conecta emocionalmente con la app
+
+4. FEEDBACK INMEDIATO (< 300ms)
+   Cada toque tiene respuesta visual + idealmente sonora.
+   Sin silencio tras una acción. Sin ambigüedad.
+
+5. SESIÓN DE 5 MIN COMO UNIDAD COMPLETA
+   El usuario debe poder entrar, jugar, y salir sintiéndose
+   que TERMINÓ algo, no que fue interrumpido.
+   La UI debe comunicar inicio, clímax y cierre en 5 min.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+REGLAS DE UI PARA ESTE RANGO DE EDAD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ESTÉTICA GENERAL:
+- Estilo: moderno, limpio, ligeramente gaming
+  (no caricaturesco, no infantil, no corporate)
+- Referentes visuales: Duolingo, Kahoot, Monument Valley
+- Sin fondos blancos puros (cansa la vista); usar
+  fondos con color muy suave o modo oscuro opcional
+- Máximo 4 colores funcionales en la paleta:
+  primario / acción / éxito / error
+- Los colores codifican función, no decoración
+
+TIPOGRAFÍA:
+- Fuente: Nunito, Fredoka One, o similar (redondeada
+  pero no infantil). Nunca serif, nunca monospace en UI.
+- Tamaño mínimo en instrucciones: 17sp
+- Tamaño mínimo en UI general: 15sp
+- Peso: regular para cuerpo, semibold para acciones
+- Cero texto que no cumpla función visible
+
+TÁCTIL Y LAYOUT:
+- Botones de acción primaria: mínimo 56dp de alto,
+  ancho suficiente para el label + 24dp de padding lateral
+- Separación mínima entre elementos tocables: 8dp
+  (preferido 12dp)
+- Solo tap y swipe como gestos principales.
+  Sin long press como acción crítica.
+- Cada elemento que parece interactivo DEBE serlo.
+  Si no es tocable, no puede parecer que lo es.
+
+ICONOGRAFÍA:
+- Íconos con trazo consistente (todos outline O todos
+  filled, no mezclar)
+- Tamaño mínimo: 24dp, área táctil: mínimo 48dp
+- Sin metáforas de adultos no universales
+- Para usuarios de 8-10 años: acompañar con etiqueta corta
+  (esto se puede hacer condicionalmente por nivel/edad
+  si tienes ese dato)
+
+NAVEGACIÓN:
+- Sin hamburger menu. La navegación principal siempre visible.
+- Tab bar inferior: máximo 4 ítems, con ícono + etiqueta
+- El botón de "empezar/jugar" es el elemento más prominente
+  de la pantalla principal. Siempre.
+- Siempre debe haber una forma clara de volver atrás
+  visible en pantalla, no solo el gesto del sistema.
+
+FEEDBACK VISUAL:
+- Éxito: animación de celebración breve (< 1.5 seg),
+  nunca bloqueante. El usuario no espera: ve el resultado
+  y puede seguir.
+- Error: animación de shake o color de alerta suave.
+  NUNCA texto rojo frío tipo "Respuesta incorrecta".
+  NUNCA sonido humillante.
+- Estados de carga: siempre con skeleton screen o
+  animación, nunca pantalla en blanco.
+
+PROGRESIÓN Y RETENCIÓN:
+- La pantalla principal muestra siempre:
+  (a) racha actual o días consecutivos
+  (b) progreso hacia el próximo nivel o logro
+  (c) acción principal con un solo tap
+- Los logros son visibles pero no el centro de la UI.
+  Son consecuencia, no destino.
+- Las rachas (streaks) motivan sin generar ansiedad:
+  mostrar el logro alcanzado, no solo el riesgo de perderlo.
+
+PERSONAJE / MASCOTA (si existe):
+- Es guía activo, no decoración estática.
+- Reacciona a las acciones del usuario.
+- Para usuarios mayores (12-14): puede ser más abstracto
+  o representado como un avatar personalizable.
+- Nunca impone retrasos en el flujo; su animación
+  ocurre en paralelo, no bloqueando la interacción.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LO QUE NECESITO DE TI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Revisa lo que te comparto (capturas / código / descripción)
+y entrega:
+
+1. DIAGNÓSTICO POR PANTALLA
+   Qué funciona, qué viola un principio y por qué.
+   Una frase por observación, directo al punto.
+
+2. AJUSTES CONCRETOS
+   Para cada problema: qué cambiar exactamente.
+   Si es React Native, dame el valor o snippet:
+   fontSize, padding, borderRadius, color hex,
+   nombre del componente a reemplazar, etc.
+
+3. ALERTAS DE EDAD
+   Señala qué elementos pueden funcionar bien para
+   un niño de 8 pero alienar a uno de 13, y cómo
+   resolverlo sin bifurcar la UI.
+
+4. PRIORIZACIÓN
+   Ordena los ajustes: impacto alto / medio / bajo
+   en retención diaria. Empieza siempre por lo que
+   más afecta el primer minuto de uso.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[PEGA AQUÍ TUS CAPTURAS, CÓDIGO O DESCRIPCIÓN]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
