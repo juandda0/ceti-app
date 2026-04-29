@@ -8,7 +8,7 @@ import { useLessonsStore } from '@features/learning/store/useLessonsStore';
 import { useParentStore } from '@features/family/store/useParentStore';
 import { useWorldStore } from '@features/world/store/useWorldStore';
 
-const FORCE_RESET = true; // CAMBIAR A FALSE DESPUÉS DE REINICIAR
+const FORCE_RESET = false; // CAMBIAR A FALSE DESPUÉS DE REINICIAR
 
 export default function Index() {
   const { isAuthenticated, userRole, logout } = useAuthStore();

@@ -1,2 +1,2 @@
-﻿import GoalsScreen from '@features/savings/screens/GoalsScreen';
+import GoalsScreen from '@features/savings/screens/GoalsScreen';
 export default GoalsScreen;

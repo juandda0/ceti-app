@@ -1,2 +1,2 @@
-﻿import ChildSetupScreen from '@features/auth/onboarding/ChildSetupScreen';
+import ChildSetupScreen from '@features/auth/onboarding/ChildSetupScreen';
 export default ChildSetupScreen;

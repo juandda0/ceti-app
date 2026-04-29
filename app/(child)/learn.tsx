@@ -1,2 +1,2 @@
-﻿import LearnScreen from '@features/learning/screens/LearnScreen';
+import LearnScreen from '@features/learning/screens/LearnScreen';
 export default LearnScreen;

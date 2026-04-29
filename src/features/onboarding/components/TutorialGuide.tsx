@@ -161,7 +161,7 @@ export default function TutorialGuide() {
           >
             {/* Dialog Box (Top or Bottom of Ion) */}
             {step.dialogPos === 'top' && (
-              <View style={[styles.dialogBox, styles.dialogTop, { backgroundColor: colors.background.secondary, borderColor: colors.brand.primary }]}>
+              <View style={[styles.dialogBox, styles.dialogTop, { backgroundColor: colors.background.secondary, borderColor: colors.materials.border }]}>
                 <DialogContent step={step} currentStep={currentStep} nickname={nickname} onNext={handleNext} colors={colors} />
               </View>
             )}
@@ -173,7 +173,7 @@ export default function TutorialGuide() {
             />
 
             {step.dialogPos === 'bottom' && (
-              <View style={[styles.dialogBox, styles.dialogBottom, { backgroundColor: colors.background.secondary, borderColor: colors.brand.primary }]}>
+              <View style={[styles.dialogBox, styles.dialogBottom, { backgroundColor: colors.background.secondary, borderColor: colors.materials.border }]}>
                 <DialogContent step={step} currentStep={currentStep} nickname={nickname} onNext={handleNext} colors={colors} />
               </View>
             )}

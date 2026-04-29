@@ -18,15 +18,20 @@ const AVATAR_MAP: Record<string, string> = {
 };
 
 export default function WorldScreen() {
-  const { nickname, xp, avatarId, streak, level, lastCelebratedLevel, celebrateLevel } = useChildStore();
+  const { nickname, xp, avatarId, streak, level, lastCelebratedLevel, celebrateLevel, hasCompletedTutorial, isOnboarded } = useChildStore();
   const totalCetis = useWalletStore((s) => s.totalCetis);
   const colors = useThemeColors();
   const { checkAll } = useRewards();
 
   useEffect(() => {
-    checkAll();
-    // Solo ejecutamos checkAll cuando cambian valores clave que pueden disparar logros
-  }, [level, streak, totalCetis]);
+    if (isOnboarded) {
+      checkAll();
+    }
+  }, [level, streak, totalCetis, isOnboarded]);
+
+  if (!isOnboarded) {
+    return null; // O una pantalla de carga
+  }
 
   const showLevelUp = level > lastCelebratedLevel;
   const avatarEmoji = AVATAR_MAP[avatarId] ?? '';
@@ -49,7 +54,7 @@ export default function WorldScreen() {
         onClose={() => celebrateLevel(level)}
       />
 
-      <TutorialGuide />
+      {!hasCompletedTutorial && <TutorialGuide />}
     </ScreenWrapper>
   );
 }

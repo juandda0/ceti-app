@@ -113,7 +113,7 @@ export default function LessonTutorialGuide({ currentStepType, currentStepIndex 
           <Animated.View entering={FadeIn} style={[styles.ionWrapper, step === 1 ? { bottom: 50 } : { top: 50 }]}>
             
             {step === 2 && (
-              <View style={[styles.dialogBox, styles.dialogBottom, { backgroundColor: colors.background.secondary, borderColor: colors.brand.primary }]}>
+              <View style={[styles.dialogBox, styles.dialogBottom, { backgroundColor: colors.background.secondary, borderColor: colors.materials.border }]}>
                 <Text style={[styles.title, { color: colors.brand.primary }]}>{getTitle()}</Text>
                 <Text style={[styles.message, { color: colors.text.primary }]}>{getMessage()}</Text>
                 <TouchableOpacity onPress={handleNext} style={[styles.button, { backgroundColor: colors.brand.primary }]}>
@@ -125,7 +125,7 @@ export default function LessonTutorialGuide({ currentStepType, currentStepIndex 
             <Image source={ION_ASSETS[getIonExpression()]} style={styles.ionImage} resizeMode="contain" />
 
             {step === 1 && (
-              <View style={[styles.dialogBox, styles.dialogTop, { backgroundColor: colors.background.secondary, borderColor: colors.brand.primary }]}>
+              <View style={[styles.dialogBox, styles.dialogTop, { backgroundColor: colors.background.secondary, borderColor: colors.materials.border }]}>
                 <Text style={[styles.title, { color: colors.brand.primary }]}>{getTitle()}</Text>
                 <Text style={[styles.message, { color: colors.text.primary }]}>{getMessage()}</Text>
                 <TouchableOpacity onPress={handleNext} style={[styles.button, { backgroundColor: colors.brand.primary }]}>

@@ -1,2 +1,2 @@
-﻿import AnalyticsScreen from '@features/family/screens/AnalyticsScreen';
+import AnalyticsScreen from '@features/family/screens/AnalyticsScreen';
 export default AnalyticsScreen;
