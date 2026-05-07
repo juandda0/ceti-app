@@ -1,7 +1,7 @@
 // store/useLessonsStore.ts — Progreso de lecciones
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createZustandMmkvStorage } from '@shared/lib/storage/mmkv';
 
 interface LessonProgress {
   childId: string;
@@ -20,7 +20,8 @@ interface LessonsState {
 interface LessonsActions {
   startLesson: (lessonId: string) => void;
   advanceStep: () => void;
-  completeLesson: (childId: string, lessonId: string, quizScore: number) => void;
+  /** Devuelve `true` si fue la primera finalización registrada para ese niño/lección (habilitar recompensas). */
+  completeLesson: (childId: string, lessonId: string, quizScore: number) => boolean;
   isLessonCompleted: (childId: string, lessonId: string) => boolean;
   getLessonProgress: (childId: string, lessonId: string) => LessonProgress | undefined;
   getLessonsForChild: (childId: string) => LessonProgress[];
@@ -69,28 +70,33 @@ export const useLessonsStore = create<LessonsStore>()(
             currentLessonId: null,
             currentStepIndex: 0,
           });
-        } else {
-          set({ currentLessonId: null, currentStepIndex: 0 });
+          return true;
         }
+        set({ currentLessonId: null, currentStepIndex: 0 });
+        return false;
       },
 
       isLessonCompleted: (childId, lessonId) => {
-        return get().completedLessons.some((lp) => lp.childId === childId && lp.lessonId === lessonId);
+        return get().completedLessons.some(
+          (lp) => lp.childId === childId && lp.lessonId === lessonId
+        );
       },
 
       getLessonProgress: (childId, lessonId) => {
-        return get().completedLessons.find((lp) => lp.childId === childId && lp.lessonId === lessonId);
+        return get().completedLessons.find(
+          (lp) => lp.childId === childId && lp.lessonId === lessonId
+        );
       },
 
       getLessonsForChild: (childId) => {
-        return get().completedLessons.filter(lp => lp.childId === childId);
+        return get().completedLessons.filter((lp) => lp.childId === childId);
       },
 
       resetLessons: () => set(initialState),
     }),
     {
       name: 'lessons-store',
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createJSONStorage(() => createZustandMmkvStorage()),
     }
   )
 );

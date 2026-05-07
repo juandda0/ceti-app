@@ -9,17 +9,15 @@ import {
   TextStyle,
   Pressable,
   View,
-  Platform
 } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
-  withSpring
+  withTiming,
+  Easing,
 } from 'react-native-reanimated';
-import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
-import { useThemeStore } from '@shared/store/useThemeStore';
 import { Typography } from '@shared/constants/typography';
 import { BorderRadius, Spacing, Shadows } from '@shared/constants/theme';
 
@@ -49,16 +47,14 @@ export default function CetiButton({
 }: CetiButtonProps) {
   const scale = useSharedValue(1);
   const colors = useThemeColors();
-  const mode = useThemeStore(s => s.mode);
-
   const handlePressIn = () => {
     if (disabled || isLoading) return;
-    scale.value = withSpring(0.96, { stiffness: 400, damping: 15 });
+    scale.value = withTiming(0.97, { duration: 85, easing: Easing.out(Easing.quad) });
   };
 
   const handlePressOut = () => {
     if (disabled || isLoading) return;
-    scale.value = withSpring(1, { stiffness: 400, damping: 15 });
+    scale.value = withTiming(1, { duration: 120, easing: Easing.out(Easing.quad) });
   };
 
   const handlePress = () => {
@@ -79,21 +75,34 @@ export default function CetiButton({
       baseStyle.backgroundColor = backgroundColor;
     } else {
       switch (variant) {
-        case 'primary': baseStyle.backgroundColor = colors.brand.primary; break;
-        case 'gold': baseStyle.backgroundColor = colors.gold.primary; break;
-        case 'solid': baseStyle.backgroundColor = colors.background.primary; break;
-        case 'secondary': baseStyle.backgroundColor = colors.materials.highlight; break;
+        case 'primary':
+          baseStyle.backgroundColor = colors.brand.primary;
+          break;
+        case 'gold':
+          baseStyle.backgroundColor = colors.gold.primary;
+          break;
+        case 'solid':
+          baseStyle.backgroundColor = colors.background.primary;
+          break;
+        case 'secondary':
+          baseStyle.backgroundColor = colors.materials.highlight;
+          break;
         case 'ghost':
-          baseStyle.backgroundColor = 'transparent';
+          baseStyle.backgroundColor = colors.materials.highlight;
           baseStyle.borderWidth = 1;
           baseStyle.borderColor = colors.materials.border;
           break;
-        case 'destructive': baseStyle.backgroundColor = colors.system.red; break;
-        case 'glass': baseStyle.backgroundColor = 'transparent'; break;
+        case 'destructive':
+          baseStyle.backgroundColor = colors.system.red;
+          break;
+        case 'glass':
+          baseStyle.backgroundColor = colors.materials.base;
+          break;
       }
     }
     if (variant !== 'ghost' && variant !== 'glass') {
-      const shadow = variant === 'gold' ? Shadows.gold : variant === 'primary' ? Shadows.brand : Shadows.medium;
+      const shadow =
+        variant === 'gold' ? Shadows.gold : variant === 'primary' ? Shadows.brand : Shadows.medium;
       Object.assign(baseStyle, shadow);
     }
     return baseStyle;
@@ -101,13 +110,22 @@ export default function CetiButton({
 
   const getTextStyle = (): TextStyle => {
     switch (variant) {
-      case 'solid': return { color: colors.text.primary, fontWeight: '800' };
-      case 'glass': return { color: colors.text.primary, fontWeight: '800' };
-      case 'primary': return { color: colors.text.onBrand, fontWeight: '800' };
-      case 'destructive': return { color: '#FFFFFF', fontWeight: '800' }; 
-      case 'gold': return { color: colors.text.onGold, fontWeight: '800' };
-      case 'secondary': return { color: colors.text.primary, fontWeight: '700' };
-      default: return { color: colors.text.onBrand, fontWeight: '700' };
+      case 'solid':
+        return { color: colors.text.primary, fontWeight: '800' };
+      case 'glass':
+        return { color: colors.text.primary, fontWeight: '800' };
+      case 'primary':
+        return { color: colors.text.onBrand, fontWeight: '800' };
+      case 'destructive':
+        return { color: colors.text.inverse, fontWeight: '800' };
+      case 'gold':
+        return { color: colors.text.onGold, fontWeight: '800' };
+      case 'secondary':
+        return { color: colors.text.primary, fontWeight: '700' };
+      case 'ghost':
+        return { color: colors.text.primary, fontWeight: '700' };
+      default:
+        return { color: colors.text.onBrand, fontWeight: '700' };
     }
   };
 
@@ -117,22 +135,51 @@ export default function CetiButton({
   };
 
   const flatStyle = StyleSheet.flatten(style) || {};
-  const { 
-    marginTop, marginBottom, marginLeft, marginRight, 
-    marginHorizontal, marginVertical, margin,
-    width, flex, alignSelf, position, top, bottom, left, right 
+  const {
+    marginTop,
+    marginBottom,
+    marginLeft,
+    marginRight,
+    marginHorizontal,
+    marginVertical,
+    margin,
+    width,
+    flex,
+    alignSelf,
+    position,
+    top,
+    bottom,
+    left,
+    right,
   } = flatStyle;
 
-  const containerStyle = { 
-    marginTop, marginBottom, marginLeft, marginRight, 
-    marginHorizontal, marginVertical, margin,
-    width, flex, alignSelf, position, top, bottom, left, right 
+  const containerStyle = {
+    marginTop,
+    marginBottom,
+    marginLeft,
+    marginRight,
+    marginHorizontal,
+    marginVertical,
+    margin,
+    width,
+    flex,
+    alignSelf,
+    position,
+    top,
+    bottom,
+    left,
+    right,
   };
 
-  const buttonOverrideStyle = flatStyle.backgroundColor ? { backgroundColor: flatStyle.backgroundColor } : {};
+  const buttonOverrideStyle = flatStyle.backgroundColor
+    ? { backgroundColor: flatStyle.backgroundColor }
+    : {};
 
   const buttonContent = (
     <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityState={{ disabled: disabled || isLoading }}
       onPress={handlePress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
@@ -148,9 +195,7 @@ export default function CetiButton({
       {isLoading ? (
         <ActivityIndicator color={getTextStyle().color} />
       ) : (
-        <Text style={[styles.label, Typography.buttonLarge, getTextStyle()]}>
-          {label}
-        </Text>
+        <Text style={[styles.label, Typography.buttonLarge, getTextStyle()]}>{label}</Text>
       )}
     </Pressable>
   );
@@ -158,16 +203,13 @@ export default function CetiButton({
   return (
     <Animated.View style={[styles.container, animatedStyle, containerStyle]}>
       {isGlass ? (
-        <View style={[styles.glassWrapper, { borderColor: colors.materials.border, backgroundColor: colors.materials.base }]}>
-          <BlurView 
-            intensity={35} 
-            tint={mode === 'light' ? 'light' : 'dark'} 
-            {...(Platform.OS === 'android' ? { experimentalBlurMethod: 'none' } : {})}
-            style={styles.blur}
-          >
-            {buttonContent}
-            <View style={styles.topShine} pointerEvents="none" />
-          </BlurView>
+        <View
+          style={[
+            styles.glassWrapper,
+            { borderColor: colors.materials.border, backgroundColor: colors.materials.base },
+          ]}
+        >
+          {buttonContent}
         </View>
       ) : (
         buttonContent
@@ -178,23 +220,22 @@ export default function CetiButton({
 
 const styles = StyleSheet.create({
   container: { alignSelf: 'stretch' },
-  button: { borderRadius: BorderRadius.full, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
+  button: {
+    borderRadius: BorderRadius.full,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   glassWrapper: {
     borderRadius: BorderRadius.full,
     overflow: 'hidden',
     borderWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    elevation: 4,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
   },
-  blur: { borderRadius: BorderRadius.full },
   label: { textAlign: 'center' },
   disabled: { opacity: 0.4 },
-  topShine: {
-    ...StyleSheet.absoluteFillObject,
-    borderRadius: BorderRadius.full,
-    backgroundColor: 'transparent',
-  },
 });

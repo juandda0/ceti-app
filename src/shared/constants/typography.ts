@@ -1,108 +1,89 @@
-// constants/typography.ts — Sistema tipográfico Geometric Sans (Outfit) para Ceti
+// Tipografía del sistema (San Francisco / Roboto según el dispositivo).
+// No se define fontFamily: React Native usa la fuente predeterminada del OS.
 import { TextStyle } from 'react-native';
 
 export const Typography: Record<string, TextStyle> = {
-  // ── DISPLAY — Números gigantes estilo Jack R. ──
   displayNumber: {
-    fontFamily: 'Outfit-Bold',
+    fontWeight: '700',
     fontSize: 56,
     lineHeight: 64,
     letterSpacing: -2,
   },
   displayNumberMedium: {
-    fontFamily: 'Outfit-SemiBold',
+    fontWeight: '600',
     fontSize: 32,
     lineHeight: 40,
     letterSpacing: -1,
   },
 
-  // ── TÍTULOS DE PANTALLA Y CARDS ────────────────
   largeTitle: {
-    fontFamily: 'Outfit-Bold',
+    fontWeight: '700',
     fontSize: 34,
     lineHeight: 41,
     letterSpacing: -1,
   },
   title1: {
-    fontFamily: 'Outfit-Bold',
+    fontWeight: '700',
     fontSize: 28,
     lineHeight: 34,
     letterSpacing: -0.5,
   },
   title2: {
-    fontFamily: 'Outfit-SemiBold',
+    fontWeight: '600',
     fontSize: 24,
     lineHeight: 30,
     letterSpacing: -0.5,
   },
   title3: {
-    fontFamily: 'Outfit-SemiBold',
+    fontWeight: '600',
     fontSize: 20,
     lineHeight: 26,
     letterSpacing: -0.3,
   },
 
-  // ── CONTENIDO PRINCIPAL Y BOTONES ──────────────
   headline: {
-    fontFamily: 'Outfit-SemiBold',
+    fontWeight: '600',
     fontSize: 17,
     lineHeight: 22,
     letterSpacing: -0.3,
   },
   body: {
-    fontFamily: 'Outfit-Regular',
+    fontWeight: '400',
     fontSize: 16,
     lineHeight: 22,
     letterSpacing: -0.2,
   },
   buttonLarge: {
-    fontFamily: 'Outfit-Medium',
+    fontWeight: '500',
     fontSize: 16,
     lineHeight: 22,
     letterSpacing: 0,
   },
 
-  // ── LABELS SECUNDARIOS (Spatial UI look) ────────
   subheadline: {
-    fontFamily: 'Outfit-Regular',
+    fontWeight: '400',
     fontSize: 16,
     lineHeight: 22,
     letterSpacing: -0.2,
   },
   footnote: {
-    fontFamily: 'Outfit-Regular',
+    fontWeight: '400',
     fontSize: 14,
     lineHeight: 20,
     letterSpacing: 0,
   },
   caption1: {
-    fontFamily: 'Outfit-Medium',
+    fontWeight: '500',
     fontSize: 14,
     lineHeight: 18,
     letterSpacing: 0,
   },
   caption2: {
-    fontFamily: 'Outfit-Light',
+    fontWeight: '300',
     fontSize: 14,
     lineHeight: 18,
     letterSpacing: 0.2,
-    opacity: 0.6,
   },
-};
-
-// Aliases para compatibilidad
-export const Fonts = {
-  heading: {
-    black: 'Outfit-Bold',
-    extraBold: 'Outfit-Bold',
-    bold: 'Outfit-Bold',
-    semiBold: 'Outfit-SemiBold',
-  },
-  body: {
-    bold: 'Outfit-SemiBold',
-    semiBold: 'Outfit-Medium',
-    regular: 'Outfit-Regular',
-  }
 };
 
 export const FontSizes = {

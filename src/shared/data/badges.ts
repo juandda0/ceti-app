@@ -1,4 +1,5 @@
 // data/badges.ts — Logros del sistema Ceti
+import { LESSONS } from '@features/learning/data/lessons';
 
 export interface Badge {
   id: string;
@@ -65,7 +66,7 @@ export const BADGES: Badge[] = [
     emoji: '🎓',
     description: 'Completaste todas las lecciones',
     conditionType: 'lessons_completed',
-    conditionValue: 5,
+    conditionValue: LESSONS.length,
   },
   {
     id: 'goal_setter',

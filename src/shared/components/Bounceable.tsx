@@ -1,11 +1,11 @@
 // components/common/Bounceable.tsx
 import React from 'react';
 import { Pressable, PressableProps, StyleProp, ViewStyle } from 'react-native';
-import Animated, { 
-  useSharedValue, 
-  useAnimatedStyle, 
-  withSpring,
-  interpolate
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  Easing,
 } from 'react-native-reanimated';
 
 interface BounceableProps extends PressableProps {
@@ -16,11 +16,11 @@ interface BounceableProps extends PressableProps {
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-export default function Bounceable({ 
-  children, 
-  style, 
+export default function Bounceable({
+  children,
+  style,
   activeScale = 0.92,
-  ...props 
+  ...props
 }: BounceableProps) {
   const scale = useSharedValue(1);
 
@@ -29,12 +29,12 @@ export default function Bounceable({
   }));
 
   const onPressIn = (e: any) => {
-    scale.value = withSpring(activeScale, { damping: 10, stiffness: 200 });
+    scale.value = withTiming(activeScale, { duration: 90, easing: Easing.out(Easing.quad) });
     props.onPressIn?.(e);
   };
 
   const onPressOut = (e: any) => {
-    scale.value = withSpring(1, { damping: 10, stiffness: 200 });
+    scale.value = withTiming(1, { duration: 110, easing: Easing.out(Easing.quad) });
     props.onPressOut?.(e);
   };
 

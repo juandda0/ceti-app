@@ -1,7 +1,8 @@
 // components/common/ScreenWrapper.tsx — Wrapper para transiciones suaves entre pantallas
 import React from 'react';
 import { ViewStyle, StyleSheet, StyleProp } from 'react-native';
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
+import { motion } from '@shared/constants/motion';
 
 interface ScreenWrapperProps {
   children: React.ReactNode;
@@ -11,9 +12,9 @@ interface ScreenWrapperProps {
 
 export default function ScreenWrapper({ children, style, delay = 0 }: ScreenWrapperProps) {
   return (
-    <Animated.View 
-      entering={FadeIn.duration(400).delay(delay)} 
-      exiting={FadeOut.duration(300)}
+    <Animated.View
+      entering={motion.screenEnter(delay)}
+      exiting={motion.screenExit}
       style={[styles.container, style]}
     >
       {children}

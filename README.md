@@ -1,50 +1,57 @@
-# Welcome to your Expo app 👋
+# Ceti
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+App de educación financiera para familias (Expo 54, React Native 0.81, Expo Router). Arquitectura **feature-first** bajo `src/features/*` y utilidades compartidas en `src/shared/*`.
 
-## Get started
+## Requisitos
 
-1. Install dependencies
+- Node LTS
+- Xcode / Android Studio para builds nativos
+- Cuenta [Expo](https://expo.dev) para EAS (opcional)
 
-   ```bash
-   npm install
-   ```
+## Scripts
 
-2. Start the app
+| Script                            | Descripción        |
+| --------------------------------- | ------------------ |
+| `npm start`                       | Metro + Expo       |
+| `npm run android` / `npm run ios` | Run nativo         |
+| `npm run lint`                    | ESLint (expo lint) |
+| `npm run typecheck`               | `tsc --noEmit`     |
+| `npm test`                        | Jest               |
+| `npm run format`                  | Prettier write     |
 
-   ```bash
-   npx expo start
-   ```
+## Variables de entorno
 
-In the output, you'll find options to open the app in a
+Copia `.env.example` → `.env` (no commitear). Prefijo `EXPO_PUBLIC_*` para claves usadas en cliente. Firebase opcional: sin `EXPO_PUBLIC_FIREBASE_*` la app funciona solo en modo local; con ellas se inicializa Auth (anónimo) + Firestore.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Firebase y EAS
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- Config dinámica: `app.config.js` mezcla `app.json` + env.
+- Reglas plantilla: `firestore.rules`.
+- Perfiles de build: `eas.json` (`development`, `preview`, `production`). El perfil `production` no usa `developmentClient`.
 
-## Get a fresh project
+## Parche `expo-gl`
 
-When you're ready, run:
+Existe `patches/expo-gl+16.0.10.patch`; `postinstall` ejecuta `patch-package`. No eliminar sin probar escena 3D en dispositivo.
 
-```bash
-npm run reset-project
-```
+## i18n
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+`i18next` + `react-i18next`, catálogo por defecto `src/shared/i18n/locales/es.json`. Inicialización en `app/i18n.ts` (importada desde `app/_layout.tsx`).
 
-## Learn more
+## Tests y CI
 
-To learn more about developing your project with Expo, look at the following resources:
+- Jest + `jest-expo`, setup en `jest.setup.js`.
+- Flujo E2E sugerido: [Maestro](https://maestro.mobile.dev/) — ver `e2e/maestro/smoke.yaml`.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Cumplimiento
 
-## Join the community
+Documento orientativo: [`docs/COMPLIANCE.md`](docs/COMPLIANCE.md) (COPPA / GDPR-K, datos de menores).
 
-Join our community of developers creating universal apps.
+## Estructura rápida
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- `app/` — rutas Expo Router (`(auth)`, `(child)`, `(parent)`).
+- `src/features/auth|family|learning|savings|world` — dominios.
+- `src/shared/` — tema, analytics (stubs / RN Firebase opcional), sesión, i18n.
+
+## Contribución
+
+Pre-commit: Husky + `lint-staged` (Prettier). CI: GitHub Actions (typecheck, lint, test, `npm audit`).

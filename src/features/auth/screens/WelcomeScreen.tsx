@@ -1,18 +1,17 @@
 // app/(auth)/welcome.tsx — Welcome screen with smooth transitions
 import { useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
-  withSpring,
   withDelay,
   withTiming,
   withRepeat,
   Easing,
   FadeIn,
 } from 'react-native-reanimated';
-import { Ionicons } from '@expo/vector-icons';
+import LottieView from 'lottie-react-native';
 import { Typography } from '@shared/constants/typography';
 import { Spacing } from '@shared/constants/theme';
 import CetiButton from '@shared/components/CetiButton';
@@ -20,13 +19,17 @@ import ScreenWrapper from '@shared/components/ScreenWrapper';
 import PageHeader from '@shared/components/PageHeader';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useThemeStore } from '@shared/store/useThemeStore';
+import { lottieSpeed, motionMs } from '@shared/constants/motion';
+import { useTranslation } from 'react-i18next';
+import { isFirebaseConfigured } from '@shared/lib/firebase/app';
 
-const { width, height } = Dimensions.get('window');
+const piggyCoinsAnimation = require('../../../../assets/lottie/piggy-coins-out.json');
 
 export default function WelcomeScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const colors = useThemeColors();
-  const mode = useThemeStore(s => s.mode);
+  const mode = useThemeStore((s) => s.mode);
   const styles = getStyles(colors, mode);
 
   const logoScale = useSharedValue(0);
@@ -37,14 +40,21 @@ export default function WelcomeScreen() {
   const logoPulse = useSharedValue(1);
 
   useEffect(() => {
-    logoScale.value = withDelay(400, withSpring(1, { damping: 15, stiffness: 150 }));
-    logoOpacity.value = withDelay(400, withTiming(1, { duration: 800 }));
-    contentOpacity.value = withDelay(1000, withTiming(1, { duration: 1000 }));
-    buttonOpacity.value = withDelay(1600, withTiming(1, { duration: 800 }));
-    buttonTranslateY.value = withDelay(1600, withSpring(0, { damping: 20 }));
+    const logoStart = 100;
+    logoScale.value = withDelay(
+      logoStart,
+      withTiming(1, { duration: 240, easing: Easing.out(Easing.cubic) })
+    );
+    logoOpacity.value = withDelay(logoStart, withTiming(1, { duration: 240 }));
+    contentOpacity.value = withDelay(280, withTiming(1, { duration: motionMs.fade }));
+    buttonOpacity.value = withDelay(420, withTiming(1, { duration: motionMs.fade }));
+    buttonTranslateY.value = withDelay(
+      420,
+      withTiming(0, { duration: motionMs.fade, easing: Easing.out(Easing.cubic) })
+    );
 
     logoPulse.value = withRepeat(
-      withTiming(1.03, { duration: 3000, easing: Easing.inOut(Easing.ease) }),
+      withTiming(1.015, { duration: 2200, easing: Easing.inOut(Easing.ease) }),
       -1,
       true
     );
@@ -64,90 +74,111 @@ export default function WelcomeScreen() {
     transform: [{ translateY: buttonTranslateY.value }],
   }));
 
-  const handleStart = () => {
-    router.push('/(auth)/select-profile');
+  const handleLogin = () => {
+    router.push('/(auth)/login');
+  };
+
+  const handleOffline = () => {
+    router.push('/(auth)/choose-role');
   };
 
   return (
     <ScreenWrapper style={styles.container}>
-      <View style={styles.content}>
-        <Animated.View style={[styles.logoContainer, logoAnimatedStyle]}>
-          <View style={styles.logoInner}>
-            <Ionicons name="leaf" size={60} color={colors.brand.primary} />
-          </View>
-        </Animated.View>
+      <View style={styles.centerColumn}>
+        <View style={styles.heroBlock}>
+          <Animated.View style={[styles.logoContainer, logoAnimatedStyle]}>
+            <LottieView
+              source={piggyCoinsAnimation}
+              speed={lottieSpeed.subtle}
+              autoPlay
+              loop={false}
+              style={styles.logoLottie}
+            />
+          </Animated.View>
 
-        <Animated.View style={[styles.textContainer, contentAnimatedStyle]}>
-          <PageHeader 
-            overline="Innovación"
-            title="Ceti"
-            subtitle="Tu mundo crece con tus decisiones"
-            style={{ alignItems: 'center' }}
-          />
-        </Animated.View>
+          <Animated.View style={[styles.textContainer, contentAnimatedStyle]}>
+            <PageHeader
+              overline={t('welcome.overline')}
+              title={t('welcome.title')}
+              subtitle={t('welcome.subtitle')}
+              showAccentLine={false}
+              style={{ alignItems: 'center' }}
+            />
+          </Animated.View>
+
+          <Animated.View style={[styles.buttonContainer, buttonAnimatedStyle]}>
+            <CetiButton
+              label={t('welcome.ctaStart')}
+              onPress={handleLogin}
+              variant="primary"
+              size="large"
+            />
+            <CetiButton
+              label={t('welcome.ctaHasAccount')}
+              onPress={handleLogin}
+              variant="ghost"
+              size="medium"
+              style={{ marginTop: Spacing.sm }}
+            />
+            {!isFirebaseConfigured() ? (
+              <CetiButton
+                label={t('welcome.ctaOffline')}
+                onPress={handleOffline}
+                variant="secondary"
+                size="medium"
+                style={{ marginTop: Spacing.md }}
+              />
+            ) : null}
+          </Animated.View>
+        </View>
       </View>
 
-      <Animated.View style={[styles.buttonContainer, buttonAnimatedStyle]}>
-        <CetiButton 
-          label="Empezar" 
-          onPress={handleStart} 
-          variant="primary" 
-          size="large"
-        />
-        <CetiButton 
-          label="Ya tengo cuenta" 
-          onPress={handleStart} 
-          variant="ghost" 
-          size="medium"
-          style={{ marginTop: Spacing.sm }}
-        />
-      </Animated.View>
-
-      <Animated.Text
-        entering={FadeIn.delay(2500)}
-        style={styles.version}
-      >
-        Diseñado para el futuro de la educación financiera
+      <Animated.Text entering={FadeIn.duration(motionMs.fade).delay(560)} style={styles.version}>
+        {t('welcome.footer')}
       </Animated.Text>
     </ScreenWrapper>
   );
 }
 
-const getStyles = (colors: any, mode: string) => StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: colors.background.base 
-  },
-  content: { 
-    flex: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center' 
-  },
-  logoContainer: { 
-    marginBottom: Spacing.xl,
-    alignItems: 'center' 
-  },
-  logoInner: { 
-    width: 120, 
-    height: 120, 
-    borderRadius: 40, 
-    backgroundColor: colors.materials.base, 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    borderWidth: 1, 
-    borderColor: colors.materials.border 
-  },
-  textContainer: { 
-    alignItems: 'center' 
-  },
-  buttonContainer: { 
-    paddingHorizontal: Spacing['2xl'], 
-    paddingBottom: Spacing['3xl'] 
-  },
-  version: { 
-    ...Typography.caption2, 
-    color: colors.text.tertiary, 
-    textAlign: 'center', 
-    paddingBottom: Spacing.lg 
-  },
-});
+const getStyles = (colors: any, _mode: string) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background.base,
+    },
+    centerColumn: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: Spacing['2xl'],
+    },
+    heroBlock: {
+      width: '100%',
+      maxWidth: 400,
+      alignItems: 'center',
+    },
+    logoContainer: {
+      marginBottom: Spacing.md,
+      alignItems: 'center',
+    },
+    logoLottie: {
+      width: 220,
+      height: 220,
+    },
+    textContainer: {
+      alignItems: 'center',
+      width: '100%',
+      marginBottom: Spacing.lg,
+    },
+    buttonContainer: {
+      alignSelf: 'stretch',
+      width: '100%',
+    },
+    version: {
+      ...Typography.caption2,
+      color: colors.text.tertiary,
+      textAlign: 'center',
+      paddingBottom: Spacing.lg,
+      paddingHorizontal: Spacing.lg,
+    },
+  });

@@ -1,0 +1,18 @@
+{
+  "app": {
+    "name": "Ceti"
+  },
+  "errors": {
+    "genericTitle": "Algo salió mal",
+    "genericBody": "Intenta de nuevo más tarde."
+  },
+  "welcome": {
+    "overline": "Innovación",
+    "title": "Ceti",
+    "subtitle": "Tu mundo crece con tus decisiones",
+    "ctaStart": "Crear cuenta / Entrar",
+    "ctaHasAccount": "Ya tengo cuenta",
+    "ctaOffline": "Continuar solo en este dispositivo",
+    "footer": "Diseñado para el futuro de la educación financiera"
+  }
+}

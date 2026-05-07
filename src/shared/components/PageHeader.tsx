@@ -1,7 +1,6 @@
 // components/common/PageHeader.tsx — Cabeceras Premium y Divertidas (Senior UI)
 import React from 'react';
 import { View, Text, StyleSheet, ViewStyle } from 'react-native';
-import Animated, { FadeInDown, Layout } from 'react-native-reanimated';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { Typography } from '@shared/constants/typography';
 
@@ -10,32 +9,55 @@ interface PageHeaderProps {
   subtitle?: string;
   overline?: string;
   style?: ViewStyle;
+  /** Línea decorativa bajo el subtítulo (p. ej. welcome sin barra “corta”). Por defecto visible. */
+  showAccentLine?: boolean;
 }
 
-export default function PageHeader({ title, subtitle, overline, style }: PageHeaderProps) {
+export default function PageHeader({
+  title,
+  subtitle,
+  overline,
+  style,
+  showAccentLine = true,
+}: PageHeaderProps) {
   const colors = useThemeColors();
 
   return (
     <View style={[styles.container, style]}>
       {overline && (
         <View style={styles.overlineRow}>
-          <View style={[styles.overlineDot, { backgroundColor: colors.brand.primary, shadowColor: colors.brand.primary }]} />
-          <Text style={[styles.overlineText, { color: colors.brand.primary }]}>{overline.toUpperCase()}</Text>
+          <View
+            style={[
+              styles.overlineDot,
+              { backgroundColor: colors.brand.primary, shadowColor: colors.brand.primary },
+            ]}
+          />
+          <Text style={[styles.overlineText, { color: colors.brand.primary }]}>
+            {overline.toUpperCase()}
+          </Text>
         </View>
       )}
-      
+
       <View style={styles.titleRow}>
-        <Text style={[styles.titleText, { color: colors.text.primary }]}>{title}</Text>
+        <Text accessibilityRole="header" style={[styles.titleText, { color: colors.text.primary }]}>
+          {title}
+        </Text>
       </View>
 
       {subtitle && (
-        <Text style={[styles.subtitleText, { color: colors.text.secondary }]}>{subtitle}</Text>
+        <Text
+          accessibilityRole="text"
+          style={[styles.subtitleText, { color: colors.text.secondary }]}
+        >
+          {subtitle}
+        </Text>
       )}
 
-      {/* Acento Visual Premium: Una línea de brillo sutil abajo */}
-      <View style={[styles.accentLine, { backgroundColor: colors.separator.transparent }]}>
-        <View style={[styles.accentGlow, { backgroundColor: colors.brand.primary }]} />
-      </View>
+      {showAccentLine ? (
+        <View style={[styles.accentLine, { backgroundColor: colors.materials.highlight }]}>
+          <View style={[styles.accentGlow, { backgroundColor: colors.brand.primary }]} />
+        </View>
+      ) : null}
     </View>
   );
 }

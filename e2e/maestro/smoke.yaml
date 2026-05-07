@@ -1,0 +1,6 @@
+appId: com.juanndda.ceti
+name: Ceti smoke
+---
+# Arranque: ajustar según fixtures locales (Maestro)
+- launchApp
+- assertVisible: 'Ceti'

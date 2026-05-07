@@ -1,0 +1,97 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isSelf(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function tokenRole() {
+      return request.auth.token.get('role', '');
+    }
+
+    function tokenFamily() {
+      return request.auth.token.get('familyId', '');
+    }
+
+    function isParentMemberOf(familyId) {
+      return signedIn() && tokenRole() == 'parent' && tokenFamily() == familyId;
+    }
+
+    function isChildMemberOf(familyId, childId) {
+      return signedIn()
+        && tokenRole() == 'child'
+        && tokenFamily() == familyId
+        && request.auth.uid == childId;
+    }
+
+    /** Perfil de cuenta (Firebase UID). */
+    match /users/{userId} {
+      allow read: if isSelf(userId);
+
+      allow create: if isSelf(userId)
+        && request.resource.data.role in ['parent', 'child']
+        && request.resource.data.provider is string;
+
+      // Perfil editable por el dueño; no cambiar rol desde el cliente.
+      // familyId solo la actualiza Cloud Functions (Admin SDK) al enlazar hijo.
+      allow update: if isSelf(userId)
+        && request.resource.data.role == resource.data.role;
+
+      allow delete: if false;
+    }
+
+    /** Familia: document ID = Firebase UID del padre. */
+    match /families/{familyId} {
+      allow read: if signedIn() && (
+        request.auth.uid == familyId ||
+        tokenFamily() == familyId
+      );
+
+      allow create: if signedIn()
+        && request.auth.uid == familyId
+        && request.resource.data.parentUid == request.auth.uid;
+
+      allow update: if signedIn()
+        && request.auth.uid == familyId
+        && tokenRole() == 'parent';
+
+      allow delete: if false;
+
+      match /children/{childId} {
+        allow read: if signedIn() && (
+          isParentMemberOf(familyId) ||
+          isChildMemberOf(familyId, childId)
+        );
+
+        allow create: if isParentMemberOf(familyId);
+
+        allow update: if isParentMemberOf(familyId)
+          || isChildMemberOf(familyId, childId);
+
+        allow delete: if isParentMemberOf(familyId);
+      }
+    }
+
+    /** Invitación para enlazar hijo; canje solo Cloud Functions. */
+    match /invitations/{code} {
+      allow get: if signedIn();
+      allow list: if false;
+      allow create: if signedIn()
+        && tokenRole() == 'parent'
+        && tokenFamily() == request.resource.data.familyId
+        && request.resource.data.parentUid == request.auth.uid
+        && request.resource.data.used == false
+        && request.resource.data.code == code;
+      allow update, delete: if false;
+    }
+
+    match /rateLimits/{docId} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -2,7 +2,8 @@
 import { useState } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import Animated, { FadeInRight, FadeOutLeft } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
+import { motion } from '@shared/constants/motion';
 import * as Haptics from 'expo-haptics';
 import { Typography } from '@shared/constants/typography';
 import { BorderRadius, Spacing } from '@shared/constants/theme';
@@ -14,13 +15,18 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useThemeStore } from '@shared/store/useThemeStore';
 
 import { useAuthStore } from '@features/auth/store/useAuthStore';
+import { logEvent } from '@shared/lib/analytics/logEvent';
+import { getFirebaseClients } from '@shared/lib/firebase/app';
+import { userRepository } from '@features/auth/data/userRepository';
+import { familyRepository } from '@features/family/data/FamilyRepository';
+import { callSyncUserClaims } from '@shared/lib/firebase/cloudFunctions';
 
 export default function ParentSetupScreen() {
   const router = useRouter();
-  const { isPinSet, setPin, verifyPin, setParentName } = useParentStore();
+  const { isPinSet, setPin, verifyPin, setParentName, setFamilyId } = useParentStore();
   const { loginAsParent } = useAuthStore();
   const colors = useThemeColors();
-  const mode = useThemeStore(s => s.mode);
+  const mode = useThemeStore((s) => s.mode);
   const styles = getStyles(colors, mode);
 
   const [step, setStep] = useState(isPinSet ? 'verify' : 'name');
@@ -33,6 +39,8 @@ export default function ParentSetupScreen() {
     if (name.trim().length < 2) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setParentName(name.trim());
+    const uid = useAuthStore.getState().firebaseUid;
+    if (uid) setFamilyId(uid);
     setStep('create_pin');
   };
 
@@ -42,21 +50,55 @@ export default function ParentSetupScreen() {
     setStep('confirm_pin');
   };
 
-  const handleConfirmPin = () => {
+  const handleConfirmPin = async () => {
     if (confirmPin !== pin) {
       setError('Los PINs no coinciden');
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       setConfirmPin('');
       return;
     }
-    setPin(pin);
+    const clients = getFirebaseClients();
+    const u = clients?.auth.currentUser;
+    if (!u) {
+      setError('Sesión expirada. Vuelve a iniciar sesión.');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      return;
+    }
+    await setPin(confirmPin);
+    const displayName = useParentStore.getState().parentName.trim();
+    const provider = u.providerData?.some((p) => p.providerId?.includes('google'))
+      ? 'google'
+      : u.providerData?.some((p) => p.providerId?.includes('apple'))
+        ? 'apple'
+        : 'unknown';
+    await userRepository.upsertParentProfile(u.uid, {
+      displayName,
+      email: u.email ?? null,
+      photoURL: u.photoURL ?? null,
+      phone: null,
+      provider,
+    });
+    await familyRepository.upsertSeed(u.uid, {
+      id: u.uid,
+      parentUid: u.uid,
+      parentDisplayName: displayName,
+      createdAt: Date.now(),
+    });
+    setFamilyId(u.uid);
+    try {
+      await callSyncUserClaims();
+      await u.getIdToken(true);
+    } catch {
+      /* claims pueden propagarse en el siguiente arranque */
+    }
+    void logEvent('parent_pin_set', {});
     loginAsParent();
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     router.replace('/(parent)/dashboard');
   };
 
-  const handleVerifyPin = () => {
-    if (verifyPin(pin)) {
+  const handleVerifyPin = async () => {
+    if (await verifyPin(pin)) {
       loginAsParent();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.replace('/(parent)/dashboard');
@@ -67,12 +109,16 @@ export default function ParentSetupScreen() {
     }
   };
 
-
   return (
     <ScreenWrapper style={styles.container}>
       {step === 'verify' && (
-        <Animated.View key="verify" entering={FadeInRight} exiting={FadeOutLeft} style={styles.stepContainer}>
-          <PageHeader 
+        <Animated.View
+          key="verify"
+          entering={motion.stepEnter}
+          exiting={motion.stepExit}
+          style={styles.stepContainer}
+        >
+          <PageHeader
             overline="Seguridad"
             title="Ingresa tu PIN"
             subtitle="Escribe tu PIN de 4 dígitos para acceder"
@@ -83,16 +129,19 @@ export default function ParentSetupScreen() {
             placeholder="0000"
             placeholderTextColor={colors.text.tertiary}
             value={pin}
-            onChangeText={(t) => { setPinValue(t); setError(''); }}
+            onChangeText={(t) => {
+              setPinValue(t);
+              setError('');
+            }}
             maxLength={4}
             keyboardType="number-pad"
             secureTextEntry
             autoFocus
           />
           {error !== '' && <Text style={[styles.error, Typography.caption1]}>{error}</Text>}
-          <CetiButton 
-            label="Entrar" 
-            onPress={handleVerifyPin} 
+          <CetiButton
+            label="Entrar"
+            onPress={handleVerifyPin}
             disabled={pin.length !== 4}
             variant="primary"
             size="large"
@@ -102,8 +151,13 @@ export default function ParentSetupScreen() {
       )}
 
       {step === 'name' && (
-        <Animated.View key="name" entering={FadeInRight} exiting={FadeOutLeft} style={styles.stepContainer}>
-          <PageHeader 
+        <Animated.View
+          key="name"
+          entering={motion.stepEnter}
+          exiting={motion.stepExit}
+          style={styles.stepContainer}
+        >
+          <PageHeader
             overline="Perfil"
             title="¿Cómo te llamas?"
             subtitle="Nombre del padre o tutor"
@@ -118,9 +172,9 @@ export default function ParentSetupScreen() {
             maxLength={30}
             autoFocus
           />
-          <CetiButton 
-            label="Siguiente" 
-            onPress={handleNameNext} 
+          <CetiButton
+            label="Siguiente"
+            onPress={handleNameNext}
             disabled={name.trim().length < 2}
             variant="primary"
             size="large"
@@ -130,8 +184,13 @@ export default function ParentSetupScreen() {
       )}
 
       {step === 'create_pin' && (
-        <Animated.View key="create" entering={FadeInRight} exiting={FadeOutLeft} style={styles.stepContainer}>
-          <PageHeader 
+        <Animated.View
+          key="create"
+          entering={motion.stepEnter}
+          exiting={motion.stepExit}
+          style={styles.stepContainer}
+        >
+          <PageHeader
             overline="Seguridad"
             title="Crea un PIN"
             subtitle="4 dígitos para proteger tu panel"
@@ -148,9 +207,9 @@ export default function ParentSetupScreen() {
             secureTextEntry
             autoFocus
           />
-          <CetiButton 
-            label="Siguiente" 
-            onPress={handleCreatePin} 
+          <CetiButton
+            label="Siguiente"
+            onPress={handleCreatePin}
             disabled={pin.length !== 4}
             variant="primary"
             size="large"
@@ -160,8 +219,13 @@ export default function ParentSetupScreen() {
       )}
 
       {step === 'confirm_pin' && (
-        <Animated.View key="confirm" entering={FadeInRight} exiting={FadeOutLeft} style={styles.stepContainer}>
-          <PageHeader 
+        <Animated.View
+          key="confirm"
+          entering={motion.stepEnter}
+          exiting={motion.stepExit}
+          style={styles.stepContainer}
+        >
+          <PageHeader
             overline="Seguridad"
             title="Confirma tu PIN"
             subtitle="Repite el PIN para asegurar que sea correcto"
@@ -172,16 +236,19 @@ export default function ParentSetupScreen() {
             placeholder="0000"
             placeholderTextColor={colors.text.tertiary}
             value={confirmPin}
-            onChangeText={(t) => { setConfirmPin(t); setError(''); }}
+            onChangeText={(t) => {
+              setConfirmPin(t);
+              setError('');
+            }}
             maxLength={4}
             keyboardType="number-pad"
             secureTextEntry
             autoFocus
           />
           {error !== '' && <Text style={[styles.error, Typography.caption1]}>{error}</Text>}
-          <CetiButton 
-            label="Finalizar" 
-            onPress={handleConfirmPin} 
+          <CetiButton
+            label="Finalizar"
+            onPress={handleConfirmPin}
             disabled={confirmPin.length !== 4}
             variant="primary"
             size="large"
@@ -193,34 +260,35 @@ export default function ParentSetupScreen() {
   );
 }
 
-const getStyles = (colors: any, mode: string) => StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: colors.background.base, 
-    justifyContent: 'center', 
-    paddingHorizontal: Spacing.xl 
-  },
-  stepContainer: { alignItems: 'center' },
-  input: { 
-    width: '100%', 
-    backgroundColor: colors.separator.transparent, 
-    borderRadius: BorderRadius.xl, 
-    padding: Spacing.lg, 
-    color: colors.text.primary, 
-    textAlign: 'center', 
-    borderWidth: 1, 
-    borderColor: colors.materials.border 
-  },
-  pinInput: { 
-    width: 240, 
-    backgroundColor: colors.separator.transparent, 
-    borderRadius: BorderRadius.xl, 
-    padding: Spacing.lg, 
-    color: colors.text.primary, 
-    textAlign: 'center', 
-    borderWidth: 1, 
-    borderColor: colors.materials.border, 
-    letterSpacing: 12 
-  },
-  error: { color: colors.system.red, marginTop: Spacing.sm },
-});
+const getStyles = (colors: any, mode: string) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background.base,
+      justifyContent: 'center',
+      paddingHorizontal: Spacing.xl,
+    },
+    stepContainer: { alignItems: 'center' },
+    input: {
+      width: '100%',
+      backgroundColor: colors.materials.highlight,
+      borderRadius: BorderRadius.xl,
+      padding: Spacing.lg,
+      color: colors.text.primary,
+      textAlign: 'center',
+      borderWidth: 1,
+      borderColor: colors.materials.border,
+    },
+    pinInput: {
+      width: 240,
+      backgroundColor: colors.materials.highlight,
+      borderRadius: BorderRadius.xl,
+      padding: Spacing.lg,
+      color: colors.text.primary,
+      textAlign: 'center',
+      borderWidth: 1,
+      borderColor: colors.materials.border,
+      letterSpacing: 12,
+    },
+    error: { color: colors.system.red, marginTop: Spacing.sm },
+  });

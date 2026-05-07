@@ -1,149 +1,147 @@
-// app/(child)/learn.tsx — Camino de Aprendizaje Dinámico para Niños
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
-import { useRouter } from 'expo-router';
-import Animated, { FadeInDown, FadeIn } from 'react-native-reanimated';
-import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '@shared/constants/colors';
-import { Typography } from '@shared/constants/typography';
+// app/(child)/learn.tsx — Mapa saga con header sticky dinamico por seccion
+import { useMemo, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
+  Platform,
+} from 'react-native';
 import { LESSONS } from '@features/learning/data/lessons';
+import { LEARN_UNITS } from '@features/learning/data/learnUnits';
 import { useLessonsStore } from '@features/learning/store/useLessonsStore';
+import LessonSagaMap from '@features/learning/components/saga/LessonSagaMap';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
-
 import { useThemeColors } from '@shared/hooks/useThemeColors';
-import { useThemeStore } from '@shared/store/useThemeStore';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useChildStore } from '@features/auth/store/useChildStore';
 
 export default function LearnScreen() {
-  const router = useRouter();
+  const childId = useChildStore((s) => s.id);
   const completedLessons = useLessonsStore((s) => s.completedLessons);
   const colors = useThemeColors();
-  const mode = useThemeStore(s => s.mode);
-  const styles = getStyles(colors, mode);
+  const insets = useSafeAreaInsets();
+  const done = useMemo(
+    () => completedLessons.filter((p) => p.childId === childId).length,
+    [completedLessons, childId]
+  );
+  const total = LESSONS.length;
+  const [activeUnitId, setActiveUnitId] = useState<string>(LEARN_UNITS[0].id);
+  const [sectionBottoms, setSectionBottoms] = useState<Record<string, number>>({});
+
+  const activeUnit = useMemo(
+    () => LEARN_UNITS.find((u) => u.id === activeUnitId) ?? LEARN_UNITS[0],
+    [activeUnitId]
+  );
+
+  const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const triggerY = e.nativeEvent.contentOffset.y;
+    const measuredUnits = LEARN_UNITS.filter((u) => sectionBottoms[u.id] != null);
+    if (measuredUnits.length === 0) return;
+
+    let candidate: string = LEARN_UNITS[0].id;
+    for (const unit of measuredUnits) {
+      const bottomY = sectionBottoms[unit.id] ?? Number.POSITIVE_INFINITY;
+      if (triggerY >= bottomY - 1) {
+        candidate = unit.id;
+      }
+    }
+
+    if (candidate !== activeUnitId) {
+      setActiveUnitId(candidate);
+    }
+  };
 
   return (
-    <ScreenWrapper style={styles.root}>
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-        
-        {/* Header Dinámico */}
-        <Animated.View entering={FadeIn.delay(100)} style={styles.header}>
-          <View>
-            <Text style={styles.greeting}>Aprender</Text>
-            <Text style={styles.welcome}>¡Conviértete en un experto!</Text>
+    <ScreenWrapper style={[styles.root, { backgroundColor: colors.background.base }]}>
+      <View
+        style={[
+          styles.stickyHeader,
+          {
+            backgroundColor: colors.brand.primary,
+            paddingTop: Math.max(insets.top, Platform.OS === 'ios' ? 12 : 8) + 8,
+          },
+        ]}
+      >
+        <View style={styles.headerTopRow}>
+          <View style={[styles.progressChip, { backgroundColor: colors.brand.chipBackdrop }]}>
+            <Text
+              style={[styles.progressChipText, { color: colors.text.onBrand }]}
+            >{`${done}/${total}`}</Text>
           </View>
-          <View style={styles.progressBadge}>
-            <Text style={styles.progressText}>{completedLessons.length}/{LESSONS.length}</Text>
-          </View>
-        </Animated.View>
-
-        {/* Camino de Lecciones (Diseño de tarjetas más visuales) */}
-        <View style={styles.path}>
-          {LESSONS.map((lesson, i) => {
-            const isCompleted = completedLessons.some(c => c.lessonId === lesson.id);
-            const isLocked = i > 0 && !completedLessons.some(c => c.lessonId === LESSONS[i - 1].id);
-            const isNext = !isCompleted && !isLocked;
-            
-            return (
-              <Animated.View key={lesson.id} entering={FadeInDown.delay(200 + i * 80).springify()}>
-                <TouchableOpacity 
-                  activeOpacity={isLocked ? 1 : 0.7} 
-                  onPress={() => !isLocked && router.push(`/lesson/${lesson.id}`)}
-                  style={[
-                    styles.lessonCard, 
-                    isLocked && styles.lessonCardLocked,
-                    isNext && styles.lessonCardNext
-                  ]}
-                >
-                  <View style={[styles.iconWrap, { backgroundColor: isLocked ? colors.separator.transparent : lesson.color + '15' }]}>
-                    <Ionicons 
-                      name={isCompleted ? 'checkmark-circle' : isLocked ? 'lock-closed' : lesson.icon as any} 
-                      size={24} 
-                      color={isCompleted ? colors.system.green : isLocked ? colors.text.tertiary : lesson.color} 
-                    />
-                  </View>
-                  
-                  <View style={styles.lessonInfo}>
-                    <Text style={[styles.lessonTitle, isLocked && styles.lockedText]}>{lesson.title}</Text>
-                    <View style={styles.rewardRow}>
-                      <View style={styles.rewardPill}>
-                        <Ionicons name="sparkles" size={10} color={colors.brand.primary} />
-                        <Text style={styles.rewardText}>+{lesson.xpReward} XP</Text>
-                      </View>
-                      <View style={styles.rewardPill}>
-                        <Ionicons name="cash" size={10} color={colors.gold.primary} />
-                        <Text style={[styles.rewardText, { color: colors.gold.primary }]}>+{lesson.cetisReward} CETI</Text>
-                      </View>
-                    </View>
-                  </View>
-
-                  {!isLocked && !isCompleted && (
-                    <View style={styles.playBtn}>
-                      <Ionicons name="play" size={16} color={colors.text.onBrand} />
-                    </View>
-                  )}
-                </TouchableOpacity>
-
-                {/* Conector visual entre lecciones */}
-                {i < LESSONS.length - 1 && (
-                  <View style={styles.connectorContainer}>
-                    <View style={[styles.connector, isCompleted && { backgroundColor: colors.system.green + '40' }]} />
-                  </View>
-                )}
-              </Animated.View>
-            );
-          })}
         </View>
 
+        <Text style={[styles.kicker, { color: colors.brand.bandSubtitle }]}>Tu camino</Text>
+        <Text style={[styles.title, { color: colors.text.onBrand }]}>{activeUnit.title}</Text>
+      </View>
+
+      <ScrollView
+        contentContainerStyle={styles.scroll}
+        showsVerticalScrollIndicator={false}
+        bounces
+        onScroll={onScroll}
+        scrollEventThrottle={1}
+      >
+        <View style={[styles.contentShell, { backgroundColor: colors.background.base }]}>
+          <LessonSagaMap
+            activeUnitId={activeUnitId}
+            onSectionBottomLayout={(unitId, bottomY) => {
+              setSectionBottoms((prev) =>
+                prev[unitId] === bottomY ? prev : { ...prev, [unitId]: bottomY }
+              );
+            }}
+          />
+        </View>
       </ScrollView>
     </ScreenWrapper>
   );
 }
 
-const getStyles = (colors: any, mode: string) => StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.background.base },
-  scroll: { paddingTop: Platform.OS === 'ios' ? 60 : 40, paddingHorizontal: 20, paddingBottom: 120, gap: 24 },
-  
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
-  greeting: { ...Typography.title2, color: colors.text.primary, fontWeight: '800' },
-  welcome: { ...Typography.subheadline, color: colors.text.secondary },
-  progressBadge: { backgroundColor: colors.brand.primary, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
-  progressText: { color: colors.text.onBrand, fontWeight: '900', fontSize: 12 },
-
-  path: { gap: 0 },
-  lessonCard: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    backgroundColor: colors.materials.base, 
-    borderRadius: 28, 
-    padding: 16, 
-    gap: 16, 
-    borderWidth: 1, 
-    borderColor: colors.materials.border 
+const styles = StyleSheet.create({
+  root: { flex: 1 },
+  stickyHeader: {
+    paddingHorizontal: 22,
+    paddingBottom: 24,
   },
-  lessonCardNext: { 
-    borderColor: colors.brand.primary + '40', 
-    backgroundColor: colors.brand.primary + (mode === 'light' ? '10' : '05'), 
-    borderWidth: 2 
+  headerTopRow: {
+    alignItems: 'flex-end',
+    marginBottom: 8,
   },
-  lessonCardLocked: { opacity: 0.6 },
-  
-  iconWrap: { width: 56, height: 56, borderRadius: 18, justifyContent: 'center', alignItems: 'center' },
-  lessonInfo: { flex: 1, gap: 8 },
-  lessonTitle: { ...Typography.headline, color: colors.text.primary, fontWeight: '800', fontSize: 17 },
-  lockedText: { color: colors.text.tertiary },
-  
-  rewardRow: { flexDirection: 'row', gap: 8 },
-  rewardPill: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    gap: 4, 
-    backgroundColor: colors.separator.transparent, 
-    paddingHorizontal: 10, 
-    paddingVertical: 4, 
-    borderRadius: 8 
+  progressChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 14,
   },
-  rewardText: { color: colors.brand.primary, fontSize: 10, fontWeight: '800' },
-
-  playBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: colors.brand.primary, justifyContent: 'center', alignItems: 'center' },
-
-  connectorContainer: { alignItems: 'center', height: 24, justifyContent: 'center' },
-  connector: { width: 4, height: '100%', backgroundColor: colors.separator.transparent, borderRadius: 2 },
+  progressChipText: {
+    fontSize: 13,
+    fontWeight: '900',
+  },
+  kicker: {
+    fontSize: 10,
+    fontWeight: '900',
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+    marginBottom: 8,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: '900',
+    letterSpacing: -0.3,
+    marginBottom: 2,
+  },
+  scroll: {
+    paddingBottom: 140,
+    paddingHorizontal: 0,
+  },
+  contentShell: {
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    marginTop: -6,
+    paddingTop: 18,
+    paddingBottom: 12,
+    minHeight: 120,
+    paddingHorizontal: 6,
+  },
 });

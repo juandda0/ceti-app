@@ -12,9 +12,13 @@ export default function AuthLayout() {
         gestureEnabled: true,
       }}
     >
-      <Stack.Screen name="Inicio" />
+      <Stack.Screen name="welcome" />
+      <Stack.Screen name="login" />
+      <Stack.Screen name="choose-role" />
+      <Stack.Screen name="child-entry" />
       <Stack.Screen name="select-profile" />
       <Stack.Screen name="onboarding/child-setup" />
+      <Stack.Screen name="onboarding/child-link" />
       <Stack.Screen name="onboarding/parent-setup" />
     </Stack>
   );
