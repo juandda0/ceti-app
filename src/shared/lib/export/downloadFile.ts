@@ -27,3 +27,15 @@ export function printPage(): boolean {
   window.print();
   return true;
 }
+
+/** Opens an HTML document in a new window and prints it (Save as PDF). Web only. */
+export function printHtml(html: string): boolean {
+  if (Platform.OS !== 'web' || typeof window === 'undefined') return false;
+  const w = window.open('', '_blank');
+  if (!w) return false;
+  w.document.write(html);
+  w.document.close();
+  w.focus();
+  w.print();
+  return true;
+}

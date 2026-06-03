@@ -48,8 +48,9 @@ service cloud.firestore {
 
     // ---- tenancy tree ----
     match /colegios/{cid} {
-      // Staff of the colegio read the institution doc; managed by Admin/Function.
-      allow read: if sameColegio(cid) && isStaff();
+      // Any member of the colegio reads its identity (nombre/logo for headers and
+      // certificates); managed by Admin/Function.
+      allow read: if sameColegio(cid);
       allow write: if false;
 
       match /sedes/{sedeId} {

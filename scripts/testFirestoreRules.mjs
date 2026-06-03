@@ -107,6 +107,7 @@ await env.withSecurityRulesDisabled(async (ctx) => {
 
 console.log('Tenant isolation:');
 await check('rector A reads own colegio', assertSucceeds(getDoc(doc(rectorA, 'colegios/A'))));
+await check('student A reads own colegio (cert)', assertSucceeds(getDoc(doc(stuA1, 'colegios/A'))));
 await check('rector B cannot read colegio A', assertFails(getDoc(doc(rectorB, 'colegios/A'))));
 
 console.log('Student progress read:');
