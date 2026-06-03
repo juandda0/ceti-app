@@ -1,6 +1,10 @@
 import { getDocs } from 'firebase/firestore';
 import { getFirebaseClients } from '@shared/lib/firebase/app';
-import { cursosByProfesorQuery, estudiantesCollectionRef } from '@shared/lib/firebase/paths';
+import {
+  cursosByProfesorQuery,
+  cursosCollectionRef,
+  estudiantesCollectionRef,
+} from '@shared/lib/firebase/paths';
 import type { Curso, Estudiante } from '@shared/types/tenancy';
 
 export type CursoWithId = Curso & { id: string };
@@ -12,6 +16,14 @@ export const rosterRepository = {
     const clients = getFirebaseClients();
     if (!clients?.firestore) return [];
     const snap = await getDocs(cursosByProfesorQuery(clients.firestore, colegioId, uid));
+    return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Curso) }));
+  },
+
+  /** All courses in the colegio (rector/coordinador school-wide report). */
+  async getAllCursos(colegioId: string): Promise<CursoWithId[]> {
+    const clients = getFirebaseClients();
+    if (!clients?.firestore) return [];
+    const snap = await getDocs(cursosCollectionRef(clients.firestore, colegioId));
     return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Curso) }));
   },
 

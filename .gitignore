@@ -42,6 +42,12 @@ dist-scripts/
 # Cloud Functions (salida de tsc)
 functions/lib/
 
+# Firebase emulator debug logs
+*-debug.log
+firestore-debug.log
+firebase-debug.log
+ui-debug.log
+
 # typescript
 *.tsbuildinfo
 
