@@ -1,46 +1,96 @@
-# Cumplimiento COPPA / GDPR-K (orientación)
+# Cumplimiento — Ley 1581 de 2012 / Decreto 1377 de 2013 (datos de menores)
 
-**No es asesoría legal.** Ceti es una app **single-user** dirigida a adolescentes (13+) y jóvenes adultos. Aunque la edad mínima coloca a la mayor parte de la audiencia fuera del alcance estricto de COPPA, GDPR-K y normativas locales LATAM/UE pueden seguir aplicando para usuarios de 13–15. Revisa con abogado antes de publicar en tiendas.
+**No es asesoría legal.** Ceti es un SaaS **B2B2C** que un colegio privado contrata
+para sus estudiantes (13+). El tratamiento de datos de menores en Colombia está
+regido por la **Ley 1581 de 2012** y el **Decreto 1377 de 2013**: el dato de un
+menor solo puede tratarse de forma excepcional, atendiendo al interés superior
+del menor y previa **autorización del representante legal (acudiente)**. Este
+documento es la guía operativa; revisar con abogado antes de operar con datos
+reales.
 
-## Autenticación y datos personales (PII)
+> Regla de oro del producto: **no se cargan datos reales de menores sin el flujo
+> de autorización completo.** Es bloqueante, no opcional (ver
+> [`ceti-invariants.mdc`](../.cursor/rules/ceti-invariants.mdc)).
 
-1. **OAuth (Google; Apple opcional con flag)**
-   Tras iniciar sesión, Firebase Auth recibe identificadores de la cuenta del proveedor (UID, correo, nombre para mostrar, foto). Esto se refleja en el documento `users/{uid}` en Firestore durante el bootstrap (`src/shared/lib/firebase/authProfileBootstrap.ts`).
+## 1. Minimización de PII (modelo Banzai)
 
-2. **Onboarding y edad mínima**
-   `UserSetupScreen` exige edad ≥ `MIN_AGE = 13` antes de habilitar el resto del flujo. No se recoge correo del usuario más allá del que provea el OAuth del proveedor.
+- El estudiante se identifica por un **seudónimo provisto por el colegio**
+  (`studentId`), no por nombre/correo/edad personales. Ver
+  [`docs/data-model.md`](data-model.md).
+- La cuenta de auth (`users/{uid}`) se vincula al seudónimo vía
+  `estudiantes/{studentId}.uidVinculado`; ese es el único punto de unión.
+- **Prohibido** escribir nombre, correo o edad del menor fuera de lo estrictamente
+  necesario. `firestore.rules` y los repos deben respetarlo.
+- **Analytics sin PII**: los parámetros de `src/shared/lib/analytics/logEvent.ts`
+  nunca llevan nombre, correo, edad, apodo ni identificadores que mapeen a una
+  persona/menor.
 
-3. **Base legal (orientación)**
-   Para usuarios entre 13 y la mayoría de edad local, varias jurisdicciones exigen consentimiento informado y, según el caso, verificación adicional. Define en producto/legal el texto de consentimiento mostrado en onboarding y registra la versión aceptada.
+## 2. Flujo de autorización del acudiente (bloqueante)
 
-4. **Almacenamiento local**
-   Estado de app persistido con **MMKV** (nativo) o AsyncStorage en web (ver `src/shared/lib/storage/mmkv.ts`); datos remotos bajo `firestore.rules`, todos bajo la ruta `users/{uid}/*` con guardia `isSelf(uid)`.
+1. El colegio crea el cupo del estudiante en el roster. Nace en estado
+   **`pendiente_autorizacion`**.
+2. Mientras esté pendiente, `firestore.rules` **impide** que el estudiante
+   genere datos: la escritura de `progress` exige `estudiante.estado == 'activo'`
+   (helper `estudianteActivo`). Sin consentimiento, no hay datos del menor.
+3. El acudiente otorga la autorización por un canal verificable (formulario
+   firmado / correo del acudiente). El colegio la **registra** con la Cloud
+   Function `setAuthorizationStatus`, que:
+   - escribe `colegios/{cid}/autorizaciones/{studentId}` con `estado: 'otorgada'`,
+     `politicaVersion`, `otorgadaAt`, `canalEvidencia`, `registradaPor`;
+   - cambia `estudiante.estado` a **`activo`**.
+4. El estudiante queda habilitado para usar la app y generar progreso.
 
-## Principios aplicados en el código
+> El acudiente **no** es un usuario de la app ni tiene panel; solo firma el
+> consentimiento. El registro queda como evidencia auditable. (Un flujo
+> self-service con enlace tokenizado para el acudiente es mejora de V2.)
 
-1. **Minimización de datos en analytics**
-   Los eventos evitan PII en parámetros (sin nombres, correos ni edades en `logEvent`). Identificadores técnicos opacos no se envían como PII en los eventos de ejemplo.
+## 3. Registro de autorizaciones
 
-2. **PIN local**
-   Cuando el flujo lo use, se almacena como digest (no en claro) mediante `src/features/auth/utils/pinCrypto.ts`; límites de intentos en memoria contra fuerza bruta donde aplique.
+`colegios/{cid}/autorizaciones/{studentId}` es el registro de consentimientos:
+estado, versión de la política aceptada, fecha, canal de evidencia y quién la
+registró. Escribible solo vía Admin/Function (`firestore.rules`:
+`autorizaciones` → `write: if false`).
 
-3. **Datos en reposo y en tránsito**
-   Firebase / TLS para tránsito; Firestore y Auth gestionados por Google según contrato DPA de Firebase. Revisar reglas antes de producción.
+## 4. Supresión de datos (derecho del titular)
 
-4. **Herramientas de diagnóstico**
-   Opcionalmente **Crashlytics**, **Performance** y **Analytics** de Firebase en builds nativos (ver `app.config.js`). Desactivar o anonimizar en entornos donde no proceda.
+La Cloud Function `suppressStudentData` (solo rector/coordinador) ejerce el
+derecho de supresión: borra el `progress` del estudiante, marca el cupo como
+**`suprimido`**, desvincula `uidVinculado` y deja la autorización en `revocada`.
+Es irreversible.
 
-5. **Perfil de IA (deuda anotada)**
-   `users/{uid}/aiProfile/state` es escribible por el propio cliente como MVP (`firestore.rules:47`). Antes de activar AI en producción debe migrarse a Cloud Functions con escritura sólo desde Admin SDK.
+## 5. Política de tratamiento de datos
 
-## Pendiente recomendado antes de tienda
+- Debe existir una **política de tratamiento** pública y enlazada **in-app**
+  (URL en `EXPO_PUBLIC_PRIVACY_POLICY_URL`, expuesta vía
+  `src/shared/constants/legal.ts`).
+- La versión aceptada se guarda en cada autorización (`politicaVersion`) para
+  trazabilidad ante cambios de política.
 
-- Publicar **política de privacidad** y enlace in-app.
-- Flujo explícito de aceptación del usuario y registro de versión/fecha del consentimiento.
-- Evaluar requisitos locales para la franja 13–18 (LATAM vs UE vs EE. UU.).
+## 6. Edad mínima y otras normativas
+
+- `MIN_AGE = 13` se valida en `UserSetupScreen`. No bajarlo.
+- Para la franja 13–18, además de Ley 1581, considerar GDPR-K (si hay usuarios
+  UE) y COPPA (si hay usuarios EE. UU. <13, fuera de alcance por `MIN_AGE`).
+- **PIN local** (si se usa): se guarda como digest vía
+  `src/features/auth/utils/pinCrypto.ts`, nunca en claro.
+- La reforma de protección de datos 2025 (proyecto) podría endurecer reglas
+  sobre perfilamiento de menores — monitorear; refuerza la decisión de **no IA
+  generativa / perfilamiento en MVP**.
+
+## 7. Datos en tránsito y en reposo
+
+Firebase/TLS en tránsito; Firestore y Auth gestionados por Google bajo el DPA de
+Firebase. Crashlytics/Performance/Analytics solo en builds nativos
+(`app.config.js`), no-op en web; sin PII en sus parámetros.
+
+## 8. Pendiente antes de operar con un colegio real
+
+- Publicar la **política de tratamiento de datos** y enlazarla in-app.
+- Acordar con el colegio el **canal de autorización** del acudiente y conservar la
+  evidencia.
+- Definir contacto de **habeas data / supresión** (correo o formulario).
 - Revisar permisos en `app.json` (cámara, mic, ubicación): mantener **mínimos**.
-- Completar la migración de `aiProfile` a Cloud Functions antes de soltar AI personalization.
 
-## Contacto DPO / privacidad
+## Contacto habeas data / privacidad
 
-Definir correo o formulario de contacto en la política pública antes del lanzamiento.
+Definir correo o formulario de contacto en la política pública antes de operar.

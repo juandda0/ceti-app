@@ -27,5 +27,8 @@
     "colegioLabel": "Colegio",
     "dashboardSoon": "El reporte de progreso por curso llegará pronto.",
     "logout": "Cerrar sesión"
+  },
+  "legal": {
+    "privacyPolicy": "Política de tratamiento de datos"
   }
 }

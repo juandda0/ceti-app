@@ -85,6 +85,7 @@ module.exports = ({ config } = {}) => {
           measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID || '',
         },
         pinPepper: process.env.EXPO_PUBLIC_PIN_PEPPER || '',
+        privacyPolicyUrl: process.env.EXPO_PUBLIC_PRIVACY_POLICY_URL || '',
         googleWebClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID || '',
         googleIosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || '',
         googleIosUrlScheme,

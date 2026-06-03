@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
+import PrivacyPolicyLink from '@shared/components/PrivacyPolicyLink';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { performLogoutAndGo } from '@features/auth/performLogout';
@@ -53,6 +54,8 @@ export default function StaffHomeScreen() {
             {t('staff.logout')}
           </Text>
         </TouchableOpacity>
+
+        <PrivacyPolicyLink style={styles.policy} />
       </ScrollView>
     </ScreenWrapper>
   );
@@ -83,4 +86,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logoutText: { fontSize: 16, fontWeight: '700' },
+  policy: { marginTop: 8 },
 });
