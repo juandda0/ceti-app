@@ -1,8 +1,9 @@
-import { getDocs } from 'firebase/firestore';
+import { getDoc, getDocs } from 'firebase/firestore';
 import { getFirebaseClients } from '@shared/lib/firebase/app';
 import {
   cursosByProfesorQuery,
   cursosCollectionRef,
+  estudianteDocRef,
   estudiantesCollectionRef,
 } from '@shared/lib/firebase/paths';
 import type { Curso, Estudiante } from '@shared/types/tenancy';
@@ -32,5 +33,18 @@ export const rosterRepository = {
     if (!clients?.firestore) return [];
     const snap = await getDocs(estudiantesCollectionRef(clients.firestore, colegioId, cursoId));
     return snap.docs.map((d) => ({ studentId: d.id, ...(d.data() as Estudiante) }));
+  },
+
+  /** A single roster slot — used by a student to read their own status (rules allow self). */
+  async getEstudiante(
+    colegioId: string,
+    cursoId: string,
+    studentId: string
+  ): Promise<EstudianteWithId | null> {
+    const clients = getFirebaseClients();
+    if (!clients?.firestore) return null;
+    const snap = await getDoc(estudianteDocRef(clients.firestore, colegioId, cursoId, studentId));
+    if (!snap.exists()) return null;
+    return { studentId: snap.id, ...(snap.data() as Estudiante) };
   },
 };

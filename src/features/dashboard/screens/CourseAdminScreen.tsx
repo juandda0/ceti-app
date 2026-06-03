@@ -8,11 +8,13 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  Platform,
 } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import QRCode from 'react-native-qrcode-svg';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
@@ -27,6 +29,10 @@ export default function CourseAdminScreen() {
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
   const colegioId = useAuthStore((s) => s.colegioId);
+  const role = useAuthStore((s) => s.role);
+  // Suppression (Ley 1581 erasure) is irreversible → rector/coordinador only.
+  // The Cloud Function independently enforces this; this is the client gate.
+  const canSuppress = role === 'rector' || role === 'coordinador';
   const params = useLocalSearchParams<{ cursoId: string; nombre?: string }>();
   const cursoId = params.cursoId;
   const cursoNombre = params.nombre ?? cursoId;
@@ -86,6 +92,21 @@ export default function CourseAdminScreen() {
       });
     });
 
+  const onSuppress = (sid: string) =>
+    Alert.alert(t('admin.suppressConfirmTitle'), t('admin.suppressConfirmBody'), [
+      { text: t('admin.cancel'), style: 'cancel' },
+      {
+        text: t('admin.suppressConfirm'),
+        style: 'destructive',
+        onPress: () =>
+          guard(async () => {
+            if (!colegioId || !cursoId) return;
+            await adminService.suppressStudent({ colegioId, cursoId, studentId: sid });
+            Alert.alert(t('admin.suppressOkTitle'), t('admin.suppressOk'));
+          }),
+      },
+    ]);
+
   const onAssignTeacher = () =>
     guard(async () => {
       if (!colegioId || !cursoId || !teacherEmail.trim()) return;
@@ -98,6 +119,15 @@ export default function CourseAdminScreen() {
       setTeacherEmail('');
       Alert.alert(t('admin.assignOkTitle'), t('admin.teacherOk', { email: teacherEmail.trim() }));
     });
+
+  const onCopyCode = () => {
+    if (!code || Platform.OS !== 'web') return;
+    const nav = typeof navigator !== 'undefined' ? navigator : undefined;
+    if (nav?.clipboard) {
+      void nav.clipboard.writeText(code);
+      Alert.alert(t('admin.codeCopied'));
+    }
+  };
 
   const onGenerateCode = async () => {
     if (!colegioId || !cursoId) return;
@@ -128,7 +158,28 @@ export default function CourseAdminScreen() {
             {t('admin.classCode')}
           </Text>
           {code ? (
-            <Text style={[styles.codeValue, { color: colors.brand.primary }]}>{code}</Text>
+            <>
+              <Text style={[styles.codeValue, { color: colors.brand.primary }]}>{code}</Text>
+              <View style={styles.qrWrap}>
+                <QRCode value={code} size={132} backgroundColor="#FFFFFF" color="#000000" />
+              </View>
+              <Text style={[styles.codeHint, { color: colors.text.tertiary }]}>
+                {t('admin.classCodeScan')}
+              </Text>
+              {Platform.OS === 'web' && (
+                <TouchableOpacity
+                  style={[styles.codeBtn, { borderColor: colors.brand.primary }]}
+                  onPress={onCopyCode}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('admin.copyCode')}
+                >
+                  <Ionicons name="copy-outline" size={16} color={colors.brand.primary} />
+                  <Text style={[styles.codeBtnText, { color: colors.brand.primary }]}>
+                    {t('admin.copyCode')}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </>
           ) : (
             <Text style={[styles.codeHint, { color: colors.text.tertiary }]}>
               {t('admin.classCodeHint')}
@@ -141,6 +192,7 @@ export default function CourseAdminScreen() {
             ]}
             onPress={() => void onGenerateCode()}
             disabled={codeBusy}
+            accessibilityRole="button"
           >
             <Ionicons name="key-outline" size={16} color={colors.brand.primary} />
             <Text style={[styles.codeBtnText, { color: colors.brand.primary }]}>
@@ -180,6 +232,7 @@ export default function CourseAdminScreen() {
         ) : (
           roster.map((s) => {
             const activo = s.estado === 'activo';
+            const suprimido = s.estado === 'suprimido';
             return (
               <View
                 key={s.studentId}
@@ -198,24 +251,39 @@ export default function CourseAdminScreen() {
                     {t(`estados.${s.estado}`)}
                   </Text>
                 </View>
-                <TouchableOpacity
-                  style={[
-                    styles.authBtn,
-                    { borderColor: activo ? colors.system.red : colors.system.green },
-                  ]}
-                  onPress={() => onToggleAuth(s.studentId, activo)}
-                  disabled={busy}
-                >
-                  <Text
-                    style={{
-                      color: activo ? colors.system.red : colors.system.green,
-                      fontWeight: '700',
-                      fontSize: 12,
-                    }}
-                  >
-                    {activo ? t('admin.revoke') : t('admin.authorize')}
-                  </Text>
-                </TouchableOpacity>
+                <View style={styles.rowActions}>
+                  {!suprimido && (
+                    <TouchableOpacity
+                      style={[
+                        styles.authBtn,
+                        { borderColor: activo ? colors.system.red : colors.system.green },
+                      ]}
+                      onPress={() => onToggleAuth(s.studentId, activo)}
+                      disabled={busy}
+                    >
+                      <Text
+                        style={{
+                          color: activo ? colors.system.red : colors.system.green,
+                          fontWeight: '700',
+                          fontSize: 12,
+                        }}
+                      >
+                        {activo ? t('admin.revoke') : t('admin.authorize')}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                  {canSuppress && !suprimido && (
+                    <TouchableOpacity
+                      style={[styles.iconBtn, { borderColor: colors.system.red }]}
+                      onPress={() => onSuppress(s.studentId)}
+                      disabled={busy}
+                      accessibilityRole="button"
+                      accessibilityLabel={t('admin.suppress')}
+                    >
+                      <Ionicons name="trash-outline" size={16} color={colors.system.red} />
+                    </TouchableOpacity>
+                  )}
+                </View>
               </View>
             );
           })
@@ -266,6 +334,7 @@ const styles = StyleSheet.create({
   codeCard: { borderRadius: 14, padding: 16, gap: 6, alignItems: 'center', marginTop: 4 },
   codeLabel: { fontSize: 13, fontWeight: '600' },
   codeValue: { fontSize: 32, fontWeight: '900', letterSpacing: 4 },
+  qrWrap: { padding: 10, borderRadius: 12, backgroundColor: '#FFFFFF', marginVertical: 4 },
   codeHint: { fontSize: 12, textAlign: 'center' },
   codeBtn: {
     flexDirection: 'row',
@@ -298,4 +367,13 @@ const styles = StyleSheet.create({
   rowName: { fontSize: 15, fontWeight: '600' },
   rowSub: { fontSize: 12, fontWeight: '600' },
   authBtn: { borderWidth: 1.5, borderRadius: 8, paddingVertical: 6, paddingHorizontal: 12 },
+  rowActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  iconBtn: {
+    borderWidth: 1.5,
+    borderRadius: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

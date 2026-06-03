@@ -67,6 +67,19 @@ export const adminService = {
     return callFunction('setAuthorizationStatus', input);
   },
 
+  /**
+   * Ley 1581 right to suppression: deletes the student's progress, marks the
+   * roster slot 'suprimido', unlinks the account and revokes consent. Restricted
+   * to rector/coordinador by the Cloud Function (irreversible).
+   */
+  async suppressStudent(input: {
+    colegioId: string;
+    cursoId: string;
+    studentId: string;
+  }): Promise<{ ok: boolean }> {
+    return callFunction('suppressStudentData', input);
+  },
+
   /** Creates a colegio and makes the caller its first rector — Cloud Function. */
   async createColegio(colegioId: string, nombre: string): Promise<{ ok: boolean }> {
     return callFunction('bootstrapColegio', { colegioId, nombre });
