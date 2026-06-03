@@ -116,6 +116,11 @@ export function cursoDocRef(db: Firestore, colegioId: string, cursoId: string) {
   return doc(db, C.colegios, colegioId, C.cursos, cursoId);
 }
 
+/** Courses a teacher manages (uid ∈ profesorUids). */
+export function cursosByProfesorQuery(db: Firestore, colegioId: string, uid: string) {
+  return query(cursosCollectionRef(db, colegioId), where('profesorUids', 'array-contains', uid));
+}
+
 export function estudiantesCollectionRef(db: Firestore, colegioId: string, cursoId: string) {
   return collection(db, C.colegios, colegioId, C.cursos, cursoId, C.estudiantes);
 }
