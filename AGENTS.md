@@ -1,54 +1,81 @@
 # AGENTS.md — Ceti
 
 > Ecosistema de agentes diseñado para **este** repositorio.
-> Versión 3 · 2026-05-27 · branch `master`
+> Versión 4 · 2026-06-03 · branch `master`
+>
+> **Capa de ejecución:** ver [`docs/HARNESS.md`](docs/HARNESS.md) — cómo este
+> ecosistema conceptual se materializa con el tooling real (Agent subagents,
+> Workflow, Skills, compuertas de verificación), el flujo por fase y el
+> paralelo/barrera. `AGENTS.md` manda en _qué agente existe_; `HARNESS.md` en
+> _cómo se ejecuta el flujo_.
 
 ---
 
 ## 0. Contexto sobre el que se diseñó este ecosistema
 
-**Producto:** Ceti — app móvil de educación financiera **single-user** (refactor reciente desde el modelo familia padre/hijo; ver migración en historial). Audiencia: adolescentes (13+) y jóvenes adultos.
+**Producto:** Ceti — **SaaS B2B2C de educación financiera** vendido a colegios
+privados en Colombia (CONPES 4005). El cliente que paga es el colegio; lo que
+compra es cumplimiento curricular + reporting docente + tiempo ahorrado al
+profesor, entregado como experiencia gamificada para estudiantes (13+).
+**Multi-tenant con jerarquía de roles** `colegio → (sede, opcional) → curso →
+estudiante`; roles `rector`/`coordinador`/`profesor`/`estudiante`. **No** es el
+modelo familia padre/hijo (eliminado y prohibido). El acudiente aparece **sólo**
+en el flujo de autorización de datos Ley 1581. Ver `CLAUDE.md` y `docs/data-model.md`.
 
 **Stack exacto (de `package.json`):**
 
 - Expo `~54.0.33`, React Native `0.81.5`, React `19.1.0`, expo-router `~6.0.23`
 - TypeScript `~5.9.2`, Jest `^29.7.0` + `jest-expo`, ESLint `^9.25.0`, Prettier `^3.8.3`
 - Firebase `^12.12.1` (Auth + Firestore) + `@react-native-firebase/{analytics,crashlytics,perf}` `^23.3.1`
+- `firebase-admin` `^13.10.0` (Functions/scripts) + `@firebase/rules-unit-testing` `^5.0.1`
 - Estado: Zustand `^5.0.12`, persistencia: `react-native-mmkv` + AsyncStorage
-- Animaciones: `react-native-reanimated` `~4.1.1`, Lottie
+- Animaciones: `react-native-reanimated` `~4.1.1`, Lottie; `react-native-qrcode-svg` (class codes)
 - Auth: `@react-native-google-signin/google-signin`, `expo-apple-authentication` (tras flag)
 - Build: EAS (`eas.json` perfiles `development/preview/production`), Husky + lint-staged
 - i18n: `i18next` + `react-i18next` (catálogo es en `src/shared/i18n/locales/es.json`)
 
 **Capas y dominios:**
 
-- `app/(auth)` (`login`, `welcome`, `onboarding/user-setup`) y `app/(app)` (`saga`, `savings`, `profile`) — rutas expo-router
-- `src/features/auth`, `src/features/learning`, `src/features/savings` — dominios
+- `app/(auth)` (`login`, `welcome`, `onboarding/user-setup`), `app/(app)` (estudiante:
+  `saga`, `savings`, `profile`, `lesson/[id]`) y `app/(staff)` (`index`, `colegio`,
+  `superadmin`, `curso/[cursoId]`, `admin/index`, `admin/curso/[cursoId]`) — rutas expo-router
+- `src/features/{auth,learning,savings,dashboard}` — dominios (`dashboard` = reportes
+  por curso/colegio, roster, asignaciones, certificados, consola admin/superadmin)
 - `src/shared/{firebase,session,analytics,storage,i18n,theme,...}` — núcleo transversal
-- `src/services/ai/aiService.ts` — abstracción AI **stub** lista para integrar Claude API
-- `functions/src/index.ts` — Cloud Functions **vacío** (sólo `export {};`)
-- `firestore.rules` + `firestore.indexes.json` — autoría manual, cubre `users/{uid}/{goals,deposits,lessonProgress,wallet,aiProfile}` y `questionBank` (write Admin SDK)
-- `scripts/seedQuestionBank.ts` (~112 KB) — sembrado del banco de preguntas vía Admin SDK
-- `e2e/maestro/smoke.yaml` — smoke test casi-vacío (sólo `launchApp` + `assertVisible: 'Ceti'`)
-- `.github/workflows/ci.yml` — único workflow: typecheck + lint + test + `npm audit` (bloqueante)
+- `functions/src/index.ts` — **Cloud Functions reales (Blaze)**: `setMemberClaims`,
+  `bootstrapColegio`, `registerColegio`, `listColegios` (super-admin),
+  `setAuthorizationStatus`/`suppressStudentData` (Ley 1581),
+  `generateClassCode`/`joinByCode` (auto-inscripción). Único escritor confiable de claims.
+- `firestore.rules` + `firestore.indexes.json` — **multi-tenant**: árbol
+  `colegios/{cid}/{sedes,cursos/{cursoId}/estudiantes/{sid}/progress},asignaciones,
+autorizaciones}`, `membership/{uid}`, `classCodes/{code}`, account-scoped
+  `users/{uid}/{goals,deposits,lessonProgress,wallet,aiProfile}`, `questionBank`.
+  Autorización por **custom claims** (`role`, `colegioId`, `sedeId`, `studentId`, `cursoId`).
+- `scripts/` — `seedQuestionBank`, `seedDemoColegio`, `seedScenario`, `setRole`,
+  `setSuperadmin`, `testFirestoreRules.mjs` (reglas contra emulador)
+- `.github/workflows/ci.yml` — typecheck + lint + test + `npm audit` (bloqueante)
 
-**Servicios externos conectados:** Firebase (Auth, Firestore, Crashlytics, Perf, Analytics), Google Sign-In, Apple Sign-In (flag), EAS Build/Updates.
+**Servicios externos conectados:** Firebase (Auth, Firestore, Cloud Functions,
+Crashlytics, Perf, Analytics; proyecto `ceti-d3769`), Google Sign-In, Apple
+Sign-In (flag), EAS Build/Updates.
 
 **Flujos críticos:**
 
-1. OAuth (Google / Apple opcional) → `tryBootstrapUserDoc` → `users/{uid}` → onboarding `user-setup`
-2. Aprendizaje: `saga` (LessonSagaMap) → `[id]` lesson → `lessonProgress/{lessonId}`, XP/wallet
-3. Ahorros: `goals/`, `deposits/` (aplicados inmediatamente, sin pending), `wallet/state`
-4. Sincronización: `userRemoteSync.ts` + `userProgressPush.ts`; cache local MMKV/AsyncStorage
-5. AI personalization (futuro): `adaptQuestion`, `getRecommendedPath`, `analyzeWeaknesses` sobre `users/{uid}/aiProfile/state`
+1. OAuth (Google / Apple opcional) → `users/{uid}` → onboarding → resolución de rol vía `membership/{uid}` y claims.
+2. Provisión de tenant: super-admin `registerColegio` → rector; staff `setMemberClaims` (rector asigna cualquier rol, coordinador sólo profesor/estudiante).
+3. Auto-inscripción estudiante: `generateClassCode` → `joinByCode` → roster en `pendiente_autorizacion`.
+4. Ley 1581: `setAuthorizationStatus` ('otorgada'→`activo` / 'revocada'→pendiente); `suppressStudentData` (derecho de borrado, sólo rector/coordinador).
+5. Aprendizaje del estudiante → `.../estudiantes/{sid}/progress/{worldId}` (gated por `estudianteActivo`); reportes agregados por collection-group (rector/coordinador) y por curso (profesor).
+6. Ahorros simulados (moneda virtual): `users/{uid}/{goals,deposits,wallet}`.
 
 **Zonas de riesgo identificadas:**
 
-- **Cumplimiento COPPA/GDPR-K** — `docs/COMPLIANCE.md` declara MIN_AGE=13, minimización en analytics, PIN como digest. Cualquier evento, campo o regla nueva puede meter PII de menor.
-- **`aiProfile` escribible desde cliente** (`firestore.rules` línea 49) — marcado como "MVP, en producción migrar a Cloud Functions". Riesgo de tampering.
-- **Cloud Functions vacío** — `functions/src/index.ts` sólo exporta `{}`; cualquier lógica server-side aún no existe.
-- **Cobertura de tests muy baja** — sólo 4 archivos de test en todo `src/` (`useAuthStore`, `learnUnits`, `levels`, `xp`); ni repositories, ni screens, ni session sync están probados.
-- **E2E inexistente** — `smoke.yaml` no valida ningún flujo real, pero los usuarios finales son adolescentes con flujos sensibles de onboarding y ahorro: el smoke no puede seguir siendo opcional.
+- **Aislamiento de tenant** — toda lectura cross-student y la query collection-group de `progress` deben filtrar por `colegioId`/rol; una fuga cross-colegio expone datos de otro cliente.
+- **Cumplimiento Ley 1581/Decreto 1377 (+ COPPA/GDPR-K)** — `docs/COMPLIANCE.md` declara MIN_AGE=13, minimización de PII y de analytics, consentimiento del acudiente. El flujo de autorización y supresión maneja datos sensibles de menores.
+- **Regresión de permisos por rol** — cambios en `firestore.rules` o en las Functions de claims pueden ampliar privilegios (p. ej. coordinador asignando rector) o romper el gate `estudianteActivo`. Requieren `test:rules` verde.
+- **`classCodes` no enumerables** — los códigos de clase sólo los toca el Admin SDK; las reglas niegan al cliente. Exponerlos permitiría inscripción no autorizada.
+- **Cobertura de tests aún parcial** — `dashboard` tiene tests de cómputo (`courseReport`, `schoolReport`, `mastery`, etc.), pero faltan repos, screens y session sync; el `test:rules` no puede ser opcional.
+- **E2E por rol** — los flujos sensibles ahora son por rol (onboarding estudiante con gate Ley 1581, reportes de staff); el smoke Maestro debe cubrir al menos un flujo real por rol antes de release.
 
 ---
 
@@ -77,12 +104,12 @@
 ### 1.3 Firestore-Rules-Auditor
 
 - **Capa:** Seguridad
-- **Responsabilidad:** Revisa cualquier diff que toque `firestore.rules`, `firestore.indexes.json` o que cree paths nuevos bajo `users/{uid}/*`. Valida principio de menor privilegio, idempotencia y compatibilidad con cliente.
-- **Input:** diff de reglas + paths nuevos detectados en repositorios cliente.
+- **Responsabilidad:** Revisa cualquier diff que toque `firestore.rules`, `firestore.indexes.json` o que cree paths nuevos (árbol de tenencia `colegios/*` o account-scoped `users/{uid}/*`). Valida menor privilegio, **aislamiento de tenant** (`sameColegio`), gates de claims (`isStaff`/`isProfesorDe`/`isStudentSelf`/`estudianteActivo`), validación de tipos/rangos en `progress`, fugas en la query collection-group, idempotencia y compatibilidad con cliente. Corre `npm run test:rules`.
+- **Input:** diff de reglas/índices + paths nuevos detectados en repositorios cliente.
 - **Output:** veredicto `pass`/`fail`, lista de violaciones, sugerencia de regla.
-- **Cuándo se invoca:** auto en cualquier PR que modifique `firestore.rules` o `src/features/**/data/*Repository.ts`.
-- **Gates duros:** **bloquea merge** si encuentra `allow write: if true`, paths sin `isSelf`, o nuevos campos PII sin validación. Marca como "needs review" cualquier path que el cliente escriba con datos de menores.
-- **Justificación:** las reglas actuales tienen el flag explícito _"Perfil de IA: escrito por el cliente (MVP). En producción migrar a Cloud Functions."_ en `firestore.rules:47` — riesgo abierto que requiere vigilancia.
+- **Cuándo se invoca:** auto en cualquier PR que modifique `firestore.rules`, `firestore.indexes.json`, `src/features/**/data/*Repository.ts` o las Functions de claims.
+- **Gates duros:** **bloquea merge** si encuentra `allow ... if true`, paths sin gate de claims, fuga cross-colegio (read sin filtro por `colegioId`), o nuevos campos PII sin validación. Marca como "needs review" cualquier path que el cliente escriba con datos de menores.
+- **Justificación:** la autorización entera se apoya en custom claims + aislamiento de tenant (`firestore.rules` cabecera y helpers `sameColegio`/`estudianteActivo`); un error de menor privilegio expone datos de **otro colegio**. Usa el skill `firebase-security-rules-auditor`.
 
 ### 1.4 Test-Writer
 
@@ -140,6 +167,11 @@
 
 ### 2.1 AI-Service-Integrator
 
+> **DIFERIDO por invariante (MVP):** `CLAUDE.md` prohíbe IA generativa en el MVP
+> ("Where is the course weak?" se computa con reglas simples, no ML; bancos
+> generativos/adaptativos son V3+). No activar sin levantar el invariante
+> (actualizar `CLAUDE.md` + regla en el mismo cambio).
+
 - **Capa:** Dominio
 - **Responsabilidad:** Sustituye los stubs de `src/services/ai/aiService.ts` (`adaptQuestion`, `getRecommendedPath`, `analyzeWeaknesses`) por integración real con Claude API. Implementa prompt caching, manejo de errores, cuotas. Coordina con `AIProfile-Functions-Migrator` si la llamada debe moverse a Functions por seguridad.
 - **Input:** stubs actuales + tipos de `aiService.types.ts` + perfil de usuario en `users/{uid}/aiProfile`.
@@ -149,6 +181,11 @@
 - **Justificación:** los stubs llevan comentarios `TODO(AI): call AI provider` explícitos en `src/services/ai/aiService.ts:36, 58, 79`.
 
 ### 2.2 AIProfile-Functions-Migrator
+
+> **OBSOLETO / DIFERIDO:** la deuda que justificaba este agente ya no existe —
+> `firestore.rules` actual define `match /aiProfile/{docId} { allow write: if false; }`
+> (bloqueo de escritura cliente ya aplicado; lectura sólo `isSelf`). La pieza de
+> Function queda diferida junto con la IA (invariante MVP, ver 2.1).
 
 - **Capa:** Dominio · **tarea única y acotada**
 - **Responsabilidad:** **Migrar la escritura de `users/{uid}/aiProfile/state` desde el cliente a Cloud Functions.** Concretamente: (a) implementar una Callable / Firestore-triggered Function en `functions/src/` que reciba la actualización validada, (b) cambiar `firestore.rules:47-50` para `allow write: if false` en `aiProfile/{docId}` dejando lectura sólo a `isSelf`, (c) reemplazar las llamadas cliente directas por invocación a la Function, (d) añadir tests de seguridad: cliente no autorizado intentando escribir debe recibir `permission-denied`. **No** se expande a otras Cloud Functions: este agente nace y muere con la migración del perfil de IA.
@@ -332,3 +369,4 @@ jobs:
 - **v1 — 2026-05-27** — diseño inicial, post-refactor single-user.
 - **v2 — 2026-05-27** — `Firebase-Functions-Author` renombrado a `AIProfile-Functions-Migrator` con scope cerrado a la migración de `aiProfile`. `E2E-Maestro-Author` promovido de Extensiones a Núcleo (1.8), con gate duro sobre `EAS-Release-Manager`. `ci.yml` deja de tolerar fallos de `npm audit`.
 - **v3 — 2026-05-27** — Eliminado `Dead-Code-Pruner`: la limpieza one-shot que justificaba su existencia se ejecutó (Skia desinstalado, referencias a `childId`/`familyId`/`features/world`/`features/family`/`CoinCatch` ya no existen en `src/`). Eliminado `Docs-Updater`: `README.md` y `docs/COMPLIANCE.md` se sanearon manualmente como parte de esta misma pasada; no hay deuda documental pendiente que justifique un agente vigilante. Total: 14 → 12 agentes.
+- **v4 — 2026-06-03** — Refresco al contexto **B2B2C** (pivot ≈ Fase 12): §0 reescrito (multi-tenant `colegio→curso→estudiante`, roles, Cloud Functions reales de claims/Ley 1581/class-codes/super-admin, feature `dashboard`, `test:rules`); zonas de riesgo recalibradas a aislamiento de tenant, regresión de permisos por rol y `classCodes` no enumerables. `Firestore-Rules-Auditor` (1.3) actualizado a aislamiento de tenant + `test:rules` (su justificación citaba un comentario de `aiProfile` ya removido). `AI-Service-Integrator` (2.1) y `AIProfile-Functions-Migrator` (2.2) marcados DIFERIDO/OBSOLETO por invariante MVP (sin IA generativa; `aiProfile` ya `allow write: if false`). Añadido enlace a `docs/HARNESS.md` como capa de ejecución.

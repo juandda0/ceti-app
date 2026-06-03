@@ -4,9 +4,11 @@
 > `firestore.rules` or `src/shared/lib/firebase/paths.ts` must match this file,
 > and this file must be updated **first** (see `CLAUDE.md` update protocol).
 >
-> Status: **design / not yet implemented.** Implemented incrementally in the
-> pivot phases (F2 = schema + paths + rules). Collection identifiers are Spanish
-> to match the product domain (`colegio`, `curso`, `estudiante`).
+> Status: **implemented (MVP).** The tenancy tree, custom-claims provisioning,
+> Ley 1581 authorization/suppression, learning + per-world progress, teacher /
+> rector dashboards and class self-join are built, and the rules are covered by
+> `npm run test:rules` (emulator). Collection identifiers are Spanish to match
+> the product domain (`colegio`, `curso`, `estudiante`).
 
 ## 1. Principles
 
@@ -59,7 +61,8 @@ colegios/{colegioId}
   ├─ sedes/{sedeId}                 # OPTIONAL in MVP (sedesEnabled=false → single implicit sede)
   │    └─ (doc) { nombre }
   ├─ cursos/{cursoId}
-  │    └─ (doc) { nombre, grado, sedeId?, profesorUids: string[], colaboracionAula: bool }
+  │    └─ (doc) { nombre, grado, sedeId?, profesorUids: string[], colaboracionAula: bool,
+  │               codigo?: string }            # class self-join code (generateClassCode Fn)
   │    └─ estudiantes/{studentId}                 # studentId = school pseudonym
   │         ├─ (doc) { displayLabel, estado: 'pendiente_autorizacion'|'activo'|'suprimido',
   │         │          uidVinculado?: string, createdAt }

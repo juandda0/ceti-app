@@ -101,16 +101,20 @@ are already repeated in the codebase. Each skill is invoked by name.
 
 ## Tooling commands
 
-| Command                        | Purpose                        |
-| ------------------------------ | ------------------------------ |
-| `npm start`                    | Metro + Expo dev server        |
-| `npm run typecheck`            | `tsc --noEmit` — must pass     |
-| `npm run lint`                 | ESLint flat config — must pass |
-| `npm test`                     | Jest — must pass               |
-| `npm run format`               | Prettier write                 |
-| `npm audit --audit-level=high` | Bloqueante en CI               |
+| Command                        | Purpose                            |
+| ------------------------------ | ---------------------------------- |
+| `npm start`                    | Metro + Expo dev server            |
+| `npm run typecheck`            | `tsc --noEmit` — must pass         |
+| `npm run lint`                 | ESLint flat config — must pass     |
+| `npm test`                     | Jest — must pass                   |
+| `npm run test:rules`           | Firestore rules vs. emulador       |
+| `npm run i18n:check`           | Toda clave `t()` existe en es.json |
+| `npm run format`               | Prettier write                     |
+| `npm audit --audit-level=high` | Bloqueante en CI                   |
 
-CI (`.github/workflows/ci.yml`) runs all four of the above plus `npm audit`.
+CI (`.github/workflows/ci.yml`): job `quality` corre typecheck + lint +
+`i18n:check` + test + `npm audit`; job `functions` compila Cloud Functions; job
+`rules` corre `test:rules` contra el emulador (con JDK).
 
 ## Update protocol
 
