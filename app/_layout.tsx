@@ -10,6 +10,8 @@ import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
+import * as Font from 'expo-font';
+import { Ionicons } from '@expo/vector-icons';
 import 'react-native-reanimated';
 import { LightColors, DarkColors } from '@shared/constants/colors';
 
@@ -68,6 +70,12 @@ export default function RootLayout() {
   const mode = useThemeStore((s) => s.mode);
   const colors = mode === 'light' ? LightColors : DarkColors;
   const [hydrated, setHydrated] = useState(false);
+
+  // Preload icon fonts. On web @expo/vector-icons relies on @font-face injection;
+  // loading explicitly avoids tofu boxes ([]) when auto-injection races/fails.
+  useEffect(() => {
+    Font.loadAsync(Ionicons.font).catch(() => {});
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
