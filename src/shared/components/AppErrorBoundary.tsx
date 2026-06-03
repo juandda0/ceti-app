@@ -24,7 +24,6 @@ export class AppErrorBoundary extends Component<Props, State> {
 
   override componentDidCatch(error: Error, info: ErrorInfo): void {
     if (__DEV__) {
-      // eslint-disable-next-line no-console -- útil en desarrollo
       console.error('[AppErrorBoundary]', error.message, info.componentStack);
     }
     try {

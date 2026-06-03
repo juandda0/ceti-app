@@ -37,7 +37,6 @@ function tryCrashlytics(): CrashModule | null {
 
 export function recordBoundaryError(error: Error, componentStack: string): void {
   if (__DEV__) {
-    // eslint-disable-next-line no-console
     console.warn('[crashlytics]', error.message, componentStack.slice(0, 200));
     return;
   }
@@ -65,7 +64,6 @@ export function setCrashlyticsUserId(uid: string | null): void {
 export function recordError(error: unknown, context?: string): void {
   const err = error instanceof Error ? error : new Error(String(error));
   if (__DEV__) {
-    // eslint-disable-next-line no-console
     console.warn('[crashlytics]', context ?? 'error', err.message);
     return;
   }

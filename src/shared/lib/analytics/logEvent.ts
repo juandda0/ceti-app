@@ -5,7 +5,6 @@ import { Platform } from 'react-native';
 
 export async function logEvent(name: string, params: Record<string, unknown> = {}): Promise<void> {
   if (__DEV__) {
-    // eslint-disable-next-line no-console
     console.log('[analytics]', name, params);
     return;
   }

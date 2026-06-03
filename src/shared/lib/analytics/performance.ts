@@ -15,7 +15,6 @@ export async function traceAsync<T>(name: string, fn: () => Promise<T>): Promise
   } catch {
     const result = await fn();
     if (__DEV__) {
-      // eslint-disable-next-line no-console
       console.log(`[perf] ${name}`, `${((Date.now() - t0) / 1000).toFixed(3)}s`);
     }
     return result;

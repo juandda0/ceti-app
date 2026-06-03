@@ -66,7 +66,7 @@ function applyWalletSnapshot(data: RemoteWalletState): void {
   });
 }
 
-let unsubs: Array<() => void> = [];
+let unsubs: (() => void)[] = [];
 let activeSyncUid = '';
 
 export function stopUserRemoteSync(): void {

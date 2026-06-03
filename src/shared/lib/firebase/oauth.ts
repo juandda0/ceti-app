@@ -155,7 +155,6 @@ export async function signInWithGoogle(): Promise<void> {
       (isErrorWithCode(e) && String(e.code) === '10')
     ) {
       if (__DEV__) {
-        // eslint-disable-next-line no-console
         console.warn(
           '[Google Sign-In DEVELOPER_ERROR] Checklist:\n' +
             '• Firebase → Project settings → app Android: SHA-1 del keystore (debug: android/gradlew signingReport), nuevo google-services.json, rebuild.\n' +

@@ -4,7 +4,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { createZustandMmkvStorage } from '@shared/lib/storage/mmkv';
 
 export type TransactionType = 'earned' | 'spent' | 'saved' | 'task_reward';
-export type TransactionCategory = 'lesson' | 'task' | 'decision' | 'parent_gift';
+export type TransactionCategory = 'lesson' | 'task' | 'decision';
 
 export interface Transaction {
   id: string;

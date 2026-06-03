@@ -10,7 +10,7 @@ import { isApplyingSnapshot } from '@shared/session/userRemoteSync';
 const DEBOUNCE_MS = 400;
 
 let activeUid = '';
-let unsubscribers: Array<() => void> = [];
+let unsubscribers: (() => void)[] = [];
 
 let savingsTimer: ReturnType<typeof setTimeout> | null = null;
 let lessonsTimer: ReturnType<typeof setTimeout> | null = null;
