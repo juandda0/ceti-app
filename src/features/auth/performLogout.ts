@@ -8,6 +8,13 @@ export async function performLogoutAndGo(
   router: Router,
   target: Href = '/(auth)/welcome'
 ): Promise<void> {
-  await useAuthStore.getState().logout();
+  // Don't let a stalled background flush/sign-out block navigation on web.
+  await Promise.race([
+    useAuthStore
+      .getState()
+      .logout()
+      .catch(() => {}),
+    new Promise<void>((resolve) => setTimeout(resolve, 1500)),
+  ]);
   router.replace(target);
 }
