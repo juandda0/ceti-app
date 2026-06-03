@@ -178,6 +178,9 @@ export default function WorldsScreen() {
   const fetchWorldQuestions = useQuestionBankStore((s) => s.fetchWorldQuestions);
   const getWorldProgress = useQuestionBankStore((s) => s.getWorldProgress);
   const isWorldComplete = useQuestionBankStore((s) => s.isWorldComplete);
+  // Subscribe to answers so progress/unlock recompute right after a quiz, without
+  // waiting for a remount (the getters above are stable and don't trigger renders).
+  const answers = useQuestionBankStore((s) => s.answers);
 
   // Prefetch all worlds on mount so progress is available immediately
   useEffect(() => {
@@ -221,10 +224,7 @@ export default function WorldsScreen() {
     world_5: isWorldComplete(uid, 'world_4'),
   };
 
-  const totalDone = WORLD_DEFS.reduce((acc, w) => {
-    const { done } = getWorldProgress(uid, w.id as 'world_1');
-    return acc + done;
-  }, 0);
+  const totalDone = answers.filter((a) => a.uid === uid && a.isCorrect).length;
   const totalAll = QUESTIONS_PER_WORLD * WORLD_DEFS.length;
 
   return (

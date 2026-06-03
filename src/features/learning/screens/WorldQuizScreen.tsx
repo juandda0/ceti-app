@@ -404,7 +404,6 @@ export default function WorldQuizScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [hasSubmitted, setHasSubmitted] = useState(false);
-  const [correctCount, setCorrectCount] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
@@ -420,7 +419,6 @@ export default function WorldQuizScreen() {
     }
     if (startIdx >= questions.length) {
       setIsComplete(true);
-      setCorrectCount(answeredIds.size);
     } else {
       setCurrentIndex(startIdx);
     }
@@ -473,7 +471,6 @@ export default function WorldQuizScreen() {
       correct ? Haptics.ImpactFeedbackStyle.Light : Haptics.ImpactFeedbackStyle.Heavy
     );
     recordAnswer(userId, currentQuestion.id, worldId as WorldId, correct);
-    if (correct) setCorrectCount((n) => n + 1);
     setHasSubmitted(true);
   };
 
@@ -572,8 +569,8 @@ export default function WorldQuizScreen() {
       <CompletionScreen
         worldName={meta.name}
         accentColor={meta.color}
-        correct={correctCount}
-        total={questions.length}
+        correct={worldDone}
+        total={worldTotal > 0 ? worldTotal : questions.length}
         onBack={handleBack}
         canCertify={canCertify}
         onCertificate={() => void handleCertificate()}
