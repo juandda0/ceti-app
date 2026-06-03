@@ -8,7 +8,13 @@ export async function performLogoutAndGo(
   router: Router,
   target: Href = '/(auth)/welcome'
 ): Promise<void> {
-  // Don't let a stalled background flush/sign-out block navigation on web.
+  // Navigate FIRST, then tear down. Resetting the auth store flips role/superadmin
+  // to null, which makes the (staff)/(app) layout guards render a <Redirect>; if
+  // that happens while we also call router.replace(), the two competing
+  // navigations crash React Navigation on web. Leaving the guarded group before
+  // the reset avoids the race — the reset then runs harmlessly on the auth stack.
+  router.replace(target);
+  // Don't let a stalled background flush/sign-out block anything on web.
   await Promise.race([
     useAuthStore
       .getState()
@@ -16,5 +22,4 @@ export async function performLogoutAndGo(
       .catch(() => {}),
     new Promise<void>((resolve) => setTimeout(resolve, 1500)),
   ]);
-  router.replace(target);
 }
