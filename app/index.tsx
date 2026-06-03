@@ -9,12 +9,13 @@ import {
 } from 'react-native';
 import { Redirect, type Href } from 'expo-router';
 import { onAuthStateChanged } from 'firebase/auth';
-import { useAuthStore } from '@features/auth/store/useAuthStore';
+import { useAuthStore, isStaffRole } from '@features/auth/store/useAuthStore';
 import { useUserStore } from '@features/auth/store/useUserStore';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
 import { useWalletStore } from '@features/savings/store/useWalletStore';
 import { useLessonsStore } from '@features/learning/store/useLessonsStore';
 import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/app';
+import { readCetiClaims } from '@shared/lib/firebase/claims';
 import { userRepository } from '@features/auth/data/userRepository';
 
 export default function Index() {
@@ -65,6 +66,19 @@ export default function Index() {
       }
 
       useAuthStore.getState().setFirebaseUid(u.uid);
+
+      // Role/tenant from custom claims (set by Cloud Functions). School staff
+      // route to the dashboard and skip the student onboarding/profile flow.
+      const claims = await readCetiClaims(u);
+      if (cancelled || mySeq !== seq.current) return;
+      useAuthStore.getState().setClaims(claims);
+
+      if (claims && isStaffRole(claims.role)) {
+        useAuthStore.getState().login();
+        // Cast: typed-routes union regenerates from the filesystem on build.
+        setTarget('/(staff)' as Href);
+        return;
+      }
 
       let remote: Awaited<ReturnType<typeof userRepository.getUser>>;
       try {

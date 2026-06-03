@@ -14,5 +14,18 @@
     "ctaHasAccount": "Ya tengo cuenta",
     "ctaOffline": "Continuar solo en este dispositivo",
     "footer": "Diseñado para el futuro de la educación financiera"
+  },
+  "roles": {
+    "rector": "Rector(a)",
+    "coordinador": "Coordinador(a)",
+    "profesor": "Profesor(a)",
+    "estudiante": "Estudiante"
+  },
+  "staff": {
+    "homeTitle": "Panel docente",
+    "welcome": "Hola, {{role}}",
+    "colegioLabel": "Colegio",
+    "dashboardSoon": "El reporte de progreso por curso llegará pronto.",
+    "logout": "Cerrar sesión"
   }
 }

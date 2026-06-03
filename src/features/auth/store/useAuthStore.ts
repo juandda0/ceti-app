@@ -5,12 +5,19 @@ import { useUserStore } from '@features/auth/store/useUserStore';
 import { useLessonsStore } from '@features/learning/store/useLessonsStore';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
 import { useWalletStore } from '@features/savings/store/useWalletStore';
+import { STAFF_ROLES, type CetiClaims, type Role } from '@shared/types/tenancy';
 
 interface AuthState {
   isAuthenticated: boolean;
   lastLogin: number | null;
   authReady: boolean;
   firebaseUid: string | null;
+  // Tenancy/role mirrored from the Auth token (see lib/firebase/claims.ts).
+  // Authoritative source is always the token; these are for routing/UI only.
+  role: Role | null;
+  colegioId: string | null;
+  sedeId: string | null;
+  studentId: string | null;
 }
 
 interface AuthActions {
@@ -19,6 +26,7 @@ interface AuthActions {
   resetSessionFlagsFromFirebase: () => void;
   markAuthReady: () => void;
   setFirebaseUid: (uid: string | null) => void;
+  setClaims: (claims: CetiClaims | null) => void;
 }
 
 type AuthStore = AuthState & AuthActions;
@@ -28,6 +36,10 @@ const initialState: AuthState = {
   lastLogin: null,
   authReady: false,
   firebaseUid: null,
+  role: null,
+  colegioId: null,
+  sedeId: null,
+  studentId: null,
 };
 
 export const useAuthStore = create<AuthStore>()(
@@ -45,11 +57,23 @@ export const useAuthStore = create<AuthStore>()(
 
       setFirebaseUid: (uid) => set({ firebaseUid: uid }),
 
+      setClaims: (claims) =>
+        set({
+          role: claims?.role ?? null,
+          colegioId: claims?.colegioId ?? null,
+          sedeId: claims?.sedeId ?? null,
+          studentId: claims?.studentId ?? null,
+        }),
+
       resetSessionFlagsFromFirebase: () =>
         set({
           isAuthenticated: false,
           lastLogin: null,
           firebaseUid: null,
+          role: null,
+          colegioId: null,
+          sedeId: null,
+          studentId: null,
         }),
 
       logout: async () => {
@@ -90,7 +114,22 @@ export const useAuthStore = create<AuthStore>()(
         authReady: false,
         firebaseUid: null,
         isAuthenticated: false,
+        role: null,
+        colegioId: null,
+        sedeId: null,
+        studentId: null,
       }),
     }
   )
 );
+
+/** True for rector/coordinador/profesor (school staff), false for estudiante/none. */
+export function isStaffRole(role: Role | null): boolean {
+  return role != null && (STAFF_ROLES as readonly string[]).includes(role);
+}
+
+/** Hook: current role, or null if unprovisioned. */
+export const useRole = (): Role | null => useAuthStore((s) => s.role);
+
+/** Hook: whether the signed-in user is school staff. */
+export const useIsStaff = (): boolean => useAuthStore((s) => isStaffRole(s.role));
