@@ -1,6 +1,10 @@
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import {
+  GoogleSignin,
+  isErrorWithCode,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
 import { GoogleAuthProvider, OAuthProvider, signInWithCredential } from 'firebase/auth';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/app';
@@ -42,12 +46,96 @@ export async function signInWithGoogle(): Promise<void> {
   if (!readExtra().googleWebClientId) {
     throw new Error('Falta EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID en .env');
   }
-  await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-  const response = await GoogleSignin.signIn();
-  const idToken = response.data?.idToken;
-  if (!idToken) throw new Error('Google no devolvió idToken');
-  const credential = GoogleAuthProvider.credential(idToken);
-  await signInWithCredential(clients.auth, credential);
+
+  try {
+    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+    const response = await GoogleSignin.signIn();
+    if (response.type !== 'success') {
+      throw new Error('Inicio de sesión con Google cancelado');
+    }
+
+    let idToken = response.data.idToken;
+    if (!idToken) {
+      const tokens = await GoogleSignin.getTokens();
+      idToken = tokens.idToken;
+    }
+    if (!idToken) {
+      throw new Error(
+        'Google no devolvió idToken. Comprueba en Firebase → Auth → Google el **Web client ID** (no uses el de Android/iOS) en EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID.'
+      );
+    }
+
+    const credential = GoogleAuthProvider.credential(idToken);
+    try {
+      await signInWithCredential(clients.auth, credential);
+    } catch (authErr) {
+      const code =
+        authErr && typeof authErr === 'object' && 'code' in authErr
+          ? String((authErr as { code?: string }).code)
+          : '';
+      if (code === 'auth/invalid-credential') {
+        throw new Error(
+          'Firebase rechazó la credencial. En Firebase Console activa el proveedor **Google** en Authentication y usa el **Web client ID** del mismo proyecto en EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID.'
+        );
+      }
+      if (code === 'auth/network-request-failed') {
+        throw new Error('No se pudo verificar la sesión con Firebase (red). Inténtalo de nuevo.');
+      }
+      throw authErr instanceof Error ? authErr : new Error(String(authErr));
+    }
+  } catch (e) {
+    if (e instanceof Error && e.message === 'Inicio de sesión con Google cancelado') throw e;
+
+    if (isErrorWithCode(e)) {
+      if (e.code === statusCodes.SIGN_IN_CANCELLED) {
+        throw new Error('Inicio de sesión con Google cancelado');
+      }
+      if (e.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        throw new Error(
+          'Google Play Services no está disponible o debe actualizarse en este dispositivo.'
+        );
+      }
+      if (e.code === statusCodes.IN_PROGRESS) {
+        throw new Error(
+          'Ya hay un inicio de sesión con Google en curso. Espera un momento e inténtalo de nuevo.'
+        );
+      }
+    }
+
+    const msg = e instanceof Error ? e.message : String(e);
+    if (
+      /\b10\b|DEVELOPER_ERROR|developer[_ ]error/i.test(msg) ||
+      (isErrorWithCode(e) && String(e.code) === '10')
+    ) {
+      if (__DEV__) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          '[Google Sign-In DEVELOPER_ERROR] Checklist:\n' +
+            '• Firebase → Project settings → app Android: SHA-1 del keystore (debug: android/gradlew signingReport), nuevo google-services.json, rebuild.\n' +
+            '• EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID = OAuth tipo Web del mismo proyecto.\n' +
+            '• Package name = app en Firebase. Auth → Google activado.\n' +
+            '• npx @react-native-google-signin/config-doctor'
+        );
+      }
+      throw new Error(
+        [
+          'Configuración incorrecta (DEVELOPER_ERROR).',
+          '',
+          '1) Firebase: añade el SHA-1 del keystore de este build, descarga otra vez google-services.json y vuelve a compilar la app.',
+          '2) En .env usa el OAuth client tipo Web, no el de Android.',
+          '3) En consola: npx @react-native-google-signin/config-doctor',
+          '',
+          'https://react-native-google-signin.github.io/docs/troubleshooting#developer_error',
+        ].join('\n')
+      );
+    }
+
+    if (/NETWORK_ERROR|network/i.test(msg)) {
+      throw new Error('Sin conexión o error de red al contactar con Google.');
+    }
+
+    throw e instanceof Error ? e : new Error(String(e));
+  }
 }
 
 export function isAppleSignInAvailable(): boolean {
@@ -78,11 +166,38 @@ export function assertFirebaseAuth(): void {
   if (!isFirebaseConfigured()) throw new Error('Firebase no configurado');
 }
 
-/** Cierra sesión en proveedores nativos (p. ej. Google) además de Firebase. */
+/** Cierra sesión en proveedores nativos y limpia caché de Google para forzar el selector de cuentas en el próximo login. */
 export async function signOutOAuthProviders(): Promise<void> {
+  if (Platform.OS === 'web') return;
+
+  // Necesario para que signOut/revoke funcionen igual si el usuario no abrió login en esta sesión.
+  configureGoogleSignIn();
+  if (!readExtra().googleWebClientId) return;
+
+  try {
+    if (GoogleSignin.hasPreviousSignIn()) {
+      try {
+        const { accessToken } = await GoogleSignin.getTokens();
+        if (Platform.OS === 'android' && accessToken) {
+          await GoogleSignin.clearCachedAccessToken(accessToken);
+        }
+      } catch {
+        /* sin tokens en caché */
+      }
+    }
+  } catch {
+    /* noop */
+  }
+
   try {
     await GoogleSignin.signOut();
   } catch {
     /* noop */
+  }
+
+  try {
+    await GoogleSignin.revokeAccess();
+  } catch {
+    /* noop — puede fallar si no había conexión OAuth activa */
   }
 }

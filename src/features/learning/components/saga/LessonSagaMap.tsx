@@ -6,7 +6,7 @@ import { useRouter } from 'expo-router';
 import { LESSONS, Lesson } from '@features/learning/data/lessons';
 import { LEARN_UNITS } from '@features/learning/data/learnUnits';
 import { useLessonsStore } from '@features/learning/store/useLessonsStore';
-import { useChildStore } from '@features/auth/store/useChildStore';
+import { useUserStore } from '@features/auth/store/useUserStore';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import LessonPathNode, { LessonNodeStatus } from './LessonPathNode';
 import LessonStartConfirmSheet from './LessonStartConfirmSheet';
@@ -66,12 +66,10 @@ export default function LessonSagaMap({
 }: LessonSagaMapProps) {
   const router = useRouter();
   const completedLessons = useLessonsStore((s) => s.completedLessons);
-  const activeChildId = useChildStore((s) => s.id);
+  const userId = useUserStore((s) => s.id);
   const colors = useThemeColors();
   const completedIds = new Set(
-    completedLessons
-      .filter((c) => (activeChildId ? c.childId === activeChildId : true))
-      .map((c) => c.lessonId)
+    completedLessons.filter((c) => (userId ? c.uid === userId : true)).map((c) => c.lessonId)
   );
   const unitTopByIdRef = useRef<Record<string, number>>({});
 

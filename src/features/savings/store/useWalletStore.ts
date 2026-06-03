@@ -42,19 +42,12 @@ interface WalletActions {
 
 type WalletStore = WalletState & WalletActions;
 
-/** Solo `__DEV__`: saldo alto para probar el mundo sin acumular Cetis. En release el inicio es 0. */
-const DEV_DEFAULT_CETIS = 9_999_999;
-
-function defaultTotalCetis(): number {
-  return __DEV__ ? DEV_DEFAULT_CETIS : 0;
-}
-
 function generateId(): string {
   return `tx_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 }
 
 const initialState: WalletState = {
-  totalCetis: defaultTotalCetis(),
+  totalCetis: 0,
   savedCetis: 0,
   spentCetis: 0,
   transactions: [],
@@ -165,14 +158,6 @@ export const useWalletStore = create<WalletStore>()(
     {
       name: 'wallet-store',
       storage: createJSONStorage(() => createZustandMmkvStorage()),
-      merge: (persisted, current) => {
-        const p = persisted as Partial<WalletState> | undefined;
-        const next = { ...current, ...p } as WalletStore;
-        if (__DEV__) {
-          next.totalCetis = DEV_DEFAULT_CETIS;
-        }
-        return next;
-      },
     }
   )
 );

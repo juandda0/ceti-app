@@ -1,33 +1,62 @@
+import type { User } from 'firebase/auth';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { getFirebaseClients } from '@shared/lib/firebase/app';
 import { FIRESTORE_COLLECTIONS } from '@shared/lib/firebase/paths';
+import { stripUndefinedValues } from '@shared/lib/firebase/sanitizeForFirestore';
 
-export type UserRole = 'parent' | 'child';
+function providerFromAuthUser(u: User): 'google' | 'apple' | 'unknown' {
+  if (u.providerData?.some((p) => p.providerId?.includes('google'))) return 'google';
+  if (u.providerData?.some((p) => p.providerId?.includes('apple'))) return 'apple';
+  return 'unknown';
+}
 
-export type ChildProfileDraft = {
+export type UserProfileDraft = {
   nickname: string;
   fullName: string;
   age: number;
   avatarId: string;
   avatarEmoji: string;
-  birthYear?: number;
-  consentParent?: boolean;
 };
 
 export type RemoteUserDoc = {
-  role: UserRole;
   displayName: string;
   email: string | null;
   photoURL: string | null;
-  phone?: string | null;
-  familyId: string | null;
   provider: 'google' | 'apple' | 'unknown';
-  childProfile?: ChildProfileDraft | null;
+  profile?: UserProfileDraft | null;
   createdAt?: unknown;
   updatedAt?: unknown;
 };
 
 export const userRepository = {
+  async ensureUserStub(uid: string, authUser: User): Promise<void> {
+    const clients = getFirebaseClients();
+    if (!clients?.firestore) return;
+
+    const existing = await this.getUser(uid);
+    if (existing) return;
+
+    const provider = providerFromAuthUser(authUser);
+    const displayName =
+      (authUser.displayName ?? '').trim() ||
+      (authUser.email?.split('@')[0] ?? '').trim() ||
+      'Usuario';
+
+    const ref = doc(clients.firestore, FIRESTORE_COLLECTIONS.users, uid);
+    await setDoc(
+      ref,
+      stripUndefinedValues({
+        displayName,
+        email: authUser.email ?? null,
+        photoURL: authUser.photoURL ?? null,
+        provider,
+        updatedAt: serverTimestamp(),
+        createdAt: serverTimestamp(),
+      } as Record<string, unknown>),
+      { merge: true }
+    );
+  },
+
   async getUser(uid: string): Promise<RemoteUserDoc | null> {
     const clients = getFirebaseClients();
     if (!clients?.firestore) return null;
@@ -37,14 +66,14 @@ export const userRepository = {
     return snap.data() as RemoteUserDoc;
   },
 
-  async upsertParentProfile(
+  async upsertProfile(
     uid: string,
     data: {
       displayName: string;
       email: string | null;
       photoURL: string | null;
-      phone?: string | null;
       provider: 'google' | 'apple' | 'unknown';
+      profile: UserProfileDraft;
     }
   ): Promise<boolean> {
     const clients = getFirebaseClients();
@@ -52,48 +81,15 @@ export const userRepository = {
     const ref = doc(clients.firestore, FIRESTORE_COLLECTIONS.users, uid);
     await setDoc(
       ref,
-      {
-        role: 'parent' as const,
+      stripUndefinedValues({
         displayName: data.displayName,
         email: data.email,
         photoURL: data.photoURL,
-        phone: data.phone ?? null,
-        familyId: uid,
         provider: data.provider,
+        profile: data.profile,
         updatedAt: serverTimestamp(),
         createdAt: serverTimestamp(),
-      },
-      { merge: true }
-    );
-    return true;
-  },
-
-  async upsertChildDraftProfile(
-    uid: string,
-    data: {
-      displayName: string;
-      email: string | null;
-      photoURL: string | null;
-      provider: 'google' | 'apple' | 'unknown';
-      childProfile: ChildProfileDraft;
-    }
-  ): Promise<boolean> {
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return false;
-    const ref = doc(clients.firestore, FIRESTORE_COLLECTIONS.users, uid);
-    await setDoc(
-      ref,
-      {
-        role: 'child' as const,
-        displayName: data.displayName,
-        email: data.email,
-        photoURL: data.photoURL,
-        familyId: null,
-        provider: data.provider,
-        childProfile: data.childProfile,
-        updatedAt: serverTimestamp(),
-        createdAt: serverTimestamp(),
-      },
+      } as Record<string, unknown>),
       { merge: true }
     );
     return true;

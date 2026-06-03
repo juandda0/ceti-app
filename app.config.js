@@ -2,8 +2,20 @@
  * Configuración Expo: extiende app.json con variables de entorno (Firebase, EAS, OAuth).
  * @param {{ config?: import('expo/config').ExpoConfig }} ctx
  */
+/** Enlazado con EAS (@juanndda/ceti). Sustituir con env solo si cambias de proyecto. */
+const EAS_PROJECT_ID = 'c1975a63-85c8-48e0-8640-1ca3a9565b9d';
+
+const appJson = require('./app.json');
+
+/**
+ * EAS/Metro a veces invoca esta config con un `config` parcial; si no fusionamos con
+ * app.json, se pierden `runtimeVersion` / `updates` y falla con:
+ * "Cannot read properties of undefined (reading 'policy')".
+ */
 module.exports = ({ config } = {}) => {
-  const root = config?.expo ? config : require('./app.json');
+  const root = config?.expo
+    ? { ...appJson, ...config, expo: { ...appJson.expo, ...config.expo } }
+    : appJson;
   const expo = root.expo ?? {};
 
   const appleOn =
@@ -16,6 +28,7 @@ module.exports = ({ config } = {}) => {
 
   const nativePlugins = [
     ...basePlugins,
+    './plugins/withAndroidMainActivitySingleTask.js',
     '@react-native-firebase/app',
     '@react-native-firebase/crashlytics',
     '@react-native-firebase/perf',
@@ -60,7 +73,7 @@ module.exports = ({ config } = {}) => {
         ...(expo.extra || {}),
         eas: {
           ...(expo.extra?.eas || {}),
-          projectId: process.env.EAS_PROJECT_ID || expo.extra?.eas?.projectId || '',
+          projectId: process.env.EAS_PROJECT_ID || expo.extra?.eas?.projectId || EAS_PROJECT_ID,
         },
         firebase: {
           apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY || '',

@@ -34,6 +34,11 @@ yarn-error.*
 .env
 .env*.local
 
+# Firebase service account (nunca commitear — tiene privilegios de admin)
+serviceAccount.json
+serviceAccount*.json
+dist-scripts/
+
 # Cloud Functions (salida de tsc)
 functions/lib/
 

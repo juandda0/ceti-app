@@ -1,5 +1,10 @@
-// data/lessons.ts — Contenido de las 5 lecciones del MVP sin emojis
-export type StepType = 'story' | 'quiz' | 'interactive' | 'simulation' | 'goal_creator';
+export type StepType =
+  | 'story'
+  | 'quiz'
+  | 'interactive'
+  | 'simulation'
+  | 'goal_creator'
+  | 'choose_path';
 
 export interface StoryStep {
   type: 'story';
@@ -47,12 +52,30 @@ export interface GoalCreatorStep {
   fields: string[];
 }
 
-export type LessonStep = StoryStep | QuizStep | InteractiveStep | SimulationStep | GoalCreatorStep;
+export interface ChoiceOption {
+  text: string;
+  consequence: string;
+  isSmartChoice: boolean;
+}
+
+export interface ChoosePathStep {
+  type: 'choose_path';
+  situation: string;
+  options: [ChoiceOption, ChoiceOption];
+}
+
+export type LessonStep =
+  | StoryStep
+  | QuizStep
+  | InteractiveStep
+  | SimulationStep
+  | GoalCreatorStep
+  | ChoosePathStep;
 
 export interface Lesson {
   id: string;
   title: string;
-  icon: string; // Cambiado de emoji a nombre de icono Ionicons
+  icon: string;
   description: string;
   xpReward: number;
   cetisReward: number;
@@ -77,6 +100,21 @@ const q = (
     { text: wrongC, correct: false },
   ],
   explanation,
+});
+
+const cp = (
+  situation: string,
+  smartText: string,
+  smartConsequence: string,
+  otherText: string,
+  otherConsequence: string
+): ChoosePathStep => ({
+  type: 'choose_path',
+  situation,
+  options: [
+    { text: smartText, consequence: smartConsequence, isSmartChoice: true },
+    { text: otherText, consequence: otherConsequence, isSmartChoice: false },
+  ],
 });
 
 export const LESSONS: Lesson[] = [
@@ -112,6 +150,13 @@ export const LESSONS: Lesson[] = [
         'Cajeros',
         'El trueque era intercambio directo de objetos.'
       ),
+      cp(
+        'Recibes $20,000 inesperados. ¿Qué haces?',
+        'Guardar la mitad y gastar la otra mitad en algo útil',
+        'Tienes dinero disponible y también ahorras. Decisión equilibrada.',
+        'Gastar todo en snacks y entretenimiento hoy',
+        'El dinero se fue rápido y no tienes nada que mostrar.'
+      ),
       q(
         '¿Qué problema resolvió el dinero?',
         'Que no siempre se podía cambiar justo',
@@ -119,14 +164,6 @@ export const LESSONS: Lesson[] = [
         'Que no había juguetes',
         'Que no había escuelas',
         'Con dinero es más fácil hacer intercambios justos.'
-      ),
-      q(
-        'Si vendes limonada y recibes monedas, eso es...',
-        'Ganar dinero por tu trabajo',
-        'Un castigo',
-        'Un préstamo',
-        'Un regalo sin razón',
-        'Si haces una actividad y te pagan, es dinero ganado.'
       ),
       q(
         'La mejor frase sobre el dinero es...',
@@ -170,6 +207,13 @@ export const LESSONS: Lesson[] = [
         'Vivienda',
         'Un juguete puede esperar, no es básico para vivir.'
       ),
+      cp(
+        'Tienes dinero justo para el bus o para un café con amigos. ¿Qué eliges?',
+        'Pagar el bus (necesidad)',
+        'Llegas a casa sin problemas y tu transporte está asegurado.',
+        'Tomar el café (deseo)',
+        'Pasaste un buen rato pero quedas sin transporte para volver.'
+      ),
       q(
         'Si tienes poco dinero, ¿qué pagas primero?',
         'Necesidades',
@@ -177,14 +221,6 @@ export const LESSONS: Lesson[] = [
         'Nada',
         'Juegos siempre',
         'Priorizar necesidades evita problemas básicos.'
-      ),
-      q(
-        'Comida, salud y vivienda son...',
-        'Necesidades',
-        'Lujo',
-        'Caprichos',
-        'Premios',
-        'Son cosas básicas para vivir bien.'
       ),
       q(
         'Elegir bien entre necesidad y deseo ayuda a...',
@@ -212,7 +248,7 @@ export const LESSONS: Lesson[] = [
         illustration: 'income',
       },
       q(
-        'Si recibes 20 Cetis por una tarea, eso es...',
+        'Si recibes $50,000 por un trabajo, eso es...',
         'Ingreso',
         'Gasto',
         'Deuda',
@@ -228,13 +264,12 @@ export const LESSONS: Lesson[] = [
         'Un gasto es salida de dinero.'
       ),
       q('Si entra 30 y sale 10, te quedan...', '20', '40', '10', '0', 'Saldo = ingresos - gastos.'),
-      q(
-        'Si gastas más de lo que recibes, ¿qué pasa?',
-        'Te quedas sin dinero o debes',
-        'Te sobra más dinero',
-        'No cambia nada',
-        'Ganas premio',
-        'Si gastas de más, tendrás problemas con tu plata.'
+      cp(
+        'Al final del mes te sobran $30,000. ¿Qué haces?',
+        'Registrar el sobrante y decidir en qué usarlo conscientemente',
+        'Sabes exactamente dónde va tu dinero y evitas gastar por impulso.',
+        'Gastarlo de inmediato en lo que sea',
+        'El dinero se va sin un propósito claro y el mes siguiente empiezas en cero.'
       ),
       q(
         'Una buena práctica es...',
@@ -270,6 +305,13 @@ export const LESSONS: Lesson[] = [
         'Copiar al amigo',
         'Comparar mejora la decisión.'
       ),
+      cp(
+        'Ves un artículo en descuento del 50%. No lo necesitabas pero parece buena oferta. ¿Qué haces?',
+        'Analizar si realmente lo necesitas antes de comprar',
+        'Evitas una compra impulsiva y guardas ese dinero para algo que sí importa.',
+        'Comprarlo de inmediato para aprovechar el descuento',
+        'Gastaste dinero en algo que no necesitabas, aunque haya sido "oferta".'
+      ),
       q(
         'Una compra impulsiva es...',
         'Comprar sin pensar',
@@ -285,14 +327,6 @@ export const LESSONS: Lesson[] = [
         'Solo marca',
         'Solo moda',
         'Elige el que te dé más por tu dinero.'
-      ),
-      q(
-        'Una buena pregunta antes de comprar es...',
-        '¿Lo necesito ahora?',
-        '¿Se ve bonito?',
-        '¿Todos lo tienen?',
-        '¿Es tendencia?',
-        'La necesidad ayuda a priorizar mejor.'
       ),
       q(
         'Comprar bien te ayuda a...',
@@ -336,13 +370,12 @@ export const LESSONS: Lesson[] = [
         'Moda',
         'Primero se cubren necesidades.'
       ),
-      q(
-        'Recibir Cetis por ayudar en casa es...',
-        'Ingreso',
-        'Gasto',
-        'Deuda',
-        'Multa',
-        'El ingreso es entrada de dinero.'
+      cp(
+        'Un amigo te invita a salir pero ya gastaste tu presupuesto semanal. ¿Qué haces?',
+        'Explicar que esta semana no puedes y proponer otro momento',
+        'Respetas tu presupuesto y mantienes la amistad sin deuda.',
+        'Ir de todas formas y pedir prestado',
+        'Pasas un buen momento pero empiezas la siguiente semana con deuda.'
       ),
       q(
         'Comprar por impulso suele causar...',
@@ -385,13 +418,12 @@ export const LESSONS: Lesson[] = [
         'No planear nada',
         'Ahorrar es separar dinero para el futuro.'
       ),
-      q(
-        'Si recibes 10 y guardas 2, ahorraste...',
-        '2',
-        '8',
-        '10',
-        '0',
-        'Ahorro es la parte apartada.'
+      cp(
+        'Recibes tu mesada o pago. ¿Qué haces primero?',
+        'Separar un porcentaje fijo de ahorro antes de gastar',
+        'Tu ahorro está garantizado sin importar los gastos del mes.',
+        'Gastar primero y ver si queda algo para ahorrar',
+        'Casi nunca queda algo al final del mes.'
       ),
       q(
         '¿Cuándo conviene ahorrar?',
@@ -450,13 +482,12 @@ export const LESSONS: Lesson[] = [
         '2 semanas',
         '30/5 = 6 semanas.'
       ),
-      q(
-        '¿Qué frase es una meta clara?',
-        'Ahorrar 20 en 4 semanas',
-        'Quiero algo algún día',
-        'Me gusta comprar',
-        'Veremos después',
-        'Una meta clara es específica y medible.'
+      cp(
+        'Quieres comprar algo que cuesta $200,000. ¿Qué haces?',
+        'Crear una meta específica y ahorrar una cantidad fija cada semana',
+        'En pocas semanas llegas a tu meta sin estrés ni deudas.',
+        'Buscar la forma de pedirlo prestado cuanto antes',
+        'Obtienes lo que quieres hoy pero debes dinero y pagas más a largo plazo.'
       ),
       q(
         '¿Para qué sirve poner fecha?',
@@ -493,6 +524,13 @@ export const LESSONS: Lesson[] = [
       },
       q('Si ahorras 3 por semana durante 4 semanas, tienes...', '12', '7', '8', '3', '3x4 = 12.'),
       q('Si ahorras 2 por semana en 10 semanas, tienes...', '20', '12', '8', '30', '2x10 = 20.'),
+      cp(
+        'Una semana se te dificulta ahorrar tu monto habitual. ¿Qué haces?',
+        'Ahorrar lo que puedas, aunque sea menos de lo planeado',
+        'Mantienes el hábito activo. Un pequeño aporte es mejor que ninguno.',
+        'Saltarte esa semana y recuperar el doble la siguiente',
+        'Pierdes el ritmo y probablemente tampoco ahorras el doble después.'
+      ),
       q(
         '¿Qué vale más para ahorrar?',
         'Ser constante',
@@ -500,14 +538,6 @@ export const LESSONS: Lesson[] = [
         'Impulso',
         'Olvido',
         'Guardar seguido da mejores resultados.'
-      ),
-      q(
-        'Si una semana no ahorras, lo mejor es...',
-        'Retomar la siguiente',
-        'Rendirse',
-        'Gastar más',
-        'Olvidar la meta',
-        'El progreso real viene de volver al plan.'
       ),
       q(
         'Ahorro semanal es...',
@@ -551,13 +581,12 @@ export const LESSONS: Lesson[] = [
         '2 semanas',
         '24/4 = 6.'
       ),
-      q(
-        'Si subes tu ahorro semanal, la meta llega...',
-        'Más rápido',
-        'Más lento',
-        'Igual siempre',
-        'Nunca',
-        'Si guardas más, llegas antes.'
+      cp(
+        'Llevas 3 semanas ahorrando y tu meta aún parece lejana. ¿Qué haces?',
+        'Revisar el plan y ver si puedes ahorrar un poco más cada semana',
+        'Aceleras el avance de forma realista y mantienes la motivación.',
+        'Abandonar la meta y empezar una nueva',
+        'Pierdes todo el progreso acumulado y el ciclo se repite.'
       ),
       q(
         'Si te atrasas una semana, ¿qué haces?',
@@ -601,6 +630,13 @@ export const LESSONS: Lesson[] = [
         '10 semanas',
         '60/15 = 4.'
       ),
+      cp(
+        'Tu meta de ahorro está al 80%. Te llega una oferta tentadora. ¿Qué haces?',
+        'Ignorar la oferta y completar la meta primero',
+        'Cumples la meta original y en un par de semanas tienes todo.',
+        'Usar el 80% ahorrado para aprovechar la oferta',
+        'Pierdes el progreso de la meta y quizás la oferta tampoco era tan buena.'
+      ),
       q(
         '¿Qué hábito te acerca más a tu meta?',
         'Ahorrar cada semana',
@@ -616,14 +652,6 @@ export const LESSONS: Lesson[] = [
         'Automática',
         'Siempre perfecta',
         'Sin fecha es fácil dejarla para después.'
-      ),
-      q(
-        'Si quieres avanzar más rápido en tu meta...',
-        'Ahorras un poco más',
-        'Esperas suerte',
-        'No haces cuentas',
-        'Gastas más',
-        'Si guardas más, avanzas más rápido.'
       ),
       q(
         'Ahorro + meta + seguimiento =',
@@ -659,13 +687,12 @@ export const LESSONS: Lesson[] = [
         'No ahorrar',
         'Te ayuda a decidir mejor en qué gastar.'
       ),
-      q(
-        'Si haces presupuesto, sabes...',
-        'En qué puedes gastar y cuánto',
-        'Solo cuánto deseas',
-        'Nada de tus gastos',
-        'Solo tus juguetes',
-        'El presupuesto da claridad del dinero disponible.'
+      cp(
+        'Empiezas el mes sin presupuesto. A la segunda semana ya no tienes dinero. ¿Qué haces el próximo mes?',
+        'Hacer un presupuesto antes de recibir tu dinero',
+        'Sabes exactamente cuánto puedes gastar en cada categoría desde el primer día.',
+        'Intentar recordar mentalmente en qué gastas',
+        'La memoria falla y el mes termina igual que el anterior.'
       ),
       q(
         'Presupuestar ayuda a...',
@@ -674,14 +701,6 @@ export const LESSONS: Lesson[] = [
         'Gastar impulsivo',
         'Olvidar metas',
         'Planear previene errores de gasto.'
-      ),
-      q(
-        'La frase correcta es...',
-        'Sin plan, el dinero se desordena',
-        'Planear no sirve',
-        'Ahorro es suerte',
-        'Gastar todo es mejor',
-        'El plan mejora resultados financieros.'
       ),
       q(
         'Presupuesto básico =',
@@ -724,13 +743,12 @@ export const LESSONS: Lesson[] = [
         'Compras rápidas',
         'El ahorro cuida objetivos futuros.'
       ),
-      q(
-        'Una compra de entretenimiento va en...',
-        'Deseos',
-        'Necesidades',
-        'Salud',
-        'Ingreso',
-        'No es esencial para vivir.'
+      cp(
+        'Tu categoría de "gustos" ya se agotó pero queda una semana. ¿Qué haces?',
+        'Ajustar y esperar al próximo período sin tomar de otras categorías',
+        'Respetas el plan y aprendes a manejar el límite de cada categoría.',
+        'Tomar de la categoría de ahorro para cubrir los gustos',
+        'Tu ahorro se ve afectado y el mes siguiente empiezas con menos base.'
       ),
       q(
         'Separar por categorías ayuda a...',
@@ -739,14 +757,6 @@ export const LESSONS: Lesson[] = [
         'Gastar sin límite',
         'No decidir',
         'Si separas, sabes cuánto va en cada cosa.'
-      ),
-      q(
-        'Si te pasas en una categoría, debes...',
-        'Ajustar otra parte del plan',
-        'Ignorarlo',
-        'Gastar más',
-        'Eliminar ahorro primero',
-        'Ajustar te ayuda a volver al orden.'
       ),
     ],
   },
@@ -782,13 +792,12 @@ export const LESSONS: Lesson[] = [
         'Nada',
         'Lo esencial va primero.'
       ),
-      q(
-        'Si recibes 50 y ahorras 10, te quedan para gastar...',
-        '40',
-        '50',
-        '10',
-        '60',
-        '50 - 10 = 40.'
+      cp(
+        'Tu ingreso bajó este mes. ¿Qué ajustas primero?',
+        'Reducir los deseos y mantener necesidades y ahorro',
+        'Lo más importante se mantiene cubierto y el ahorro no se sacrifica.',
+        'Dejar de ahorrar para mantener el estilo de vida',
+        'El estilo de vida se mantiene pero el ahorro desaparece y estás más vulnerable.'
       ),
       q(
         'La regla de reparto ayuda a...',
@@ -797,14 +806,6 @@ export const LESSONS: Lesson[] = [
         'Olvidar metas',
         'No medir nada',
         'Con regla, decides más fácil.'
-      ),
-      q(
-        'Si no te alcanza en deseos, lo mejor es...',
-        'Recortar deseos primero',
-        'Recortar comida',
-        'No ahorrar nunca',
-        'Endeudarte siempre',
-        'Primero se recorta lo menos importante.'
       ),
     ],
   },
@@ -831,6 +832,13 @@ export const LESSONS: Lesson[] = [
         'Cancelar todo',
         'Ajustar evita repetir el desorden.'
       ),
+      cp(
+        'Tuviste un gasto inesperado que no estaba en el presupuesto. ¿Qué haces?',
+        'Revisarlo, encontrar de dónde ajustar y actualizar el presupuesto',
+        'El presupuesto sigue siendo útil y te adaptas a la realidad.',
+        'Ignorar el presupuesto por el resto del mes',
+        'Sin control, los gastos se acumulan y terminas el mes sin saber qué pasó.'
+      ),
       q(
         'Revisar presupuesto cada semana permite...',
         'Ver errores a tiempo',
@@ -838,22 +846,6 @@ export const LESSONS: Lesson[] = [
         'Gastar igual siempre',
         'Perder metas',
         'Si revisas, corriges antes de que empeore.'
-      ),
-      q(
-        'Un buen ajuste cuida primero...',
-        'Necesidades y ahorro',
-        'Antojos',
-        'Compras impulsivas',
-        'Caprichos',
-        'Primero cuidas lo más importante.'
-      ),
-      q(
-        'Si tu ingreso baja una semana, lo ideal es...',
-        'Reducir deseos temporalmente',
-        'Dejar de planear',
-        'Gastar más',
-        'Ignorar la baja',
-        'El ajuste temporal mantiene equilibrio.'
       ),
       q(
         'La mejor actitud con tu plan es...',
@@ -889,13 +881,12 @@ export const LESSONS: Lesson[] = [
         'No medir nada',
         'Así sabes qué hacer con tu dinero.'
       ),
-      q(
-        'Si tu meta es 80 y ahorras 20 por semana, tardas...',
-        '4 semanas',
-        '8 semanas',
-        '2 semanas',
-        '6 semanas',
-        '80/20 = 4 semanas.'
+      cp(
+        'Llegaste a tu meta de ahorro. ¿Qué haces con el sistema que creaste?',
+        'Mantener el hábito y crear una nueva meta',
+        'El sistema funciona y ahora tienes experiencia para metas más grandes.',
+        'Relajarte y gastar libremente porque ya cumpliste',
+        'Sin estructura, los gastos vuelven a ser desorganizados.'
       ),
       q(
         'Si quieres mantener tu plan, debes...',
@@ -904,14 +895,6 @@ export const LESSONS: Lesson[] = [
         'Gastar sin límite',
         'Cambiar meta diario',
         'Revisar seguido te mantiene en orden.'
-      ),
-      q(
-        '¿Qué protege mejor tu futuro?',
-        'Ahorrar seguido dentro del plan',
-        'Impulsos frecuentes',
-        'No registrar gastos',
-        'Comprar por moda',
-        'Ahorrar seguido te da más tranquilidad.'
       ),
       q(
         'La idea final de la sección 3 es...',

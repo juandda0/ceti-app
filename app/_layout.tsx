@@ -1,4 +1,3 @@
-// app/_layout.tsx — Root Layout de Ceti (tipografía: sistema del dispositivo)
 import 'react-native-url-polyfill/auto';
 import { decode, encode } from 'base-64';
 import { Buffer } from 'buffer';
@@ -21,34 +20,26 @@ import { AppErrorBoundary } from '@shared/components/AppErrorBoundary';
 import { rehydrateAllPersistedStores } from '@shared/session/hydrateStores';
 import { initFirebaseAuthSession } from '@shared/lib/firebase/authSession';
 import { seedLocalDataToRemoteIfNeeded } from '@shared/session/syncRemote';
-import {
-  startFamilyChildrenRemoteSync,
-  stopFamilyChildrenRemoteSync,
-} from '@shared/session/firestoreSync';
+import { isNativeFirebaseAppAvailable } from '@shared/lib/analytics/crashlytics';
+import { startUserRemoteSync, stopUserRemoteSync } from '@shared/session/userRemoteSync';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
-import { useParentStore } from '@features/family/store/useParentStore';
+import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/app';
 
-import './i18n';
+import '@shared/i18n';
 
-// Polyfills globales para Three.js en React Native
-if (!global.btoa) {
-  global.btoa = encode;
-}
-if (!global.atob) {
-  global.atob = decode;
-}
-if (!global.Buffer) {
-  global.Buffer = Buffer;
-}
-if (!global.Blob) {
-  global.Blob = Blob;
-}
-if (!global.FileReader) {
-  global.FileReader = FileReader;
-}
+if (!global.btoa) global.btoa = encode;
+if (!global.atob) global.atob = decode;
+if (!global.Buffer) global.Buffer = Buffer;
+if (!global.Blob) global.Blob = Blob;
+if (!global.FileReader) global.FileReader = FileReader;
 
-// Splash usa keep-awake; falla en web, con pantalla apagada durante la carga, etc.
 LogBox.ignoreLogs(['Unable to activate keep awake']);
+if (__DEV__) {
+  LogBox.ignoreLogs([
+    'Looks like you have configured linking in multiple places',
+    /configured linking in multiple places/i,
+  ]);
+}
 
 async function preventSplashAutoHideSafe() {
   try {
@@ -80,6 +71,8 @@ export default function RootLayout() {
 
   useEffect(() => {
     let cancelled = false;
+    const cleanups: (() => void)[] = [];
+
     void (async () => {
       try {
         await rehydrateAllPersistedStores();
@@ -91,23 +84,41 @@ export default function RootLayout() {
       } catch {
         useAuthStore.getState().markAuthReady();
       }
-      try {
-        await seedLocalDataToRemoteIfNeeded();
-      } catch {
-        /* noop */
-      }
-      if (!cancelled) {
-        const { isAuthenticated, userRole } = useAuthStore.getState();
-        const familyId = useParentStore.getState().familyId;
-        if (isAuthenticated && userRole === 'parent' && familyId) {
-          startFamilyChildrenRemoteSync(familyId);
+
+      function syncRemoteIfAuthenticated() {
+        const { isAuthenticated, firebaseUid } = useAuthStore.getState();
+        if (isAuthenticated && firebaseUid?.trim()) {
+          startUserRemoteSync(firebaseUid.trim());
+        } else {
+          stopUserRemoteSync();
         }
       }
+
+      if (!cancelled) syncRemoteIfAuthenticated();
+      cleanups.push(useAuthStore.subscribe(syncRemoteIfAuthenticated));
+
+      if (!cancelled && isFirebaseConfigured()) {
+        const clients = getFirebaseClients();
+        if (clients) {
+          const seedUnsub = clients.auth.onIdTokenChanged(async (user) => {
+            if (!user) return;
+            try {
+              await seedLocalDataToRemoteIfNeeded();
+            } catch {
+              /* noop */
+            }
+          });
+          cleanups.push(seedUnsub);
+        }
+      }
+
       if (!cancelled) setHydrated(true);
     })();
+
     return () => {
       cancelled = true;
-      stopFamilyChildrenRemoteSync();
+      cleanups.forEach((fn) => fn());
+      stopUserRemoteSync();
     };
   }, []);
 
@@ -124,6 +135,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (Platform.OS === 'web' || __DEV__) return;
+    if (!isNativeFirebaseAppAvailable()) return;
     type CrashMod = () => { recordError: (e: Error) => void; log: (m: string) => void };
     let getCrashlytics: CrashMod;
     try {
@@ -159,8 +171,7 @@ export default function RootLayout() {
             }}
           >
             <Stack.Screen name="(auth)" options={{ animation: 'fade' }} />
-            <Stack.Screen name="(child)" options={{ animation: 'fade' }} />
-            <Stack.Screen name="(parent)" options={{ animation: 'fade' }} />
+            <Stack.Screen name="(app)" options={{ animation: 'fade' }} />
             <Stack.Screen
               name="lesson/[id]"
               options={{

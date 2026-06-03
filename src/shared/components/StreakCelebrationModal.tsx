@@ -15,7 +15,7 @@ import {
   useStreakCelebrationStore,
   type StreakCelebrationPayload,
 } from '@features/auth/store/useStreakCelebrationStore';
-import { useChildStore } from '@features/auth/store/useChildStore';
+import { useUserStore } from '@features/auth/store/useUserStore';
 import {
   WEEKDAY_LABELS_SUN_START_ES,
   getCurrentWeekDaysSunStart,
@@ -47,7 +47,7 @@ type StreakPhase = 'fire' | 'content';
 export default function StreakCelebrationModal() {
   const pending = useStreakCelebrationStore((s) => s.pending);
   const clear = useStreakCelebrationStore((s) => s.clear);
-  const missionCalendarDays = useChildStore((s) => s.missionCalendarDays);
+  const missionCalendarDays = useUserStore((s) => s.missionCalendarDays);
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
   const lottieRef = useRef<LottieView>(null);

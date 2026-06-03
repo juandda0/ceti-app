@@ -1,6 +1,6 @@
 // hooks/useRewards.ts — Motor de desbloqueo de badges
 import { useCallback } from 'react';
-import { useChildStore } from '@features/auth/store/useChildStore';
+import { useUserStore } from '@features/auth/store/useUserStore';
 import { useWalletStore } from '@features/savings/store/useWalletStore';
 import { useLessonsStore } from '@features/learning/store/useLessonsStore';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
@@ -11,21 +11,21 @@ import { BADGES, Badge, BadgeConditionType } from '@shared/data/badges';
  * Llamar después de cualquier acción que pueda desbloquear algo.
  */
 export function useRewards() {
-  const store = useChildStore();
+  const store = useUserStore();
   const wallet = useWalletStore();
   const lessons = useLessonsStore();
   const savingsGoals = useSavingsStore((s) => s.goals);
 
   const getConditionValue = useCallback(
     (type: BadgeConditionType): number => {
-      const activeChildId = (store.id || '').trim();
-      const lessonCountForChild = activeChildId
-        ? lessons.completedLessons.filter((l) => l.childId === activeChildId).length
+      const userId = (store.id || '').trim();
+      const lessonCount = userId
+        ? lessons.completedLessons.filter((l) => l.uid === userId).length
         : 0;
 
       switch (type) {
         case 'lessons_completed':
-          return lessonCountForChild;
+          return lessonCount;
         case 'saved_cetis':
           return wallet.savedCetis;
         case 'streak':
@@ -35,12 +35,10 @@ export function useRewards() {
         case 'savings_goal_set':
           return wallet.savingsGoal ? 1 : 0;
         case 'goals_completed':
-          return savingsGoals.filter((g) => {
-            if (!activeChildId || g.childId !== activeChildId) return false;
-            if (!g.completedAt && g.targetAmount > 0 && g.currentAmount >= g.targetAmount)
-              return true;
-            return Boolean(g.completedAt);
-          }).length;
+          return savingsGoals.filter(
+            (g) =>
+              Boolean(g.completedAt) || (g.targetAmount > 0 && g.currentAmount >= g.targetAmount)
+          ).length;
         case 'level':
           return store.level;
         default:

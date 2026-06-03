@@ -1,16 +1,15 @@
 # Ceti
 
-Ceti es una app móvil de **educación financiera para familias**: el adulto gestiona la familia, recompensas y visibilidad; el menor aprende con lecciones, metas y un mundo interactivo con minijuegos. La base del cliente es **Expo 54**, **React Native 0.81** y **Expo Router** para la navegación.
+Ceti es una app móvil de **educación financiera single-user** para adolescentes (13+) y jóvenes adultos: el usuario aprende con lecciones, crea metas de ahorro y gestiona su cartera personal (cetis, la moneda interna). La base del cliente es **Expo 54**, **React Native 0.81** y **Expo Router** para la navegación.
 
 La arquitectura del código es **feature-first**: dominios en `src/features/*` y piezas compartidas (tema, sesión, Firebase, i18n) en `src/shared/*`.
 
 ## Funcionalidades principales
 
-- **Roles** — flujos separados para padre/tutor (`(parent)`) e hijo (`(child)`), con autenticación y onboarding.
-- **Aprendizaje** — lecciones y saga de contenido bajo `src/features/learning`.
-- **Ahorros y metas** — cartera, cetis (moneda interna), metas y asignación de recompensas.
-- **Mundo** — escena interactiva con Skia, zonas y minijuegos (p. ej. atrapar monedas, decisiones de gasto).
-- **Sincronización** — Firestore y Cloud Functions cuando Firebase está configurado; sin variables públicas de Firebase la app puede operar en modo principalmente local.
+- **Onboarding** — autenticación con Google (Apple opcional tras flag) y configuración de perfil en `(auth)/onboarding/user-setup` con MIN_AGE = 13.
+- **Aprendizaje** — saga de lecciones bajo `src/features/learning` (`story`, `quiz`, `interactive`, `simulation`, `goal_creator`, `choose_path`).
+- **Ahorros y metas** — cartera, cetis (moneda interna), metas y depósitos (aplicados inmediatamente, sin pending).
+- **Sincronización** — Firestore cuando Firebase está configurado; sin variables públicas de Firebase la app opera en modo principalmente local.
 
 ## Requisitos
 
@@ -49,16 +48,16 @@ Copia `.env.example` → `.env` (no commitear). Usa el prefijo `EXPO_PUBLIC_*` p
 
 - **Cliente:** configuración dinámica en `app.config.js` (mezcla `app.json` + env).
 - **Reglas:** plantilla en `firestore.rules`.
-- **Cloud Functions:** código en `functions/` (Node 20). Build: `cd functions && npm run build`; emulador: `npm run serve`; despliegue: `npm run deploy`.
+- **Cloud Functions:** estructura preparada en `functions/` (Node 20) pero `src/index.ts` está vacío hoy (sólo `export {};`). Reservado para la migración futura de `aiProfile` cliente → server.
 - **EAS:** perfiles en `eas.json` (`development`, `preview`, `production`). El perfil `production` no usa `developmentClient`.
 
 ## Parches de dependencias
 
-`postinstall` ejecuta `patch-package`. Si en el repo hay archivos bajo `patches/`, no los elimines sin probar bien la app (p. ej. escenas con GL / Skia en dispositivo).
+`postinstall` ejecuta `patch-package`. Si en el repo hay archivos bajo `patches/`, no los elimines sin probar la app en dispositivo.
 
 ## Internacionalización
 
-`i18next` + `react-i18next`; catálogo por defecto en `src/shared/i18n/locales/es.json`. Inicialización en `app/i18n.ts` (importada desde `app/_layout.tsx`).
+`i18next` + `react-i18next`; catálogo por defecto en `src/shared/i18n/locales/es.json`. Inicialización importando `@shared/i18n` desde `app/_layout.tsx`.
 
 ## Tests y CI
 
@@ -71,10 +70,21 @@ Orientación sobre COPPA / GDPR-K y datos de menores: [`docs/COMPLIANCE.md`](doc
 
 ## Estructura del repositorio
 
-- `app/` — rutas Expo Router (`(auth)`, `(child)`, `(parent)`).
-- `src/features/auth|family|learning|savings|world` — dominios de producto.
+- `app/` — rutas Expo Router (`(auth)` para login/onboarding, `(app)` para saga/savings/profile, `lesson/[id]` para lecciones individuales).
+- `src/features/auth|learning|savings` — dominios de producto.
 - `src/shared/` — tema, analytics (stubs / React Native Firebase opcional), sesión, i18n.
-- `functions/` — Firebase Cloud Functions (TypeScript).
+- `src/services/ai/` — abstracción AI (hoy stubs; preparada para integrar Claude API).
+- `functions/` — estructura para Firebase Cloud Functions (vacío hoy).
+
+## Smoke test (sincronización single-user)
+
+Tras desplegar reglas (`npx firebase deploy --only firestore:rules`), valida en dispositivos reales o emuladores:
+
+1. **Onboarding** — login OAuth + `user-setup` con edad ≥ 13; aparece el doc `users/{uid}` en consola Firebase.
+2. **Lecciones** — completar una lección actualiza `users/{uid}/lessonProgress/{lessonId}` y suma XP en `users/{uid}` al sincronizar.
+3. **Metas** — crear una meta escribe `users/{uid}/goals/{goalId}`.
+4. **Depósitos** — registrar un depósito escribe `users/{uid}/deposits/{depositId}` y actualiza `users/{uid}/wallet/state` (sin pending; aplicado inmediatamente).
+5. **Persistencia** — logout/login del mismo usuario en otro dispositivo: cartera, metas, racha y XP coherentes con lo que está en Firestore.
 
 ## Contribución
 

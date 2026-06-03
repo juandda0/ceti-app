@@ -1,5 +1,7 @@
 /**
  * Crashlytics opcional: no-op si el módulo nativo no está disponible o en web.
+ * El paquete @react-native-firebase/crashlytics llama a getApp() al importarse; solo
+ * debe cargarse si existe una app nativa (p. ej. google-services / GoogleService-Info).
  */
 import { Platform } from 'react-native';
 
@@ -9,9 +11,24 @@ type CrashModule = () => {
   setUserId: (id: string) => void;
 };
 
+/** True si @react-native-firebase tiene apps nativas registradas (sin cargar crashlytics). */
+export function isNativeFirebaseAppAvailable(): boolean {
+  if (Platform.OS === 'web') return false;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { getApps } = require('@react-native-firebase/app') as { getApps: () => unknown[] };
+    const apps = getApps();
+    return Array.isArray(apps) && apps.length > 0;
+  } catch {
+    return false;
+  }
+}
+
 function tryCrashlytics(): CrashModule | null {
   if (Platform.OS === 'web') return null;
+  if (!isNativeFirebaseAppAvailable()) return null;
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     return require('@react-native-firebase/crashlytics').default as CrashModule;
   } catch {
     return null;

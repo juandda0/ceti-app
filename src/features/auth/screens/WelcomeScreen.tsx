@@ -79,7 +79,7 @@ export default function WelcomeScreen() {
   };
 
   const handleOffline = () => {
-    router.push('/(auth)/choose-role');
+    router.push('/(auth)/onboarding/user-setup');
   };
 
   return (

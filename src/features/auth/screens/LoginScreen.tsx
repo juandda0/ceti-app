@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Platform } from 'react-native';
+import { View, Text, StyleSheet, Platform, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
+import { safeRouterBack } from '@shared/utils/safeRouterBack';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { Typography } from '@shared/constants/typography';
@@ -67,7 +68,7 @@ export default function LoginScreen() {
 
   const offlineContinue = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    router.replace('/(auth)/choose-role');
+    router.replace('/(auth)/onboarding/user-setup');
   };
 
   if (!isFirebaseConfigured()) {
@@ -88,7 +89,7 @@ export default function LoginScreen() {
           />
           <CetiButton
             label="Volver"
-            onPress={() => router.back()}
+            onPress={() => safeRouterBack(router, '/(auth)/welcome')}
             variant="ghost"
             size="medium"
             style={{ marginTop: Spacing.md }}
@@ -105,7 +106,7 @@ export default function LoginScreen() {
       <View style={styles.content}>
         <CetiButton
           label="← Volver"
-          onPress={() => router.back()}
+          onPress={() => safeRouterBack(router, '/(auth)/welcome')}
           variant="ghost"
           size="small"
           style={{ alignSelf: 'flex-start', marginBottom: Spacing.md }}
@@ -114,7 +115,7 @@ export default function LoginScreen() {
         <PageHeader
           overline="Cuenta"
           title="Entra a Ceti"
-          subtitle="Usa tu cuenta Google (o Apple en iOS) para guardar tu familia en la nube de forma segura."
+          subtitle="Usa tu cuenta Google (o Apple en iOS) para guardar tu progreso en la nube de forma segura."
           style={{ marginBottom: Spacing['2xl'] }}
         />
 
@@ -125,8 +126,20 @@ export default function LoginScreen() {
               { backgroundColor: colors.system.red + '22', borderColor: colors.system.red },
             ]}
           >
-            <Ionicons name="alert-circle" size={20} color={colors.system.red} />
-            <Text style={[styles.errorText, { color: colors.system.red }]}>{error}</Text>
+            <Ionicons
+              name="alert-circle"
+              size={20}
+              color={colors.system.red}
+              style={styles.errorIcon}
+            />
+            <ScrollView
+              style={styles.errorScroll}
+              nestedScrollEnabled
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator
+            >
+              <Text style={[styles.errorText, { color: colors.system.red }]}>{error}</Text>
+            </ScrollView>
           </View>
         ) : null}
 
@@ -174,17 +187,25 @@ const getStyles = (colors: ReturnType<typeof useThemeColors>, _mode: string) =>
     },
     errorBox: {
       flexDirection: 'row',
-      alignItems: 'center',
+      alignItems: 'flex-start',
       gap: 8,
       padding: Spacing.base,
       borderRadius: BorderRadius.md,
       borderWidth: 1,
       marginBottom: Spacing.lg,
+      maxHeight: 240,
+    },
+    errorIcon: {
+      marginTop: 2,
+    },
+    errorScroll: {
+      flex: 1,
+      flexShrink: 1,
     },
     errorText: {
       ...Typography.caption1,
-      flex: 1,
       fontWeight: '600',
+      lineHeight: 20,
     },
     hint: {
       ...Typography.caption2,

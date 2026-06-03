@@ -1,13 +1,12 @@
-// store/useLessonsStore.ts — Progreso de lecciones
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createZustandMmkvStorage } from '@shared/lib/storage/mmkv';
 
 interface LessonProgress {
-  childId: string;
+  uid: string;
   lessonId: string;
   completedAt: number;
-  quizScore: number; // Porcentaje de respuestas correctas (0-100)
+  quizScore: number;
   perfectQuiz: boolean;
 }
 
@@ -20,11 +19,10 @@ interface LessonsState {
 interface LessonsActions {
   startLesson: (lessonId: string) => void;
   advanceStep: () => void;
-  /** Devuelve `true` si fue la primera finalización registrada para ese niño/lección (habilitar recompensas). */
-  completeLesson: (childId: string, lessonId: string, quizScore: number) => boolean;
-  isLessonCompleted: (childId: string, lessonId: string) => boolean;
-  getLessonProgress: (childId: string, lessonId: string) => LessonProgress | undefined;
-  getLessonsForChild: (childId: string) => LessonProgress[];
+  completeLesson: (uid: string, lessonId: string, quizScore: number) => boolean;
+  isLessonCompleted: (uid: string, lessonId: string) => boolean;
+  getLessonProgress: (uid: string, lessonId: string) => LessonProgress | undefined;
+  getLessonsForUser: (uid: string) => LessonProgress[];
   resetLessons: () => void;
 }
 
@@ -46,20 +44,18 @@ export const useLessonsStore = create<LessonsStore>()(
       },
 
       advanceStep: () => {
-        set((state) => ({
-          currentStepIndex: state.currentStepIndex + 1,
-        }));
+        set((state) => ({ currentStepIndex: state.currentStepIndex + 1 }));
       },
 
-      completeLesson: (childId, lessonId, quizScore) => {
+      completeLesson: (uid, lessonId, quizScore) => {
         const { completedLessons } = get();
         const alreadyCompleted = completedLessons.some(
-          (lp) => lp.childId === childId && lp.lessonId === lessonId
+          (lp) => lp.uid === uid && lp.lessonId === lessonId
         );
 
         if (!alreadyCompleted) {
           const progress: LessonProgress = {
-            childId,
+            uid,
             lessonId,
             completedAt: Date.now(),
             quizScore,
@@ -70,26 +66,43 @@ export const useLessonsStore = create<LessonsStore>()(
             currentLessonId: null,
             currentStepIndex: 0,
           });
+
+          void (async () => {
+            try {
+              const { useAuthStore } = await import('@features/auth/store/useAuthStore');
+              const firebaseUid = useAuthStore.getState().firebaseUid;
+              if (!firebaseUid) return;
+              const { lessonProgressRepository } =
+                await import('@features/learning/data/lessonProgressRepository');
+              await lessonProgressRepository.upsertLessonProgress(firebaseUid, {
+                uid: firebaseUid,
+                lessonId: progress.lessonId,
+                completedAt: progress.completedAt,
+                quizScore: progress.quizScore,
+                perfectQuiz: progress.perfectQuiz,
+              });
+            } catch {
+              /* noop */
+            }
+          })();
+
           return true;
         }
+
         set({ currentLessonId: null, currentStepIndex: 0 });
         return false;
       },
 
-      isLessonCompleted: (childId, lessonId) => {
-        return get().completedLessons.some(
-          (lp) => lp.childId === childId && lp.lessonId === lessonId
-        );
+      isLessonCompleted: (uid, lessonId) => {
+        return get().completedLessons.some((lp) => lp.uid === uid && lp.lessonId === lessonId);
       },
 
-      getLessonProgress: (childId, lessonId) => {
-        return get().completedLessons.find(
-          (lp) => lp.childId === childId && lp.lessonId === lessonId
-        );
+      getLessonProgress: (uid, lessonId) => {
+        return get().completedLessons.find((lp) => lp.uid === uid && lp.lessonId === lessonId);
       },
 
-      getLessonsForChild: (childId) => {
-        return get().completedLessons.filter((lp) => lp.childId === childId);
+      getLessonsForUser: (uid) => {
+        return get().completedLessons.filter((lp) => lp.uid === uid);
       },
 
       resetLessons: () => set(initialState),
@@ -97,6 +110,9 @@ export const useLessonsStore = create<LessonsStore>()(
     {
       name: 'lessons-store',
       storage: createJSONStorage(() => createZustandMmkvStorage()),
+      partialize: (state) => ({
+        completedLessons: state.completedLessons,
+      }),
     }
   )
 );

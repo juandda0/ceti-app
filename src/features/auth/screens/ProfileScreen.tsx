@@ -1,16 +1,17 @@
-// app/(child)/profile.tsx — Perfil Dinámico y Motivador para Niños
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import Animated from 'react-native-reanimated';
 import { motion } from '@shared/constants/motion';
 import { Ionicons } from '@expo/vector-icons';
 import { Typography } from '@shared/constants/typography';
-import { useChildStore } from '@features/auth/store/useChildStore';
-import ChildUnitScreenLayout from '@shared/components/child/ChildUnitScreenLayout';
+import { Spacing } from '@shared/constants/theme';
+import { useUserStore } from '@features/auth/store/useUserStore';
+import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { getLevelForXP, getLevelProgress } from '@shared/data/levels';
-
-import { useAuthStore } from '@features/auth/store/useAuthStore';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Platform } from 'react-native';
+import { performLogoutAndGo } from '@features/auth/performLogout';
 
 const AVATARS: Record<string, string> = {
   avatar_1: '🦁',
@@ -26,29 +27,26 @@ const AVATARS: Record<string, string> = {
 export default function ProfileScreen() {
   const router = useRouter();
   const { nickname, fullName, avatarId, avatarEmoji, xp, streak, totalLessonsCompleted, level } =
-    useChildStore();
-  const logout = useAuthStore((s) => s.logout);
+    useUserStore();
   const colors = useThemeColors();
+  const insets = useSafeAreaInsets();
   const styles = getStyles(colors);
-
-  const handleLogout = () => {
-    logout();
-    router.replace('/(auth)/choose-role');
-  };
 
   const levelMeta = getLevelForXP(xp);
   const levelProgressPct = getLevelProgress(xp) * 100;
   const xpIntoLevel = Math.max(0, xp - levelMeta.xpRequired);
 
   return (
-    <ChildUnitScreenLayout
-      kicker="Mi progreso"
-      title="Mi perfil"
-      subtitle={`${nickname}${fullName && fullName !== nickname ? ` · ${fullName}` : ''}`}
-      chip={`Nv. ${level}`}
-    >
-      <View style={styles.stack}>
-        {/* Hero de Nivel (Enfoque en Progreso) */}
+    <ScreenWrapper style={styles.root}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.scroll,
+          { paddingTop: Math.max(insets.top, Platform.OS === 'ios' ? 12 : 8) + 16 },
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={[styles.pageTitle, { color: colors.text.primary }]}>Mi perfil</Text>
+
         <Animated.View entering={motion.enterDown(56)} style={styles.levelCard}>
           <View style={styles.avatarContainer}>
             <View style={[styles.avatarCircle, { borderColor: colors.brand.primary }]}>
@@ -68,19 +66,22 @@ export default function ProfileScreen() {
             </View>
           </View>
 
-          <Text style={styles.nameText}>{nickname}</Text>
+          <Text style={[styles.nameText, { color: colors.text.primary }]}>{nickname}</Text>
+          {fullName && fullName !== nickname ? (
+            <Text style={[styles.fullNameText, { color: colors.text.secondary }]}>{fullName}</Text>
+          ) : null}
           <Text style={[styles.levelName, { color: colors.brand.primary }]}>
             Nivel {level}: {levelMeta.name}
           </Text>
 
           <View style={styles.xpSection}>
             <View style={styles.xpHeader}>
-              <Text style={styles.xpLabel}>Próximo nivel</Text>
-              <Text style={styles.xpValue}>
+              <Text style={[styles.xpLabel, { color: colors.text.tertiary }]}>Próximo nivel</Text>
+              <Text style={[styles.xpValue, { color: colors.brand.primary }]}>
                 {xpIntoLevel} / {levelMeta.xpToNext} XP
               </Text>
             </View>
-            <View style={styles.progressBar}>
+            <View style={[styles.progressBar, { backgroundColor: colors.materials.highlight }]}>
               <View
                 style={[
                   styles.progressFill,
@@ -91,28 +92,46 @@ export default function ProfileScreen() {
           </View>
         </Animated.View>
 
-        {/* Stats Amigables (Pocas y claras) */}
         <View style={styles.statsRow}>
-          <Animated.View entering={motion.enterDown(88)} style={styles.statBox}>
+          <Animated.View
+            entering={motion.enterDown(88)}
+            style={[
+              styles.statBox,
+              { backgroundColor: colors.materials.base, borderColor: colors.materials.border },
+            ]}
+          >
             <Ionicons name="flame" size={28} color={colors.system.orange} />
-            <Text style={styles.statNum}>{streak}</Text>
-            <Text style={styles.statLabel}>DÍAS SEGUIDOS</Text>
+            <Text style={[styles.statNum, { color: colors.text.primary }]}>{streak}</Text>
+            <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>RACHA</Text>
           </Animated.View>
-          <Animated.View entering={motion.enterDown(112)} style={styles.statBox}>
+          <Animated.View
+            entering={motion.enterDown(112)}
+            style={[
+              styles.statBox,
+              { backgroundColor: colors.materials.base, borderColor: colors.materials.border },
+            ]}
+          >
             <Ionicons name="book" size={28} color={colors.system.blue} />
-            <Text style={styles.statNum}>{totalLessonsCompleted}</Text>
-            <Text style={styles.statLabel}>LECCIONES</Text>
+            <Text style={[styles.statNum, { color: colors.text.primary }]}>
+              {totalLessonsCompleted}
+            </Text>
+            <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>LECCIONES</Text>
           </Animated.View>
-          <Animated.View entering={motion.enterDown(136)} style={styles.statBox}>
+          <Animated.View
+            entering={motion.enterDown(136)}
+            style={[
+              styles.statBox,
+              { backgroundColor: colors.materials.base, borderColor: colors.materials.border },
+            ]}
+          >
             <Ionicons name="sparkles" size={28} color={colors.gold.primary} />
-            <Text style={styles.statNum}>{xp}</Text>
-            <Text style={styles.statLabel}>XP TOTAL</Text>
+            <Text style={[styles.statNum, { color: colors.text.primary }]}>{xp}</Text>
+            <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>XP TOTAL</Text>
           </Animated.View>
         </View>
 
-        {/* Mis Logros (Visual y divertido) */}
         <Animated.View entering={motion.enterDown(152)} style={styles.section}>
-          <Text style={styles.sectionTitle}>Mis Logros</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>Logros</Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -125,28 +144,42 @@ export default function ProfileScreen() {
               { icon: 'star', color: colors.system.blue, title: 'Estrella' },
             ].map((badge, i) => (
               <View key={i} style={styles.badgeCard}>
-                <View style={[styles.badgeIcon, { backgroundColor: colors.materials.highlight }]}>
+                <View
+                  style={[
+                    styles.badgeIcon,
+                    {
+                      backgroundColor: colors.materials.highlight,
+                      borderColor: colors.materials.border,
+                    },
+                  ]}
+                >
                   <Ionicons name={badge.icon as any} size={32} color={badge.color} />
                 </View>
-                <Text style={styles.badgeTitle}>{badge.title}</Text>
+                <Text style={[styles.badgeTitle, { color: colors.text.secondary }]}>
+                  {badge.title}
+                </Text>
               </View>
             ))}
           </ScrollView>
         </Animated.View>
 
-        {/* Opciones de Salida */}
-        <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
+        <TouchableOpacity
+          style={styles.logoutBtn}
+          onPress={() => void performLogoutAndGo(router, '/(auth)/welcome')}
+        >
           <Ionicons name="log-out-outline" size={20} color={colors.system.red} />
-          <Text style={styles.logoutText}>Cerrar Sesión</Text>
+          <Text style={[styles.logoutText, { color: colors.system.red }]}>Cerrar sesión</Text>
         </TouchableOpacity>
-      </View>
-    </ChildUnitScreenLayout>
+      </ScrollView>
+    </ScreenWrapper>
   );
 }
 
 const getStyles = (colors: any) =>
   StyleSheet.create({
-    stack: { gap: 22 },
+    root: { flex: 1, backgroundColor: colors.background.base },
+    scroll: { paddingHorizontal: Spacing.base, paddingBottom: 120, gap: 22 },
+    pageTitle: { ...Typography.largeTitle, fontWeight: '900', marginBottom: 8 },
 
     levelCard: {
       backgroundColor: colors.materials.base,
@@ -178,14 +211,9 @@ const getStyles = (colors: any) =>
       alignItems: 'center',
       borderWidth: 3,
     },
-    levelNumber: { color: colors.text.onBrand, fontSize: 18, fontWeight: '900' },
-
-    nameText: {
-      ...Typography.title1,
-      color: colors.text.primary,
-      fontWeight: '900',
-      marginTop: 12,
-    },
+    levelNumber: { color: '#fff', fontSize: 18, fontWeight: '900' },
+    nameText: { ...Typography.title1, fontWeight: '900', marginTop: 12 },
+    fullNameText: { ...Typography.subheadline, marginTop: 2 },
     levelName: {
       ...Typography.headline,
       fontWeight: '800',
@@ -194,33 +222,25 @@ const getStyles = (colors: any) =>
       letterSpacing: 1,
     },
 
-    xpSection: { width: '100%', gap: 8 },
+    xpSection: { width: '100%', gap: 8, marginTop: Spacing.lg },
     xpHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-    xpLabel: { ...Typography.caption1, color: colors.text.tertiary, fontWeight: '700' },
-    xpValue: { ...Typography.caption1, color: colors.brand.primary, fontWeight: '800' },
-    progressBar: {
-      height: 12,
-      backgroundColor: colors.materials.highlight,
-      borderRadius: 6,
-      overflow: 'hidden',
-    },
+    xpLabel: { ...Typography.caption1, fontWeight: '700' },
+    xpValue: { ...Typography.caption1, fontWeight: '800' },
+    progressBar: { height: 12, borderRadius: 6, overflow: 'hidden' },
     progressFill: { height: '100%', borderRadius: 6 },
 
     statsRow: { flexDirection: 'row', gap: 12 },
     statBox: {
       flex: 1,
-      backgroundColor: colors.materials.base,
       borderRadius: 24,
       padding: 16,
       alignItems: 'center',
       gap: 4,
       borderWidth: 1,
-      borderColor: colors.materials.border,
     },
-    statNum: { ...Typography.title2, color: colors.text.primary, fontWeight: '900' },
+    statNum: { ...Typography.title2, fontWeight: '900' },
     statLabel: {
       ...Typography.caption1,
-      color: colors.text.tertiary,
       fontWeight: '800',
       textAlign: 'center',
       fontSize: 10,
@@ -228,7 +248,7 @@ const getStyles = (colors: any) =>
     },
 
     section: { gap: 16 },
-    sectionTitle: { ...Typography.title3, color: colors.text.primary, fontWeight: '800' },
+    sectionTitle: { ...Typography.title3, fontWeight: '800' },
     badgesScroll: { gap: 16, paddingRight: 20 },
     badgeCard: { alignItems: 'center', gap: 8 },
     badgeIcon: {
@@ -238,10 +258,15 @@ const getStyles = (colors: any) =>
       justifyContent: 'center',
       alignItems: 'center',
       borderWidth: 1,
-      borderColor: colors.materials.border,
     },
-    badgeTitle: { ...Typography.caption2, color: colors.text.secondary, fontWeight: '700' },
+    badgeTitle: { ...Typography.caption2, fontWeight: '700' },
 
-    logoutBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
-    logoutText: { ...Typography.caption1, color: colors.system.red, fontWeight: '700' },
+    logoutBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+      marginTop: 8,
+    },
+    logoutText: { ...Typography.caption1, fontWeight: '700' },
   });

@@ -1,96 +1,216 @@
-// app/index.tsx — Punto de entrada: Firebase + documento remoto o modo solo-local
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import {
+  ActivityIndicator,
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  useWindowDimensions,
+} from 'react-native';
 import { Redirect, type Href } from 'expo-router';
+import { onAuthStateChanged } from 'firebase/auth';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
-import { useChildStore } from '@features/auth/store/useChildStore';
-import { useParentStore } from '@features/family/store/useParentStore';
+import { useUserStore } from '@features/auth/store/useUserStore';
+import { useSavingsStore } from '@features/savings/store/useSavingsStore';
+import { useWalletStore } from '@features/savings/store/useWalletStore';
+import { useLessonsStore } from '@features/learning/store/useLessonsStore';
 import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/app';
 import { userRepository } from '@features/auth/data/userRepository';
 
 export default function Index() {
   const authReady = useAuthStore((s) => s.authReady);
   const [target, setTarget] = useState<Href | null>(null);
+  const [bootstrapError, setBootstrapError] = useState(false);
+  const [routeRetry, setRouteRetry] = useState(0);
+  const seq = useRef(0);
+  const { width } = useWindowDimensions();
 
   useEffect(() => {
     if (!authReady) return;
     let cancelled = false;
 
-    void (async () => {
-      if (!isFirebaseConfigured()) {
-        const { isAuthenticated, userRole } = useAuthStore.getState();
-        const isChildOnboarded = useChildStore.getState().isOnboarded;
-        const isPinSet = useParentStore.getState().isPinSet;
-        const parentName = useParentStore.getState().parentName;
+    function resolveOffline(): void {
+      const { isAuthenticated } = useAuthStore.getState();
+      const isOnboarded = useUserStore.getState().isOnboarded;
 
-        if (!isAuthenticated || !userRole) {
-          if (!cancelled) setTarget('/(auth)/welcome');
-          return;
-        }
-        if (userRole === 'parent') {
-          const parentReady = isPinSet && parentName.trim().length >= 2;
-          if (!cancelled) {
-            setTarget(parentReady ? '/(parent)/dashboard' : '/(auth)/onboarding/parent-setup');
-          }
-          return;
-        }
-        if (!isChildOnboarded) {
-          if (!cancelled) setTarget('/(auth)/onboarding/child-setup');
-          return;
-        }
-        if (!cancelled) setTarget('/(child)/world');
+      if (!isAuthenticated) {
+        if (!cancelled) setTarget('/(auth)/welcome');
         return;
       }
+      if (!isOnboarded) {
+        if (!cancelled) setTarget('/(auth)/onboarding/user-setup');
+        return;
+      }
+      if (!cancelled) setTarget('/(app)/saga');
+    }
 
-      const clients = getFirebaseClients();
-      const u = clients?.auth.currentUser;
+    async function resolveFirebase(clients: NonNullable<ReturnType<typeof getFirebaseClients>>) {
+      const mySeq = ++seq.current;
+      setBootstrapError(false);
+
+      try {
+        await clients.auth.authStateReady();
+      } catch {
+        if (cancelled || mySeq !== seq.current) return;
+        setBootstrapError(true);
+        setTarget(null);
+        return;
+      }
+      if (cancelled || mySeq !== seq.current) return;
+
+      const u = clients.auth.currentUser;
       if (!u) {
-        if (!cancelled) setTarget('/(auth)/welcome');
+        setTarget('/(auth)/welcome');
         return;
       }
 
       useAuthStore.getState().setFirebaseUid(u.uid);
 
-      const remote = await userRepository.getUser(u.uid);
-      if (!remote) {
-        if (!cancelled) setTarget('/(auth)/choose-role');
+      let remote: Awaited<ReturnType<typeof userRepository.getUser>>;
+      try {
+        remote = await userRepository.getUser(u.uid);
+      } catch {
+        if (cancelled || mySeq !== seq.current) return;
+        setBootstrapError(true);
+        setTarget(null);
         return;
       }
 
-      if (remote.role === 'parent') {
-        const { isPinSet, parentName } = useParentStore.getState();
-        const parentReady = isPinSet && parentName.trim().length >= 2;
-        if (!parentReady) {
-          if (!cancelled) setTarget('/(auth)/onboarding/parent-setup');
+      if (cancelled || mySeq !== seq.current) return;
+
+      const localUser = useUserStore.getState();
+      const persistedId = (localUser.id ?? '').trim();
+      const idMismatch = persistedId !== u.uid && (persistedId !== '' || localUser.isOnboarded);
+
+      if (idMismatch) {
+        useUserStore.getState().resetUser();
+        useSavingsStore.getState().resetSavings();
+        useWalletStore.getState().resetWallet();
+        useLessonsStore.getState().resetLessons();
+      }
+
+      if (!remote) {
+        setTarget('/(auth)/onboarding/user-setup');
+        return;
+      }
+
+      const hasProfile =
+        remote.profile != null &&
+        typeof remote.profile.nickname === 'string' &&
+        remote.profile.nickname.trim().length >= 2;
+
+      if (!hasProfile || !useUserStore.getState().isOnboarded) {
+        if (remote.profile) {
+          const p = remote.profile;
+          useUserStore.getState().loadProfile({
+            id: u.uid,
+            nickname: typeof p.nickname === 'string' ? p.nickname : '',
+            fullName: typeof p.fullName === 'string' ? p.fullName : '',
+            age: typeof p.age === 'number' ? p.age : 0,
+            avatarId: typeof p.avatarId === 'string' ? p.avatarId : '',
+            avatarEmoji: typeof p.avatarEmoji === 'string' ? p.avatarEmoji : '',
+          });
+        }
+        if (!useUserStore.getState().isOnboarded) {
+          setTarget('/(auth)/onboarding/user-setup');
           return;
         }
-        useAuthStore.getState().loginAsParent();
-        if (!cancelled) setTarget('/(parent)/dashboard');
-        return;
       }
 
-      const fam = remote.familyId;
-      if (fam == null || fam === '') {
-        if (!cancelled) setTarget('/(auth)/onboarding/child-link');
-        return;
-      }
+      useAuthStore.getState().login();
+      if (cancelled || mySeq !== seq.current) return;
+      setTarget('/(app)/saga');
+    }
 
-      useAuthStore.getState().setLinkedFamilyId(fam);
+    if (!isFirebaseConfigured()) {
+      resolveOffline();
+      return () => {
+        cancelled = true;
+      };
+    }
 
-      const isChildOnboarded = useChildStore.getState().isOnboarded;
-      if (!isChildOnboarded) {
-        if (!cancelled) setTarget('/(auth)/onboarding/child-setup');
-        return;
-      }
+    const clients = getFirebaseClients();
+    if (!clients) {
+      setTarget('/(auth)/welcome');
+      return () => {
+        cancelled = true;
+      };
+    }
 
-      useAuthStore.getState().loginAsChild();
-      if (!cancelled) setTarget('/(child)/world');
-    })();
+    const unsub = onAuthStateChanged(clients.auth, () => {
+      void resolveFirebase(clients);
+    });
+
+    void resolveFirebase(clients);
 
     return () => {
       cancelled = true;
+      unsub();
     };
-  }, [authReady]);
+  }, [authReady, routeRetry]);
 
-  if (!authReady || target === null) return null;
+  const onRetryBootstrap = () => {
+    setBootstrapError(false);
+    setTarget(null);
+    setRouteRetry((n) => n + 1);
+  };
+
+  if (!authReady) return null;
+
+  if (bootstrapError) {
+    return (
+      <View style={[styles.errorWrap, { maxWidth: Math.min(400, width - 48) }]}>
+        <Text style={styles.errorTitle}>No pudimos cargar tu perfil</Text>
+        <Text style={styles.errorSub}>Revisa tu conexión e inténtalo de nuevo.</Text>
+        <TouchableOpacity
+          style={styles.retryBtn}
+          onPress={onRetryBootstrap}
+          accessibilityRole="button"
+        >
+          <Text style={styles.retryBtnText}>Reintentar</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  if (target === null) {
+    if (isFirebaseConfigured()) {
+      return (
+        <View style={styles.loadingWrap}>
+          <ActivityIndicator size="large" color="#6366f1" />
+        </View>
+      );
+    }
+    return null;
+  }
+
   return <Redirect href={target} />;
 }
+
+const styles = StyleSheet.create({
+  loadingWrap: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#0f172a',
+  },
+  errorWrap: {
+    flex: 1,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+    backgroundColor: '#0f172a',
+    gap: 12,
+  },
+  errorTitle: { fontSize: 20, fontWeight: '800', color: '#f8fafc' },
+  errorSub: { fontSize: 15, lineHeight: 22, color: '#94a3b8' },
+  retryBtn: {
+    marginTop: 16,
+    backgroundColor: '#6366f1',
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  retryBtnText: { color: '#fff', fontWeight: '700', fontSize: 16 },
+});

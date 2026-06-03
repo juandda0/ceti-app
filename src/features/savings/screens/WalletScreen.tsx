@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   withRepeat,
@@ -8,10 +8,12 @@ import Animated, {
 import { motion } from '@shared/constants/motion';
 import { Ionicons } from '@expo/vector-icons';
 import { Typography } from '@shared/constants/typography';
+import { Spacing } from '@shared/constants/theme';
 import { useWalletStore, Transaction } from '@features/savings/store/useWalletStore';
-import ChildUnitScreenLayout from '@shared/components/child/ChildUnitScreenLayout';
+import ScreenWrapper from '@shared/components/ScreenWrapper';
 import type { ThemeColors } from '@shared/constants/colors';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 function SavingRocket({ progress }: { progress: number }) {
   const colors = useThemeColors();
@@ -75,98 +77,111 @@ function TransactionItem({ tx }: { tx: Transaction }) {
 export default function WalletScreen() {
   const { totalCetis, savedCetis, transactions } = useWalletStore();
   const colors = useThemeColors();
+  const insets = useSafeAreaInsets();
   const styles = getStyles(colors);
 
   return (
-    <ChildUnitScreenLayout
-      kicker="Ahorros"
-      title="Mi alcancía"
-      subtitle="Cetis para jugar y tu cohete hacia la meta"
-      chip={String(totalCetis)}
-    >
-      <Animated.View
-        entering={motion.enterDown(40)}
-        style={[
-          styles.heroCard,
-          { backgroundColor: colors.background.elevated, borderColor: colors.materials.border },
+    <ScreenWrapper style={styles.root}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.scroll,
+          { paddingTop: Math.max(insets.top, Platform.OS === 'ios' ? 12 : 8) + 16 },
         ]}
+        showsVerticalScrollIndicator={false}
       >
-        <Text style={[styles.heroLabel, { color: colors.text.tertiary }]}>Cetis para gastar</Text>
-        <View style={styles.heroRow}>
-          <Text style={[styles.heroNumber, { color: colors.text.primary }]}>{totalCetis}</Text>
-          <Ionicons name="sparkles" size={28} color={colors.gold.primary} />
-        </View>
-      </Animated.View>
+        <Text style={[styles.pageTitle, { color: colors.text.primary }]}>Mi alcancía</Text>
+        <Text style={[styles.pageSubtitle, { color: colors.text.secondary }]}>
+          Cetis para jugar y tu cohete hacia la meta
+        </Text>
 
-      <Animated.View
-        entering={motion.enterDown(72)}
-        style={[
-          styles.panel,
-          { backgroundColor: colors.background.elevated, borderColor: colors.materials.border },
-        ]}
-      >
-        <View style={styles.panelText}>
-          <Text style={[styles.panelTitle, { color: colors.text.primary }]}>Tu alcancía</Text>
-          <Text style={[styles.panelValue, { color: colors.gold.primary }]}>
-            {savedCetis} Cetis
-          </Text>
-          <Text style={[styles.panelSub, { color: colors.text.tertiary }]}>
-            Guardados para metas
-          </Text>
-        </View>
-        <SavingRocket progress={Math.min((savedCetis / 100) * 100, 100)} />
-      </Animated.View>
-
-      <View style={styles.actionsRow}>
-        <TouchableOpacity
-          style={[styles.actionBtn, { backgroundColor: colors.brand.primary }]}
-          activeOpacity={0.85}
-        >
-          <Text style={[styles.actionBtnText, { color: colors.text.onBrand }]}>Ahorrar</Text>
-          <Ionicons name="archive" size={20} color={colors.text.onBrand} />
-        </TouchableOpacity>
-        <TouchableOpacity
+        <Animated.View
+          entering={motion.enterDown(40)}
           style={[
-            styles.actionBtn,
-            {
-              backgroundColor: colors.materials.highlight,
-              borderWidth: 1,
-              borderColor: colors.materials.border,
-            },
-          ]}
-          activeOpacity={0.85}
-        >
-          <Text style={[styles.actionBtnText, { color: colors.text.primary }]}>Gastar</Text>
-          <Ionicons name="cart" size={20} color={colors.text.primary} />
-        </TouchableOpacity>
-      </View>
-
-      <Animated.View entering={motion.enterDown(104)} style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>Movimientos</Text>
-        <View
-          style={[
-            styles.listCard,
+            styles.heroCard,
             { backgroundColor: colors.background.elevated, borderColor: colors.materials.border },
           ]}
         >
-          {transactions.slice(0, 6).map((tx) => (
-            <TransactionItem key={tx.id} tx={tx} />
-          ))}
+          <Text style={[styles.heroLabel, { color: colors.text.tertiary }]}>Cetis para gastar</Text>
+          <View style={styles.heroRow}>
+            <Text style={[styles.heroNumber, { color: colors.text.primary }]}>{totalCetis}</Text>
+            <Ionicons name="sparkles" size={28} color={colors.gold.primary} />
+          </View>
+        </Animated.View>
+
+        <Animated.View
+          entering={motion.enterDown(72)}
+          style={[
+            styles.panel,
+            { backgroundColor: colors.background.elevated, borderColor: colors.materials.border },
+          ]}
+        >
+          <View style={styles.panelText}>
+            <Text style={[styles.panelTitle, { color: colors.text.primary }]}>Tu alcancía</Text>
+            <Text style={[styles.panelValue, { color: colors.gold.primary }]}>
+              {savedCetis} Cetis
+            </Text>
+            <Text style={[styles.panelSub, { color: colors.text.tertiary }]}>
+              Guardados para metas
+            </Text>
+          </View>
+          <SavingRocket progress={Math.min((savedCetis / 100) * 100, 100)} />
+        </Animated.View>
+
+        <View style={styles.actionsRow}>
+          <TouchableOpacity
+            style={[styles.actionBtn, { backgroundColor: colors.brand.primary }]}
+            activeOpacity={0.85}
+          >
+            <Text style={[styles.actionBtnText, { color: colors.text.onBrand }]}>Ahorrar</Text>
+            <Ionicons name="archive" size={20} color={colors.text.onBrand} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.actionBtn,
+              {
+                backgroundColor: colors.materials.highlight,
+                borderWidth: 1,
+                borderColor: colors.materials.border,
+              },
+            ]}
+            activeOpacity={0.85}
+          >
+            <Text style={[styles.actionBtnText, { color: colors.text.primary }]}>Gastar</Text>
+            <Ionicons name="cart" size={20} color={colors.text.primary} />
+          </TouchableOpacity>
         </View>
-      </Animated.View>
-    </ChildUnitScreenLayout>
+
+        <Animated.View entering={motion.enterDown(104)} style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>Movimientos</Text>
+          <View
+            style={[
+              styles.listCard,
+              { backgroundColor: colors.background.elevated, borderColor: colors.materials.border },
+            ]}
+          >
+            {transactions.slice(0, 6).map((tx) => (
+              <TransactionItem key={tx.id} tx={tx} />
+            ))}
+          </View>
+        </Animated.View>
+      </ScrollView>
+    </ScreenWrapper>
   );
 }
 
 const getStyles = (colors: ThemeColors) =>
   StyleSheet.create({
+    root: { flex: 1, backgroundColor: colors.background.base },
+    scroll: { paddingHorizontal: Spacing.base, paddingBottom: 120, gap: 16 },
+    pageTitle: { ...Typography.largeTitle, fontWeight: '900' },
+    pageSubtitle: { ...Typography.subheadline, marginTop: 4 },
+
     heroCard: {
       borderRadius: 22,
       paddingVertical: 24,
       paddingHorizontal: 20,
       alignItems: 'center',
       borderWidth: 1,
-      marginBottom: 14,
     },
     heroLabel: { ...Typography.caption1, fontWeight: '800', letterSpacing: 0.6, marginBottom: 6 },
     heroRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
@@ -179,14 +194,13 @@ const getStyles = (colors: ThemeColors) =>
       borderRadius: 22,
       padding: 20,
       borderWidth: 1,
-      marginBottom: 16,
     },
     panelText: { flex: 1, gap: 4 },
     panelTitle: { ...Typography.headline, fontWeight: '800' },
     panelValue: { ...Typography.title2, fontWeight: '900' },
     panelSub: { ...Typography.caption1 },
 
-    actionsRow: { flexDirection: 'row', gap: 12, marginBottom: 22 },
+    actionsRow: { flexDirection: 'row', gap: 12 },
     actionBtn: {
       flex: 1,
       height: 56,
@@ -198,7 +212,7 @@ const getStyles = (colors: ThemeColors) =>
     },
     actionBtnText: { ...Typography.headline, fontWeight: '800', fontSize: 15 },
 
-    section: { gap: 10, marginBottom: 24 },
+    section: { gap: 10 },
     sectionTitle: { ...Typography.title3, fontWeight: '800' },
     listCard: { borderRadius: 20, borderWidth: 1, overflow: 'hidden' },
   });

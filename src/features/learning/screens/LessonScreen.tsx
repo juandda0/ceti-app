@@ -1,16 +1,22 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity, TextInput } from 'react-native';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
+import { safeRouterBack } from '@shared/utils/safeRouterBack';
 import Animated from 'react-native-reanimated';
 import { motion } from '@shared/constants/motion';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import LottieView from 'lottie-react-native';
 
-import { LESSONS, Lesson, LessonStep, type GoalCreatorStep } from '@features/learning/data/lessons';
+import {
+  LESSONS,
+  type GoalCreatorStep,
+  type ChoosePathStep,
+} from '@features/learning/data/lessons';
 import { useLessonsStore } from '@features/learning/store/useLessonsStore';
 import { useWalletStore } from '@features/savings/store/useWalletStore';
-import { useChildStore } from '@features/auth/store/useChildStore';
+import { useUserStore } from '@features/auth/store/useUserStore';
+import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { useStreakCelebrationStore } from '@features/auth/store/useStreakCelebrationStore';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { Typography } from '@shared/constants/typography';
@@ -20,9 +26,7 @@ import CetiBottomSheet from '@shared/components/CetiBottomSheet';
 import { showCetiNotice } from '@shared/store/useCetiOverlayStore';
 import { logEvent } from '@shared/lib/analytics/logEvent';
 
-// ─── Sub-componentes de Pasos ────────────────────────────────────────────────
-
-const STORY_LOTTIE_MAP: Record<string, any> = {
+const STORY_LOTTIE_MAP: Record<string, unknown> = {
   barter: require('../../../../assets/lessons/lesson1.json'),
   needs_vs_wants: require('../../../../assets/lessons/lesson2.json'),
   income: require('../../../../assets/lessons/lesson3.json'),
@@ -30,12 +34,21 @@ const STORY_LOTTIE_MAP: Record<string, any> = {
   full_plan: require('../../../../assets/lessons/lesson5.json'),
 };
 
+function shuffleArray<T>(items: T[]): T[] {
+  const out = [...items];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
 const StoryStepView = ({ step, colors }: { step: any; colors: any }) => (
   <Animated.View entering={motion.stepEnter} exiting={motion.stepExit} style={styles.stepContent}>
     <View style={styles.illustrationContainer}>
       {STORY_LOTTIE_MAP[step.illustration] ? (
         <LottieView
-          source={STORY_LOTTIE_MAP[step.illustration]}
+          source={STORY_LOTTIE_MAP[step.illustration] as any}
           autoPlay
           loop
           style={styles.storyLottie}
@@ -61,31 +74,36 @@ const QuizStepView = ({
   const [selected, setSelected] = useState<number | null>(null);
   const [blocked, setBlocked] = useState(false);
 
+  const optionStamp = step.options.map((o: { text: string }) => o.text).join('');
+  const shuffledOptions = useMemo(
+    () => shuffleArray(step.options as { text: string; correct: boolean }[]),
+    [step.question, optionStamp]
+  );
+
   const handlePress = (index: number) => {
     if (blocked) return;
     setSelected(index);
     setBlocked(true);
-    const isCorrect = step.options[index].correct;
-    if (isCorrect) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    const opt = shuffledOptions[index];
+    if (opt.correct) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     else Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-    onAnswer(isCorrect, step.explanation, step.options[index].text);
+    onAnswer(opt.correct, step.explanation, opt.text);
   };
 
   return (
     <Animated.View entering={motion.stepEnter} exiting={motion.stepExit} style={styles.stepContent}>
       <Text style={[styles.questionText, { color: colors.text.primary }]}>{step.question}</Text>
       <View style={styles.optionsContainer}>
-        {step.options.map((opt: any, i: number) => {
+        {shuffledOptions.map((opt: { text: string; correct: boolean }, i: number) => {
           const isSelected = selected === i;
           const bg = isSelected
             ? opt.correct
               ? colors.system.green
               : colors.system.red
             : colors.materials.base;
-
           return (
             <TouchableOpacity
-              key={i}
+              key={`${opt.text}-${i}`}
               onPress={() => handlePress(i)}
               activeOpacity={0.7}
               style={[
@@ -97,6 +115,81 @@ const QuizStepView = ({
                 style={[
                   styles.optionText,
                   { color: isSelected ? colors.text.inverse : colors.text.primary },
+                ]}
+              >
+                {opt.text}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    </Animated.View>
+  );
+};
+
+const ChoosePathStepView = ({
+  step,
+  onChoice,
+  colors,
+}: {
+  step: ChoosePathStep;
+  onChoice: (isSmartChoice: boolean, consequence: string, choiceText: string) => void;
+  colors: any;
+}) => {
+  const [chosen, setChosen] = useState<0 | 1 | null>(null);
+  const [blocked, setBlocked] = useState(false);
+
+  const handlePress = (idx: 0 | 1) => {
+    if (blocked) return;
+    setChosen(idx);
+    setBlocked(true);
+    const opt = step.options[idx];
+    if (opt.isSmartChoice) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    else Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+    onChoice(opt.isSmartChoice, opt.consequence, opt.text);
+  };
+
+  return (
+    <Animated.View entering={motion.stepEnter} exiting={motion.stepExit} style={styles.stepContent}>
+      <View
+        style={[
+          styles.situationBox,
+          { backgroundColor: colors.background.secondary, borderColor: colors.materials.border },
+        ]}
+      >
+        <Ionicons
+          name="git-compare-outline"
+          size={32}
+          color={colors.brand.primary}
+          style={{ marginBottom: 12 }}
+        />
+        <Text style={[styles.situationText, { color: colors.text.primary }]}>{step.situation}</Text>
+      </View>
+
+      <Text style={[styles.chooseLabel, { color: colors.text.tertiary }]}>Elige tu camino</Text>
+
+      <View style={styles.choiceButtonsContainer}>
+        {step.options.map((opt, idx) => {
+          const isChosen = chosen === idx;
+          const bg = isChosen
+            ? opt.isSmartChoice
+              ? colors.system.green
+              : colors.system.orange
+            : colors.materials.base;
+          return (
+            <TouchableOpacity
+              key={idx}
+              onPress={() => handlePress(idx as 0 | 1)}
+              activeOpacity={0.8}
+              style={[
+                styles.choiceBtn,
+                { backgroundColor: bg, borderColor: isChosen ? bg : colors.materials.border },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.choiceBtnText,
+                  { color: isChosen ? colors.text.inverse : colors.text.primary },
                 ]}
               >
                 {opt.text}
@@ -124,7 +217,6 @@ const InteractiveStepView = ({
   colors: any;
 }) => {
   const [items, setItems] = useState(step.items);
-  const [classified, setClassified] = useState<{ text: string; category: string }[]>([]);
 
   const handleClassify = (item: any, category: string) => {
     const isCorrect = item.category === category;
@@ -143,7 +235,6 @@ const InteractiveStepView = ({
     const isLastItem = items.length === 1;
     onResult(true, 'Bien clasificado. ¡Sigue así!', selectedText, isLastItem ? 'next' : 'stay');
     setItems(items.filter((i: any) => i.text !== item.text));
-    setClassified([...classified, { ...item, category }]);
   };
 
   return (
@@ -152,7 +243,6 @@ const InteractiveStepView = ({
       <Text style={[styles.stepText, { color: colors.text.secondary, marginBottom: 30 }]}>
         {step.instruction}
       </Text>
-
       {items.length > 0 ? (
         <Animated.View layout={motion.layout} style={styles.itemToClassify}>
           <Text style={[styles.itemText, { color: colors.brand.primary }]}>{items[0].text}</Text>
@@ -208,7 +298,6 @@ const SimulationStepView = ({
       <Text style={[styles.stepText, { color: colors.text.secondary, marginBottom: 30 }]}>
         {step.instruction}
       </Text>
-
       <View
         style={[
           styles.inputBox,
@@ -224,7 +313,6 @@ const SimulationStepView = ({
           placeholderTextColor={colors.text.tertiary}
         />
       </View>
-
       <CetiButton
         label="Validar"
         onPress={checkAnswer}
@@ -249,8 +337,6 @@ const GoalCreatorStepView = ({ step, colors }: { step: GoalCreatorStep; colors: 
   </Animated.View>
 );
 
-// ─── Pantalla Principal ──────────────────────────────────────────────────────
-
 export default function LessonScreen() {
   const params = useLocalSearchParams<{ id?: string | string[] }>();
   const lessonId = useMemo(() => {
@@ -263,17 +349,19 @@ export default function LessonScreen() {
   const colors = useThemeColors();
 
   const lesson = useMemo(() => LESSONS.find((l) => l.id === lessonId), [lessonId]);
+
   useEffect(() => {
     if (!lesson) return;
     void logEvent('lesson_started', { lesson_id: lesson.id });
-  }, [lesson, lesson?.id]);
+  }, [lesson]);
+
   const { completeLesson } = useLessonsStore();
   const earnCetis = useWalletStore((s) => s.earnCetis);
-  const addXP = useChildStore((s) => s.addXP);
-  const incrementLessonsCompleted = useChildStore((s) => s.incrementLessonsCompleted);
-  const recordStreakOnMissionComplete = useChildStore((s) => s.recordStreakOnMissionComplete);
-  const registerMissionCalendarDay = useChildStore((s) => s.registerMissionCalendarDay);
-  const childId = useChildStore((s) => s.id);
+  const addXP = useUserStore((s) => s.addXP);
+  const incrementLessonsCompleted = useUserStore((s) => s.incrementLessonsCompleted);
+  const recordStreakOnMissionComplete = useUserStore((s) => s.recordStreakOnMissionComplete);
+  const registerMissionCalendarDay = useUserStore((s) => s.registerMissionCalendarDay);
+  const uid = useAuthStore((s) => s.firebaseUid) ?? useUserStore.getState().id;
 
   const [currentStep, setCurrentStep] = useState(0);
   const [quizScores, setQuizScores] = useState<boolean[]>([]);
@@ -288,7 +376,7 @@ export default function LessonScreen() {
   const [pendingAction, setPendingAction] = useState<'next' | 'stay'>('next');
 
   if (!lessonId || !lesson) {
-    return <Redirect href="/(child)/learn" />;
+    return <Redirect href="/(app)/saga" />;
   }
 
   const progress = isFinished ? 100 : ((currentStep + 1) / lesson.steps.length) * 100;
@@ -323,9 +411,9 @@ export default function LessonScreen() {
       showCetiNotice({
         variant: 'error',
         title: 'Perdiste la lección',
-        message: 'Te quedaste sin vidas. Vuelve al mapa y cuando quieras la intentas otra vez.',
+        message: 'Te quedaste sin vidas. Vuelve al mapa y cuando quieras la intentas de nuevo.',
         onDismiss: () => {
-          router.replace('/(child)/learn');
+          router.replace('/(app)/saga');
         },
       });
       return false;
@@ -336,6 +424,12 @@ export default function LessonScreen() {
   const onQuizAnswer = (correct: boolean, explanation: string, selectedText: string) => {
     openAnswerFeedback(correct, explanation, selectedText, 'next');
     setQuizScores((prev) => [...prev, correct]);
+  };
+
+  const onChoicePathAnswer = (isSmartChoice: boolean, consequence: string, choiceText: string) => {
+    openAnswerFeedback(isSmartChoice, consequence, choiceText, 'next');
+    setQuizScores((prev) => [...prev, isSmartChoice]);
+    if (isSmartChoice) useUserStore.getState().incrementSavingsDecisions();
   };
 
   const onSimulationResult = (correct: boolean, explanation: string, selectedText: string) => {
@@ -355,21 +449,18 @@ export default function LessonScreen() {
     setShowAnswerModal(false);
     const canContinue = consumeLifeIfNeeded(answerWasCorrect);
     if (!canContinue) return;
-    if (pendingAction === 'next') {
-      handleNext();
-    }
+    if (pendingAction === 'next') handleNext();
   };
 
   const finishLesson = () => {
     const totalQuizzes = quizScores.length;
     const correctQuizzes = quizScores.filter((s) => s).length;
     const score = totalQuizzes > 0 ? (correctQuizzes / totalQuizzes) * 100 : 100;
-
     const passed = score >= 70;
     setHasPassed(passed);
 
     if (passed) {
-      const firstCompletion = completeLesson(childId, lesson.id, score);
+      const firstCompletion = completeLesson(uid, lesson.id, score);
       void logEvent('lesson_completed', {
         lesson_id: lesson.id,
         first_completion: firstCompletion,
@@ -381,9 +472,7 @@ export default function LessonScreen() {
         incrementLessonsCompleted();
         registerMissionCalendarDay();
         const streakPayload = recordStreakOnMissionComplete();
-        if (streakPayload) {
-          useStreakCelebrationStore.getState().show(streakPayload);
-        }
+        if (streakPayload) useStreakCelebrationStore.getState().show(streakPayload);
       }
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } else {
@@ -398,13 +487,16 @@ export default function LessonScreen() {
     setQuizScores([]);
     setIsFinished(false);
     setHasPassed(true);
+    setLives(3);
   };
 
   return (
     <ScreenWrapper style={[styles.container, { backgroundColor: colors.background.base }]}>
-      {/* Header / Progreso */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.closeBtn}>
+        <TouchableOpacity
+          onPress={() => safeRouterBack(router, '/(app)/saga')}
+          style={styles.closeBtn}
+        >
           <Ionicons name="close" size={24} color={colors.text.primary} />
         </TouchableOpacity>
         <View style={[styles.progressTrack, { backgroundColor: colors.background.tertiary }]}>
@@ -436,13 +528,12 @@ export default function LessonScreen() {
                     <Ionicons name="checkmark-circle" size={80} color={colors.system.green} />
                   </View>
                   <Text style={[styles.finishTitle, { color: colors.text.primary }]}>
-                    ¡LECCIÓN COMPLETADA!
+                    LECCIÓN COMPLETADA
                   </Text>
                   <Text style={[styles.finishSub, { color: colors.text.tertiary }]}>
-                    Has dado un gran paso hoy
+                    Has dado un gran paso
                   </Text>
                 </View>
-
                 <View style={styles.rewardCards}>
                   <Animated.View
                     entering={motion.enterDown(96)}
@@ -462,7 +553,6 @@ export default function LessonScreen() {
                       PUNTOS XP
                     </Text>
                   </Animated.View>
-
                   <Animated.View
                     entering={motion.enterDown(152)}
                     style={[
@@ -482,10 +572,9 @@ export default function LessonScreen() {
                     </Text>
                   </Animated.View>
                 </View>
-
                 <CetiButton
-                  label="CONTINUAR MI AVENTURA"
-                  onPress={() => router.replace('/(child)/world')}
+                  label="CONTINUAR"
+                  onPress={() => router.replace('/(app)/saga')}
                   variant="primary"
                   size="large"
                   style={{ marginTop: 20, width: '100%' }}
@@ -497,43 +586,22 @@ export default function LessonScreen() {
                   <View style={[styles.successCircle, { backgroundColor: colors.fill.redSubtle }]}>
                     <Ionicons name="close-circle" size={80} color={colors.system.red} />
                   </View>
-                  <Text style={[styles.finishTitle, { color: colors.text.primary }]}>
-                    ¡OH NO, CASI!
-                  </Text>
+                  <Text style={[styles.finishTitle, { color: colors.text.primary }]}>¡CASI!</Text>
                   <Text style={[styles.finishSub, { color: colors.text.tertiary }]}>
-                    Necesitas un 70% para ganar premios. ¡Inténtalo de nuevo!
+                    Necesitas un 70% para ganar premios.
                   </Text>
                 </View>
-
-                <View style={styles.rewardCards}>
-                  <View
-                    style={[
-                      styles.rewardCard,
-                      {
-                        backgroundColor: colors.materials.highlight,
-                        borderColor: colors.materials.border,
-                      },
-                    ]}
-                  >
-                    <Ionicons name="lock-closed" size={32} color={colors.text.tertiary} />
-                    <Text style={[styles.rewardValue, { color: colors.text.tertiary }]}>0</Text>
-                    <Text style={[styles.rewardLabel, { color: colors.text.tertiary }]}>
-                      PREMIOS BLOQUEADOS
-                    </Text>
-                  </View>
-                </View>
-
                 <View style={{ width: '100%', gap: 12 }}>
                   <CetiButton
-                    label="REINTENTAR LECCIÓN"
+                    label="REINTENTAR"
                     onPress={retryLesson}
                     variant="primary"
                     size="large"
                     style={{ width: '100%' }}
                   />
                   <CetiButton
-                    label="SALIR POR AHORA"
-                    onPress={() => router.replace('/(child)/world')}
+                    label="SALIR"
+                    onPress={() => router.replace('/(app)/saga')}
                     variant="glass"
                     size="large"
                     style={{ width: '100%' }}
@@ -552,6 +620,14 @@ export default function LessonScreen() {
                 key={`step-${currentStep}`}
                 step={currentStepData}
                 onAnswer={onQuizAnswer}
+                colors={colors}
+              />
+            )}
+            {currentStepData.type === 'choose_path' && (
+              <ChoosePathStepView
+                key={`step-${currentStep}`}
+                step={currentStepData}
+                onChoice={onChoicePathAnswer}
                 colors={colors}
               />
             )}
@@ -579,10 +655,10 @@ export default function LessonScreen() {
               />
             )}
 
-            {/* Otros tipos de pasos se pueden añadir aquí */}
             {currentStepData.type !== 'quiz' &&
               currentStepData.type !== 'simulation' &&
-              currentStepData.type !== 'interactive' && (
+              currentStepData.type !== 'interactive' &&
+              currentStepData.type !== 'choose_path' && (
                 <View style={styles.footer}>
                   <CetiButton
                     label={currentStep === lesson.steps.length - 1 ? 'Finalizar' : 'Continuar'}
@@ -600,7 +676,7 @@ export default function LessonScreen() {
         visible={showAnswerModal}
         onClose={() => setShowAnswerModal(false)}
         title={answerWasCorrect ? '¡Bien hecho!' : '¡Sigue intentando!'}
-        subtitle={answerWasCorrect ? 'Respuesta correcta' : 'Respuesta incorrecta'}
+        subtitle={answerWasCorrect ? 'Decisión acertada' : 'Había una mejor opción'}
         closeOnBackdropPress={false}
       >
         <View style={styles.answerSheet}>
@@ -627,7 +703,7 @@ export default function LessonScreen() {
                   { color: answerWasCorrect ? colors.system.green : colors.system.red },
                 ]}
               >
-                {answerWasCorrect ? 'EXPLICAR MI RESPUESTA' : 'EXPLICAR MI ERROR'}
+                {answerWasCorrect ? 'VER EXPLICACIÓN' : 'ENTENDER MI ERROR'}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -666,7 +742,7 @@ export default function LessonScreen() {
           </View>
           <View style={[styles.notebookPaper, { backgroundColor: colors.background.secondary }]}>
             <Text style={[styles.notebookTitle, { color: colors.text.primary }]}>
-              {answerWasCorrect ? 'Explicación de tu respuesta' : 'Explicación de tu error'}
+              {answerWasCorrect ? 'Explicación' : '¿Por qué esa era la mejor opción?'}
             </Text>
             <Text style={[styles.notebookBody, { color: colors.text.secondary }]}>
               {answerExplanation}
@@ -704,26 +780,17 @@ export default function LessonScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 20,
-    paddingTop: 60,
-    gap: 15,
-  },
+  header: { flexDirection: 'row', alignItems: 'center', padding: 20, paddingTop: 60, gap: 15 },
   closeBtn: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
   progressTrack: { flex: 1, height: 6, borderRadius: 3, overflow: 'hidden' },
   progressFill: { height: '100%', borderRadius: 3 },
   stepCount: { ...Typography.caption2, width: 45, textAlign: 'right' },
   livesWrap: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   livesText: { ...Typography.headline, fontWeight: '800', minWidth: 12, textAlign: 'center' },
-
   body: { flex: 1, paddingHorizontal: 24, justifyContent: 'center' },
   stepContent: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-
   illustrationContainer: { marginBottom: 32, alignItems: 'center', justifyContent: 'center' },
   storyLottie: { width: 260, height: 260 },
-
   stepTitle: {
     ...Typography.title2,
     fontWeight: '800',
@@ -732,7 +799,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   stepText: { ...Typography.headline, textAlign: 'center', lineHeight: 28, paddingHorizontal: 10 },
-
   questionText: {
     ...Typography.title3,
     fontWeight: '800',
@@ -751,9 +817,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   optionText: { ...Typography.headline, fontWeight: '700', fontSize: 17 },
-
+  situationBox: {
+    width: '100%',
+    borderRadius: 20,
+    borderWidth: 1,
+    padding: 24,
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  situationText: { ...Typography.title3, fontWeight: '700', textAlign: 'center', lineHeight: 26 },
+  chooseLabel: { ...Typography.caption1, fontWeight: '600', marginBottom: 16, letterSpacing: 0.5 },
+  choiceButtonsContainer: { width: '100%', gap: 12 },
+  choiceBtn: {
+    width: '100%',
+    minHeight: 72,
+    padding: 20,
+    borderRadius: 20,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  choiceBtnText: { ...Typography.headline, fontWeight: '700', fontSize: 16, textAlign: 'center' },
   footer: { paddingVertical: 40, width: '100%' },
-
   finishContent: {
     flex: 1,
     justifyContent: 'center',
@@ -772,7 +857,6 @@ const styles = StyleSheet.create({
   },
   finishTitle: { ...Typography.title1, fontWeight: '900', textAlign: 'center', letterSpacing: 1 },
   finishSub: { ...Typography.headline, textAlign: 'center' },
-
   rewardCards: { flexDirection: 'row', gap: 16, width: '100%' },
   rewardCard: {
     flex: 1,
@@ -784,12 +868,10 @@ const styles = StyleSheet.create({
   },
   rewardValue: { ...Typography.largeTitle, fontWeight: '900', fontSize: 32 },
   rewardLabel: { ...Typography.caption1, fontWeight: '800', letterSpacing: 1 },
-
   itemToClassify: { width: '100%', alignItems: 'center', gap: 20 },
   itemText: { ...Typography.title1, fontWeight: '900' },
   classifyButtons: { flexDirection: 'row', gap: 12, width: '100%' },
   classifyBtn: { flex: 1, padding: 20, borderRadius: 16, alignItems: 'center' },
-
   inputBox: { width: '100%', padding: 20, borderRadius: 20, borderWidth: 2 },
   simInput: { ...Typography.title2, textAlign: 'center', fontWeight: '800' },
   hintText: { ...Typography.caption2, marginTop: 12, fontStyle: 'italic' },
@@ -818,18 +900,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 14,
   },
-  actionBtnText: {
-    ...Typography.headline,
-    fontWeight: '700',
-    textAlign: 'center',
-  },
-  notebookSheet: {
-    width: '100%',
-    alignSelf: 'stretch',
-    backgroundColor: '#f7f2e7',
-    padding: 14,
-    alignItems: 'stretch',
-  },
+  actionBtnText: { ...Typography.headline, fontWeight: '700', textAlign: 'center' },
+  notebookSheet: { width: '100%', alignSelf: 'stretch', padding: 14, alignItems: 'stretch' },
   notebookSpiral: {
     position: 'absolute',
     left: 10,
@@ -838,37 +910,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  spiralHole: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#d3c7b3',
-  },
+  spiralHole: { width: 8, height: 8, borderRadius: 4 },
   notebookPaper: {
     width: '100%',
     minHeight: 260,
-    backgroundColor: '#fffdf7',
     paddingVertical: 14,
     paddingHorizontal: 18,
     paddingLeft: 26,
   },
-  notebookTitle: {
-    ...Typography.headline,
-    color: '#4c3f2e',
-    fontWeight: '900',
-    marginBottom: 10,
-  },
-  notebookBody: {
-    ...Typography.body,
-    color: '#4c3f2e',
-    lineHeight: 22,
-    marginBottom: 10,
-  },
-  paperLines: {
-    gap: 16,
-  },
-  paperLine: {
-    height: 1,
-    backgroundColor: '#C9C2B6',
-  },
+  notebookTitle: { ...Typography.headline, fontWeight: '900', marginBottom: 10 },
+  notebookBody: { ...Typography.body, lineHeight: 22, marginBottom: 10 },
+  paperLines: { gap: 16 },
+  paperLine: { height: 1 },
 });

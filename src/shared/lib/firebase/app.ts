@@ -1,6 +1,8 @@
+import { Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
-import { getAuth, type Auth } from 'firebase/auth';
-import { getFirestore, type Firestore } from 'firebase/firestore';
+import { getAuth, initializeAuth, getReactNativePersistence, type Auth } from 'firebase/auth';
+import { getFirestore, initializeFirestore, type Firestore } from 'firebase/firestore';
 import Constants from 'expo-constants';
 
 export type FirebaseClients = {
@@ -34,6 +36,38 @@ function readFirebaseConfigFromExpo(): {
   };
 }
 
+function initAuthWithPersistence(app: FirebaseApp): Auth {
+  if (Platform.OS === 'web') {
+    return getAuth(app);
+  }
+  try {
+    return initializeAuth(app, {
+      persistence: getReactNativePersistence(AsyncStorage),
+    });
+  } catch (e: unknown) {
+    const code =
+      e && typeof e === 'object' && 'code' in e ? String((e as { code?: string }).code) : '';
+    if (code === 'auth/already-initialized') {
+      return getAuth(app);
+    }
+    throw e;
+  }
+}
+
+function initFirestoreWithLongPolling(app: FirebaseApp): Firestore {
+  try {
+    return initializeFirestore(app, {
+      experimentalForceLongPolling: true,
+    });
+  } catch (e: unknown) {
+    const msg = e && typeof e === 'object' && 'message' in e ? String((e as Error).message) : '';
+    if (msg.includes('already been initialized') || msg.includes('already initialized')) {
+      return getFirestore(app);
+    }
+    return getFirestore(app);
+  }
+}
+
 /** Inicializa Firebase (JS SDK). Sin EXPO_PUBLIC_* configurados, devuelve null (modo solo local). */
 export function getFirebaseClients(): FirebaseClients | null {
   if (cached) return cached;
@@ -42,8 +76,8 @@ export function getFirebaseClients(): FirebaseClients | null {
   const app = getApps().length ? getApps()[0]! : initializeApp(cfg);
   cached = {
     app,
-    auth: getAuth(app),
-    firestore: getFirestore(app),
+    auth: initAuthWithPersistence(app),
+    firestore: initFirestoreWithLongPolling(app),
   };
   return cached;
 }

@@ -1,4 +1,3 @@
-// app/(child)/goals.tsx — Metas Visuales y Dinámicas para Niños (Versión sin iconos y funcional)
 import { useEffect, useState } from 'react';
 import {
   View,
@@ -9,23 +8,25 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   Keyboard,
+  Platform,
 } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { motion } from '@shared/constants/motion';
 import { Ionicons } from '@expo/vector-icons';
 import { Typography } from '@shared/constants/typography';
-import { useSavingsStore, SavingsGoal } from '@features/savings/store/useSavingsStore';
-import { useChildStore } from '@features/auth/store/useChildStore';
+import { Spacing } from '@shared/constants/theme';
+import { useSavingsStore, type SavingsGoal } from '@features/savings/store/useSavingsStore';
+import { useUserStore } from '@features/auth/store/useUserStore';
 import CetiButton from '@shared/components/CetiButton';
-import ChildUnitScreenLayout from '@shared/components/child/ChildUnitScreenLayout';
+import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useWalletStore } from '@features/savings/store/useWalletStore';
 import { formatMoneyInputThousands, parseMoneyAmountInt } from '@shared/utils/moneyInputFormat';
 import { formatDisplayCopGoals } from '@shared/utils/formatDisplayCop';
 import CetiBottomSheet from '@shared/components/CetiBottomSheet';
 import { showCetiNotice } from '@shared/store/useCetiOverlayStore';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-// ── Tarjeta de Meta Visual (Sin Iconos) ───────────────────────────────────────
 function VisualGoalCard({
   goal,
   delay,
@@ -51,23 +52,18 @@ function VisualGoalCard({
         <View style={{ flex: 1 }}>
           <Text style={[styles.goalName, { color: colors.text.primary }]}>{goal.title}</Text>
           <Text style={[styles.goalStatus, { color: colors.text.tertiary }]}>
-            {progress === 100
-              ? '¡Meta alcanzada!'
-              : `${goal.source === 'parent' ? 'Reto de Papá' : 'Tu propia meta'}`}
+            {progress === 100 ? '¡Meta alcanzada!' : 'Tu meta'}
           </Text>
         </View>
         {progress === 100 ? (
           <Ionicons name="trophy" size={24} color={colors.gold.primary} />
         ) : (
           <TouchableOpacity
-            style={[
-              styles.cardDepositBtn,
-              { backgroundColor: colors.brand.primary, borderColor: colors.brand.primary },
-            ]}
+            style={[styles.cardDepositBtn, { backgroundColor: colors.brand.primary }]}
             onPress={onDeposit}
           >
             <Ionicons name="add-circle" size={18} color={colors.text.onBrand} />
-            <Text style={[styles.cardDepositText, { color: colors.text.onBrand }]}>¡Ahorrar!</Text>
+            <Text style={[styles.cardDepositText, { color: colors.text.onBrand }]}>Ahorrar</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -110,253 +106,225 @@ function VisualGoalCard({
 
 export default function GoalsScreen() {
   const colors = useThemeColors();
-  const styles_dynamic = getStyles(colors);
+  const insets = useSafeAreaInsets();
   const { totalCetis } = useWalletStore();
-
-  const { id: activeChildId, nickname } = useChildStore();
+  const { nickname } = useUserStore();
   const [showDeposit, setShowDeposit] = useState(false);
   const [showNewGoal, setShowNewGoal] = useState(false);
   const [preSelectedGoal, setPreSelectedGoal] = useState<{ id: string; title: string } | null>(
     null
   );
 
-  const rawGoals = useSavingsStore((s) => s.goals);
-  const rawDeposits = useSavingsStore((s) => s.deposits);
-
-  const goals = rawGoals.filter((g) => g.childId === activeChildId);
-  const deposits = rawDeposits.filter((d) => d.childId === activeChildId);
-  const totalApproved = deposits
-    .filter((d) => d.status === 'approved')
-    .reduce((a, b) => a + b.amount, 0);
+  const goals = useSavingsStore((s) => s.goals);
+  const deposits = useSavingsStore((s) => s.deposits);
+  const totalSaved = useSavingsStore((s) => s.getTotalSaved)();
 
   const openDeposit = (goal?: SavingsGoal) => {
-    if (goal) {
-      setPreSelectedGoal({ id: goal.id, title: goal.title });
-    } else {
-      setPreSelectedGoal(null);
-    }
+    setPreSelectedGoal(goal ? { id: goal.id, title: goal.title } : null);
     setShowDeposit(true);
   };
 
   return (
     <>
-      <ChildUnitScreenLayout
-        kicker="Metas"
-        title="Tus metas"
-        subtitle={`¡Hola ${nickname}! Ahorra para lo que sueñas.`}
-        chip={goals.length > 0 ? String(goals.length) : undefined}
-      >
-        {/* Economía: mismas superficies que el resto de metas; acento en barra + icono */}
-        <View style={styles_dynamic.economyRow}>
-          <Animated.View
-            entering={motion.enterDown(72)}
-            style={[
-              styles_dynamic.economyCard,
-              { backgroundColor: colors.materials.base, borderColor: colors.materials.border },
-            ]}
-          >
-            <View style={styles_dynamic.economyCardInner}>
-              <View
-                style={[
-                  styles_dynamic.economyIconWrap,
-                  { backgroundColor: colors.materials.highlight },
-                ]}
-              >
-                <Ionicons name="wallet-outline" size={22} color={colors.gold.primary} />
-              </View>
-              <View style={styles_dynamic.economyTexts}>
-                <Text style={[styles_dynamic.economyLabel, { color: colors.text.tertiary }]}>
-                  Ahorros
-                </Text>
-                <Text
-                  style={[styles_dynamic.economyValue, { color: colors.gold.primary }]}
-                  numberOfLines={1}
-                >
-                  {formatDisplayCopGoals(totalApproved)}
-                </Text>
-              </View>
-            </View>
-          </Animated.View>
-
-          <Animated.View
-            entering={motion.enterDown(104)}
-            style={[
-              styles_dynamic.economyCard,
-              { backgroundColor: colors.materials.base, borderColor: colors.materials.border },
-            ]}
-          >
-            <View style={styles_dynamic.economyCardInner}>
-              <View
-                style={[
-                  styles_dynamic.economyIconWrap,
-                  { backgroundColor: colors.materials.highlight },
-                ]}
-              >
-                <Ionicons name="sparkles" size={22} color={colors.brand.primary} />
-              </View>
-              <View style={styles_dynamic.economyTexts}>
-                <Text style={[styles_dynamic.economyLabel, { color: colors.text.tertiary }]}>
-                  Cetis
-                </Text>
-                <Text style={[styles_dynamic.economyValue, { color: colors.text.primary }]}>
-                  {totalCetis}
-                </Text>
-              </View>
-            </View>
-          </Animated.View>
-        </View>
-
-        {/* Botones de Acción */}
-        <View style={styles_dynamic.actionsRow}>
-          <TouchableOpacity
-            style={[styles_dynamic.actionBtn, { backgroundColor: colors.brand.primary }]}
-            onPress={() => openDeposit()}
-          >
-            <Ionicons name="add-circle" size={20} color={colors.text.onBrand} />
-            <Text style={[styles_dynamic.actionBtnText, { color: colors.text.onBrand }]}>
-              ¡Ahorrar!
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles_dynamic.actionBtn,
-              {
-                backgroundColor: colors.background.secondary,
-                borderColor: colors.materials.border,
-                borderWidth: 1,
-              },
-            ]}
-            onPress={() => setShowNewGoal(true)}
-          >
-            <Ionicons name="flag" size={18} color={colors.text.primary} />
-            <Text style={[styles_dynamic.actionBtnText, { color: colors.text.primary }]}>
-              Nueva meta
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Metas Activas */}
-        <Animated.View entering={motion.enterDown(128)} style={styles_dynamic.section}>
-          <Text style={[styles_dynamic.sectionTitle, { color: colors.text.primary }]}>
-            Tus Metas
+      <ScreenWrapper style={[stylesD.root, { backgroundColor: colors.background.base }]}>
+        <ScrollView
+          contentContainerStyle={[
+            stylesD.scroll,
+            { paddingTop: Math.max(insets.top, Platform.OS === 'ios' ? 12 : 8) + 16 },
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
+          <Text style={[stylesD.pageTitle, { color: colors.text.primary }]}>Mis metas</Text>
+          <Text style={[stylesD.pageSubtitle, { color: colors.text.secondary }]}>
+            ¡Hola {nickname}! Ahorra para lo que sueñas.
           </Text>
-          {goals.length > 0 ? (
-            goals.map((g, i) => (
-              <VisualGoalCard
-                key={g.id}
-                goal={g}
-                delay={96 + i * 40}
-                onDeposit={() => openDeposit(g)}
-              />
-            ))
-          ) : (
-            <View
+
+          <View style={stylesD.economyRow}>
+            <Animated.View
+              entering={motion.enterDown(72)}
               style={[
-                styles_dynamic.emptyCard,
+                stylesD.economyCard,
                 { backgroundColor: colors.materials.base, borderColor: colors.materials.border },
               ]}
             >
-              <Ionicons name="star-outline" size={40} color={colors.separator.opaque} />
-              <Text style={[styles_dynamic.emptyText, { color: colors.text.tertiary }]}>
-                ¿Cuál será tu primera meta?
-              </Text>
-              <CetiButton
-                label="Crear mi meta"
-                onPress={() => setShowNewGoal(true)}
-                variant="glass"
-                size="small"
-              />
-            </View>
-          )}
-        </Animated.View>
+              <View style={stylesD.economyCardInner}>
+                <View
+                  style={[stylesD.economyIconWrap, { backgroundColor: colors.materials.highlight }]}
+                >
+                  <Ionicons name="wallet-outline" size={22} color={colors.gold.primary} />
+                </View>
+                <View style={stylesD.economyTexts}>
+                  <Text style={[stylesD.economyLabel, { color: colors.text.tertiary }]}>
+                    Ahorros
+                  </Text>
+                  <Text
+                    style={[stylesD.economyValue, { color: colors.gold.primary }]}
+                    numberOfLines={1}
+                  >
+                    {formatDisplayCopGoals(totalSaved)}
+                  </Text>
+                </View>
+              </View>
+            </Animated.View>
 
-        {/* Historial de Ahorro Simplificado */}
-        <Animated.View
-          entering={motion.enterDown(168)}
-          style={[styles_dynamic.section, { marginTop: 14 }]}
-        >
-          <Text style={[styles_dynamic.sectionTitle, { color: colors.text.primary }]}>
-            Mis ahorros
-          </Text>
-          <View
-            style={[
-              styles_dynamic.historyBox,
-              { backgroundColor: colors.materials.base, borderColor: colors.materials.border },
-            ]}
-          >
-            {deposits.slice(0, 3).map((d, i, arr) => (
+            <Animated.View
+              entering={motion.enterDown(104)}
+              style={[
+                stylesD.economyCard,
+                { backgroundColor: colors.materials.base, borderColor: colors.materials.border },
+              ]}
+            >
+              <View style={stylesD.economyCardInner}>
+                <View
+                  style={[stylesD.economyIconWrap, { backgroundColor: colors.materials.highlight }]}
+                >
+                  <Ionicons name="sparkles" size={22} color={colors.brand.primary} />
+                </View>
+                <View style={stylesD.economyTexts}>
+                  <Text style={[stylesD.economyLabel, { color: colors.text.tertiary }]}>Cetis</Text>
+                  <Text style={[stylesD.economyValue, { color: colors.text.primary }]}>
+                    {totalCetis}
+                  </Text>
+                </View>
+              </View>
+            </Animated.View>
+          </View>
+
+          <View style={stylesD.actionsRow}>
+            <TouchableOpacity
+              style={[stylesD.actionBtn, { backgroundColor: colors.brand.primary }]}
+              onPress={() => openDeposit()}
+            >
+              <Ionicons name="add-circle" size={20} color={colors.text.onBrand} />
+              <Text style={[stylesD.actionBtnText, { color: colors.text.onBrand }]}>Ahorrar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                stylesD.actionBtn,
+                {
+                  backgroundColor: colors.background.secondary,
+                  borderColor: colors.materials.border,
+                  borderWidth: 1,
+                },
+              ]}
+              onPress={() => setShowNewGoal(true)}
+            >
+              <Ionicons name="flag" size={18} color={colors.text.primary} />
+              <Text style={[stylesD.actionBtnText, { color: colors.text.primary }]}>
+                Nueva meta
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <Animated.View entering={motion.enterDown(128)} style={stylesD.section}>
+            <Text style={[stylesD.sectionTitle, { color: colors.text.primary }]}>Tus metas</Text>
+            {goals.length > 0 ? (
+              goals.map((g, i) => (
+                <VisualGoalCard
+                  key={g.id}
+                  goal={g}
+                  delay={96 + i * 40}
+                  onDeposit={() => openDeposit(g)}
+                />
+              ))
+            ) : (
               <View
-                key={d.id}
                 style={[
-                  styles_dynamic.historyItem,
-                  i < arr.length - 1 && {
-                    borderBottomWidth: 1,
-                    borderBottomColor: colors.materials.border,
-                  },
+                  stylesD.emptyCard,
+                  { backgroundColor: colors.materials.base, borderColor: colors.materials.border },
                 ]}
               >
-                <Ionicons
-                  name={d.status === 'approved' ? 'checkmark-circle' : 'time'}
-                  size={18}
-                  color={d.status === 'approved' ? colors.system.green : colors.system.orange}
+                <Ionicons name="star-outline" size={40} color={colors.separator.opaque} />
+                <Text style={[stylesD.emptyText, { color: colors.text.tertiary }]}>
+                  ¿Cuál será tu primera meta?
+                </Text>
+                <CetiButton
+                  label="Crear mi meta"
+                  onPress={() => setShowNewGoal(true)}
+                  variant="glass"
+                  size="small"
                 />
-                <Text style={[styles_dynamic.historyDesc, { color: colors.text.primary }]}>
-                  {d.description}
-                </Text>
-                <Text
-                  style={[styles_dynamic.historyAmt, { color: colors.text.secondary }]}
-                  numberOfLines={1}
-                >
-                  {formatDisplayCopGoals(d.amount)}
-                </Text>
               </View>
-            ))}
-          </View>
-        </Animated.View>
-      </ChildUnitScreenLayout>
+            )}
+          </Animated.View>
 
-      {/* Modal: Ahorrar Dinero */}
+          <Animated.View
+            entering={motion.enterDown(168)}
+            style={[stylesD.section, { marginTop: 14 }]}
+          >
+            <Text style={[stylesD.sectionTitle, { color: colors.text.primary }]}>Historial</Text>
+            <View
+              style={[
+                stylesD.historyBox,
+                { backgroundColor: colors.materials.base, borderColor: colors.materials.border },
+              ]}
+            >
+              {deposits.length === 0 ? (
+                <View style={stylesD.historyEmpty}>
+                  <Text style={[stylesD.emptyText, { color: colors.text.tertiary }]}>
+                    Sin depósitos todavía
+                  </Text>
+                </View>
+              ) : (
+                deposits.slice(0, 5).map((d, i, arr) => (
+                  <View
+                    key={d.id}
+                    style={[
+                      stylesD.historyItem,
+                      i < arr.length - 1 && {
+                        borderBottomWidth: 1,
+                        borderBottomColor: colors.materials.border,
+                      },
+                    ]}
+                  >
+                    <Ionicons name="checkmark-circle" size={18} color={colors.system.green} />
+                    <Text style={[stylesD.historyDesc, { color: colors.text.primary }]}>
+                      {d.description}
+                    </Text>
+                    <Text
+                      style={[stylesD.historyAmt, { color: colors.text.secondary }]}
+                      numberOfLines={1}
+                    >
+                      {formatDisplayCopGoals(d.amount)}
+                    </Text>
+                  </View>
+                ))
+              )}
+            </View>
+          </Animated.View>
+        </ScrollView>
+      </ScreenWrapper>
+
       <DepositModal
         visible={showDeposit}
         onClose={() => setShowDeposit(false)}
         goals={goals}
         preSelected={preSelectedGoal}
-        childId={activeChildId}
         colors={colors}
       />
 
-      {/* Modal: Nueva Meta */}
-      <NewGoalModal
-        visible={showNewGoal}
-        onClose={() => setShowNewGoal(false)}
-        childId={activeChildId}
-        colors={colors}
-      />
+      <NewGoalModal visible={showNewGoal} onClose={() => setShowNewGoal(false)} colors={colors} />
     </>
   );
 }
-
-// ── SUB-COMPONENTES: MODALES ──────────────────────────────────────────────────
 
 function DepositModal({
   visible,
   onClose,
   goals,
   preSelected,
-  childId,
   colors,
 }: {
   visible: boolean;
   onClose: () => void;
   goals: SavingsGoal[];
   preSelected: { id: string; title: string } | null;
-  childId: string;
   colors: ReturnType<typeof useThemeColors>;
 }) {
   const [amount, setAmount] = useState('');
   const [desc, setDesc] = useState('');
   const [selectedGoalId, setSelectedGoalId] = useState('');
-  const submitDeposit = useSavingsStore((s) => s.submitDeposit);
+  const addDeposit = useSavingsStore((s) => s.addDeposit);
 
   useEffect(() => {
     if (!visible) return;
@@ -369,23 +337,23 @@ function DepositModal({
       showCetiNotice({
         variant: 'info',
         title: 'Primero una meta',
-        message: 'Crea una meta con el botón «Nueva meta» para registrar ahorros.',
+        message: 'Crea una meta antes de registrar ahorros.',
       });
       return;
     }
-    if (!num || !desc.trim() || !selectedGoalId) {
+    if (!num || !desc.trim()) {
       showCetiNotice({
         variant: 'error',
         title: 'Revisa los datos',
-        message: 'Indica cuánto ahorraste, de dónde salió y elige una meta.',
+        message: 'Indica cuánto ahorraste y una descripción.',
       });
       return;
     }
-    submitDeposit(childId, num, desc.trim(), selectedGoalId);
+    addDeposit(num, desc.trim(), selectedGoalId || undefined);
     showCetiNotice({
       variant: 'success',
-      title: '¡Enviado!',
-      message: 'Un adulto debe confirmar tu depósito en la app.',
+      title: '¡Guardado!',
+      message: 'Tu ahorro fue registrado.',
     });
     setAmount('');
     setDesc('');
@@ -397,7 +365,7 @@ function DepositModal({
       visible={visible}
       onClose={onClose}
       title="Registrar ahorro"
-      subtitle="Tu familia debe aprobarlo"
+      subtitle="Se aplica directamente a tu meta"
       closeOnBackdropPress
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -411,7 +379,7 @@ function DepositModal({
                 borderColor: colors.materials.border,
               },
             ]}
-            placeholder="¿Cuánto dinero? (ej: 50.000)"
+            placeholder="¿Cuánto? (ej: 50.000)"
             placeholderTextColor={colors.text.tertiary}
             keyboardType="numeric"
             value={amount}
@@ -431,40 +399,46 @@ function DepositModal({
             value={desc}
             onChangeText={setDesc}
           />
-          <Text style={[mStyles.label, { color: colors.text.secondary }]}>¿Para qué meta es?</Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={{ marginBottom: 12 }}
-          >
-            {goals.map((g) => (
-              <TouchableOpacity
-                key={g.id}
-                onPress={() => setSelectedGoalId(g.id)}
-                style={[
-                  mStyles.goalChip,
-                  {
-                    backgroundColor: colors.materials.highlight,
-                    borderColor: colors.materials.border,
-                  },
-                  selectedGoalId === g.id && {
-                    borderColor: colors.brand.primary,
-                    backgroundColor: colors.fill.brandSubtle,
-                  },
-                ]}
+          {goals.length > 0 && (
+            <>
+              <Text style={[mStyles.label, { color: colors.text.secondary }]}>
+                ¿Para qué meta es?
+              </Text>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={{ marginBottom: 12 }}
               >
-                <Text
-                  style={[
-                    mStyles.chipText,
-                    { color: colors.text.primary },
-                    selectedGoalId === g.id && { color: colors.brand.primary },
-                  ]}
-                >
-                  {g.title}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+                {goals.map((g) => (
+                  <TouchableOpacity
+                    key={g.id}
+                    onPress={() => setSelectedGoalId(g.id)}
+                    style={[
+                      mStyles.goalChip,
+                      {
+                        backgroundColor: colors.materials.highlight,
+                        borderColor: colors.materials.border,
+                      },
+                      selectedGoalId === g.id && {
+                        borderColor: colors.brand.primary,
+                        backgroundColor: colors.fill.brandSubtle,
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        mStyles.chipText,
+                        { color: colors.text.primary },
+                        selectedGoalId === g.id && { color: colors.brand.primary },
+                      ]}
+                    >
+                      {g.title}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </>
+          )}
           <View style={mStyles.row}>
             <CetiButton
               label="Cancelar"
@@ -474,7 +448,7 @@ function DepositModal({
               style={{ flex: 1 }}
             />
             <CetiButton
-              label="Enviar"
+              label="Guardar"
               onPress={handleDeposit}
               variant="primary"
               size="medium"
@@ -490,17 +464,15 @@ function DepositModal({
 function NewGoalModal({
   visible,
   onClose,
-  childId,
   colors,
 }: {
   visible: boolean;
   onClose: () => void;
-  childId: string;
   colors: ReturnType<typeof useThemeColors>;
 }) {
   const [title, setTitle] = useState('');
   const [target, setTarget] = useState('');
-  const addChildGoal = useSavingsStore((s) => s.addChildGoal);
+  const addGoal = useSavingsStore((s) => s.addGoal);
 
   const handleCreate = () => {
     const num = parseMoneyAmountInt(target);
@@ -508,11 +480,11 @@ function NewGoalModal({
       showCetiNotice({
         variant: 'error',
         title: 'Faltan datos',
-        message: 'Pon nombre a tu meta y cuánto cuesta en pesos.',
+        message: 'Pon nombre a tu meta y cuánto cuesta.',
       });
       return;
     }
-    addChildGoal(childId, {
+    addGoal({
       title: title.trim(),
       targetAmount: num,
       category: 'custom',
@@ -522,7 +494,7 @@ function NewGoalModal({
     });
     showCetiNotice({
       variant: 'success',
-      title: '¡Meta lista!',
+      title: '¡Meta creada!',
       message: 'Ahora sí a ahorrar para lograrla.',
     });
     setTitle('');
@@ -591,77 +563,76 @@ function NewGoalModal({
   );
 }
 
-const getStyles = (colors: any) =>
-  StyleSheet.create({
-    economyRow: { flexDirection: 'row', gap: 12, marginBottom: 20 },
-    economyCard: {
-      flex: 1,
-      borderRadius: 20,
-      borderWidth: 1,
-      overflow: 'hidden',
-      minHeight: 80,
-    },
-    economyCardInner: {
-      flex: 1,
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 14,
-      paddingVertical: 16,
-      paddingHorizontal: 14,
-    },
-    economyIconWrap: {
-      width: 46,
-      height: 46,
-      borderRadius: 14,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    economyTexts: { flex: 1, minWidth: 0, gap: 4 },
-    economyLabel: {
-      ...Typography.caption2,
-      fontSize: 10,
-      fontWeight: '800',
-      letterSpacing: 1.2,
-      textTransform: 'uppercase',
-    },
-    economyValue: { ...Typography.headline, fontWeight: '900', fontSize: 17 },
+const stylesD = StyleSheet.create({
+  root: { flex: 1 },
+  scroll: { paddingHorizontal: Spacing.base, paddingBottom: 120, gap: 22 },
+  pageTitle: { ...Typography.largeTitle, fontWeight: '900' },
+  pageSubtitle: { ...Typography.subheadline, marginTop: 4 },
 
-    actionsRow: { flexDirection: 'row', gap: 12, marginBottom: 26 },
-    actionBtn: {
-      flex: 1,
-      height: 52,
-      borderRadius: 26,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: 8,
-    },
-    actionBtnText: { ...Typography.subheadline, fontWeight: '800' },
+  economyRow: { flexDirection: 'row', gap: 12 },
+  economyCard: { flex: 1, borderRadius: 20, borderWidth: 1, overflow: 'hidden', minHeight: 80 },
+  economyCardInner: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    paddingVertical: 16,
+    paddingHorizontal: 14,
+  },
+  economyIconWrap: {
+    width: 46,
+    height: 46,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  economyTexts: { flex: 1, minWidth: 0, gap: 4 },
+  economyLabel: {
+    ...Typography.caption2,
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 1.2,
+    textTransform: 'uppercase',
+  },
+  economyValue: { ...Typography.headline, fontWeight: '900', fontSize: 17 },
 
-    section: { gap: 18 },
-    sectionTitle: { ...Typography.title3, fontWeight: '800', marginBottom: 14 },
+  actionsRow: { flexDirection: 'row', gap: 12 },
+  actionBtn: {
+    flex: 1,
+    height: 52,
+    borderRadius: 26,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  actionBtnText: { ...Typography.subheadline, fontWeight: '800' },
 
-    emptyCard: {
-      padding: 40,
-      alignItems: 'center',
-      gap: 16,
-      borderRadius: 32,
-      borderStyle: 'dashed',
-      borderWidth: 2,
-    },
-    emptyText: { ...Typography.subheadline, textAlign: 'center' },
+  section: { gap: 18 },
+  sectionTitle: { ...Typography.title3, fontWeight: '800' },
 
-    historyBox: { borderRadius: 20, paddingHorizontal: 4, paddingVertical: 4, borderWidth: 1 },
-    historyItem: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 12,
-      paddingVertical: 14,
-      paddingHorizontal: 12,
-    },
-    historyDesc: { flex: 1, ...Typography.caption1 },
-    historyAmt: { ...Typography.headline, fontWeight: '700', flexShrink: 0, marginLeft: 8 },
-  });
+  emptyCard: {
+    padding: 40,
+    alignItems: 'center',
+    gap: 16,
+    borderRadius: 32,
+    borderStyle: 'dashed',
+    borderWidth: 2,
+  },
+  emptyText: { ...Typography.subheadline, textAlign: 'center' },
+
+  historyBox: { borderRadius: 20, paddingHorizontal: 4, paddingVertical: 4, borderWidth: 1 },
+  historyEmpty: { paddingVertical: 20, alignItems: 'center' },
+  historyItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 12,
+  },
+  historyDesc: { flex: 1, ...Typography.caption1 },
+  historyAmt: { ...Typography.headline, fontWeight: '700', flexShrink: 0, marginLeft: 8 },
+});
 
 const styles = StyleSheet.create({
   goalCard: {
@@ -673,7 +644,6 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   cardHeader: { flexDirection: 'row', alignItems: 'flex-start', gap: 14 },
-  cardTitleBlock: { flex: 1, minWidth: 0, paddingRight: 6, gap: 6 },
   goalName: { ...Typography.headline, fontWeight: '800' },
   goalStatus: { ...Typography.caption1 },
   cardDepositBtn: {
@@ -683,12 +653,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 16,
-    borderWidth: 1,
     flexShrink: 0,
     marginTop: 2,
   },
   cardDepositText: { ...Typography.caption1, fontWeight: '800' },
-
   progressArea: { gap: 14, marginTop: 2 },
   barContainer: { height: 12, borderRadius: 6, justifyContent: 'center' },
   barBg: { ...StyleSheet.absoluteFillObject, borderRadius: 6, overflow: 'hidden' },

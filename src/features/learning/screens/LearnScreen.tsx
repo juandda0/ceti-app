@@ -1,4 +1,3 @@
-// app/(child)/learn.tsx — Mapa saga con header sticky dinamico por seccion
 import { useMemo, useState } from 'react';
 import {
   View,
@@ -16,16 +15,16 @@ import LessonSagaMap from '@features/learning/components/saga/LessonSagaMap';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useChildStore } from '@features/auth/store/useChildStore';
+import { useUserStore } from '@features/auth/store/useUserStore';
 
 export default function LearnScreen() {
-  const childId = useChildStore((s) => s.id);
+  const userId = useUserStore((s) => s.id);
   const completedLessons = useLessonsStore((s) => s.completedLessons);
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
   const done = useMemo(
-    () => completedLessons.filter((p) => p.childId === childId).length,
-    [completedLessons, childId]
+    () => completedLessons.filter((p) => p.uid === userId).length,
+    [completedLessons, userId]
   );
   const total = LESSONS.length;
   const [activeUnitId, setActiveUnitId] = useState<string>(LEARN_UNITS[0].id);
