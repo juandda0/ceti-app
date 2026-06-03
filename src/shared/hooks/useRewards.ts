@@ -4,6 +4,8 @@ import { useUserStore } from '@features/auth/store/useUserStore';
 import { useWalletStore } from '@features/savings/store/useWalletStore';
 import { useLessonsStore } from '@features/learning/store/useLessonsStore';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
+import { useQuestionBankStore } from '@features/learning/store/useQuestionBankStore';
+import { masteryPercent } from '@features/learning/data/mastery';
 import { BADGES, Badge, BadgeConditionType } from '@shared/data/badges';
 
 /**
@@ -15,6 +17,18 @@ export function useRewards() {
   const wallet = useWalletStore();
   const lessons = useLessonsStore();
   const savingsGoals = useSavingsStore((s) => s.goals);
+  const getWorldProgress = useQuestionBankStore((s) => s.getWorldProgress);
+
+  // Mastery (0..100) for a world's quiz; drives achievement-based badges.
+  const getWorldMastery = useCallback(
+    (worldId: NonNullable<Badge['worldId']>): number => {
+      const userId = (store.id || '').trim();
+      if (!userId) return 0;
+      const { done, total } = getWorldProgress(userId, worldId);
+      return masteryPercent(done, total);
+    },
+    [store.id, getWorldProgress]
+  );
 
   const getConditionValue = useCallback(
     (type: BadgeConditionType): number => {
@@ -63,14 +77,17 @@ export function useRewards() {
 
     for (const badge of BADGES) {
       if (unlockedBadges.includes(badge.id)) continue;
-      const currentValue = getConditionValue(badge.conditionType);
+      const currentValue =
+        badge.conditionType === 'world_mastery' && badge.worldId
+          ? getWorldMastery(badge.worldId)
+          : getConditionValue(badge.conditionType);
       if (currentValue >= badge.conditionValue) {
         unlockBadge(badge.id);
         newBadges.push(badge);
       }
     }
     return newBadges;
-  }, [store.unlockedBadges, store.unlockBadge, getConditionValue]);
+  }, [store.unlockedBadges, store.unlockBadge, getConditionValue, getWorldMastery]);
 
   const checkAll = useCallback(() => {
     return { badges: checkBadges() };

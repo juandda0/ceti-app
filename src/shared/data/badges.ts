@@ -1,5 +1,8 @@
 // data/badges.ts — Logros del sistema Ceti
 import { LESSONS } from '@features/learning/data/lessons';
+import { WORLD_COMPETENCIAS } from '@features/learning/data/competencias';
+import { MASTERY_THRESHOLD } from '@features/learning/data/mastery';
+import type { WorldId } from '@features/learning/data/questionBank.types';
 
 export interface Badge {
   id: string;
@@ -7,7 +10,10 @@ export interface Badge {
   emoji: string;
   description: string;
   conditionType: BadgeConditionType;
+  /** Threshold; for `world_mastery` it is a mastery percent (0..100). */
   conditionValue: number;
+  /** Required for `world_mastery` badges: which world/competency it rewards. */
+  worldId?: WorldId;
 }
 
 export type BadgeConditionType =
@@ -17,7 +23,25 @@ export type BadgeConditionType =
   | 'savings_decisions'
   | 'savings_goal_set'
   | 'goals_completed'
-  | 'level';
+  | 'level'
+  // Achievement-based (NOT time): awarded when a competency is mastered.
+  | 'world_mastery';
+
+// One mastery badge per competency (achievement-based, not time-based).
+const WORLD_MASTERY_BADGES: Badge[] = (Object.keys(WORLD_COMPETENCIAS) as WorldId[]).map(
+  (worldId) => {
+    const comp = WORLD_COMPETENCIAS[worldId];
+    return {
+      id: `mastery_${comp.id}`,
+      name: `Maestría: ${comp.label}`,
+      emoji: '🎯',
+      description: `Dominaste la competencia de ${comp.label}`,
+      conditionType: 'world_mastery',
+      conditionValue: Math.round(MASTERY_THRESHOLD * 100),
+      worldId,
+    };
+  }
+);
 
 export const BADGES: Badge[] = [
   {
@@ -92,4 +116,5 @@ export const BADGES: Badge[] = [
     conditionType: 'level',
     conditionValue: 3,
   },
+  ...WORLD_MASTERY_BADGES,
 ];
