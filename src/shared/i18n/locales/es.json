@@ -25,8 +25,25 @@
     "homeTitle": "Panel docente",
     "welcome": "Hola, {{role}}",
     "colegioLabel": "Colegio",
-    "dashboardSoon": "El reporte de progreso por curso llegará pronto.",
+    "coursesLabel": "Mis cursos",
+    "noCourses": "Aún no tienes cursos asignados.",
     "logout": "Cerrar sesión"
+  },
+  "dashboard": {
+    "courseReport": "Reporte de progreso por competencia",
+    "error": "No se pudo cargar el reporte.",
+    "noData": "Aún no hay progreso registrado en este curso.",
+    "weakest": "Competencia más floja del curso: {{competencia}} ({{pct}} promedio)",
+    "students": "Estudiantes ({{count}})",
+    "exportCsv": "Exportar CSV",
+    "exportPdf": "Imprimir / PDF",
+    "exportTitle": "Exportar",
+    "exportWebOnly": "La exportación está disponible en la versión web."
+  },
+  "estados": {
+    "pendiente_autorizacion": "Pendiente de autorización",
+    "activo": "Activo",
+    "suprimido": "Suprimido"
   },
   "legal": {
     "privacyPolicy": "Política de tratamiento de datos"
