@@ -111,6 +111,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 12,
     maxHeight: '92%',
+    // Web: keep the panel above the absolute backdrop Pressable, otherwise the
+    // backdrop paints on top and swallows taps so inputs can't be focused.
+    position: 'relative',
+    zIndex: 1,
   },
   dragHandle: {
     width: 44,
