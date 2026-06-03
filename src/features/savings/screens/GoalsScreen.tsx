@@ -11,6 +11,7 @@ import {
   Platform,
 } from 'react-native';
 import Animated from 'react-native-reanimated';
+import { useTranslation } from 'react-i18next';
 import { motion } from '@shared/constants/motion';
 import { Ionicons } from '@expo/vector-icons';
 import { Typography } from '@shared/constants/typography';
@@ -37,6 +38,7 @@ function VisualGoalCard({
   onDeposit: () => void;
 }) {
   const colors = useThemeColors();
+  const { t } = useTranslation();
   const progress =
     goal.targetAmount > 0 ? Math.min((goal.currentAmount / goal.targetAmount) * 100, 100) : 0;
 
@@ -52,7 +54,7 @@ function VisualGoalCard({
         <View style={{ flex: 1 }}>
           <Text style={[styles.goalName, { color: colors.text.primary }]}>{goal.title}</Text>
           <Text style={[styles.goalStatus, { color: colors.text.tertiary }]}>
-            {progress === 100 ? '¡Meta alcanzada!' : 'Tu meta'}
+            {progress === 100 ? t('goals.goalReached') : t('goals.yourGoal')}
           </Text>
         </View>
         {progress === 100 ? (
@@ -61,9 +63,13 @@ function VisualGoalCard({
           <TouchableOpacity
             style={[styles.cardDepositBtn, { backgroundColor: colors.brand.primary }]}
             onPress={onDeposit}
+            accessibilityRole="button"
+            accessibilityLabel={t('goals.depositForGoal', { title: goal.title })}
           >
             <Ionicons name="add-circle" size={18} color={colors.text.onBrand} />
-            <Text style={[styles.cardDepositText, { color: colors.text.onBrand }]}>Ahorrar</Text>
+            <Text style={[styles.cardDepositText, { color: colors.text.onBrand }]}>
+              {t('goals.save')}
+            </Text>
           </TouchableOpacity>
         )}
       </View>
@@ -96,7 +102,7 @@ function VisualGoalCard({
             {formatDisplayCopGoals(goal.currentAmount)}
           </Text>
           <Text style={[styles.targetAmount, { color: colors.text.tertiary }]}>
-            de {formatDisplayCopGoals(goal.targetAmount)}
+            {t('goals.ofTarget', { amount: formatDisplayCopGoals(goal.targetAmount) })}
           </Text>
         </View>
       </View>
@@ -106,6 +112,7 @@ function VisualGoalCard({
 
 export default function GoalsScreen() {
   const colors = useThemeColors();
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const { totalCetis } = useWalletStore();
   const { nickname } = useUserStore();
@@ -134,9 +141,11 @@ export default function GoalsScreen() {
           ]}
           showsVerticalScrollIndicator={false}
         >
-          <Text style={[stylesD.pageTitle, { color: colors.text.primary }]}>Mis metas</Text>
+          <Text style={[stylesD.pageTitle, { color: colors.text.primary }]}>
+            {t('goals.pageTitle')}
+          </Text>
           <Text style={[stylesD.pageSubtitle, { color: colors.text.secondary }]}>
-            ¡Hola {nickname}! Ahorra para lo que sueñas.
+            {t('goals.pageSubtitle', { name: nickname })}
           </Text>
 
           <View style={stylesD.economyRow}>
@@ -155,7 +164,7 @@ export default function GoalsScreen() {
                 </View>
                 <View style={stylesD.economyTexts}>
                   <Text style={[stylesD.economyLabel, { color: colors.text.tertiary }]}>
-                    Ahorros
+                    {t('goals.savings')}
                   </Text>
                   <Text
                     style={[stylesD.economyValue, { color: colors.gold.primary }]}
@@ -181,7 +190,9 @@ export default function GoalsScreen() {
                   <Ionicons name="sparkles" size={22} color={colors.brand.primary} />
                 </View>
                 <View style={stylesD.economyTexts}>
-                  <Text style={[stylesD.economyLabel, { color: colors.text.tertiary }]}>Cetis</Text>
+                  <Text style={[stylesD.economyLabel, { color: colors.text.tertiary }]}>
+                    {t('goals.cetis')}
+                  </Text>
                   <Text style={[stylesD.economyValue, { color: colors.text.primary }]}>
                     {totalCetis}
                   </Text>
@@ -194,9 +205,13 @@ export default function GoalsScreen() {
             <TouchableOpacity
               style={[stylesD.actionBtn, { backgroundColor: colors.brand.primary }]}
               onPress={() => openDeposit()}
+              accessibilityRole="button"
+              accessibilityLabel={t('goals.save')}
             >
               <Ionicons name="add-circle" size={20} color={colors.text.onBrand} />
-              <Text style={[stylesD.actionBtnText, { color: colors.text.onBrand }]}>Ahorrar</Text>
+              <Text style={[stylesD.actionBtnText, { color: colors.text.onBrand }]}>
+                {t('goals.save')}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[
@@ -208,16 +223,20 @@ export default function GoalsScreen() {
                 },
               ]}
               onPress={() => setShowNewGoal(true)}
+              accessibilityRole="button"
+              accessibilityLabel={t('goals.newGoal')}
             >
               <Ionicons name="flag" size={18} color={colors.text.primary} />
               <Text style={[stylesD.actionBtnText, { color: colors.text.primary }]}>
-                Nueva meta
+                {t('goals.newGoal')}
               </Text>
             </TouchableOpacity>
           </View>
 
           <Animated.View entering={motion.enterDown(128)} style={stylesD.section}>
-            <Text style={[stylesD.sectionTitle, { color: colors.text.primary }]}>Tus metas</Text>
+            <Text style={[stylesD.sectionTitle, { color: colors.text.primary }]}>
+              {t('goals.yourGoals')}
+            </Text>
             {goals.length > 0 ? (
               goals.map((g, i) => (
                 <VisualGoalCard
@@ -236,10 +255,10 @@ export default function GoalsScreen() {
               >
                 <Ionicons name="star-outline" size={40} color={colors.separator.opaque} />
                 <Text style={[stylesD.emptyText, { color: colors.text.tertiary }]}>
-                  ¿Cuál será tu primera meta?
+                  {t('goals.firstGoal')}
                 </Text>
                 <CetiButton
-                  label="Crear mi meta"
+                  label={t('goals.createMyGoal')}
                   onPress={() => setShowNewGoal(true)}
                   variant="glass"
                   size="small"
@@ -252,7 +271,9 @@ export default function GoalsScreen() {
             entering={motion.enterDown(168)}
             style={[stylesD.section, { marginTop: 14 }]}
           >
-            <Text style={[stylesD.sectionTitle, { color: colors.text.primary }]}>Historial</Text>
+            <Text style={[stylesD.sectionTitle, { color: colors.text.primary }]}>
+              {t('goals.history')}
+            </Text>
             <View
               style={[
                 stylesD.historyBox,
@@ -262,7 +283,7 @@ export default function GoalsScreen() {
               {deposits.length === 0 ? (
                 <View style={stylesD.historyEmpty}>
                   <Text style={[stylesD.emptyText, { color: colors.text.tertiary }]}>
-                    Sin depósitos todavía
+                    {t('goals.noDeposits')}
                   </Text>
                 </View>
               ) : (
@@ -321,6 +342,7 @@ function DepositModal({
   preSelected: { id: string; title: string } | null;
   colors: ReturnType<typeof useThemeColors>;
 }) {
+  const { t } = useTranslation();
   const [amount, setAmount] = useState('');
   const [desc, setDesc] = useState('');
   const [selectedGoalId, setSelectedGoalId] = useState('');
@@ -336,24 +358,24 @@ function DepositModal({
     if (!goals.length) {
       showCetiNotice({
         variant: 'info',
-        title: 'Primero una meta',
-        message: 'Crea una meta antes de registrar ahorros.',
+        title: t('goals.needGoalTitle'),
+        message: t('goals.needGoalMsg'),
       });
       return;
     }
     if (!num || !desc.trim()) {
       showCetiNotice({
         variant: 'error',
-        title: 'Revisa los datos',
-        message: 'Indica cuánto ahorraste y una descripción.',
+        title: t('goals.reviewTitle'),
+        message: t('goals.reviewMsg'),
       });
       return;
     }
     addDeposit(num, desc.trim(), selectedGoalId || undefined);
     showCetiNotice({
       variant: 'success',
-      title: '¡Guardado!',
-      message: 'Tu ahorro fue registrado.',
+      title: t('goals.savedTitle'),
+      message: t('goals.savedMsg'),
     });
     setAmount('');
     setDesc('');
@@ -364,8 +386,8 @@ function DepositModal({
     <CetiBottomSheet
       visible={visible}
       onClose={onClose}
-      title="Registrar ahorro"
-      subtitle="Se aplica directamente a tu meta"
+      title={t('goals.registerSaving')}
+      subtitle={t('goals.registerSavingSub')}
       closeOnBackdropPress
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -379,11 +401,11 @@ function DepositModal({
                 borderColor: colors.materials.border,
               },
             ]}
-            placeholder="¿Cuánto? (ej: 50.000)"
+            placeholder={t('goals.amountPlaceholder')}
             placeholderTextColor={colors.text.tertiary}
             keyboardType="numeric"
             value={amount}
-            onChangeText={(t) => setAmount(formatMoneyInputThousands(t))}
+            onChangeText={(text) => setAmount(formatMoneyInputThousands(text))}
           />
           <TextInput
             style={[
@@ -394,7 +416,7 @@ function DepositModal({
                 borderColor: colors.materials.border,
               },
             ]}
-            placeholder="¿De dónde salió? (Ej: Domingo)"
+            placeholder={t('goals.sourcePlaceholder')}
             placeholderTextColor={colors.text.tertiary}
             value={desc}
             onChangeText={setDesc}
@@ -402,7 +424,7 @@ function DepositModal({
           {goals.length > 0 && (
             <>
               <Text style={[mStyles.label, { color: colors.text.secondary }]}>
-                ¿Para qué meta es?
+                {t('goals.whichGoal')}
               </Text>
               <ScrollView
                 horizontal
@@ -441,14 +463,14 @@ function DepositModal({
           )}
           <View style={mStyles.row}>
             <CetiButton
-              label="Cancelar"
+              label={t('goals.cancel')}
               onPress={onClose}
               variant="glass"
               size="medium"
               style={{ flex: 1 }}
             />
             <CetiButton
-              label="Guardar"
+              label={t('goals.saveBtn')}
               onPress={handleDeposit}
               variant="primary"
               size="medium"
@@ -470,6 +492,7 @@ function NewGoalModal({
   onClose: () => void;
   colors: ReturnType<typeof useThemeColors>;
 }) {
+  const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [target, setTarget] = useState('');
   const addGoal = useSavingsStore((s) => s.addGoal);
@@ -479,8 +502,8 @@ function NewGoalModal({
     if (!title.trim() || !num) {
       showCetiNotice({
         variant: 'error',
-        title: 'Faltan datos',
-        message: 'Pon nombre a tu meta y cuánto cuesta.',
+        title: t('goals.missingDataTitle'),
+        message: t('goals.missingDataMsg'),
       });
       return;
     }
@@ -494,8 +517,8 @@ function NewGoalModal({
     });
     showCetiNotice({
       variant: 'success',
-      title: '¡Meta creada!',
-      message: 'Ahora sí a ahorrar para lograrla.',
+      title: t('goals.goalCreatedTitle'),
+      message: t('goals.goalCreatedMsg'),
     });
     setTitle('');
     setTarget('');
@@ -506,8 +529,8 @@ function NewGoalModal({
     <CetiBottomSheet
       visible={visible}
       onClose={onClose}
-      title="Nueva meta"
-      subtitle="¿Qué quieres conseguir?"
+      title={t('goals.newGoalTitle')}
+      subtitle={t('goals.newGoalSub')}
       closeOnBackdropPress
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -521,7 +544,7 @@ function NewGoalModal({
                 borderColor: colors.materials.border,
               },
             ]}
-            placeholder="¿Qué quieres comprar o hacer?"
+            placeholder={t('goals.goalNamePlaceholder')}
             placeholderTextColor={colors.text.tertiary}
             value={title}
             onChangeText={setTitle}
@@ -535,22 +558,22 @@ function NewGoalModal({
                 borderColor: colors.materials.border,
               },
             ]}
-            placeholder="¿Cuánto cuesta? (ej: 120.000)"
+            placeholder={t('goals.goalCostPlaceholder')}
             placeholderTextColor={colors.text.tertiary}
             keyboardType="numeric"
             value={target}
-            onChangeText={(t) => setTarget(formatMoneyInputThousands(t))}
+            onChangeText={(text) => setTarget(formatMoneyInputThousands(text))}
           />
           <View style={mStyles.row}>
             <CetiButton
-              label="Cancelar"
+              label={t('goals.cancel')}
               onPress={onClose}
               variant="glass"
               size="medium"
               style={{ flex: 1 }}
             />
             <CetiButton
-              label="Crear meta"
+              label={t('goals.createGoal')}
               onPress={handleCreate}
               variant="primary"
               size="medium"

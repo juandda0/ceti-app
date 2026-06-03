@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
@@ -63,18 +63,23 @@ export default function AssignmentsManager({
 
   const onCreate = useCallback(async () => {
     setCreating(true);
-    const now = Date.now();
-    await asignacionRepository.create(colegioId, {
-      worldId: world,
-      target: { tipo: 'curso', cursoId },
-      fechaInicio: now,
-      deadline: now + days * DAY,
-      createdByUid,
-      createdAt: now,
-    });
-    setCreating(false);
-    await reload();
-  }, [colegioId, cursoId, world, days, createdByUid, reload]);
+    try {
+      const now = Date.now();
+      await asignacionRepository.create(colegioId, {
+        worldId: world,
+        target: { tipo: 'curso', cursoId },
+        fechaInicio: now,
+        deadline: now + days * DAY,
+        createdByUid,
+        createdAt: now,
+      });
+      await reload();
+    } catch (e) {
+      Alert.alert(t('admin.error'), e instanceof Error ? e.message : t('assignments.error'));
+    } finally {
+      setCreating(false);
+    }
+  }, [colegioId, cursoId, world, days, createdByUid, reload, t]);
 
   const now = Date.now();
   const sorted = useMemo(() => [...items].sort((a, b) => a.deadline - b.deadline), [items]);
