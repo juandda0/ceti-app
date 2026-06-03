@@ -23,6 +23,7 @@ export async function readCetiClaims(user: User, forceRefresh = false): Promise<
       sedeId: typeof c.sedeId === 'string' && c.sedeId.length > 0 ? c.sedeId : undefined,
       studentId:
         typeof c.studentId === 'string' && c.studentId.length > 0 ? c.studentId : undefined,
+      cursoId: typeof c.cursoId === 'string' && c.cursoId.length > 0 ? c.cursoId : undefined,
     };
   } catch {
     return null;

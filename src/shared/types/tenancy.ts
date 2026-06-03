@@ -24,6 +24,8 @@ export type CetiClaims = {
   sedeId?: string;
   /** Only for `estudiante`: the school pseudonym. */
   studentId?: string;
+  /** Only for `estudiante`: the course their roster slot lives under. */
+  cursoId?: string;
 };
 
 export type Colegio = {

@@ -44,6 +44,7 @@ Set by a Cloud Function (`functions/`) on provisioning / role assignment:
   "colegioId": "col_abc",
   "sedeId": "sede_1", // optional in MVP
   "studentId": "stu_2025_0481", // only for estudiante; the school pseudonym
+  "cursoId": "c1", // only for estudiante; locates their progress path
 }
 ```
 

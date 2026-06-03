@@ -18,6 +18,7 @@ interface AuthState {
   colegioId: string | null;
   sedeId: string | null;
   studentId: string | null;
+  cursoId: string | null;
 }
 
 interface AuthActions {
@@ -40,6 +41,7 @@ const initialState: AuthState = {
   colegioId: null,
   sedeId: null,
   studentId: null,
+  cursoId: null,
 };
 
 export const useAuthStore = create<AuthStore>()(
@@ -63,6 +65,7 @@ export const useAuthStore = create<AuthStore>()(
           colegioId: claims?.colegioId ?? null,
           sedeId: claims?.sedeId ?? null,
           studentId: claims?.studentId ?? null,
+          cursoId: claims?.cursoId ?? null,
         }),
 
       resetSessionFlagsFromFirebase: () =>
@@ -74,6 +77,7 @@ export const useAuthStore = create<AuthStore>()(
           colegioId: null,
           sedeId: null,
           studentId: null,
+          cursoId: null,
         }),
 
       logout: async () => {
@@ -118,6 +122,7 @@ export const useAuthStore = create<AuthStore>()(
         colegioId: null,
         sedeId: null,
         studentId: null,
+        cursoId: null,
       }),
     }
   )

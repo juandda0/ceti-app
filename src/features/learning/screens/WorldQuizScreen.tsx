@@ -15,6 +15,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { useQuestionBankStore } from '@features/learning/store/useQuestionBankStore';
 import { useUserStore } from '@features/auth/store/useUserStore';
+import { useAuthStore } from '@features/auth/store/useAuthStore';
+import { buildWorldProgress } from '@features/learning/data/worldProgress';
+import { worldProgressRepository } from '@features/dashboard/data/worldProgressRepository';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { Typography } from '@shared/constants/typography';
@@ -334,8 +337,18 @@ export default function WorldQuizScreen() {
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
   const userId = useUserStore((s) => s.id);
+  const xp = useUserStore((s) => s.xp);
+  const level = useUserStore((s) => s.level);
+
+  // Tenant identity (set only for provisioned students). Used to mirror progress
+  // to the school tree for the teacher dashboard; no-op when not provisioned.
+  const role = useAuthStore((s) => s.role);
+  const colegioId = useAuthStore((s) => s.colegioId);
+  const cursoId = useAuthStore((s) => s.cursoId);
+  const studentId = useAuthStore((s) => s.studentId);
 
   const fetchWorldQuestions = useQuestionBankStore((s) => s.fetchWorldQuestions);
+  const getWorldProgress = useQuestionBankStore((s) => s.getWorldProgress);
   const recordAnswer = useQuestionBankStore((s) => s.recordAnswer);
   const questions = useQuestionBankStore(
     (s) => s.questionsByWorld[worldId as WorldId] ?? EMPTY_QUESTIONS
@@ -387,6 +400,38 @@ export default function WorldQuizScreen() {
       setCurrentIndex(startIdx);
     }
   }, [questions.length]);
+
+  // On completion, mirror progress to the tenant tree for the teacher dashboard.
+  // Best-effort: only for provisioned students; rules also gate on estado=='activo'.
+  useEffect(() => {
+    if (!isComplete) return;
+    if (role !== 'estudiante' || !colegioId || !cursoId || !studentId || !worldId) return;
+    const { done, total } = getWorldProgress(userId ?? '', worldId as WorldId);
+    if (total <= 0) return;
+    const progress = buildWorldProgress({
+      colegioId,
+      cursoId,
+      studentId,
+      worldId: worldId as WorldId,
+      correct: done,
+      total,
+      xp,
+      nivel: level,
+      now: Date.now(),
+    });
+    void worldProgressRepository.upsert(colegioId, cursoId, studentId, worldId, progress);
+  }, [
+    isComplete,
+    role,
+    colegioId,
+    cursoId,
+    studentId,
+    worldId,
+    userId,
+    xp,
+    level,
+    getWorldProgress,
+  ]);
 
   const currentQuestion = questions[currentIndex];
   const options = currentQuestion ? (optionsByQuestion[currentQuestion.id] ?? []) : [];

@@ -42,6 +42,7 @@ type ClaimsPayload = {
   colegioId: string;
   sedeId?: string;
   studentId?: string;
+  cursoId?: string;
 };
 
 /** Sets auth custom claims + mirrors them into membership/{uid}. */
@@ -55,7 +56,11 @@ async function applyClaims(uid: string, payload: ClaimsPayload): Promise<void> {
     if (!payload.studentId) {
       throw new HttpsError('invalid-argument', "Role 'estudiante' requires a studentId.");
     }
+    if (!payload.cursoId) {
+      throw new HttpsError('invalid-argument', "Role 'estudiante' requires a cursoId.");
+    }
     claims.studentId = payload.studentId;
+    claims.cursoId = payload.cursoId;
   }
 
   await getAuth().setCustomUserClaims(uid, claims);
@@ -68,6 +73,7 @@ async function applyClaims(uid: string, payload: ClaimsPayload): Promise<void> {
         colegioId: payload.colegioId,
         ...(payload.sedeId ? { sedeId: payload.sedeId } : {}),
         ...(payload.studentId ? { studentId: payload.studentId } : {}),
+        ...(payload.cursoId ? { cursoId: payload.cursoId } : {}),
         claimsUpdatedAt: FieldValue.serverTimestamp(),
       },
       { merge: true }
@@ -107,8 +113,11 @@ export const setMemberClaims = onCall(async (request) => {
   const studentId = request.data?.studentId
     ? requireString(request.data.studentId, 'studentId')
     : undefined;
+  const cursoId = request.data?.cursoId
+    ? requireString(request.data.cursoId, 'cursoId')
+    : undefined;
 
-  await applyClaims(targetUid, { role, colegioId, sedeId, studentId });
+  await applyClaims(targetUid, { role, colegioId, sedeId, studentId, cursoId });
   return { ok: true };
 });
 
