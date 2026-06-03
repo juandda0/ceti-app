@@ -96,7 +96,12 @@ export const setMemberClaims = onCall(async (request) => {
     throw new HttpsError('permission-denied', 'Only rector/coordinador can assign roles.');
   }
 
-  const targetUid = requireString(request.data?.uid, 'uid');
+  // Target identified by email (admin console) or uid.
+  const emailArg = typeof request.data?.email === 'string' ? request.data.email.trim() : '';
+  const uidArg = typeof request.data?.uid === 'string' ? request.data.uid.trim() : '';
+  if (!emailArg && !uidArg) {
+    throw new HttpsError('invalid-argument', "Provide 'email' or 'uid'.");
+  }
   const colegioId = requireString(request.data?.colegioId, 'colegioId');
   const role = request.data?.role;
   if (!isRole(role)) {
@@ -117,8 +122,34 @@ export const setMemberClaims = onCall(async (request) => {
     ? requireString(request.data.cursoId, 'cursoId')
     : undefined;
 
+  let targetUid = uidArg;
+  if (!targetUid) {
+    try {
+      targetUid = (await getAuth().getUserByEmail(emailArg)).uid;
+    } catch {
+      throw new HttpsError(
+        'not-found',
+        `No existe un usuario con el correo ${emailArg}. Debe iniciar sesion al menos una vez.`
+      );
+    }
+  }
+
   await applyClaims(targetUid, { role, colegioId, sedeId, studentId, cursoId });
-  return { ok: true };
+
+  // Wire the membership both ways so the dashboards resolve.
+  const db = getFirestore();
+  if (role === 'profesor' && cursoId) {
+    await db
+      .doc(`colegios/${colegioId}/cursos/${cursoId}`)
+      .set({ profesorUids: FieldValue.arrayUnion(targetUid) }, { merge: true });
+  }
+  if (role === 'estudiante' && cursoId && studentId) {
+    await db
+      .doc(`colegios/${colegioId}/cursos/${cursoId}/estudiantes/${studentId}`)
+      .set({ uidVinculado: targetUid }, { merge: true });
+  }
+
+  return { ok: true, uid: targetUid };
 });
 
 /**

@@ -69,6 +69,30 @@
     "byCompetency": "Por competencia",
     "studentsCount": "{{count}} estudiantes con actividad"
   },
+  "admin": {
+    "link": "Administrar",
+    "title": "Administración",
+    "error": "No se pudo completar la acción",
+    "newCourse": "Nuevo curso",
+    "courseName": "Nombre del curso (ej. 9A)",
+    "courseGrade": "Grado (ej. 9)",
+    "createCourse": "Crear curso",
+    "courses": "Cursos",
+    "noCourses": "Aún no hay cursos.",
+    "assignMember": "Asignar miembro",
+    "assignHint": "El usuario debe haber iniciado sesión al menos una vez.",
+    "email": "Correo del usuario",
+    "assign": "Asignar rol",
+    "assignOkTitle": "Listo",
+    "assignOk": "{{email}} quedó asignado. Debe re-iniciar sesión para aplicar el rol.",
+    "teacherOk": "{{email}} es ahora profesor del curso. Debe re-iniciar sesión.",
+    "rosterTitle": "Roster del curso",
+    "studentLabel": "Etiqueta del estudiante (ej. Estudiante 1)",
+    "emptyRoster": "Aún no hay estudiantes en este curso.",
+    "authorize": "Autorizar",
+    "revoke": "Revocar",
+    "assignTeacher": "Asignar profesor"
+  },
   "legal": {
     "privacyPolicy": "Política de tratamiento de datos"
   }

@@ -75,19 +75,34 @@ export default function StaffHomeScreen() {
         </View>
 
         {(role === 'rector' || role === 'coordinador') && (
-          <TouchableOpacity
-            style={[styles.courseRow, { borderColor: colors.brand.primary }]}
-            accessibilityRole="button"
-            onPress={() => router.push('/(staff)/colegio' as Href)}
-          >
-            <Ionicons name="stats-chart-outline" size={20} color={colors.brand.primary} />
-            <View style={styles.courseInfo}>
-              <Text style={[styles.courseName, { color: colors.text.primary }]}>
-                {t('school.reportLink')}
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
-          </TouchableOpacity>
+          <>
+            <TouchableOpacity
+              style={[styles.courseRow, { borderColor: colors.brand.primary }]}
+              accessibilityRole="button"
+              onPress={() => router.push('/(staff)/colegio' as Href)}
+            >
+              <Ionicons name="stats-chart-outline" size={20} color={colors.brand.primary} />
+              <View style={styles.courseInfo}>
+                <Text style={[styles.courseName, { color: colors.text.primary }]}>
+                  {t('school.reportLink')}
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.courseRow, { borderColor: colors.brand.primary }]}
+              accessibilityRole="button"
+              onPress={() => router.push('/(staff)/admin' as Href)}
+            >
+              <Ionicons name="settings-outline" size={20} color={colors.brand.primary} />
+              <View style={styles.courseInfo}>
+                <Text style={[styles.courseName, { color: colors.text.primary }]}>
+                  {t('admin.link')}
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
+            </TouchableOpacity>
+          </>
         )}
 
         <Text style={[styles.sectionLabel, { color: colors.text.secondary }]}>
