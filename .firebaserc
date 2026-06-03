@@ -1,7 +1,5 @@
 {
   "projects": {
-    "finance": "ceti-a6475"
-  },
-  "targets": {},
-  "etags": {}
+    "default": "ceti-d3769"
+  }
 }
