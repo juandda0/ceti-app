@@ -74,6 +74,22 @@ export default function StaffHomeScreen() {
           <Text style={[styles.cardValue, { color: colors.text.primary }]}>{colegioId ?? '—'}</Text>
         </View>
 
+        {(role === 'rector' || role === 'coordinador') && (
+          <TouchableOpacity
+            style={[styles.courseRow, { borderColor: colors.brand.primary }]}
+            accessibilityRole="button"
+            onPress={() => router.push('/(staff)/colegio' as Href)}
+          >
+            <Ionicons name="stats-chart-outline" size={20} color={colors.brand.primary} />
+            <View style={styles.courseInfo}>
+              <Text style={[styles.courseName, { color: colors.text.primary }]}>
+                {t('school.reportLink')}
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
+          </TouchableOpacity>
+        )}
+
         <Text style={[styles.sectionLabel, { color: colors.text.secondary }]}>
           {t('staff.coursesLabel')}
         </Text>

@@ -60,6 +60,15 @@
     "studentTitle": "Tus tareas",
     "studentItem": "Completar Mundo {{n}} antes del {{date}}"
   },
+  "school": {
+    "reportLink": "Reporte del colegio",
+    "title": "Cumplimiento del colegio",
+    "overall": "Dominio promedio del colegio",
+    "weakest": "Competencia más floja: {{competencia}} ({{pct}})",
+    "byCourse": "Por curso",
+    "byCompetency": "Por competencia",
+    "studentsCount": "{{count}} estudiantes con actividad"
+  },
   "legal": {
     "privacyPolicy": "Política de tratamiento de datos"
   }
