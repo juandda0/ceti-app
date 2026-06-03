@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUserStore } from '@features/auth/store/useUserStore';
 import { useQuestionBankStore } from '@features/learning/store/useQuestionBankStore';
+import { competenciaForWorld } from '@features/learning/data/competencias';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { Typography } from '@shared/constants/typography';
@@ -123,6 +124,20 @@ function WorldCard({
           <Text style={[cardSt.worldDesc, { color: colors.text.tertiary }]} numberOfLines={2}>
             {world.description}
           </Text>
+
+          <View style={cardSt.competenciaTag}>
+            <Ionicons
+              name="school-outline"
+              size={12}
+              color={isUnlocked ? world.color : colors.text.quaternary}
+            />
+            <Text
+              style={[cardSt.competenciaText, { color: colors.text.tertiary }]}
+              numberOfLines={1}
+            >
+              {competenciaForWorld(world.id).label}
+            </Text>
+          </View>
 
           {isUnlocked ? (
             <View style={cardSt.progressRow}>
@@ -296,6 +311,16 @@ const cardSt = StyleSheet.create({
   worldDesc: {
     ...Typography.caption1,
     lineHeight: 17,
+  },
+  competenciaTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 6,
+  },
+  competenciaText: {
+    ...Typography.caption2,
+    fontWeight: '600',
   },
   progressRow: {
     flexDirection: 'row',
