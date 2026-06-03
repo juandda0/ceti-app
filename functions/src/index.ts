@@ -145,3 +145,135 @@ export const bootstrapColegio = onCall(async (request) => {
   await applyClaims(caller.uid, { role: 'rector', colegioId });
   return { ok: true, colegioId };
 });
+
+// ---------------------------------------------------------------------------
+// Ley 1581 — acudiente authorization & data suppression (see docs/COMPLIANCE.md).
+// ---------------------------------------------------------------------------
+
+type Caller = NonNullable<Parameters<Parameters<typeof onCall>[0]>[0]['auth']>;
+
+/** Verify the caller is a teacher listed on the course. */
+async function assertProfesorDeCurso(
+  uid: string,
+  colegioId: string,
+  cursoId: string
+): Promise<void> {
+  const snap = await getFirestore().doc(`colegios/${colegioId}/cursos/${cursoId}`).get();
+  const profesorUids = (snap.data()?.profesorUids ?? []) as string[];
+  if (!snap.exists || !profesorUids.includes(uid)) {
+    throw new HttpsError('permission-denied', 'Not a teacher of this course.');
+  }
+}
+
+/** Caller must be staff of `colegioId`; teachers must also own the course. */
+async function assertStaffOfColegio(
+  caller: Caller,
+  colegioId: string,
+  cursoId: string,
+  opts: { allowProfesor: boolean }
+): Promise<void> {
+  if (caller.token.colegioId !== colegioId) {
+    throw new HttpsError('permission-denied', 'Outside your colegio.');
+  }
+  const r = caller.token.role;
+  if (r === 'rector' || r === 'coordinador') return;
+  if (opts.allowProfesor && r === 'profesor') {
+    await assertProfesorDeCurso(caller.uid, colegioId, cursoId);
+    return;
+  }
+  throw new HttpsError('permission-denied', 'Insufficient role.');
+}
+
+/**
+ * Record (or revoke) the acudiente's data-treatment authorization for a student
+ * and gate activation accordingly. Consent is collected out-of-band (signed
+ * form / verified channel) and recorded here by staff with evidence metadata.
+ * 'otorgada' → estudiante activo; 'revocada' → back to pendiente (deactivated).
+ */
+export const setAuthorizationStatus = onCall(async (request) => {
+  const caller = request.auth;
+  if (!caller) throw new HttpsError('unauthenticated', 'Sign in required.');
+
+  const colegioId = requireString(request.data?.colegioId, 'colegioId');
+  const cursoId = requireString(request.data?.cursoId, 'cursoId');
+  const studentId = requireString(request.data?.studentId, 'studentId');
+  const estado = request.data?.estado;
+  if (estado !== 'otorgada' && estado !== 'revocada') {
+    throw new HttpsError('invalid-argument', "'estado' must be 'otorgada' or 'revocada'.");
+  }
+  const politicaVersion = requireString(request.data?.politicaVersion, 'politicaVersion');
+  const canalEvidencia =
+    typeof request.data?.canalEvidencia === 'string' ? request.data.canalEvidencia : undefined;
+  const acudienteRef =
+    typeof request.data?.acudienteRef === 'string' ? request.data.acudienteRef : undefined;
+
+  await assertStaffOfColegio(caller, colegioId, cursoId, { allowProfesor: true });
+
+  const db = getFirestore();
+  const autRef = db.doc(`colegios/${colegioId}/autorizaciones/${studentId}`);
+  const estRef = db.doc(`colegios/${colegioId}/cursos/${cursoId}/estudiantes/${studentId}`);
+
+  const batch = db.batch();
+  batch.set(
+    autRef,
+    {
+      estado,
+      politicaVersion,
+      ...(canalEvidencia ? { canalEvidencia } : {}),
+      ...(acudienteRef ? { acudienteRef } : {}),
+      ...(estado === 'otorgada' ? { otorgadaAt: FieldValue.serverTimestamp() } : {}),
+      registradaPor: caller.uid,
+      registradaAt: FieldValue.serverTimestamp(),
+    },
+    { merge: true }
+  );
+  batch.set(
+    estRef,
+    { estado: estado === 'otorgada' ? 'activo' : 'pendiente_autorizacion' },
+    { merge: true }
+  );
+  await batch.commit();
+
+  return { ok: true, estado };
+});
+
+/**
+ * Ley 1581 right to suppression: deletes the student's progress data, marks the
+ * roster slot 'suprimido', unlinks the auth account, and revokes consent.
+ * Restricted to rector/coordinador (sensitive, irreversible).
+ */
+export const suppressStudentData = onCall(async (request) => {
+  const caller = request.auth;
+  if (!caller) throw new HttpsError('unauthenticated', 'Sign in required.');
+
+  const colegioId = requireString(request.data?.colegioId, 'colegioId');
+  const cursoId = requireString(request.data?.cursoId, 'cursoId');
+  const studentId = requireString(request.data?.studentId, 'studentId');
+
+  await assertStaffOfColegio(caller, colegioId, cursoId, { allowProfesor: false });
+
+  const db = getFirestore();
+  const estRef = db.doc(`colegios/${colegioId}/cursos/${cursoId}/estudiantes/${studentId}`);
+
+  // Delete all per-world progress (the minor's generated data).
+  await db.recursiveDelete(estRef.collection('progress'));
+
+  const batch = db.batch();
+  batch.set(
+    estRef,
+    {
+      estado: 'suprimido',
+      uidVinculado: FieldValue.delete(),
+      suprimidoAt: FieldValue.serverTimestamp(),
+    },
+    { merge: true }
+  );
+  batch.set(
+    db.doc(`colegios/${colegioId}/autorizaciones/${studentId}`),
+    { estado: 'revocada', suprimidoAt: FieldValue.serverTimestamp() },
+    { merge: true }
+  );
+  await batch.commit();
+
+  return { ok: true };
+});
