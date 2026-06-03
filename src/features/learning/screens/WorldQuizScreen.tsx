@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
@@ -24,6 +25,7 @@ import { competenciaForWorld } from '@features/learning/data/competencias';
 import { isMastered } from '@features/learning/data/mastery';
 import { buildCertificateHtml } from '@features/learning/data/certificate';
 import { printHtml } from '@shared/lib/export/downloadFile';
+import { useRewards } from '@shared/hooks/useRewards';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { Typography } from '@shared/constants/typography';
@@ -148,6 +150,7 @@ function QuizHeader({
   onBack,
   colors,
   insetTop,
+  backLabel,
 }: {
   worldName: string;
   accentColor: string;
@@ -156,6 +159,7 @@ function QuizHeader({
   onBack: () => void;
   colors: ThemeColors;
   insetTop: number;
+  backLabel: string;
 }) {
   const pct = total > 0 ? (currentIndex / total) * 100 : 0;
   return (
@@ -170,7 +174,13 @@ function QuizHeader({
       ]}
     >
       <View style={headerSt.row}>
-        <TouchableOpacity onPress={onBack} hitSlop={12} style={headerSt.backBtn}>
+        <TouchableOpacity
+          onPress={onBack}
+          hitSlop={12}
+          style={headerSt.backBtn}
+          accessibilityRole="button"
+          accessibilityLabel={backLabel}
+        >
           <Ionicons name="chevron-back" size={22} color={colors.text.primary} />
         </TouchableOpacity>
         <View style={headerSt.center}>
@@ -243,17 +253,19 @@ function FeedbackBanner({
   isCorrect,
   explanation,
   colors,
+  t,
 }: {
   isCorrect: boolean;
   explanation: string;
   colors: ThemeColors;
+  t: (key: string, options?: Record<string, unknown>) => string;
 }) {
   const bgColor = isCorrect
     ? (colors.fill?.greenSubtle ?? '#1A3B2B')
     : (colors.fill?.redSubtle ?? '#3B1A1A');
   const iconName = isCorrect ? 'checkmark-circle' : 'close-circle';
   const iconColor = isCorrect ? colors.system.green : colors.system.red;
-  const label = isCorrect ? '¡Correcto!' : 'Incorrecto';
+  const label = isCorrect ? t('quiz.correct') : t('quiz.incorrect');
 
   return (
     <Animated.View
@@ -280,6 +292,7 @@ function CompletionScreen({
   colors,
   insetTop,
   insetBottom,
+  t,
 }: {
   worldName: string;
   accentColor: string;
@@ -291,6 +304,7 @@ function CompletionScreen({
   colors: ThemeColors;
   insetTop: number;
   insetBottom: number;
+  t: (key: string, options?: Record<string, unknown>) => string;
 }) {
   const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
   return (
@@ -308,7 +322,9 @@ function CompletionScreen({
           <View style={[completeSt.iconCircle, { backgroundColor: accentColor + '22' }]}>
             <Ionicons name="trophy" size={52} color={accentColor} />
           </View>
-          <Text style={[completeSt.title, { color: colors.text.primary }]}>¡Mundo completado!</Text>
+          <Text style={[completeSt.title, { color: colors.text.primary }]}>
+            {t('quiz.worldComplete')}
+          </Text>
           <Text style={[completeSt.subtitle, { color: colors.text.secondary }]}>{worldName}</Text>
           <View
             style={[
@@ -320,7 +336,7 @@ function CompletionScreen({
               {correct}/{total}
             </Text>
             <Text style={[completeSt.scoreLabel, { color: colors.text.tertiary }]}>
-              respuestas correctas · {pct}% de precisión
+              {t('quiz.score', { pct })}
             </Text>
           </View>
         </Animated.View>
@@ -331,10 +347,12 @@ function CompletionScreen({
               onPress={onCertificate}
               activeOpacity={0.85}
               style={[completeSt.certBtn, { borderColor: accentColor }]}
+              accessibilityRole="button"
+              accessibilityLabel={t('quiz.downloadCertificate')}
             >
               <Ionicons name="ribbon-outline" size={18} color={accentColor} />
               <Text style={[completeSt.certText, { color: accentColor }]}>
-                Descargar certificado
+                {t('quiz.downloadCertificate')}
               </Text>
             </TouchableOpacity>
           )}
@@ -342,8 +360,10 @@ function CompletionScreen({
             onPress={onBack}
             activeOpacity={0.85}
             style={[completeSt.btn, { backgroundColor: accentColor }]}
+            accessibilityRole="button"
+            accessibilityLabel={t('quiz.backToWorlds')}
           >
-            <Text style={[completeSt.btnText, { color: '#fff' }]}>Volver a los mundos</Text>
+            <Text style={[completeSt.btnText, { color: '#fff' }]}>{t('quiz.backToWorlds')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -381,6 +401,8 @@ export default function WorldQuizScreen() {
   const fetchWorldQuestions = useQuestionBankStore((s) => s.fetchWorldQuestions);
   const getWorldProgress = useQuestionBankStore((s) => s.getWorldProgress);
   const recordAnswer = useQuestionBankStore((s) => s.recordAnswer);
+  const { checkBadges } = useRewards();
+  const { t } = useTranslation();
   const questions = useQuestionBankStore(
     (s) => s.questionsByWorld[worldId as WorldId] ?? EMPTY_QUESTIONS
   );
@@ -411,6 +433,7 @@ export default function WorldQuizScreen() {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [certBusy, setCertBusy] = useState(false);
 
   useEffect(() => {
     if (worldId) void fetchWorldQuestions(worldId as WorldId);
@@ -462,6 +485,13 @@ export default function WorldQuizScreen() {
     getWorldProgress,
   ]);
 
+  // Award mastery/achievement badges on completion (idempotent — skips already
+  // unlocked). Runs for every student, not just provisioned ones (gamification).
+  useEffect(() => {
+    if (!isComplete) return;
+    checkBadges();
+  }, [isComplete, checkBadges]);
+
   const currentQuestion = questions[currentIndex];
   const options = currentQuestion ? (optionsByQuestion[currentQuestion.id] ?? []) : [];
 
@@ -500,18 +530,31 @@ export default function WorldQuizScreen() {
   const canCertify = isMastered(worldDone, worldTotal);
 
   const handleCertificate = async () => {
-    const colegio = colegioId ? await colegioRepository.getColegio(colegioId) : null;
-    const html = buildCertificateHtml({
-      colegioNombre: colegio?.nombre ?? 'Ceti',
-      colegioLogoUrl: colegio?.logoUrl,
-      studentName: nickname || 'Estudiante',
-      competenciaLabel: competenciaForWorld(worldId as WorldId).label,
-      worldName: meta.name,
-      masteryPct: worldTotal > 0 ? Math.round((worldDone / worldTotal) * 100) : 0,
-      dateLabel: new Date().toLocaleDateString('es-CO', { dateStyle: 'long' }),
-    });
-    if (!printHtml(html)) {
-      Alert.alert('Certificado', 'Descarga el certificado desde la versión web.');
+    if (certBusy) return; // guard against double-print while the colegio loads
+    setCertBusy(true);
+    try {
+      // The colegio name/logo is best-effort: a fetch failure must not block the
+      // certificate — fall back to the product name.
+      let colegio: Awaited<ReturnType<typeof colegioRepository.getColegio>> = null;
+      try {
+        colegio = colegioId ? await colegioRepository.getColegio(colegioId) : null;
+      } catch {
+        colegio = null;
+      }
+      const html = buildCertificateHtml({
+        colegioNombre: colegio?.nombre ?? 'Ceti',
+        colegioLogoUrl: colegio?.logoUrl,
+        studentName: nickname || 'Estudiante',
+        competenciaLabel: competenciaForWorld(worldId as WorldId).label,
+        worldName: meta.name,
+        masteryPct: worldTotal > 0 ? Math.round((worldDone / worldTotal) * 100) : 0,
+        dateLabel: new Date().toLocaleDateString('es-CO', { dateStyle: 'long' }),
+      });
+      if (!printHtml(html)) {
+        Alert.alert(t('learning.certificateTitle'), t('learning.certificateWebOnly'));
+      }
+    } finally {
+      setCertBusy(false);
     }
   };
 
@@ -528,7 +571,7 @@ export default function WorldQuizScreen() {
       >
         <ActivityIndicator size="large" color={meta.color} />
         <Text style={[{ color: colors.text.tertiary, marginTop: 16 }, Typography.footnote]}>
-          Cargando preguntas…
+          {t('quiz.loading')}
         </Text>
       </ScreenWrapper>
     );
@@ -552,7 +595,7 @@ export default function WorldQuizScreen() {
             Typography.headline,
           ]}
         >
-          Sin conexión
+          {t('quiz.offline')}
         </Text>
         <Text
           style={[
@@ -560,10 +603,15 @@ export default function WorldQuizScreen() {
             Typography.footnote,
           ]}
         >
-          Verifica tu internet y vuelve a intentarlo.
+          {t('quiz.offlineHint')}
         </Text>
-        <TouchableOpacity onPress={handleBack} style={{ marginTop: 24 }}>
-          <Text style={[{ color: meta.color }, Typography.headline]}>Volver</Text>
+        <TouchableOpacity
+          onPress={handleBack}
+          style={{ marginTop: 24 }}
+          accessibilityRole="button"
+          accessibilityLabel={t('quiz.back')}
+        >
+          <Text style={[{ color: meta.color }, Typography.headline]}>{t('quiz.back')}</Text>
         </TouchableOpacity>
       </ScreenWrapper>
     );
@@ -583,6 +631,7 @@ export default function WorldQuizScreen() {
         colors={colors}
         insetTop={insets.top}
         insetBottom={insets.bottom}
+        t={t}
       />
     );
   }
@@ -603,6 +652,7 @@ export default function WorldQuizScreen() {
         onBack={handleBack}
         colors={colors}
         insetTop={insets.top}
+        backLabel={t('quiz.back')}
       />
 
       <ScrollView
@@ -615,10 +665,10 @@ export default function WorldQuizScreen() {
           <View style={[styles.badge, { backgroundColor: colors.materials.highlight }]}>
             <Text style={[styles.badgeText, { color: colors.text.tertiary }]}>
               {currentQuestion.difficulty === 'basic'
-                ? 'Básico'
+                ? t('quiz.difficultyBasic')
                 : currentQuestion.difficulty === 'intermediate'
-                  ? 'Intermedio'
-                  : 'Avanzado'}
+                  ? t('quiz.difficultyIntermediate')
+                  : t('quiz.difficultyAdvanced')}
             </Text>
           </View>
           <Text style={[styles.concept, { color: colors.text.quaternary }]} numberOfLines={1}>
@@ -662,6 +712,7 @@ export default function WorldQuizScreen() {
             isCorrect={isCorrect}
             explanation={currentQuestion.content.explanation}
             colors={colors}
+            t={t}
           />
         )}
       </ScrollView>
@@ -681,6 +732,9 @@ export default function WorldQuizScreen() {
           <TouchableOpacity
             activeOpacity={selectedAnswer ? 0.85 : 0.4}
             onPress={selectedAnswer ? handleSubmit : undefined}
+            accessibilityRole="button"
+            accessibilityLabel={t('quiz.check')}
+            accessibilityState={{ disabled: !selectedAnswer }}
             style={[
               styles.actionBtn,
               {
@@ -695,17 +749,21 @@ export default function WorldQuizScreen() {
                 { color: selectedAnswer ? '#fff' : colors.text.tertiary },
               ]}
             >
-              Comprobar
+              {t('quiz.check')}
             </Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
             activeOpacity={0.85}
             onPress={handleNext}
+            accessibilityRole="button"
+            accessibilityLabel={
+              currentIndex + 1 >= questions.length ? t('quiz.result') : t('quiz.next')
+            }
             style={[styles.actionBtn, { backgroundColor: meta.color }]}
           >
             <Text style={[styles.actionBtnText, { color: '#fff' }]}>
-              {currentIndex + 1 >= questions.length ? 'Ver resultado' : 'Siguiente'}
+              {currentIndex + 1 >= questions.length ? t('quiz.result') : t('quiz.next')}
             </Text>
             <Ionicons name="arrow-forward" size={18} color="#fff" />
           </TouchableOpacity>

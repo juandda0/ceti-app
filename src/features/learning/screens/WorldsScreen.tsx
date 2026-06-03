@@ -1,15 +1,19 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { ScrollView, TouchableOpacity, View, Text, StyleSheet, Platform } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUserStore } from '@features/auth/store/useUserStore';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { useQuestionBankStore } from '@features/learning/store/useQuestionBankStore';
+import type { WorldId } from '@features/learning/data/questionBank.types';
+import { worldProgressRepository } from '@features/dashboard/data/worldProgressRepository';
 import { competenciaForWorld } from '@features/learning/data/competencias';
 import StudentAssignmentsBanner from '@features/dashboard/components/StudentAssignmentsBanner';
 import JoinClassBanner from '@features/dashboard/components/JoinClassBanner';
+import AuthorizationPendingBanner from '@features/dashboard/components/AuthorizationPendingBanner';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { Typography } from '@shared/constants/typography';
@@ -76,6 +80,7 @@ function WorldCard({
   index,
   colors,
   onPress,
+  t,
 }: {
   world: WorldDef;
   progress: number;
@@ -83,6 +88,7 @@ function WorldCard({
   index: number;
   colors: ThemeColors;
   onPress: () => void;
+  t: (key: string, options?: Record<string, unknown>) => string;
 }) {
   const done = Math.round(progress * QUESTIONS_PER_WORLD);
   const pct = Math.min(Math.round(progress * 100), 100);
@@ -92,6 +98,9 @@ function WorldCard({
       <TouchableOpacity
         activeOpacity={isUnlocked ? 0.8 : 1}
         onPress={isUnlocked ? onPress : undefined}
+        accessibilityRole="button"
+        accessibilityLabel={t('worlds.openWorld', { n: world.number })}
+        accessibilityState={{ disabled: !isUnlocked }}
         style={[
           cardSt.card,
           {
@@ -119,7 +128,7 @@ function WorldCard({
           <Text
             style={[cardSt.worldNum, { color: isUnlocked ? world.color : colors.text.quaternary }]}
           >
-            Mundo {world.number}
+            {t('worlds.worldNumber', { n: world.number })}
           </Text>
           <Text style={[cardSt.worldName, { color: colors.text.primary }]} numberOfLines={1}>
             {world.name}
@@ -158,7 +167,7 @@ function WorldCard({
             </View>
           ) : (
             <Text style={[cardSt.lockedNote, { color: colors.text.quaternary }]}>
-              Completa el Mundo {world.number - 1} para desbloquear
+              {t('worlds.lockedNote', { n: world.number - 1 })}
             </Text>
           )}
         </View>
@@ -173,6 +182,7 @@ function WorldCard({
 
 export default function WorldsScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
   // Per-account key (Firebase uid); fallback to local profile id only offline.
@@ -180,12 +190,19 @@ export default function WorldsScreen() {
   const firebaseUid = useAuthStore((s) => s.firebaseUid);
   const localProfileId = useUserStore((s) => s.id);
   const userId = firebaseUid ?? localProfileId;
+  // Tenant identity (provisioned students only) — used to rehydrate progress.
+  const colegioId = useAuthStore((s) => s.colegioId);
+  const cursoId = useAuthStore((s) => s.cursoId);
+  const studentId = useAuthStore((s) => s.studentId);
   const fetchWorldQuestions = useQuestionBankStore((s) => s.fetchWorldQuestions);
   const getWorldProgress = useQuestionBankStore((s) => s.getWorldProgress);
   const isWorldComplete = useQuestionBankStore((s) => s.isWorldComplete);
+  const setRemoteProgress = useQuestionBankStore((s) => s.setRemoteProgress);
   // Subscribe to answers so progress/unlock recompute right after a quiz, without
   // waiting for a remount (the getters above are stable and don't trigger renders).
   const answers = useQuestionBankStore((s) => s.answers);
+  // Subscribe to remoteProgress so the cards re-render once hydration resolves.
+  const remoteProgress = useQuestionBankStore((s) => s.remoteProgress);
 
   // Prefetch all worlds on mount so progress is available immediately
   useEffect(() => {
@@ -196,38 +213,52 @@ export default function WorldsScreen() {
     void fetchWorldQuestions('world_5');
   }, []);
 
+  // Rehydrate per-world mastery from the tenant tree so unlock/progress survive
+  // logout and new devices (the local answers cache is empty there).
+  useEffect(() => {
+    if (!colegioId || !cursoId || !studentId) return;
+    let cancelled = false;
+    void (async () => {
+      const docs = await worldProgressRepository.getStudentProgress(colegioId, cursoId, studentId);
+      if (cancelled) return;
+      const byWorld: Partial<Record<WorldId, number>> = {};
+      for (const d of docs) byWorld[d.worldId as WorldId] = d.mastery;
+      setRemoteProgress(byWorld);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [colegioId, cursoId, studentId, setRemoteProgress]);
+
   const uid = userId ?? '';
 
-  const progressMap: Record<string, number> = {
-    world_1: (() => {
-      const { done, total } = getWorldProgress(uid, 'world_1');
+  // Recompute when local answers OR the hydrated remote snapshot change.
+  // (getWorldProgress/isWorldComplete read both internally.)
+  const progressMap = useMemo<Record<string, number>>(() => {
+    const ratio = (worldId: WorldId): number => {
+      const { done, total } = getWorldProgress(uid, worldId);
       return total > 0 ? done / total : 0;
-    })(),
-    world_2: (() => {
-      const { done, total } = getWorldProgress(uid, 'world_2');
-      return total > 0 ? done / total : 0;
-    })(),
-    world_3: (() => {
-      const { done, total } = getWorldProgress(uid, 'world_3');
-      return total > 0 ? done / total : 0;
-    })(),
-    world_4: (() => {
-      const { done, total } = getWorldProgress(uid, 'world_4');
-      return total > 0 ? done / total : 0;
-    })(),
-    world_5: (() => {
-      const { done, total } = getWorldProgress(uid, 'world_5');
-      return total > 0 ? done / total : 0;
-    })(),
-  };
+    };
+    return {
+      world_1: ratio('world_1'),
+      world_2: ratio('world_2'),
+      world_3: ratio('world_3'),
+      world_4: ratio('world_4'),
+      world_5: ratio('world_5'),
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [uid, answers, remoteProgress, getWorldProgress]);
 
-  const unlockedMap: Record<string, boolean> = {
-    world_1: true,
-    world_2: isWorldComplete(uid, 'world_1'),
-    world_3: isWorldComplete(uid, 'world_2'),
-    world_4: isWorldComplete(uid, 'world_3'),
-    world_5: isWorldComplete(uid, 'world_4'),
-  };
+  const unlockedMap = useMemo<Record<string, boolean>>(() => {
+    return {
+      world_1: true,
+      world_2: isWorldComplete(uid, 'world_1'),
+      world_3: isWorldComplete(uid, 'world_2'),
+      world_4: isWorldComplete(uid, 'world_3'),
+      world_5: isWorldComplete(uid, 'world_4'),
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [uid, answers, remoteProgress, isWorldComplete]);
 
   const totalDone = answers.filter((a) => a.uid === uid && a.isCorrect).length;
   const totalAll = QUESTIONS_PER_WORLD * WORLD_DEFS.length;
@@ -243,12 +274,15 @@ export default function WorldsScreen() {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={[styles.pageTitle, { color: colors.text.primary }]}>Tu Galaxia</Text>
+        <Text style={[styles.pageTitle, { color: colors.text.primary }]}>
+          {t('worlds.pageTitle')}
+        </Text>
         <Text style={[styles.pageSubtitle, { color: colors.text.secondary }]}>
-          {totalDone} de {totalAll} lecciones completadas
+          {t('worlds.lessonsCompleted', { done: totalDone, total: totalAll })}
         </Text>
 
         <JoinClassBanner />
+        <AuthorizationPendingBanner />
         <StudentAssignmentsBanner />
 
         <View style={styles.list}>
@@ -261,6 +295,7 @@ export default function WorldsScreen() {
               index={index}
               colors={colors}
               onPress={() => router.push(`/saga/${world.id}` as never)}
+              t={t}
             />
           ))}
         </View>

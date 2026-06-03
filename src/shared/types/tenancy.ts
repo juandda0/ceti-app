@@ -53,6 +53,8 @@ export type Curso = {
   profesorUids: string[];
   /** Teacher-toggled class collaboration (no public leaderboard). */
   colaboracionAula: boolean;
+  /** Class self-join code (set by the generateClassCode Function). */
+  codigo?: string;
 };
 
 export type EstudianteEstado = 'pendiente_autorizacion' | 'activo' | 'suprimido';

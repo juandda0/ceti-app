@@ -33,13 +33,15 @@ export const worldProgressRepository = {
     colegioId: string,
     cursoId: string,
     studentId: string
-  ): Promise<WorldProgress[]> {
+  ): Promise<(WorldProgress & { worldId: string })[]> {
     const clients = getFirebaseClients();
     if (!clients?.firestore) return [];
     const snap = await getDocs(
       estudianteProgressCollectionRef(clients.firestore, colegioId, cursoId, studentId)
     );
-    return snap.docs.map((d) => d.data() as WorldProgress);
+    // The doc id is the worldId (path key); callers need it to rehydrate per-world
+    // unlock/progress state, so surface it alongside the denormalized data.
+    return snap.docs.map((d) => ({ ...(d.data() as WorldProgress), worldId: d.id }));
   },
 
   /** All progress in a colegio (collection-group; rector/coordinador only per rules). */

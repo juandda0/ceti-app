@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createZustandMmkvStorage } from '@shared/lib/storage/mmkv';
 import type { QuestionBankItem, WorldId } from '@features/learning/data/questionBank.types';
+import { isMastered } from '@features/learning/data/mastery';
 
 interface QuestionAnswer {
   uid: string;
@@ -16,6 +17,12 @@ interface QuestionBankState {
   fetchedWorlds: WorldId[];
   fetchStatus: Partial<Record<WorldId, 'idle' | 'loading' | 'success' | 'error'>>;
   answers: QuestionAnswer[];
+  /**
+   * Per-world mastery (0..1) hydrated from the Firestore tenant tree on app load.
+   * Lets unlock/progress survive logout/new-device, where the local `answers`
+   * cache is empty. Combined with local answers via max() (never summed).
+   */
+  remoteProgress: Partial<Record<WorldId, number>>;
 }
 
 interface QuestionBankActions {
@@ -24,6 +31,8 @@ interface QuestionBankActions {
   getWorldProgress: (uid: string, worldId: WorldId) => { done: number; total: number };
   getAnsweredIds: (uid: string, worldId: WorldId) => Set<string>;
   isWorldComplete: (uid: string, worldId: WorldId) => boolean;
+  /** Replace remote mastery snapshot (authoritative for the session). */
+  setRemoteProgress: (byWorld: Partial<Record<WorldId, number>>) => void;
   resetUserProgress: () => void;
 }
 
@@ -34,6 +43,7 @@ const initialState: QuestionBankState = {
   fetchedWorlds: [],
   fetchStatus: {},
   answers: [],
+  remoteProgress: {},
 };
 
 export const useQuestionBankStore = create<QuestionBankStore>()(
@@ -72,11 +82,17 @@ export const useQuestionBankStore = create<QuestionBankStore>()(
       },
 
       getWorldProgress: (uid, worldId) => {
-        const questions = get().questionsByWorld[worldId] ?? [];
-        const done = get().answers.filter(
+        const total = (get().questionsByWorld[worldId] ?? []).length;
+        const localDone = get().answers.filter(
           (a) => a.uid === uid && a.worldId === worldId && a.isCorrect
         ).length;
-        return { done, total: questions.length };
+        // Remote mastery (0..1) reconstructs the correct-answer count from the
+        // tenant tree. max() keeps progress monotonic without double-counting.
+        const remoteMastery = get().remoteProgress[worldId];
+        const remoteDone =
+          remoteMastery != null && total > 0 ? Math.round(remoteMastery * total) : 0;
+        const done = Math.min(total, Math.max(localDone, remoteDone));
+        return { done, total };
       },
 
       getAnsweredIds: (uid, worldId) =>
@@ -87,11 +103,15 @@ export const useQuestionBankStore = create<QuestionBankStore>()(
         ),
 
       isWorldComplete: (uid, worldId) => {
+        // Mastery-based (80%), consistent with certificates and badges — a student
+        // who has mastered a world unlocks the next one (does not require 100%).
         const { done, total } = get().getWorldProgress(uid, worldId);
-        return total > 0 && done >= total;
+        return isMastered(done, total);
       },
 
-      resetUserProgress: () => set({ answers: [] }),
+      setRemoteProgress: (byWorld) => set({ remoteProgress: byWorld }),
+
+      resetUserProgress: () => set({ answers: [], remoteProgress: {} }),
     }),
     {
       name: 'question-bank-store',
