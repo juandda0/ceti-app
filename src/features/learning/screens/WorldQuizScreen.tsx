@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Platform,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -18,6 +19,11 @@ import { useUserStore } from '@features/auth/store/useUserStore';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { buildWorldProgress } from '@features/learning/data/worldProgress';
 import { worldProgressRepository } from '@features/dashboard/data/worldProgressRepository';
+import { colegioRepository } from '@features/dashboard/data/colegioRepository';
+import { competenciaForWorld } from '@features/learning/data/competencias';
+import { isMastered } from '@features/learning/data/mastery';
+import { buildCertificateHtml } from '@features/learning/data/certificate';
+import { printHtml } from '@shared/lib/export/downloadFile';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { Typography } from '@shared/constants/typography';
@@ -269,6 +275,8 @@ function CompletionScreen({
   correct,
   total,
   onBack,
+  canCertify,
+  onCertificate,
   colors,
   insetTop,
   insetBottom,
@@ -278,6 +286,8 @@ function CompletionScreen({
   correct: number;
   total: number;
   onBack: () => void;
+  canCertify: boolean;
+  onCertificate: () => void;
   colors: ThemeColors;
   insetTop: number;
   insetBottom: number;
@@ -315,13 +325,27 @@ function CompletionScreen({
           </View>
         </Animated.View>
 
-        <TouchableOpacity
-          onPress={onBack}
-          activeOpacity={0.85}
-          style={[completeSt.btn, { backgroundColor: accentColor }]}
-        >
-          <Text style={[completeSt.btnText, { color: '#fff' }]}>Volver a los mundos</Text>
-        </TouchableOpacity>
+        <View style={completeSt.actions}>
+          {canCertify && (
+            <TouchableOpacity
+              onPress={onCertificate}
+              activeOpacity={0.85}
+              style={[completeSt.certBtn, { borderColor: accentColor }]}
+            >
+              <Ionicons name="ribbon-outline" size={18} color={accentColor} />
+              <Text style={[completeSt.certText, { color: accentColor }]}>
+                Descargar certificado
+              </Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            onPress={onBack}
+            activeOpacity={0.85}
+            style={[completeSt.btn, { backgroundColor: accentColor }]}
+          >
+            <Text style={[completeSt.btnText, { color: '#fff' }]}>Volver a los mundos</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScreenWrapper>
   );
@@ -339,6 +363,7 @@ export default function WorldQuizScreen() {
   const userId = useUserStore((s) => s.id);
   const xp = useUserStore((s) => s.xp);
   const level = useUserStore((s) => s.level);
+  const nickname = useUserStore((s) => s.nickname);
 
   // Tenant identity (set only for provisioned students). Used to mirror progress
   // to the school tree for the teacher dashboard; no-op when not provisioned.
@@ -467,6 +492,26 @@ export default function WorldQuizScreen() {
     if (router.canGoBack()) router.back();
   };
 
+  // Certificate is earned when the world is mastered (achievement, not time).
+  const { done: worldDone, total: worldTotal } = getWorldProgress(userId ?? '', worldId as WorldId);
+  const canCertify = isMastered(worldDone, worldTotal);
+
+  const handleCertificate = async () => {
+    const colegio = colegioId ? await colegioRepository.getColegio(colegioId) : null;
+    const html = buildCertificateHtml({
+      colegioNombre: colegio?.nombre ?? 'Ceti',
+      colegioLogoUrl: colegio?.logoUrl,
+      studentName: nickname || 'Estudiante',
+      competenciaLabel: competenciaForWorld(worldId as WorldId).label,
+      worldName: meta.name,
+      masteryPct: worldTotal > 0 ? Math.round((worldDone / worldTotal) * 100) : 0,
+      dateLabel: new Date().toLocaleDateString('es-CO', { dateStyle: 'long' }),
+    });
+    if (!printHtml(html)) {
+      Alert.alert('Certificado', 'Descarga el certificado desde la versión web.');
+    }
+  };
+
   // ── Loading ────────────────────────────────────────────────────────────────
   if (fetchStatus === 'loading' || (fetchStatus === 'idle' && questions.length === 0)) {
     return (
@@ -530,6 +575,8 @@ export default function WorldQuizScreen() {
         correct={correctCount}
         total={questions.length}
         onBack={handleBack}
+        canCertify={canCertify}
+        onCertificate={() => void handleCertificate()}
         colors={colors}
         insetTop={insets.top}
         insetBottom={insets.bottom}
@@ -852,6 +899,22 @@ const completeSt = StyleSheet.create({
   scoreLabel: {
     ...Typography.footnote,
     textAlign: 'center',
+  },
+  actions: {
+    gap: 10,
+  },
+  certBtn: {
+    height: 50,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1.5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  certText: {
+    ...Typography.headline,
+    fontWeight: '700',
   },
   btn: {
     height: 54,
