@@ -17,6 +17,7 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { loadCourseReport } from '@features/dashboard/data/loadCourseReport';
 import { courseReportToCsv, type CourseReport } from '@features/dashboard/data/courseReport';
+import AssignmentsManager from '@features/dashboard/components/AssignmentsManager';
 import { downloadTextFile, printPage } from '@shared/lib/export/downloadFile';
 
 function pct(m: number): string {
@@ -28,6 +29,7 @@ export default function CourseDashboardScreen() {
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
   const colegioId = useAuthStore((s) => s.colegioId);
+  const uid = useAuthStore((s) => s.firebaseUid);
   const params = useLocalSearchParams<{ cursoId: string; nombre?: string }>();
   const cursoId = params.cursoId;
   const cursoNombre = params.nombre ?? cursoId;
@@ -148,6 +150,10 @@ export default function CourseDashboardScreen() {
                 </Text>
               </View>
             ))}
+
+            {colegioId && cursoId && uid && (
+              <AssignmentsManager colegioId={colegioId} cursoId={cursoId} createdByUid={uid} />
+            )}
           </>
         )}
       </ScrollView>

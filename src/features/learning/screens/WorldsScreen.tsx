@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUserStore } from '@features/auth/store/useUserStore';
 import { useQuestionBankStore } from '@features/learning/store/useQuestionBankStore';
 import { competenciaForWorld } from '@features/learning/data/competencias';
+import StudentAssignmentsBanner from '@features/dashboard/components/StudentAssignmentsBanner';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { Typography } from '@shared/constants/typography';
@@ -240,6 +241,8 @@ export default function WorldsScreen() {
         <Text style={[styles.pageSubtitle, { color: colors.text.secondary }]}>
           {totalDone} de {totalAll} lecciones completadas
         </Text>
+
+        <StudentAssignmentsBanner />
 
         <View style={styles.list}>
           {WORLD_DEFS.map((world, index) => (

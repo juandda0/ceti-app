@@ -45,6 +45,21 @@
     "activo": "Activo",
     "suprimido": "Suprimido"
   },
+  "assignments": {
+    "title": "Asignaciones",
+    "create": "Asignar",
+    "world": "Mundo {{n}}",
+    "deadline_1w": "1 semana",
+    "deadline_2w": "2 semanas",
+    "deadline_1m": "1 mes",
+    "none": "Sin asignaciones todavía.",
+    "itemTitle": "Completar Mundo {{n}}",
+    "due": "Vence el {{date}}",
+    "status_overdue": "Vencida",
+    "daysLeft": "{{n}} días",
+    "studentTitle": "Tus tareas",
+    "studentItem": "Completar Mundo {{n}} antes del {{date}}"
+  },
   "legal": {
     "privacyPolicy": "Política de tratamiento de datos"
   }
