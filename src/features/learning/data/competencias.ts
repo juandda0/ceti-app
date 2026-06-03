@@ -52,3 +52,12 @@ export const WORLD_COMPETENCIAS: Record<WorldId, Competencia> = {
 export function competenciaForWorld(worldId: WorldId): Competencia {
   return WORLD_COMPETENCIAS[worldId];
 }
+
+const WORLD_ORDER: WorldId[] = ['world_1', 'world_2', 'world_3', 'world_4', 'world_5'];
+
+/** Competencies in world order — the stable column set for reports/CSV. */
+export const ALL_COMPETENCIAS: Competencia[] = WORLD_ORDER.map((w) => WORLD_COMPETENCIAS[w]);
+
+export function competenciaLabel(id: string): string {
+  return ALL_COMPETENCIAS.find((c) => c.id === id)?.label ?? id;
+}
