@@ -5,7 +5,13 @@ import {
   isErrorWithCode,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
-import { GoogleAuthProvider, OAuthProvider, signInWithCredential } from 'firebase/auth';
+import {
+  GoogleAuthProvider,
+  OAuthProvider,
+  signInWithCredential,
+  signInWithPopup,
+  signInWithRedirect,
+} from 'firebase/auth';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/app';
 
@@ -36,9 +42,50 @@ export function configureGoogleSignIn(): void {
   googleConfigured = true;
 }
 
+/**
+ * Web: usa el flujo OAuth del JS SDK (popup; fallback a redirect si el navegador
+ * lo bloquea). No requiere @react-native-google-signin ni Play Services.
+ */
+async function signInWithGoogleWeb(): Promise<void> {
+  const clients = getFirebaseClients();
+  if (!clients) throw new Error('Configura Firebase (EXPO_PUBLIC_FIREBASE_*)');
+
+  const provider = new GoogleAuthProvider();
+  // Fuerza el selector de cuentas en cada inicio (paridad con el flujo nativo).
+  provider.setCustomParameters({ prompt: 'select_account' });
+
+  try {
+    await signInWithPopup(clients.auth, provider);
+  } catch (e) {
+    const code =
+      e && typeof e === 'object' && 'code' in e ? String((e as { code?: string }).code) : '';
+
+    if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+      throw new Error('Inicio de sesión con Google cancelado');
+    }
+    // Popup bloqueado por el navegador: degradar a redirect (recarga la página).
+    if (
+      code === 'auth/popup-blocked' ||
+      code === 'auth/operation-not-supported-in-this-environment'
+    ) {
+      await signInWithRedirect(clients.auth, provider);
+      return;
+    }
+    if (code === 'auth/network-request-failed') {
+      throw new Error('No se pudo verificar la sesión con Firebase (red). Inténtalo de nuevo.');
+    }
+    if (code === 'auth/unauthorized-domain') {
+      throw new Error(
+        'Dominio no autorizado. En Firebase → Authentication → Settings → Authorized domains, agrega el dominio donde corre la web.'
+      );
+    }
+    throw e instanceof Error ? e : new Error(String(e));
+  }
+}
+
 export async function signInWithGoogle(): Promise<void> {
   if (Platform.OS === 'web') {
-    throw new Error('Inicia sesión desde la app para Android o iOS.');
+    return signInWithGoogleWeb();
   }
   const clients = getFirebaseClients();
   if (!clients) throw new Error('Configura Firebase (EXPO_PUBLIC_FIREBASE_*)');

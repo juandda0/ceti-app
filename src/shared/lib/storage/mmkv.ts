@@ -47,13 +47,11 @@ export function createZustandMmkvStorage(): StateStorage {
 /** Claves `persist.name` de Zustand que antes vivían en AsyncStorage. */
 export const ZUSTAND_PERSIST_KEYS = [
   'auth-store',
-  'child-store',
-  'children-registry',
-  'parent-store',
+  'user-store',
   'lessons-store',
+  'question-bank-store',
   'savings-store',
   'wallet-store',
-  'world-store',
   'ceti-theme-storage',
 ] as const;
 
