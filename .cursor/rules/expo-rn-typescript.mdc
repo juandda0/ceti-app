@@ -1,0 +1,90 @@
+---
+description: "Expo 54 + React Native 0.81 + TypeScript strict conventions for Ceti."
+globs: **/*.ts, **/*.tsx
+alwaysApply: true
+---
+
+<!--
+Composed rule — built from this repo's own tooling, not from external community rules.
+Sources:
+- tsconfig.json (strict: true, paths @/*, @features/*, @shared/*)
+- eslint.config.js (flat config, eslint-config-expo, no-unused-vars with ^_)
+- .prettierrc.json (semi, singleQuote, trailingComma es5, printWidth 100)
+- app.config.js (Expo plugins: RNFirebase, Crashlytics, Perf, Google-SignIn, optional Apple)
+- package.json (Expo 54, RN 0.81, React 19, TypeScript ~5.9.2)
+- README.md, .husky/pre-commit
+External community rules for Expo/RN were reviewed but contradicted the actual stack
+(Tamagui, TanStack Query, Detox, Sentry are NOT used here — Maestro + Crashlytics are).
+Anchored by: CLAUDE.md → AGENTS.md.
+-->
+
+You are working in **Ceti**, an Expo 54 / React Native 0.81 / TypeScript-strict single-user mobile app. Apply these conventions to every `.ts`/`.tsx` change.
+
+## TypeScript
+
+- TypeScript strict mode is on (`tsconfig.json`). Do not weaken it.
+- Use the configured path aliases:
+  - `@/*` → repo root
+  - `@features/*` → `src/features/*`
+  - `@shared/*` → `src/shared/*`
+- Do NOT use relative imports that cross `src/features/` or `src/shared/` boundaries — always go through the alias.
+- Prefer `interface` for object shapes; reserve `type` for unions, mapped types, and aliases of primitives.
+- Avoid `any`; use `unknown` + narrowing. Avoid `enum`; use `as const` maps.
+- Annotate exported function return types explicitly.
+- Functional components with TypeScript props; no class components.
+
+## File and naming conventions
+
+- Architecture is **feature-first**:
+  - `src/features/{auth,learning,savings}/{screens,components,data,store,...}`
+  - `src/shared/{components,lib,session,theme,i18n,utils,hooks}`
+- Screens: PascalCase, suffix `Screen` (e.g., `LessonScreen.tsx`).
+- Stores: camelCase, prefix `use` and suffix `Store` (e.g., `useUserStore.ts`).
+- Repositories: camelCase, suffix `Repository.ts` (e.g., `goalsRepository.ts`).
+- Hooks: prefix `use`.
+- Route files under `app/` follow Expo Router conventions (`(group)`, `_layout.tsx`, `[param].tsx`).
+
+## ESLint and formatting
+
+- `npm run lint` must pass (flat config + `eslint-config-expo`).
+- Unused vars/args are warnings when prefixed with `_` (configured in `eslint.config.js`); use the prefix for intentional ignores instead of disabling the rule.
+- `react-hooks/exhaustive-deps` is on as warn — do NOT silence it without a comment that explains why.
+- Prettier settings (`.prettierrc.json`): `semi: true`, `singleQuote: true`, `trailingComma: "es5"`, `printWidth: 100`. Run `npm run format` if unsure.
+- Husky `pre-commit` runs `lint-staged` (Prettier only). Typecheck and tests run in CI — verify locally with `npm run typecheck` and `npm test` before pushing.
+
+## React / RN patterns
+
+- Hooks-first; minimize `useEffect` and derived state.
+- Use `useMemo`/`useCallback` only when there is a measured re-render cost.
+- Cross-platform: code must compile for Android, iOS, and web (`expo start --web`). Use `Platform.OS` guards where APIs differ.
+- Native modules used in the repo: Skia, Reanimated 4, MMKV, RNFirebase Analytics/Crashlytics/Perf, Google Sign-In, optional Apple Sign-In behind `EXPO_PUBLIC_FEATURE_APPLE_SIGNIN`.
+- For analytics: import dynamically (see `src/shared/lib/analytics/logEvent.ts`). Do not statically import `@react-native-firebase/*` from web code paths.
+
+## Internationalization
+
+- All user-visible strings go through `t('...')` from `react-i18next`.
+- Keys live in `src/shared/i18n/locales/es.json`. Never inline a Spanish string in JSX.
+
+## Performance and assets
+
+- Prefer `expo-image` over `Image` for cached remote images.
+- Heavy animations via `react-native-reanimated` (v4) with worklets; avoid JS-thread animations.
+- Avoid hardcoded paddings for safe-area handling; use `react-native-safe-area-context`.
+
+## Tests
+
+- Jest 29 with `jest-expo` preset (`jest.config.js`). Test files: `*.test.ts(x)`.
+- Use the path aliases in test imports (the moduleNameMapper supports them).
+- Reanimated and AsyncStorage are mocked globally in `jest.setup.js` — do not re-mock them locally.
+
+## Build and release
+
+- EAS profiles: `development`, `preview`, `production` (`eas.json`). `production` does NOT use `developmentClient`.
+- `app.config.js` mixes `app.json` with environment variables — never edit `app.json` directly for env-dependent values; pass them through `process.env.EXPO_PUBLIC_*`.
+- `patches/` is consumed by `patch-package` via `postinstall`. Don't delete patches without testing Skia/GL scenes on device.
+
+## What NOT to do
+
+- Do NOT introduce libraries already absent from `package.json`: NativeWind, Tamagui, TanStack Query, Sentry, Detox, Expo Sensors. Maestro is the E2E tool; Crashlytics is the error sink.
+- Do NOT bypass `firestore.rules` by writing to new paths from the client without registering a helper in `src/shared/lib/firebase/paths.ts` and updating the rules.
+- Do NOT re-introduce features the project removed: `features/world`, `features/family`, parent/child stores. See `ceti-invariants.mdc`.

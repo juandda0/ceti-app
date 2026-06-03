@@ -1,0 +1,143 @@
+---
+description: "Ceti project invariants — B2B2C school multi-tenancy, role hierarchy, allowed Firestore paths, PII minimization (Ley 1581), MIN_AGE, no-real-money. Highest priority rule."
+globs: **/*
+alwaysApply: true
+---
+
+<!--
+Composed rule — distilled from this repo's own ground truth after the B2B2C pivot.
+Sources:
+- CLAUDE.md (product description and current architecture) — anchors this rule.
+- docs/data-model.md (multi-tenant schema, role claims, PII model) — source of truth for data.
+- docs/COMPLIANCE.md (Ley 1581 / Decreto 1377, MIN_AGE=13, PII minimization).
+- firestore.rules (allowed paths and write boundaries).
+- src/shared/lib/firebase/paths.ts (Firestore path helpers — source of truth).
+If this rule contradicts any other rule, this one wins.
+-->
+
+These are **hard invariants** for Ceti. Apply them in every change.
+
+## Product
+
+- Ceti is a **B2B2C educational SaaS** sold to **private schools in Colombia**.
+  The buyer is the school; what it pays for is **curricular compliance
+  (CONPES 4005) + teacher reporting + saved teacher time**, delivered through a
+  gamified financial-education experience for students (13+).
+- Every feature must justify itself against compliance/reporting/teacher-time.
+  "It's fun for the student" is not, by itself, a reason to build something.
+
+## Multi-tenancy & roles (core invariant)
+
+- Tenancy hierarchy: **`colegio → (sede, optional in MVP) → curso → estudiante`**.
+  `sede` is modeled but optional in MVP; do not block on it.
+- Roles: `rector`/`coordinador` (whole school / their sede), `profesor` (their
+  courses only), `estudiante` (their own experience only).
+- Authorization is driven by **custom claims** (`role`, `colegioId`, and a
+  `sedeId` when present) on the Firebase Auth token, set by a Cloud Function —
+  **never** trusted from client-writable Firestore fields.
+- `firestore.rules` enforces the hierarchy from day one. A teacher can read a
+  student's progress **only** because a rule authorizes it by role+tenant — never
+  by per-user grants bolted on later.
+
+## NOT the family model (forbidden — regression if reintroduced)
+
+- The old **parent/child financial-guardianship** model was removed and stays
+  removed. Forbidden: `parent`/`child`/`family` entities, routes, stores, repos;
+  any "child profile" owned by another app user; any guardian acting as an
+  in-app user with a dashboard over a minor.
+- The institutional hierarchy (school staff ↔ students) is **org-tenancy, not
+  guardianship** — do not model it with the old family primitives.
+- The **acudiente** (legal guardian) exists **only** as a consent signer in the
+  Ley 1581 authorization flow. They are not an app role, have no login-as-parent
+  dashboard, and see no other student's data.
+
+## Compliance — Ley 1581 / Decreto 1377 (blocking)
+
+- Processing a minor's data requires **acudiente authorization** before the
+  student account is activated. A student without recorded authorization stays
+  in `pendiente_autorizacion` and inactive.
+- **Minimize PII**: students are keyed by a **school-provided pseudonym/ID**, not
+  by personal name/email/age, wherever possible. Never write a minor's name,
+  email, or age outside what the authorization flow strictly requires.
+- Maintain a **register of authorizations** (timestamp + version) and support
+  **data suppression** (deletion) on request.
+- A **data-treatment policy** must be linked in-app.
+- `MIN_AGE = 13` is enforced in `UserSetupScreen`. Do not lower it.
+- Analytics params **must not contain user PII**: no `name`, `email`, `age`,
+  `nickname`, `fullName`, or any identifier that maps back to a person/minor.
+  Route all analytics through `src/shared/lib/analytics/logEvent.ts`.
+
+## Removed / forbidden features
+
+- **No real money**: savings goals are **simulated** with virtual currency.
+  No gift cards, no "pay kids to learn", no linking to real bank accounts.
+- **No public/global leaderboards** (documented harm to adolescents).
+  Class-level collaboration/competition the teacher can toggle is allowed.
+- **No generative AI in MVP**: detect "where the course is weak" with **simple
+  rules**, not ML. Generative/adaptive question banks are V3+. The human-curated
+  question bank stays the source of truth.
+- **No B2C freemium funnel** as a priority. The customer is the school.
+
+## Data model
+
+- Tenancy data lives under the institutional tree (see `docs/data-model.md`);
+  account-scoped auth data lives under `users/{uid}`.
+- **Student progress must be readable by the authorized teacher/rector** — model
+  it under the tenant tree (keyed by pseudonymous `studentId`), not buried under
+  a private `users/{uid}` subtree the teacher cannot reach.
+- **Savings/goals are simulated** (virtual currency). There is no real-money or
+  approval/pending workflow on real funds.
+- Each **world maps 1:1 to a CONPES 4005 competency** (`competencia` field), so
+  the teacher dashboard can show "world = competency".
+
+## Allowed Firestore paths
+
+Defined and constructed exclusively via `src/shared/lib/firebase/paths.ts`. The
+authoritative, evolving list lives in `docs/data-model.md`. Any new path requires
+three coordinated changes:
+
+1. A helper exported from `src/shared/lib/firebase/paths.ts`.
+2. A least-privilege, role-aware rule in `firestore.rules`.
+3. A repository under `src/features/<domain>/data/<entity>Repository.ts` that
+   uses the helper.
+
+The global `questionBank/{questionId}` stays read-only for signed-in clients;
+writes go through the Admin SDK seed script.
+
+## Platform
+
+- **MVP target is web responsive** (Expo Web / React Native Web over this same
+  codebase). Keep platform shims in `src/shared/lib/*` (`*.web.ts` /
+  `Platform.OS` branches): MMKV→AsyncStorage, native Firebase telemetry→no-op,
+  Google sign-in→popup/redirect. Native iOS/Android is **out of scope for MVP** —
+  do not invest in EAS native builds, native-only modules, or store flows now.
+
+## Code organization
+
+- **Feature-first.** Domain code lives in `src/features/<domain>/{screens,
+  components,data,store,...}`. Cross-feature imports are forbidden — share via
+  `src/shared/*`.
+- **Firestore paths** via `src/shared/lib/firebase/paths.ts` (see
+  `firebase-modular-client.mdc`).
+- **Store persistence** via `@shared/lib/storage/mmkv` (see `zustand-stores.mdc`).
+- **User-visible strings** via `t('...')`, defined in
+  `src/shared/i18n/locales/es.json`.
+
+## Tooling stack
+
+- **State management:** Zustand. **Local persistence:** MMKV (`react-native-mmkv`,
+  web falls back to AsyncStorage).
+- **Server state:** repository pattern under `src/features/**/data/*Repository.ts`
+  against Firestore (JS modular SDK — web-compatible).
+- **Styling:** RN `StyleSheet` + theme via `useThemeColors()`.
+- **E2E:** Maestro (`e2e/maestro/`).
+- **Diagnostics:** Crashlytics/Perf/Analytics via `@react-native-firebase/*` on
+  native; **no-op on web**.
+
+## When in doubt
+
+- Changes to `firestore.rules` route through the rules auditor (see `AGENTS.md`)
+  and must be tested against the emulator with role/tenant scenarios.
+- Changes to analytics, auth, role claims, PII handling, or age handling route
+  through the compliance guard (Ley 1581 + COPPA/GDPR-K).
+- Before any release, the Maestro smoke must be green.

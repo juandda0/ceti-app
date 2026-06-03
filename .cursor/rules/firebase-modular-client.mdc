@@ -1,0 +1,120 @@
+---
+description: "Firebase modular SDK conventions in Ceti — paths, repositories, dual-SDK coexistence."
+globs: src/features/**/data/*.ts, src/shared/lib/firebase/**/*.ts, src/shared/session/**/*.ts, src/services/ai/**/*.ts
+alwaysApply: false
+---
+
+<!--
+Composed rule — no community rule for Firebase JS v12 modular SDK on RN was a clean fit.
+Sources from this repo:
+- src/shared/lib/firebase/app.ts (initializeApp + initializeAuth + getReactNativePersistence + experimentalForceLongPolling)
+- src/shared/lib/firebase/paths.ts (single source of truth for Firestore paths)
+- src/shared/lib/firebase/sanitizeForFirestore.ts (stripUndefinedValues)
+- src/features/savings/data/{wallet,goals,deposits}Repository.ts (repository pattern)
+- src/shared/lib/analytics/logEvent.ts (dynamic import of @react-native-firebase/analytics)
+- firestore.rules
+- package.json (firebase ^12 modular + @react-native-firebase/* ^23 coexist)
+Anchored by: CLAUDE.md → AGENTS.md → ceti-invariants.mdc.
+-->
+
+Ceti runs **two** Firebase SDKs side by side. Confusing them is the most common foot-gun, so apply these conventions strictly.
+
+## Which SDK for what
+
+| Concern               | SDK to use                                  |
+| --------------------- | ------------------------------------------- |
+| Auth, Firestore       | `firebase` (JS modular SDK v12)             |
+| Analytics             | `@react-native-firebase/analytics` (native) |
+| Crashlytics           | `@react-native-firebase/crashlytics`        |
+| Performance           | `@react-native-firebase/perf`               |
+
+- For Auth/Firestore: import from `firebase/auth` and `firebase/firestore`. **Never** call `firebase.firestore()` (namespaced API) — it does not exist in v9+ modular.
+- For Analytics/Crashlytics/Perf: import dynamically (see `src/shared/lib/analytics/logEvent.ts` for the pattern) to avoid loading native modules on web.
+
+## Initialization
+
+- Always obtain the client through `getFirebaseClients()` from `@shared/lib/firebase/app`. It:
+  - Reads config from `Constants.expoConfig?.extra.firebase` (driven by `EXPO_PUBLIC_FIREBASE_*` env vars).
+  - Returns `null` if config is missing — repos must treat that as "remote disabled, local-only mode".
+  - On native uses `initializeAuth` + `getReactNativePersistence(AsyncStorage)`; on web uses `getAuth(app)`.
+  - Uses `initializeFirestore(app, { experimentalForceLongPolling: true })` — do not change this without verifying connectivity on Android emulators.
+- Do NOT call `initializeApp` directly outside `app.ts`.
+- Do NOT cache `auth` or `firestore` in module-level globals other than the `cached` singleton inside `app.ts`.
+
+## Firestore paths — single source of truth
+
+- **All** Firestore refs go through helpers in `src/shared/lib/firebase/paths.ts`. Never construct a `doc(...)` / `collection(...)` with string literals in a repository or screen.
+- When a new path is needed:
+  1. Add the segment to `FIRESTORE_COLLECTIONS` (`paths.ts`).
+  2. Export a `userXxxRef` / `userXxxCollectionRef` helper.
+  3. Update `firestore.rules` to cover the new path with the least-privilege rule.
+  4. Only then import the helper from a repository.
+- Allowed paths today:
+  - `users/{uid}`
+  - `users/{uid}/goals/{goalId}`
+  - `users/{uid}/deposits/{depositId}`
+  - `users/{uid}/lessonProgress/{lessonId}`
+  - `users/{uid}/wallet/state`
+  - `users/{uid}/aiProfile/state` (client-writeable today; flagged for migration to Functions)
+  - `questionBank/{questionId}` (client read-only; writes via Admin SDK seed script)
+
+## Repository pattern
+
+Every Firestore write goes through a repository under `src/features/**/data/*Repository.ts`. The pattern (taken from `walletRepository.ts`, `goalsRepository.ts`, `depositsRepository.ts`):
+
+```ts
+import { setDoc } from 'firebase/firestore';
+import { getFirebaseClients } from '@shared/lib/firebase/app';
+import { userXxxDocRef } from '@shared/lib/firebase/paths';
+import { stripUndefinedValues } from '@shared/lib/firebase/sanitizeForFirestore';
+
+export const xxxRepository = {
+  async upsertXxx(uid: string, data: Xxx): Promise<boolean> {
+    const clients = getFirebaseClients();
+    if (!clients?.firestore) return false;
+    const ref = userXxxDocRef(clients.firestore, uid, data.id);
+    await setDoc(ref, stripUndefinedValues({ ...data } as Record<string, unknown>), { merge: true });
+    return true;
+  },
+};
+```
+
+Required elements:
+
+1. **Null guard** on `clients?.firestore` → return `false` (local-only mode).
+2. **Use the path helper**, never an inline `doc(...)` literal.
+3. **Sanitize** every payload with `stripUndefinedValues` — Firestore rejects `undefined` at any depth.
+4. **`{ merge: true }`** unless you genuinely intend to overwrite the whole document.
+5. **Return `boolean`** so callers know whether the remote write succeeded.
+
+For deletes: `deleteDoc(ref)` — same null guard, same return shape.
+
+## Reads and listeners
+
+- For one-shot reads: `getDoc(ref)` / `getDocs(query)`.
+- For subscriptions: `onSnapshot(ref, cb)`. Always return the unsubscribe function from the hook/effect that owns the listener.
+- Never leak listeners across navigation — co-locate them with the screen or with `src/shared/session/*`.
+
+## Auth session
+
+- The user-facing auth state lives in `useAuthStore`; Firebase Auth state is bootstrapped via `src/shared/lib/firebase/authSession.ts` and `authProfileBootstrap.ts`.
+- Do not store the Firebase `User` object in Zustand — store only `firebaseUid` and the derived flags. The full user is reachable via `auth.currentUser` when needed.
+
+## Security rules
+
+- `firestore.rules` enforces `isSelf(uid)` on all `users/{uid}/**` paths.
+- `aiProfile/{docId}` is currently writeable by the owner client — this is **flagged deuda** (see `AGENTS.md` → `AIProfile-Functions-Migrator`). Do not add new client-writeable paths with PII without explicit review.
+- `questionBank/{questionId}` is `read: signedIn(), write: false` — seeds go through `scripts/seedQuestionBank.ts` (Admin SDK).
+
+## Analytics safety
+
+- Use `logEvent(name, params)` from `src/shared/lib/analytics/logEvent.ts` — it handles web no-op, dev console log, and native module absence.
+- **Never** put names, emails, ages, or any minor PII into analytics params. See `docs/COMPLIANCE.md` and `ceti-invariants.mdc`.
+
+## What NOT to do
+
+- Do NOT import the namespaced `firebase/compat` API.
+- Do NOT write Firestore strings like `users/${uid}/goals` inline.
+- Do NOT call `getFirestore()` without going through `getFirebaseClients()`.
+- Do NOT skip `stripUndefinedValues` — even a single nested `undefined` will throw at runtime.
+- Do NOT add Cloud Functions code casually; the only sanctioned Function today is the planned `aiProfile` migrator.
