@@ -180,6 +180,11 @@ export function asignacionDocRef(db: Firestore, colegioId: string, asignacionId:
   return doc(db, C.colegios, colegioId, C.asignaciones, asignacionId);
 }
 
+/** Assignments targeting a course (covers both course- and student-targeted). */
+export function asignacionesByCursoQuery(db: Firestore, colegioId: string, cursoId: string) {
+  return query(asignacionesCollectionRef(db, colegioId), where('target.cursoId', '==', cursoId));
+}
+
 /** Ley 1581 consent register. Keyed by the student pseudonym. */
 export function autorizacionDocRef(db: Firestore, colegioId: string, studentId: string) {
   return doc(db, C.colegios, colegioId, C.autorizaciones, studentId);

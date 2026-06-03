@@ -178,6 +178,17 @@ await check(
   )
 );
 
+console.log('Assignments:');
+const asigPath = 'colegios/A/asignaciones/a1';
+const asig = { worldId: 'world_1', target: { tipo: 'curso', cursoId: 'c1' }, fechaInicio: 1, deadline: 2, createdByUid: 'uProfA1', createdAt: 1 };
+await check('teacher creates assignment', assertSucceeds(setDoc(doc(profA1, asigPath), asig)));
+await check('student reads assignment', assertSucceeds(getDoc(doc(stuA1, asigPath))));
+await check(
+  'student cannot create assignment',
+  assertFails(setDoc(doc(stuA2, 'colegios/A/asignaciones/a2'), asig))
+);
+await check('rector B cannot read A assignment', assertFails(getDoc(doc(rectorB, asigPath))));
+
 console.log('Membership & questionBank:');
 await check('user reads own membership', assertSucceeds(getDoc(doc(stuA1, 'membership/uStuA1'))));
 await check('user cannot read other membership', assertFails(getDoc(doc(stuA2, 'membership/uStuA1'))));
