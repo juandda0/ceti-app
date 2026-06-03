@@ -71,4 +71,14 @@ export const adminService = {
   async createColegio(colegioId: string, nombre: string): Promise<{ ok: boolean }> {
     return callFunction('bootstrapColegio', { colegioId, nombre });
   },
+
+  /** Generates (or returns) the join code for a course — Cloud Function. */
+  async generateClassCode(colegioId: string, cursoId: string): Promise<{ code: string }> {
+    return callFunction('generateClassCode', { colegioId, cursoId });
+  },
+
+  /** Student self-joins a course by code — Cloud Function. */
+  async joinByCode(code: string): Promise<{ ok: boolean; colegioId: string; cursoId: string }> {
+    return callFunction('joinByCode', { code });
+  },
 };

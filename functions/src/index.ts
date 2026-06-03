@@ -317,3 +317,83 @@ export const suppressStudentData = onCall(async (request) => {
 
   return { ok: true };
 });
+
+// ---------------------------------------------------------------------------
+// Class codes (Google-Classroom-style self-join). classCodes/{code} maps a code
+// to a colegio/curso; only these functions (Admin) touch it (rules deny clients).
+// ---------------------------------------------------------------------------
+
+// No ambiguous chars (0/O, 1/I/L).
+const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function randomCode(): string {
+  let s = '';
+  for (let i = 0; i < 6; i++) s += CODE_ALPHABET[Math.floor(Math.random() * CODE_ALPHABET.length)];
+  return s;
+}
+
+/** Staff generates (or returns the existing) join code for a course. */
+export const generateClassCode = onCall(async (request) => {
+  const caller = request.auth;
+  if (!caller) throw new HttpsError('unauthenticated', 'Sign in required.');
+  const colegioId = requireString(request.data?.colegioId, 'colegioId');
+  const cursoId = requireString(request.data?.cursoId, 'cursoId');
+  await assertStaffOfColegio(caller, colegioId, cursoId, { allowProfesor: true });
+
+  const db = getFirestore();
+  const cursoRef = db.doc(`colegios/${colegioId}/cursos/${cursoId}`);
+  const existing = (await cursoRef.get()).data()?.codigo as string | undefined;
+  if (existing) return { code: existing };
+
+  let code = '';
+  for (let attempt = 0; attempt < 10 && !code; attempt++) {
+    const candidate = randomCode();
+    if (!(await db.doc(`classCodes/${candidate}`).get()).exists) code = candidate;
+  }
+  if (!code) throw new HttpsError('internal', 'No se pudo generar un código único.');
+
+  await db.doc(`classCodes/${code}`).set({
+    colegioId,
+    cursoId,
+    createdAt: FieldValue.serverTimestamp(),
+  });
+  await cursoRef.set({ codigo: code }, { merge: true });
+  return { code };
+});
+
+/**
+ * Student self-joins a course by code. Creates a roster slot linked to their
+ * auth account, in 'pendiente_autorizacion' (Ley 1581 gate: inactive until the
+ * acudiente authorizes). Sets the student's claims.
+ */
+export const joinByCode = onCall(async (request) => {
+  const caller = request.auth;
+  if (!caller) throw new HttpsError('unauthenticated', 'Sign in required.');
+  const code = requireString(request.data?.code, 'code').toUpperCase();
+
+  const db = getFirestore();
+  const codeSnap = await db.doc(`classCodes/${code}`).get();
+  if (!codeSnap.exists) throw new HttpsError('not-found', 'Código de clase inválido.');
+  const { colegioId, cursoId } = codeSnap.data() as { colegioId: string; cursoId: string };
+
+  // Already linked to this colegio → no-op.
+  if (caller.token.colegioId === colegioId && caller.token.studentId) {
+    return { ok: true, colegioId, cursoId, studentId: caller.token.studentId };
+  }
+
+  const studentId = `stu_${Date.now().toString(36)}${Math.floor(Math.random() * 1e4)}`;
+  // Label so staff can identify the student; the school may rename to a pseudonym.
+  const displayLabel =
+    (caller.token.name as string | undefined) ||
+    (caller.token.email as string | undefined)?.split('@')[0] ||
+    'Estudiante';
+
+  await db.doc(`colegios/${colegioId}/cursos/${cursoId}/estudiantes/${studentId}`).set({
+    displayLabel,
+    estado: 'pendiente_autorizacion',
+    uidVinculado: caller.uid,
+    createdAt: FieldValue.serverTimestamp(),
+  });
+  await applyClaims(caller.uid, { role: 'estudiante', colegioId, cursoId, studentId });
+
+  return { ok: true, colegioId, cursoId, studentId };
+});

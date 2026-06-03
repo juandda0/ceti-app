@@ -91,7 +91,20 @@
     "emptyRoster": "Aún no hay estudiantes en este curso.",
     "authorize": "Autorizar",
     "revoke": "Revocar",
-    "assignTeacher": "Asignar profesor"
+    "assignTeacher": "Asignar profesor",
+    "classCode": "Código de clase",
+    "classCodeHint": "Genera un código para que los estudiantes se unan a este curso.",
+    "classCodeGen": "Generar código",
+    "classCodeShow": "Regenerar / ver"
+  },
+  "join": {
+    "title": "Únete a tu curso",
+    "hint": "¿Tu profesor te dio un código de clase? Ingrésalo para unirte.",
+    "placeholder": "Código (ej. ABC123)",
+    "cta": "Unirme",
+    "okTitle": "¡Listo!",
+    "ok": "Te uniste al curso. Quedas pendiente de autorización del acudiente para empezar.",
+    "errorTitle": "No se pudo unir"
   },
   "legal": {
     "privacyPolicy": "Política de tratamiento de datos"

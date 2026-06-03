@@ -36,6 +36,8 @@ export default function CourseAdminScreen() {
   const [label, setLabel] = useState('');
   const [busy, setBusy] = useState(false);
   const [teacherEmail, setTeacherEmail] = useState('');
+  const [code, setCode] = useState<string | null>(null);
+  const [codeBusy, setCodeBusy] = useState(false);
 
   const reload = useCallback(async () => {
     if (!colegioId || !cursoId) return;
@@ -97,6 +99,19 @@ export default function CourseAdminScreen() {
       Alert.alert(t('admin.assignOkTitle'), t('admin.teacherOk', { email: teacherEmail.trim() }));
     });
 
+  const onGenerateCode = async () => {
+    if (!colegioId || !cursoId) return;
+    setCodeBusy(true);
+    try {
+      const res = await adminService.generateClassCode(colegioId, cursoId);
+      setCode(res.code);
+    } catch (e) {
+      Alert.alert(t('admin.error'), e instanceof Error ? e.message : String(e));
+    } finally {
+      setCodeBusy(false);
+    }
+  };
+
   const input = { backgroundColor: colors.background.secondary, color: colors.text.primary };
 
   return (
@@ -106,6 +121,33 @@ export default function CourseAdminScreen() {
         <Text style={[styles.subtitle, { color: colors.text.secondary }]}>
           {t('admin.rosterTitle')}
         </Text>
+
+        {/* Class code */}
+        <View style={[styles.codeCard, { backgroundColor: colors.background.secondary }]}>
+          <Text style={[styles.codeLabel, { color: colors.text.secondary }]}>
+            {t('admin.classCode')}
+          </Text>
+          {code ? (
+            <Text style={[styles.codeValue, { color: colors.brand.primary }]}>{code}</Text>
+          ) : (
+            <Text style={[styles.codeHint, { color: colors.text.tertiary }]}>
+              {t('admin.classCodeHint')}
+            </Text>
+          )}
+          <TouchableOpacity
+            style={[
+              styles.codeBtn,
+              { borderColor: colors.brand.primary, opacity: codeBusy ? 0.6 : 1 },
+            ]}
+            onPress={() => void onGenerateCode()}
+            disabled={codeBusy}
+          >
+            <Ionicons name="key-outline" size={16} color={colors.brand.primary} />
+            <Text style={[styles.codeBtnText, { color: colors.brand.primary }]}>
+              {code ? t('admin.classCodeShow') : t('admin.classCodeGen')}
+            </Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Add student */}
         <View style={styles.addRow}>
@@ -221,6 +263,21 @@ const styles = StyleSheet.create({
   section: { fontSize: 13, fontWeight: '700', marginTop: 16 },
   hint: { fontSize: 12, lineHeight: 16 },
   muted: { fontSize: 13, marginTop: 4 },
+  codeCard: { borderRadius: 14, padding: 16, gap: 6, alignItems: 'center', marginTop: 4 },
+  codeLabel: { fontSize: 13, fontWeight: '600' },
+  codeValue: { fontSize: 32, fontWeight: '900', letterSpacing: 4 },
+  codeHint: { fontSize: 12, textAlign: 'center' },
+  codeBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    borderWidth: 1.5,
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    marginTop: 4,
+  },
+  codeBtnText: { fontSize: 14, fontWeight: '700' },
   addRow: { flexDirection: 'row', gap: 8, alignItems: 'center', marginTop: 4 },
   field: { borderRadius: 10, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15 },
   addBtn: {

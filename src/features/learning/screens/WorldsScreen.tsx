@@ -8,6 +8,7 @@ import { useUserStore } from '@features/auth/store/useUserStore';
 import { useQuestionBankStore } from '@features/learning/store/useQuestionBankStore';
 import { competenciaForWorld } from '@features/learning/data/competencias';
 import StudentAssignmentsBanner from '@features/dashboard/components/StudentAssignmentsBanner';
+import JoinClassBanner from '@features/dashboard/components/JoinClassBanner';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { Typography } from '@shared/constants/typography';
@@ -242,6 +243,7 @@ export default function WorldsScreen() {
           {totalDone} de {totalAll} lecciones completadas
         </Text>
 
+        <JoinClassBanner />
         <StudentAssignmentsBanner />
 
         <View style={styles.list}>

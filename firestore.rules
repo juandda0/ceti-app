@@ -184,6 +184,12 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Class join codes: resolved only by the joinByCode Function (Admin SDK).
+    // Never exposed to clients (codes must not be enumerable).
+    match /classCodes/{code} {
+      allow read, write: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
