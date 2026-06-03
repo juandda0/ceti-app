@@ -360,7 +360,13 @@ export default function WorldQuizScreen() {
   const router = useRouter();
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
-  const userId = useUserStore((s) => s.id);
+  // Key progress by the Firebase auth uid (unique per account). The local
+  // useUserStore.id is a device-local profile id shared across accounts on the
+  // same browser, which mixed different users' progress. Fallback to it only in
+  // offline/local mode (no Firebase user). Both hooks run every render.
+  const firebaseUid = useAuthStore((s) => s.firebaseUid);
+  const localProfileId = useUserStore((s) => s.id);
+  const userId = firebaseUid ?? localProfileId;
   const xp = useUserStore((s) => s.xp);
   const level = useUserStore((s) => s.level);
   const nickname = useUserStore((s) => s.nickname);

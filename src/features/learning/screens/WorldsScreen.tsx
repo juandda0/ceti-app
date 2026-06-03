@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUserStore } from '@features/auth/store/useUserStore';
+import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { useQuestionBankStore } from '@features/learning/store/useQuestionBankStore';
 import { competenciaForWorld } from '@features/learning/data/competencias';
 import StudentAssignmentsBanner from '@features/dashboard/components/StudentAssignmentsBanner';
@@ -174,7 +175,11 @@ export default function WorldsScreen() {
   const router = useRouter();
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
-  const userId = useUserStore((s) => s.id);
+  // Per-account key (Firebase uid); fallback to local profile id only offline.
+  // Both hooks must run every render (no conditional hook calls).
+  const firebaseUid = useAuthStore((s) => s.firebaseUid);
+  const localProfileId = useUserStore((s) => s.id);
+  const userId = firebaseUid ?? localProfileId;
   const fetchWorldQuestions = useQuestionBankStore((s) => s.fetchWorldQuestions);
   const getWorldProgress = useQuestionBankStore((s) => s.getWorldProgress);
   const isWorldComplete = useQuestionBankStore((s) => s.isWorldComplete);
