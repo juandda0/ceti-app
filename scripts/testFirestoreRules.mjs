@@ -17,6 +17,7 @@ import {
   doc,
   getDoc,
   setDoc,
+  deleteDoc,
   collectionGroup,
   getDocs,
   query,
@@ -62,6 +63,9 @@ const stuA3 = env
   .authenticatedContext('uStuA3', { role: 'estudiante', colegioId: 'A', studentId: 's3' })
   .firestore();
 const rectorB = env.authenticatedContext('uRectorB', { role: 'rector', colegioId: 'B' }).firestore();
+const stuA4 = env
+  .authenticatedContext('uStuA4', { role: 'estudiante', colegioId: 'A', studentId: 's4' })
+  .firestore();
 
 const progPath = (cid, curso, sid, w) =>
   `colegios/${cid}/cursos/${curso}/estudiantes/${sid}/progress/${w}`;
@@ -103,6 +107,19 @@ await env.withSecurityRulesDisabled(async (ctx) => {
   });
   await setDoc(doc(db, progPath('A', 'c1', 's1', 'w1')), validProgress);
   await setDoc(doc(db, 'membership/uStuA1'), { role: 'estudiante', colegioId: 'A', studentId: 's1' });
+  // s4 is a suppressed (Ley 1581 erasure) roster slot — must not be able to write.
+  await setDoc(doc(db, 'colegios/A/cursos/c1/estudiantes/s4'), {
+    displayLabel: 'Est 4',
+    estado: 'suprimido',
+    createdAt: 1,
+  });
+  await setDoc(doc(db, 'colegios/A/sedes/sede1'), { nombre: 'Sede 1' });
+  await setDoc(doc(db, 'colegios/A/autorizaciones/s1'), {
+    estado: 'otorgada',
+    politicaVersion: 'v1',
+  });
+  await setDoc(doc(db, 'classCodes/CODE1'), { colegioId: 'A', cursoId: 'c1' });
+  await setDoc(doc(db, 'questionBank/q1'), { worldId: 'world_1', competencia: 'ahorro' });
 });
 
 console.log('Tenant isolation:');
@@ -196,6 +213,85 @@ await check('user cannot read other membership', assertFails(getDoc(doc(stuA2, '
 await check(
   'client cannot write membership',
   assertFails(setDoc(doc(stuA1, 'membership/uStuA1'), { role: 'rector', colegioId: 'A' }))
+);
+
+console.log('Class codes (deny-all to clients):');
+await check('client cannot read classCodes', assertFails(getDoc(doc(stuA1, 'classCodes/CODE1'))));
+await check(
+  'client cannot write classCodes',
+  assertFails(setDoc(doc(stuA1, 'classCodes/NEW'), { colegioId: 'A', cursoId: 'c1' }))
+);
+
+console.log('Autorizaciones (Ley 1581 register; Function-only writes):');
+await check(
+  'staff reads autorizaciones',
+  assertSucceeds(getDoc(doc(profA1, 'colegios/A/autorizaciones/s1')))
+);
+await check(
+  'student cannot read autorizaciones',
+  assertFails(getDoc(doc(stuA1, 'colegios/A/autorizaciones/s1')))
+);
+await check(
+  'rector B cannot read A autorizaciones',
+  assertFails(getDoc(doc(rectorB, 'colegios/A/autorizaciones/s1')))
+);
+await check(
+  'even rector cannot write autorizaciones (Function only)',
+  assertFails(
+    setDoc(doc(rectorA, 'colegios/A/autorizaciones/s9'), { estado: 'otorgada', politicaVersion: 'v1' })
+  )
+);
+
+console.log('Sedes:');
+await check('staff reads sede', assertSucceeds(getDoc(doc(profA1, 'colegios/A/sedes/sede1'))));
+await check('student cannot read sede', assertFails(getDoc(doc(stuA1, 'colegios/A/sedes/sede1'))));
+await check(
+  'client cannot write sede',
+  assertFails(setDoc(doc(rectorA, 'colegios/A/sedes/sede2'), { nombre: 'Sede 2' }))
+);
+
+console.log('Colegio doc is read-only to clients:');
+await check(
+  'rector cannot mutate colegio doc',
+  assertFails(setDoc(doc(rectorA, 'colegios/A'), { nombre: 'hack' }, { merge: true }))
+);
+
+console.log('Account-scoped users/{uid}:');
+await check('user reads own user doc', assertSucceeds(getDoc(doc(stuA1, 'users/uStuA1'))));
+await check('user cannot read another user doc', assertFails(getDoc(doc(stuA2, 'users/uStuA1'))));
+await check(
+  'user creates own user doc (validated)',
+  assertSucceeds(setDoc(doc(stuA1, 'users/uStuA1'), { displayName: 'A', provider: 'google' }))
+);
+await check(
+  'wallet rejects negative total',
+  assertFails(setDoc(doc(stuA1, 'users/uStuA1/wallet/state'), { totalCetis: -5 }))
+);
+await check(
+  'wallet accepts valid total',
+  assertSucceeds(setDoc(doc(stuA1, 'users/uStuA1/wallet/state'), { totalCetis: 10 }))
+);
+await check('aiProfile self read ok', assertSucceeds(getDoc(doc(stuA1, 'users/uStuA1/aiProfile/state'))));
+await check(
+  'aiProfile client write denied (no AI in MVP)',
+  assertFails(setDoc(doc(stuA1, 'users/uStuA1/aiProfile/state'), { weakness: 'x' }))
+);
+
+console.log('Question bank (read-only):');
+await check('signed-in reads questionBank', assertSucceeds(getDoc(doc(stuA1, 'questionBank/q1'))));
+await check(
+  'client cannot write questionBank',
+  assertFails(setDoc(doc(stuA1, 'questionBank/q2'), { worldId: 'world_1' }))
+);
+
+console.log('Suppression & delete guards:');
+await check(
+  'Ley 1581: suprimido student cannot write progress',
+  assertFails(setDoc(doc(stuA4, progPath('A', 'c1', 's4', 'w1')), { ...validProgress, studentId: 's4' }))
+);
+await check(
+  'progress cannot be deleted by the student',
+  assertFails(deleteDoc(doc(stuA1, progPath('A', 'c1', 's1', 'w1'))))
 );
 
 await env.cleanup();

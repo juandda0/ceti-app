@@ -17,7 +17,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "test:rules": "firebase emulators:exec --only firestore --project demo-ceti \"node scripts/testFirestoreRules.mjs\""
+    "test:rules": "firebase emulators:exec --only firestore --project demo-ceti \"node scripts/testFirestoreRules.mjs\"",
+    "i18n:check": "node scripts/checkI18nKeys.mjs"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json,md,css,yml,yaml}": [
@@ -87,6 +88,7 @@
     "@types/base-64": "^1.0.2",
     "@types/jest": "^30.0.0",
     "@types/react": "~19.1.0",
+    "babel-plugin-dynamic-import-node": "^2.3.3",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
     "firebase-admin": "^13.10.0",
