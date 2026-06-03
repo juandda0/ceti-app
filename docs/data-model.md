@@ -63,7 +63,8 @@ colegios/{colegioId}
   │         ├─ (doc) { displayLabel, estado: 'pendiente_autorizacion'|'activo'|'suprimido',
   │         │          uidVinculado?: string, createdAt }
   │         └─ progress/{worldId}
-  │              └─ (doc) { competencia, xp, nivel, mastery: 0..1,
+  │              └─ (doc) { colegioId, cursoId, studentId,   # denormalized for collection-group reports
+  │                         competencia, xp, nivel, mastery: 0..1,
   │                         quizScores: {...}, badges: string[],
   │                         completed: bool, completedAt?, updatedAt }
   ├─ asignaciones/{asignacionId}
