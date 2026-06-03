@@ -81,4 +81,23 @@ export const adminService = {
   async joinByCode(code: string): Promise<{ ok: boolean; colegioId: string; cursoId: string }> {
     return callFunction('joinByCode', { code });
   },
+
+  // ---- Platform super-admin (CETI_SUPERADMIN_EMAILS) ----
+
+  /** Registers a colegio and optionally assigns its first rector by email. */
+  async registerColegio(input: {
+    colegioId: string;
+    nombre: string;
+    plan?: string;
+    rectorEmail?: string;
+  }): Promise<{ ok: boolean; colegioId: string; rectorAssigned: boolean }> {
+    return callFunction('registerColegio', input);
+  },
+
+  /** Lists all colegios (super-admin overview). */
+  async listColegios(): Promise<{
+    colegios: { id: string; nombre: string; plan: string | null }[];
+  }> {
+    return callFunction('listColegios');
+  },
 };

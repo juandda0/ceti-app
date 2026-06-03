@@ -29,12 +29,19 @@ function requireString(value: unknown, field: string): string {
   return value.trim();
 }
 
-/** Super-admins allowed to bootstrap a colegio (comma-separated emails). */
+/** Super-admins allowed to register/administer colegios (comma-separated emails). */
 function superAdminEmails(): string[] {
   return (process.env.CETI_SUPERADMIN_EMAILS ?? '')
     .split(',')
     .map((e) => e.trim().toLowerCase())
     .filter(Boolean);
+}
+
+type CallerLike = { token: { email?: unknown; email_verified?: unknown } };
+/** True if the caller's verified email is in the super-admin allowlist. */
+function isSuperAdmin(caller: CallerLike): boolean {
+  const email = (typeof caller.token.email === 'string' ? caller.token.email : '').toLowerCase();
+  return !!email && caller.token.email_verified === true && superAdminEmails().includes(email);
 }
 
 type ClaimsPayload = {
@@ -90,9 +97,10 @@ export const setMemberClaims = onCall(async (request) => {
   const caller = request.auth;
   if (!caller) throw new HttpsError('unauthenticated', 'Sign in required.');
 
+  const superAdmin = isSuperAdmin(caller);
   const callerRole = caller.token.role;
   const callerColegio = caller.token.colegioId;
-  if (callerRole !== 'rector' && callerRole !== 'coordinador') {
+  if (!superAdmin && callerRole !== 'rector' && callerRole !== 'coordinador') {
     throw new HttpsError('permission-denied', 'Only rector/coordinador can assign roles.');
   }
 
@@ -107,10 +115,15 @@ export const setMemberClaims = onCall(async (request) => {
   if (!isRole(role)) {
     throw new HttpsError('invalid-argument', `'role' must be one of: ${ROLES.join(', ')}.`);
   }
-  if (colegioId !== callerColegio) {
+  // Super-admins may assign any role in any colegio; staff only within their own.
+  if (!superAdmin && colegioId !== callerColegio) {
     throw new HttpsError('permission-denied', 'Cannot assign roles outside your colegio.');
   }
-  if (callerRole === 'coordinador' && (role === 'rector' || role === 'coordinador')) {
+  if (
+    !superAdmin &&
+    callerRole === 'coordinador' &&
+    (role === 'rector' || role === 'coordinador')
+  ) {
     throw new HttpsError('permission-denied', 'Coordinador cannot assign rector/coordinador.');
   }
 
@@ -396,4 +409,71 @@ export const joinByCode = onCall(async (request) => {
   await applyClaims(caller.uid, { role: 'estudiante', colegioId, cursoId, studentId });
 
   return { ok: true, colegioId, cursoId, studentId };
+});
+
+// ---------------------------------------------------------------------------
+// Platform super-admin: register & list colegios (above the rector level).
+// Gated by the CETI_SUPERADMIN_EMAILS allowlist.
+// ---------------------------------------------------------------------------
+
+/** Creates a colegio and optionally assigns its first rector by email. */
+export const registerColegio = onCall(async (request) => {
+  const caller = request.auth;
+  if (!caller) throw new HttpsError('unauthenticated', 'Sign in required.');
+  if (!isSuperAdmin(caller)) {
+    throw new HttpsError('permission-denied', 'Solo un super-admin puede registrar colegios.');
+  }
+
+  const colegioId = requireString(request.data?.colegioId, 'colegioId');
+  const nombre = requireString(request.data?.nombre, 'nombre');
+  const plan = typeof request.data?.plan === 'string' ? request.data.plan : undefined;
+  const rectorEmail =
+    typeof request.data?.rectorEmail === 'string' ? request.data.rectorEmail.trim() : '';
+
+  const colegioRef = getFirestore().doc(`colegios/${colegioId}`);
+  if ((await colegioRef.get()).exists) {
+    throw new HttpsError('already-exists', `El colegio '${colegioId}' ya existe.`);
+  }
+
+  await colegioRef.set({
+    nombre,
+    sedesEnabled: false,
+    ...(plan ? { plan } : {}),
+    createdAt: FieldValue.serverTimestamp(),
+  });
+
+  let rectorAssigned = false;
+  if (rectorEmail) {
+    try {
+      const uid = (await getAuth().getUserByEmail(rectorEmail)).uid;
+      await applyClaims(uid, { role: 'rector', colegioId });
+      rectorAssigned = true;
+    } catch {
+      // Rector hasn't signed in yet; the colegio is created and a rector can be
+      // assigned later from the super-admin panel once they have an account.
+      rectorAssigned = false;
+    }
+  }
+
+  return { ok: true, colegioId, rectorAssigned };
+});
+
+/** Lists all colegios (super-admin overview). */
+export const listColegios = onCall(async (request) => {
+  const caller = request.auth;
+  if (!caller) throw new HttpsError('unauthenticated', 'Sign in required.');
+  if (!isSuperAdmin(caller)) {
+    throw new HttpsError('permission-denied', 'Solo un super-admin puede listar colegios.');
+  }
+
+  const snap = await getFirestore().collection('colegios').get();
+  const colegios = snap.docs.map((d) => {
+    const data = d.data();
+    return {
+      id: d.id,
+      nombre: (data.nombre as string) ?? d.id,
+      plan: (data.plan as string) ?? null,
+    };
+  });
+  return { colegios };
 });

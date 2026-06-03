@@ -20,6 +20,7 @@ interface AuthState {
   sedeId: string | null;
   studentId: string | null;
   cursoId: string | null;
+  superadmin: boolean;
 }
 
 interface AuthActions {
@@ -43,6 +44,7 @@ const initialState: AuthState = {
   sedeId: null,
   studentId: null,
   cursoId: null,
+  superadmin: false,
 };
 
 export const useAuthStore = create<AuthStore>()(
@@ -67,6 +69,7 @@ export const useAuthStore = create<AuthStore>()(
           sedeId: claims?.sedeId ?? null,
           studentId: claims?.studentId ?? null,
           cursoId: claims?.cursoId ?? null,
+          superadmin: claims?.superadmin ?? false,
         }),
 
       resetSessionFlagsFromFirebase: () =>
@@ -79,6 +82,7 @@ export const useAuthStore = create<AuthStore>()(
           sedeId: null,
           studentId: null,
           cursoId: null,
+          superadmin: false,
         }),
 
       logout: async () => {
@@ -125,6 +129,7 @@ export const useAuthStore = create<AuthStore>()(
         sedeId: null,
         studentId: null,
         cursoId: null,
+        superadmin: false,
       }),
     }
   )
@@ -140,3 +145,6 @@ export const useRole = (): Role | null => useAuthStore((s) => s.role);
 
 /** Hook: whether the signed-in user is school staff. */
 export const useIsStaff = (): boolean => useAuthStore((s) => isStaffRole(s.role));
+
+/** Hook: whether the signed-in user is a platform super-admin. */
+export const useIsSuperAdmin = (): boolean => useAuthStore((s) => s.superadmin);

@@ -106,6 +106,21 @@
     "ok": "Te uniste al curso. Quedas pendiente de autorización del acudiente para empezar.",
     "errorTitle": "No se pudo unir"
   },
+  "superadmin": {
+    "link": "Super-admin (colegios)",
+    "title": "Administración de colegios",
+    "newColegio": "Registrar colegio",
+    "colegioId": "Identificador corto (ej. san-jose)",
+    "colegioNombre": "Nombre del colegio",
+    "rectorEmail": "Correo del rector (opcional)",
+    "rectorHint": "Si el rector ya inició sesión, queda asignado; si no, lo asignas luego.",
+    "register": "Registrar",
+    "colegios": "Colegios",
+    "none": "Aún no hay colegios registrados.",
+    "okTitle": "Colegio registrado",
+    "okWithRector": "Colegio creado y rector asignado. El rector debe re-iniciar sesión.",
+    "okNoRector": "Colegio creado. Asigna el rector cuando haya iniciado sesión."
+  },
   "legal": {
     "privacyPolicy": "Política de tratamiento de datos"
   }

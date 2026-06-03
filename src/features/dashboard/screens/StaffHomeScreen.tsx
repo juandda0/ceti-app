@@ -30,6 +30,7 @@ export default function StaffHomeScreen() {
   const role = useAuthStore((s) => s.role);
   const colegioId = useAuthStore((s) => s.colegioId);
   const uid = useAuthStore((s) => s.firebaseUid);
+  const superadmin = useAuthStore((s) => s.superadmin);
 
   const [cursos, setCursos] = useState<CursoWithId[]>([]);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
@@ -73,6 +74,22 @@ export default function StaffHomeScreen() {
           </Text>
           <Text style={[styles.cardValue, { color: colors.text.primary }]}>{colegioId ?? '—'}</Text>
         </View>
+
+        {superadmin && (
+          <TouchableOpacity
+            style={[styles.courseRow, { borderColor: colors.brand.primary }]}
+            accessibilityRole="button"
+            onPress={() => router.push('/(staff)/superadmin' as Href)}
+          >
+            <Ionicons name="business-outline" size={20} color={colors.brand.primary} />
+            <View style={styles.courseInfo}>
+              <Text style={[styles.courseName, { color: colors.text.primary }]}>
+                {t('superadmin.link')}
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
+          </TouchableOpacity>
+        )}
 
         {(role === 'rector' || role === 'coordinador') && (
           <>

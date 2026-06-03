@@ -26,6 +26,9 @@ export type CetiClaims = {
   studentId?: string;
   /** Only for `estudiante`: the course their roster slot lives under. */
   cursoId?: string;
+  /** Platform super-admin (registers/administers colegios). UI gate only; the
+   * Cloud Functions independently enforce the CETI_SUPERADMIN_EMAILS allowlist. */
+  superadmin?: boolean;
 };
 
 export type Colegio = {

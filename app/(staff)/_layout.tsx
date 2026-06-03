@@ -6,9 +6,10 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 export default function StaffLayout() {
   const authReady = useAuthStore((s) => s.authReady);
   const role = useAuthStore((s) => s.role);
+  const superadmin = useAuthStore((s) => s.superadmin);
   const colors = useThemeColors();
 
-  if (authReady && !isStaffRole(role)) {
+  if (authReady && !isStaffRole(role) && !superadmin) {
     return <Redirect href="/" />;
   }
 
