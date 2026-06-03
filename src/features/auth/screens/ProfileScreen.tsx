@@ -1,5 +1,6 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import Animated from 'react-native-reanimated';
 import { motion } from '@shared/constants/motion';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,7 +11,7 @@ import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { getLevelForXP, getLevelProgress } from '@shared/data/levels';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Platform } from 'react-native';
+
 import { performLogoutAndGo } from '@features/auth/performLogout';
 
 const AVATARS: Record<string, string> = {
@@ -26,6 +27,7 @@ const AVATARS: Record<string, string> = {
 
 export default function ProfileScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const { nickname, fullName, avatarId, avatarEmoji, xp, streak, totalLessonsCompleted, level } =
     useUserStore();
   const colors = useThemeColors();
@@ -45,7 +47,9 @@ export default function ProfileScreen() {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={[styles.pageTitle, { color: colors.text.primary }]}>Mi perfil</Text>
+        <Text style={[styles.pageTitle, { color: colors.text.primary }]}>
+          {t('profile.pageTitle')}
+        </Text>
 
         <Animated.View entering={motion.enterDown(56)} style={styles.levelCard}>
           <View style={styles.avatarContainer}>
@@ -71,14 +75,16 @@ export default function ProfileScreen() {
             <Text style={[styles.fullNameText, { color: colors.text.secondary }]}>{fullName}</Text>
           ) : null}
           <Text style={[styles.levelName, { color: colors.brand.primary }]}>
-            Nivel {level}: {levelMeta.name}
+            {t('profile.levelName', { level, name: levelMeta.name })}
           </Text>
 
           <View style={styles.xpSection}>
             <View style={styles.xpHeader}>
-              <Text style={[styles.xpLabel, { color: colors.text.tertiary }]}>Próximo nivel</Text>
+              <Text style={[styles.xpLabel, { color: colors.text.tertiary }]}>
+                {t('profile.nextLevel')}
+              </Text>
               <Text style={[styles.xpValue, { color: colors.brand.primary }]}>
-                {xpIntoLevel} / {levelMeta.xpToNext} XP
+                {t('profile.xpProgress', { current: xpIntoLevel, total: levelMeta.xpToNext })}
               </Text>
             </View>
             <View style={[styles.progressBar, { backgroundColor: colors.materials.highlight }]}>
@@ -102,7 +108,9 @@ export default function ProfileScreen() {
           >
             <Ionicons name="flame" size={28} color={colors.system.orange} />
             <Text style={[styles.statNum, { color: colors.text.primary }]}>{streak}</Text>
-            <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>RACHA</Text>
+            <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>
+              {t('profile.streak')}
+            </Text>
           </Animated.View>
           <Animated.View
             entering={motion.enterDown(112)}
@@ -115,7 +123,9 @@ export default function ProfileScreen() {
             <Text style={[styles.statNum, { color: colors.text.primary }]}>
               {totalLessonsCompleted}
             </Text>
-            <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>LECCIONES</Text>
+            <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>
+              {t('profile.lessons')}
+            </Text>
           </Animated.View>
           <Animated.View
             entering={motion.enterDown(136)}
@@ -126,22 +136,26 @@ export default function ProfileScreen() {
           >
             <Ionicons name="sparkles" size={28} color={colors.gold.primary} />
             <Text style={[styles.statNum, { color: colors.text.primary }]}>{xp}</Text>
-            <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>XP TOTAL</Text>
+            <Text style={[styles.statLabel, { color: colors.text.tertiary }]}>
+              {t('profile.totalXp')}
+            </Text>
           </Animated.View>
         </View>
 
         <Animated.View entering={motion.enterDown(152)} style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>Logros</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>
+            {t('profile.achievements')}
+          </Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.badgesScroll}
           >
             {[
-              { icon: 'ribbon', color: colors.gold.primary, title: '¡Hola Ceti!' },
-              { icon: 'wallet', color: colors.system.green, title: 'Ahorrador' },
-              { icon: 'school', color: colors.system.purple, title: 'Alumno' },
-              { icon: 'star', color: colors.system.blue, title: 'Estrella' },
+              { icon: 'ribbon', color: colors.gold.primary, title: t('profile.badgeHello') },
+              { icon: 'wallet', color: colors.system.green, title: t('profile.badgeSaver') },
+              { icon: 'school', color: colors.system.purple, title: t('profile.badgeStudent') },
+              { icon: 'star', color: colors.system.blue, title: t('profile.badgeStar') },
             ].map((badge, i) => (
               <View key={i} style={styles.badgeCard}>
                 <View
@@ -166,9 +180,13 @@ export default function ProfileScreen() {
         <TouchableOpacity
           style={styles.logoutBtn}
           onPress={() => void performLogoutAndGo(router, '/(auth)/welcome')}
+          accessibilityRole="button"
+          accessibilityLabel={t('profile.logout')}
         >
           <Ionicons name="log-out-outline" size={20} color={colors.system.red} />
-          <Text style={[styles.logoutText, { color: colors.system.red }]}>Cerrar sesión</Text>
+          <Text style={[styles.logoutText, { color: colors.system.red }]}>
+            {t('profile.logout')}
+          </Text>
         </TouchableOpacity>
       </ScrollView>
     </ScreenWrapper>

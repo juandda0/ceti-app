@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { View, Text, TextInput, StyleSheet, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import Animated from 'react-native-reanimated';
 import { motion } from '@shared/constants/motion';
 import * as Haptics from 'expo-haptics';
@@ -41,6 +42,7 @@ function parseAge(text: string): number | null {
 
 export default function UserSetupScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const setProfile = useUserStore((s) => s.setProfile);
   const colors = useThemeColors();
 
@@ -79,7 +81,7 @@ export default function UserSetupScreen() {
     if (isFirebaseConfigured()) {
       const u = getFirebaseClients()?.auth.currentUser;
       if (!u) {
-        setError('Tu sesión expiró. Vuelve a iniciar sesión.');
+        setError(t('onboarding.sessionExpired'));
         router.replace('/(auth)/welcome');
         return;
       }
@@ -98,7 +100,7 @@ export default function UserSetupScreen() {
           profile: { nickname, fullName: nickname, age, avatarId, avatarEmoji: emoji },
         });
       } catch (e) {
-        setError(e instanceof Error ? e.message : 'No se pudo guardar el perfil.');
+        setError(e instanceof Error ? e.message : t('onboarding.saveError'));
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         setFinishing(false);
         return;
@@ -140,9 +142,9 @@ export default function UserSetupScreen() {
             style={styles.stepContainer}
           >
             <PageHeader
-              overline="Empecemos"
-              title="¿Cómo te llamas?"
-              subtitle="Escribe tu nombre para personalizar tu experiencia"
+              overline={t('onboarding.stepNameOverline')}
+              title={t('onboarding.stepNameTitle')}
+              subtitle={t('onboarding.stepNameSubtitle')}
               style={{ alignItems: 'center' }}
             />
             <TextInput
@@ -155,7 +157,7 @@ export default function UserSetupScreen() {
                   backgroundColor: colors.materials.highlight,
                 },
               ]}
-              placeholder="Tu nombre..."
+              placeholder={t('onboarding.namePlaceholder')}
               placeholderTextColor={colors.text.tertiary}
               value={name}
               onChangeText={setName}
@@ -173,9 +175,9 @@ export default function UserSetupScreen() {
             style={styles.stepContainer}
           >
             <PageHeader
-              overline="Datos"
-              title="¿Cuántos años tienes?"
-              subtitle={`Debes tener al menos ${MIN_AGE} años para usar la app`}
+              overline={t('onboarding.stepAgeOverline')}
+              title={t('onboarding.stepAgeTitle')}
+              subtitle={t('onboarding.stepAgeSubtitle', { minAge: MIN_AGE })}
               style={{ alignItems: 'center' }}
             />
             <TextInput
@@ -188,17 +190,17 @@ export default function UserSetupScreen() {
                   backgroundColor: colors.materials.highlight,
                 },
               ]}
-              placeholder="Ej. 18"
+              placeholder={t('onboarding.agePlaceholder')}
               placeholderTextColor={colors.text.tertiary}
               value={ageText}
-              onChangeText={(t) => setAgeText(t.replace(/[^0-9]/g, ''))}
+              onChangeText={(text) => setAgeText(text.replace(/[^0-9]/g, ''))}
               keyboardType="number-pad"
               maxLength={3}
               autoFocus
             />
             {ageText.trim() !== '' && parseAge(ageText) === null && (
               <Text style={[styles.hint, { color: colors.system.red }]}>
-                Ingresa una edad entre {MIN_AGE} y {MAX_AGE} años
+                {t('onboarding.ageHint', { minAge: MIN_AGE, maxAge: MAX_AGE })}
               </Text>
             )}
           </Animated.View>
@@ -212,15 +214,18 @@ export default function UserSetupScreen() {
             style={styles.stepContainer}
           >
             <PageHeader
-              overline="Identidad"
-              title="Elige tu avatar"
-              subtitle="Este te identificará en la app"
+              overline={t('onboarding.stepAvatarOverline')}
+              title={t('onboarding.stepAvatarTitle')}
+              subtitle={t('onboarding.stepAvatarSubtitle')}
               style={{ alignItems: 'center' }}
             />
             <View style={styles.avatarGrid}>
               {AVATARS.map((av) => (
                 <Bounceable
                   key={av.id}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('onboarding.selectAvatar')}
+                  accessibilityState={{ selected: avatarId === av.id }}
                   onPress={() => {
                     setAvatarId(av.id);
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -252,9 +257,9 @@ export default function UserSetupScreen() {
             style={styles.stepContainer}
           >
             <PageHeader
-              overline="¡Todo listo!"
-              title="Bienvenido/a"
-              subtitle="Tu viaje financiero comienza ahora. Completa retos, gana Cetis y alcanza tus metas."
+              overline={t('onboarding.stepWelcomeOverline')}
+              title={t('onboarding.stepWelcomeTitle')}
+              subtitle={t('onboarding.stepWelcomeSubtitle')}
               style={{ alignItems: 'center' }}
             />
             <View
@@ -279,7 +284,7 @@ export default function UserSetupScreen() {
           <Text style={[styles.errorText, { color: colors.system.red }]}>{error}</Text>
         )}
         <CetiButton
-          label={step === 3 ? 'Comenzar' : 'Siguiente'}
+          label={step === 3 ? t('onboarding.start') : t('onboarding.next')}
           onPress={handleNext}
           disabled={!canAdvance() || finishing}
           variant="primary"

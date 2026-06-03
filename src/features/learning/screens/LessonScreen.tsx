@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity, TextInput } from 'react-native';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { safeRouterBack } from '@shared/utils/safeRouterBack';
 import Animated from 'react-native-reanimated';
 import { motion } from '@shared/constants/motion';
@@ -33,6 +34,8 @@ const STORY_LOTTIE_MAP: Record<string, unknown> = {
   smart_buy: require('../../../../assets/lessons/lesson4.json'),
   full_plan: require('../../../../assets/lessons/lesson5.json'),
 };
+
+type TFn = (key: string, options?: Record<string, unknown>) => string;
 
 function shuffleArray<T>(items: T[]): T[] {
   const out = [...items];
@@ -131,10 +134,12 @@ const ChoosePathStepView = ({
   step,
   onChoice,
   colors,
+  t,
 }: {
   step: ChoosePathStep;
   onChoice: (isSmartChoice: boolean, consequence: string, choiceText: string) => void;
   colors: any;
+  t: TFn;
 }) => {
   const [chosen, setChosen] = useState<0 | 1 | null>(null);
   const [blocked, setBlocked] = useState(false);
@@ -166,7 +171,9 @@ const ChoosePathStepView = ({
         <Text style={[styles.situationText, { color: colors.text.primary }]}>{step.situation}</Text>
       </View>
 
-      <Text style={[styles.chooseLabel, { color: colors.text.tertiary }]}>Elige tu camino</Text>
+      <Text style={[styles.chooseLabel, { color: colors.text.tertiary }]}>
+        {t('lesson.choosePath')}
+      </Text>
 
       <View style={styles.choiceButtonsContainer}>
         {step.options.map((opt, idx) => {
@@ -206,6 +213,7 @@ const InteractiveStepView = ({
   step,
   onResult,
   colors,
+  t,
 }: {
   step: any;
   onResult: (
@@ -215,25 +223,21 @@ const InteractiveStepView = ({
     action: 'next' | 'stay'
   ) => void;
   colors: any;
+  t: TFn;
 }) => {
   const [items, setItems] = useState(step.items);
 
   const handleClassify = (item: any, category: string) => {
     const isCorrect = item.category === category;
-    const selectedText = `${item.text} -> ${category === 'need' ? 'Necesidad' : 'Deseo'}`;
+    const selectedText = `${item.text} -> ${category === 'need' ? t('lesson.need') : t('lesson.want')}`;
     if (!isCorrect) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      onResult(
-        false,
-        'No era esa categoría. Mira si es algo básico o algo que puede esperar.',
-        selectedText,
-        'stay'
-      );
+      onResult(false, t('lesson.interactiveWrong'), selectedText, 'stay');
       return;
     }
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     const isLastItem = items.length === 1;
-    onResult(true, 'Bien clasificado. ¡Sigue así!', selectedText, isLastItem ? 'next' : 'stay');
+    onResult(true, t('lesson.interactiveCorrect'), selectedText, isLastItem ? 'next' : 'stay');
     setItems(items.filter((i: any) => i.text !== item.text));
   };
 
@@ -249,15 +253,23 @@ const InteractiveStepView = ({
           <View style={styles.classifyButtons}>
             <TouchableOpacity
               onPress={() => handleClassify(items[0], 'need')}
+              accessibilityRole="button"
+              accessibilityLabel={t('lesson.need')}
               style={[styles.classifyBtn, { backgroundColor: colors.fill.blueStrong }]}
             >
-              <Text style={{ color: colors.system.blue, fontWeight: 'bold' }}>Necesidad</Text>
+              <Text style={{ color: colors.system.blue, fontWeight: 'bold' }}>
+                {t('lesson.need')}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => handleClassify(items[0], 'want')}
+              accessibilityRole="button"
+              accessibilityLabel={t('lesson.want')}
               style={[styles.classifyBtn, { backgroundColor: colors.fill.purpleStrong }]}
             >
-              <Text style={{ color: colors.system.purple, fontWeight: 'bold' }}>Deseo</Text>
+              <Text style={{ color: colors.system.purple, fontWeight: 'bold' }}>
+                {t('lesson.want')}
+              </Text>
             </TouchableOpacity>
           </View>
         </Animated.View>
@@ -272,10 +284,12 @@ const SimulationStepView = ({
   step,
   onResult,
   colors,
+  t,
 }: {
   step: any;
   onResult: (correct: boolean, explanation: string, selectedText: string) => void;
   colors: any;
+  t: TFn;
 }) => {
   const [value, setValue] = useState('');
   const [error, setError] = useState(false);
@@ -283,10 +297,18 @@ const SimulationStepView = ({
   const checkAnswer = () => {
     if (parseInt(value) === step.answer) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      onResult(true, `Excelente. ${step.hint}`, value || '(sin respuesta)');
+      onResult(
+        true,
+        t('lesson.simulationCorrect', { hint: step.hint }),
+        value || t('lesson.noAnswer')
+      );
     } else {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      onResult(false, `Respuesta incorrecta. Pista: ${step.hint}`, value || '(sin respuesta)');
+      onResult(
+        false,
+        t('lesson.simulationWrong', { hint: step.hint }),
+        value || t('lesson.noAnswer')
+      );
       setError(true);
       setTimeout(() => setError(false), 1000);
     }
@@ -309,18 +331,20 @@ const SimulationStepView = ({
           value={value}
           onChangeText={setValue}
           keyboardType="number-pad"
-          placeholder="Tu respuesta..."
+          placeholder={t('lesson.answerPlaceholder')}
           placeholderTextColor={colors.text.tertiary}
         />
       </View>
       <CetiButton
-        label="Validar"
+        label={t('lesson.validate')}
         onPress={checkAnswer}
         variant="primary"
         size="medium"
         style={{ marginTop: 20 }}
       />
-      <Text style={[styles.hintText, { color: colors.text.tertiary }]}>Pista: {step.hint}</Text>
+      <Text style={[styles.hintText, { color: colors.text.tertiary }]}>
+        {t('lesson.hint', { hint: step.hint })}
+      </Text>
     </Animated.View>
   );
 };
@@ -347,6 +371,7 @@ export default function LessonScreen() {
 
   const router = useRouter();
   const colors = useThemeColors();
+  const { t } = useTranslation();
 
   const lesson = useMemo(() => LESSONS.find((l) => l.id === lessonId), [lessonId]);
 
@@ -410,8 +435,8 @@ export default function LessonScreen() {
     if (nextLives === 0) {
       showCetiNotice({
         variant: 'error',
-        title: 'Perdiste la lección',
-        message: 'Te quedaste sin vidas. Vuelve al mapa y cuando quieras la intentas de nuevo.',
+        title: t('lesson.lostTitle'),
+        message: t('lesson.lostMessage'),
         onDismiss: () => {
           router.replace('/(app)/saga');
         },
@@ -467,7 +492,7 @@ export default function LessonScreen() {
         score_rounded: Math.round(score),
       });
       if (firstCompletion) {
-        earnCetis(lesson.cetisReward, `Lección: ${lesson.title}`, 'lesson');
+        earnCetis(lesson.cetisReward, t('lesson.rewardLabel', { title: lesson.title }), 'lesson');
         addXP(lesson.xpReward);
         incrementLessonsCompleted();
         registerMissionCalendarDay();
@@ -496,6 +521,8 @@ export default function LessonScreen() {
         <TouchableOpacity
           onPress={() => safeRouterBack(router, '/(app)/saga')}
           style={styles.closeBtn}
+          accessibilityRole="button"
+          accessibilityLabel={t('lesson.close')}
         >
           <Ionicons name="close" size={24} color={colors.text.primary} />
         </TouchableOpacity>
@@ -528,10 +555,10 @@ export default function LessonScreen() {
                     <Ionicons name="checkmark-circle" size={80} color={colors.system.green} />
                   </View>
                   <Text style={[styles.finishTitle, { color: colors.text.primary }]}>
-                    LECCIÓN COMPLETADA
+                    {t('lesson.completed')}
                   </Text>
                   <Text style={[styles.finishSub, { color: colors.text.tertiary }]}>
-                    Has dado un gran paso
+                    {t('lesson.completedSub')}
                   </Text>
                 </View>
                 <View style={styles.rewardCards}>
@@ -550,7 +577,7 @@ export default function LessonScreen() {
                       +{lesson.xpReward}
                     </Text>
                     <Text style={[styles.rewardLabel, { color: colors.brand.primary }]}>
-                      PUNTOS XP
+                      {t('lesson.xpPoints')}
                     </Text>
                   </Animated.View>
                   <Animated.View
@@ -568,12 +595,12 @@ export default function LessonScreen() {
                       +{lesson.cetisReward}
                     </Text>
                     <Text style={[styles.rewardLabel, { color: colors.gold.primary }]}>
-                      CETIS GANADOS
+                      {t('lesson.cetisEarned')}
                     </Text>
                   </Animated.View>
                 </View>
                 <CetiButton
-                  label="CONTINUAR"
+                  label={t('lesson.continue')}
                   onPress={() => router.replace('/(app)/saga')}
                   variant="primary"
                   size="large"
@@ -586,21 +613,23 @@ export default function LessonScreen() {
                   <View style={[styles.successCircle, { backgroundColor: colors.fill.redSubtle }]}>
                     <Ionicons name="close-circle" size={80} color={colors.system.red} />
                   </View>
-                  <Text style={[styles.finishTitle, { color: colors.text.primary }]}>¡CASI!</Text>
+                  <Text style={[styles.finishTitle, { color: colors.text.primary }]}>
+                    {t('lesson.almost')}
+                  </Text>
                   <Text style={[styles.finishSub, { color: colors.text.tertiary }]}>
-                    Necesitas un 70% para ganar premios.
+                    {t('lesson.almostSub')}
                   </Text>
                 </View>
                 <View style={{ width: '100%', gap: 12 }}>
                   <CetiButton
-                    label="REINTENTAR"
+                    label={t('lesson.retry')}
                     onPress={retryLesson}
                     variant="primary"
                     size="large"
                     style={{ width: '100%' }}
                   />
                   <CetiButton
-                    label="SALIR"
+                    label={t('lesson.exit')}
                     onPress={() => router.replace('/(app)/saga')}
                     variant="glass"
                     size="large"
@@ -629,6 +658,7 @@ export default function LessonScreen() {
                 step={currentStepData}
                 onChoice={onChoicePathAnswer}
                 colors={colors}
+                t={t}
               />
             )}
             {currentStepData.type === 'interactive' && (
@@ -637,6 +667,7 @@ export default function LessonScreen() {
                 step={currentStepData}
                 onResult={onInteractiveResult}
                 colors={colors}
+                t={t}
               />
             )}
             {currentStepData.type === 'simulation' && (
@@ -645,6 +676,7 @@ export default function LessonScreen() {
                 step={currentStepData}
                 onResult={onSimulationResult}
                 colors={colors}
+                t={t}
               />
             )}
             {currentStepData.type === 'goal_creator' && (
@@ -661,7 +693,11 @@ export default function LessonScreen() {
               currentStepData.type !== 'choose_path' && (
                 <View style={styles.footer}>
                   <CetiButton
-                    label={currentStep === lesson.steps.length - 1 ? 'Finalizar' : 'Continuar'}
+                    label={
+                      currentStep === lesson.steps.length - 1
+                        ? t('lesson.finish')
+                        : t('lesson.continueStep')
+                    }
                     onPress={handleNext}
                     variant="primary"
                     size="large"
@@ -675,8 +711,10 @@ export default function LessonScreen() {
       <CetiBottomSheet
         visible={showAnswerModal}
         onClose={() => setShowAnswerModal(false)}
-        title={answerWasCorrect ? '¡Bien hecho!' : '¡Sigue intentando!'}
-        subtitle={answerWasCorrect ? 'Decisión acertada' : 'Había una mejor opción'}
+        title={answerWasCorrect ? t('lesson.answerCorrectTitle') : t('lesson.answerWrongTitle')}
+        subtitle={
+          answerWasCorrect ? t('lesson.answerCorrectSubtitle') : t('lesson.answerWrongSubtitle')
+        }
         closeOnBackdropPress={false}
       >
         <View style={styles.answerSheet}>
@@ -692,6 +730,10 @@ export default function LessonScreen() {
                   backgroundColor: colors.materials.highlight,
                 },
               ]}
+              accessibilityRole="button"
+              accessibilityLabel={
+                answerWasCorrect ? t('lesson.seeExplanation') : t('lesson.understandError')
+              }
               onPress={() => {
                 setShowAnswerModal(false);
                 setShowNotebookModal(true);
@@ -703,7 +745,7 @@ export default function LessonScreen() {
                   { color: answerWasCorrect ? colors.system.green : colors.system.red },
                 ]}
               >
-                {answerWasCorrect ? 'VER EXPLICACIÓN' : 'ENTENDER MI ERROR'}
+                {answerWasCorrect ? t('lesson.seeExplanation') : t('lesson.understandError')}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -714,9 +756,13 @@ export default function LessonScreen() {
                   backgroundColor: answerWasCorrect ? colors.system.green : colors.system.red,
                 },
               ]}
+              accessibilityRole="button"
+              accessibilityLabel={t('lesson.nextBtn')}
               onPress={onAnswerUnderstood}
             >
-              <Text style={[styles.actionBtnText, { color: '#000000' }]}>SIGUIENTE</Text>
+              <Text style={[styles.actionBtnText, { color: '#000000' }]}>
+                {t('lesson.nextBtn')}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -742,7 +788,7 @@ export default function LessonScreen() {
           </View>
           <View style={[styles.notebookPaper, { backgroundColor: colors.background.secondary }]}>
             <Text style={[styles.notebookTitle, { color: colors.text.primary }]}>
-              {answerWasCorrect ? 'Explicación' : '¿Por qué esa era la mejor opción?'}
+              {answerWasCorrect ? t('lesson.notebookCorrect') : t('lesson.notebookWrong')}
             </Text>
             <Text style={[styles.notebookBody, { color: colors.text.secondary }]}>
               {answerExplanation}
@@ -765,12 +811,14 @@ export default function LessonScreen() {
                 backgroundColor: answerWasCorrect ? colors.system.green : colors.system.red,
               },
             ]}
+            accessibilityRole="button"
+            accessibilityLabel={t('lesson.nextBtn')}
             onPress={() => {
               setShowNotebookModal(false);
               onAnswerUnderstood();
             }}
           >
-            <Text style={[styles.actionBtnText, { color: '#000000' }]}>SIGUIENTE</Text>
+            <Text style={[styles.actionBtnText, { color: '#000000' }]}>{t('lesson.nextBtn')}</Text>
           </TouchableOpacity>
         </View>
       </CetiBottomSheet>
