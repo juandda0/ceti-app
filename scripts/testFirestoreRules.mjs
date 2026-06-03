@@ -58,6 +58,9 @@ const stuA1 = env
 const stuA2 = env
   .authenticatedContext('uStuA2', { role: 'estudiante', colegioId: 'A', studentId: 's2' })
   .firestore();
+const stuA3 = env
+  .authenticatedContext('uStuA3', { role: 'estudiante', colegioId: 'A', studentId: 's3' })
+  .firestore();
 const rectorB = env.authenticatedContext('uRectorB', { role: 'rector', colegioId: 'B' }).firestore();
 
 const progPath = (cid, curso, sid, w) =>
@@ -90,6 +93,12 @@ await env.withSecurityRulesDisabled(async (ctx) => {
   await setDoc(doc(db, 'colegios/A/cursos/c1/estudiantes/s1'), {
     displayLabel: 'Est 1',
     estado: 'activo',
+    createdAt: 1,
+  });
+  // s3 exists but is NOT yet authorized (Ley 1581 gate).
+  await setDoc(doc(db, 'colegios/A/cursos/c1/estudiantes/s3'), {
+    displayLabel: 'Est 3',
+    estado: 'pendiente_autorizacion',
     createdAt: 1,
   });
   await setDoc(doc(db, progPath('A', 'c1', 's1', 'w1')), validProgress);
@@ -140,6 +149,15 @@ await check(
 await check(
   'write into non-existent roster slot rejected',
   assertFails(setDoc(doc(stuA2, progPath('A', 'c1', 's2', 'w1')), { ...validProgress, studentId: 's2' }))
+);
+await check(
+  'Ley 1581: unauthorized (pendiente) student cannot write progress',
+  assertFails(
+    setDoc(doc(stuA3, progPath('A', 'c1', 's3', 'w1')), {
+      ...validProgress,
+      studentId: 's3',
+    })
+  )
 );
 
 console.log('Course update field guard:');

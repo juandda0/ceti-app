@@ -37,10 +37,13 @@ service cloud.firestore {
       return sameColegio(cid)
         && (isRole('rector') || isRole('coordinador') || isProfesorDe(cid, cursoId));
     }
-    function estudianteExists(cid, cursoId, sid) {
-      return exists(
+    // Ley 1581 gate: a student only generates data once the acudiente has
+    // authorized and a staffer/Function flipped estado to 'activo'. get() on a
+    // missing doc errors → denied, so this also implies existence.
+    function estudianteActivo(cid, cursoId, sid) {
+      return get(
         /databases/$(database)/documents/colegios/$(cid)/cursos/$(cursoId)/estudiantes/$(sid)
-      );
+      ).data.estado == 'activo';
     }
 
     // ---- tenancy tree ----
@@ -89,7 +92,7 @@ service cloud.firestore {
             // report — the product — so a student must not inflate or bloat it).
             allow create, update: if isStudentSelf(sid)
               && sameColegio(cid)
-              && estudianteExists(cid, cursoId, sid)
+              && estudianteActivo(cid, cursoId, sid)
               && request.resource.data.colegioId == cid
               && request.resource.data.cursoId == cursoId
               && request.resource.data.studentId == sid
