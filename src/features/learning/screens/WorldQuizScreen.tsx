@@ -23,6 +23,7 @@ import { worldProgressRepository } from '@features/dashboard/data/worldProgressR
 import { colegioRepository } from '@features/dashboard/data/colegioRepository';
 import { competenciaForWorld } from '@features/learning/data/competencias';
 import { isMastered } from '@features/learning/data/mastery';
+import { selectNextQuestion, type AnswerResult } from '@features/learning/data/adaptiveQuiz';
 import { buildCertificateHtml } from '@features/learning/data/certificate';
 import { printHtml } from '@shared/lib/export/downloadFile';
 import { useRewards } from '@shared/hooks/useRewards';
@@ -428,8 +429,11 @@ export default function WorldQuizScreen() {
     [questions]
   );
 
-  // Quiz state
-  const [currentIndex, setCurrentIndex] = useState(0);
+  // Quiz state. Adaptive engine: `currentId` is the shown question, `consumed`
+  // are the questions done this session, `results` drives the difficulty ladder.
+  const [currentId, setCurrentId] = useState<string | null>(null);
+  const [consumed, setConsumed] = useState<string[]>([]);
+  const [results, setResults] = useState<AnswerResult[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
@@ -439,18 +443,20 @@ export default function WorldQuizScreen() {
     if (worldId) void fetchWorldQuestions(worldId as WorldId);
   }, [worldId]);
 
-  // Skip already-correctly-answered questions when starting
+  // Seed already-correct questions as consumed (so re-entry skips them), then pick
+  // the first question adaptively (rule-based difficulty ladder — no AI).
   useEffect(() => {
     if (questions.length === 0) return;
-    let startIdx = 0;
-    while (startIdx < questions.length && answeredIds.has(questions[startIdx]?.id ?? '')) {
-      startIdx++;
-    }
-    if (startIdx >= questions.length) {
+    const seed = questions.filter((q) => answeredIds.has(q.id)).map((q) => q.id);
+    const first = selectNextQuestion(questions, new Set(seed), []);
+    setConsumed(seed);
+    setResults([]);
+    if (!first) {
       setIsComplete(true);
     } else {
-      setCurrentIndex(startIdx);
+      setCurrentId(first.id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [questions.length]);
 
   // On completion, mirror progress to the tenant tree for the teacher dashboard.
@@ -492,8 +498,12 @@ export default function WorldQuizScreen() {
     checkBadges();
   }, [isComplete, checkBadges]);
 
-  const currentQuestion = questions[currentIndex];
+  const currentQuestion = questions.find((q) => q.id === currentId) ?? null;
   const options = currentQuestion ? (optionsByQuestion[currentQuestion.id] ?? []) : [];
+  // The question that would follow the current one (null = current is the last).
+  const nextAfterCurrent = currentQuestion
+    ? selectNextQuestion(questions, new Set([...consumed, currentQuestion.id]), results)
+    : null;
 
   const handleSelect = (option: string) => {
     if (hasSubmitted) return;
@@ -507,15 +517,19 @@ export default function WorldQuizScreen() {
       correct ? Haptics.ImpactFeedbackStyle.Light : Haptics.ImpactFeedbackStyle.Heavy
     );
     recordAnswer(userId, currentQuestion.id, worldId as WorldId, correct);
+    setResults((prev) => [...prev, { difficulty: currentQuestion.difficulty, correct }]);
     setHasSubmitted(true);
   };
 
   const handleNext = () => {
-    const nextIdx = currentIndex + 1;
-    if (nextIdx >= questions.length) {
+    if (!currentQuestion) return;
+    const newConsumed = [...consumed, currentQuestion.id];
+    setConsumed(newConsumed);
+    const next = selectNextQuestion(questions, new Set(newConsumed), results);
+    if (!next) {
       setIsComplete(true);
     } else {
-      setCurrentIndex(nextIdx);
+      setCurrentId(next.id);
       setSelectedAnswer(null);
       setHasSubmitted(false);
     }
@@ -647,7 +661,7 @@ export default function WorldQuizScreen() {
       <QuizHeader
         worldName={meta.name}
         accentColor={meta.color}
-        currentIndex={currentIndex}
+        currentIndex={consumed.length}
         total={questions.length}
         onBack={handleBack}
         colors={colors}
@@ -757,13 +771,11 @@ export default function WorldQuizScreen() {
             activeOpacity={0.85}
             onPress={handleNext}
             accessibilityRole="button"
-            accessibilityLabel={
-              currentIndex + 1 >= questions.length ? t('quiz.result') : t('quiz.next')
-            }
+            accessibilityLabel={!nextAfterCurrent ? t('quiz.result') : t('quiz.next')}
             style={[styles.actionBtn, { backgroundColor: meta.color }]}
           >
             <Text style={[styles.actionBtnText, { color: '#fff' }]}>
-              {currentIndex + 1 >= questions.length ? t('quiz.result') : t('quiz.next')}
+              {!nextAfterCurrent ? t('quiz.result') : t('quiz.next')}
             </Text>
             <Ionicons name="arrow-forward" size={18} color="#fff" />
           </TouchableOpacity>
