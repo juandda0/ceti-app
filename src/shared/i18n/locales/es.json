@@ -38,7 +38,15 @@
     "exportCsv": "Exportar CSV",
     "exportPdf": "Imprimir / PDF",
     "exportTitle": "Exportar",
-    "exportWebOnly": "La exportación está disponible en la versión web."
+    "exportWebOnly": "La exportación está disponible en la versión web.",
+    "diagnosisTitle": "Diagnóstico del curso",
+    "weakCompetenciesTitle": "Competencias a reforzar",
+    "weakCompetencyItem": "{{label}} · {{pct}} promedio",
+    "weakCompetencyBelow": "{{below}} de {{total}} por debajo del 80%",
+    "atRiskTitle": "Estudiantes que necesitan apoyo",
+    "atRiskItem": "{{pct}} global",
+    "atRiskAreas": "A reforzar: {{areas}}",
+    "allStrong": "Todo el curso está en nivel de maestría (80%+). ¡Bien!"
   },
   "estados": {
     "pendiente_autorizacion": "Pendiente de autorización",

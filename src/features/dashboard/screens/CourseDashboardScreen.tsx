@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -17,6 +17,7 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { loadCourseReport } from '@features/dashboard/data/loadCourseReport';
 import { courseReportToCsv, type CourseReport } from '@features/dashboard/data/courseReport';
+import { buildWeaknessReport } from '@features/dashboard/data/weaknessReport';
 import AssignmentsManager from '@features/dashboard/components/AssignmentsManager';
 import { downloadTextFile, printPage } from '@shared/lib/export/downloadFile';
 
@@ -36,6 +37,7 @@ export default function CourseDashboardScreen() {
 
   const [report, setReport] = useState<CourseReport | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
+  const weakness = useMemo(() => (report ? buildWeaknessReport(report) : null), [report]);
 
   useEffect(() => {
     let cancelled = false;
@@ -128,6 +130,78 @@ export default function CourseDashboardScreen() {
               </TouchableOpacity>
             </View>
 
+            {weakness && weakness.hasData && (
+              <View style={styles.diag}>
+                <Text style={[styles.sectionLabel, { color: colors.text.secondary }]}>
+                  {t('dashboard.diagnosisTitle')}
+                </Text>
+                {weakness.weakCompetencias.length === 0 && weakness.studentsAtRisk.length === 0 ? (
+                  <View style={[styles.diagCard, { backgroundColor: colors.background.secondary }]}>
+                    <Ionicons
+                      name="checkmark-circle-outline"
+                      size={18}
+                      color={colors.system.green}
+                    />
+                    <Text style={[styles.weakText, { color: colors.text.primary }]}>
+                      {t('dashboard.allStrong')}
+                    </Text>
+                  </View>
+                ) : (
+                  <>
+                    {weakness.weakCompetencias.length > 0 && (
+                      <View
+                        style={[styles.diagCard, { backgroundColor: colors.background.secondary }]}
+                      >
+                        <Text style={[styles.diagHead, { color: colors.text.primary }]}>
+                          {t('dashboard.weakCompetenciesTitle')}
+                        </Text>
+                        {weakness.weakCompetencias.map((c) => (
+                          <View key={c.competenciaId} style={styles.diagItem}>
+                            <Text style={[styles.diagItemTitle, { color: colors.text.primary }]}>
+                              {t('dashboard.weakCompetencyItem', {
+                                label: c.label,
+                                pct: pct(c.averageMastery),
+                              })}
+                            </Text>
+                            <Text style={[styles.diagItemSub, { color: colors.text.tertiary }]}>
+                              {t('dashboard.weakCompetencyBelow', {
+                                below: c.studentsBelow,
+                                total: c.studentsWithData,
+                              })}
+                            </Text>
+                          </View>
+                        ))}
+                      </View>
+                    )}
+                    {weakness.studentsAtRisk.length > 0 && (
+                      <View
+                        style={[styles.diagCard, { backgroundColor: colors.background.secondary }]}
+                      >
+                        <Text style={[styles.diagHead, { color: colors.text.primary }]}>
+                          {t('dashboard.atRiskTitle')}
+                        </Text>
+                        {weakness.studentsAtRisk.map((s) => (
+                          <View key={s.studentId} style={styles.diagItem}>
+                            <Text style={[styles.diagItemTitle, { color: colors.text.primary }]}>
+                              {s.displayLabel} ·{' '}
+                              {t('dashboard.atRiskItem', { pct: pct(s.overallMastery) })}
+                            </Text>
+                            {s.weakAreas.length > 0 && (
+                              <Text style={[styles.diagItemSub, { color: colors.text.tertiary }]}>
+                                {t('dashboard.atRiskAreas', {
+                                  areas: s.weakAreas.map((a) => a.label).join(', '),
+                                })}
+                              </Text>
+                            )}
+                          </View>
+                        ))}
+                      </View>
+                    )}
+                  </>
+                )}
+              </View>
+            )}
+
             <Text style={[styles.sectionLabel, { color: colors.text.secondary }]}>
               {t('dashboard.students', { count: report.students.length })}
             </Text>
@@ -178,6 +252,19 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   weakText: { flex: 1, fontSize: 14, fontWeight: '600' },
+  diag: { gap: 8, marginTop: 4 },
+  diagCard: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    gap: 8,
+    borderRadius: 12,
+    padding: 14,
+  },
+  diagHead: { width: '100%', fontSize: 14, fontWeight: '800' },
+  diagItem: { width: '100%', gap: 2 },
+  diagItemTitle: { fontSize: 14, fontWeight: '600' },
+  diagItemSub: { fontSize: 12 },
   exportRow: { flexDirection: 'row', gap: 12, marginTop: 8 },
   exportBtn: {
     flexDirection: 'row',
