@@ -16,7 +16,16 @@ import { motion } from '@shared/constants/motion';
 import { Ionicons } from '@expo/vector-icons';
 import { Typography } from '@shared/constants/typography';
 import { Spacing } from '@shared/constants/theme';
-import { useSavingsStore, type SavingsGoal } from '@features/savings/store/useSavingsStore';
+import {
+  useSavingsStore,
+  type SavingsGoal,
+  type GoalCategory,
+} from '@features/savings/store/useSavingsStore';
+import {
+  LIFE_PROJECT_TEMPLATES,
+  monthsToReach,
+  suggestMonthly,
+} from '@features/savings/data/lifeProjects';
 import { useUserStore } from '@features/auth/store/useUserStore';
 import CetiButton from '@shared/components/CetiButton';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
@@ -105,6 +114,19 @@ function VisualGoalCard({
             {t('goals.ofTarget', { amount: formatDisplayCopGoals(goal.targetAmount) })}
           </Text>
         </View>
+        {progress < 100 &&
+          (() => {
+            const monthly = suggestMonthly(goal.targetAmount, goal.currentAmount);
+            const months = monthsToReach(goal.targetAmount, goal.currentAmount, monthly);
+            return monthly > 0 && months != null ? (
+              <Text style={[styles.projection, { color: colors.text.tertiary }]}>
+                {t('goals.projection', {
+                  monthly: formatDisplayCopGoals(monthly),
+                  months,
+                })}
+              </Text>
+            ) : null;
+          })()}
       </View>
     </Animated.View>
   );
@@ -495,7 +517,16 @@ function NewGoalModal({
   const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [target, setTarget] = useState('');
+  const [emoji, setEmoji] = useState('🎯');
+  const [category, setCategory] = useState<GoalCategory>('custom');
   const addGoal = useSavingsStore((s) => s.addGoal);
+
+  const reset = () => {
+    setTitle('');
+    setTarget('');
+    setEmoji('🎯');
+    setCategory('custom');
+  };
 
   const handleCreate = () => {
     const num = parseMoneyAmountInt(target);
@@ -510,8 +541,8 @@ function NewGoalModal({
     addGoal({
       title: title.trim(),
       targetAmount: num,
-      category: 'custom',
-      emoji: '🎯',
+      category,
+      emoji,
       description: '',
       frequency: 'total',
     });
@@ -520,8 +551,7 @@ function NewGoalModal({
       title: t('goals.goalCreatedTitle'),
       message: t('goals.goalCreatedMsg'),
     });
-    setTitle('');
-    setTarget('');
+    reset();
     onClose();
   };
 
@@ -535,6 +565,40 @@ function NewGoalModal({
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View>
+          <Text style={{ color: colors.text.secondary, fontWeight: '700', marginBottom: 8 }}>
+            {t('goals.templatesLabel')}
+          </Text>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
+            {LIFE_PROJECT_TEMPLATES.map((tpl) => (
+              <TouchableOpacity
+                key={tpl.id}
+                onPress={() => {
+                  setTitle(t(tpl.titleKey));
+                  setTarget(formatMoneyInputThousands(String(tpl.suggestedTarget)));
+                  setEmoji(tpl.emoji);
+                  setCategory(tpl.category);
+                }}
+                accessibilityRole="button"
+                accessibilityLabel={t(tpl.titleKey)}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 6,
+                  backgroundColor: colors.materials.highlight,
+                  borderColor: colors.materials.border,
+                  borderWidth: 1,
+                  borderRadius: 999,
+                  paddingVertical: 8,
+                  paddingHorizontal: 12,
+                }}
+              >
+                <Text>{tpl.emoji}</Text>
+                <Text style={{ color: colors.text.primary, fontWeight: '600', fontSize: 13 }}>
+                  {t(tpl.titleKey)}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
           <TextInput
             style={[
               mStyles.input,
@@ -701,6 +765,7 @@ const styles = StyleSheet.create({
   },
   currentAmount: { ...Typography.headline, fontWeight: '800' },
   targetAmount: { ...Typography.caption1 },
+  projection: { ...Typography.caption2, marginTop: 8, fontStyle: 'italic' },
 });
 
 const mStyles = StyleSheet.create({

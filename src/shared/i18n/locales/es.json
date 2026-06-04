@@ -272,7 +272,14 @@
     "missingDataTitle": "Faltan datos",
     "missingDataMsg": "Pon nombre a tu meta y cuánto cuesta.",
     "goalCreatedTitle": "¡Meta creada!",
-    "goalCreatedMsg": "Ahora sí a ahorrar para lograrla."
+    "goalCreatedMsg": "Ahora sí a ahorrar para lograrla.",
+    "templatesLabel": "Proyecto de vida",
+    "tplEducation": "Estudios",
+    "tplTech": "Tecnología",
+    "tplTrip": "Viaje",
+    "tplEmergency": "Fondo de emergencia",
+    "tplBusiness": "Emprendimiento",
+    "projection": "Ahorra ~{{monthly}}/mes y la logras en {{months}} meses"
   },
   "profile": {
     "pageTitle": "Mi perfil",
