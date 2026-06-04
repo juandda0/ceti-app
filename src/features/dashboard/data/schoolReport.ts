@@ -13,12 +13,23 @@ export interface CursoMeta {
   id: string;
   nombre: string;
   grado: string;
+  /** Sede this course belongs to (V2). Undefined = sin sede (single implicit). */
+  sedeId?: string;
 }
 
 export interface CourseSummary {
   cursoId: string;
   nombre: string;
   grado: string;
+  sedeId: string | null;
+  avgMastery: number;
+  studentsWithData: number;
+}
+
+/** Per-sede roll-up (V2 sede dashboard). `sedeId` null groups courses without a sede. */
+export interface SedeSummary {
+  sedeId: string | null;
+  courseCount: number;
   avgMastery: number;
   studentsWithData: number;
 }
@@ -28,6 +39,8 @@ export interface SchoolReport {
   generatedAt: number;
   competencyAverages: CompetencyAverage[];
   courseSummaries: CourseSummary[];
+  /** Per-sede aggregates (empty when no course has a sede assigned). */
+  sedeSummaries: SedeSummary[];
   weakestCompetencia: CompetencyAverage | null;
   /** School-wide average mastery across all progress records (0..1). */
   overallMastery: number;
@@ -64,10 +77,28 @@ export function buildSchoolReport(input: BuildSchoolReportInput): SchoolReport {
       cursoId: c.id,
       nombre: c.nombre,
       grado: c.grado,
+      sedeId: c.sedeId ?? null,
       avgMastery: average(cursoProgress.map((p) => p.mastery)),
       studentsWithData: new Set(cursoProgress.map((p) => p.studentId)).size,
     };
   });
+
+  // Per-sede roll-up (V2). Empty unless at least one course has a sede assigned.
+  const anySede = input.cursos.some((c) => c.sedeId != null);
+  const sedeSummaries: SedeSummary[] = anySede
+    ? Array.from(new Set(input.cursos.map((c) => c.sedeId ?? null))).map((key) => {
+        const cursoIds = new Set(
+          input.cursos.filter((c) => (c.sedeId ?? null) === key).map((c) => c.id)
+        );
+        const sedeProgress = input.progress.filter((p) => cursoIds.has(p.cursoId));
+        return {
+          sedeId: key,
+          courseCount: cursoIds.size,
+          avgMastery: average(sedeProgress.map((p) => p.mastery)),
+          studentsWithData: new Set(sedeProgress.map((p) => p.studentId)).size,
+        };
+      })
+    : [];
 
   const withData = competencyAverages.filter((c) => c.studentsWithData > 0);
   const weakestCompetencia =
@@ -80,6 +111,7 @@ export function buildSchoolReport(input: BuildSchoolReportInput): SchoolReport {
     generatedAt: input.now,
     competencyAverages,
     courseSummaries,
+    sedeSummaries,
     weakestCompetencia,
     overallMastery: average(input.progress.map((p) => p.mastery)),
   };

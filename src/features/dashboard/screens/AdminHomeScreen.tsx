@@ -35,6 +35,7 @@ export default function AdminHomeScreen() {
 
   const [nombre, setNombre] = useState('');
   const [grado, setGrado] = useState('');
+  const [sede, setSede] = useState('');
   const [creating, setCreating] = useState(false);
 
   const [memberEmail, setMemberEmail] = useState('');
@@ -56,16 +57,21 @@ export default function AdminHomeScreen() {
     if (!colegioId || !nombre.trim() || !grado.trim()) return;
     setCreating(true);
     try {
-      await adminService.createCurso(colegioId, { nombre: nombre.trim(), grado: grado.trim() });
+      await adminService.createCurso(colegioId, {
+        nombre: nombre.trim(),
+        grado: grado.trim(),
+        sedeId: sede.trim() || undefined,
+      });
       setNombre('');
       setGrado('');
+      setSede('');
       await reload();
     } catch (e) {
       Alert.alert(t('admin.error'), e instanceof Error ? e.message : String(e));
     } finally {
       setCreating(false);
     }
-  }, [colegioId, nombre, grado, reload, t]);
+  }, [colegioId, nombre, grado, sede, reload, t]);
 
   const onAssign = useCallback(async () => {
     if (!colegioId || !memberEmail.trim()) return;
@@ -114,6 +120,13 @@ export default function AdminHomeScreen() {
           value={grado}
           onChangeText={setGrado}
         />
+        <TextInput
+          style={[styles.field, input]}
+          placeholder={t('admin.courseSede')}
+          placeholderTextColor={colors.text.tertiary}
+          value={sede}
+          onChangeText={setSede}
+        />
         <TouchableOpacity
           style={[
             styles.primaryBtn,
@@ -148,7 +161,9 @@ export default function AdminHomeScreen() {
               <Ionicons name="people-outline" size={20} color={colors.brand.primary} />
               <View style={{ flex: 1 }}>
                 <Text style={[styles.rowName, { color: colors.text.primary }]}>{c.nombre}</Text>
-                <Text style={[styles.rowSub, { color: colors.text.tertiary }]}>{c.grado}</Text>
+                <Text style={[styles.rowSub, { color: colors.text.tertiary }]}>
+                  {c.sedeId ? `${c.grado} · ${c.sedeId}` : c.grado}
+                </Text>
               </View>
               <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
             </TouchableOpacity>

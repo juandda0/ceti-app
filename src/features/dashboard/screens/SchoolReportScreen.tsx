@@ -28,6 +28,10 @@ export default function SchoolReportScreen() {
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
   const colegioId = useAuthStore((s) => s.colegioId);
+  const role = useAuthStore((s) => s.role);
+  const sedeId = useAuthStore((s) => s.sedeId);
+  // A coordinador assigned to a sede sees only that sede; rector sees all.
+  const sedeFilter = role === 'coordinador' && sedeId ? sedeId : undefined;
 
   const [report, setReport] = useState<SchoolReport | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
@@ -39,7 +43,7 @@ export default function SchoolReportScreen() {
       return;
     }
     setStatus('loading');
-    void loadSchoolReport(colegioId, Date.now())
+    void loadSchoolReport(colegioId, Date.now(), sedeFilter)
       .then((r) => {
         if (!cancelled) {
           setReport(r);
@@ -52,7 +56,7 @@ export default function SchoolReportScreen() {
     return () => {
       cancelled = true;
     };
-  }, [colegioId]);
+  }, [colegioId, sedeFilter]);
 
   const onExportCsv = useCallback(() => {
     if (!report) return;
@@ -126,6 +130,32 @@ export default function SchoolReportScreen() {
                 </Text>
               </TouchableOpacity>
             </View>
+
+            {report.sedeSummaries.length > 0 && (
+              <>
+                <Text style={[styles.section, { color: colors.text.secondary }]}>
+                  {t('school.bySede')}
+                </Text>
+                {report.sedeSummaries.map((s) => (
+                  <View
+                    key={s.sedeId ?? 'none'}
+                    style={[styles.row, { borderColor: colors.background.secondary }]}
+                  >
+                    <View style={{ flex: 1 }}>
+                      <Text style={[styles.rowName, { color: colors.text.primary }]}>
+                        {s.sedeId ?? t('school.noSede')}
+                      </Text>
+                      <Text style={[styles.rowSub, { color: colors.text.tertiary }]}>
+                        {t('school.sedeCourses', { count: s.courseCount })}
+                      </Text>
+                    </View>
+                    <Text style={[styles.rowValue, { color: colors.brand.primary }]}>
+                      {pct(s.avgMastery)}
+                    </Text>
+                  </View>
+                ))}
+              </>
+            )}
 
             <Text style={[styles.section, { color: colors.text.secondary }]}>
               {t('school.byCourse')}

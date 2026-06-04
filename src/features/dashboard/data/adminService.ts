@@ -12,15 +12,22 @@ import type { Role } from '@shared/types/tenancy';
 
 export const adminService = {
   /** Rector/coordinador creates a course (Firestore; rules gate to staff). */
-  async createCurso(colegioId: string, data: { nombre: string; grado: string }): Promise<boolean> {
+  async createCurso(
+    colegioId: string,
+    data: { nombre: string; grado: string; sedeId?: string }
+  ): Promise<boolean> {
     const clients = getFirebaseClients();
     if (!clients?.firestore) return false;
-    await addDoc(cursosCollectionRef(clients.firestore, colegioId), {
-      nombre: data.nombre,
-      grado: data.grado,
-      profesorUids: [],
-      colaboracionAula: false,
-    });
+    await addDoc(
+      cursosCollectionRef(clients.firestore, colegioId),
+      stripUndefinedValues({
+        nombre: data.nombre,
+        grado: data.grado,
+        ...(data.sedeId ? { sedeId: data.sedeId } : {}),
+        profesorUids: [],
+        colaboracionAula: false,
+      })
+    );
     return true;
   },
 

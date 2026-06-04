@@ -80,6 +80,9 @@
     "weakest": "Competencia más floja: {{competencia}} ({{pct}})",
     "byCourse": "Por curso",
     "byCompetency": "Por competencia",
+    "bySede": "Por sede",
+    "noSede": "Sin sede",
+    "sedeCourses": "{{count}} cursos",
     "studentsCount": "{{count}} estudiantes con actividad"
   },
   "admin": {
@@ -89,6 +92,7 @@
     "newCourse": "Nuevo curso",
     "courseName": "Nombre del curso (ej. 9A)",
     "courseGrade": "Grado (ej. 9)",
+    "courseSede": "Sede (opcional)",
     "createCourse": "Crear curso",
     "courses": "Cursos",
     "noCourses": "Aún no hay cursos.",

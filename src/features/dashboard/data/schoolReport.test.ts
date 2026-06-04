@@ -53,6 +53,34 @@ describe('buildSchoolReport', () => {
     expect(r.overallMastery).toBeCloseTo((0.8 + 0.6 + 0.2) / 3);
   });
 
+  it('groups courses by sede when sedes are assigned (V2)', () => {
+    const r = buildSchoolReport({
+      colegioId: 'A',
+      now: 1,
+      cursos: [
+        { id: 'c1', nombre: '9A', grado: '9', sedeId: 'norte' },
+        { id: 'c2', nombre: '9B', grado: '9', sedeId: 'norte' },
+        { id: 'c3', nombre: '10A', grado: '10', sedeId: 'sur' },
+      ],
+      progress: [
+        wp('c1', 's1', 'ahorro', 0.8),
+        wp('c2', 's2', 'ahorro', 0.6),
+        wp('c3', 's3', 'ahorro', 0.4),
+      ],
+    });
+    const norte = r.sedeSummaries.find((s) => s.sedeId === 'norte')!;
+    expect(norte.courseCount).toBe(2);
+    expect(norte.studentsWithData).toBe(2);
+    expect(norte.avgMastery).toBeCloseTo(0.7);
+    const sur = r.sedeSummaries.find((s) => s.sedeId === 'sur')!;
+    expect(sur.courseCount).toBe(1);
+    expect(sur.avgMastery).toBeCloseTo(0.4);
+  });
+
+  it('emits no sede summaries when no course has a sede assigned', () => {
+    expect(buildSchoolReport(input).sedeSummaries).toEqual([]);
+  });
+
   it('CSV has a course table and a competency summary', () => {
     const csv = schoolReportToCsv(buildSchoolReport(input));
     expect(csv).toContain('cursoId');
