@@ -118,7 +118,9 @@
     "suppressConfirm": "Suprimir",
     "cancel": "Cancelar",
     "suppressOkTitle": "Datos suprimidos",
-    "suppressOk": "Se eliminaron los datos del estudiante."
+    "suppressOk": "Se eliminaron los datos del estudiante.",
+    "colaboracion": "Colaboración de aula",
+    "colaboracionHint": "Muestra a los estudiantes un ranking de la clase. Sin ranking global ni público."
   },
   "join": {
     "title": "Únete a tu curso",
@@ -169,6 +171,12 @@
     "insufficient": "No tienes suficientes Cetis.",
     "insufficientSaved": "No tienes tantos Cetis en la alcancía.",
     "invalidAmount": "Ingresa una cantidad válida."
+  },
+  "leaderboard": {
+    "title": "Ranking de la clase",
+    "you": "Tú",
+    "xp": "{{xp}} XP",
+    "empty": "Aún nadie tiene puntos. ¡Sé el primero!"
   },
   "legal": {
     "privacyPolicy": "Política de tratamiento de datos"

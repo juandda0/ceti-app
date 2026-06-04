@@ -112,6 +112,34 @@ service cloud.firestore {
             allow delete: if false;
           }
         }
+
+        // Class leaderboard (V2 collaboration). A student maintains their OWN
+        // minimal entry (label + xp); course staff always read it, course-mates
+        // read it only when the teacher has enabled colaboracionAula (no global
+        // boards). XP is student-reported — the dashboard uses real progress as
+        // the source of truth, so this never feeds compliance reporting.
+        match /leaderboard/{sid} {
+          allow read: if sameColegio(cid)
+            && (
+              isRole('rector') || isRole('coordinador') || isProfesorDe(cid, cursoId)
+              || (
+                isRole('estudiante')
+                && request.auth.token.cursoId == cursoId
+                && get(/databases/$(database)/documents/colegios/$(cid)/cursos/$(cursoId)).data.colaboracionAula == true
+              )
+            );
+          allow create, update: if isStudentSelf(sid)
+            && sameColegio(cid)
+            && request.auth.token.cursoId == cursoId
+            && estudianteActivo(cid, cursoId, sid)
+            && request.resource.data.studentId == sid
+            && request.resource.data.displayLabel is string
+            && request.resource.data.displayLabel.size() <= 60
+            && request.resource.data.xp is number
+            && request.resource.data.xp >= 0
+            && request.resource.data.updatedAt is number;
+          allow delete: if false;
+        }
       }
 
       match /asignaciones/{aid} {

@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Alert,
   Platform,
+  Switch,
 } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -44,11 +45,17 @@ export default function CourseAdminScreen() {
   const [teacherEmail, setTeacherEmail] = useState('');
   const [code, setCode] = useState<string | null>(null);
   const [codeBusy, setCodeBusy] = useState(false);
+  const [colaboracion, setColaboracion] = useState(false);
 
   const reload = useCallback(async () => {
     if (!colegioId || !cursoId) return;
     setLoading(true);
-    setRoster(await rosterRepository.getRoster(colegioId, cursoId));
+    const [r, curso] = await Promise.all([
+      rosterRepository.getRoster(colegioId, cursoId),
+      rosterRepository.getCurso(colegioId, cursoId),
+    ]);
+    setRoster(r);
+    setColaboracion(Boolean(curso?.colaboracionAula));
     setLoading(false);
   }, [colegioId, cursoId]);
 
@@ -106,6 +113,13 @@ export default function CourseAdminScreen() {
           }),
       },
     ]);
+
+  const onToggleColaboracion = (value: boolean) =>
+    guard(async () => {
+      if (!colegioId || !cursoId) return;
+      setColaboracion(value);
+      await adminService.setColaboracion(colegioId, cursoId, value);
+    });
 
   const onAssignTeacher = () =>
     guard(async () => {
@@ -199,6 +213,21 @@ export default function CourseAdminScreen() {
               {code ? t('admin.classCodeShow') : t('admin.classCodeGen')}
             </Text>
           </TouchableOpacity>
+        </View>
+
+        {/* Class collaboration toggle */}
+        <View style={[styles.codeCard, { backgroundColor: colors.background.secondary }]}>
+          <View style={styles.toggleRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.codeLabel, { color: colors.text.primary }]}>
+                {t('admin.colaboracion')}
+              </Text>
+              <Text style={[styles.codeHint, { color: colors.text.tertiary, textAlign: 'left' }]}>
+                {t('admin.colaboracionHint')}
+              </Text>
+            </View>
+            <Switch value={colaboracion} onValueChange={onToggleColaboracion} disabled={busy} />
+          </View>
         </View>
 
         {/* Add student */}
@@ -347,6 +376,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   codeBtnText: { fontSize: 14, fontWeight: '700' },
+  toggleRow: { flexDirection: 'row', alignItems: 'center', gap: 12, width: '100%' },
   addRow: { flexDirection: 'row', gap: 8, alignItems: 'center', marginTop: 4 },
   field: { borderRadius: 10, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15 },
   addBtn: {

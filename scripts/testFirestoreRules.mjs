@@ -66,6 +66,16 @@ const rectorB = env.authenticatedContext('uRectorB', { role: 'rector', colegioId
 const stuA4 = env
   .authenticatedContext('uStuA4', { role: 'estudiante', colegioId: 'A', studentId: 's4' })
   .firestore();
+// Leaderboard (V2) contexts: students carry a cursoId claim.
+const stuLb1 = env
+  .authenticatedContext('uLb1', { role: 'estudiante', colegioId: 'A', studentId: 'lb1', cursoId: 'cLbOn' })
+  .firestore();
+const stuLb2 = env
+  .authenticatedContext('uLb2', { role: 'estudiante', colegioId: 'A', studentId: 'lb2', cursoId: 'cLbOn' })
+  .firestore();
+const stuLb4 = env
+  .authenticatedContext('uLb4', { role: 'estudiante', colegioId: 'A', studentId: 'lb4', cursoId: 'cLbOff' })
+  .firestore();
 
 const progPath = (cid, curso, sid, w) =>
   `colegios/${cid}/cursos/${curso}/estudiantes/${sid}/progress/${w}`;
@@ -120,6 +130,43 @@ await env.withSecurityRulesDisabled(async (ctx) => {
   });
   await setDoc(doc(db, 'classCodes/CODE1'), { colegioId: 'A', cursoId: 'c1' });
   await setDoc(doc(db, 'questionBank/q1'), { worldId: 'world_1', competencia: 'ahorro' });
+  // Leaderboard (V2): two courses, collaboration on vs off, with active students.
+  await setDoc(doc(db, 'colegios/A/cursos/cLbOn'), {
+    nombre: 'Lb On',
+    grado: '9',
+    profesorUids: [],
+    colaboracionAula: true,
+  });
+  await setDoc(doc(db, 'colegios/A/cursos/cLbOff'), {
+    nombre: 'Lb Off',
+    grado: '9',
+    profesorUids: [],
+    colaboracionAula: false,
+  });
+  for (const [curso, sid] of [
+    ['cLbOn', 'lb1'],
+    ['cLbOn', 'lb2'],
+    ['cLbOff', 'lb3'],
+    ['cLbOff', 'lb4'],
+  ]) {
+    await setDoc(doc(db, `colegios/A/cursos/${curso}/estudiantes/${sid}`), {
+      displayLabel: sid,
+      estado: 'activo',
+      createdAt: 1,
+    });
+  }
+  await setDoc(doc(db, 'colegios/A/cursos/cLbOn/leaderboard/lb1'), {
+    studentId: 'lb1',
+    displayLabel: 'lb1',
+    xp: 100,
+    updatedAt: 1,
+  });
+  await setDoc(doc(db, 'colegios/A/cursos/cLbOff/leaderboard/lb3'), {
+    studentId: 'lb3',
+    displayLabel: 'lb3',
+    xp: 100,
+    updatedAt: 1,
+  });
 });
 
 console.log('Tenant isolation:');
@@ -292,6 +339,31 @@ await check(
 await check(
   'progress cannot be deleted by the student',
   assertFails(deleteDoc(doc(stuA1, progPath('A', 'c1', 's1', 'w1'))))
+);
+
+console.log('Class leaderboard (V2 collaboration):');
+const lbEntry = { studentId: 'lb1', displayLabel: 'lb1', xp: 50, updatedAt: 2 };
+const lbPath = 'colegios/A/cursos/cLbOn/leaderboard/lb1';
+await check(
+  'classmate reads leaderboard when colaboracionAula on',
+  assertSucceeds(getDoc(doc(stuLb2, lbPath)))
+);
+await check(
+  'classmate cannot read leaderboard when colaboracionAula off',
+  assertFails(getDoc(doc(stuLb4, 'colegios/A/cursos/cLbOff/leaderboard/lb3')))
+);
+await check('rector reads any course leaderboard', assertSucceeds(getDoc(doc(rectorA, lbPath))));
+await check(
+  'student writes own leaderboard entry',
+  assertSucceeds(setDoc(doc(stuLb1, lbPath), lbEntry))
+);
+await check(
+  'student cannot write another student leaderboard entry',
+  assertFails(setDoc(doc(stuLb2, lbPath), { ...lbEntry }))
+);
+await check(
+  'leaderboard rejects negative xp',
+  assertFails(setDoc(doc(stuLb1, lbPath), { ...lbEntry, xp: -1 }))
 );
 
 await env.cleanup();

@@ -114,6 +114,18 @@ export type Autorizacion = {
   acudienteRef?: string;
 };
 
+/**
+ * Class leaderboard entry (V2 collaboration). Minimal by design — only a
+ * non-identifying label + XP, written by the student, read by course-mates only
+ * when the teacher enables colaboracionAula. Never exposes per-competency data.
+ */
+export type LeaderboardEntry = {
+  studentId: string;
+  displayLabel: string;
+  xp: number;
+  updatedAt: number;
+};
+
 /** uid → tenant mapping used at bootstrap and by rules helpers. */
 export type Membership = {
   colegioId: string;

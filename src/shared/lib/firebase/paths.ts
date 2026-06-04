@@ -20,6 +20,9 @@ export const FIRESTORE_COLLECTIONS = {
   asignaciones: 'asignaciones',
   autorizaciones: 'autorizaciones',
   membership: 'membership',
+  // Class-level leaderboard (V2) — minimal {displayLabel, xp} per student,
+  // readable by course-mates only when colaboracionAula is on. No global board.
+  leaderboard: 'leaderboard',
 } as const;
 
 export const WALLET_STATE_DOC_ID = 'state';
@@ -193,6 +196,20 @@ export function autorizacionDocRef(db: Firestore, colegioId: string, studentId: 
 /** uid → tenant mapping, used at bootstrap to resolve where a user belongs. */
 export function membershipDocRef(db: Firestore, uid: string) {
   return doc(db, C.membership, uid);
+}
+
+/** Class leaderboard entries for a course (V2 class collaboration). */
+export function leaderboardCollectionRef(db: Firestore, colegioId: string, cursoId: string) {
+  return collection(db, C.colegios, colegioId, C.cursos, cursoId, C.leaderboard);
+}
+
+export function leaderboardDocRef(
+  db: Firestore,
+  colegioId: string,
+  cursoId: string,
+  studentId: string
+) {
+  return doc(db, C.colegios, colegioId, C.cursos, cursoId, C.leaderboard, studentId);
 }
 
 /**

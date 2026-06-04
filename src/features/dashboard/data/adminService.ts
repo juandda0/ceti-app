@@ -5,7 +5,7 @@
  */
 import { addDoc, setDoc } from 'firebase/firestore';
 import { getFirebaseClients } from '@shared/lib/firebase/app';
-import { cursosCollectionRef, estudianteDocRef } from '@shared/lib/firebase/paths';
+import { cursoDocRef, cursosCollectionRef, estudianteDocRef } from '@shared/lib/firebase/paths';
 import { stripUndefinedValues } from '@shared/lib/firebase/sanitizeForFirestore';
 import { callFunction } from '@shared/lib/firebase/functions';
 import type { Role } from '@shared/types/tenancy';
@@ -53,6 +53,18 @@ export const adminService = {
     studentId?: string;
   }): Promise<{ ok: boolean; uid?: string }> {
     return callFunction('setMemberClaims', input);
+  },
+
+  /** Teacher/staff toggles class collaboration (class leaderboard visibility). */
+  async setColaboracion(colegioId: string, cursoId: string, enabled: boolean): Promise<boolean> {
+    const clients = getFirebaseClients();
+    if (!clients?.firestore) return false;
+    await setDoc(
+      cursoDocRef(clients.firestore, colegioId, cursoId),
+      { colaboracionAula: enabled },
+      { merge: true }
+    );
+    return true;
   },
 
   /** Records (or revokes) the acudiente authorization — Cloud Function (Ley 1581). */

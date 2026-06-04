@@ -14,6 +14,7 @@ import { competenciaForWorld } from '@features/learning/data/competencias';
 import StudentAssignmentsBanner from '@features/dashboard/components/StudentAssignmentsBanner';
 import JoinClassBanner from '@features/dashboard/components/JoinClassBanner';
 import AuthorizationPendingBanner from '@features/dashboard/components/AuthorizationPendingBanner';
+import ClassLeaderboard from '@features/dashboard/components/ClassLeaderboard';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { Typography } from '@shared/constants/typography';
@@ -284,6 +285,7 @@ export default function WorldsScreen() {
         <JoinClassBanner />
         <AuthorizationPendingBanner />
         <StudentAssignmentsBanner />
+        <ClassLeaderboard />
 
         <View style={styles.list}>
           {WORLD_DEFS.map((world, index) => (
