@@ -46,7 +46,13 @@
     "atRiskTitle": "Estudiantes que necesitan apoyo",
     "atRiskItem": "{{pct}} global",
     "atRiskAreas": "A reforzar: {{areas}}",
-    "allStrong": "Todo el curso está en nivel de maestría (80%+). ¡Bien!"
+    "allStrong": "Todo el curso está en nivel de maestría (80%+). ¡Bien!",
+    "earlyWarningTitle": "Alerta temprana",
+    "riskHigh": "Riesgo alto",
+    "riskMedium": "Riesgo medio",
+    "flagNoActivity": "Sin actividad",
+    "flagStalled": "Estancado",
+    "flagLowMastery": "Maestría baja"
   },
   "estados": {
     "pendiente_autorizacion": "Pendiente de autorización",

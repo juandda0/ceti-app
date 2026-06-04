@@ -25,6 +25,8 @@ export interface StudentReportRow {
   masteryByCompetencia: Record<string, number>;
   /** Average mastery across competencies with data (0 if none). */
   overallMastery: number;
+  /** Most recent progress timestamp (ms), or null if no activity. Feeds early-warning. */
+  lastActivity: number | null;
 }
 
 export interface CompetencyAverage {
@@ -68,8 +70,9 @@ export function buildCourseReport(input: BuildCourseReportInput): CourseReport {
   }
 
   const students: StudentReportRow[] = input.roster.map((entry) => {
+    const studentProgress = progressByStudent.get(entry.studentId) ?? [];
     const masteryByCompetencia: Record<string, number> = {};
-    for (const p of progressByStudent.get(entry.studentId) ?? []) {
+    for (const p of studentProgress) {
       masteryByCompetencia[p.competencia] = p.mastery;
     }
     const values = Object.values(masteryByCompetencia);
@@ -79,6 +82,9 @@ export function buildCourseReport(input: BuildCourseReportInput): CourseReport {
       estado: entry.estado,
       masteryByCompetencia,
       overallMastery: average(values),
+      lastActivity: studentProgress.length
+        ? Math.max(...studentProgress.map((p) => p.updatedAt))
+        : null,
     };
   });
 

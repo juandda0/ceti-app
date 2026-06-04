@@ -18,7 +18,14 @@ import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { loadCourseReport } from '@features/dashboard/data/loadCourseReport';
 import { courseReportToCsv, type CourseReport } from '@features/dashboard/data/courseReport';
 import { buildWeaknessReport } from '@features/dashboard/data/weaknessReport';
+import { buildEarlyWarning, type RiskFlag } from '@features/dashboard/data/earlyWarning';
 import AssignmentsManager from '@features/dashboard/components/AssignmentsManager';
+
+const FLAG_KEY: Record<RiskFlag, string> = {
+  no_activity: 'dashboard.flagNoActivity',
+  stalled: 'dashboard.flagStalled',
+  low_mastery: 'dashboard.flagLowMastery',
+};
 import { downloadTextFile, printPage } from '@shared/lib/export/downloadFile';
 
 function pct(m: number): string {
@@ -38,6 +45,7 @@ export default function CourseDashboardScreen() {
   const [report, setReport] = useState<CourseReport | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
   const weakness = useMemo(() => (report ? buildWeaknessReport(report) : null), [report]);
+  const warning = useMemo(() => (report ? buildEarlyWarning(report, Date.now()) : null), [report]);
 
   useEffect(() => {
     let cancelled = false;
@@ -129,6 +137,27 @@ export default function CourseDashboardScreen() {
                 </Text>
               </TouchableOpacity>
             </View>
+
+            {warning && warning.atRisk.length > 0 && (
+              <View style={styles.diag}>
+                <Text style={[styles.sectionLabel, { color: colors.text.secondary }]}>
+                  {t('dashboard.earlyWarningTitle')}
+                </Text>
+                <View style={[styles.diagCard, { backgroundColor: colors.background.secondary }]}>
+                  {warning.atRisk.map((r) => (
+                    <View key={r.studentId} style={styles.diagItem}>
+                      <Text style={[styles.diagItemTitle, { color: colors.text.primary }]}>
+                        {r.displayLabel} ·{' '}
+                        {r.level === 'high' ? t('dashboard.riskHigh') : t('dashboard.riskMedium')}
+                      </Text>
+                      <Text style={[styles.diagItemSub, { color: colors.text.tertiary }]}>
+                        {r.flags.map((f) => t(FLAG_KEY[f])).join(' · ')}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            )}
 
             {weakness && weakness.hasData && (
               <View style={styles.diag}>
