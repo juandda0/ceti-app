@@ -137,8 +137,11 @@ If real users exist under `users/{uid}/...`, F2 includes a one-shot script that:
   Ley 1581 authorization + PII minimization, content + auto-graded quiz,
   world↔competencia, XP/levels/mastery badges, teacher dashboard + CSV/PDF
   export, simple assignment, certificate PDF, basic rector aggregate report.
-- **V2**: rule-based weakness detection reports, simulated life-project goals,
-  class collaboration + optional class leaderboard, Google Classroom roster sync,
-  full sede dashboard, basic parents report.
+- **V2**: ✅ rule-based weakness detection reports, ✅ simulated life-project
+  goals, ✅ class collaboration + optional class leaderboard (teacher toggle,
+  class-scoped — never global), ✅ sede dashboard (per-sede roll-up + coordinador
+  scoping). Still pending: Google Classroom roster sync; **basic parents report**
+  (must be a generated read-only report shared out-of-band — NOT an acudiente
+  login/dashboard, which stays forbidden).
 - **V3+**: generative/adaptive AI question bank, native iOS/Android app, LTI/
   OneRoster grade passback, predictive analytics, bank-sponsorship channel.

@@ -42,8 +42,12 @@ curso → estudiante`. Roles: `rector`/`coordinador` (whole school or sede),
   is setting role/colegio custom claims.
 
 The phased roadmap (MVP → V2 → V3) lives in `docs/data-model.md` and the pivot
-plan. Do not build V2/V3 features (LMS roster sync, native app, parents app,
-generative AI, full sede dashboard, leaderboards) during the MVP.
+plan. The **invariant-safe V2 subset is now built** (weakness-detection reports,
+life-project goals, class-scoped collaboration/leaderboard, sede dashboard). Still
+**not built and gated by invariants** — do not build without lifting the invariant
+(update this file + the rule in the same change): generative AI, native iOS/Android
+app, and any acudiente login/dashboard (the "parents app"). LMS roster sync and a
+read-only parents _report_ (shared out-of-band, not a login) remain future work.
 
 ## Source-of-truth documents
 
