@@ -14,7 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import PrivacyPolicyLink from '@shared/components/PrivacyPolicyLink';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
-import { useAuthStore } from '@features/auth/store/useAuthStore';
+import { useAuthStore, useIsAdmin } from '@features/auth/store/useAuthStore';
 import { performLogoutAndGo } from '@features/auth/performLogout';
 import { rosterRepository, type CursoWithId } from '@features/dashboard/data/rosterRepository';
 
@@ -30,7 +30,7 @@ export default function StaffHomeScreen() {
   const role = useAuthStore((s) => s.role);
   const colegioId = useAuthStore((s) => s.colegioId);
   const uid = useAuthStore((s) => s.firebaseUid);
-  const superadmin = useAuthStore((s) => s.superadmin);
+  const isAdmin = useIsAdmin();
 
   const [cursos, setCursos] = useState<CursoWithId[]>([]);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
@@ -75,7 +75,7 @@ export default function StaffHomeScreen() {
           <Text style={[styles.cardValue, { color: colors.text.primary }]}>{colegioId ?? '—'}</Text>
         </View>
 
-        {superadmin && (
+        {isAdmin && (
           <TouchableOpacity
             style={[styles.courseRow, { borderColor: colors.brand.primary }]}
             accessibilityRole="button"

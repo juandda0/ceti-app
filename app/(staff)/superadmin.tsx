@@ -1,18 +1,18 @@
 import { Redirect, type Href } from 'expo-router';
-import { useAuthStore } from '@features/auth/store/useAuthStore';
+import { useAuthStore, useIsAdmin } from '@features/auth/store/useAuthStore';
 import SuperAdminScreen from '@features/dashboard/screens/SuperAdminScreen';
 
 /**
- * Platform super-admin console (register/list colegios). Gated to the super-admin
- * allowlist: the `superadmin` claim is set server-side (CETI_SUPERADMIN_EMAILS)
- * and the Cloud Functions re-check it, so this is the client-side mirror that
- * keeps ordinary staff (rector/coordinador/profesor) out of the platform surface.
+ * Platform admin console (register/list colegios). Gated to the platform admin:
+ * the `role:'admin'` claim is set server-side and the Cloud Functions re-check
+ * it, so this is the client-side mirror that keeps ordinary staff
+ * (rector/coordinador/profesor) out of the platform surface.
  */
 export default function SuperAdminRoute() {
   const authReady = useAuthStore((s) => s.authReady);
-  const superadmin = useAuthStore((s) => s.superadmin);
+  const isAdmin = useIsAdmin();
 
-  if (authReady && !superadmin) {
+  if (authReady && !isAdmin) {
     // Cast: typed-routes union regenerates from the filesystem on build.
     return <Redirect href={'/(staff)' as Href} />;
   }

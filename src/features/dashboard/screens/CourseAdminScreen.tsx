@@ -40,7 +40,6 @@ export default function CourseAdminScreen() {
 
   const [roster, setRoster] = useState<EstudianteWithId[]>([]);
   const [loading, setLoading] = useState(true);
-  const [label, setLabel] = useState('');
   const [busy, setBusy] = useState(false);
   const [teacherEmail, setTeacherEmail] = useState('');
   const [code, setCode] = useState<string | null>(null);
@@ -75,31 +74,19 @@ export default function CourseAdminScreen() {
     }
   };
 
-  const onAddStudent = () =>
-    guard(async () => {
-      if (!colegioId || !cursoId || !label.trim()) return;
-      const studentId = `stu_${Date.now().toString(36)}`;
-      await adminService.addEstudiante(colegioId, cursoId, {
-        studentId,
-        displayLabel: label.trim(),
-      });
-      setLabel('');
-    });
-
-  const onToggleAuth = (sid: string, activo: boolean) =>
+  const onToggleAuth = (uid: string, activo: boolean) =>
     guard(async () => {
       if (!colegioId || !cursoId) return;
-      await adminService.setAuthorization({
+      await adminService.atestar({
         colegioId,
         cursoId,
-        studentId: sid,
-        estado: activo ? 'revocada' : 'otorgada',
+        uid,
+        atestado: !activo,
         politicaVersion: POLICY_VERSION,
-        canalEvidencia: 'consola-admin',
       });
     });
 
-  const onSuppress = (sid: string) =>
+  const onSuppress = (uid: string) =>
     Alert.alert(t('admin.suppressConfirmTitle'), t('admin.suppressConfirmBody'), [
       { text: t('admin.cancel'), style: 'cancel' },
       {
@@ -108,7 +95,7 @@ export default function CourseAdminScreen() {
         onPress: () =>
           guard(async () => {
             if (!colegioId || !cursoId) return;
-            await adminService.suppressStudent({ colegioId, cursoId, studentId: sid });
+            await adminService.suppressStudent({ colegioId, cursoId, uid });
             Alert.alert(t('admin.suppressOkTitle'), t('admin.suppressOk'));
           }),
       },
@@ -124,7 +111,7 @@ export default function CourseAdminScreen() {
   const onAssignTeacher = () =>
     guard(async () => {
       if (!colegioId || !cursoId || !teacherEmail.trim()) return;
-      await adminService.assignMember({
+      await adminService.assignRole({
         email: teacherEmail.trim(),
         role: 'profesor',
         colegioId,
@@ -230,26 +217,10 @@ export default function CourseAdminScreen() {
           </View>
         </View>
 
-        {/* Add student */}
-        <View style={styles.addRow}>
-          <TextInput
-            style={[styles.field, input, { flex: 1 }]}
-            placeholder={t('admin.studentLabel')}
-            placeholderTextColor={colors.text.tertiary}
-            value={label}
-            onChangeText={setLabel}
-          />
-          <TouchableOpacity
-            style={[
-              styles.addBtn,
-              { backgroundColor: colors.brand.primary, opacity: busy || !label.trim() ? 0.6 : 1 },
-            ]}
-            onPress={onAddStudent}
-            disabled={busy || !label.trim()}
-          >
-            <Ionicons name="add" size={20} color="#fff" />
-          </TouchableOpacity>
-        </View>
+        {/* Students self-join by code (no manual roster slot). */}
+        <Text style={[styles.hint, { color: colors.text.tertiary }]}>
+          {t('admin.rosterSelfJoinHint')}
+        </Text>
 
         {/* Roster */}
         {loading ? (
@@ -263,14 +234,9 @@ export default function CourseAdminScreen() {
             const activo = s.estado === 'activo';
             const suprimido = s.estado === 'suprimido';
             return (
-              <View
-                key={s.studentId}
-                style={[styles.row, { borderColor: colors.background.secondary }]}
-              >
+              <View key={s.uid} style={[styles.row, { borderColor: colors.background.secondary }]}>
                 <View style={{ flex: 1 }}>
-                  <Text style={[styles.rowName, { color: colors.text.primary }]}>
-                    {s.displayLabel}
-                  </Text>
+                  <Text style={[styles.rowName, { color: colors.text.primary }]}>{s.nombre}</Text>
                   <Text
                     style={[
                       styles.rowSub,
@@ -287,7 +253,7 @@ export default function CourseAdminScreen() {
                         styles.authBtn,
                         { borderColor: activo ? colors.system.red : colors.system.green },
                       ]}
-                      onPress={() => onToggleAuth(s.studentId, activo)}
+                      onPress={() => onToggleAuth(s.uid, activo)}
                       disabled={busy}
                     >
                       <Text
@@ -304,7 +270,7 @@ export default function CourseAdminScreen() {
                   {canSuppress && !suprimido && (
                     <TouchableOpacity
                       style={[styles.iconBtn, { borderColor: colors.system.red }]}
-                      onPress={() => onSuppress(s.studentId)}
+                      onPress={() => onSuppress(s.uid)}
                       disabled={busy}
                       accessibilityRole="button"
                       accessibilityLabel={t('admin.suppress')}

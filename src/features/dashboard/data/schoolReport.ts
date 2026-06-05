@@ -66,7 +66,7 @@ export function buildSchoolReport(input: BuildSchoolReportInput): SchoolReport {
       label: comp.label,
       averageMastery: average(masteries),
       studentsWithData: new Set(
-        input.progress.filter((p) => p.competencia === comp.id).map((p) => p.studentId)
+        input.progress.filter((p) => p.competencia === comp.id).map((p) => p.uid)
       ).size,
     };
   });
@@ -79,11 +79,14 @@ export function buildSchoolReport(input: BuildSchoolReportInput): SchoolReport {
       grado: c.grado,
       sedeId: c.sedeId ?? null,
       avgMastery: average(cursoProgress.map((p) => p.mastery)),
-      studentsWithData: new Set(cursoProgress.map((p) => p.studentId)).size,
+      studentsWithData: new Set(cursoProgress.map((p) => p.uid)).size,
     };
   });
 
   // Per-sede roll-up (V2). Empty unless at least one course has a sede assigned.
+  // Sedes are dormant (RQ-FN01) so this stays an optional passthrough on the curso.
+  // TODO(RQ-IN02 / Block 6): replace sede grouping with the institutional redesign
+  // (aggregate by grado/curso) once sedes are formally retired.
   const anySede = input.cursos.some((c) => c.sedeId != null);
   const sedeSummaries: SedeSummary[] = anySede
     ? Array.from(new Set(input.cursos.map((c) => c.sedeId ?? null))).map((key) => {
@@ -95,7 +98,7 @@ export function buildSchoolReport(input: BuildSchoolReportInput): SchoolReport {
           sedeId: key,
           courseCount: cursoIds.size,
           avgMastery: average(sedeProgress.map((p) => p.mastery)),
-          studentsWithData: new Set(sedeProgress.map((p) => p.studentId)).size,
+          studentsWithData: new Set(sedeProgress.map((p) => p.uid)).size,
         };
       })
     : [];

@@ -90,11 +90,91 @@ de escenarios a la matriz §1.3 va acoplada al refactor de `firestore.rules` en
 Fase 6); E10 tocó `.github/ci.yml` (infra del arnés, fuera de la lista literal);
 E1 typecheck por-edición opt-in; `lint` completo en CI, no en pre-commit.
 
-## Siguiente: Fase 5 y Fase 6 (intercalables)
+## Fase 5 — completa ✅
 
-**Arnés operativo.** Fase 5 = pipeline de contenido (llenar el set dorado de E6,
-generar bancos con GC → VC → E3, constantes `economia-CO.<año>.json`). Fase 6 =
-implementación por RQ siguiendo el orden recomendado de `harness-design.md`
-(fundación §1 primero: migración atómica `studentId` con aprobación manual,
-roles, atestación; luego contenido, retiros, capa estudiante, impacto, staff).
-El `legacy-baseline.json` debe decrecer hasta cero a lo largo de Fase 6.
+**Fase 5 completa. Bancos generados, pendientes de validación docente (no
+bloqueante). Siguiente: Fase 6 — implementación por RQ según el orden de
+`harness-design.md`.**
+
+Pipeline de contenido ejecutado vía agentes D6 (`generador-contenido`, una celda
+`grado×mundo` por agente) → gate determinista E3. Inventario completo:
+
+- **45 bancos de quiz** (`grado{9,10,11} × world_{1..5} × {MC,VF,ordenar}`): **12
+  MC + 9 VF + 9 ordenar por celda** (3× lo que consume un quiz, para variedad
+  entre intentos) = **450 ítems**.
+- **15 bancos "Elige tu camino"** (`grado×world`): 3 situaciones/celda = **45
+  situaciones**, sin `correctAnswer`/puntaje (R5).
+- **15 micro-teorías** (`grado×world`, `content/microteoria/`), 3–4 cards c/u.
+- **1 pre/post-test de impacto** a nivel programa (`content/impacttest/impact-test.json`):
+  15 ítems, 3 por competencia, mismo set pre/post, sin XP (RQ-TS).
+- **Paquete de revisión docente**: `content/revision-docente/mundo-{1..5}.md`
+  (teoría + todas las preguntas con respuestas + situaciones, por mundo y grado).
+
+Todo nace `pendiente_validacion_docente:true`, `generadoPor:'ia'`, `version:1`.
+Gate E3 (estructura S5 + ensamblaje 4+3+3 + caducables R14 + rango de dificultad
+por celda S6 + unicidad + EligeCamino sin `correctAnswer`): **60/60 aprobados, 0
+rechazados.** Lo aprobado quedó en `content/approved/` (la siembra Admin SDK
+read-only, R8/CN05, es paso aparte de Fase 6).
+
+**Desviaciones registradas (decisión del usuario, demo con tiempo limitado):**
+
+- **VC y calibración del set dorado (Paso 0) saltados** por decisión del usuario:
+  el contenido se asume correcto y lo verificará el docente después (que es
+  justamente el flag no-bloqueante `pendiente_validacion_docente`, R8/CN02). Los
+  veredictos en `content/validation/*.json` quedan **estampados como
+  `_assumed:true`** (rúbricas pass) para que el gate determinista E3 —que sí
+  corrió y es el gate real— pudiera ejecutarse. El set dorado de E6 queda sin
+  llenar; `_answer-key.private.json` guarda 24 candidatos por si se retoma la
+  calibración.
+- **Contenido conceptual sin cifras** ($/%/SMMLV/UVT) para mantener el gate R14
+  trivialmente verde sin depender de `economia-CO.2026.json` (aún en ceros, sin
+  verificar). Cuando se agregue contenido con magnitudes, hay que llenar y
+  verificar esas constantes y usar `constRef`.
+- **Rebalanceo mecánico de `correctIndex`** de MC: los generadores sesgaban la
+  respuesta correcta a la posición 0 (162/180); se permutaron opciones (swap puro,
+  contenido intacto) → distribución uniforme 45/45/45/45.
+
+## Fase 6 — ejecución autónoma por bloques (orden de `harness-design.md`)
+
+### Bloque 1 — Fundación ✅ COMPLETO (RQs: FN02, FN03, FN06, FN01, FN05, FN10, FN12, FN08, FN11, FN09)
+
+Migración atómica de identidad (#1) + 5º rol admin (#4) + atestación ligera (#6),
+como una sola unidad de cambio (ver `docs/decisiones.md` D-B1-01).
+
+**Qué cambió:**
+
+- **Identidad por `uid`** (R1): `estudiantes/{uid}` con solo `email`+`nombre`
+  (R4); `studentId` eliminado de rules/paths/tenancy/claims/functions/scripts/tests
+  (0 ocurrencias en código). `WorldProgress.studentId`→`uid`.
+- **5 roles** con `admin` global (claim, sin `colegioId`); `isSuperAdmin` y la
+  allowlist `CETI_SUPERADMIN_EMAILS` retiradas; `scripts/setSuperadmin.ts` borrado.
+  Functions: `assignRole` (admin), `registerColegio`/`listColegios`/`createCurso`
+  (admin), `generateClassCode` (admin/coord/profesor), `joinByCode` (estudiante).
+- **Atestación ligera** (R6): Function `atestar` (booleano `atestado` + quién/cuándo
+  - `politicaVersion`, **cero PII de acudiente**); colección `autorizaciones`,
+    tipo `Autorizacion`, `setAuthorizationStatus`, `autorizacionDocRef` demolidos.
+    estado `pendiente_autorizacion`→`pendiente_atestacion`.
+- **`firestore.rules`** reescritas a la matriz §1.3 (R12): `admin` global; roster
+  Function-only; **rector excluido de dato nominal** (solo `agregados/*`);
+  `estudianteActivo` gatea progreso/impactTest; collection-group scoped por rol;
+  default deny. Esquema sembrado: `agregados/*` (FN09) e `impactTest/{pre|post}`.
+- Supresión (FN11): `suppressStudentData` borra progress+impactTest, marca
+  `suprimido`, revoca claims.
+
+**Gates (todos verdes):** typecheck ✓ · lint ✓ (0 errores) · i18n ✓ · jest 125/125 ✓ ·
+**test:rules E7 70/70 ✓** · invariant-lint E4 sin violaciones nuevas ✓ · functions
+build ✓ · **veto AR `pass`** · **veto CP `pass`**.
+
+**Baseline legacy:** 80 → **34 entradas**. Grupos eliminados: `studentId` (#1),
+`acudiente` (#6), `roles-superadmin` (#4). Restan: `bancos-global`(17, #8 B2),
+`quiz-tipos`(3, #9 B2), `perfilamiento`(4, #2 B3), `features-excluidas`(3, #5 B3),
+`runtime-ia`(7, #7 B3).
+
+**Conflictos resueltos:** #1, #4, #6 (✅). #3 parcial (claim `sedeId` retirado; UI
+de sede se inertiza en Bloque 3).
+
+**Deuda diferida (ver decisiones.md D-B1-06):** harness de integración de Functions
+(`firebase-functions-test`) → Fase 7. UI/route legacy `superadmin`→`admin`
+(cosmético; funcionalmente correcto por `useIsAdmin`).
+
+Bloque 1 completo. Siguiente: Bloque 2 (Contenido) según harness-design.md.

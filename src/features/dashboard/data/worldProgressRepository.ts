@@ -16,13 +16,13 @@ export const worldProgressRepository = {
   async upsert(
     colegioId: string,
     cursoId: string,
-    studentId: string,
+    uid: string,
     worldId: string,
     progress: WorldProgress
   ): Promise<boolean> {
     const clients = getFirebaseClients();
     if (!clients?.firestore) return false;
-    const ref = estudianteProgressDocRef(clients.firestore, colegioId, cursoId, studentId, worldId);
+    const ref = estudianteProgressDocRef(clients.firestore, colegioId, cursoId, uid, worldId);
     await setDoc(ref, stripUndefinedValues({ ...progress } as Record<string, unknown>), {
       merge: true,
     });
@@ -32,12 +32,12 @@ export const worldProgressRepository = {
   async getStudentProgress(
     colegioId: string,
     cursoId: string,
-    studentId: string
+    uid: string
   ): Promise<(WorldProgress & { worldId: string })[]> {
     const clients = getFirebaseClients();
     if (!clients?.firestore) return [];
     const snap = await getDocs(
-      estudianteProgressCollectionRef(clients.firestore, colegioId, cursoId, studentId)
+      estudianteProgressCollectionRef(clients.firestore, colegioId, cursoId, uid)
     );
     // The doc id is the worldId (path key); callers need it to rehydrate per-world
     // unlock/progress state, so surface it alongside the denormalized data.

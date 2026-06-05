@@ -145,9 +145,9 @@ export default function CourseDashboardScreen() {
                 </Text>
                 <View style={[styles.diagCard, { backgroundColor: colors.background.secondary }]}>
                   {warning.atRisk.map((r) => (
-                    <View key={r.studentId} style={styles.diagItem}>
+                    <View key={r.uid} style={styles.diagItem}>
                       <Text style={[styles.diagItemTitle, { color: colors.text.primary }]}>
-                        {r.displayLabel} ·{' '}
+                        {r.nombre} ·{' '}
                         {r.level === 'high' ? t('dashboard.riskHigh') : t('dashboard.riskMedium')}
                       </Text>
                       <Text style={[styles.diagItemSub, { color: colors.text.tertiary }]}>
@@ -210,9 +210,9 @@ export default function CourseDashboardScreen() {
                           {t('dashboard.atRiskTitle')}
                         </Text>
                         {weakness.studentsAtRisk.map((s) => (
-                          <View key={s.studentId} style={styles.diagItem}>
+                          <View key={s.uid} style={styles.diagItem}>
                             <Text style={[styles.diagItemTitle, { color: colors.text.primary }]}>
-                              {s.displayLabel} ·{' '}
+                              {s.nombre} ·{' '}
                               {t('dashboard.atRiskItem', { pct: pct(s.overallMastery) })}
                             </Text>
                             {s.weakAreas.length > 0 && (
@@ -237,12 +237,12 @@ export default function CourseDashboardScreen() {
 
             {report.students.map((s) => (
               <View
-                key={s.studentId}
+                key={s.uid}
                 style={[styles.studentRow, { borderColor: colors.background.secondary }]}
               >
                 <View style={styles.studentInfo}>
                   <Text style={[styles.studentName, { color: colors.text.primary }]}>
-                    {s.displayLabel}
+                    {s.nombre}
                   </Text>
                   <Text style={[styles.studentEstado, { color: colors.text.tertiary }]}>
                     {t(`estados.${s.estado}`)}

@@ -8,7 +8,7 @@ export async function performLogoutAndGo(
   router: Router,
   target: Href = '/(auth)/welcome'
 ): Promise<void> {
-  // Navigate FIRST, then tear down. Resetting the auth store flips role/superadmin
+  // Navigate FIRST, then tear down. Resetting the auth store flips role
   // to null, which makes the (staff)/(app) layout guards render a <Redirect>; if
   // that happens while we also call router.replace(), the two competing
   // navigations crash React Navigation on web. Leaving the guarded group before

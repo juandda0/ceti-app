@@ -1,5 +1,5 @@
 import { Redirect, Stack, type Href } from 'expo-router';
-import { useAuthStore } from '@features/auth/store/useAuthStore';
+import { useAuthStore, useIsAdmin } from '@features/auth/store/useAuthStore';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 
 /**
@@ -12,10 +12,10 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 export default function AdminLayout() {
   const authReady = useAuthStore((s) => s.authReady);
   const role = useAuthStore((s) => s.role);
-  const superadmin = useAuthStore((s) => s.superadmin);
+  const isAdmin = useIsAdmin();
   const colors = useThemeColors();
 
-  const canManageSchool = role === 'rector' || role === 'coordinador' || superadmin;
+  const canManageSchool = role === 'rector' || role === 'coordinador' || isAdmin;
 
   if (authReady && !canManageSchool) {
     // Cast: typed-routes union regenerates from the filesystem on build.

@@ -20,11 +20,11 @@ export async function loadCourseReport(
 ): Promise<CourseReport> {
   const roster = await rosterRepository.getRoster(colegioId, cursoId);
   const progressArrays = await Promise.all(
-    roster.map((s) => worldProgressRepository.getStudentProgress(colegioId, cursoId, s.studentId))
+    roster.map((s) => worldProgressRepository.getStudentProgress(colegioId, cursoId, s.uid))
   );
   const rosterEntries: RosterEntry[] = roster.map((s) => ({
-    studentId: s.studentId,
-    displayLabel: s.displayLabel,
+    uid: s.uid,
+    nombre: s.nombre,
     estado: s.estado,
   }));
   return buildCourseReport({

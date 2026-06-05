@@ -29,7 +29,6 @@ export default function SuperAdminScreen() {
 
   const [id, setId] = useState('');
   const [nombre, setNombre] = useState('');
-  const [rectorEmail, setRectorEmail] = useState('');
   const [busy, setBusy] = useState(false);
 
   const reload = useCallback(async () => {
@@ -56,25 +55,20 @@ export default function SuperAdminScreen() {
     if (!slug || !nombre.trim()) return;
     setBusy(true);
     try {
-      const res = await adminService.registerColegio({
+      await adminService.registerColegio({
         colegioId: slug,
         nombre: nombre.trim(),
-        rectorEmail: rectorEmail.trim() || undefined,
       });
-      Alert.alert(
-        t('superadmin.okTitle'),
-        res.rectorAssigned ? t('superadmin.okWithRector') : t('superadmin.okNoRector')
-      );
+      Alert.alert(t('superadmin.okTitle'), t('superadmin.okNoRector'));
       setId('');
       setNombre('');
-      setRectorEmail('');
       await reload();
     } catch (e) {
       Alert.alert(t('admin.error'), e instanceof Error ? e.message : String(e));
     } finally {
       setBusy(false);
     }
-  }, [slug, nombre, rectorEmail, reload, t]);
+  }, [slug, nombre, reload, t]);
 
   const field = { backgroundColor: colors.background.secondary, color: colors.text.primary };
 
@@ -103,15 +97,6 @@ export default function SuperAdminScreen() {
           placeholderTextColor={colors.text.tertiary}
           value={nombre}
           onChangeText={setNombre}
-        />
-        <TextInput
-          style={[styles.input, field]}
-          placeholder={t('superadmin.rectorEmail')}
-          placeholderTextColor={colors.text.tertiary}
-          autoCapitalize="none"
-          keyboardType="email-address"
-          value={rectorEmail}
-          onChangeText={setRectorEmail}
         />
         <Text style={[styles.hint, { color: colors.text.tertiary }]}>
           {t('superadmin.rectorHint')}

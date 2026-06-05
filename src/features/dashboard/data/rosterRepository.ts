@@ -10,7 +10,7 @@ import {
 import type { Curso, Estudiante } from '@shared/types/tenancy';
 
 export type CursoWithId = Curso & { id: string };
-export type EstudianteWithId = Estudiante & { studentId: string };
+export type EstudianteWithId = { uid: string } & Estudiante;
 
 /** Reads the institutional roster (courses a teacher manages, students in a course). */
 export const rosterRepository = {
@@ -33,7 +33,7 @@ export const rosterRepository = {
     const clients = getFirebaseClients();
     if (!clients?.firestore) return [];
     const snap = await getDocs(estudiantesCollectionRef(clients.firestore, colegioId, cursoId));
-    return snap.docs.map((d) => ({ studentId: d.id, ...(d.data() as Estudiante) }));
+    return snap.docs.map((d) => ({ uid: d.id, ...(d.data() as Estudiante) }));
   },
 
   /** A single course doc — any colegio member may read it (rules allow sameColegio). */
@@ -49,12 +49,12 @@ export const rosterRepository = {
   async getEstudiante(
     colegioId: string,
     cursoId: string,
-    studentId: string
+    uid: string
   ): Promise<EstudianteWithId | null> {
     const clients = getFirebaseClients();
     if (!clients?.firestore) return null;
-    const snap = await getDoc(estudianteDocRef(clients.firestore, colegioId, cursoId, studentId));
+    const snap = await getDoc(estudianteDocRef(clients.firestore, colegioId, cursoId, uid));
     if (!snap.exists()) return null;
-    return { studentId: snap.id, ...(snap.data() as Estudiante) };
+    return { uid: snap.id, ...(snap.data() as Estudiante) };
   },
 };

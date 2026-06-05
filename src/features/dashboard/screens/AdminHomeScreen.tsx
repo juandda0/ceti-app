@@ -18,9 +18,10 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { rosterRepository, type CursoWithId } from '@features/dashboard/data/rosterRepository';
 import { adminService } from '@features/dashboard/data/adminService';
-import type { Role } from '@shared/types/tenancy';
+import type { Grado, Role } from '@shared/types/tenancy';
 
-const ASSIGNABLE: Role[] = ['coordinador', 'profesor'];
+const ASSIGNABLE: Exclude<Role, 'estudiante' | 'admin' | 'rector'>[] = ['coordinador', 'profesor'];
+const GRADOS: Grado[] = ['9', '10', '11'];
 
 /** Admin console home (rector/coordinador): create courses, list them, assign staff. */
 export default function AdminHomeScreen() {
@@ -33,14 +34,19 @@ export default function AdminHomeScreen() {
   const [cursos, setCursos] = useState<CursoWithId[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [cursoId, setCursoId] = useState('');
   const [nombre, setNombre] = useState('');
-  const [grado, setGrado] = useState('');
-  const [sede, setSede] = useState('');
+  const [grado, setGrado] = useState<Grado>('9');
   const [creating, setCreating] = useState(false);
 
   const [memberEmail, setMemberEmail] = useState('');
-  const [memberRole, setMemberRole] = useState<Role>('profesor');
+  const [memberRole, setMemberRole] = useState<Exclude<Role, 'estudiante'>>('profesor');
   const [assigning, setAssigning] = useState(false);
+
+  const cursoSlug = cursoId
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, '-');
 
   const reload = useCallback(async () => {
     if (!colegioId) return;
@@ -54,30 +60,31 @@ export default function AdminHomeScreen() {
   }, [reload]);
 
   const onCreateCurso = useCallback(async () => {
-    if (!colegioId || !nombre.trim() || !grado.trim()) return;
+    if (!colegioId || !cursoSlug || !nombre.trim()) return;
     setCreating(true);
     try {
-      await adminService.createCurso(colegioId, {
+      await adminService.createCurso({
+        colegioId,
+        cursoId: cursoSlug,
         nombre: nombre.trim(),
-        grado: grado.trim(),
-        sedeId: sede.trim() || undefined,
+        grado,
       });
+      setCursoId('');
       setNombre('');
-      setGrado('');
-      setSede('');
+      setGrado('9');
       await reload();
     } catch (e) {
       Alert.alert(t('admin.error'), e instanceof Error ? e.message : String(e));
     } finally {
       setCreating(false);
     }
-  }, [colegioId, nombre, grado, sede, reload, t]);
+  }, [colegioId, cursoSlug, nombre, grado, reload, t]);
 
   const onAssign = useCallback(async () => {
     if (!colegioId || !memberEmail.trim()) return;
     setAssigning(true);
     try {
-      await adminService.assignMember({
+      await adminService.assignRole({
         email: memberEmail.trim(),
         role: memberRole,
         colegioId,
@@ -108,32 +115,48 @@ export default function AdminHomeScreen() {
         </Text>
         <TextInput
           style={[styles.field, input]}
+          placeholder={t('admin.courseId')}
+          placeholderTextColor={colors.text.tertiary}
+          autoCapitalize="none"
+          value={cursoId}
+          onChangeText={setCursoId}
+        />
+        {cursoSlug ? (
+          <Text style={[styles.hint, { color: colors.text.tertiary }]}>ID: {cursoSlug}</Text>
+        ) : null}
+        <TextInput
+          style={[styles.field, input]}
           placeholder={t('admin.courseName')}
           placeholderTextColor={colors.text.tertiary}
           value={nombre}
           onChangeText={setNombre}
         />
-        <TextInput
-          style={[styles.field, input]}
-          placeholder={t('admin.courseGrade')}
-          placeholderTextColor={colors.text.tertiary}
-          value={grado}
-          onChangeText={setGrado}
-        />
-        <TextInput
-          style={[styles.field, input]}
-          placeholder={t('admin.courseSede')}
-          placeholderTextColor={colors.text.tertiary}
-          value={sede}
-          onChangeText={setSede}
-        />
+        <View style={styles.roleRow}>
+          {GRADOS.map((g) => {
+            const sel = g === grado;
+            return (
+              <TouchableOpacity
+                key={g}
+                onPress={() => setGrado(g)}
+                style={[
+                  styles.chip,
+                  { backgroundColor: sel ? colors.brand.primary : colors.background.secondary },
+                ]}
+              >
+                <Text style={{ color: sel ? '#fff' : colors.text.secondary, fontWeight: '600' }}>
+                  {t('admin.gradoChip', { grado: g })}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
         <TouchableOpacity
           style={[
             styles.primaryBtn,
             { backgroundColor: colors.brand.primary, opacity: creating ? 0.6 : 1 },
           ]}
           onPress={() => void onCreateCurso()}
-          disabled={creating || !nombre.trim() || !grado.trim()}
+          disabled={creating || !cursoSlug || !nombre.trim()}
         >
           <Ionicons name="add" size={18} color="#fff" />
           <Text style={styles.primaryText}>{t('admin.createCourse')}</Text>

@@ -1,11 +1,13 @@
 /**
- * Firestore rules role-scenario tests (B2B2C multi-tenant).
+ * Firestore rules role-scenario tests (B2B2C multi-tenant, 5 roles).
  * Run via the emulator so FIRESTORE_EMULATOR_HOST is set:
  *   firebase emulators:exec --only firestore --project demo-ceti "node scripts/testFirestoreRules.mjs"
  *
- * Exits non-zero on any failed assertion. No jest — standalone to avoid the
- * jest-expo preset. Covers tenant isolation, role scope, the collection-group
- * report rule, and the student progress write guards.
+ * Exits non-zero on any failed assertion. Standalone (no jest). Covers the §1.3
+ * matrix: tenant isolation, the 5 roles, uid-identity (R1), the Ley 1581
+ * attestation gate, rector excluded from nominal data, the collection-group
+ * report rule, aggregates, and progress write guards. At least one allow + one
+ * deny per critical cell.
  */
 import { readFileSync } from 'node:fs';
 import {
@@ -42,7 +44,8 @@ async function check(name, promise) {
   }
 }
 
-// Auth contexts (second arg = custom claims).
+// Auth contexts (second arg = custom claims). Student identity = the uid (R1).
+const adminG = env.authenticatedContext('uAdmin', { role: 'admin' }).firestore();
 const rectorA = env.authenticatedContext('uRectorA', { role: 'rector', colegioId: 'A' }).firestore();
 const coordA = env
   .authenticatedContext('uCoordA', { role: 'coordinador', colegioId: 'A' })
@@ -54,35 +57,35 @@ const profA2 = env
   .authenticatedContext('uProfA2', { role: 'profesor', colegioId: 'A' })
   .firestore();
 const stuA1 = env
-  .authenticatedContext('uStuA1', { role: 'estudiante', colegioId: 'A', studentId: 's1' })
+  .authenticatedContext('uStuA1', { role: 'estudiante', colegioId: 'A', cursoId: 'c1' })
   .firestore();
 const stuA2 = env
-  .authenticatedContext('uStuA2', { role: 'estudiante', colegioId: 'A', studentId: 's2' })
+  .authenticatedContext('uStuA2', { role: 'estudiante', colegioId: 'A', cursoId: 'c1' })
   .firestore();
 const stuA3 = env
-  .authenticatedContext('uStuA3', { role: 'estudiante', colegioId: 'A', studentId: 's3' })
+  .authenticatedContext('uStuA3', { role: 'estudiante', colegioId: 'A', cursoId: 'c1' })
+  .firestore();
+const stuA4 = env
+  .authenticatedContext('uStuA4', { role: 'estudiante', colegioId: 'A', cursoId: 'c1' })
   .firestore();
 const rectorB = env.authenticatedContext('uRectorB', { role: 'rector', colegioId: 'B' }).firestore();
-const stuA4 = env
-  .authenticatedContext('uStuA4', { role: 'estudiante', colegioId: 'A', studentId: 's4' })
-  .firestore();
 // Leaderboard (V2) contexts: students carry a cursoId claim.
 const stuLb1 = env
-  .authenticatedContext('uLb1', { role: 'estudiante', colegioId: 'A', studentId: 'lb1', cursoId: 'cLbOn' })
+  .authenticatedContext('uLb1', { role: 'estudiante', colegioId: 'A', cursoId: 'cLbOn' })
   .firestore();
 const stuLb2 = env
-  .authenticatedContext('uLb2', { role: 'estudiante', colegioId: 'A', studentId: 'lb2', cursoId: 'cLbOn' })
+  .authenticatedContext('uLb2', { role: 'estudiante', colegioId: 'A', cursoId: 'cLbOn' })
   .firestore();
 const stuLb4 = env
-  .authenticatedContext('uLb4', { role: 'estudiante', colegioId: 'A', studentId: 'lb4', cursoId: 'cLbOff' })
+  .authenticatedContext('uLb4', { role: 'estudiante', colegioId: 'A', cursoId: 'cLbOff' })
   .firestore();
 
-const progPath = (cid, curso, sid, w) =>
-  `colegios/${cid}/cursos/${curso}/estudiantes/${sid}/progress/${w}`;
+const progPath = (cid, curso, uid, w) =>
+  `colegios/${cid}/cursos/${curso}/estudiantes/${uid}/progress/${w}`;
 const validProgress = {
   colegioId: 'A',
   cursoId: 'c1',
-  studentId: 's1',
+  uid: 'uStuA1',
   competencia: 'ahorro',
   xp: 100,
   nivel: 2,
@@ -93,7 +96,7 @@ const validProgress = {
   updatedAt: 1,
 };
 
-// Seed with rules disabled: course c1 (profesor uProfA1), roster s1, a progress doc.
+// Seed with rules disabled.
 await env.withSecurityRulesDisabled(async (ctx) => {
   const db = ctx.firestore();
   await setDoc(doc(db, 'colegios/A'), { nombre: 'Colegio A', sedesEnabled: false, createdAt: 1 });
@@ -104,30 +107,37 @@ await env.withSecurityRulesDisabled(async (ctx) => {
     profesorUids: ['uProfA1'],
     colaboracionAula: false,
   });
-  await setDoc(doc(db, 'colegios/A/cursos/c1/estudiantes/s1'), {
-    displayLabel: 'Est 1',
+  await setDoc(doc(db, 'colegios/A/cursos/c1/estudiantes/uStuA1'), {
+    email: 'a1@demo.ceti',
+    nombre: 'Est 1',
     estado: 'activo',
-    createdAt: 1,
+    atestado: true,
+    joinedAt: 1,
   });
-  // s3 exists but is NOT yet authorized (Ley 1581 gate).
-  await setDoc(doc(db, 'colegios/A/cursos/c1/estudiantes/s3'), {
-    displayLabel: 'Est 3',
-    estado: 'pendiente_autorizacion',
-    createdAt: 1,
+  // uStuA3 exists but is NOT yet attested (Ley 1581 gate).
+  await setDoc(doc(db, 'colegios/A/cursos/c1/estudiantes/uStuA3'), {
+    email: 'a3@demo.ceti',
+    nombre: 'Est 3',
+    estado: 'pendiente_atestacion',
+    atestado: false,
+    joinedAt: 1,
   });
-  await setDoc(doc(db, progPath('A', 'c1', 's1', 'w1')), validProgress);
-  await setDoc(doc(db, 'membership/uStuA1'), { role: 'estudiante', colegioId: 'A', studentId: 's1' });
-  // s4 is a suppressed (Ley 1581 erasure) roster slot — must not be able to write.
-  await setDoc(doc(db, 'colegios/A/cursos/c1/estudiantes/s4'), {
-    displayLabel: 'Est 4',
+  // uStuA4 is a suppressed roster slot — must not be able to write.
+  await setDoc(doc(db, 'colegios/A/cursos/c1/estudiantes/uStuA4'), {
+    email: 'a4@demo.ceti',
+    nombre: 'Est 4',
     estado: 'suprimido',
-    createdAt: 1,
+    atestado: false,
+    joinedAt: 1,
   });
+  await setDoc(doc(db, progPath('A', 'c1', 'uStuA1', 'w1')), validProgress);
+  await setDoc(doc(db, 'colegios/A/cursos/c1/agregados/ag1'), {
+    competencia: 'ahorro',
+    masteryPromedio: 0.5,
+    updatedAt: 1,
+  });
+  await setDoc(doc(db, 'membership/uStuA1'), { role: 'estudiante', colegioId: 'A', cursoId: 'c1' });
   await setDoc(doc(db, 'colegios/A/sedes/sede1'), { nombre: 'Sede 1' });
-  await setDoc(doc(db, 'colegios/A/autorizaciones/s1'), {
-    estado: 'otorgada',
-    politicaVersion: 'v1',
-  });
   await setDoc(doc(db, 'classCodes/CODE1'), { colegioId: 'A', cursoId: 'c1' });
   await setDoc(doc(db, 'questionBank/q1'), { worldId: 'world_1', competencia: 'ahorro' });
   // Leaderboard (V2): two courses, collaboration on vs off, with active students.
@@ -143,26 +153,28 @@ await env.withSecurityRulesDisabled(async (ctx) => {
     profesorUids: [],
     colaboracionAula: false,
   });
-  for (const [curso, sid] of [
-    ['cLbOn', 'lb1'],
-    ['cLbOn', 'lb2'],
-    ['cLbOff', 'lb3'],
-    ['cLbOff', 'lb4'],
+  for (const [curso, uid] of [
+    ['cLbOn', 'uLb1'],
+    ['cLbOn', 'uLb2'],
+    ['cLbOff', 'uLb3'],
+    ['cLbOff', 'uLb4'],
   ]) {
-    await setDoc(doc(db, `colegios/A/cursos/${curso}/estudiantes/${sid}`), {
-      displayLabel: sid,
+    await setDoc(doc(db, `colegios/A/cursos/${curso}/estudiantes/${uid}`), {
+      email: `${uid}@demo.ceti`,
+      nombre: uid,
       estado: 'activo',
-      createdAt: 1,
+      atestado: true,
+      joinedAt: 1,
     });
   }
-  await setDoc(doc(db, 'colegios/A/cursos/cLbOn/leaderboard/lb1'), {
-    studentId: 'lb1',
+  await setDoc(doc(db, 'colegios/A/cursos/cLbOn/leaderboard/uLb1'), {
+    uid: 'uLb1',
     displayLabel: 'lb1',
     xp: 100,
     updatedAt: 1,
   });
-  await setDoc(doc(db, 'colegios/A/cursos/cLbOff/leaderboard/lb3'), {
-    studentId: 'lb3',
+  await setDoc(doc(db, 'colegios/A/cursos/cLbOff/leaderboard/uLb3'), {
+    uid: 'uLb3',
     displayLabel: 'lb3',
     xp: 100,
     updatedAt: 1,
@@ -171,58 +183,163 @@ await env.withSecurityRulesDisabled(async (ctx) => {
 
 console.log('Tenant isolation:');
 await check('rector A reads own colegio', assertSucceeds(getDoc(doc(rectorA, 'colegios/A'))));
-await check('student A reads own colegio (cert)', assertSucceeds(getDoc(doc(stuA1, 'colegios/A'))));
+await check('student A reads own colegio', assertSucceeds(getDoc(doc(stuA1, 'colegios/A'))));
 await check('rector B cannot read colegio A', assertFails(getDoc(doc(rectorB, 'colegios/A'))));
+await check('admin reads any colegio (global)', assertSucceeds(getDoc(doc(adminG, 'colegios/A'))));
 
-console.log('Student progress read:');
-await check('student reads own progress', assertSucceeds(getDoc(doc(stuA1, progPath('A', 'c1', 's1', 'w1')))));
+console.log('Structure provisioning (admin-only):');
 await check(
-  'student cannot read another student progress',
-  assertFails(getDoc(doc(stuA2, progPath('A', 'c1', 's1', 'w1'))))
+  'admin creates a colegio',
+  assertSucceeds(setDoc(doc(adminG, 'colegios/X'), { nombre: 'X', sedesEnabled: false, createdAt: 1 }))
+);
+await check(
+  'coordinador cannot create a curso (structure = admin)',
+  assertFails(
+    setDoc(doc(coordA, 'colegios/A/cursos/cNew'), {
+      nombre: 'cNew',
+      grado: '9',
+      profesorUids: [],
+      colaboracionAula: false,
+    })
+  )
+);
+await check(
+  'admin creates a curso',
+  assertSucceeds(
+    setDoc(doc(adminG, 'colegios/A/cursos/cAdmin'), {
+      nombre: 'cAdmin',
+      grado: '9',
+      profesorUids: [],
+      colaboracionAula: false,
+    })
+  )
 );
 
-console.log('Teacher scope (nested rule):');
+console.log('Roster nominal read (rector EXCLUDED — only aggregates):');
+await check(
+  'coordinador reads roster',
+  assertSucceeds(getDoc(doc(coordA, 'colegios/A/cursos/c1/estudiantes/uStuA1')))
+);
+await check(
+  'teacher of course reads roster',
+  assertSucceeds(getDoc(doc(profA1, 'colegios/A/cursos/c1/estudiantes/uStuA1')))
+);
+await check(
+  'rector CANNOT read nominal roster',
+  assertFails(getDoc(doc(rectorA, 'colegios/A/cursos/c1/estudiantes/uStuA1')))
+);
+await check(
+  'student reads own roster doc',
+  assertSucceeds(getDoc(doc(stuA1, 'colegios/A/cursos/c1/estudiantes/uStuA1')))
+);
+await check(
+  'student cannot read another student roster doc',
+  assertFails(getDoc(doc(stuA2, 'colegios/A/cursos/c1/estudiantes/uStuA1')))
+);
+await check(
+  'roster is Function-only: coordinador cannot client-write it',
+  assertFails(
+    setDoc(
+      doc(coordA, 'colegios/A/cursos/c1/estudiantes/uStuA1'),
+      { atestado: true },
+      { merge: true }
+    )
+  )
+);
+
+console.log('Student progress read:');
+await check('student reads own progress', assertSucceeds(getDoc(doc(stuA1, progPath('A', 'c1', 'uStuA1', 'w1')))));
+await check(
+  'student cannot read another student progress',
+  assertFails(getDoc(doc(stuA2, progPath('A', 'c1', 'uStuA1', 'w1'))))
+);
 await check(
   'teacher of course reads student progress',
-  assertSucceeds(getDoc(doc(profA1, progPath('A', 'c1', 's1', 'w1'))))
+  assertSucceeds(getDoc(doc(profA1, progPath('A', 'c1', 'uStuA1', 'w1'))))
 );
 await check(
   'teacher NOT of course cannot read it directly',
-  assertFails(getDoc(doc(profA2, progPath('A', 'c1', 's1', 'w1'))))
+  assertFails(getDoc(doc(profA2, progPath('A', 'c1', 'uStuA1', 'w1'))))
+);
+await check(
+  'rector cannot read nominal progress',
+  assertFails(getDoc(doc(rectorA, progPath('A', 'c1', 'uStuA1', 'w1'))))
 );
 
-console.log('Collection-group report rule:');
+console.log('Collection-group report rule (rector EXCLUDED):');
 const cg = (db) => getDocs(query(collectionGroup(db, 'progress'), where('colegioId', '==', 'A')));
 await check('coordinador collection-group read', assertSucceeds(cg(coordA)));
-await check('rector collection-group read', assertSucceeds(cg(rectorA)));
-await check('profesor collection-group read denied', assertFails(cg(profA1)));
+await check('admin collection-group read', assertSucceeds(cg(adminG)));
+await check('rector collection-group read DENIED (nominal)', assertFails(cg(rectorA)));
+await check('profesor not-of-course collection-group denied', assertFails(cg(profA2)));
 await check('rector B collection-group on A denied', assertFails(cg(rectorB)));
 
 console.log('Student progress write guards:');
 await check(
   'student writes valid own progress',
-  assertSucceeds(setDoc(doc(stuA1, progPath('A', 'c1', 's1', 'w2')), { ...validProgress }))
+  assertSucceeds(setDoc(doc(stuA1, progPath('A', 'c1', 'uStuA1', 'w2')), { ...validProgress }))
 );
 await check(
   'mastery > 1 rejected',
-  assertFails(setDoc(doc(stuA1, progPath('A', 'c1', 's1', 'w3')), { ...validProgress, mastery: 5 }))
+  assertFails(setDoc(doc(stuA1, progPath('A', 'c1', 'uStuA1', 'w3')), { ...validProgress, mastery: 5 }))
 );
 await check(
-  'spoofed studentId rejected',
-  assertFails(setDoc(doc(stuA1, progPath('A', 'c1', 's1', 'w4')), { ...validProgress, studentId: 's2' }))
+  'spoofed uid rejected',
+  assertFails(setDoc(doc(stuA1, progPath('A', 'c1', 'uStuA1', 'w4')), { ...validProgress, uid: 'uStuA2' }))
 );
 await check(
   'write into non-existent roster slot rejected',
-  assertFails(setDoc(doc(stuA2, progPath('A', 'c1', 's2', 'w1')), { ...validProgress, studentId: 's2' }))
+  assertFails(setDoc(doc(stuA2, progPath('A', 'c1', 'uStuA2', 'w1')), { ...validProgress, uid: 'uStuA2' }))
 );
 await check(
-  'Ley 1581: unauthorized (pendiente) student cannot write progress',
+  'Ley 1581: unattested (pendiente) student cannot write progress',
   assertFails(
-    setDoc(doc(stuA3, progPath('A', 'c1', 's3', 'w1')), {
-      ...validProgress,
-      studentId: 's3',
-    })
+    setDoc(doc(stuA3, progPath('A', 'c1', 'uStuA3', 'w1')), { ...validProgress, uid: 'uStuA3' })
   )
+);
+await check(
+  'Ley 1581: suprimido student cannot write progress',
+  assertFails(
+    setDoc(doc(stuA4, progPath('A', 'c1', 'uStuA4', 'w1')), { ...validProgress, uid: 'uStuA4' })
+  )
+);
+await check(
+  'progress cannot be deleted by the student',
+  assertFails(deleteDoc(doc(stuA1, progPath('A', 'c1', 'uStuA1', 'w1'))))
+);
+
+console.log('Impact pre/post test (RQ-TS):');
+const impactPath = (uid, fase) => `colegios/A/cursos/c1/estudiantes/${uid}/impactTest/${fase}`;
+const validImpact = { score: 6, total: 10, takenAt: 1, breakdown: { ahorro: 3 } };
+await check(
+  'active student writes own pre-test',
+  assertSucceeds(setDoc(doc(stuA1, impactPath('uStuA1', 'pre')), validImpact))
+);
+await check(
+  'unattested student cannot write impact test',
+  assertFails(setDoc(doc(stuA3, impactPath('uStuA3', 'pre')), validImpact))
+);
+await check(
+  'teacher reads student impact test',
+  assertSucceeds(getDoc(doc(profA1, impactPath('uStuA1', 'pre'))))
+);
+
+console.log('Aggregates (rector ALLOWED, students denied):');
+await check(
+  'rector reads aggregates',
+  assertSucceeds(getDoc(doc(rectorA, 'colegios/A/cursos/c1/agregados/ag1')))
+);
+await check(
+  'coordinador reads aggregates',
+  assertSucceeds(getDoc(doc(coordA, 'colegios/A/cursos/c1/agregados/ag1')))
+);
+await check(
+  'student cannot read aggregates',
+  assertFails(getDoc(doc(stuA1, 'colegios/A/cursos/c1/agregados/ag1')))
+);
+await check(
+  'client cannot write aggregates (Function only)',
+  assertFails(setDoc(doc(coordA, 'colegios/A/cursos/c1/agregados/ag2'), { updatedAt: 1 }))
 );
 
 console.log('Course update field guard:');
@@ -237,16 +354,23 @@ await check(
   )
 );
 await check(
-  'rector can change profesorUids',
-  assertSucceeds(
-    setDoc(doc(rectorA, 'colegios/A/cursos/c1'), { profesorUids: ['uProfA1', 'uProfA2'] }, { merge: true })
-  )
+  'coordinador toggles colaboracionAula',
+  assertSucceeds(setDoc(doc(coordA, 'colegios/A/cursos/c1'), { colaboracionAula: false }, { merge: true }))
+);
+await check(
+  'rector cannot toggle colaboracionAula',
+  assertFails(setDoc(doc(rectorA, 'colegios/A/cursos/c1'), { colaboracionAula: true }, { merge: true }))
 );
 
 console.log('Assignments:');
 const asigPath = 'colegios/A/asignaciones/a1';
 const asig = { worldId: 'world_1', target: { tipo: 'curso', cursoId: 'c1' }, fechaInicio: 1, deadline: 2, createdByUid: 'uProfA1', createdAt: 1 };
-await check('teacher creates assignment', assertSucceeds(setDoc(doc(profA1, asigPath), asig)));
+await check('teacher of course creates assignment', assertSucceeds(setDoc(doc(profA1, asigPath), asig)));
+await check('coordinador creates assignment', assertSucceeds(setDoc(doc(coordA, 'colegios/A/asignaciones/aC'), asig)));
+await check(
+  'teacher NOT of course cannot create assignment',
+  assertFails(setDoc(doc(profA2, 'colegios/A/asignaciones/aX'), asig))
+);
 await check('student reads assignment', assertSucceeds(getDoc(doc(stuA1, asigPath))));
 await check(
   'student cannot create assignment',
@@ -254,7 +378,7 @@ await check(
 );
 await check('rector B cannot read A assignment', assertFails(getDoc(doc(rectorB, asigPath))));
 
-console.log('Membership & questionBank:');
+console.log('Membership:');
 await check('user reads own membership', assertSucceeds(getDoc(doc(stuA1, 'membership/uStuA1'))));
 await check('user cannot read other membership', assertFails(getDoc(doc(stuA2, 'membership/uStuA1'))));
 await check(
@@ -269,27 +393,7 @@ await check(
   assertFails(setDoc(doc(stuA1, 'classCodes/NEW'), { colegioId: 'A', cursoId: 'c1' }))
 );
 
-console.log('Autorizaciones (Ley 1581 register; Function-only writes):');
-await check(
-  'staff reads autorizaciones',
-  assertSucceeds(getDoc(doc(profA1, 'colegios/A/autorizaciones/s1')))
-);
-await check(
-  'student cannot read autorizaciones',
-  assertFails(getDoc(doc(stuA1, 'colegios/A/autorizaciones/s1')))
-);
-await check(
-  'rector B cannot read A autorizaciones',
-  assertFails(getDoc(doc(rectorB, 'colegios/A/autorizaciones/s1')))
-);
-await check(
-  'even rector cannot write autorizaciones (Function only)',
-  assertFails(
-    setDoc(doc(rectorA, 'colegios/A/autorizaciones/s9'), { estado: 'otorgada', politicaVersion: 'v1' })
-  )
-);
-
-console.log('Sedes:');
+console.log('Sedes (dormant):');
 await check('staff reads sede', assertSucceeds(getDoc(doc(profA1, 'colegios/A/sedes/sede1'))));
 await check('student cannot read sede', assertFails(getDoc(doc(stuA1, 'colegios/A/sedes/sede1'))));
 await check(
@@ -297,7 +401,7 @@ await check(
   assertFails(setDoc(doc(rectorA, 'colegios/A/sedes/sede2'), { nombre: 'Sede 2' }))
 );
 
-console.log('Colegio doc is read-only to clients:');
+console.log('Colegio doc is read-only to clients (non-admin):');
 await check(
   'rector cannot mutate colegio doc',
   assertFails(setDoc(doc(rectorA, 'colegios/A'), { nombre: 'hack' }, { merge: true }))
@@ -318,11 +422,6 @@ await check(
   'wallet accepts valid total',
   assertSucceeds(setDoc(doc(stuA1, 'users/uStuA1/wallet/state'), { totalCetis: 10 }))
 );
-await check('aiProfile self read ok', assertSucceeds(getDoc(doc(stuA1, 'users/uStuA1/aiProfile/state'))));
-await check(
-  'aiProfile client write denied (no AI in MVP)',
-  assertFails(setDoc(doc(stuA1, 'users/uStuA1/aiProfile/state'), { weakness: 'x' }))
-);
 
 console.log('Question bank (read-only):');
 await check('signed-in reads questionBank', assertSucceeds(getDoc(doc(stuA1, 'questionBank/q1'))));
@@ -331,28 +430,18 @@ await check(
   assertFails(setDoc(doc(stuA1, 'questionBank/q2'), { worldId: 'world_1' }))
 );
 
-console.log('Suppression & delete guards:');
-await check(
-  'Ley 1581: suprimido student cannot write progress',
-  assertFails(setDoc(doc(stuA4, progPath('A', 'c1', 's4', 'w1')), { ...validProgress, studentId: 's4' }))
-);
-await check(
-  'progress cannot be deleted by the student',
-  assertFails(deleteDoc(doc(stuA1, progPath('A', 'c1', 's1', 'w1'))))
-);
-
 console.log('Class leaderboard (V2 collaboration):');
-const lbEntry = { studentId: 'lb1', displayLabel: 'lb1', xp: 50, updatedAt: 2 };
-const lbPath = 'colegios/A/cursos/cLbOn/leaderboard/lb1';
+const lbEntry = { uid: 'uLb1', displayLabel: 'lb1', xp: 50, updatedAt: 2 };
+const lbPath = 'colegios/A/cursos/cLbOn/leaderboard/uLb1';
 await check(
   'classmate reads leaderboard when colaboracionAula on',
   assertSucceeds(getDoc(doc(stuLb2, lbPath)))
 );
 await check(
   'classmate cannot read leaderboard when colaboracionAula off',
-  assertFails(getDoc(doc(stuLb4, 'colegios/A/cursos/cLbOff/leaderboard/lb3')))
+  assertFails(getDoc(doc(stuLb4, 'colegios/A/cursos/cLbOff/leaderboard/uLb3')))
 );
-await check('rector reads any course leaderboard', assertSucceeds(getDoc(doc(rectorA, lbPath))));
+await check('coordinador reads any course leaderboard', assertSucceeds(getDoc(doc(coordA, lbPath))));
 await check(
   'student writes own leaderboard entry',
   assertSucceeds(setDoc(doc(stuLb1, lbPath), lbEntry))
@@ -365,6 +454,9 @@ await check(
   'leaderboard rejects negative xp',
   assertFails(setDoc(doc(stuLb1, lbPath), { ...lbEntry, xp: -1 }))
 );
+
+console.log('Default deny:');
+await check('any other path denied', assertFails(getDoc(doc(stuA1, 'randomCol/randomDoc'))));
 
 await env.cleanup();
 console.log(`\n${passed} passed, ${failed} failed`);

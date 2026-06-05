@@ -28,10 +28,10 @@ export default function SchoolReportScreen() {
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
   const colegioId = useAuthStore((s) => s.colegioId);
-  const role = useAuthStore((s) => s.role);
-  const sedeId = useAuthStore((s) => s.sedeId);
-  // A coordinador assigned to a sede sees only that sede; rector sees all.
-  const sedeFilter = role === 'coordinador' && sedeId ? sedeId : undefined;
+  // Sedes are dormant (RQ-FN01): the sedeId claim no longer exists, so a
+  // coordinador scopes by their whole colegioId (same as rector). The full
+  // institutional redesign (aggregate by grado/curso) is deferred.
+  // TODO(RQ-IN02 / Block 6): re-scope institutional reports by grado/curso.
 
   const [report, setReport] = useState<SchoolReport | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
@@ -43,7 +43,7 @@ export default function SchoolReportScreen() {
       return;
     }
     setStatus('loading');
-    void loadSchoolReport(colegioId, Date.now(), sedeFilter)
+    void loadSchoolReport(colegioId, Date.now())
       .then((r) => {
         if (!cancelled) {
           setReport(r);
@@ -56,7 +56,7 @@ export default function SchoolReportScreen() {
     return () => {
       cancelled = true;
     };
-  }, [colegioId, sedeFilter]);
+  }, [colegioId]);
 
   const onExportCsv = useCallback(() => {
     if (!report) return;

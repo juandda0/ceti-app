@@ -26,8 +26,8 @@ export interface StudentWeaknessArea {
 }
 
 export interface StudentWeakness {
-  studentId: string;
-  displayLabel: string;
+  uid: string;
+  nombre: string;
   overallMastery: number;
   /** Competencies (with data) where this student is below the threshold. */
   weakAreas: StudentWeaknessArea[];
@@ -76,8 +76,8 @@ export function buildWeaknessReport(
       return hasAny && s.overallMastery < threshold;
     })
     .map((s) => ({
-      studentId: s.studentId,
-      displayLabel: s.displayLabel,
+      uid: s.uid,
+      nombre: s.nombre,
       overallMastery: s.overallMastery,
       weakAreas: Object.entries(s.masteryByCompetencia)
         .filter(([, m]) => m < threshold)

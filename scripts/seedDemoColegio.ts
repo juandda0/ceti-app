@@ -36,22 +36,51 @@ const WORLD_COMPETENCIA: Record<string, string> = {
   world_5: 'deuda',
 };
 
-type Plan = { label: string; estado: string; worlds: Partial<Record<string, number>> };
+// Demo students are keyed by a synthetic "uid" (R1: students are keyed by uid).
+// Only email + nombre are stored (R4); the grade comes from the course.
+type Plan = {
+  nombre: string;
+  email: string;
+  estado: string;
+  worlds: Partial<Record<string, number>>;
+};
 const STUDENTS: Record<string, Plan> = {
-  s_001: {
-    label: 'Estudiante 1',
+  demo_u001: {
+    nombre: 'Estudiante 1',
+    email: 'estudiante1@demo.ceti',
     estado: 'activo',
     worlds: { world_1: 0.9, world_2: 0.85, world_3: 0.6 },
   },
-  s_002: { label: 'Estudiante 2', estado: 'activo', worlds: { world_1: 0.7, world_2: 0.4 } },
-  s_003: {
-    label: 'Estudiante 3',
+  demo_u002: {
+    nombre: 'Estudiante 2',
+    email: 'estudiante2@demo.ceti',
+    estado: 'activo',
+    worlds: { world_1: 0.7, world_2: 0.4 },
+  },
+  demo_u003: {
+    nombre: 'Estudiante 3',
+    email: 'estudiante3@demo.ceti',
     estado: 'activo',
     worlds: { world_1: 0.95, world_2: 0.9, world_3: 0.8, world_4: 0.5 },
   },
-  s_004: { label: 'Estudiante 4', estado: 'activo', worlds: { world_1: 0.3 } },
-  s_005: { label: 'Estudiante 5', estado: 'activo', worlds: { world_1: 0.8, world_2: 0.75 } },
-  s_006: { label: 'Estudiante 6', estado: 'pendiente_autorizacion', worlds: {} },
+  demo_u004: {
+    nombre: 'Estudiante 4',
+    email: 'estudiante4@demo.ceti',
+    estado: 'activo',
+    worlds: { world_1: 0.3 },
+  },
+  demo_u005: {
+    nombre: 'Estudiante 5',
+    email: 'estudiante5@demo.ceti',
+    estado: 'activo',
+    worlds: { world_1: 0.8, world_2: 0.75 },
+  },
+  demo_u006: {
+    nombre: 'Estudiante 6',
+    email: 'estudiante6@demo.ceti',
+    estado: 'pendiente_atestacion',
+    worlds: {},
+  },
 };
 
 async function main(): Promise<void> {
@@ -66,37 +95,34 @@ async function main(): Promise<void> {
   );
 
   let progressDocs = 0;
-  for (const [sid, plan] of Object.entries(STUDENTS)) {
+  for (const [uid, plan] of Object.entries(STUDENTS)) {
+    const activo = plan.estado === 'activo';
     await cursoBase
       .collection('estudiantes')
-      .doc(sid)
-      .set({ displayLabel: plan.label, estado: plan.estado, createdAt: NOW }, { merge: true });
-    // Authorization record for active students.
-    if (plan.estado === 'activo') {
-      await db
-        .doc(`colegios/${COLEGIO}/autorizaciones/${sid}`)
-        .set(
-          {
-            estado: 'otorgada',
-            politicaVersion: 'v1',
-            otorgadaAt: NOW,
-            canalEvidencia: 'seed-demo',
-          },
-          { merge: true }
-        );
-    }
+      .doc(uid)
+      .set(
+        {
+          email: plan.email,
+          nombre: plan.nombre,
+          estado: plan.estado,
+          atestado: activo,
+          ...(activo ? { atestadoPor: 'seed-demo', atestadoAt: NOW, politicaVersion: 'v1' } : {}),
+          joinedAt: NOW,
+        },
+        { merge: true }
+      );
     for (const [worldId, mastery] of Object.entries(plan.worlds)) {
       if (typeof mastery !== 'number') continue;
       await cursoBase
         .collection('estudiantes')
-        .doc(sid)
+        .doc(uid)
         .collection('progress')
         .doc(worldId)
         .set(
           {
             colegioId: COLEGIO,
             cursoId: CURSO,
-            studentId: sid,
+            uid,
             competencia: WORLD_COMPETENCIA[worldId],
             xp: Math.round(mastery * 150),
             nivel: 1 + Math.floor(mastery * 4),

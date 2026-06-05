@@ -14,16 +14,16 @@ export const leaderboardRepository = {
   async upsertEntry(
     colegioId: string,
     cursoId: string,
-    studentId: string,
+    uid: string,
     data: { displayLabel: string; xp: number }
   ): Promise<boolean> {
     const clients = getFirebaseClients();
     if (!clients?.firestore) return false;
-    const ref = leaderboardDocRef(clients.firestore, colegioId, cursoId, studentId);
+    const ref = leaderboardDocRef(clients.firestore, colegioId, cursoId, uid);
     await setDoc(
       ref,
       stripUndefinedValues({
-        studentId,
+        uid,
         displayLabel: data.displayLabel,
         xp: data.xp,
         updatedAt: Date.now(),

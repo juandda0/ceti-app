@@ -397,7 +397,6 @@ export default function WorldQuizScreen() {
   const role = useAuthStore((s) => s.role);
   const colegioId = useAuthStore((s) => s.colegioId);
   const cursoId = useAuthStore((s) => s.cursoId);
-  const studentId = useAuthStore((s) => s.studentId);
 
   const fetchWorldQuestions = useQuestionBankStore((s) => s.fetchWorldQuestions);
   const getWorldProgress = useQuestionBankStore((s) => s.getWorldProgress);
@@ -463,13 +462,13 @@ export default function WorldQuizScreen() {
   // Best-effort: only for provisioned students; rules also gate on estado=='activo'.
   useEffect(() => {
     if (!isComplete) return;
-    if (role !== 'estudiante' || !colegioId || !cursoId || !studentId || !worldId) return;
+    if (role !== 'estudiante' || !colegioId || !cursoId || !firebaseUid || !worldId) return;
     const { done, total } = getWorldProgress(userId ?? '', worldId as WorldId);
     if (total <= 0) return;
     const progress = buildWorldProgress({
       colegioId,
       cursoId,
-      studentId,
+      uid: firebaseUid,
       worldId: worldId as WorldId,
       correct: done,
       total,
@@ -477,13 +476,13 @@ export default function WorldQuizScreen() {
       nivel: level,
       now: Date.now(),
     });
-    void worldProgressRepository.upsert(colegioId, cursoId, studentId, worldId, progress);
+    void worldProgressRepository.upsert(colegioId, cursoId, firebaseUid, worldId, progress);
   }, [
     isComplete,
     role,
     colegioId,
     cursoId,
-    studentId,
+    firebaseUid,
     worldId,
     userId,
     xp,

@@ -17,10 +17,7 @@ interface AuthState {
   // Authoritative source is always the token; these are for routing/UI only.
   role: Role | null;
   colegioId: string | null;
-  sedeId: string | null;
-  studentId: string | null;
   cursoId: string | null;
-  superadmin: boolean;
 }
 
 interface AuthActions {
@@ -41,10 +38,7 @@ const initialState: AuthState = {
   firebaseUid: null,
   role: null,
   colegioId: null,
-  sedeId: null,
-  studentId: null,
   cursoId: null,
-  superadmin: false,
 };
 
 export const useAuthStore = create<AuthStore>()(
@@ -66,10 +60,7 @@ export const useAuthStore = create<AuthStore>()(
         set({
           role: claims?.role ?? null,
           colegioId: claims?.colegioId ?? null,
-          sedeId: claims?.sedeId ?? null,
-          studentId: claims?.studentId ?? null,
           cursoId: claims?.cursoId ?? null,
-          superadmin: claims?.superadmin ?? false,
         }),
 
       resetSessionFlagsFromFirebase: () =>
@@ -79,10 +70,7 @@ export const useAuthStore = create<AuthStore>()(
           firebaseUid: null,
           role: null,
           colegioId: null,
-          sedeId: null,
-          studentId: null,
           cursoId: null,
-          superadmin: false,
         }),
 
       logout: async () => {
@@ -126,10 +114,7 @@ export const useAuthStore = create<AuthStore>()(
         isAuthenticated: false,
         role: null,
         colegioId: null,
-        sedeId: null,
-        studentId: null,
         cursoId: null,
-        superadmin: false,
       }),
     }
   )
@@ -146,5 +131,5 @@ export const useRole = (): Role | null => useAuthStore((s) => s.role);
 /** Hook: whether the signed-in user is school staff. */
 export const useIsStaff = (): boolean => useAuthStore((s) => isStaffRole(s.role));
 
-/** Hook: whether the signed-in user is a platform super-admin. */
-export const useIsSuperAdmin = (): boolean => useAuthStore((s) => s.superadmin);
+/** Hook: whether the signed-in user is the platform admin Ceti (role claim — R3). */
+export const useIsAdmin = (): boolean => useAuthStore((s) => s.role === 'admin');

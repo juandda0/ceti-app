@@ -22,12 +22,12 @@ export default function ClassLeaderboard() {
   const role = useAuthStore((s) => s.role);
   const colegioId = useAuthStore((s) => s.colegioId);
   const cursoId = useAuthStore((s) => s.cursoId);
-  const studentId = useAuthStore((s) => s.studentId);
+  const firebaseUid = useAuthStore((s) => s.firebaseUid);
   const xp = useUserStore((s) => s.xp);
   const [entries, setEntries] = useState<LeaderboardEntry[] | null>(null);
 
   useEffect(() => {
-    if (role !== 'estudiante' || !colegioId || !cursoId || !studentId) {
+    if (role !== 'estudiante' || !colegioId || !cursoId || !firebaseUid) {
       setEntries(null);
       return;
     }
@@ -39,9 +39,12 @@ export default function ClassLeaderboard() {
         setEntries(null);
         return;
       }
-      const est = await rosterRepository.getEstudiante(colegioId, cursoId, studentId);
-      const displayLabel = est?.displayLabel ?? 'Estudiante';
-      await leaderboardRepository.upsertEntry(colegioId, cursoId, studentId, { displayLabel, xp });
+      const est = await rosterRepository.getEstudiante(colegioId, cursoId, firebaseUid);
+      const displayLabel = est?.nombre ?? 'Estudiante';
+      await leaderboardRepository.upsertEntry(colegioId, cursoId, firebaseUid, {
+        displayLabel,
+        xp,
+      });
       if (cancelled) return;
       const board = await leaderboardRepository.getCourseLeaderboard(colegioId, cursoId);
       if (!cancelled) setEntries(board);
@@ -49,7 +52,7 @@ export default function ClassLeaderboard() {
     return () => {
       cancelled = true;
     };
-  }, [role, colegioId, cursoId, studentId, xp]);
+  }, [role, colegioId, cursoId, firebaseUid, xp]);
 
   if (!entries) return null;
 
@@ -70,9 +73,9 @@ export default function ClassLeaderboard() {
         </Text>
       ) : (
         entries.map((e, i) => {
-          const isSelf = e.studentId === studentId;
+          const isSelf = e.uid === firebaseUid;
           return (
-            <View key={e.studentId} style={styles.row}>
+            <View key={e.uid} style={styles.row}>
               <Text style={[styles.rank, { color: colors.text.tertiary }]}>{i + 1}</Text>
               <Text
                 style={[

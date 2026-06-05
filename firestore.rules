@@ -1,13 +1,15 @@
 rules_version = '2';
 
-// Ceti B2B2C — multi-tenant rules. Authorization is driven by CUSTOM CLAIMS
-// (role, colegioId, studentId) set by a Cloud Function; never by client-writable
-// fields. See docs/data-model.md. Tenant isolation: a request can only ever
-// touch its own colegioId.
+// Ceti B2B2C — multi-tenant rules. Authorization is driven ENTIRELY by CUSTOM
+// CLAIMS (role, colegioId, cursoId) set by a Cloud Function; never by
+// client-writable fields (R2). Students are identified by their Auth `uid` (R1):
+// there is no pseudonym key and no active sede claim. Tenant isolation: a request can
+// only ever touch its own colegioId. Implements the rol×acción matrix
+// (docs/requerimientos.md §1.3) as least-privilege rules (R12). Default deny.
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ---- helpers (claims) ----
+    // ---- helpers (claims only — R2) ----
     function signedIn() {
       return request.auth != null;
     }
@@ -17,14 +19,20 @@ service cloud.firestore {
     function isRole(r) {
       return role() == r;
     }
+    // admin is global (no colegioId) and may act anywhere, without overriding
+    // the other roles' own capabilities.
+    function isAdmin() {
+      return isRole('admin');
+    }
     function sameColegio(cid) {
       return signedIn() && request.auth.token.colegioId == cid;
     }
     function isStaff() {
       return isRole('rector') || isRole('coordinador') || isRole('profesor');
     }
-    function isStudentSelf(sid) {
-      return isRole('estudiante') && request.auth.token.studentId == sid;
+    // Student identity is the Auth uid (R1) — replaces the old token pseudonym.
+    function isEstudianteSelf(uid) {
+      return isRole('estudiante') && request.auth.uid == uid;
     }
     // uid is listed as a teacher of this course (one get()).
     function isProfesorDe(cid, cursoId) {
@@ -33,70 +41,75 @@ service cloud.firestore {
         && request.auth.uid in
           get(/databases/$(database)/documents/colegios/$(cid)/cursos/$(cursoId)).data.profesorUids;
     }
-    function canManageCurso(cid, cursoId) {
-      return sameColegio(cid)
-        && (isRole('rector') || isRole('coordinador') || isProfesorDe(cid, cursoId));
+    // Who may OPERATE a course (assignments, codes, attestation, toggles):
+    // admin (global), coordinador (own colegio), or the course's teacher.
+    function canOperarCurso(cid, cursoId) {
+      return isAdmin()
+        || (sameColegio(cid) && isRole('coordinador'))
+        || isProfesorDe(cid, cursoId);
     }
-    // Ley 1581 gate: a student only generates data once the acudiente has
-    // authorized and a staffer/Function flipped estado to 'activo'. get() on a
-    // missing doc errors → denied, so this also implies existence.
-    function estudianteActivo(cid, cursoId, sid) {
+    // Ley 1581 gate: a student only generates data once a staffer attested the
+    // acudiente authorization and estado flipped to 'activo'. get() on a missing
+    // doc errors → denied, so this also implies existence.
+    function estudianteActivo(cid, cursoId, uid) {
       return get(
-        /databases/$(database)/documents/colegios/$(cid)/cursos/$(cursoId)/estudiantes/$(sid)
+        /databases/$(database)/documents/colegios/$(cid)/cursos/$(cursoId)/estudiantes/$(uid)
       ).data.estado == 'activo';
     }
 
     // ---- tenancy tree ----
     match /colegios/{cid} {
-      // Any member of the colegio reads its identity (nombre/logo for headers and
-      // certificates); managed by Admin/Function.
-      allow read: if sameColegio(cid);
-      allow write: if false;
+      // Any member of the colegio reads its identity (nombre/logo for headers);
+      // admin reads any. Structure (create/edit/delete) is admin-only.
+      allow read: if isAdmin() || sameColegio(cid);
+      allow create, update, delete: if isAdmin();
 
+      // Dormant entity (RQ-FN01): readable by staff if it ever existed; never written.
       match /sedes/{sedeId} {
-        allow read: if sameColegio(cid) && isStaff();
+        allow read: if isAdmin() || (sameColegio(cid) && isStaff());
         allow write: if false;
       }
 
       match /cursos/{cursoId} {
         // Any member of the colegio may read course docs (students need their course).
-        allow read: if sameColegio(cid);
-        allow create, delete: if sameColegio(cid) && (isRole('rector') || isRole('coordinador'));
-        // Rector/coordinador may update any field. Teachers of the course may
-        // update only non-sensitive fields (e.g. colaboracionAula) — never the
-        // roster of teachers, sede, grado or nombre.
-        allow update: if sameColegio(cid)
-          && (
-            isRole('rector') || isRole('coordinador')
-            || (
-              isProfesorDe(cid, cursoId)
-              && !request.resource.data.diff(resource.data).affectedKeys()
-                .hasAny(['profesorUids', 'sedeId', 'grado', 'nombre'])
-            )
+        allow read: if isAdmin() || sameColegio(cid);
+        // Course structure (create/delete) is admin-only (matriz §1.3).
+        allow create, delete: if isAdmin();
+        // admin edits anything; coordinador/teacher may toggle ONLY colaboracionAula.
+        // (The join code is set by the generateClassCode Function via Admin SDK.)
+        allow update: if isAdmin()
+          || (
+            canOperarCurso(cid, cursoId)
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['colaboracionAula'])
           );
 
-        match /estudiantes/{sid} {
-          // Staff of the course/colegio read the roster; the student reads self.
-          allow read: if (sameColegio(cid)
-              && (isRole('rector') || isRole('coordinador') || isProfesorDe(cid, cursoId)))
-            || isStudentSelf(sid);
-          // Roster is provisioned by staff (or Function). Students cannot create.
-          allow create, update, delete: if canManageCurso(cid, cursoId);
+        match /estudiantes/{uid} {
+          // Roster nominal (email+nombre): admin, coordinador, the course teacher,
+          // and the student themself. RECTOR is excluded — only aggregates (§1.3).
+          allow read: if isAdmin()
+            || (sameColegio(cid) && isRole('coordinador'))
+            || isProfesorDe(cid, cursoId)
+            || isEstudianteSelf(uid);
+          // Roster is mutated ONLY by Cloud Functions (joinByCode / atestar /
+          // suppressStudentData) via the Admin SDK — never by a client (D-B1-03).
+          allow write: if false;
 
           match /progress/{worldId} {
-            allow read: if (sameColegio(cid)
-                && (isRole('rector') || isRole('coordinador') || isProfesorDe(cid, cursoId)))
-              || isStudentSelf(sid);
-            // Only the student writes their own progress, and only into a roster
-            // slot a staffer already created. Denormalized keys must match path,
-            // and values are type/range/size-checked (progress feeds the teacher
-            // report — the product — so a student must not inflate or bloat it).
-            allow create, update: if isStudentSelf(sid)
+            allow read: if isAdmin()
+              || (sameColegio(cid) && isRole('coordinador'))
+              || isProfesorDe(cid, cursoId)
+              || isEstudianteSelf(uid);
+            // Only the student writes their OWN progress, only into a roster slot
+            // a Function already created, only while active, and only under their
+            // own course claim. Denormalized keys must match the path; values are
+            // type/range/size-checked (progress feeds the teacher report).
+            allow create, update: if isEstudianteSelf(uid)
               && sameColegio(cid)
-              && estudianteActivo(cid, cursoId, sid)
+              && request.auth.token.cursoId == cursoId
+              && estudianteActivo(cid, cursoId, uid)
               && request.resource.data.colegioId == cid
               && request.resource.data.cursoId == cursoId
-              && request.resource.data.studentId == sid
+              && request.resource.data.uid == uid
               && request.resource.data.competencia is string
               && request.resource.data.xp is number
               && request.resource.data.xp >= 0
@@ -111,28 +124,53 @@ service cloud.firestore {
               && request.resource.data.badges.size() <= 50;
             allow delete: if false;
           }
+
+          // Impact pre/post test (RQ-TS01..TS04). The student writes their own
+          // result while active; staff read it (admin/coordinador/teacher).
+          match /impactTest/{fase} {
+            allow read: if isAdmin()
+              || (sameColegio(cid) && isRole('coordinador'))
+              || isProfesorDe(cid, cursoId)
+              || isEstudianteSelf(uid);
+            allow create, update: if isEstudianteSelf(uid)
+              && sameColegio(cid)
+              && request.auth.token.cursoId == cursoId
+              && estudianteActivo(cid, cursoId, uid)
+              && (fase == 'pre' || fase == 'post')
+              && request.resource.data.score is number
+              && request.resource.data.total is number
+              && request.resource.data.takenAt is number;
+            allow delete: if false;
+          }
+        }
+
+        // Per-course aggregates (RQ-FN09): NO individual minor data. Readable by
+        // admin and any staff of the colegio (rector's only data view); written
+        // ONLY by a Function (Admin SDK).
+        match /agregados/{agregadoId} {
+          allow read: if isAdmin() || (sameColegio(cid) && isStaff());
+          allow write: if false;
         }
 
         // Class leaderboard (V2 collaboration). A student maintains their OWN
-        // minimal entry (label + xp); course staff always read it, course-mates
-        // read it only when the teacher has enabled colaboracionAula (no global
-        // boards). XP is student-reported — the dashboard uses real progress as
-        // the source of truth, so this never feeds compliance reporting.
-        match /leaderboard/{sid} {
-          allow read: if sameColegio(cid)
-            && (
-              isRole('rector') || isRole('coordinador') || isProfesorDe(cid, cursoId)
-              || (
-                isRole('estudiante')
-                && request.auth.token.cursoId == cursoId
-                && get(/databases/$(database)/documents/colegios/$(cid)/cursos/$(cursoId)).data.colaboracionAula == true
-              )
+        // minimal entry (label + xp); the course staff (admin/coordinador/teacher)
+        // read it, and course-mates read it only when the teacher enabled
+        // colaboracionAula (no global boards). XP is student-reported — the
+        // dashboard uses real progress as truth, so this never feeds compliance.
+        match /leaderboard/{uid} {
+          allow read: if isAdmin()
+            || (sameColegio(cid) && isRole('coordinador'))
+            || isProfesorDe(cid, cursoId)
+            || (
+              isRole('estudiante')
+              && request.auth.token.cursoId == cursoId
+              && get(/databases/$(database)/documents/colegios/$(cid)/cursos/$(cursoId)).data.colaboracionAula == true
             );
-          allow create, update: if isStudentSelf(sid)
+          allow create, update: if isEstudianteSelf(uid)
             && sameColegio(cid)
             && request.auth.token.cursoId == cursoId
-            && estudianteActivo(cid, cursoId, sid)
-            && request.resource.data.studentId == sid
+            && estudianteActivo(cid, cursoId, uid)
+            && request.resource.data.uid == uid
             && request.resource.data.displayLabel is string
             && request.resource.data.displayLabel.size() <= 60
             && request.resource.data.xp is number
@@ -144,23 +182,28 @@ service cloud.firestore {
 
       match /asignaciones/{aid} {
         // Staff and students of the colegio can see assignments.
-        allow read: if sameColegio(cid);
-        allow create, update, delete: if sameColegio(cid) && isStaff();
-      }
-
-      // Ley 1581 consent register. Staff read; writes only via Admin/Function (F4).
-      match /autorizaciones/{sid} {
-        allow read: if sameColegio(cid) && isStaff();
-        allow write: if false;
+        allow read: if isAdmin() || sameColegio(cid);
+        // Create/operate: admin, coordinador (own colegio), or the target course's
+        // teacher (matriz §1.3: "Asignar mundo con deadline").
+        allow create: if isAdmin()
+          || (sameColegio(cid) && isRole('coordinador'))
+          || isProfesorDe(cid, request.resource.data.target.cursoId);
+        allow update, delete: if isAdmin()
+          || (sameColegio(cid) && isRole('coordinador'))
+          || isProfesorDe(cid, resource.data.target.cursoId);
       }
     }
 
-    // Collection-group read for aggregate reports (F6/F9). Only rector/coordinador
-    // (whole-colegio scope). Teachers read per-course via the nested rule
-    // (isProfesorDe), so they cannot see courses they don't teach.
+    // Collection-group read for aggregate/report queries (RQ-FN08). Scoped by
+    // role: admin (global); coordinador (whole colegio); teacher (own course);
+    // student (self). RECTOR is excluded from nominal progress — they read the
+    // precomputed agregados/* instead (invariante §1.3).
     match /{path=**}/progress/{worldId} {
-      allow read: if (isRole('rector') || isRole('coordinador'))
+      allow read: if isAdmin();
+      allow read: if isRole('coordinador')
         && resource.data.colegioId == request.auth.token.colegioId;
+      allow read: if isProfesorDe(resource.data.colegioId, resource.data.cursoId);
+      allow read: if isEstudianteSelf(resource.data.uid);
     }
 
     // uid → tenant mapping, set by the Function; the user reads only their own.
@@ -199,7 +242,7 @@ service cloud.firestore {
           && request.resource.data.totalCetis >= 0;
         allow delete: if false;
       }
-      // aiProfile deferred (no AI in MVP): keep readable, block client writes.
+      // aiProfile deferred for removal (no AI in MVP): readable, no client writes.
       match /aiProfile/{docId} {
         allow read: if isSelf(userId);
         allow write: if false;

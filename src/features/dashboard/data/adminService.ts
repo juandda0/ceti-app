@@ -1,65 +1,35 @@
 /**
- * Admin/provisioning operations for the in-app console. Claim/auth-sensitive
- * actions go through Cloud Functions; plain tenant writes (cursos, roster) go
- * straight to Firestore (firestore.rules authorizes staff).
+ * Admin/provisioning operations for the in-app console. Claim/auth/PII-sensitive
+ * actions go through Cloud Functions (the only trusted writer of claims, roster
+ * and structure — R2/R3/D-B1-03). The only direct client write is toggling
+ * colaboracionAula, which firestore.rules allows for coordinador/profesor.
  */
-import { addDoc, setDoc } from 'firebase/firestore';
+import { setDoc } from 'firebase/firestore';
 import { getFirebaseClients } from '@shared/lib/firebase/app';
-import { cursoDocRef, cursosCollectionRef, estudianteDocRef } from '@shared/lib/firebase/paths';
-import { stripUndefinedValues } from '@shared/lib/firebase/sanitizeForFirestore';
+import { cursoDocRef } from '@shared/lib/firebase/paths';
 import { callFunction } from '@shared/lib/firebase/functions';
 import type { Role } from '@shared/types/tenancy';
 
 export const adminService = {
-  /** Rector/coordinador creates a course (Firestore; rules gate to staff). */
-  async createCurso(
-    colegioId: string,
-    data: { nombre: string; grado: string; sedeId?: string }
-  ): Promise<boolean> {
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return false;
-    await addDoc(
-      cursosCollectionRef(clients.firestore, colegioId),
-      stripUndefinedValues({
-        nombre: data.nombre,
-        grado: data.grado,
-        ...(data.sedeId ? { sedeId: data.sedeId } : {}),
-        profesorUids: [],
-        colaboracionAula: false,
-      })
-    );
-    return true;
-  },
-
-  /** Adds a roster slot (pseudonym). Starts pendiente_autorizacion (Ley 1581). */
-  async addEstudiante(
-    colegioId: string,
-    cursoId: string,
-    data: { studentId: string; displayLabel: string }
-  ): Promise<boolean> {
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return false;
-    await setDoc(
-      estudianteDocRef(clients.firestore, colegioId, cursoId, data.studentId),
-      stripUndefinedValues({
-        displayLabel: data.displayLabel,
-        estado: 'pendiente_autorizacion',
-        createdAt: Date.now(),
-      }),
-      { merge: true }
-    );
-    return true;
-  },
-
-  /** Assigns a role to a user (by email) — Cloud Function (sets custom claims). */
-  async assignMember(input: {
-    email: string;
-    role: Role;
+  /** Admin creates a course (Cloud Function — structure is admin-only, RQ-AD04). */
+  async createCurso(input: {
     colegioId: string;
+    cursoId: string;
+    nombre: string;
+    grado: '9' | '10' | '11';
+  }): Promise<{ ok: boolean; code?: string }> {
+    return callFunction('createCurso', input);
+  },
+
+  /** Admin assigns/changes an adult's role (Cloud Function — sets custom claims). */
+  async assignRole(input: {
+    email?: string;
+    uid?: string;
+    role: Exclude<Role, 'estudiante'>;
+    colegioId?: string;
     cursoId?: string;
-    studentId?: string;
   }): Promise<{ ok: boolean; uid?: string }> {
-    return callFunction('setMemberClaims', input);
+    return callFunction('assignRole', input);
   },
 
   /** Teacher/staff toggles class collaboration (class leaderboard visibility). */
@@ -74,39 +44,41 @@ export const adminService = {
     return true;
   },
 
-  /** Records (or revokes) the acudiente authorization — Cloud Function (Ley 1581). */
-  async setAuthorization(input: {
+  /**
+   * Lightweight Ley 1581 attestation (Cloud Function): the school confirms it
+   * holds the acudiente authorization. NO acudiente PII is stored — only the
+   * boolean + who/when + policy version. atestado:true activates the student.
+   */
+  async atestar(input: {
     colegioId: string;
     cursoId: string;
-    studentId: string;
-    estado: 'otorgada' | 'revocada';
+    uid: string;
+    atestado: boolean;
     politicaVersion: string;
-    canalEvidencia?: string;
-  }): Promise<{ ok: boolean }> {
-    return callFunction('setAuthorizationStatus', input);
+  }): Promise<{ ok: boolean; atestado: boolean }> {
+    return callFunction('atestar', input);
   },
 
   /**
-   * Ley 1581 right to suppression: deletes the student's progress, marks the
-   * roster slot 'suprimido', unlinks the account and revokes consent. Restricted
-   * to rector/coordinador by the Cloud Function (irreversible).
+   * Ley 1581 right to suppression (Cloud Function): deletes the student's
+   * progress/impact data, marks 'suprimido' and revokes claims. Restricted to
+   * admin/rector/coordinador (irreversible).
    */
   async suppressStudent(input: {
     colegioId: string;
     cursoId: string;
-    studentId: string;
+    uid: string;
   }): Promise<{ ok: boolean }> {
     return callFunction('suppressStudentData', input);
   },
 
-  /** Creates a colegio and makes the caller its first rector — Cloud Function. */
-  async createColegio(colegioId: string, nombre: string): Promise<{ ok: boolean }> {
-    return callFunction('bootstrapColegio', { colegioId, nombre });
-  },
-
-  /** Generates (or returns) the join code for a course — Cloud Function. */
-  async generateClassCode(colegioId: string, cursoId: string): Promise<{ code: string }> {
-    return callFunction('generateClassCode', { colegioId, cursoId });
+  /** (Re)generates the join code for a course — Cloud Function. */
+  async generateClassCode(
+    colegioId: string,
+    cursoId: string,
+    regenerate = false
+  ): Promise<{ code: string }> {
+    return callFunction('generateClassCode', { colegioId, cursoId, regenerate });
   },
 
   /** Student self-joins a course by code — Cloud Function. */
@@ -114,21 +86,26 @@ export const adminService = {
     return callFunction('joinByCode', { code });
   },
 
-  // ---- Platform super-admin (CETI_SUPERADMIN_EMAILS) ----
+  // ---- Platform admin Ceti (role:'admin' claim — R3) ----
 
-  /** Registers a colegio and optionally assigns its first rector by email. */
+  /** Admin registers a colegio (Cloud Function). Born with sedesEnabled:false. */
   async registerColegio(input: {
     colegioId: string;
     nombre: string;
     plan?: string;
-    rectorEmail?: string;
-  }): Promise<{ ok: boolean; colegioId: string; rectorAssigned: boolean }> {
+    planMaxEstudiantes?: number;
+  }): Promise<{ ok: boolean; colegioId: string }> {
     return callFunction('registerColegio', input);
   },
 
-  /** Lists all colegios (super-admin overview). */
+  /** Lists all colegios (admin overview). */
   async listColegios(): Promise<{
-    colegios: { id: string; nombre: string; plan: string | null }[];
+    colegios: {
+      id: string;
+      nombre: string;
+      plan: string | null;
+      planMaxEstudiantes: number | null;
+    }[];
   }> {
     return callFunction('listColegios');
   },

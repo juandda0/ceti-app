@@ -55,7 +55,7 @@
     "flagLowMastery": "Maestría baja"
   },
   "estados": {
-    "pendiente_autorizacion": "Pendiente de autorización",
+    "pendiente_atestacion": "Pendiente de atestación",
     "activo": "Activo",
     "suprimido": "Suprimido"
   },
@@ -96,9 +96,11 @@
     "title": "Administración",
     "error": "No se pudo completar la acción",
     "newCourse": "Nuevo curso",
+    "courseId": "ID del curso (ej. 9a)",
     "courseName": "Nombre del curso (ej. 9A)",
     "courseGrade": "Grado (ej. 9)",
     "courseSede": "Sede (opcional)",
+    "gradoChip": "Grado {{grado}}",
     "createCourse": "Crear curso",
     "courses": "Cursos",
     "noCourses": "Aún no hay cursos.",
@@ -110,7 +112,7 @@
     "assignOk": "{{email}} quedó asignado. Debe re-iniciar sesión para aplicar el rol.",
     "teacherOk": "{{email}} es ahora profesor del curso. Debe re-iniciar sesión.",
     "rosterTitle": "Roster del curso",
-    "studentLabel": "Etiqueta del estudiante (ej. Estudiante 1)",
+    "rosterSelfJoinHint": "Los estudiantes se unen con el código de clase. No se agregan manualmente.",
     "emptyRoster": "Aún no hay estudiantes en este curso.",
     "authorize": "Autorizar",
     "revoke": "Revocar",
@@ -150,7 +152,7 @@
     "colegioId": "Identificador corto (ej. san-jose)",
     "colegioNombre": "Nombre del colegio",
     "rectorEmail": "Correo del rector (opcional)",
-    "rectorHint": "Si el rector ya inició sesión, queda asignado; si no, lo asignas luego.",
+    "rectorHint": "El rector se asigna después, desde la administración, cuando haya iniciado sesión.",
     "register": "Registrar",
     "colegios": "Colegios",
     "none": "Aún no hay colegios registrados.",

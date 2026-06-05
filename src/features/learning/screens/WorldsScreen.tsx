@@ -194,7 +194,6 @@ export default function WorldsScreen() {
   // Tenant identity (provisioned students only) — used to rehydrate progress.
   const colegioId = useAuthStore((s) => s.colegioId);
   const cursoId = useAuthStore((s) => s.cursoId);
-  const studentId = useAuthStore((s) => s.studentId);
   const fetchWorldQuestions = useQuestionBankStore((s) => s.fetchWorldQuestions);
   const getWorldProgress = useQuestionBankStore((s) => s.getWorldProgress);
   const isWorldComplete = useQuestionBankStore((s) => s.isWorldComplete);
@@ -217,10 +216,14 @@ export default function WorldsScreen() {
   // Rehydrate per-world mastery from the tenant tree so unlock/progress survive
   // logout and new devices (the local answers cache is empty there).
   useEffect(() => {
-    if (!colegioId || !cursoId || !studentId) return;
+    if (!colegioId || !cursoId || !firebaseUid) return;
     let cancelled = false;
     void (async () => {
-      const docs = await worldProgressRepository.getStudentProgress(colegioId, cursoId, studentId);
+      const docs = await worldProgressRepository.getStudentProgress(
+        colegioId,
+        cursoId,
+        firebaseUid
+      );
       if (cancelled) return;
       const byWorld: Partial<Record<WorldId, number>> = {};
       for (const d of docs) byWorld[d.worldId as WorldId] = d.mastery;
@@ -229,7 +232,7 @@ export default function WorldsScreen() {
     return () => {
       cancelled = true;
     };
-  }, [colegioId, cursoId, studentId, setRemoteProgress]);
+  }, [colegioId, cursoId, firebaseUid, setRemoteProgress]);
 
   const uid = userId ?? '';
 

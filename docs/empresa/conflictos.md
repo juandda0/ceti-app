@@ -44,6 +44,22 @@
 - **Conflicto 1 y 6 tocan `firestore.rules` + claims + Functions a la vez:**
   deben planearse juntos en F2 para no romper tenancy/seguridad.
 
+## Estado de resolución (Fase 6 — ejecución por bloques)
+
+| #   | Conflicto              | Estado       | Bloque     | Evidencia                                                                         |
+| --- | ---------------------- | ------------ | ---------- | --------------------------------------------------------------------------------- |
+| 1   | Llave del estudiante   | ✅ RESUELTO  | Bloque 1   | identidad por `uid`; `studentId` 0 en código; baseline grupo `studentId` → 0      |
+| 4   | Rol admin Ceti         | ✅ RESUELTO  | Bloque 1   | 5º rol `admin` (claim); `isSuperAdmin`/allowlist retirados; `assignRole` admin    |
+| 6   | Autorización acudiente | ✅ RESUELTO  | Bloque 1   | `atestar` booleano sin PII; colección `autorizaciones`/`Autorizacion` demolidas   |
+| 3   | Sedes activas          | 🟡 PARCIAL   | Bloque 1/3 | claim `sedeId` retirado; `sedesEnabled:false`; UI de sede se inertiza en Bloque 3 |
+| 2   | Perfil del menor       | ⏳ pendiente | Bloque 3   | `aiProfile` en baseline (`perfilamiento`)                                         |
+| 5   | Certificados PDF       | ⏳ pendiente | Bloque 3   | `certificate.ts` en baseline (`features-excluidas`)                               |
+| 7   | IA en runtime          | ⏳ pendiente | Bloque 3   | `services/ai`/`adaptiveQuiz` en baseline (`runtime-ia`)                           |
+| 8   | Bancos de contenido    | ⏳ pendiente | Bloque 2   | `questionBank` global en baseline (`bancos-global`)                               |
+| 9   | Tipos de pregunta      | ⏳ pendiente | Bloque 2   | `seedQuestionBank`/tipos en baseline (`quiz-tipos`)                               |
+| 10  | Narrativa de mundos    | ⏳ pendiente | Bloque 5   | —                                                                                 |
+| 11  | Pre/Post-test          | ⏳ pendiente | Bloque 5   | schema `impactTest` + reglas ya sembrados en Bloque 1                             |
+
 ## Orden sugerido de resolución (propuesta, no decisión)
 
 1. F2: reescribir `requerimientos.md` v2 con el modelo nuevo (resuelve en papel

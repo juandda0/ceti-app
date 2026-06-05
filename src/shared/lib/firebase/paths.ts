@@ -17,8 +17,9 @@ export const FIRESTORE_COLLECTIONS = {
   cursos: 'cursos',
   estudiantes: 'estudiantes',
   progress: 'progress',
+  impactTest: 'impactTest',
+  agregados: 'agregados',
   asignaciones: 'asignaciones',
-  autorizaciones: 'autorizaciones',
   membership: 'membership',
   // Class-level leaderboard (V2) — minimal {displayLabel, xp} per student,
   // readable by course-mates only when colaboracionAula is on. No global board.
@@ -93,8 +94,9 @@ export function questionBankByWorldQuery(db: Firestore, worldId: string) {
 }
 
 // ---------------------------------------------------------------------------
-// Tenancy tree: colegio → (sede) → curso → estudiante → progress.
-// See docs/data-model.md. studentId is the school-provided pseudonym.
+// Tenancy tree: colegio → (sede, dormant) → curso → estudiante → progress.
+// See docs/data-model.md. Students are keyed by their Auth `uid` (R1) — there is
+// no school-provided pseudonym key.
 // ---------------------------------------------------------------------------
 
 const C = FIRESTORE_COLLECTIONS;
@@ -128,51 +130,52 @@ export function estudiantesCollectionRef(db: Firestore, colegioId: string, curso
   return collection(db, C.colegios, colegioId, C.cursos, cursoId, C.estudiantes);
 }
 
-export function estudianteDocRef(
-  db: Firestore,
-  colegioId: string,
-  cursoId: string,
-  studentId: string
-) {
-  return doc(db, C.colegios, colegioId, C.cursos, cursoId, C.estudiantes, studentId);
+export function estudianteDocRef(db: Firestore, colegioId: string, cursoId: string, uid: string) {
+  return doc(db, C.colegios, colegioId, C.cursos, cursoId, C.estudiantes, uid);
 }
 
 export function estudianteProgressCollectionRef(
   db: Firestore,
   colegioId: string,
   cursoId: string,
-  studentId: string
+  uid: string
 ) {
-  return collection(
-    db,
-    C.colegios,
-    colegioId,
-    C.cursos,
-    cursoId,
-    C.estudiantes,
-    studentId,
-    C.progress
-  );
+  return collection(db, C.colegios, colegioId, C.cursos, cursoId, C.estudiantes, uid, C.progress);
 }
 
 export function estudianteProgressDocRef(
   db: Firestore,
   colegioId: string,
   cursoId: string,
-  studentId: string,
+  uid: string,
   worldId: string
 ) {
-  return doc(
-    db,
-    C.colegios,
-    colegioId,
-    C.cursos,
-    cursoId,
-    C.estudiantes,
-    studentId,
-    C.progress,
-    worldId
-  );
+  return doc(db, C.colegios, colegioId, C.cursos, cursoId, C.estudiantes, uid, C.progress, worldId);
+}
+
+/** Pre/post impact test docs for a student (RQ-TS01..TS04). */
+export function estudianteImpactTestDocRef(
+  db: Firestore,
+  colegioId: string,
+  cursoId: string,
+  uid: string,
+  fase: 'pre' | 'post'
+) {
+  return doc(db, C.colegios, colegioId, C.cursos, cursoId, C.estudiantes, uid, C.impactTest, fase);
+}
+
+/** Per-course aggregates roll-up (RQ-FN09). No individual minor data. */
+export function agregadosCollectionRef(db: Firestore, colegioId: string, cursoId: string) {
+  return collection(db, C.colegios, colegioId, C.cursos, cursoId, C.agregados);
+}
+
+export function agregadoDocRef(
+  db: Firestore,
+  colegioId: string,
+  cursoId: string,
+  agregadoId: string
+) {
+  return doc(db, C.colegios, colegioId, C.cursos, cursoId, C.agregados, agregadoId);
 }
 
 export function asignacionesCollectionRef(db: Firestore, colegioId: string) {
@@ -188,11 +191,6 @@ export function asignacionesByCursoQuery(db: Firestore, colegioId: string, curso
   return query(asignacionesCollectionRef(db, colegioId), where('target.cursoId', '==', cursoId));
 }
 
-/** Ley 1581 consent register. Keyed by the student pseudonym. */
-export function autorizacionDocRef(db: Firestore, colegioId: string, studentId: string) {
-  return doc(db, C.colegios, colegioId, C.autorizaciones, studentId);
-}
-
 /** uid → tenant mapping, used at bootstrap to resolve where a user belongs. */
 export function membershipDocRef(db: Firestore, uid: string) {
   return doc(db, C.membership, uid);
@@ -203,13 +201,8 @@ export function leaderboardCollectionRef(db: Firestore, colegioId: string, curso
   return collection(db, C.colegios, colegioId, C.cursos, cursoId, C.leaderboard);
 }
 
-export function leaderboardDocRef(
-  db: Firestore,
-  colegioId: string,
-  cursoId: string,
-  studentId: string
-) {
-  return doc(db, C.colegios, colegioId, C.cursos, cursoId, C.leaderboard, studentId);
+export function leaderboardDocRef(db: Firestore, colegioId: string, cursoId: string, uid: string) {
+  return doc(db, C.colegios, colegioId, C.cursos, cursoId, C.leaderboard, uid);
 }
 
 /**

@@ -1,71 +1,8 @@
 {
   "note": "Baseline de deuda legacy (E4 / CR1). SOLO-DECRECIMIENTO: prohibido agregar entradas. Debe llegar a cero al cerrar el refactor del pivot. Cada entrada cita su conflicto de docs/empresa/conflictos.md.",
   "generatedBy": "scripts/invariantLint.mjs --update-baseline",
-  "totalEntries": 80,
+  "totalEntries": 34,
   "entries": [
-    {
-      "group": "acudiente",
-      "R": "R6",
-      "file": "firestore.rules",
-      "count": 1,
-      "conflicto": 6
-    },
-    {
-      "group": "acudiente",
-      "R": "R6",
-      "file": "functions/src/index.ts",
-      "count": 9,
-      "conflicto": 6
-    },
-    {
-      "group": "acudiente",
-      "R": "R6",
-      "file": "scripts/seedDemoColegio.ts",
-      "count": 2,
-      "conflicto": 6
-    },
-    {
-      "group": "acudiente",
-      "R": "R6",
-      "file": "scripts/seedScenario.ts",
-      "count": 2,
-      "conflicto": 6
-    },
-    {
-      "group": "acudiente",
-      "R": "R6",
-      "file": "scripts/testFirestoreRules.mjs",
-      "count": 9,
-      "conflicto": 6
-    },
-    {
-      "group": "acudiente",
-      "R": "R6",
-      "file": "src/features/dashboard/data/adminService.ts",
-      "count": 2,
-      "conflicto": 6
-    },
-    {
-      "group": "acudiente",
-      "R": "R6",
-      "file": "src/features/dashboard/screens/CourseAdminScreen.tsx",
-      "count": 1,
-      "conflicto": 6
-    },
-    {
-      "group": "acudiente",
-      "R": "R6",
-      "file": "src/shared/lib/firebase/paths.ts",
-      "count": 2,
-      "conflicto": 6
-    },
-    {
-      "group": "acudiente",
-      "R": "R6",
-      "file": "src/shared/types/tenancy.ts",
-      "count": 3,
-      "conflicto": 6
-    },
     {
       "group": "bancos-global",
       "R": "R8",
@@ -84,7 +21,7 @@
       "group": "bancos-global",
       "R": "R8",
       "file": "scripts/testFirestoreRules.mjs",
-      "count": 5,
+      "count": 4,
       "conflicto": 8
     },
     {
@@ -216,13 +153,6 @@
     {
       "group": "perfilamiento",
       "R": "R5",
-      "file": "scripts/testFirestoreRules.mjs",
-      "count": 3,
-      "conflicto": 2
-    },
-    {
-      "group": "perfilamiento",
-      "R": "R5",
       "file": "src/services/ai/aiService.ts",
       "count": 2,
       "conflicto": 2
@@ -261,41 +191,6 @@
       "file": "src/features/learning/screens/WorldQuizScreen.tsx",
       "count": 3,
       "conflicto": 9
-    },
-    {
-      "group": "roles-superadmin",
-      "R": "R3",
-      "file": "app/(staff)/superadmin.tsx",
-      "count": 1,
-      "conflicto": 4
-    },
-    {
-      "group": "roles-superadmin",
-      "R": "R3",
-      "file": "functions/src/index.ts",
-      "count": 7,
-      "conflicto": 4
-    },
-    {
-      "group": "roles-superadmin",
-      "R": "R3",
-      "file": "scripts/setSuperadmin.ts",
-      "count": 3,
-      "conflicto": 4
-    },
-    {
-      "group": "roles-superadmin",
-      "R": "R3",
-      "file": "src/features/dashboard/data/adminService.ts",
-      "count": 1,
-      "conflicto": 4
-    },
-    {
-      "group": "roles-superadmin",
-      "R": "R3",
-      "file": "src/shared/types/tenancy.ts",
-      "count": 1,
-      "conflicto": 4
     },
     {
       "group": "runtime-ia",
@@ -345,223 +240,6 @@
       "file": "src/services/ai/index.ts",
       "count": 3,
       "conflicto": 7
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "firestore.rules",
-      "count": 4,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "functions/src/index.ts",
-      "count": 23,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "scripts/seedDemoColegio.ts",
-      "count": 1,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "scripts/seedScenario.ts",
-      "count": 5,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "scripts/setRole.ts",
-      "count": 6,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "scripts/testFirestoreRules.mjs",
-      "count": 17,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/features/auth/store/useAuthStore.ts",
-      "count": 5,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/features/dashboard/components/AuthorizationPendingBanner.tsx",
-      "count": 4,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/features/dashboard/components/ClassLeaderboard.tsx",
-      "count": 7,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/features/dashboard/data/adminService.ts",
-      "count": 5,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/features/dashboard/data/courseReport.test.ts",
-      "count": 5,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/features/dashboard/data/courseReport.ts",
-      "count": 8,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/features/dashboard/data/earlyWarning.test.ts",
-      "count": 16,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/features/dashboard/data/earlyWarning.ts",
-      "count": 2,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/features/dashboard/data/leaderboardRepository.ts",
-      "count": 3,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/features/dashboard/data/loadCourseReport.ts",
-      "count": 2,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/features/dashboard/data/rosterRepository.ts",
-      "count": 5,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/features/dashboard/data/schoolReport.test.ts",
-      "count": 2,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/features/dashboard/data/schoolReport.ts",
-      "count": 3,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/features/dashboard/data/weaknessReport.test.ts",
-      "count": 7,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/features/dashboard/data/weaknessReport.ts",
-      "count": 2,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/features/dashboard/data/worldProgressRepository.ts",
-      "count": 4,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/features/dashboard/screens/CourseAdminScreen.tsx",
-      "count": 7,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/features/dashboard/screens/CourseDashboardScreen.tsx",
-      "count": 3,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/features/learning/data/worldProgress.test.ts",
-      "count": 2,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/features/learning/data/worldProgress.ts",
-      "count": 2,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/features/learning/screens/WorldQuizScreen.tsx",
-      "count": 5,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/features/learning/screens/WorldsScreen.tsx",
-      "count": 4,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/shared/lib/firebase/claims.ts",
-      "count": 3,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/shared/lib/firebase/paths.ts",
-      "count": 11,
-      "conflicto": 1
-    },
-    {
-      "group": "studentId",
-      "R": "R1",
-      "file": "src/shared/types/tenancy.ts",
-      "count": 8,
-      "conflicto": 1
     }
   ]
 }

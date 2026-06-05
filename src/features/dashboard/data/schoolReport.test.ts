@@ -5,16 +5,11 @@ import {
 } from '@features/dashboard/data/schoolReport';
 import type { WorldProgress } from '@shared/types/tenancy';
 
-function wp(
-  cursoId: string,
-  studentId: string,
-  competencia: string,
-  mastery: number
-): WorldProgress {
+function wp(cursoId: string, uid: string, competencia: string, mastery: number): WorldProgress {
   return {
     colegioId: 'A',
     cursoId,
-    studentId,
+    uid,
     competencia,
     xp: 0,
     nivel: 1,

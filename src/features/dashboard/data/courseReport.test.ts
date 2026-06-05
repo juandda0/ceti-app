@@ -5,11 +5,11 @@ import {
 } from '@features/dashboard/data/courseReport';
 import type { WorldProgress } from '@shared/types/tenancy';
 
-function wp(studentId: string, competencia: string, mastery: number): WorldProgress {
+function wp(uid: string, competencia: string, mastery: number): WorldProgress {
   return {
     colegioId: 'A',
     cursoId: 'c1',
-    studentId,
+    uid,
     competencia,
     xp: 0,
     nivel: 1,
@@ -22,8 +22,8 @@ function wp(studentId: string, competencia: string, mastery: number): WorldProgr
 }
 
 const roster: RosterEntry[] = [
-  { studentId: 's1', displayLabel: 'Est 1', estado: 'activo' },
-  { studentId: 's2', displayLabel: 'Est 2', estado: 'activo' },
+  { uid: 's1', nombre: 'Est 1', estado: 'activo' },
+  { uid: 's2', nombre: 'Est 2', estado: 'activo' },
 ];
 
 const progress = [wp('s1', 'ahorro', 0.8), wp('s1', 'ingreso', 0.4), wp('s2', 'ahorro', 0.6)];
@@ -40,7 +40,7 @@ const input = {
 describe('buildCourseReport', () => {
   it('computes per-student mastery and overall', () => {
     const r = buildCourseReport(input);
-    const s1 = r.students.find((s) => s.studentId === 's1')!;
+    const s1 = r.students.find((s) => s.uid === 's1')!;
     expect(s1.masteryByCompetencia).toEqual({ ahorro: 0.8, ingreso: 0.4 });
     expect(s1.overallMastery).toBeCloseTo(0.6);
   });

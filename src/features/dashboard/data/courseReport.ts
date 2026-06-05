@@ -12,14 +12,14 @@ function toPct(mastery: number): number {
 }
 
 export interface RosterEntry {
-  studentId: string;
-  displayLabel: string;
+  uid: string;
+  nombre: string;
   estado: EstudianteEstado;
 }
 
 export interface StudentReportRow {
-  studentId: string;
-  displayLabel: string;
+  uid: string;
+  nombre: string;
   estado: EstudianteEstado;
   /** competenciaId → mastery 0..1 (only competencies with data). */
   masteryByCompetencia: Record<string, number>;
@@ -64,21 +64,21 @@ function average(values: number[]): number {
 export function buildCourseReport(input: BuildCourseReportInput): CourseReport {
   const progressByStudent = new Map<string, WorldProgress[]>();
   for (const p of input.progress) {
-    const list = progressByStudent.get(p.studentId) ?? [];
+    const list = progressByStudent.get(p.uid) ?? [];
     list.push(p);
-    progressByStudent.set(p.studentId, list);
+    progressByStudent.set(p.uid, list);
   }
 
   const students: StudentReportRow[] = input.roster.map((entry) => {
-    const studentProgress = progressByStudent.get(entry.studentId) ?? [];
+    const studentProgress = progressByStudent.get(entry.uid) ?? [];
     const masteryByCompetencia: Record<string, number> = {};
     for (const p of studentProgress) {
       masteryByCompetencia[p.competencia] = p.mastery;
     }
     const values = Object.values(masteryByCompetencia);
     return {
-      studentId: entry.studentId,
-      displayLabel: entry.displayLabel,
+      uid: entry.uid,
+      nombre: entry.nombre,
       estado: entry.estado,
       masteryByCompetencia,
       overallMastery: average(values),
@@ -129,15 +129,15 @@ function csvField(value: string | number): string {
 export function courseReportToCsv(report: CourseReport): string {
   const compCols = ALL_COMPETENCIAS;
   const header = [
-    'studentId',
+    'uid',
     'estudiante',
     'estado',
     ...compCols.map((c) => competenciaLabel(c.id)),
     'global',
   ];
   const rows = report.students.map((s) => [
-    csvField(s.studentId),
-    csvField(s.displayLabel),
+    csvField(s.uid),
+    csvField(s.nombre),
     csvField(s.estado),
     ...compCols.map((c) =>
       typeof s.masteryByCompetencia[c.id] === 'number'

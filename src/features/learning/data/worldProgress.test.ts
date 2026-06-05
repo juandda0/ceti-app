@@ -4,7 +4,7 @@ import { competenciaForWorld } from '@features/learning/data/competencias';
 const base = {
   colegioId: 'A',
   cursoId: 'c1',
-  studentId: 's1',
+  uid: 's1',
   worldId: 'world_3' as const,
   xp: 120,
   nivel: 2,
@@ -17,7 +17,7 @@ describe('buildWorldProgress', () => {
     expect(p.competencia).toBe(competenciaForWorld('world_3').id);
     expect(p.colegioId).toBe('A');
     expect(p.cursoId).toBe('c1');
-    expect(p.studentId).toBe('s1');
+    expect(p.uid).toBe('s1');
   });
 
   it('marks completed and stamps completedAt at/above mastery threshold', () => {

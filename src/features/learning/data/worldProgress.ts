@@ -15,7 +15,7 @@ import { computeMastery, isMastered } from '@features/learning/data/mastery';
 export interface BuildWorldProgressInput {
   colegioId: string;
   cursoId: string;
-  studentId: string;
+  uid: string;
   worldId: WorldId;
   /** Correct answers / total questions for this world. */
   correct: number;
@@ -34,7 +34,7 @@ export function buildWorldProgress(input: BuildWorldProgressInput): WorldProgres
   return {
     colegioId: input.colegioId,
     cursoId: input.cursoId,
-    studentId: input.studentId,
+    uid: input.uid,
     competencia: competenciaForWorld(input.worldId).id,
     xp: input.xp,
     nivel: input.nivel,

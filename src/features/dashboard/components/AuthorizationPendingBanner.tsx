@@ -9,7 +9,7 @@ import { Typography } from '@shared/constants/typography';
 
 /**
  * Ley 1581 transparency: tells a student whose roster slot is still
- * `pendiente_autorizacion` that their acudiente must authorize data treatment
+ * `pendiente_atestacion` that their acudiente must authorize data treatment
  * before their progress is recorded (the firestore.rules estudianteActivo gate
  * blocks progress writes until then). Renders nothing once active/suppressed or
  * for non-students.
@@ -20,23 +20,23 @@ export default function AuthorizationPendingBanner() {
   const role = useAuthStore((s) => s.role);
   const colegioId = useAuthStore((s) => s.colegioId);
   const cursoId = useAuthStore((s) => s.cursoId);
-  const studentId = useAuthStore((s) => s.studentId);
+  const firebaseUid = useAuthStore((s) => s.firebaseUid);
   const [pending, setPending] = useState(false);
 
   useEffect(() => {
-    if (role !== 'estudiante' || !colegioId || !cursoId || !studentId) {
+    if (role !== 'estudiante' || !colegioId || !cursoId || !firebaseUid) {
       setPending(false);
       return;
     }
     let cancelled = false;
     void (async () => {
-      const est = await rosterRepository.getEstudiante(colegioId, cursoId, studentId);
-      if (!cancelled) setPending(est?.estado === 'pendiente_autorizacion');
+      const est = await rosterRepository.getEstudiante(colegioId, cursoId, firebaseUid);
+      if (!cancelled) setPending(est?.estado === 'pendiente_atestacion');
     })();
     return () => {
       cancelled = true;
     };
-  }, [role, colegioId, cursoId, studentId]);
+  }, [role, colegioId, cursoId, firebaseUid]);
 
   if (!pending) return null;
 

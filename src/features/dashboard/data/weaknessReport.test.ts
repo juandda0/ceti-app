@@ -2,11 +2,11 @@ import { buildCourseReport, type RosterEntry } from '@features/dashboard/data/co
 import { buildWeaknessReport } from '@features/dashboard/data/weaknessReport';
 import type { WorldProgress } from '@shared/types/tenancy';
 
-function prog(studentId: string, competencia: string, mastery: number): WorldProgress {
+function prog(uid: string, competencia: string, mastery: number): WorldProgress {
   return {
     colegioId: 'A',
     cursoId: 'c1',
-    studentId,
+    uid,
     competencia,
     xp: 0,
     nivel: 0,
@@ -19,9 +19,9 @@ function prog(studentId: string, competencia: string, mastery: number): WorldPro
 }
 
 const roster: RosterEntry[] = [
-  { studentId: 's1', displayLabel: 'Est 1', estado: 'activo' },
-  { studentId: 's2', displayLabel: 'Est 2', estado: 'activo' },
-  { studentId: 's3', displayLabel: 'Est 3', estado: 'activo' },
+  { uid: 's1', nombre: 'Est 1', estado: 'activo' },
+  { uid: 's2', nombre: 'Est 2', estado: 'activo' },
+  { uid: 's3', nombre: 'Est 3', estado: 'activo' },
 ];
 
 function report(progress: WorldProgress[]) {
@@ -65,9 +65,9 @@ describe('buildWeaknessReport', () => {
         prog('s3', 'presupuesto', 0.9),
       ])
     );
-    expect(w.studentsAtRisk.map((s) => s.studentId)).toEqual(['s3', 's2']); // 0.65 then 0.70
+    expect(w.studentsAtRisk.map((s) => s.uid)).toEqual(['s3', 's2']); // 0.65 then 0.70
     expect(w.studentsAtRisk[0].weakAreas.map((a) => a.competenciaId)).toEqual(['ahorro']);
-    expect(w.studentsAtRisk.find((s) => s.studentId === 's1')).toBeUndefined();
+    expect(w.studentsAtRisk.find((s) => s.uid === 's1')).toBeUndefined();
   });
 
   it('reports no data when nobody has progress', () => {

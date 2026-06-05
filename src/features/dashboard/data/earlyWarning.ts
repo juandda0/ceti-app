@@ -13,8 +13,8 @@ const DEFAULT_STALE_DAYS = 14;
 export type RiskFlag = 'no_activity' | 'stalled' | 'low_mastery';
 
 export interface StudentRisk {
-  studentId: string;
-  displayLabel: string;
+  uid: string;
+  nombre: string;
   flags: RiskFlag[];
   level: 'high' | 'medium';
   lastActivity: number | null;
@@ -49,8 +49,8 @@ export function buildEarlyWarning(
         (flags.includes('stalled') && flags.includes('low_mastery'));
 
       return {
-        studentId: s.studentId,
-        displayLabel: s.displayLabel,
+        uid: s.uid,
+        nombre: s.nombre,
         flags,
         level: high ? ('high' as const) : ('medium' as const),
         lastActivity: s.lastActivity,

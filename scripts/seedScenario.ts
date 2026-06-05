@@ -1,6 +1,8 @@
 /**
- * One-off demo scenario: a colegio + curso with a super-admin, a rector and a
- * student across three real Google accounts. Idempotent.
+ * One-off demo scenario: a colegio + curso with an admin, a rector and a student
+ * across three real Google accounts. Idempotent. Identity is by Auth uid (R1);
+ * only email + nombre are stored for the student (R4). Lightweight attestation is
+ * pre-set for the demo (no acudiente PII).
  *
  *   $env:GOOGLE_APPLICATION_CREDENTIALS = "$env:APPDATA\gcloud\application_default_credentials.json"
  *   $env:GOOGLE_CLOUD_PROJECT = "ceti-d3769"
@@ -8,8 +10,7 @@
  *
  * Accounts that haven't signed in are pre-created in Auth; when they later sign
  * in with Google, Firebase links by email (one-account-per-email) so the claims
- * apply. If linking is off in your project, have them sign in and re-run, or
- * re-assign by email from the admin panels.
+ * apply.
  */
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const admin = require('firebase-admin');
@@ -32,9 +33,10 @@ const COLEGIO = 'ceti-piloto';
 const COLEGIO_NOMBRE = 'Colegio Piloto Ceti';
 const CURSO = '10A';
 
-const SUPERADMIN = 'juandiegodiazave@gmail.com';
+const ADMIN = 'juandiegodiazave@gmail.com';
 const RECTOR = 'juandiegodiazave12@gmail.com';
 const STUDENT = 'danielportacio09@gmail.com';
+const STUDENT_NOMBRE = 'Daniel Portacio';
 
 /** Returns the uid for an email, creating the auth user if it doesn't exist. */
 async function ensureUser(email: string): Promise<string> {
@@ -48,8 +50,7 @@ async function ensureUser(email: string): Promise<string> {
 }
 
 async function setClaims(uid: string, claims: Record<string, unknown>): Promise<void> {
-  const existing = (await auth.getUser(uid)).customClaims ?? {};
-  await auth.setCustomUserClaims(uid, { ...existing, ...claims });
+  await auth.setCustomUserClaims(uid, claims);
   await db.doc(`membership/${uid}`).set({ ...claims, claimsUpdatedAt: NOW }, { merge: true });
 }
 
@@ -65,50 +66,35 @@ async function main(): Promise<void> {
       { merge: true }
     );
 
-  // Super-admin (also keeps whatever role they already had)
-  const superUid = await ensureUser(SUPERADMIN);
-  await setClaims(superUid, { superadmin: true });
+  // Global admin Ceti
+  const adminUid = await ensureUser(ADMIN);
+  await setClaims(adminUid, { role: 'admin' });
 
   // Rector of ceti-piloto
   const rectorUid = await ensureUser(RECTOR);
   await setClaims(rectorUid, { role: 'rector', colegioId: COLEGIO });
 
-  // Student in 10A (active, Ley 1581 authorization recorded for the demo)
+  // Student in 10A — keyed by uid, only email + nombre, active (demo attestation).
   const studentUid = await ensureUser(STUDENT);
-  const studentId = 'stu_daniel';
-  await db
-    .doc(`colegios/${COLEGIO}/cursos/${CURSO}/estudiantes/${studentId}`)
-    .set(
-      {
-        displayLabel: 'Daniel Portacio',
-        estado: 'activo',
-        uidVinculado: studentUid,
-        createdAt: NOW,
-      },
-      { merge: true }
-    );
-  await db
-    .doc(`colegios/${COLEGIO}/autorizaciones/${studentId}`)
-    .set(
-      {
-        estado: 'otorgada',
-        politicaVersion: 'v1',
-        otorgadaAt: NOW,
-        canalEvidencia: 'seed-escenario',
-      },
-      { merge: true }
-    );
-  await setClaims(studentUid, {
-    role: 'estudiante',
-    colegioId: COLEGIO,
-    cursoId: CURSO,
-    studentId,
-  });
+  await db.doc(`colegios/${COLEGIO}/cursos/${CURSO}/estudiantes/${studentUid}`).set(
+    {
+      email: STUDENT,
+      nombre: STUDENT_NOMBRE,
+      estado: 'activo',
+      atestado: true,
+      atestadoPor: rectorUid,
+      atestadoAt: NOW,
+      politicaVersion: 'v1',
+      joinedAt: NOW,
+    },
+    { merge: true }
+  );
+  await setClaims(studentUid, { role: 'estudiante', colegioId: COLEGIO, cursoId: CURSO });
 
   console.log(`✅ Escenario listo en "${COLEGIO}" / "${CURSO}":`);
-  console.log(`   super-admin: ${SUPERADMIN}`);
+  console.log(`   admin Ceti:  ${ADMIN}`);
   console.log(`   rector:      ${RECTOR}`);
-  console.log(`   estudiante:  ${STUDENT} (${studentId}, activo)`);
+  console.log(`   estudiante:  ${STUDENT} (${studentUid}, activo)`);
   console.log('   Cada cuenta debe (re)iniciar sesión para aplicar su rol.');
 }
 
