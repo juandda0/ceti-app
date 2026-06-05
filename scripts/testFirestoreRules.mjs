@@ -46,6 +46,10 @@ async function check(name, promise) {
 
 // Auth contexts (second arg = custom claims). Student identity = the uid (R1).
 const adminG = env.authenticatedContext('uAdmin', { role: 'admin' }).firestore();
+// Demo cage (RQ-DM05): the demo admin carries demo:true + colegioId 'demo-colegio'.
+const demoAdmin = env
+  .authenticatedContext('demo-admin', { role: 'admin', demo: true, colegioId: 'demo-colegio' })
+  .firestore();
 const rectorA = env.authenticatedContext('uRectorA', { role: 'rector', colegioId: 'A' }).firestore();
 const coordA = env
   .authenticatedContext('uCoordA', { role: 'coordinador', colegioId: 'A' })
@@ -178,6 +182,25 @@ await env.withSecurityRulesDisabled(async (ctx) => {
     displayLabel: 'lb3',
     xp: 100,
     updatedAt: 1,
+  });
+  // Demo colegio (RQ-DM): the cage confines demo tokens here.
+  await setDoc(doc(db, 'colegios/demo-colegio'), {
+    nombre: 'Colegio Demo Ceti',
+    sedesEnabled: false,
+    createdAt: 1,
+  });
+  await setDoc(doc(db, 'colegios/demo-colegio/cursos/dc1'), {
+    nombre: 'Demo 9A',
+    grado: '9',
+    profesorUids: [],
+    colaboracionAula: false,
+  });
+  await setDoc(doc(db, 'colegios/demo-colegio/cursos/dc1/estudiantes/demo-estudiante'), {
+    email: 'demo@demo.ceti',
+    nombre: 'Demo Estudiante',
+    estado: 'activo',
+    atestado: true,
+    joinedAt: 1,
   });
 });
 
@@ -453,6 +476,54 @@ await check(
 await check(
   'leaderboard rejects negative xp',
   assertFails(setDoc(doc(stuLb1, lbPath), { ...lbEntry, xp: -1 }))
+);
+
+console.log('Demo cage (RQ-DM05 — demo admin confined to demo-colegio):');
+await check(
+  'demo admin reads own demo colegio',
+  assertSucceeds(getDoc(doc(demoAdmin, 'colegios/demo-colegio')))
+);
+await check(
+  'demo admin reads demo roster',
+  assertSucceeds(getDoc(doc(demoAdmin, 'colegios/demo-colegio/cursos/dc1/estudiantes/demo-estudiante')))
+);
+await check(
+  'demo admin CANNOT read a real colegio',
+  assertFails(getDoc(doc(demoAdmin, 'colegios/A')))
+);
+await check(
+  'demo admin CANNOT read a real colegio roster',
+  assertFails(getDoc(doc(demoAdmin, 'colegios/A/cursos/c1/estudiantes/uStuA1')))
+);
+await check(
+  'demo admin CANNOT create a real colegio',
+  assertFails(setDoc(doc(demoAdmin, 'colegios/REAL'), { nombre: 'x', sedesEnabled: false, createdAt: 1 }))
+);
+await check(
+  'demo admin CANNOT create a course in a real colegio',
+  assertFails(
+    setDoc(doc(demoAdmin, 'colegios/A/cursos/hack'), {
+      nombre: 'h',
+      grado: '9',
+      profesorUids: [],
+      colaboracionAula: false,
+    })
+  )
+);
+await check(
+  'demo admin CAN create a course in the demo colegio',
+  assertSucceeds(
+    setDoc(doc(demoAdmin, 'colegios/demo-colegio/cursos/dcNew'), {
+      nombre: 'Demo 10A',
+      grado: '10',
+      profesorUids: [],
+      colaboracionAula: false,
+    })
+  )
+);
+await check(
+  'demo admin collection-group on real colegio A denied',
+  assertFails(cg(demoAdmin))
 );
 
 console.log('Default deny:');

@@ -24,6 +24,18 @@ service cloud.firestore {
     function isAdmin() {
       return isRole('admin');
     }
+    // Demo cage (RQ-DM05): a token minted by demoLogin carries demo:true. The
+    // demo rector/coordinador/profesor/estudiante are ALREADY confined by their
+    // colegioId:'demo-colegio' claim (via sameColegio). The only global identity
+    // is admin, so `adminHere` caps a DEMO admin to the demo colegio while leaving
+    // a real admin global. Non-demo tokens are unaffected.
+    function isDemo() {
+      // .get(key, default) so a non-demo token (no `demo` claim) doesn't error.
+      return signedIn() && request.auth.token.get('demo', false) == true;
+    }
+    function adminHere(cid) {
+      return isAdmin() && (!isDemo() || cid == 'demo-colegio');
+    }
     function sameColegio(cid) {
       return signedIn() && request.auth.token.colegioId == cid;
     }
@@ -44,7 +56,7 @@ service cloud.firestore {
     // Who may OPERATE a course (assignments, codes, attestation, toggles):
     // admin (global), coordinador (own colegio), or the course's teacher.
     function canOperarCurso(cid, cursoId) {
-      return isAdmin()
+      return adminHere(cid)
         || (sameColegio(cid) && isRole('coordinador'))
         || isProfesorDe(cid, cursoId);
     }
@@ -61,23 +73,23 @@ service cloud.firestore {
     match /colegios/{cid} {
       // Any member of the colegio reads its identity (nombre/logo for headers);
       // admin reads any. Structure (create/edit/delete) is admin-only.
-      allow read: if isAdmin() || sameColegio(cid);
-      allow create, update, delete: if isAdmin();
+      allow read: if adminHere(cid) || sameColegio(cid);
+      allow create, update, delete: if adminHere(cid);
 
       // Dormant entity (RQ-FN01): readable by staff if it ever existed; never written.
       match /sedes/{sedeId} {
-        allow read: if isAdmin() || (sameColegio(cid) && isStaff());
+        allow read: if adminHere(cid) || (sameColegio(cid) && isStaff());
         allow write: if false;
       }
 
       match /cursos/{cursoId} {
         // Any member of the colegio may read course docs (students need their course).
-        allow read: if isAdmin() || sameColegio(cid);
+        allow read: if adminHere(cid) || sameColegio(cid);
         // Course structure (create/delete) is admin-only (matriz §1.3).
-        allow create, delete: if isAdmin();
+        allow create, delete: if adminHere(cid);
         // admin edits anything; coordinador/teacher may toggle ONLY colaboracionAula.
         // (The join code is set by the generateClassCode Function via Admin SDK.)
-        allow update: if isAdmin()
+        allow update: if adminHere(cid)
           || (
             canOperarCurso(cid, cursoId)
             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['colaboracionAula'])
@@ -86,7 +98,7 @@ service cloud.firestore {
         match /estudiantes/{uid} {
           // Roster nominal (email+nombre): admin, coordinador, the course teacher,
           // and the student themself. RECTOR is excluded — only aggregates (§1.3).
-          allow read: if isAdmin()
+          allow read: if adminHere(cid)
             || (sameColegio(cid) && isRole('coordinador'))
             || isProfesorDe(cid, cursoId)
             || isEstudianteSelf(uid);
@@ -95,7 +107,7 @@ service cloud.firestore {
           allow write: if false;
 
           match /progress/{worldId} {
-            allow read: if isAdmin()
+            allow read: if adminHere(cid)
               || (sameColegio(cid) && isRole('coordinador'))
               || isProfesorDe(cid, cursoId)
               || isEstudianteSelf(uid);
@@ -128,7 +140,7 @@ service cloud.firestore {
           // Impact pre/post test (RQ-TS01..TS04). The student writes their own
           // result while active; staff read it (admin/coordinador/teacher).
           match /impactTest/{fase} {
-            allow read: if isAdmin()
+            allow read: if adminHere(cid)
               || (sameColegio(cid) && isRole('coordinador'))
               || isProfesorDe(cid, cursoId)
               || isEstudianteSelf(uid);
@@ -148,7 +160,7 @@ service cloud.firestore {
         // admin and any staff of the colegio (rector's only data view); written
         // ONLY by a Function (Admin SDK).
         match /agregados/{agregadoId} {
-          allow read: if isAdmin() || (sameColegio(cid) && isStaff());
+          allow read: if adminHere(cid) || (sameColegio(cid) && isStaff());
           allow write: if false;
         }
 
@@ -158,7 +170,7 @@ service cloud.firestore {
         // colaboracionAula (no global boards). XP is student-reported — the
         // dashboard uses real progress as truth, so this never feeds compliance.
         match /leaderboard/{uid} {
-          allow read: if isAdmin()
+          allow read: if adminHere(cid)
             || (sameColegio(cid) && isRole('coordinador'))
             || isProfesorDe(cid, cursoId)
             || (
@@ -182,13 +194,13 @@ service cloud.firestore {
 
       match /asignaciones/{aid} {
         // Staff and students of the colegio can see assignments.
-        allow read: if isAdmin() || sameColegio(cid);
+        allow read: if adminHere(cid) || sameColegio(cid);
         // Create/operate: admin, coordinador (own colegio), or the target course's
         // teacher (matriz §1.3: "Asignar mundo con deadline").
-        allow create: if isAdmin()
+        allow create: if adminHere(cid)
           || (sameColegio(cid) && isRole('coordinador'))
           || isProfesorDe(cid, request.resource.data.target.cursoId);
-        allow update, delete: if isAdmin()
+        allow update, delete: if adminHere(cid)
           || (sameColegio(cid) && isRole('coordinador'))
           || isProfesorDe(cid, resource.data.target.cursoId);
       }
@@ -199,7 +211,8 @@ service cloud.firestore {
     // student (self). RECTOR is excluded from nominal progress — they read the
     // precomputed agregados/* instead (invariante §1.3).
     match /{path=**}/progress/{worldId} {
-      allow read: if isAdmin();
+      // Demo admin is capped to the demo colegio (RQ-DM05).
+      allow read: if isAdmin() && (!isDemo() || resource.data.colegioId == 'demo-colegio');
       allow read: if isRole('coordinador')
         && resource.data.colegioId == request.auth.token.colegioId;
       allow read: if isProfesorDe(resource.data.colegioId, resource.data.cursoId);

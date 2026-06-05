@@ -178,3 +178,32 @@ de sede se inertiza en Bloque 3).
 (cosmético; funcionalmente correcto por `useIsAdmin`).
 
 Bloque 1 completo. Siguiente: Bloque 2 (Contenido) según harness-design.md.
+
+### Modo Demo (RQ-DM) ✅ CONSTRUIDO (prioridad de pitch, intercalado antes de Bloque 2)
+
+Adición formal a la spec (`requerimientos.md` §10), autorizada por el dueño.
+Acceso de un toque a los 5 perfiles sobre un colegio simulado, con jaula de
+seguridad en `firestore.rules` **y** Cloud Functions. Ver `docs/reporte-demo.md`.
+
+- **Auth demo:** Function pública `demoLogin({role})` → custom token → cliente
+  `signInWithCustomToken`. Solo acuña los 5 pares `(uid,claims)` fijos
+  (`DEMO_USERS`), todos con `demo:true` (D-DEMO-01). UI: sección "Simulación Ceti"
+  en `LoginScreen.tsx` con 5 botones.
+- **Jaula (RQ-DM05, innegociable):** `isDemo()`+`adminHere(cid)` en rules (todo
+  `isAdmin()` cid-scoped → `adminHere`); `assertDemoScope`/`assertNotDemo` en
+  functions. El admin demo queda confinado a `demo-colegio`; el resto ya por su
+  claim `colegioId`. Tests "Demo cage" en E7.
+- **Colegio simulado:** `scripts/seedDemo.ts` — `demo-colegio`, 3 cursos
+  (9/10/11), ~60 estudiantes sintéticos (`@demo.ceti`, solo email+nombre) con
+  progreso variado + impactTest pre/post + agregados por curso; profesor demo y
+  estudiante demo en `demo-9A`.
+- **Estudiante demo:** progreso CERO, excluido de agregados; `demoLogin('estudiante')`
+  lo resetea (RQ-DM06).
+
+**Gates:** typecheck ✓ · lint 0 errores ✓ · i18n ✓ · jest 125/125 ✓ ·
+**test:rules 78/78** ✓ · E4 sin violaciones nuevas (baseline 34) ✓ · functions
+build ✓ · **veto AR `pass`** · **veto CP `pass`**.
+
+**Deploy (RQ-DM07):** pasos exactos en `reporte-demo.md` §6. Firebase CLI
+logueado (`ceti-d3769`); deploy de rules+functions+hosting y siembra demo
+ejecutables. Estado del intento de deploy: ver abajo / commit siguiente.

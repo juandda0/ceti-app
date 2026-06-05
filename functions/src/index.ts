@@ -42,6 +42,43 @@ function isAdmin(caller: Caller): boolean {
   return caller.token.role === 'admin';
 }
 
+// ---- Demo cage (RQ-DM05) ----
+const DEMO_COLEGIO = 'demo-colegio';
+const DEMO_USERS: Record<string, { uid: string; claims: Record<string, unknown> }> = {
+  admin: { uid: 'demo-admin', claims: { role: 'admin', demo: true, colegioId: DEMO_COLEGIO } },
+  rector: { uid: 'demo-rector', claims: { role: 'rector', demo: true, colegioId: DEMO_COLEGIO } },
+  coordinador: {
+    uid: 'demo-coordinador',
+    claims: { role: 'coordinador', demo: true, colegioId: DEMO_COLEGIO },
+  },
+  profesor: {
+    uid: 'demo-profesor',
+    claims: { role: 'profesor', demo: true, colegioId: DEMO_COLEGIO },
+  },
+  estudiante: {
+    uid: 'demo-estudiante',
+    claims: { role: 'estudiante', demo: true, colegioId: DEMO_COLEGIO, cursoId: 'demo-9A' },
+  },
+};
+
+function callerIsDemo(caller: Caller): boolean {
+  return caller.token.demo === true;
+}
+
+/** A demo caller may never touch anything outside the demo colegio (RQ-DM05). */
+function assertDemoScope(caller: Caller, colegioId: string | undefined): void {
+  if (callerIsDemo(caller) && colegioId !== DEMO_COLEGIO) {
+    throw new HttpsError('permission-denied', 'El modo demo solo opera dentro del colegio demo.');
+  }
+}
+
+/** Structural/claim mutations are forbidden to demo callers (no real entities). */
+function assertNotDemo(caller: Caller): void {
+  if (callerIsDemo(caller)) {
+    throw new HttpsError('permission-denied', 'El modo demo no puede ejecutar esta acción.');
+  }
+}
+
 type ClaimsPayload = {
   role: Role;
   colegioId?: string;
@@ -95,6 +132,7 @@ async function assertStaffOfCurso(
   cursoId: string,
   opts: { allowProfesor: boolean; allowRector: boolean }
 ): Promise<void> {
+  assertDemoScope(caller, colegioId);
   if (isAdmin(caller)) return;
   if (caller.token.colegioId !== colegioId) {
     throw new HttpsError('permission-denied', 'Outside your colegio.');
@@ -125,6 +163,7 @@ export const assignRole = onCall(async (request) => {
   if (!isAdmin(caller)) {
     throw new HttpsError('permission-denied', 'Solo un admin puede asignar roles.');
   }
+  assertNotDemo(caller); // demo admin cannot create/assign real adult roles (RQ-DM05)
 
   const role = request.data?.role;
   if (!isRole(role)) {
@@ -179,6 +218,7 @@ export const registerColegio = onCall(async (request) => {
   if (!isAdmin(caller)) {
     throw new HttpsError('permission-denied', 'Solo un admin puede registrar colegios.');
   }
+  assertNotDemo(caller); // demo admin cannot create real colegios (RQ-DM05)
 
   const colegioId = requireString(request.data?.colegioId, 'colegioId');
   const nombre = requireString(request.data?.nombre, 'nombre');
@@ -213,9 +253,13 @@ export const listColegios = onCall(async (request) => {
     throw new HttpsError('permission-denied', 'Solo un admin puede listar colegios.');
   }
 
-  const snap = await getFirestore().collection('colegios').get();
+  // Demo admin sees only the demo colegio (RQ-DM05).
+  const db = getFirestore();
+  const snap = callerIsDemo(caller)
+    ? { docs: [await db.doc(`colegios/${DEMO_COLEGIO}`).get()].filter((d) => d.exists) }
+    : await db.collection('colegios').get();
   const colegios = snap.docs.map((d) => {
-    const data = d.data();
+    const data = d.data() ?? {};
     return {
       id: d.id,
       nombre: (data.nombre as string) ?? d.id,
@@ -235,6 +279,7 @@ export const createCurso = onCall(async (request) => {
   }
 
   const colegioId = requireString(request.data?.colegioId, 'colegioId');
+  assertDemoScope(caller, colegioId); // demo admin may only create within demo-colegio
   const cursoId = requireString(request.data?.cursoId, 'cursoId');
   const nombre = requireString(request.data?.nombre, 'nombre');
   const grado = requireString(request.data?.grado, 'grado');
@@ -419,6 +464,7 @@ export const joinByCode = onCall(async (request) => {
   const codeSnap = await db.doc(`classCodes/${code}`).get();
   if (!codeSnap.exists) throw new HttpsError('not-found', 'Código de clase inválido.');
   const { colegioId, cursoId } = codeSnap.data() as { colegioId: string; cursoId: string };
+  assertDemoScope(caller, colegioId); // a demo student cannot join a real course (RQ-DM05)
 
   // Already linked to this exact course → no-op (idempotent).
   if (caller.token.colegioId === colegioId && caller.token.cursoId === cursoId) {
@@ -443,4 +489,46 @@ export const joinByCode = onCall(async (request) => {
   await applyClaims(caller.uid, { role: 'estudiante', colegioId, cursoId });
 
   return { ok: true, colegioId, cursoId };
+});
+
+// ---------------------------------------------------------------------------
+// Demo mode (RQ-DM). A PUBLIC (unauthenticated) callable that mints a custom
+// token for ONE of the 5 fixed demo identities. It cannot be parameterized into
+// arbitrary claims — only the role selects a fixed (uid, claims) pair. All demo
+// tokens carry demo:true, which firestore.rules + the Functions cage confine to
+// `demo-colegio`. Signing in as the demo student first resets their progress so
+// every demo starts fresh (RQ-DM06).
+// ---------------------------------------------------------------------------
+export const demoLogin = onCall(async (request) => {
+  const role = typeof request.data?.role === 'string' ? request.data.role : '';
+  const demo = DEMO_USERS[role];
+  if (!demo) {
+    throw new HttpsError(
+      'invalid-argument',
+      `role must be one of: ${Object.keys(DEMO_USERS).join(', ')}.`
+    );
+  }
+
+  const auth = getAuth();
+  const db = getFirestore();
+
+  // Ensure the demo Auth user exists with its fixed demo claims (idempotent).
+  try {
+    await auth.getUser(demo.uid);
+  } catch {
+    await auth.createUser({ uid: demo.uid, displayName: `Demo ${role}` });
+  }
+  await auth.setCustomUserClaims(demo.uid, demo.claims);
+
+  // Reset the demo student so every demo starts at zero (RQ-DM06). Aggregates
+  // exclude the demo student by design, so this never corrupts them.
+  if (role === 'estudiante') {
+    const cursoId = demo.claims.cursoId as string;
+    const estRef = db.doc(`colegios/${DEMO_COLEGIO}/cursos/${cursoId}/estudiantes/${demo.uid}`);
+    await db.recursiveDelete(estRef.collection('progress'));
+    await db.recursiveDelete(estRef.collection('impactTest'));
+  }
+
+  const token = await auth.createCustomToken(demo.uid, demo.claims);
+  return { token, role };
 });

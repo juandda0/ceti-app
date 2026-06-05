@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Platform, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Platform, ScrollView, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
+import { signInWithCustomToken } from 'firebase/auth';
 import { safeRouterBack } from '@shared/utils/safeRouterBack';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -11,7 +13,8 @@ import PageHeader from '@shared/components/PageHeader';
 import CetiButton from '@shared/components/CetiButton';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useThemeStore } from '@shared/store/useThemeStore';
-import { isFirebaseConfigured } from '@shared/lib/firebase/app';
+import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/app';
+import { callFunction } from '@shared/lib/firebase/functions';
 import {
   configureGoogleSignIn,
   isAppleSignInAvailable,
@@ -19,14 +22,18 @@ import {
   signInWithGoogle,
 } from '@shared/lib/firebase/oauth';
 
+type DemoRole = 'admin' | 'rector' | 'coordinador' | 'profesor' | 'estudiante';
+
 export default function LoginScreen() {
   const router = useRouter();
   const colors = useThemeColors();
   const mode = useThemeStore((s) => s.mode);
   const styles = getStyles(colors, mode);
+  const { t } = useTranslation();
 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [demoLoadingRole, setDemoLoadingRole] = useState<DemoRole | null>(null);
 
   useEffect(() => {
     configureGoogleSignIn();
@@ -69,6 +76,24 @@ export default function LoginScreen() {
   const offlineContinue = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     router.replace('/(auth)/onboarding/user-setup');
+  };
+
+  const onDemoLogin = async (role: DemoRole) => {
+    setDemoLoadingRole(role);
+    try {
+      const { token } = await callFunction<{ token: string; role: string }>('demoLogin', { role });
+      const clients = getFirebaseClients();
+      if (!clients) throw new Error('Firebase no configurado');
+      await signInWithCustomToken(clients.auth, token);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      goHome();
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : t('demo.error');
+      Alert.alert(t('errors.genericTitle'), msg);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    } finally {
+      setDemoLoadingRole(null);
+    }
   };
 
   if (!isFirebaseConfigured()) {
@@ -164,6 +189,30 @@ export default function LoginScreen() {
           />
         ) : null}
 
+        <View style={styles.demoSection}>
+          <View style={[styles.demoDivider, { borderColor: colors.materials.border }]} />
+          <Text style={[styles.demoTitle, { color: colors.text.primary }]}>{t('demo.title')}</Text>
+          <Text style={[styles.demoSubtitle, { color: colors.text.secondary }]}>
+            {t('demo.subtitle')}
+          </Text>
+          <View style={styles.demoGrid}>
+            {(['admin', 'rector', 'coordinador', 'profesor', 'estudiante'] as DemoRole[]).map(
+              (role) => (
+                <View key={role} style={styles.demoButtonWrap}>
+                  <CetiButton
+                    label={t(`demo.role.${role}`)}
+                    onPress={() => onDemoLogin(role)}
+                    variant="glass"
+                    size="small"
+                    disabled={demoLoadingRole !== null}
+                    isLoading={demoLoadingRole === role}
+                  />
+                </View>
+              )
+            )}
+          </View>
+        </View>
+
         <Text style={[styles.hint, { color: colors.text.tertiary }]}>
           Al continuar aceptas el uso de tu nombre y correo según la política de privacidad del
           proyecto.
@@ -212,5 +261,33 @@ const getStyles = (colors: ReturnType<typeof useThemeColors>, _mode: string) =>
       textAlign: 'center',
       marginTop: Spacing['2xl'],
       lineHeight: 18,
+    },
+    demoSection: {
+      marginTop: Spacing['2xl'],
+    },
+    demoDivider: {
+      borderTopWidth: 1,
+      marginBottom: Spacing['2xl'],
+    },
+    demoTitle: {
+      ...Typography.headline,
+      fontWeight: '700',
+      textAlign: 'center',
+      marginBottom: Spacing.xs,
+    },
+    demoSubtitle: {
+      ...Typography.caption1,
+      textAlign: 'center',
+      marginBottom: Spacing.lg,
+    },
+    demoGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: Spacing.sm,
+      justifyContent: 'center',
+    },
+    demoButtonWrap: {
+      minWidth: 120,
+      flex: 0,
     },
   });

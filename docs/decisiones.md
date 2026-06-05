@@ -6,6 +6,58 @@
 > ante una ambigüedad de spec llevan el tag **[AUTO-DECIDIDO]** y eligen la
 > interpretación más conservadora.
 
+## RQ-DM (RQ-DEMO) — Modo Demo (simulación en el login)
+
+### [AUTO-DECIDIDO] D-DEMO-05 — La familia "RQ-DEMO" se registra como `RQ-DM01..RQ-DM07`
+
+- **Contexto:** el dueño pidió registrar el modo demo como "RQ-DEMO". El gate E8
+  (`scripts/rqCitationCheck.mjs`) valida el formato `RQ-[A-Z]{2}\d{2}` (exactamente
+  2 letras); todos los RQ existentes usan 2 letras (FN/ES/PR/IN/AD/TS/CN). "DEMO"
+  (4 letras) no cita-valida y modificar el enforcement está prohibido (regla 5).
+- **Decisión:** la familia se registra como **`RQ-DM01..RQ-DM07`** (DM = Demo) en
+  `requerimientos.md` §10; "RQ-DEMO" queda como alias legible. Mantiene el gate
+  intacto y la trazabilidad R13 (todo mapea a un RQ-id válido).
+
+### D-DEMO-01 — Mecanismo de auth: custom token + claim `demo:true` (no debilita rules)
+
+- **Decisión:** una Cloud Function `demoLogin(role)` emite un **custom token** para
+  una de **5 identidades demo fijas** (uids `demo-admin`, `demo-rector`,
+  `demo-coordinador`, `demo-profesor`, `demo-estudiante`) con sus claims reales
+  (role + colegioId/cursoId) **+ `demo:true`**. El cliente hace
+  `signInWithCustomToken`. No se embeben credenciales; no se relaja ninguna regla.
+- **Por qué:** el custom token deja la autorización intacta (mismos claims que un
+  usuario real), y el flag `demo:true` habilita la jaula en rules/functions sin
+  tocar la lógica de los 5 roles.
+
+### D-DEMO-02 — Jaula (`demo:true`) en rules Y functions (RQ-DM05, innegociable)
+
+- **Decisión:** `firestore.rules` añade `isDemo()` y `DEMO_COLEGIO='demo-colegio'`.
+  Regla dura: **cualquier** token con `demo:true` solo puede tocar
+  `colegios/demo-colegio/**`, su propio `users/{uid}` y `membership/{uid}`; todo lo
+  demás (otros colegios, `questionBank`/`bancos` de escritura, paths globales) se
+  **deniega**. El admin demo (global por rol) queda acotado: sus reglas
+  `isAdmin()` se reescriben a `isAdmin() && (no demo || colegio==demo)`.
+  Las Functions estructurales rechazan llamantes `demo:true`.
+- **Conservador:** la jaula se aplica en el motor (rules+functions), no solo UI;
+  default-deny sigue cubriendo todo lo no listado.
+
+### D-DEMO-03 — Estudiante demo fuera de los agregados (RQ-DM06)
+
+- **Decisión:** los `agregados/*` del curso del estudiante demo se siembran
+  computados **solo** desde los ~20 sintéticos del curso (excluyendo `demo-estudiante`).
+  Como el estudiante demo nunca se incluye en el cómputo y su progreso se borra en
+  cada `demoLogin('estudiante')`, el reseteo no corrompe los agregados.
+
+### [AUTO-DECIDIDO] D-DEMO-04 — Demo sobre datos sembrados; riqueza del flujo estudiante limitada a lo construido
+
+- **Contexto:** RQ-DM03 pide quizzes de 3 tipos y Elige-camino "vivos". El runtime
+  de quiz de 3 tipos y la mecánica Elige-camino son Bloques 2/4 (aún no construidos).
+- **Decisión:** el seed escribe **datos sintéticos directos** (quizScores, mastery,
+  agregados, impactTest) que los dashboards staff —ya construidos— renderizan llenos.
+  El flujo jugable del estudiante demo muestra lo que exista al momento; su riqueza
+  crece conforme se completen Bloques 2/4. Es la lectura más conservadora que cumple
+  el principio rector (dashboards sin vacíos) sin inventar runtime fuera de spec.
+
 ## Bloque 1 — Fundación (identidad + roles + atestación)
 
 ### [AUTO-DECIDIDO] D-B1-01 — #1 + #4 + #6 se ejecutan como una sola unidad de Bloque 1

@@ -642,3 +642,78 @@ no MVP recortado, pero **acotada a este documento**).
 reportes/app para padres, facturación in-system, sedes activas, IA
 generativa/adaptativa en runtime, dinero real/gift cards, leaderboard público
 individual, perfil individual del menor.
+
+---
+
+## SECCIÓN 10 — MODO DEMO (RQ-DM)
+
+> Adición formal a la spec (autorizada por el dueño; el guardián D1 la acepta).
+> **Principio rector:** todo debe poder mostrar cada uno de los 5 perfiles **sin
+> datos vacíos**. Ante ambigüedad, elegir lo que haga la demo más completa para un
+> visitante que explora solo. Modo autónomo; vetos D4 bloquean.
+
+**RQ-DM01 — Acceso demo de un toque en el login**
+Bajo el auth normal, una sección "Simulación Ceti" con 5 accesos de un toque:
+Admin Ceti · Rector · Coordinador · Profesor · Estudiante. Cada uno inicia sesión
+como su usuario demo **sin credenciales**, vía **custom token** emitido por una
+Cloud Function (`demoLogin`) — nunca debilitando `firestore.rules`.
+
+- _CA1_: 5 botones; un toque autentica como el usuario demo de ese rol (custom token → `signInWithCustomToken`).
+- _CA2_: La Function `demoLogin` solo puede emitir las **5 identidades demo fijas** con claims demo; no acepta parámetros que produzcan claims arbitrarios.
+- _CA3_: El mecanismo no relaja ninguna regla: los demo se autorizan por los **mismos** claims (role + colegioId/cursoId) + un flag `demo:true`.
+
+**RQ-DM02 — Colegio simulado (datos sintéticos realistas, español)**
+1 colegio demo (`demo-colegio`) con rector y coordinador demo; **3 cursos** (uno
+por grado 9/10/11), cada uno ~20 estudiantes sintéticos y su profesor (3
+profesores; uno es **EL** profesor demo). Relaciones correctas del modelo real
+(códigos de curso, roster keyed por uid, claims). El estudiante demo y el profesor
+demo comparten el **mismo curso**.
+
+- _CA1_: Existe `colegios/demo-colegio` con `sedesEnabled:false`; 3 cursos (grado 9/10/11) con `profesorUids` y `codigo`.
+- _CA2_: ~60 estudiantes sintéticos en total (≈20/curso), todos keyed por `uid`, solo `email`+`nombre`, `estado:'activo'`, `atestado:true`.
+- _CA3_: El profesor demo está en `profesorUids` del curso del estudiante demo; los otros 2 profesores en los otros 2 cursos.
+
+**RQ-DM03 — Datos vivos (cero dashboards vacíos)**
+Los estudiantes sintéticos (todos menos el demo) tienen progreso variado y
+verosímil: mundos en distintos avances, `quizScores` de los 3 tipos, agregados de
+"Elige tu camino" poblados por curso, pre-test respondido, XP/badges repartidos.
+
+- _CA1_: El dashboard del profesor, los reportes de coordinador/rector y el panel admin muestran tablas/gráficas **llenas** y creíbles.
+- _CA2_: Los `agregados/*` por curso reflejan a los sintéticos (Elige-camino, mastery promedio); **no** incluyen al estudiante demo.
+- _CA3_: Cada estudiante sintético tiene `impactTest/pre`; una fracción tiene los 5 mundos completos (con `post`) para que el delta de impacto sea no vacío.
+
+**RQ-DM04 — Estudiante demo en cero (flujo desde el inicio)**
+El estudiante demo es el **único** en progreso CERO (recién unido), para demostrar
+el flujo completo desde el principio.
+
+- _CA1_: El estudiante demo no tiene docs de `progress` ni `impactTest` al iniciar.
+- _CA2_: Su `estado` es `activo` (ya atestado) para que pueda jugar de inmediato.
+
+**RQ-DM05 — Jaula de seguridad (innegociable, en rules + claims, no solo UI)**
+Los 5 usuarios demo **solo** pueden ver/operar dentro de `demo-colegio`. El admin
+demo administra **únicamente** el colegio demo. No pueden escalar, crear usuarios
+reales, ni tocar datos fuera de la simulación.
+
+- _CA1_: Todo token con `demo:true` que intente leer/escribir fuera de `colegios/demo-colegio/**` (o su propio `users/{uid}`/`membership/{uid}`) es **denegado** por `firestore.rules`.
+- _CA2_: El admin demo (`role:'admin', demo:true`) queda confinado a `demo-colegio` (sus poderes globales se acotan en rules).
+- _CA3_: Las Cloud Functions estructurales/claims (`registerColegio`, `createCurso`, `assignRole`, `generateClassCode`, `atestar`, `suppressStudentData`) **rechazan** a cualquier llamante `demo:true` (no crean usuarios/colegios reales ni claims fuera del demo).
+- _CA4_: `test:rules` incluye escenarios que demuestran la jaula (demo intenta tocar dato real → deny; demo opera dentro del demo → allow donde corresponda por su rol).
+
+**RQ-DM06 — Reseteo del estudiante demo**
+Al iniciar sesión como estudiante demo, su progreso se limpia (vuelve a cero) para
+que cada demo empiece fresca, **sin corromper** los agregados del curso.
+
+- _CA1_: `demoLogin('estudiante')` borra `progress` + `impactTest` del estudiante demo antes de devolver el token.
+- _CA2_: Los `agregados/*` excluyen al estudiante demo por diseño, así que el reseteo no los altera.
+
+**RQ-DM07 — Deploy web del modo demo**
+El deploy web de prueba se actualiza con el modo demo activo; el flujo se verifica
+en la URL real entrando con los 5 accesos.
+
+- _CA1_: La build web incluye la sección "Simulación Ceti" y `demoLogin` desplegado.
+- _CA2_: Entrar con cada uno de los 5 accesos muestra sus funciones con datos.
+
+### Conflictos resueltos en esta sección
+
+Ninguno (adición nueva). No introduce PII de menor (los sintéticos usan
+`@demo.ceti`), no relaja rules (cage por claim `demo`), no añade IA runtime.
