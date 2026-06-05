@@ -204,6 +204,10 @@ seguridad en `firestore.rules` **y** Cloud Functions. Ver `docs/reporte-demo.md`
 **test:rules 78/78** ✓ · E4 sin violaciones nuevas (baseline 34) ✓ · functions
 build ✓ · **veto AR `pass`** · **veto CP `pass`**.
 
-**Deploy (RQ-DM07):** pasos exactos en `reporte-demo.md` §6. Firebase CLI
-logueado (`ceti-d3769`); deploy de rules+functions+hosting y siembra demo
-ejecutables. Estado del intento de deploy: ver abajo / commit siguiente.
+**Deploy (RQ-DM07) — BLOQUEADO en credenciales del dueño:** Firebase CLI logueado
+(`ceti-d3769`) y `firebase.json` listo, pero (a) el seed `seedDemo.ts` necesita ADC
+/`serviceAccount.json` (no presentes; `firebase login` ≠ ADC) → sin seed no hay
+datos vivos; (b) el deploy es todo-o-nada (rules+functions+hosting+seed juntos) para
+no romper el sitio en vivo. Pasos copy-paste y detalle del bloqueo en
+`reporte-demo.md` §6. Es el único ítem de RQ-DM pendiente y requiere al dueño
+(`gcloud auth application-default login` y luego correr §6).

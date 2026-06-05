@@ -114,7 +114,26 @@ npx firebase-tools@latest deploy --only hosting --project <PROJECT_ID>
 # 4. Verificar en la URL real: entrar con los 5 accesos y confirmar datos.
 ```
 
-**Estado del deploy:** los pasos 1–4 quedan listos para ejecutarse con las
-credenciales del proyecto; en el entorno de ejecución autónoma no hay credenciales
-Firebase, así que el deploy/verificación en la URL real es el único ítem que
-requiere al dueño (ver `docs/estado.md`).
+**Estado del deploy (BLOQUEADO — requiere credenciales del dueño):**
+
+El Firebase CLI está logueado (`firebase login`, proyecto `ceti-d3769`) y
+`firebase.json` está configurado (rules + functions + hosting SPA). **Pero el
+deploy correcto no puede completarse de forma autónoma**, por dos razones reales
+(no se ejecutó un deploy parcial para no romper el sitio):
+
+1. **El seed (`seedDemo.ts`) necesita credenciales Admin SDK** (ADC o
+   `serviceAccount.json`), que **no** están presentes (`firebase login` ≠ ADC).
+   Sin el seed no hay "datos vivos" → dashboards vacíos, lo que contradice el
+   principio rector. El dueño debe primero:
+   ```bash
+   gcloud auth application-default login   # (o colocar serviceAccount.json en la raíz)
+   ```
+2. **El deploy es todo-o-nada**: desplegar rules+functions nuevos **sin** el nuevo
+   build web rompería el sitio en vivo (el cliente viejo llama Functions retiradas
+   y choca con las reglas nuevas). Por eso se despliega junto: rules + functions +
+   hosting + seed, en el orden de §6 arriba.
+
+**Una vez el dueño provea ADC**, los pasos 1–4 de §6 son copy-paste y dejan el
+modo demo activo en la URL real. La verificación en navegador (entrar con los 5
+accesos) es el paso final del dueño. Todo el código está commit+tag (`demo-mode`),
+con gates verdes y vetos AR+CP en `pass`.
