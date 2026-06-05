@@ -1,5 +1,21 @@
 # Cumplimiento — Ley 1581 de 2012 / Decreto 1377 de 2013 (datos de menores)
 
+> **Fuente de verdad: `docs/empresa/`. En conflicto, manda
+> `docs/empresa/decisiones.md`** (y su síntesis `docs/empresa/compliance.md`).
+> Este doc es PREVIO al modelo de Fase 2 y conserva partes OBSOLETAS marcadas
+> abajo. Reescritura profunda = Fase 3-4.
+
+> ### ⚠️ OBSOLETO tras Fase 2
+>
+> | Esto (abajo)                                                                                     | Reemplazo vigente                                                                                                    |
+> | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+> | Seudónimo `studentId` como identidad del menor (§1)                                              | **email + nombre; email = identidad** (RQ-FN02)                                                                      |
+> | Flujo in-system de autorización del acudiente (`setAuthorizationStatus`, estado `otorgada`) (§2) | **atestación ligera** booleana (checkbox) + quién/cuándo; el consentimiento se recolecta FUERA del sistema (RQ-FN10) |
+> | Registro `autorizaciones` con `canalEvidencia`/`registradaPor`/PII (§3)                          | **sin PII del acudiente**; solo booleano de atestación (RQ-FN10)                                                     |
+>
+> **Siguen vigentes:** minimización de PII, analytics sin PII, `MIN_AGE = 13`,
+> derecho de supresión (RQ-FN11), política de tratamiento pública.
+
 **No es asesoría legal.** Ceti es un SaaS **B2B2C** que un colegio privado contrata
 para sus estudiantes (13+). El tratamiento de datos de menores en Colombia está
 regido por la **Ley 1581 de 2012** y el **Decreto 1377 de 2013**: el dato de un
@@ -14,6 +30,8 @@ reales.
 
 ## 1. Minimización de PII (modelo Banzai)
 
+`[OBSOLETO — ver docs/empresa/ y RQ-FN02: el estudiante se identifica por su cuenta OAuth (email = identidad); se guarda email + nombre; se retira el seudónimo studentId. La minimización de PII sigue vigente como principio.]`
+
 - El estudiante se identifica por un **seudónimo provisto por el colegio**
   (`studentId`), no por nombre/correo/edad personales. Ver
   [`docs/data-model.md`](data-model.md).
@@ -26,6 +44,8 @@ reales.
   persona/menor.
 
 ## 2. Flujo de autorización del acudiente (bloqueante)
+
+`[OBSOLETO — ver docs/empresa/ y RQ-FN10: el consentimiento se recolecta FUERA del sistema; dentro solo hay una atestación ligera (booleano "el colegio confirma tener la autorización") + atestadoPor/atestadoAt, sin Function setAuthorizationStatus ni PII del acudiente. El gating de activación (estudiante no activo no genera datos) sigue vigente.]`
 
 1. El colegio crea el cupo del estudiante en el roster. Nace en estado
    **`pendiente_autorizacion`**.
@@ -45,6 +65,8 @@ reales.
 > self-service con enlace tokenizado para el acudiente es mejora de V2.)
 
 ## 3. Registro de autorizaciones
+
+`[OBSOLETO — ver docs/empresa/ y RQ-FN10: no existe colección autorizaciones con canalEvidencia/acudienteRef ni PII del acudiente; solo el booleano de atestación con trazabilidad mínima (quién/cuándo).]`
 
 `colegios/{cid}/autorizaciones/{studentId}` es el registro de consentimientos:
 estado, versión de la política aceptada, fecha, canal de evidencia y quién la

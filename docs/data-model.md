@@ -1,5 +1,22 @@
 # Ceti — Data model (multi-tenant B2B2C)
 
+> **Fuente de verdad: `docs/empresa/`. En conflicto, manda
+> `docs/empresa/decisiones.md`.** Este doc es PREVIO al modelo nuevo (Fase 2) y
+> conserva partes OBSOLETAS marcadas abajo; la especificación viva es
+> `docs/requerimientos.md` (v2). Reescritura profunda = Fase 3-4.
+
+> ### ⚠️ OBSOLETO tras Fase 2 (no heredar estos invariantes)
+>
+> | Esto (abajo en este doc)                                                    | Reemplazo vigente                                                             |
+> | --------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+> | `studentId` seudónimo como llave del estudiante (Principio 3, §3, §4)       | **email = identidad; clave = `uid`** (RQ-FN02)                                |
+> | 4 roles (§2)                                                                | **5 roles**, incluye **admin Ceti** (RQ-FN06)                                 |
+> | `sedeId` en claims / sede activa (§3, §4)                                   | **sedes dormantes** `colegio→curso→estudiante` (RQ-FN01)                      |
+> | `autorizaciones` con `canalEvidencia`/`acudienteRef` (§4, §6)               | **atestación ligera** booleana, sin PII de acudiente (RQ-FN10)                |
+> | `questionBank` global sin grado (§4)                                        | **bancos `grado×mundo×tipo`** + flag `pendiente_validacion_docente` (RQ-FN07) |
+> | `aiProfile` por usuario (§4)                                                | **prohibido**; agregado por curso (RQ-FN09)                                   |
+> | Roadmap MVP: certificado PDF; V2: reporte a padres / dashboard de sede (§8) | **excluidos** (certificados, padres, sede) — ver §9 de requerimientos.md      |
+
 > Source of truth for the Firestore schema after the B2B2C pivot. Any change to
 > `firestore.rules` or `src/shared/lib/firebase/paths.ts` must match this file,
 > and this file must be updated **first** (see `CLAUDE.md` update protocol).
@@ -17,6 +34,7 @@
    `request.auth.token.{role, colegioId, sedeId}`.
 3. **PII minimization (Ley 1581 / Banzai model)**: a student is keyed by a
    **school-provided pseudonym** (`studentId`), not by personal name/email/age.
+   `[OBSOLETO — ver docs/empresa/ y RQ-FN02: email = identidad, clave = uid; se retira el seudónimo studentId]`
    The auth account (`users/{uid}`) is linked to the pseudonym via a membership
    record; identifying data, if ever stored, is isolated and access-restricted.
 4. **Teacher-readable progress**: student progress lives under the tenant tree so
@@ -25,6 +43,8 @@
 5. **No real money**: wallet/goals are simulated (virtual currency).
 
 ## 2. Roles
+
+`[OBSOLETO — ver docs/empresa/ y RQ-FN06: son 5 roles; falta admin Ceti (claim, no allowlist de email)]`
 
 | Role          | Scope                                     | Sees                                          |
 | ------------- | ----------------------------------------- | --------------------------------------------- |
@@ -39,6 +59,8 @@
 ## 3. Custom claims (Auth token)
 
 Set by a Cloud Function (`functions/`) on provisioning / role assignment:
+
+`[OBSOLETO — ver docs/empresa/ y RQ-FN01/FN02: el claim vigente es {role, colegioId?, cursoId?}; sin studentId, sin sedeId]`
 
 ```jsonc
 {
@@ -86,6 +108,9 @@ membership/{uid}                     # uid → tenant mapping, used by rules/boo
 
 questionBank/{questionId}            # GLOBAL, human-curated, read-only to clients
   └─ (doc) { worldId, competencia, ...question }
+# [OBSOLETO — ver docs/empresa/ y RQ-FN07: bancos por grado×mundo×tipo
+#  (bancos/{grado}_{worldId}_{tipo}) + bancosEligeCamino separado + flag
+#  pendiente_validacion_docente; el banco global sin grado queda reemplazado]
 ```
 
 ### Notes
