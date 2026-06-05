@@ -1,0 +1,18 @@
+{
+  "_comment": "Plantilla de un caso del set dorado (E6). Copia este archivo SIN el prefijo '_' (p. ej. caso-001.json) y llénalo. Los archivos que empiezan con '_' se ignoran. 'positivo' = el validador debe DETECTAR el banco malo, es decir expected_verdict='fail'. verdict_hybrid/verdict_4dim son los veredictos producidos por cada modo del validador para medir la brecha de recall.",
+  "bancoId": "9_world_1_multiple_choice",
+  "input": {
+    "bancoId": "9_world_1_multiple_choice",
+    "grado": "9",
+    "worldId": "world_1",
+    "tipo": "multiple_choice",
+    "items": [],
+    "pendiente_validacion_docente": true,
+    "generadoPor": "ia",
+    "version": 1
+  },
+  "expected_verdict": "fail",
+  "rationale": "Por qué este banco debería fallar (o pasar): describe el error inyectado o la corrección esperada.",
+  "verdict_hybrid": null,
+  "verdict_4dim": null
+}

@@ -17,8 +17,18 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "pretest:rules": "node scripts/freeEmulatorPort.mjs",
     "test:rules": "firebase emulators:exec --only firestore --project demo-ceti \"node scripts/testFirestoreRules.mjs\"",
-    "i18n:check": "node scripts/checkI18nKeys.mjs"
+    "i18n:check": "node scripts/checkI18nKeys.mjs",
+    "lint:invariants": "node scripts/invariantLint.mjs",
+    "lint:invariants:update": "node scripts/invariantLint.mjs --update-baseline",
+    "content:schemas": "node scripts/contentSchemas.mjs",
+    "content:gate": "node scripts/bankGate.mjs",
+    "validar-bancos": "node scripts/contentSchemas.mjs && node scripts/bankGate.mjs",
+    "eval:validador": "node scripts/evalValidador.mjs",
+    "rq:check": "node scripts/rqCitationCheck.mjs",
+    "pre-pivot:check": "node scripts/prePivotTagGuard.mjs",
+    "gates": "node scripts/invariantLint.mjs && npm run i18n:check && npm run validar-bancos && npm run eval:validador"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json,md,css,yml,yaml}": [
@@ -100,7 +110,8 @@
     "prettier": "^3.8.3",
     "react-native-svg-transformer": "^1.5.3",
     "ts-node": "^10.9.2",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "zod": "^4.4.3"
   },
   "private": true
 }

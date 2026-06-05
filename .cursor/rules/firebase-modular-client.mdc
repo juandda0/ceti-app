@@ -1,6 +1,6 @@
 ---
 description: "Firebase modular SDK conventions in Ceti — paths, repositories, dual-SDK coexistence."
-globs: src/features/**/data/*.ts, src/shared/lib/firebase/**/*.ts, src/shared/session/**/*.ts, src/services/ai/**/*.ts
+globs: src/features/**/data/*.ts, src/shared/lib/firebase/**/*.ts, src/shared/session/**/*.ts
 alwaysApply: false
 ---
 
@@ -44,19 +44,31 @@ Ceti runs **two** Firebase SDKs side by side. Confusing them is the most common 
 ## Firestore paths — single source of truth
 
 - **All** Firestore refs go through helpers in `src/shared/lib/firebase/paths.ts`. Never construct a `doc(...)` / `collection(...)` with string literals in a repository or screen.
-- When a new path is needed:
+- When a new path is needed (three coordinated changes):
   1. Add the segment to `FIRESTORE_COLLECTIONS` (`paths.ts`).
-  2. Export a `userXxxRef` / `userXxxCollectionRef` helper.
-  3. Update `firestore.rules` to cover the new path with the least-privilege rule.
+  2. Export a `userXxxRef` / `userXxxCollectionRef` (or tenant-tree) helper.
+  3. Cover the new path in `firestore.rules` with a **least-privilege, role-aware**
+     rule — derive it from the matriz §1.3 via skill **`firestore-rules-matrix`
+     (S4)**, never `allow if true` / `allow if signedIn()`.
   4. Only then import the helper from a repository.
-- Allowed paths today:
-  - `users/{uid}`
-  - `users/{uid}/goals/{goalId}`
-  - `users/{uid}/deposits/{depositId}`
-  - `users/{uid}/lessonProgress/{lessonId}`
-  - `users/{uid}/wallet/state`
-  - `users/{uid}/aiProfile/state` (client-writeable today; flagged for migration to Functions)
-  - `questionBank/{questionId}` (client read-only; writes via Admin SDK seed script)
+- The authoritative, evolving path list lives in `docs/data-model.md`. Path
+  families (v2 — identidad por `uid`, R1):
+  - **Account-scoped** (`isSelf(uid)`): `users/{uid}`, `users/{uid}/goals/{goalId}`,
+    `users/{uid}/deposits/{depositId}`, `users/{uid}/lessonProgress/{lessonId}`,
+    `users/{uid}/wallet/state`.
+  - **Tenant tree** (gated por claim `{role, colegioId, cursoId}`, R2/R12):
+    `colegios/{cid}/cursos/{cursoId}/estudiantes/{uid}` (solo `email`+`nombre`, R4),
+    `.../progress/{worldId}` (denormaliza `{colegioId,cursoId,uid}` para
+    collection-group), `cursos/{cursoId}/agregados/*` (contadores por curso, sin
+    decisión individual, R5).
+  - **Content (read-only para todo cliente, R8):** `bancos/{grado}_{worldId}_{tipo}`,
+    `bancosEligeCamino/{grado}_{worldId}` — siembra vía Admin SDK
+    (`scripts/seedQuestionBank.mjs`); el flag `pendiente_validacion_docente` lo
+    cambia una Cloud Function.
+- **Prohibidos como path válido** (deuda legacy en migración — ver CR1 baseline):
+  `users/{uid}/aiProfile/**` (R5), `studentId` como llave (R1), `questionBank/**`
+  global (R8), `autorizaciones/**` con PII de acudiente (R6), `sedes/**` activo
+  (R11).
 
 ## Repository pattern
 
@@ -102,9 +114,17 @@ For deletes: `deleteDoc(ref)` — same null guard, same return shape.
 
 ## Security rules
 
-- `firestore.rules` enforces `isSelf(uid)` on all `users/{uid}/**` paths.
-- `aiProfile/{docId}` is currently writeable by the owner client — this is **flagged deuda** (see `AGENTS.md` → `AIProfile-Functions-Migrator`). Do not add new client-writeable paths with PII without explicit review.
-- `questionBank/{questionId}` is `read: signedIn(), write: false` — seeds go through `scripts/seedQuestionBank.ts` (Admin SDK).
+- `firestore.rules` enforces `isSelf(uid)` on `users/{uid}/**`; el árbol tenant se
+  autoriza por claim (`{role, colegioId, cursoId}`, R2) con least-privilege según
+  la matriz §1.3 (skill `firestore-rules-matrix`, S4). La identidad del estudiante
+  es su **`uid`** (R1) — nunca un `studentId`.
+- **No `aiProfile`**: prohibido construir/persistir perfil individual del menor
+  (R5). Si encuentras el path legacy, es deuda en migración (CR1 baseline), no un
+  patrón a copiar.
+- **Bancos read-only**: `bancos/**` y `bancosEligeCamino/**` son `read` gated,
+  `write:false` para todo cliente (R8) — la siembra va por
+  `scripts/seedQuestionBank.mjs` (Admin SDK) y el flag de validación lo cambia una
+  Cloud Function.
 
 ## Analytics safety
 
@@ -117,4 +137,11 @@ For deletes: `deleteDoc(ref)` — same null guard, same return shape.
 - Do NOT write Firestore strings like `users/${uid}/goals` inline.
 - Do NOT call `getFirestore()` without going through `getFirebaseClients()`.
 - Do NOT skip `stripUndefinedValues` — even a single nested `undefined` will throw at runtime.
-- Do NOT add Cloud Functions code casually; the only sanctioned Function today is the planned `aiProfile` migrator.
+- Do NOT use `studentId` as a key/field/claim — the student is keyed by `uid` (R1).
+- Do NOT create or write `aiProfile/**` (R5), `questionBank/**` global, or
+  `services/ai/**` runtime paths (R7/R8) — these are forbidden; ver
+  `ceti-invariants.mdc` (CR1).
+- Do NOT add a client-writeable path for `bancos/**` — content is read-only,
+  seeded by Admin SDK (R8).
+- Cloud Functions: the sanctioned use is fixing role/colegio claims — patrón en
+  skill `add-cloud-function-claims` (S9). No `superadmin` allowlist.

@@ -56,3 +56,11 @@ app-example
 # generated native folders
 /ios
 /android
+
+# Harness — artefactos generados (no versionar)
+.firebase/
+content/approved/*.json
+.pr-msg.txt
+
+# Claude Code — settings personales (no compartir; settings.json sí se versiona)
+.claude/settings.local.json

@@ -1,143 +1,197 @@
 ---
-description: "Ceti project invariants — B2B2C school multi-tenancy, role hierarchy, allowed Firestore paths, PII minimization (Ley 1581), MIN_AGE, no-real-money. Highest priority rule."
+description: "Ceti — invariantes duros R1–R15 (post-pivot B2B2C). Identidad por uid, 5 roles, PII mínima de menores (Ley 1581), runtime estático, bancos read-only, least-privilege. Prioridad máxima."
 globs: **/*
 alwaysApply: true
 ---
 
 <!--
-Composed rule — distilled from this repo's own ground truth after the B2B2C pivot.
-Sources:
-- CLAUDE.md (product description and current architecture) — anchors this rule.
-- docs/data-model.md (multi-tenant schema, role claims, PII model) — source of truth for data.
-- docs/COMPLIANCE.md (Ley 1581 / Decreto 1377, MIN_AGE=13, PII minimization).
-- firestore.rules (allowed paths and write boundaries).
-- src/shared/lib/firebase/paths.ts (Firestore path helpers — source of truth).
-If this rule contradicts any other rule, this one wins.
+Archivo-ancla del arnés (CR1). Reescritura completa post-pivot — materializa
+docs/harness-design.md (Fase 4). Reemplaza la versión neutralizada de Fase 2.
+Orden de autoridad (D0): docs/empresa/decisiones.md > resto de docs/empresa/ >
+docs/requerimientos.md (v2) > conflictos.md/estado.md > este archivo / CLAUDE.md
+> repo/código. Donde esta regla contradiga docs/empresa/, manda docs/empresa/.
 -->
 
-These are **hard invariants** for Ceti. Apply them in every change.
+> **Fuente de verdad: `docs/empresa/`. En conflicto, manda
+> `docs/empresa/decisiones.md`**, luego el resto de `docs/empresa/`, luego
+> `docs/requerimientos.md` (v2). Esta regla / `CLAUDE.md` ganan frente a otras
+> reglas, skills y memoria, pero **no** frente a `docs/empresa/`.
 
-## Product
+Estos son los **invariantes duros** de Ceti. Aplícalos en cada cambio.
 
-- Ceti is a **B2B2C educational SaaS** sold to **private schools in Colombia**.
-  The buyer is the school; what it pays for is **curricular compliance
-  (CONPES 4005) + teacher reporting + saved teacher time**, delivered through a
-  gamified financial-education experience for students (13+).
-- Every feature must justify itself against compliance/reporting/teacher-time.
-  "It's fun for the student" is not, by itself, a reason to build something.
+## Principio: norma / check / juicio
 
-## Multi-tenancy & roles (core invariant)
+La *norma* de cada invariante vive aquí (R1–R15). La parte mecánicamente
+verificable tiene un **check espejo** en enforcement (`E4 invariant-lint` /
+`E7 rules-matrix-tests`); el *juicio* irreducible lo emiten los agentes de
+veto (D4: `auditor-firestore-rules`, `compliance-privacidad`). No se duplica
+contenido: la norma aquí, el check en `scripts/`, el juicio en los agentes.
 
-- Tenancy hierarchy: **`colegio → (sede, optional in MVP) → curso → estudiante`**.
-  `sede` is modeled but optional in MVP; do not block on it.
-- Roles: `rector`/`coordinador` (whole school / their sede), `profesor` (their
-  courses only), `estudiante` (their own experience only).
-- Authorization is driven by **custom claims** (`role`, `colegioId`, and a
-  `sedeId` when present) on the Firebase Auth token, set by a Cloud Function —
-  **never** trusted from client-writable Firestore fields.
-- `firestore.rules` enforces the hierarchy from day one. A teacher can read a
-  student's progress **only** because a rule authorizes it by role+tenant — never
-  by per-user grants bolted on later.
+## Producto (contexto permanente)
 
-## NOT the family model (forbidden — regression if reintroduced)
+Ceti es un **SaaS educativo B2B2C** vendido a **colegios privados de Colombia**.
+El comprador es el colegio; lo que paga es **cumplimiento curricular (CONPES
+4005) + reportería docente + tiempo docente ahorrado**, entregado mediante una
+experiencia gamificada de educación financiera para estudiantes (13+). Cada
+feature se justifica contra ese objetivo de cumplimiento/reportería; "es
+divertido para el estudiante" no basta como razón para construir algo.
 
-- The old **parent/child financial-guardianship** model was removed and stays
-  removed. Forbidden: `parent`/`child`/`family` entities, routes, stores, repos;
-  any "child profile" owned by another app user; any guardian acting as an
-  in-app user with a dashboard over a minor.
-- The institutional hierarchy (school staff ↔ students) is **org-tenancy, not
-  guardianship** — do not model it with the old family primitives.
-- The **acudiente** (legal guardian) exists **only** as a consent signer in the
-  Ley 1581 authorization flow. They are not an app role, have no login-as-parent
-  dashboard, and see no other student's data.
+## NO es el modelo familiar (regresión si reaparece → R11)
 
-## Compliance — Ley 1581 / Decreto 1377 (blocking)
+El viejo modelo de **tutela financiera padre/hijo** fue removido y sigue
+prohibido: ninguna entidad/ruta/store `parent`/`child`/`family`, ningún "perfil
+de hijo" propiedad de otro usuario, ningún acudiente actuando como usuario con
+dashboard sobre un menor. La jerarquía institucional (staff ↔ estudiantes) es
+**org-tenancy, no tutela**. El **acudiente** aparece únicamente como firmante de
+la autorización Ley 1581 (atestación ligera, R6); no es rol, no tiene login ni
+pantalla.
 
-- Processing a minor's data requires **acudiente authorization** before the
-  student account is activated. A student without recorded authorization stays
-  in `pendiente_autorizacion` and inactive.
-- **Minimize PII**: students are keyed by a **school-provided pseudonym/ID**, not
-  by personal name/email/age, wherever possible. Never write a minor's name,
-  email, or age outside what the authorization flow strictly requires.
-- Maintain a **register of authorizations** (timestamp + version) and support
-  **data suppression** (deletion) on request.
-- A **data-treatment policy** must be linked in-app.
-- `MIN_AGE = 13` is enforced in `UserSetupScreen`. Do not lower it.
-- Analytics params **must not contain user PII**: no `name`, `email`, `age`,
-  `nickname`, `fullName`, or any identifier that maps back to a person/minor.
-  Route all analytics through `src/shared/lib/analytics/logEvent.ts`.
+---
 
-## Removed / forbidden features
+## Invariantes duros (R1–R15)
 
-- **No real money**: savings goals are **simulated** with virtual currency.
-  No gift cards, no "pay kids to learn", no linking to real bank accounts.
-- **No public/global leaderboards** (documented harm to adolescents).
-  Class-level collaboration/competition the teacher can toggle is allowed.
-- **No generative AI in MVP**: detect "where the course is weak" with **simple
-  rules**, not ML. Generative/adaptive question banks are V3+. The human-curated
-  question bank stays the source of truth.
-- **No B2C freemium funnel** as a priority. The customer is the school.
+**R1 — Identidad por email; clave `uid`.** El estudiante se identifica por su
+cuenta OAuth: la clave de `estudiantes/{uid}` es el `uid` de Auth, y se almacenan
+únicamente `email` y `nombre`. Prohibido el seudónimo `studentId` como llave,
+campo o claim en cualquier capa (`firestore.rules`, `paths.ts`, `tenancy.ts`,
+`functions/`, claims). *(RQ-FN02 · conflicto #1)* — Espejo: E4 grupo `studentId`,
+E7 `isEstudianteSelf(uid)`.
 
-## Data model
+**R2 — Autorización solo por custom claims.** Reglas y backend autorizan
+exclusivamente con `request.auth.token.{role, colegioId, cursoId}`. Ningún campo
+escribible por el cliente es autoritativo; los claims los fija solo una Cloud
+Function. No existen claims `sedeId` ni `studentId` activos. *(RQ-FN03, RQ-FN01)*
+— Espejo: E4 grupo `claims`, E7 "campo cliente miente vs. claim".
 
-- Tenancy data lives under the institutional tree (see `docs/data-model.md`);
-  account-scoped auth data lives under `users/{uid}`.
-- **Student progress must be readable by the authorized teacher/rector** — model
-  it under the tenant tree (keyed by pseudonymous `studentId`), not buried under
-  a private `users/{uid}` subtree the teacher cannot reach.
-- **Savings/goals are simulated** (virtual currency). There is no real-money or
-  approval/pending workflow on real funds.
-- Each **world maps 1:1 to a CONPES 4005 competency** (`competencia` field), so
-  the teacher dashboard can show "world = competency".
+**R3 — Cinco roles; `admin` es claim.** Enum exacto `{admin, rector, coordinador,
+profesor, estudiante}` en `tenancy.ts`, `functions/`, `firestore.rules`. `admin`
+es rol con claim de alcance global (sin `colegioId`), no allowlist de email.
+Ningún adulto se auto-asigna rol. Retirado `isSuperAdmin`/`CETI_SUPERADMIN_EMAILS`.
+*(RQ-FN06, RQ-AD03, D7 · conflicto #4)* — Espejo: E4 grupo `roles`, E7 fila
+"admin G".
 
-## Allowed Firestore paths
+**R4 — PII mínima del menor.** En el perfil del estudiante solo `email` y
+`nombre`. Prohibido edad, fecha de nacimiento, documento, teléfono, dirección o
+**grado** en el doc del estudiante/claims/membership; el grado vive en
+`curso.grado`. Toda PII extra requiere R15. Analytics nunca recibe PII de menor.
+*(RQ-FN02 CA2, D9)* — Espejo: E4 grupo `pii-menor` (lista blanca de campos),
+agente CP.
 
-Defined and constructed exclusively via `src/shared/lib/firebase/paths.ts`. The
-authoritative, evolving list lives in `docs/data-model.md`. Any new path requires
-three coordinated changes:
+**R5 — Sin perfil individual del menor.** Prohibido construir/persistir
+perfil/rasgo/etiqueta individual derivado del comportamiento. No existe
+`aiProfile`. "Elige tu camino" y todo diagnóstico = solo agregados por curso
+(`cursos/{cursoId}/agregados/*`); una decisión incrementa un contador agregado y
+nunca se guarda por estudiante ni revela quién eligió qué. *(RQ-FN09, RQ-ES06,
+D4 · conflicto #2)* — Espejo: E4 grupo `perfilamiento`, E7, agente CP.
 
-1. A helper exported from `src/shared/lib/firebase/paths.ts`.
-2. A least-privilege, role-aware rule in `firestore.rules`.
-3. A repository under `src/features/<domain>/data/<entity>Repository.ts` that
-   uses the helper.
+**R6 — Atestación ligera; cero PII de acudiente.** La autorización del acudiente
+se recolecta fuera del sistema. In-system solo un booleano `atestado` en
+`estudiantes/{uid}` (+`atestadoPor`+`atestadoAt`+`politicaVersion`) que un rol
+autorizado marca para activar. Prohibido guardar PII del acudiente y la colección
+`autorizaciones` con `canalEvidencia`/`acudienteRef`. El acudiente no tiene
+cuenta ni pantalla. Mientras `estado!='activo'`, las reglas impiden escribir
+progreso/impactTest. *(RQ-FN10, D9 · conflicto #6)* — Espejo: E4 grupo
+`acudiente`, E7 `estudianteActivo`. Estado destino:
+`pendiente_atestacion|activo|suprimido`.
 
-The global `questionBank/{questionId}` stays read-only for signed-in clients;
-writes go through the Admin SDK seed script.
+**R7 — Runtime estático; IA solo authoring-time.** En runtime la app solo lee del
+banco: ninguna generación/adaptación/selección por modelo en vivo. Prohibido en
+runtime `aiService.adaptQuestion`, `getRecommendedPath`, `analyzeWeaknesses`,
+`adaptiveQuiz`, campos `aiHints`/`isAdaptable`. La selección de las 10 preguntas
+es estática/aleatoria simple. IA solo en authoring-time (D6, offline). El
+diagnóstico por reglas (no ML) se conserva. *(RQ-CN03, RQ-PR05 CA3, D5 ·
+conflicto #7)* — Espejo: E4 grupo `runtime-ia` (discrimina por ruta;
+`content/`+`scripts/` exentos), agente RC.
 
-## Platform
+**R8 — Bancos por `grado×mundo×tipo`, read-only, sembrados.** Contenido en
+`bancos/{grado}_{worldId}_{tipo}` (tipos `multiple_choice|true_false|ordenar`) y
+`bancosEligeCamino/{grado}_{worldId}` (separado, ítems con 2 opciones sin
+`correctAnswer`). Cobertura: 45 quiz + 15 Elige-camino. Todo nace
+`pendiente_validacion_docente:true`, `generadoPor:'ia'`, `version`. Read-only
+para todo cliente (incluido admin UI): siembra vía Admin SDK; la validación
+docente cambia el flag vía Cloud Function. No existe `questionBank` global ni
+`fill_blank`/`calculation`. *(RQ-FN07, RQ-CN05, RQ-PR08 · conflicto #8, prepara
+#9)* — Espejo: E4 grupo `bancos`, E7 `write:false`, E2/E3 estructura+flag.
 
-- **MVP target is web responsive** (Expo Web / React Native Web over this same
-  codebase). Keep platform shims in `src/shared/lib/*` (`*.web.ts` /
-  `Platform.OS` branches): MMKV→AsyncStorage, native Firebase telemetry→no-op,
-  Google sign-in→popup/redirect. Native iOS/Android is **out of scope for MVP** —
-  do not invest in EAS native builds, native-only modules, or store flows now.
+**R9 — Quiz de exactamente 10 ítems, 3 tipos.** Cada quiz = 10 ítems del banco
+`grado×mundo`, mezcla **4 MC + 3 V/F + 3 ordenar**. Tipos `multiple_choice`,
+`true_false`, `ordenar` (drag-to-rank; orden canónico nunca expuesto antes de
+responder). Prohibido `fill_blank`/`calculation` u otro número. Calificación
+determinista e inmediata (`ordenar`: score parcial por posición). *(RQ-ES03,
+RQ-ES04 · conflicto #9)* — Espejo: E2 (length==10, conteo por tipo), E4 grupo
+`bancos`, agente TQ.
 
-## Code organization
+**R10 — Sin dinero real; sin ranking público individual.** Todo monto del
+simulador y goals de ahorro = moneda virtual simulada; prohibido dinero real,
+cuentas bancarias, gift cards. Gamificación atada a `mastery`, no al tiempo.
+Prohibido leaderboard global/público/inter-colegio; permitido solo leaderboard
+de aula (acotado al curso, `curso.colaboracionAula`), sin más PII que el nombre
+dentro del curso. Pre/post-test no otorga XP/badges ni altera `mastery`/desbloqueo.
+*(RQ-ES05, ES08, ES09, TS04)* — Espejo: E4 grupo `dinero-leaderboard`, E7 scope
+de aula, TQ.
 
-- **Feature-first.** Domain code lives in `src/features/<domain>/{screens,
-  components,data,store,...}`. Cross-feature imports are forbidden — share via
-  `src/shared/*`.
-- **Firestore paths** via `src/shared/lib/firebase/paths.ts` (see
-  `firebase-modular-client.mdc`).
-- **Store persistence** via `@shared/lib/storage/mmkv` (see `zustand-stores.mdc`).
-- **User-visible strings** via `t('...')`, defined in
-  `src/shared/i18n/locales/es.json`.
+**R11 — Features excluidas (permanente).** Excluidos y prohibidos sin R15:
+certificados/diplomas PDF (`buildCertificateHtml`), reporte/app para padres y
+todo login/dashboard de acudiente, facturación in-system, **sedes activas** (sede
+dormante: `sedesEnabled:false`, sin docs en `sedes/`, ninguna pantalla la
+requiere), IA generativa/adaptativa en runtime (R7), modelo
+`parent`/`child`/`family`. *(D2, RQ-PR07, RQ-FN01, §9 · conflictos #5, #3)* —
+Espejo: E4 grupo `features-excluidas`, E7 sede inerte, agente CP.
 
-## Tooling stack
+**R12 — Reglas least-privilege según matriz §1.3.** Toda acción cross-tenant se
+autoriza con reglas de mínimo privilegio derivadas de la matriz rol×acción
+(§1.3), con helpers `isRole`, `sameColegio`, `isProfesorDe`, `isEstudianteSelf`,
+`estudianteActivo`. Invariantes: rector nunca lee datos nominales del menor (solo
+agregados; sus únicas escrituras son atestación y supresión); profesor no
+suprime; crear estructura = admin, operar = coordinador/profesor; admin opera
+global sin anular a los demás. `/{document=**}` → deny. *(RQ-FN12, IN01..IN05,
+AD06)* — La traducción operativa vive en S4. Espejo: E7 (un escenario por celda
+crítica), E4 grupo `default-deny`.
 
-- **State management:** Zustand. **Local persistence:** MMKV (`react-native-mmkv`,
-  web falls back to AsyncStorage).
-- **Server state:** repository pattern under `src/features/**/data/*Repository.ts`
-  against Firestore (JS modular SDK — web-compatible).
-- **Styling:** RN `StyleSheet` + theme via `useThemeColors()`.
-- **E2E:** Maestro (`e2e/maestro/`).
-- **Diagnostics:** Crashlytics/Perf/Analytics via `@react-native-firebase/*` on
-  native; **no-op on web**.
+**R13 — Todo trabajo mapea a un RQ.** Ninguna unidad de trabajo entra sin un
+`RQ-id` de `requerimientos.md` que la justifique; lo que no mapea se rechaza o
+escala como cambio de spec (no se construye por iniciativa). `requerimientos.md`
+es el universo de trabajo y la definición de "terminado" (§9). *(D2, §9)* —
+Espejo: E8 (commit/PR cita `RQ-id` válido), agente PS (juicio del mapeo).
 
-## When in doubt
+**R14 — Cifras caducables nunca quemadas.** Ningún valor que caduca (SMMLV, UVT,
+tasas, topes legales, precios) se escribe como literal fijo en contenido; se
+referencia desde `content/constants/economia-CO.<año>.json`. Lenguaje neutro
+(tono/registro), ejemplos cotidianos válidos en Colombia; "neutro" no borra el
+contexto-país. *(RQ-CN04, C4-matiz)* — Cómo parametrizar: S6. Espejo: E3 check
+`caducables`, VC dimensión *precisión financiera*.
 
-- Changes to `firestore.rules` route through the rules auditor (see `AGENTS.md`)
-  and must be tested against the emulator with role/tenant scenarios.
-- Changes to analytics, auth, role claims, PII handling, or age handling route
-  through the compliance guard (Ley 1581 + COPPA/GDPR-K).
-- Before any release, the Maestro smoke must be green.
+**R15 — Levantar/cambiar un invariante exige cambio coordinado.** Modificar o
+levantar cualquier invariante (R1–R14) requiere actualizar en el mismo cambio
+`CLAUDE.md` **y** esta regla en `ceti-invariants.mdc` (y el check espejo si
+aplica). Ningún agente (incluido RF) lo hace unilateralmente; es decisión humana
+citada contra `decisiones.md` (que no se reabre). Orden de autoridad:
+`decisiones.md` > resto de `docs/empresa/` > `requerimientos.md` > rules/CLAUDE.md
+> código. *(D11, D0, Update protocol)* — Espejo: E4 check `coherencia-arnes`
+(diff que toca la rule sin tocar CLAUDE.md, o viceversa, advierte/bloquea).
+
+---
+
+## Baseline de deuda legacy (solo-decrecimiento)
+
+El código aún sin refactorizar viola algunos invariantes (`studentId`,
+autorizaciones con PII, `aiProfile`, etc.). Esas violaciones **conocidas** están
+inventariadas en `scripts/legacy-baseline.json`, cada entrada citando su
+conflicto de `docs/empresa/conflictos.md`. Reglas del baseline (invariante):
+
+- Los gates (`E4 invariant-lint` y compañía) **fallan solo ante violaciones
+  NUEVAS** no listadas en el baseline.
+- El baseline es **solo-decrecimiento**: está **prohibido agregarle entradas**.
+  Una violación nueva se arregla, no se añade al baseline.
+- El baseline debe **llegar a cero** al final del refactor del pivot.
+
+Quitar una entrada del baseline = la unidad de refactor que la elimina (RF, S8).
+
+## Organización de código (feature-first)
+
+Código de dominio en `src/features/<domain>/{screens,components,data,store,...}`;
+imports cross-feature prohibidos (comparte vía `src/shared/*`). Paths de
+Firestore, repositorios y SDK: ver `firebase-modular-client.mdc` (CR3). Stores y
+persistencia MMKV: ver `zustand-stores.mdc` (CR4). Convenciones TS/Expo/i18n: ver
+`expo-rn-typescript.mdc` (CR2). Strings visibles vía `t('...')` en
+`src/shared/i18n/locales/es.json`.

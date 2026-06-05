@@ -1,127 +1,166 @@
 # CLAUDE.md
 
-This file is the entry point that anchors all other guidance for Claude (and any
-AI assistant) working in this repository. If a rule, skill, or memory conflicts
-with this file, **this file wins**.
+> **Fuente de verdad: `docs/empresa/`. En conflicto, manda
+> `docs/empresa/decisiones.md`**, luego el resto de `docs/empresa/`, luego
+> `docs/requerimientos.md` (v2). Este archivo es el ancla del arnés: gana frente
+> a reglas, skills y memoria, pero **no** frente a `docs/empresa/`.
+>
+> Orden de autoridad (D0): `docs/empresa/decisiones.md` > resto de
+> `docs/empresa/` > `docs/requerimientos.md` (v2) > `conflictos.md`/`estado.md` >
+> este archivo / `.cursor/rules/*` > repo/código.
 
-## What Ceti is
+Este archivo ancla toda la guía para Claude (y cualquier asistente) en este
+repositorio. El diseño completo del arnés (departamentos, agentes, rules, skills,
+enforcement) vive en **[`docs/harness-design.md`](docs/harness-design.md)**, que
+**absorbe y reemplaza** a los antiguos `docs/HARNESS.md` y `AGENTS.md`.
 
-Ceti is a **B2B2C educational SaaS** sold to private schools in Colombia. The
-paying customer is the school (rector/coordinador); what it buys is **curricular
-compliance (CONPES 4005) + teacher reporting + saved teacher time**, delivered
-through a gamified financial-education experience for students (13+). It is
-**not** "a fun app" — every feature must serve that compliance/reporting goal.
+## Qué es Ceti
 
-- **Multi-tenant with role hierarchy**: `colegio → (sede, optional in MVP) →
-curso → estudiante`. Roles: `rector`/`coordinador` (whole school or sede),
-  `profesor` (own courses), `estudiante` (own experience). Permissions are
-  enforced in `firestore.rules` from custom claims (`role`, `colegioId`) — by
-  design from the start, never as a later patch.
-- **This is NOT the family model.** The old parent/child financial-guardianship
-  model was removed and stays forbidden — no `parent`/`child`/`family` entities,
-  routes, or stores, and no acudiente acting as an in-app user with a dashboard.
-  The institutional hierarchy (school staff ↔ students) is org-tenancy, not
-  guardianship. The acudiente (legal guardian) appears **only** in the Ley 1581
-  data-authorization (consent) flow — see `docs/COMPLIANCE.md`.
-- **MVP is web responsive** (Expo Web / React Native Web over this same
-  codebase — the web shims already exist in `src/shared/lib/*`). Native
-  iOS/Android is out of scope for the MVP.
-- **No real money, ever.** Savings goals are simulated with virtual currency.
-  No gift cards, no real-bank-account linking. No public/global leaderboards
-  (class-level collaboration the teacher can toggle is allowed).
-- **No generative AI in MVP.** "Where is the course weak?" is computed with
-  simple rules, not ML. Generative/adaptive question banks are V3+.
-- **PII of minors is minimized** (Banzai model): students are keyed by a
-  school-provided pseudonym/ID, not by personal name/email, wherever possible.
+Ceti es un **SaaS educativo B2B2C** vendido a **colegios privados de Colombia**.
+El cliente que paga es el colegio (rector/coordinador); lo que compra es
+**cumplimiento curricular (CONPES 4005) + reportería docente + tiempo docente
+ahorrado**, entregado mediante una experiencia gamificada de educación financiera
+para estudiantes (13+). **No** es "una app divertida": cada feature debe servir a
+ese objetivo de cumplimiento/reportería.
+
+- **Multi-tenant con jerarquía de roles**: `colegio → curso → estudiante` (sede
+  **dormante**, RQ-FN01). **Cinco roles**: `admin` (Ceti, global), `rector` y
+  `coordinador` (colegio), `profesor` (sus cursos), `estudiante` (su experiencia).
+  La autorización se aplica en `firestore.rules` desde custom claims
+  (`role`, `colegioId`, `cursoId`) — por diseño desde el inicio, nunca como
+  parche posterior.
+- **NO es el modelo familiar.** El viejo modelo de tutela padre/hijo fue removido
+  y sigue prohibido: sin entidades/rutas/stores `parent`/`child`/`family`, sin
+  acudiente como usuario in-app con dashboard. El acudiente aparece **solo** en la
+  atestación ligera Ley 1581 (R6). La jerarquía institucional es org-tenancy, no
+  tutela.
+- **App completa, web-first** (Expo Web / RN-Web sobre este mismo codebase).
+  Nativo iOS/Android fuera de alcance.
+- **Sin dinero real, jamás.** Simulador con moneda virtual. Sin gift cards, sin
+  vínculo a cuentas bancarias. Sin leaderboards públicos individuales (solo
+  colaboración de aula que el profesor activa).
+- **IA solo en authoring-time** (offline). El runtime se sirve 100% estático
+  (sin generación/adaptación ML en vivo). El diagnóstico del curso es por reglas,
+  no ML.
+- **PII de menores minimizada** (Ley 1581): solo `email` + `nombre`; identidad por
+  `uid` de Auth (sin seudónimo `studentId`).
 - Stack: Expo 54, React Native 0.81, TypeScript strict, Firebase 12 modular,
   Zustand 5, MMKV, Maestro E2E, Jest + RTL.
-- Architecture: feature-first (`src/features/{auth,learning,savings,...}`) with
-  shared infrastructure under `src/shared/*`.
-- Backend: Firestore + `firestore.rules` + `docs/data-model.md` (tenancy
-  schema). Cloud Functions (`functions/`) is scaffolded; the pivot's first use
-  is setting role/colegio custom claims.
+- Arquitectura: feature-first (`src/features/{auth,learning,savings,...}`) con
+  infraestructura compartida bajo `src/shared/*`.
 
-The phased roadmap (MVP → V2 → V3) lives in `docs/data-model.md` and the pivot
-plan. The **invariant-safe V2 subset is now built** (weakness-detection reports,
-life-project goals, class-scoped collaboration/leaderboard, sede dashboard). Still
-**not built and gated by invariants** — do not build without lifting the invariant
-(update this file + the rule in the same change): generative AI, native iOS/Android
-app, and any acudiente login/dashboard (the "parents app"). LMS roster sync and a
-read-only parents _report_ (shared out-of-band, not a login) remain future work.
+## Invariantes duros (R1–R15) — anclas
 
-## Source-of-truth documents
+La norma completa vive en
+[`.cursor/rules/ceti-invariants.mdc`](.cursor/rules/ceti-invariants.mdc) (CR1).
+Aquí una línea por invariante; **levantarlos exige cambio coordinado** (R15: este
+archivo **y** la rule en el mismo cambio).
 
-Read these before changing anything non-trivial. They are kept up to date in
-this repo and are authoritative.
+- **R1** — Identidad por email; clave `estudiantes/{uid}` con solo `email`+`nombre`. Prohibido `studentId`. _(RQ-FN02)_
+- **R2** — Autorización solo por custom claims `{role, colegioId, cursoId}`; ningún campo cliente es autoritativo; sin `sedeId`/`studentId`. _(RQ-FN03/FN01)_
+- **R3** — Cinco roles `{admin, rector, coordinador, profesor, estudiante}`; `admin` es claim global, no allowlist de email. _(RQ-FN06)_
+- **R4** — PII mínima del menor: solo `email`+`nombre`; prohibido edad/fecha/documento/teléfono/dirección/grado; analytics sin PII. _(RQ-FN02)_
+- **R5** — Sin perfil individual del menor; sin `aiProfile`; Elige-camino/diagnóstico solo agregados por curso. _(RQ-FN09)_
+- **R6** — Atestación ligera; cero PII de acudiente; booleano `atestado` activa al estudiante; acudiente sin cuenta/pantalla. _(RQ-FN10)_
+- **R7** — Runtime estático; IA solo authoring-time; prohibida adaptación/selección por modelo en vivo. _(RQ-CN03)_
+- **R8** — Bancos `grado×mundo×tipo`, read-only, sembrados vía Admin SDK; flag `pendiente_validacion_docente`. _(RQ-FN07)_
+- **R9** — Quiz de exactamente 10 ítems = 4 MC + 3 V/F + 3 ordenar. _(RQ-ES03/ES04)_
+- **R10** — Sin dinero real; sin ranking público; solo leaderboard de aula. _(RQ-ES05/ES08/ES09)_
+- **R11** — Features excluidas (certificados PDF, app/reporte de padres, facturación, sedes activas, IA runtime, `parent/child/family`). _(D2/§9)_
+- **R12** — Reglas least-privilege según matriz §1.3; default deny `/{document=**}`. _(RQ-FN12)_
+- **R13** — Todo trabajo mapea a un `RQ-id` de `requerimientos.md`. _(§9)_
+- **R14** — Cifras caducables nunca quemadas; vía `content/constants/economia-CO.<año>.json`. _(RQ-CN04)_
+- **R15** — Levantar/cambiar un invariante exige cambio coordinado (`CLAUDE.md` + rule). _(D11)_
 
-- **[AGENTS.md](AGENTS.md)** — the agent ecosystem: who does what, who blocks
-  whom, what gates exist before merge or release.
-- **[docs/data-model.md](docs/data-model.md)** — multi-tenant Firestore schema
-  (`colegio → curso → estudiante`), role custom claims, PII-minimization model,
-  and the MVP/V2/V3 roadmap. Authoritative for any data or rules change.
-- **[docs/COMPLIANCE.md](docs/COMPLIANCE.md)** — **Ley 1581 / Decreto 1377**
-  (data of minors, acudiente authorization) plus COPPA / GDPR-K guidance,
-  `MIN_AGE = 13`, PII minimization, analytics minimization, PIN handling.
-- **[README.md](README.md)** — how to install, run, build, and what the smoke
-  test should validate.
+**Baseline de deuda legacy:** el código aún sin refactorizar viola algunos
+invariantes; sus violaciones conocidas están en `scripts/legacy-baseline.json`
+(solo-decrecimiento, prohibido agregar entradas, debe llegar a cero). Los gates
+fallan solo ante violaciones **nuevas**. Ver CR1.
+
+## Documentos fuente de verdad
+
+Léelos antes de cualquier cambio no trivial.
+
+- **[docs/empresa/](docs/empresa/)** — cerebro de la empresa. `decisiones.md`
+  (máxima autoridad), `conflictos.md`, `vision.md`, `modelo-negocio.md`,
+  `producto.md`, `compliance.md`, `competencia.md`.
+- **[docs/requerimientos.md](docs/requerimientos.md)** — especificación v2
+  (definición de "terminado"); universo de RQ (R13).
+- **[docs/harness-design.md](docs/harness-design.md)** — diseño del arnés:
+  agentes, departamentos, gates, pipeline de contenido. Absorbe HARNESS/AGENTS.
+- **[docs/data-model.md](docs/data-model.md)** / **[docs/COMPLIANCE.md](docs/COMPLIANCE.md)**
+  — schema de tenancy y Ley 1581 (targets de refactor del pivot).
+- **[docs/estado.md](docs/estado.md)** — bitácora de avance por fases.
 
 ## Active rules
 
-Cursor / Claude rules live in [`.cursor/rules/`](.cursor/rules/). Each rule
-states its source in its header. They are loaded automatically by tooling that
-supports `.mdc` rules; humans should read them too.
+Las rules viven en [`.cursor/rules/`](.cursor/rules/) (lo que el motor carga).
 
-| Rule                                                                       | Scope                                                                             |
-| -------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| [`ceti-invariants.mdc`](.cursor/rules/ceti-invariants.mdc)                 | Project invariants — highest priority. Forbidden refs, MIN_AGE, removed features. |
-| [`expo-rn-typescript.mdc`](.cursor/rules/expo-rn-typescript.mdc)           | Expo 54 + RN 0.81 + TS strict conventions, ESLint/Prettier, EAS, i18n.            |
-| [`firebase-modular-client.mdc`](.cursor/rules/firebase-modular-client.mdc) | Firebase modular SDK usage, dual-SDK coexistence, repository pattern.             |
-| [`zustand-stores.mdc`](.cursor/rules/zustand-stores.mdc)                   | Store design, selectors, MMKV persistence, testing.                               |
-
-If a rule and `AGENTS.md` disagree on policy, follow `AGENTS.md` for _agent
-behavior_ and the rule for _code conventions_.
+| Rule                                                                             | Scope                                                         |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| [`ceti-invariants.mdc`](.cursor/rules/ceti-invariants.mdc) (CR1)                 | Invariantes R1–R15 + baseline legacy. Prioridad máxima.       |
+| [`expo-rn-typescript.mdc`](.cursor/rules/expo-rn-typescript.mdc) (CR2)           | Expo 54 + RN 0.81 + TS strict, ESLint/Prettier, EAS, i18n.    |
+| [`firebase-modular-client.mdc`](.cursor/rules/firebase-modular-client.mdc) (CR3) | Firebase modular SDK, dual-SDK, paths v2, patrón repositorio. |
+| [`zustand-stores.mdc`](.cursor/rules/zustand-stores.mdc) (CR4)                   | Diseño de stores, selectores, persistencia MMKV, testing.     |
 
 ## Active skills
 
-Skills live in [`.claude/skills/`](.claude/skills/) and formalize patterns that
-are already repeated in the codebase. Each skill is invoked by name.
+Las skills viven en [`.claude/skills/`](.claude/skills/) y formalizan
+procedimientos/conocimiento reutilizable (no repiten la _norma_ de las rules ni
+el _check_ del enforcement).
 
-| Skill                                                                          | Use when                                                                                                                           |
-| ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
-| [`add-firestore-repository`](.claude/skills/add-firestore-repository/SKILL.md) | A new entity needs to be persisted (under the tenancy tree in `docs/data-model.md`, or `users/{uid}/...` for account-scoped data). |
-| [`add-zustand-mmkv-store`](.claude/skills/add-zustand-mmkv-store/SKILL.md)     | A new piece of shared client-state with MMKV persistence is needed.                                                                |
-| [`add-screen`](.claude/skills/add-screen/SKILL.md)                             | A new app page, tab, or onboarding step is needed.                                                                                 |
+| Skill                             | Úsala cuando                                                          |
+| --------------------------------- | --------------------------------------------------------------------- |
+| `add-firestore-repository` (S1)   | Persistir una entidad nueva bajo el árbol tenant o `users/{uid}/...`. |
+| `add-zustand-mmkv-store` (S2)     | Nuevo estado cliente compartido con persistencia MMKV.                |
+| `add-screen` (S3)                 | Nueva pantalla/tab/ruta (con role-gating).                            |
+| `firestore-rules-matrix` (S4)     | Traducir la matriz §1.3 a reglas least-privilege + escenarios.        |
+| `content-schemas` (S5)            | Schemas Zod por tipo de ítem/banco.                                   |
+| `content-authoring-pipeline` (S6) | Generar contenido (banco) authoring-time → validar → sembrar.         |
+| `compliance-ley1581` (S7)         | Revisar PII/perfilamiento de un feature (Ley 1581).                   |
+| `refactor-pivot` (S8)             | Demoler código viejo del pivot según `conflictos.md`.                 |
+| `add-cloud-function-claims` (S9)  | Cloud Function que fija claims de rol/colegio.                        |
+
+## Agentes y enforcement
+
+- **Agentes** (12 en 6 departamentos D1–D6): `.claude/agents/d{N}-{depto}/*.md`.
+  Constructores (FE/BE/RF/TQ/GC/DR) producen diff; revisores (RC) y veto
+  (AR/CP de D4) bloquean merge. Mapa completo en `docs/harness-design.md`.
+- **Enforcement** (E1–E11): hook `PostToolUse` (E1), gates de contenido (E2/E3),
+  `invariant-lint` (E4), slash commands (E5), eval del validador (E6),
+  rules-matrix-tests (E7), rq-citation (E8), pre-pivot-tag-guard (E9), CI (E10),
+  pre-commit husky (E11). Detalle en `docs/harness-design.md` → Capa 4.
 
 ## Quick conventions reference
 
-- Path aliases: `@/*` (root), `@features/*` (`src/features/*`), `@shared/*` (`src/shared/*`). Never relative-cross-feature imports.
-- Firestore paths: always via `src/shared/lib/firebase/paths.ts`, matching the tenancy schema in `docs/data-model.md`. Never inline string literals.
-- Firestore writes: always via a `*Repository.ts` with `getFirebaseClients()` null guard + `stripUndefinedValues` + `{ merge: true }` + boolean return.
-- Tenancy & roles: every cross-student read (teacher/rector views) is gated by `role`/`colegioId` custom claims in `firestore.rules`. Never read another student's data from the client without a rule that authorizes it by role.
-- Student PII: never write a minor's name/email/age outside what the Ley 1581 flow strictly requires; prefer the school-provided pseudonym/`studentId`.
-- Store persistence: always `createJSONStorage(() => createZustandMmkvStorage())` — never bare `AsyncStorage`.
-- User-visible strings: always `t('...')` with keys in `src/shared/i18n/locales/es.json`.
-- Analytics: route through `src/shared/lib/analytics/logEvent.ts`. **Never** put names, emails, ages, or any minor PII into analytics params.
+- Path aliases: `@/*` (root), `@features/*` (`src/features/*`), `@shared/*` (`src/shared/*`). Nunca imports relativos cross-feature.
+- Firestore paths: siempre vía `src/shared/lib/firebase/paths.ts`, según `docs/data-model.md`. Nunca literales inline.
+- Firestore writes: siempre vía `*Repository.ts` con guard `getFirebaseClients()` + `stripUndefinedValues` + `{ merge: true }` + retorno boolean.
+- Tenancy & roles: todo read cross-estudiante (staff) se gatea por `role`/`colegioId`/`cursoId` en `firestore.rules`. Nunca leer datos de otro estudiante sin regla que lo autorice por rol (R12).
+- PII del menor: solo `email`+`nombre`; nunca edad/grado/documento (R4). `bancos/**` read-only (R8).
+- Persistencia de stores: siempre `createJSONStorage(() => createZustandMmkvStorage())` — nunca PII/tokens a MMKV (R4).
+- Strings visibles: siempre `t('...')` con claves en `src/shared/i18n/locales/es.json`.
+- Analytics: vía `src/shared/lib/analytics/logEvent.ts`. **Nunca** nombres, emails, edades ni PII de menor en params.
 
 ## Tooling commands
 
-| Command                        | Purpose                            |
-| ------------------------------ | ---------------------------------- |
-| `npm start`                    | Metro + Expo dev server            |
-| `npm run typecheck`            | `tsc --noEmit` — must pass         |
-| `npm run lint`                 | ESLint flat config — must pass     |
-| `npm test`                     | Jest — must pass                   |
-| `npm run test:rules`           | Firestore rules vs. emulador       |
-| `npm run i18n:check`           | Toda clave `t()` existe en es.json |
-| `npm run format`               | Prettier write                     |
-| `npm audit --audit-level=high` | Bloqueante en CI                   |
-
-CI (`.github/workflows/ci.yml`): job `quality` corre typecheck + lint +
-`i18n:check` + test + `npm audit`; job `functions` compila Cloud Functions; job
-`rules` corre `test:rules` contra el emulador (con JDK).
+| Command                        | Purpose                                                 |
+| ------------------------------ | ------------------------------------------------------- |
+| `npm start`                    | Metro + Expo dev server                                 |
+| `npm run typecheck`            | `tsc --noEmit` — must pass                              |
+| `npm run lint`                 | ESLint flat config — must pass                          |
+| `npm test`                     | Jest — must pass                                        |
+| `npm run test:rules`           | Firestore rules vs. emulador                            |
+| `npm run i18n:check`           | Toda clave `t()` existe en es.json                      |
+| `npm run lint:invariants`      | E4 invariant-lint (R1–R14)                              |
+| `npm run validar-bancos`       | E2/E3 gate de contenido                                 |
+| `npm run gates`                | Gates rápidos: invariant-lint + i18n + contenido + eval |
+| `npm run format`               | Prettier write                                          |
+| `npm audit --audit-level=high` | Bloqueante en CI                                        |
 
 ## Update protocol
 
-When you change project conventions, update this file and the affected rule in
-the same change. Rules and skills should never contradict CLAUDE.md silently —
-update CLAUDE.md first.
+Cuando cambies convenciones del proyecto, actualiza este archivo y la rule
+afectada en el mismo cambio. Las rules y skills nunca contradicen `CLAUDE.md` en
+silencio — actualiza `CLAUDE.md` primero. Para invariantes (R1–R15) aplica R15
+(cambio coordinado citado contra `docs/empresa/decisiones.md`).

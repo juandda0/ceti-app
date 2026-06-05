@@ -16,11 +16,33 @@ jobs:
           node-version: '20'
           cache: npm
       - run: npm ci
+      - run: npm run lint:invariants # E4 invariant-lint (R1–R14 + baseline)
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run i18n:check
       - run: npm test
+      - run: npm run validar-bancos # E2/E3 content gate (Zod + bank-insertion)
+      - run: npm run eval:validador # E6 eval del validador (golden set; sin regresión)
       - run: npm audit --audit-level=high
+
+  rq-citation:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      # E8 — el cuerpo/título del PR (o el último commit) cita un RQ-id válido.
+      - name: RQ citation check
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          printf '%s\n%s\n' "$PR_TITLE" "$PR_BODY" > .pr-msg.txt
+          node scripts/rqCitationCheck.mjs .pr-msg.txt
 
   functions:
     runs-on: ubuntu-latest
