@@ -1,0 +1,46 @@
+{
+  "bancoId": "9_world_5",
+  "grado": "9",
+  "worldId": "world_5",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "situaciones": [
+    {
+      "id": "9_w5_ec_01",
+      "enunciado": "Un amigo te ofrece prestarte dinero para comprar de inmediato algo que quieres, pero todavía no sabes con qué lo devolverías. Aún podrías esperar y ahorrar para conseguirlo.",
+      "opcionA": {
+        "texto": "Aceptar el préstamo y llevarte la cosa hoy mismo",
+        "consecuencia": "Tienes el objeto ahora, pero asumes una deuda sin un plan claro de cómo devolverla, lo que puede complicarte más adelante."
+      },
+      "opcionB": {
+        "texto": "Esperar y ahorrar poco a poco para comprarlo con dinero propio",
+        "consecuencia": "Te demoras más en tenerlo, pero llegas a la meta sin deuda y sin presión de pagos futuros."
+      }
+    },
+    {
+      "id": "9_w5_ec_02",
+      "enunciado": "Tienes una deuda pendiente y este mes el dinero alcanza justo. Puedes pagar el total acordado o pagar solo una parte y usar el resto en un plan de fin de semana.",
+      "opcionA": {
+        "texto": "Pagar el total acordado y posponer el plan",
+        "consecuencia": "Te quedas sin el plan por ahora, pero la deuda baja como estaba previsto y no se suman costos por atraso."
+      },
+      "opcionB": {
+        "texto": "Pagar solo una parte y salir el fin de semana",
+        "consecuencia": "Disfrutas el plan, pero queda un saldo que sigue sumando intereses y la deuda termina costando más."
+      }
+    },
+    {
+      "id": "9_w5_ec_03",
+      "enunciado": "Notas que tienes varios compromisos por pagar y cada vez te cuesta más cumplirlos a tiempo. Empiezas a pensar qué hacer.",
+      "opcionA": {
+        "texto": "Hablar con alguien de confianza y con el prestamista para reorganizar los pagos",
+        "consecuencia": "Reconocer el problema y buscar ayuda te permite renegociar plazos y retomar el control de la situación."
+      },
+      "opcionB": {
+        "texto": "Dejar las cuentas para después y no contarle a nadie",
+        "consecuencia": "Evitas la conversación incómoda hoy, pero los compromisos siguen acumulándose y se vuelven más difíciles de manejar."
+      }
+    }
+  ]
+}

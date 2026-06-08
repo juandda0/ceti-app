@@ -1,0 +1,26 @@
+{
+  "grado": "10",
+  "worldId": "world_3",
+  "cards": [
+    {
+      "titulo": "El fondo de emergencia",
+      "cuerpo": "Es un ahorro reservado solo para imprevistos. Suele apuntar a cubrir varios meses de tus gastos esenciales y conviene tenerlo disponible y separado del dinero del día a día.",
+      "ejemplo": "Si un día se daña algo importante en casa y toca repararlo pronto, este fondo te permite afrontarlo sin desorganizar el resto de tu plan."
+    },
+    {
+      "titulo": "Ahorrar e invertir no son lo mismo",
+      "cuerpo": "Ahorrar prioriza la seguridad y la disponibilidad del dinero. Invertir busca que crezca, asumiendo algo de riesgo. Cada uno sirve para metas distintas.",
+      "ejemplo": "Guardas en tu ahorro lo que podrías necesitar pronto, y reservas para crecer lo que no usarás en mucho tiempo."
+    },
+    {
+      "titulo": "Interés compuesto y tiempo",
+      "cuerpo": "En el interés compuesto, los intereses ganados se suman al ahorro y empiezan a generar nuevos intereses. Por eso el tiempo juega a favor de quien empieza temprano.",
+      "ejemplo": "Quien comienza a ahorrar con anticipación le da a sus intereses más oportunidades de generar todavía más intereses."
+    },
+    {
+      "titulo": "Liquidez frente a rendimiento",
+      "cuerpo": "La liquidez es qué tan fácil y rápido puedes usar tu dinero. El rendimiento es cuánto puede crecer. Para imprevistos pesa la liquidez; para metas lejanas, suele importar más el rendimiento.",
+      "ejemplo": "Para una urgencia quieres el dinero a la mano; para una meta lejana puedes dejarlo crecer con calma."
+    }
+  ]
+}

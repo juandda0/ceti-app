@@ -1,0 +1,179 @@
+{
+  "bancoId": "11_world_4_multiple_choice",
+  "grado": "11",
+  "worldId": "world_4",
+  "tipo": "multiple_choice",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "11_w4_mc_01",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "Un crédito informa una tasa nominal y una tasa efectiva anual. ¿Por qué la tasa efectiva anual suele expresar mejor el costo de usar el dinero prestado?",
+      "opciones": [
+        "Porque siempre es más baja que la tasa nominal y conviene más a quien toma el crédito.",
+        "Porque tiene en cuenta cómo se acumulan los intereses a lo largo del año, no solo la referencia base.",
+        "Porque la fija cada entidad sin relación con el plazo del crédito.",
+        "Porque solo aplica cuando el crédito se paga en un único pago al final."
+      ],
+      "correctIndex": 1,
+      "explicacion": "La tasa efectiva anual incorpora la forma en que los intereses se acumulan durante el año, por lo que refleja el costo real de usar el dinero mejor que la sola tasa nominal de referencia."
+    },
+    {
+      "id": "11_w4_mc_02",
+      "competencia": "credito",
+      "dificultad": 5,
+      "enunciado": "La tasa de usura funciona como un tope legal. ¿Qué describe mejor su papel en el crédito?",
+      "opciones": [
+        "Es la tasa que cada persona negocia libremente sin ningún límite.",
+        "Es la tasa mínima que toda entidad debe cobrar a cualquier cliente.",
+        "Es el límite máximo que una entidad puede cobrar por interés; cobrar por encima no está permitido.",
+        "Es un descuento que las entidades aplican a los buenos pagadores."
+      ],
+      "correctIndex": 2,
+      "explicacion": "La tasa de usura es un tope legal máximo de interés: las entidades no pueden cobrar por encima de ese límite, lo que protege a quien toma el crédito de cobros excesivos."
+    },
+    {
+      "id": "11_w4_mc_03",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "Al evaluar el costo total de un crédito, además de la tasa de interés, ¿qué conviene considerar?",
+      "opciones": [
+        "Exclusivamente la opinión de quien te ofrece el crédito.",
+        "Únicamente el color de la tarjeta o el nombre de la entidad.",
+        "Solo la cuota del primer periodo, ignorando el resto del plazo.",
+        "Los costos asociados como seguros, comisiones o cobros administrativos, que también pesan en lo que pagas."
+      ],
+      "correctIndex": 3,
+      "explicacion": "El costo total del crédito no es solo el interés: incluye seguros, comisiones y otros cobros asociados, que se suman a lo que efectivamente terminas pagando."
+    },
+    {
+      "id": "11_w4_mc_04",
+      "competencia": "credito",
+      "dificultad": 5,
+      "enunciado": "En un crédito con cuotas, cada cuota se reparte entre capital e interés. Al inicio del plazo, ¿qué tiende a ocurrir con esa distribución?",
+      "opciones": [
+        "Una parte mayor de la cuota cubre intereses y una parte menor abona al capital.",
+        "Toda la cuota abona solo al capital y nada a intereses.",
+        "La cuota cubre solo intereses durante todo el plazo y el capital nunca baja.",
+        "Capital e interés siempre se reparten exactamente por mitades en cada cuota."
+      ],
+      "correctIndex": 0,
+      "explicacion": "En la amortización, al comienzo los intereses se calculan sobre un saldo de capital aún alto, así que la cuota cubre más interés y menos capital; con el tiempo esa proporción se invierte."
+    },
+    {
+      "id": "11_w4_mc_05",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "Algunos créditos piden una garantía o colateral. ¿Qué función cumple esa garantía?",
+      "opciones": [
+        "Aumenta automáticamente la tasa de interés del crédito.",
+        "Respalda el cumplimiento del crédito; si no se paga, la entidad puede recurrir a ese respaldo.",
+        "Sustituye por completo la necesidad de tener capacidad de pago.",
+        "Sirve solo para créditos que se pagan en un único periodo."
+      ],
+      "correctIndex": 1,
+      "explicacion": "La garantía o colateral es un respaldo del crédito: reduce el riesgo para la entidad porque puede recurrir a ese bien si el crédito no se paga, y por eso a veces mejora las condiciones."
+    },
+    {
+      "id": "11_w4_mc_06",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "El historial o score crediticio resume cómo una persona ha manejado sus créditos. ¿Para qué lo usan principalmente las entidades?",
+      "opciones": [
+        "Para fijar el mismo trato a todas las personas sin distinción.",
+        "Para conocer los gustos personales del solicitante sin relación con el pago.",
+        "Para estimar la confianza en que el crédito se pagará y definir las condiciones que ofrecen.",
+        "Para reemplazar la evaluación de la capacidad de pago por completo."
+      ],
+      "correctIndex": 2,
+      "explicacion": "El score o historial crediticio sintetiza el comportamiento de pago previo; las entidades lo usan para estimar el riesgo y ajustar las condiciones del crédito que ofrecen."
+    },
+    {
+      "id": "11_w4_mc_07",
+      "competencia": "credito",
+      "dificultad": 5,
+      "enunciado": "Comparas dos ofertas de crédito para la misma meta. Una tiene cuota más baja pero plazo más largo. ¿Cuál es la forma más completa de compararlas?",
+      "opciones": [
+        "Decidir solo por cuál entidad tiene el anuncio más llamativo.",
+        "Quedarte con la de cuota más baja, porque siempre es la más barata.",
+        "Elegir la de mayor plazo, porque pagar lento siempre cuesta menos.",
+        "Mirar el costo total de cada oferta a lo largo del plazo, no solo el tamaño de la cuota."
+      ],
+      "correctIndex": 3,
+      "explicacion": "Una cuota más baja puede esconder un plazo más largo y, con ello, un mayor costo total por pagar intereses durante más tiempo; comparar por costo total da una imagen más completa que la sola cuota."
+    },
+    {
+      "id": "11_w4_mc_08",
+      "competencia": "credito",
+      "dificultad": 5,
+      "enunciado": "El apalancamiento consiste en usar dinero prestado para impulsar una meta o un proyecto. ¿Qué afirmación lo describe mejor?",
+      "opciones": [
+        "Puede ampliar los resultados, pero también el riesgo, porque la deuda debe pagarse con su costo aunque el proyecto no salga como se esperaba.",
+        "Siempre garantiza un mejor resultado, sin importar cómo evolucione el proyecto.",
+        "Elimina por completo el riesgo de quien lo usa.",
+        "Solo significa pagar de contado para no asumir compromisos."
+      ],
+      "correctIndex": 0,
+      "explicacion": "El apalancamiento usa recursos prestados para potenciar un objetivo: puede ampliar los resultados, pero también el riesgo, ya que la deuda y su costo deben cubrirse aunque el proyecto no rinda lo esperado."
+    },
+    {
+      "id": "11_w4_mc_09",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "¿Qué distingue principalmente a un crédito de consumo de un crédito hipotecario?",
+      "opciones": [
+        "El crédito de consumo nunca cobra intereses y el hipotecario sí.",
+        "El crédito hipotecario suele asociarse a un bien inmueble como respaldo y a plazos largos; el de consumo cubre necesidades más generales.",
+        "El hipotecario se paga en un solo periodo y el de consumo en muchos.",
+        "No existe ninguna diferencia entre ambos tipos de crédito."
+      ],
+      "correctIndex": 1,
+      "explicacion": "El crédito hipotecario se vincula típicamente a un inmueble como garantía y a plazos largos, mientras que el crédito de consumo financia necesidades más generales; conocer el tipo ayuda a elegir según el propósito."
+    },
+    {
+      "id": "11_w4_mc_10",
+      "competencia": "credito",
+      "dificultad": 5,
+      "enunciado": "Un crédito rotativo o cupo rotativo se diferencia de un crédito de cuota fija porque:",
+      "opciones": [
+        "Obliga a pagar todo el cupo en un único periodo sin excepción.",
+        "Nunca genera intereses al usar el cupo disponible.",
+        "Ofrece un cupo que se puede usar, abonar y volver a usar, mientras que el de cuota fija desembolsa un monto y se paga en cuotas definidas.",
+        "Solo puede usarse para comprar bienes inmuebles."
+      ],
+      "correctIndex": 2,
+      "explicacion": "El crédito rotativo funciona como un cupo reutilizable: a medida que abonas, vuelves a disponer de él; el de cuota fija entrega un monto y se amortiza en cuotas predefinidas. Cada uno conviene a propósitos distintos."
+    },
+    {
+      "id": "11_w4_mc_11",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "Dos créditos muestran la misma tasa nominal, pero su tasa efectiva anual no coincide. ¿Qué puede explicar esa diferencia?",
+      "opciones": [
+        "El día de la semana en que se firma el crédito.",
+        "El nombre comercial del producto, que cambia la tasa efectiva.",
+        "Nada: si la nominal es igual, la efectiva siempre es idéntica.",
+        "La frecuencia con que se aplican los intereses y los costos asociados a cada crédito."
+      ],
+      "correctIndex": 3,
+      "explicacion": "Con igual tasa nominal, la tasa efectiva anual puede diferir según cada cuánto se aplican los intereses y según los costos asociados; por eso comparar por la efectiva evita conclusiones equivocadas."
+    },
+    {
+      "id": "11_w4_mc_12",
+      "competencia": "credito",
+      "dificultad": 5,
+      "enunciado": "Una entidad ofrece a un buen pagador una tasa más favorable que a otro solicitante por el mismo producto. ¿Qué lo explica mejor?",
+      "opciones": [
+        "Un mejor historial reduce el riesgo percibido, y la entidad puede ofrecer condiciones más favorables.",
+        "Las tasas se asignan al azar sin relación con el comportamiento de pago.",
+        "El buen pagador paga más interés como recompensa por su historial.",
+        "El historial no influye en ningún caso sobre las condiciones del crédito."
+      ],
+      "correctIndex": 0,
+      "explicacion": "Un buen historial de pago reduce el riesgo que percibe la entidad; ese menor riesgo suele traducirse en condiciones más favorables, lo que muestra el valor de mantener un buen comportamiento crediticio."
+    }
+  ]
+}

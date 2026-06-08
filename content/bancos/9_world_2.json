@@ -1,0 +1,46 @@
+{
+  "bancoId": "9_world_2",
+  "grado": "9",
+  "worldId": "world_2",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "situaciones": [
+    {
+      "id": "9_w2_ec_01",
+      "enunciado": "Es el inicio de la semana y ya planeaste tu presupuesto. Aparece un plan con tus amistades que no estaba previsto y que se llevaría buena parte de lo que tenías para toda la semana.",
+      "opcionA": {
+        "texto": "Aceptas el plan ahora y revisas después qué ajustar en el resto de la semana.",
+        "consecuencia": "Disfrutas el momento, pero tu presupuesto queda más ajustado y tendrás que recortar otros gastos previstos para no quedar en déficit."
+      },
+      "opcionB": {
+        "texto": "Propones un plan alternativo más sencillo que encaje con lo que ya tenías presupuestado.",
+        "consecuencia": "Mantienes tu plan bajo control y compartes con tus amistades, aunque renuncias a la versión más vistosa del plan original."
+      }
+    },
+    {
+      "id": "9_w2_ec_02",
+      "enunciado": "Tienes una meta de ahorro y este periodo te quedó un superávit, es decir, dinero a favor. Al mismo tiempo, ves un deseo que te gustaría darte.",
+      "opcionA": {
+        "texto": "Destinas el dinero a favor a tu meta de ahorro.",
+        "consecuencia": "Avanzas hacia tu meta y refuerzas el hábito de aprovechar el superávit, aunque pospones el gusto que tenías en mente."
+      },
+      "opcionB": {
+        "texto": "Usas el dinero a favor para darte el gusto ahora.",
+        "consecuencia": "Disfrutas el deseo de inmediato, pero tu meta de ahorro avanza más lento este periodo."
+      }
+    },
+    {
+      "id": "9_w2_ec_03",
+      "enunciado": "Al revisar tu presupuesto notas que tus egresos vienen superando a tus ingresos varios periodos seguidos. Hay que decidir cómo corregir el rumbo.",
+      "opcionA": {
+        "texto": "Revisas tus gastos variables y reduces los que son deseos para equilibrar el presupuesto.",
+        "consecuencia": "Recuperas el equilibrio y evitas el déficit, aunque debes renunciar por ahora a algunos gastos que disfrutabas."
+      },
+      "opcionB": {
+        "texto": "Buscas la forma de aumentar tus ingresos con una labor adicional dentro de lo que puedes hacer.",
+        "consecuencia": "Tu presupuesto gana margen, aunque te ocupa tiempo y esfuerzo que antes dedicabas a otras cosas."
+      }
+    }
+  ]
+}

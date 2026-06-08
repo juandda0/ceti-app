@@ -1,0 +1,46 @@
+{
+  "bancoId": "11_world_4",
+  "grado": "11",
+  "worldId": "world_4",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "situaciones": [
+    {
+      "id": "11_w4_ec_01",
+      "enunciado": "Tienes una meta importante y comparas dos créditos. Uno muestra una tasa efectiva anual más baja con un plazo corto, lo que implica cuotas más grandes; el otro tiene una tasa más alta con plazo largo y cuotas pequeñas. Revisas tu capacidad de pago, que sí admite la cuota grande. ¿Qué priorizas?",
+      "opcionA": {
+        "texto": "Elijo el de menor tasa efectiva y plazo corto, confirmando que la cuota grande cabe en mi capacidad de pago.",
+        "consecuencia": "Tiendes a un menor costo total y saldas el crédito antes, a cambio de cuotas más exigentes en cada periodo."
+      },
+      "opcionB": {
+        "texto": "Elijo el de cuotas pequeñas para que cada periodo pese menos, aunque la tasa efectiva sea más alta.",
+        "consecuencia": "Cada cuota es más liviana, pero pagas durante más tiempo y el costo total por intereses suele ser mayor."
+      }
+    },
+    {
+      "id": "11_w4_ec_02",
+      "enunciado": "Estás considerando un apalancamiento: tomar un crédito para impulsar un proyecto con un resultado esperado prometedor, pero incierto. El costo del crédito deberás cubrirlo aunque el proyecto no rinda lo previsto. ¿Cómo decides?",
+      "opcionA": {
+        "texto": "Tomo el crédito solo si el beneficio esperado justifica el costo y puedo sostener los pagos incluso si el resultado es menor al previsto.",
+        "consecuencia": "Usas el apalancamiento con criterio: si el proyecto rinde, amplías el resultado; si no, el costo sigue siendo manejable dentro de tu capacidad."
+      },
+      "opcionB": {
+        "texto": "Tomo el crédito por el resultado prometedor, confiando en que el proyecto saldrá como espero.",
+        "consecuencia": "Si el proyecto rinde, el resultado se amplía; si no, asumes un costo que debes cubrir igual, lo que aumenta la presión sobre tu presupuesto."
+      }
+    },
+    {
+      "id": "11_w4_ec_03",
+      "enunciado": "Comparas dos ofertas de crédito para la misma compra. Ambas muestran la misma tasa nominal, pero al revisar con calma notas que difieren en cada cuánto aplican los intereses y en los costos asociados, por lo que su tasa efectiva anual no es igual. ¿Cómo eliges?",
+      "opcionA": {
+        "texto": "Comparo por la tasa efectiva anual y el costo total, no solo por la tasa nominal idéntica.",
+        "consecuencia": "Eliges con base en el costo real del crédito y evitas pagar de más por fijarte solo en la cifra nominal."
+      },
+      "opcionB": {
+        "texto": "Como la tasa nominal es la misma, asumo que ambas cuestan igual y elijo cualquiera.",
+        "consecuencia": "Podrías terminar en la oferta más costosa, porque la igualdad en la tasa nominal no garantiza el mismo costo total."
+      }
+    }
+  ]
+}

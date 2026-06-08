@@ -1,0 +1,26 @@
+{
+  "grado": "10",
+  "worldId": "world_2",
+  "cards": [
+    {
+      "titulo": "Repartir el ingreso por grupos",
+      "cuerpo": "Un método sencillo reparte tu ingreso en tres grandes grupos: necesidades indispensables, deseos y ahorro. No necesitas cifras exactas; basta con decidir a qué grupo das más prioridad y revisar que el reparto encaje con lo que recibes.",
+      "ejemplo": "Cuando recibes tu mesada, primero separas mentalmente lo que va a lo indispensable, lo que va al ahorro y lo que queda para gustos."
+    },
+    {
+      "titulo": "Priorizar y vigilar los gastos hormiga",
+      "cuerpo": "Priorizar es atender primero lo indispensable y dejar los deseos para después. Cuida también los gastos hormiga: son pequeños y frecuentes, y aunque cada uno parece insignificante, al sumarse pueden desequilibrar tu presupuesto.",
+      "ejemplo": "Comprar onces sueltas todos los días parece poca cosa, pero al final del periodo notas que esos pequeños gastos se llevaron buena parte de lo previsto."
+    },
+    {
+      "titulo": "Déficit, superávit y ajuste",
+      "cuerpo": "Si tus egresos superan a tus ingresos, tu presupuesto queda en déficit y conviene ajustarlo recortando deseos antes que lo esencial. Si tus ingresos superan a tus egresos, hay superávit: dinero a favor que puedes destinar al ahorro o a una meta. Un imprevisto también obliga a reajustar el plan.",
+      "ejemplo": "Si te queda dinero a favor al cerrar el periodo, lo sumas a tu meta; si te faltó, revisas qué gustos recortar para el siguiente."
+    },
+    {
+      "titulo": "Mensual, por proyecto y base cero",
+      "cuerpo": "El presupuesto mensual organiza un periodo que se repite; el de proyecto se arma para una meta puntual y termina al cumplirla. Al cerrar, compara lo planeado con lo real para mejorar. El presupuesto base cero parte de cero cada periodo y obliga a justificar cada gasto en lugar de arrastrar el anterior.",
+      "ejemplo": "Para un viaje con fecha haces un presupuesto por proyecto; al terminar el mes comparas lo que planeaste con lo que realmente pasó para ajustar el siguiente."
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "grado": "9",
+  "worldId": "world_4",
+  "cards": [
+    {
+      "titulo": "Qué es un crédito",
+      "cuerpo": "Un crédito es dinero que una entidad te presta y que te comprometes a devolver más adelante. No es un regalo: es un acuerdo con responsabilidades para ambas partes.",
+      "ejemplo": "Una familia pide prestado para comprar una nevera ahora y la paga poco a poco durante varios meses."
+    },
+    {
+      "titulo": "La tasa de interés",
+      "cuerpo": "La tasa de interés es el costo de usar el dinero prestado. Por eso, al final devuelves algo más que la cantidad que recibiste. A menor tasa, en condiciones iguales, menor costo total.",
+      "ejemplo": "Al pedir prestado para un computador, devuelves la cantidad recibida más un costo adicional por haberlo usado antes de tenerlo."
+    },
+    {
+      "titulo": "Cupo, plazo y cuotas",
+      "cuerpo": "El cupo es el monto máximo que te autorizan; el plazo es el tiempo para terminar de pagar; las cuotas son los pagos que entregas en cada periodo. Conviene elegir condiciones que de verdad puedas cumplir.",
+      "ejemplo": "Una persona usa solo parte de su cupo y acuerda cuotas que caben en su presupuesto mensual."
+    },
+    {
+      "titulo": "El crédito como herramienta",
+      "cuerpo": "Bien usado, el crédito ayuda a conseguir algo importante hoy cuando hay un plan realista para pagarlo. Antes de aceptarlo, revisa la tasa, el plazo, las cuotas y tu capacidad de pago.",
+      "ejemplo": "Antes de aceptar un préstamo, alguien compara dos ofertas y verifica que podrá pagar cada cuota a tiempo."
+    }
+  ]
+}

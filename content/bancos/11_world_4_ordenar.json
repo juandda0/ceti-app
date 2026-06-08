@@ -1,0 +1,138 @@
+{
+  "bancoId": "11_world_4_ordenar",
+  "grado": "11",
+  "worldId": "world_4",
+  "tipo": "ordenar",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "11_w4_ord_01",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "Ordena los pasos para comparar dos ofertas de crédito por su costo total.",
+      "elementos": [
+        "Definir la meta y el monto que realmente necesitas financiar.",
+        "Identificar la tasa efectiva anual de cada oferta.",
+        "Sumar los costos asociados como seguros y comisiones.",
+        "Estimar el costo total de cada oferta a lo largo del plazo.",
+        "Elegir la oferta con menor costo total que tu capacidad de pago sostenga."
+      ],
+      "ordenCanonico": [0, 1, 2, 3, 4],
+      "explicacion": "Comparar bien va de definir la necesidad, mirar la tasa efectiva, sumar costos asociados, estimar el costo total y, con eso, elegir la opción más conveniente que puedas sostener."
+    },
+    {
+      "id": "11_w4_ord_02",
+      "competencia": "credito",
+      "dificultad": 5,
+      "enunciado": "Ordena cómo evoluciona la composición de una cuota fija a lo largo del plazo, desde el inicio.",
+      "elementos": [
+        "Al inicio, una parte mayor de la cuota cubre intereses.",
+        "Con cada pago, el saldo de capital pendiente disminuye.",
+        "Al bajar el capital, los intereses calculados sobre él se reducen.",
+        "Hacia el final, una parte mayor de la cuota abona al capital."
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "En la amortización, al inicio pesa más el interés; cada pago reduce el capital, lo que baja los intereses futuros, y hacia el final la cuota abona sobre todo al capital."
+    },
+    {
+      "id": "11_w4_ord_03",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "Ordena los pasos para evaluar si un apalancamiento es razonable para un proyecto.",
+      "elementos": [
+        "Definir el proyecto y el resultado que esperas lograr.",
+        "Estimar el costo total del crédito que usarías.",
+        "Comparar el beneficio esperado con ese costo y su riesgo.",
+        "Decidir tomar el crédito solo si el beneficio justifica el riesgo asumido."
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Apalancarse con criterio va de definir el proyecto, estimar el costo del crédito, comparar beneficio y riesgo, y decidir solo cuando el beneficio justifica el riesgo."
+    },
+    {
+      "id": "11_w4_ord_04",
+      "competencia": "credito",
+      "dificultad": 5,
+      "enunciado": "Ordena los pasos para entender el efecto de la tasa de usura como tope legal en una oferta de crédito.",
+      "elementos": [
+        "Reconocer que la usura es un tope legal máximo de interés.",
+        "Comparar la tasa efectiva anual de la oferta con ese límite.",
+        "Verificar que la tasa cobrada no supere el tope permitido.",
+        "Concluir que una oferta dentro del tope cumple ese límite legal."
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Entender la usura va de reconocerla como tope máximo, comparar la tasa de la oferta con ese límite, verificar que no lo supere y concluir si la oferta lo respeta."
+    },
+    {
+      "id": "11_w4_ord_05",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "Ordena los pasos para construir y aprovechar un buen historial crediticio.",
+      "elementos": [
+        "Tomar un crédito acorde con tu capacidad de pago.",
+        "Pagar cada cuota a tiempo a lo largo del plazo.",
+        "Mantener ese cumplimiento de forma sostenida.",
+        "Aprovechar el buen historial para acceder a mejores condiciones."
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Un buen historial se construye tomando crédito acorde a tu capacidad, pagando a tiempo, sosteniendo ese cumplimiento y aprovechando luego las mejores condiciones que abre."
+    },
+    {
+      "id": "11_w4_ord_06",
+      "competencia": "credito",
+      "dificultad": 5,
+      "enunciado": "Ordena el proceso de un crédito respaldado con garantía o colateral.",
+      "elementos": [
+        "Acordar con la entidad un bien que respalde el crédito.",
+        "Recibir condiciones que consideran ese menor riesgo.",
+        "Pagar las cuotas según lo acordado durante el plazo.",
+        "Liberar la garantía una vez saldado por completo el crédito."
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Un crédito con garantía va de acordar el respaldo, recibir condiciones acordes al menor riesgo, cumplir los pagos y liberar la garantía al saldar el crédito."
+    },
+    {
+      "id": "11_w4_ord_07",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "Ordena los pasos para distinguir qué tipo de crédito conviene según el propósito.",
+      "elementos": [
+        "Definir con claridad la necesidad que quieres financiar.",
+        "Reconocer si se trata de consumo general, vivienda o un cupo reutilizable.",
+        "Asociar esa necesidad al tipo de crédito que mejor encaja.",
+        "Comparar ofertas de ese tipo por su costo total."
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Elegir el tipo de crédito va de definir la necesidad, reconocer su naturaleza, asociarla al tipo adecuado y comparar dentro de ese tipo por costo total."
+    },
+    {
+      "id": "11_w4_ord_08",
+      "competencia": "credito",
+      "dificultad": 5,
+      "enunciado": "Ordena los pasos para comparar dos créditos que muestran la misma tasa nominal pero distinta tasa efectiva anual.",
+      "elementos": [
+        "Notar que ambos exhiben la misma tasa nominal.",
+        "Revisar cada cuánto se aplican los intereses en cada uno.",
+        "Sumar los costos asociados que cobra cada oferta.",
+        "Comparar por la tasa efectiva anual resultante de cada crédito."
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Ante igual tasa nominal, conviene notar esa coincidencia, revisar la frecuencia de los intereses, sumar costos asociados y comparar por la tasa efectiva anual real de cada oferta."
+    },
+    {
+      "id": "11_w4_ord_09",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "Ordena los pasos para decidir entre una cuota más alta a plazo corto o una más baja a plazo largo.",
+      "elementos": [
+        "Revisar cuánto admite tu capacidad de pago en cada periodo.",
+        "Estimar el costo total de cada alternativa a lo largo de su plazo.",
+        "Sopesar el equilibrio entre cuota asumible y costo total razonable.",
+        "Elegir la opción que cabe en tu presupuesto con el menor costo total posible."
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Decidir entre plazos va de revisar tu capacidad de pago, estimar el costo total de cada opción, sopesar el equilibrio y elegir la que cabe en tu presupuesto con menor costo total."
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "bancoId": "9_world_4",
+  "grado": "9",
+  "worldId": "world_4",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "situaciones": [
+    {
+      "id": "9_w4_ec_01",
+      "enunciado": "Necesitas una herramienta para estudiar que de verdad usarás todos los días. Una entidad te ofrece un crédito para conseguirla ahora, con cuotas durante un plazo. ¿Qué decides?",
+      "opcionA": {
+        "texto": "Tomo el crédito tras revisar la tasa, el plazo y si puedo cumplir las cuotas.",
+        "consecuencia": "Consigues la herramienta hoy y asumes un compromiso de pago que ya planeaste; deberás cumplir cada cuota a tiempo."
+      },
+      "opcionB": {
+        "texto": "Espero y ahorro poco a poco para comprarla de contado más adelante.",
+        "consecuencia": "Evitas el costo de los intereses, pero tendrás la herramienta más tarde, cuando reúnas el valor completo."
+      }
+    },
+    {
+      "id": "9_w4_ec_02",
+      "enunciado": "Te ofrecen un cupo de crédito mayor al que necesitas para tu objetivo. Podrías usar todo el cupo disponible o solo una parte. ¿Qué decides?",
+      "opcionA": {
+        "texto": "Uso solo la parte que cubre mi necesidad concreta.",
+        "consecuencia": "Tu compromiso de pago se mantiene acotado a lo que realmente necesitabas."
+      },
+      "opcionB": {
+        "texto": "Uso todo el cupo porque está disponible, aunque no lo necesite.",
+        "consecuencia": "Dispones de más dinero ahora, pero aumentas el monto que tendrás que devolver con sus intereses."
+      }
+    },
+    {
+      "id": "9_w4_ec_03",
+      "enunciado": "Comparas dos ofertas de crédito para lo mismo. Una tiene una tasa de interés más baja con un plazo algo más corto; la otra una tasa más alta con cuotas más pequeñas en un plazo más largo. ¿Cuál eliges?",
+      "opcionA": {
+        "texto": "Elijo la de tasa más baja, asegurándome de poder asumir sus cuotas.",
+        "consecuencia": "El costo total por usar el dinero tiende a ser menor, a cambio de cuotas un poco más grandes durante menos tiempo."
+      },
+      "opcionB": {
+        "texto": "Elijo la de cuotas más pequeñas para pagar más cómodo cada periodo.",
+        "consecuencia": "Cada cuota pesa menos en tu presupuesto, pero pagas durante más tiempo y el costo total suele ser mayor."
+      }
+    }
+  ]
+}

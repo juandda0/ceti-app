@@ -1,0 +1,205 @@
+{
+  "instrumentoId": "impact_test_v1",
+  "nivel": "programa",
+  "descripcion": "Instrumento único de medición de impacto pre/post (mismo set de ítems). No otorga XP ni afecta mastery.",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "impact_01",
+      "competencia": "ingreso",
+      "enunciado": "¿Qué describe mejor un ingreso?",
+      "opciones": [
+        "Un objeto que se compra para revenderlo más caro",
+        "El dinero que una persona gasta cada mes en transporte",
+        "Una deuda que se debe pagar al final del año",
+        "El dinero que una persona recibe por su trabajo o por otras fuentes"
+      ],
+      "correctIndex": 3,
+      "explicacion": "El ingreso es el dinero que entra a una persona, por ejemplo por su trabajo, un negocio o un apoyo recibido. No es un gasto ni una deuda."
+    },
+    {
+      "id": "impact_02",
+      "competencia": "ingreso",
+      "enunciado": "Una persona recibe dinero por su empleo y, además, vende postres los fines de semana. ¿Cómo se describe mejor su situación de ingresos?",
+      "opciones": [
+        "Tiene más de una fuente de ingreso",
+        "No tiene ningún ingreso porque el empleo es temporal",
+        "Su único ingreso es el de los postres",
+        "Sus ventas de postres son un gasto, no un ingreso"
+      ],
+      "correctIndex": 0,
+      "explicacion": "El empleo y la venta de postres son dos fuentes distintas de ingreso. Contar con varias fuentes puede dar más estabilidad."
+    },
+    {
+      "id": "impact_03",
+      "competencia": "ingreso",
+      "enunciado": "¿Cuál es la diferencia entre un ingreso fijo y un ingreso variable?",
+      "opciones": [
+        "El fijo solo existe en empresas grandes; el variable solo en pequeñas",
+        "El fijo se repite con un monto estable; el variable cambia de un periodo a otro",
+        "El fijo nunca se puede gastar; el variable sí",
+        "No hay diferencia, son dos nombres para lo mismo"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Un ingreso fijo llega de forma estable cada periodo, mientras que un ingreso variable puede ser distinto cada vez, como el de quien trabaja por ventas."
+    },
+    {
+      "id": "impact_04",
+      "competencia": "presupuesto",
+      "enunciado": "¿Para qué sirve principalmente un presupuesto personal?",
+      "opciones": [
+        "Para evitar por completo cualquier tipo de gasto",
+        "Para registrar solo las deudas pendientes",
+        "Para planear cuánto se va a recibir y cuánto se va a gastar en un periodo",
+        "Para calcular los impuestos del país"
+      ],
+      "correctIndex": 2,
+      "explicacion": "Un presupuesto organiza los ingresos y los gastos esperados, lo que ayuda a tomar mejores decisiones con el dinero."
+    },
+    {
+      "id": "impact_05",
+      "competencia": "presupuesto",
+      "enunciado": "En un presupuesto, ¿qué significa que una persona tenga un saldo negativo al final del mes?",
+      "opciones": [
+        "Que no registró ningún gasto en el mes",
+        "Que ahorró más de lo que esperaba",
+        "Que sus ingresos fueron mayores que sus gastos",
+        "Que sus gastos fueron mayores que sus ingresos"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Un saldo negativo indica que se gastó más de lo que se recibió, lo que suele cubrirse con ahorros previos o con deuda."
+    },
+    {
+      "id": "impact_06",
+      "competencia": "presupuesto",
+      "enunciado": "Al organizar un presupuesto, ¿cuál de estos suele clasificarse como gasto necesario antes que como gasto opcional?",
+      "opciones": [
+        "La alimentación básica del hogar",
+        "Una salida al cine cada semana",
+        "Comprar la versión más reciente de un videojuego",
+        "Un viaje de vacaciones de lujo"
+      ],
+      "correctIndex": 0,
+      "explicacion": "La alimentación básica es una necesidad. Priorizar lo necesario sobre lo opcional ayuda a que el presupuesto se sostenga."
+    },
+    {
+      "id": "impact_07",
+      "competencia": "ahorro",
+      "enunciado": "¿Qué describe mejor el acto de ahorrar?",
+      "opciones": [
+        "Gastar todo el dinero disponible apenas se recibe",
+        "Apartar parte del dinero hoy para usarlo en el futuro",
+        "Pedir dinero prestado para una compra",
+        "Pagar las cuotas de una deuda existente"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Ahorrar es reservar una parte del dinero en lugar de gastarlo, para tenerlo disponible más adelante."
+    },
+    {
+      "id": "impact_08",
+      "competencia": "ahorro",
+      "enunciado": "¿Por qué se recomienda tener un fondo de emergencia?",
+      "opciones": [
+        "Porque elimina por completo la posibilidad de imprevistos",
+        "Para poder gastar más en compras de lujo cada mes",
+        "Para cubrir gastos inesperados sin tener que endeudarse de inmediato",
+        "Porque es obligatorio por ley para todas las personas"
+      ],
+      "correctIndex": 2,
+      "explicacion": "Un fondo de emergencia es un ahorro reservado para imprevistos, como una reparación urgente, y reduce la necesidad de endeudarse."
+    },
+    {
+      "id": "impact_09",
+      "competencia": "ahorro",
+      "enunciado": "Una persona quiere ahorrar para una meta dentro de un año. ¿Cuál es una estrategia más efectiva?",
+      "opciones": [
+        "Gastar primero en todos sus deseos y ahorrar lo que quede",
+        "Esperar a fin de año a ver si le sobra algo de dinero",
+        "Ahorrar solo cuando recuerde hacerlo, sin un plan",
+        "Apartar una parte fija de su dinero de forma constante cada periodo"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Ahorrar una cantidad fija de manera constante hace más probable alcanzar la meta que depender de lo que sobre al final."
+    },
+    {
+      "id": "impact_10",
+      "competencia": "credito",
+      "enunciado": "¿Qué es un crédito?",
+      "opciones": [
+        "Dinero que se recibe prestado y se debe devolver, por lo general con un costo adicional",
+        "Dinero que se recibe como regalo y no se devuelve",
+        "El ahorro acumulado en una cuenta personal",
+        "Un descuento que se aplica en una compra"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Un crédito es dinero prestado que debe devolverse, normalmente pagando además un costo por usarlo (los intereses)."
+    },
+    {
+      "id": "impact_11",
+      "competencia": "credito",
+      "enunciado": "¿Qué representa la tasa de interés en un crédito?",
+      "opciones": [
+        "El nombre del banco que otorga el préstamo",
+        "El costo de usar el dinero prestado durante un tiempo",
+        "La cantidad de cuotas en que se divide el pago",
+        "Un premio que recibe quien pide el crédito"
+      ],
+      "correctIndex": 1,
+      "explicacion": "La tasa de interés expresa cuánto cuesta tener el dinero prestado durante un periodo. A mayor tasa, más se paga por el crédito."
+    },
+    {
+      "id": "impact_12",
+      "competencia": "credito",
+      "enunciado": "Antes de aceptar un crédito, ¿qué es más prudente revisar?",
+      "opciones": [
+        "Solo el nombre comercial de la entidad",
+        "Únicamente el color y diseño de la tarjeta",
+        "El costo total que se pagará y si las cuotas caben en el presupuesto",
+        "La rapidez con la que se aprueba, sin mirar nada más"
+      ],
+      "correctIndex": 2,
+      "explicacion": "Conviene revisar cuánto costará en total el crédito y si las cuotas se pueden pagar con los ingresos, para no comprometer el presupuesto."
+    },
+    {
+      "id": "impact_13",
+      "competencia": "deuda",
+      "enunciado": "¿Qué es una deuda?",
+      "opciones": [
+        "Un gasto que ya quedó totalmente pagado",
+        "El dinero ahorrado que aún no se ha gastado",
+        "Un ingreso adicional que llega cada mes",
+        "Una obligación de pagar dinero que se debe a otra persona o entidad"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Una deuda es el compromiso de devolver dinero que se debe. Mientras no se pague, sigue siendo una obligación."
+    },
+    {
+      "id": "impact_14",
+      "competencia": "deuda",
+      "enunciado": "¿Qué suele ocurrir cuando una persona deja de pagar las cuotas de una deuda a tiempo?",
+      "opciones": [
+        "La deuda puede crecer por cargos adicionales y afectar su historial de pagos",
+        "La deuda desaparece automáticamente después de un mes",
+        "El monto a pagar siempre se reduce a la mitad",
+        "La entidad regala el dinero prestado"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Atrasarse suele generar cargos extra y afectar el historial de pagos, lo que dificulta obtener crédito en el futuro."
+    },
+    {
+      "id": "impact_15",
+      "competencia": "deuda",
+      "enunciado": "Una persona tiene varias deudas al mismo tiempo. ¿Cuál es una práctica saludable para manejarlas?",
+      "opciones": [
+        "Ignorarlas hasta que la entidad deje de cobrarlas",
+        "Tener un plan de pago y priorizar las deudas más costosas o urgentes",
+        "Pedir un nuevo préstamo cada vez sin llevar ningún control",
+        "Pagar siempre menos de lo acordado para gastar más en otras cosas"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Llevar un plan y dar prioridad a las deudas más costosas o urgentes ayuda a reducirlas de forma ordenada y a evitar que crezcan."
+    }
+  ]
+}

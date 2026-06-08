@@ -1,0 +1,83 @@
+{
+  "bancoId": "10_world_3_true_false",
+  "grado": "10",
+  "worldId": "world_3",
+  "tipo": "true_false",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "10_w3_vf_01",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "El fondo de emergencia conviene tenerlo disponible y fácil de retirar cuando aparece un imprevisto.",
+      "respuesta": true,
+      "explicacion": "Su propósito es cubrir imprevistos, así que debe estar accesible justo cuando se necesita."
+    },
+    {
+      "id": "10_w3_vf_02",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "Ahorrar e invertir son exactamente lo mismo y no tienen ninguna diferencia.",
+      "respuesta": false,
+      "explicacion": "Ahorrar prioriza seguridad y disponibilidad; invertir busca crecimiento aceptando cierto riesgo."
+    },
+    {
+      "id": "10_w3_vf_03",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "En el interés compuesto, los intereses ganados se suman al ahorro y empiezan a generar nuevos intereses.",
+      "respuesta": true,
+      "explicacion": "Esa es la idea central del interés compuesto: los intereses producen más intereses con el tiempo."
+    },
+    {
+      "id": "10_w3_vf_04",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "La liquidez se refiere a la facilidad con que se puede disponer del dinero cuando se necesita.",
+      "respuesta": true,
+      "explicacion": "La liquidez indica qué tan rápido y fácil es usar el dinero ahorrado."
+    },
+    {
+      "id": "10_w3_vf_05",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "Como regla general, buscar mayor rendimiento suele implicar asumir mayor riesgo.",
+      "respuesta": true,
+      "explicacion": "Rendimiento y riesgo suelen ir de la mano; por eso conviene equilibrarlos según la meta."
+    },
+    {
+      "id": "10_w3_vf_06",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "El ahorro automático o programado depende de que la persona recuerde apartar el dinero cada vez.",
+      "respuesta": false,
+      "explicacion": "El ahorro automático funciona precisamente sin depender de recordarlo, porque se aparta de forma periódica y planeada."
+    },
+    {
+      "id": "10_w3_vf_07",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "Una meta de corto plazo se alcanza en poco tiempo, mientras que una de largo plazo requiere ahorrar de forma sostenida durante más tiempo.",
+      "respuesta": true,
+      "explicacion": "El plazo distingue cuánto tiempo y constancia exige la meta de ahorro."
+    },
+    {
+      "id": "10_w3_vf_08",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "Empezar a ahorrar con anticipación da más tiempo para que el interés compuesto haga crecer el ahorro.",
+      "respuesta": true,
+      "explicacion": "Con más tiempo, los intereses tienen más oportunidades de generar nuevos intereses."
+    },
+    {
+      "id": "10_w3_vf_09",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "Conviene guardar el fondo de emergencia en un lugar difícil de retirar justo cuando ocurre el imprevisto.",
+      "respuesta": false,
+      "explicacion": "Si fuera difícil de retirar a tiempo, dejaría de cumplir su función; debe ser de fácil acceso."
+    }
+  ]
+}

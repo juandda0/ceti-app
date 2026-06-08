@@ -1,0 +1,26 @@
+{
+  "grado": "11",
+  "worldId": "world_3",
+  "cards": [
+    {
+      "titulo": "El interes compuesto y el tiempo",
+      "cuerpo": "El interes compuesto es ganar rendimientos no solo sobre lo que aportaste, sino tambien sobre los rendimientos ya acumulados. Por eso el tiempo es su mejor aliado: cuanto antes empiezas y mas largo es el horizonte, mas se nota el efecto acumulado.",
+      "ejemplo": "Es como una bola de nieve que rueda ladera abajo: empieza pequeña, pero cuanto mas avanza, mas nieve va sumando a su propio tamaño."
+    },
+    {
+      "titulo": "Riesgo y rentabilidad van de la mano",
+      "cuerpo": "Como regla general, las opciones que ofrecen mayor rentabilidad potencial tambien implican mayor riesgo de perder. No existe rentabilidad alta garantizada sin riesgo: cuando algo promete mucho sin ninguna contrapartida, conviene desconfiar.",
+      "ejemplo": "Elegir un camino mas corto pero con terreno irregular: puede llegarte antes, aunque tambien tiene mas probabilidad de tropiezos por el camino."
+    },
+    {
+      "titulo": "Diversificar y la liquidez",
+      "cuerpo": "Diversificar es repartir el ahorro entre varias opciones distintas, para que un mal resultado en una afecte menos al conjunto. La liquidez es la facilidad de disponer del dinero cuando lo necesitas; suele haber un equilibrio: a mayor liquidez, menor rendimiento esperado.",
+      "ejemplo": "Como no llevar todas tus pertenencias en un solo bolso al viajar, y guardar aparte lo que podrias necesitar de inmediato."
+    },
+    {
+      "titulo": "La inflacion y el ahorro quieto",
+      "cuerpo": "Con el tiempo, los precios tienden a subir. Si el ahorro se deja quieto sin generar rendimientos, ese dinero pierde poder de compra: mas adelante alcanza para menos cosas. Por eso conviene que el ahorro de largo plazo no se quede simplemente guardado.",
+      "ejemplo": "Es como guardar una bolsa de hielo para mas tarde: si no haces nada, con el tiempo se va achicando sola."
+    }
+  ]
+}

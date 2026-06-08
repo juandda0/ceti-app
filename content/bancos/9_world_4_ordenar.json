@@ -1,0 +1,136 @@
+{
+  "bancoId": "9_world_4_ordenar",
+  "grado": "9",
+  "worldId": "world_4",
+  "tipo": "ordenar",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "9_w4_ord_01",
+      "competencia": "credito",
+      "dificultad": 2,
+      "enunciado": "Ordena los pasos para pedir un crédito de forma responsable.",
+      "elementos": [
+        "Identificar una necesidad real que justifique el crédito.",
+        "Comparar las condiciones de las ofertas disponibles.",
+        "Elegir la opción que puedas pagar y firmar el acuerdo.",
+        "Pagar cada cuota en la fecha acordada hasta terminar."
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Primero defines la necesidad, luego comparas, después eliges y firmas, y finalmente pagas las cuotas a tiempo."
+    },
+    {
+      "id": "9_w4_ord_02",
+      "competencia": "credito",
+      "dificultad": 2,
+      "enunciado": "Ordena las etapas de la vida de un crédito, desde el inicio hasta el final.",
+      "elementos": [
+        "La entidad aprueba y entrega el dinero prestado.",
+        "Usas el dinero para lo que necesitabas.",
+        "Pagas las cuotas durante el plazo acordado.",
+        "Terminas de pagar y el crédito queda saldado."
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "El crédito comienza con la entrega del dinero, sigue con su uso, continúa con los pagos y termina cuando queda saldado."
+    },
+    {
+      "id": "9_w4_ord_03",
+      "competencia": "credito",
+      "dificultad": 2,
+      "enunciado": "Ordena los pasos para comparar dos ofertas de crédito antes de decidir.",
+      "elementos": [
+        "Reunir la información de cada oferta.",
+        "Revisar la tasa de interés de cada una.",
+        "Revisar el plazo y el valor de las cuotas.",
+        "Elegir la que mejor se ajuste a tu capacidad de pago."
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Comparar bien implica reunir la información, mirar la tasa, revisar plazo y cuotas, y luego elegir según lo que puedas pagar."
+    },
+    {
+      "id": "9_w4_ord_04",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para decidir si un crédito te conviene en este momento.",
+      "elementos": [
+        "Preguntarte si la necesidad es importante y oportuna.",
+        "Estimar si podrás pagar las cuotas con tus ingresos.",
+        "Revisar la tasa de interés y el plazo ofrecidos.",
+        "Tomar la decisión solo si el plan de pago es realista."
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Decidir con criterio implica evaluar la necesidad, tu capacidad de pago y las condiciones, y decidir solo si el plan es realista."
+    },
+    {
+      "id": "9_w4_ord_05",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "Ordena estos conceptos según el momento en que aparecen al tomar un crédito.",
+      "elementos": [
+        "El cupo que la entidad te autoriza.",
+        "La tasa de interés que se aplicará.",
+        "El plazo en el que pagarás.",
+        "Las cuotas que entregarás en cada periodo."
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Primero conoces tu cupo, luego la tasa, después el plazo y finalmente las cuotas que pagarás en cada periodo."
+    },
+    {
+      "id": "9_w4_ord_06",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "Ordena las acciones para usar un crédito como herramienta y no como problema.",
+      "elementos": [
+        "Pedir prestado solo lo necesario para la meta.",
+        "Acordar un plazo que puedas cumplir.",
+        "Cumplir cada cuota en la fecha pactada.",
+        "Terminar el pago y mantener tu compromiso al día."
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Usar bien el crédito implica pedir solo lo necesario, acordar un plazo cumplible, pagar a tiempo y cerrar el compromiso."
+    },
+    {
+      "id": "9_w4_ord_07",
+      "competencia": "credito",
+      "dificultad": 2,
+      "enunciado": "Ordena los pasos desde que decides comprar a cuotas hasta que terminas de pagar.",
+      "elementos": [
+        "Acordar dividir el valor total en cuotas.",
+        "Recibir el producto o servicio.",
+        "Pagar cada cuota en su fecha.",
+        "Completar la última cuota y quedar al día."
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Comprar a cuotas va de acordar la división, recibir lo comprado, pagar cada cuota y terminar con la última."
+    },
+    {
+      "id": "9_w4_ord_08",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para revisar las condiciones de un crédito antes de firmar.",
+      "elementos": [
+        "Leer con calma todo el documento.",
+        "Identificar la tasa de interés y el plazo.",
+        "Verificar el valor de cada cuota.",
+        "Firmar solo si entiendes y aceptas las condiciones."
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Antes de firmar conviene leer todo, ubicar tasa y plazo, verificar la cuota y firmar solo si comprendes y aceptas."
+    },
+    {
+      "id": "9_w4_ord_09",
+      "competencia": "credito",
+      "dificultad": 2,
+      "enunciado": "Ordena estas opciones de pago de menor a mayor compromiso futuro, en general.",
+      "elementos": [
+        "Pagar de contado todo el valor ahora.",
+        "Pagar a crédito en pocas cuotas.",
+        "Pagar a crédito en muchas cuotas durante un plazo largo."
+      ],
+      "ordenCanonico": [0, 1, 2],
+      "explicacion": "Pagar de contado no deja compromiso futuro; pocas cuotas implican un compromiso corto; un plazo largo extiende más el compromiso."
+    }
+  ]
+}

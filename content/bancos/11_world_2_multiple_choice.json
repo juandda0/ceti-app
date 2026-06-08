@@ -1,0 +1,179 @@
+{
+  "bancoId": "11_world_2_multiple_choice",
+  "grado": "11",
+  "worldId": "world_2",
+  "tipo": "multiple_choice",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "11_w2_mc_01",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "En el presupuesto base cero, cada periodo el presupuesto se construye partiendo desde cero. Esto significa que cada gasto debe:",
+      "opciones": [
+        "Eliminarse por completo para reducir todo el gasto posible",
+        "Repetirse igual que el periodo anterior para mantener la estabilidad",
+        "Crecer una porcion fija cada periodo de forma automatica",
+        "Justificarse de nuevo segun la necesidad actual, sin asumir que continua solo porque existia antes"
+      ],
+      "correctIndex": 3,
+      "explicacion": "El presupuesto base cero exige justificar cada gasto desde cero en cada periodo, en lugar de heredar lo del periodo anterior sin revisarlo."
+    },
+    {
+      "id": "11_w2_mc_02",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "enunciado": "Una persona organiza metas de ahorro de corto, mediano y largo plazo dentro de su presupuesto. Lo mas adecuado al asignar recursos es:",
+      "opciones": [
+        "Reservar una parte para cada horizonte segun su prioridad y plazo, no solo para la meta mas cercana",
+        "Destinar todo a la meta de largo plazo porque es la mas grande",
+        "Atender unicamente la meta de corto plazo y posponer las demas indefinidamente",
+        "Repartir partes iguales a todas sin importar urgencia ni plazo"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Un presupuesto por metas distribuye recursos entre los distintos horizontes segun prioridad y plazo, no concentrandolos en una sola meta."
+    },
+    {
+      "id": "11_w2_mc_03",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "El flujo de caja personal compara, en un periodo, lo que entra contra lo que sale. Un flujo de caja positivo indica que:",
+      "opciones": [
+        "Salio mas de lo que entro, generando un faltante",
+        "Entro mas de lo que salio, dejando un excedente disponible",
+        "Las entradas y salidas fueron exactamente iguales",
+        "No hubo movimientos de dinero en el periodo"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Un flujo de caja positivo significa que las entradas superaron a las salidas, dejando un excedente para ahorrar o destinar a metas."
+    },
+    {
+      "id": "11_w2_mc_04",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "enunciado": "Alguien recibe ingresos variables que cambian mes a mes. Para que su presupuesto sea sostenible, conviene:",
+      "opciones": [
+        "Gastar todo lo que entra cada mes para no perder oportunidades",
+        "Planear los gastos asumiendo siempre el mes de mayor ingreso",
+        "Basar los gastos fijos en un nivel de ingreso prudente y reservar lo extra de los meses buenos",
+        "Ignorar la variacion y presupuestar un monto al azar"
+      ],
+      "correctIndex": 2,
+      "explicacion": "Con ingresos variables se presupuesta sobre un nivel prudente y se guarda el excedente de los meses altos para cubrir los meses bajos."
+    },
+    {
+      "id": "11_w2_mc_05",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "enunciado": "Una persona con ingresos estacionales gana mas en ciertas temporadas del ano y poco en otras. La estrategia mas adecuada de presupuesto es:",
+      "opciones": [
+        "Dejar de presupuestar porque el ingreso es impredecible",
+        "Gastar libremente en temporada alta y endeudarse en temporada baja",
+        "Suponer que cada mes rendira lo mismo que la temporada alta",
+        "Promediar el ingreso anual y apartar reservas en temporada alta para sostener la temporada baja"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Con ingresos estacionales se nivela el ano: se ahorra el excedente de la temporada alta para cubrir los gastos de la temporada baja."
+    },
+    {
+      "id": "11_w2_mc_06",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "Dentro de un presupuesto, el fondo de imprevistos cumple la funcion de:",
+      "opciones": [
+        "Cubrir gastos inesperados sin desarmar las metas ni recurrir a deudas",
+        "Financiar caprichos planeados de antemano",
+        "Reemplazar por completo al ahorro para metas de largo plazo",
+        "Guardar dinero que nunca debe tocarse bajo ninguna circunstancia"
+      ],
+      "correctIndex": 0,
+      "explicacion": "El fondo de imprevistos esta destinado a gastos inesperados, de modo que una emergencia no obligue a abandonar metas ni a endeudarse."
+    },
+    {
+      "id": "11_w2_mc_07",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "enunciado": "Cuando el costo de vida sube de forma generalizada (inflacion), un presupuesto bien hecho debe:",
+      "opciones": [
+        "Mantenerse identico porque los planes no deben cambiar nunca",
+        "Revisarse y reasignar recursos, ya que el mismo dinero alcanza para menos que antes",
+        "Aumentar todos los gastos en la misma proporcion sin analizar prioridades",
+        "Eliminar el fondo de imprevistos para liberar dinero"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Cuando los precios suben de forma general, el dinero rinde menos; el presupuesto se revisa y se reasignan recursos segun prioridades."
+    },
+    {
+      "id": "11_w2_mc_08",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "enunciado": "Al decidir entre dos gastos posibles con recursos limitados, el costo de oportunidad de elegir uno es:",
+      "opciones": [
+        "El gasto mas barato disponible en ese momento",
+        "El total de dinero que queda despues de gastar",
+        "El valor de la mejor alternativa a la que se renuncia al tomar esa decision",
+        "Un cargo adicional que cobran por presupuestar"
+      ],
+      "correctIndex": 2,
+      "explicacion": "El costo de oportunidad es aquello a lo que se renuncia: la mejor alternativa que se deja de lado al destinar los recursos a otra opcion."
+    },
+    {
+      "id": "11_w2_mc_09",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "Una diferencia central entre un presupuesto familiar y uno individual es que el familiar:",
+      "opciones": [
+        "Elimina la necesidad de fijar metas porque ya hay varios ingresos",
+        "No requiere registrar gastos porque varias personas los recuerdan",
+        "Siempre es mas pequeno que un presupuesto individual",
+        "Coordina ingresos y gastos de varias personas y reparte responsabilidades comunes"
+      ],
+      "correctIndex": 3,
+      "explicacion": "El presupuesto familiar coordina ingresos y gastos de varias personas y distribuye responsabilidades compartidas; el individual gestiona los de una sola."
+    },
+    {
+      "id": "11_w2_mc_10",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "enunciado": "Una meta de mediano plazo se planea para alcanzarse en un horizonte intermedio. Dentro del presupuesto conviene tratarla:",
+      "opciones": [
+        "Apartando aportes regulares cada periodo para no depender de un esfuerzo unico al final",
+        "Dejandola para el ultimo periodo y reuniendo todo de golpe",
+        "Atendiendola solo si sobra dinero despues de todo lo demas",
+        "Mezclando su dinero con el del fondo de imprevistos para confundir su uso"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Las metas de mediano plazo se cubren con aportes regulares en cada periodo, evitando depender de un unico esfuerzo final."
+    },
+    {
+      "id": "11_w2_mc_11",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "Al construir un presupuesto base cero, antes de asignar recursos a una categoria de gasto se debe preguntar:",
+      "opciones": [
+        "Cuanto se gasto el ano pasado para copiarlo sin cambios",
+        "Si ese gasto sigue siendo necesario y cuanto realmente requiere hoy",
+        "Cual fue el gasto mas alto historico para igualarlo",
+        "Si los demas suelen gastar en eso para imitarlos"
+      ],
+      "correctIndex": 1,
+      "explicacion": "En base cero cada categoria se evalua por su necesidad actual y el monto que realmente requiere, no por su historico."
+    },
+    {
+      "id": "11_w2_mc_12",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "enunciado": "Una persona detecta varios meses seguidos con flujo de caja negativo. La respuesta de presupuesto mas sensata es:",
+      "opciones": [
+        "Aumentar los gastos para sentirse mejor en el momento",
+        "Ignorarlo mientras quede algo de dinero en el bolsillo",
+        "Revisar gastos y entradas para reducir salidas o aumentar ingresos hasta equilibrar el flujo",
+        "Esperar a que el problema se resuelva por si solo sin actuar"
+      ],
+      "correctIndex": 2,
+      "explicacion": "Un flujo de caja negativo sostenido exige actuar: reducir salidas o aumentar entradas hasta que las entradas vuelvan a cubrir las salidas."
+    }
+  ]
+}

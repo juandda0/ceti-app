@@ -1,0 +1,26 @@
+{
+  "grado": "11",
+  "worldId": "world_5",
+  "cards": [
+    {
+      "titulo": "Avalancha y bola de nieve",
+      "cuerpo": "Cuando hay varias deudas, dos estrategias ayudan a ordenar los pagos. La avalancha ataca primero la deuda de mayor tasa de interes, lo que suele reducir el costo total. La bola de nieve paga primero el saldo mas pequeño, lo que da logros tempranos y motivacion, aunque puede costar mas en intereses.",
+      "ejemplo": "Es como ordenar tareas pendientes: una persona empieza por la que mas le pesa para quitarsela de encima; otra empieza por la mas corta para sentir avance rapido."
+    },
+    {
+      "titulo": "Refinanciar y consolidar",
+      "cuerpo": "Refinanciar es renegociar las condiciones de una deuda existente, como el plazo o la tasa, para hacerla mas manejable. Consolidar es reunir varias deudas en una sola. Ambas pueden ayudar, pero solo convienen si las nuevas condiciones mejoran de verdad y el costo total no termina siendo mayor.",
+      "ejemplo": "Es como reorganizar varios compromisos de la semana en una sola agenda: ayuda solo si de verdad facilita cumplir, no si los amontona y los vuelve mas dificiles."
+    },
+    {
+      "titulo": "La espiral del pago minimo",
+      "cuerpo": "Pagar mes a mes solo el monto minimo cubre poco mas que los intereses del periodo. El saldo baja muy lento, el plazo se alarga y los intereses totales crecen. Asi puede formarse una espiral de deuda. Abonar mas que el minimo, cuando es posible, ayuda a salir antes.",
+      "ejemplo": "Es como achicar agua de un bote con un vaso pequeño mientras sigue entrando: si solo sacas lo justo, nunca terminas de vaciarlo."
+    },
+    {
+      "titulo": "Señales de riesgo y ultima instancia",
+      "cuerpo": "Una relacion alta entre las cuotas y el ingreso es una señal de alerta de sobreendeudamiento. Ante una deuda dificil conviene actuar a tiempo: ajustar el presupuesto, refinanciar, buscar asesoria y un plan de pago. Los mecanismos de insolvencia existen, pero son un recurso de ultima instancia, con consecuencias.",
+      "ejemplo": "Es como atender una gotera apenas aparece: revisarla a tiempo evita que el problema crezca y se vuelva mucho mas dificil de resolver."
+    }
+  ]
+}

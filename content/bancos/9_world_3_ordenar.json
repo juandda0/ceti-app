@@ -1,0 +1,137 @@
+{
+  "bancoId": "9_world_3_ordenar",
+  "grado": "9",
+  "worldId": "world_3",
+  "tipo": "ordenar",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "9_w3_ord_01",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Ordena los pasos para empezar a ahorrar con una meta, del primero al ultimo.",
+      "elementos": [
+        "Definir para que se quiere ahorrar",
+        "Fijar el plazo de la meta",
+        "Apartar una parte cada vez que se recibe dinero",
+        "Revisar el avance hacia la meta"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Primero se decide el proposito, luego el plazo, despues se aparta dinero de forma regular y por ultimo se revisa el avance."
+    },
+    {
+      "id": "9_w3_ord_02",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Ordena los pasos para abrir y usar una cuenta de ahorros en una entidad vigilada, del primero al ultimo.",
+      "elementos": [
+        "Elegir una entidad vigilada",
+        "Abrir la cuenta de ahorros",
+        "Depositar el dinero ahorrado en la cuenta",
+        "Dejar el dinero en la cuenta para que gane intereses"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Se elige la entidad, se abre la cuenta, se deposita el ahorro y se mantiene para que gane intereses."
+    },
+    {
+      "id": "9_w3_ord_03",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Ordena las acciones para convertir el ahorro en un habito, del primero al ultimo.",
+      "elementos": [
+        "Decidir guardar una parte de forma regular",
+        "Repetir el ahorro cada vez que se recibe dinero",
+        "Mantener la rutina durante varios periodos",
+        "El ahorro ya se siente parte de la rutina"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "El habito se forma al decidir ahorrar, repetir la accion, sostenerla en el tiempo y verla integrada a la rutina."
+    },
+    {
+      "id": "9_w3_ord_04",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Ordena los pasos para armar un fondo de imprevistos, del primero al ultimo.",
+      "elementos": [
+        "Reconocer que pueden ocurrir gastos inesperados",
+        "Apartar una parte del dinero para ese fondo",
+        "Guardar el fondo separado del gasto diario",
+        "Usar el fondo solo ante un imprevisto real"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Primero se reconoce el riesgo de gastos inesperados, se aparta dinero, se mantiene separado y se usa solo ante un imprevisto."
+    },
+    {
+      "id": "9_w3_ord_05",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Ordena las etapas del crecimiento de un ahorro que gana intereses, del momento inicial al posterior.",
+      "elementos": [
+        "Se deposita el dinero ahorrado",
+        "El dinero permanece guardado en la cuenta",
+        "La cuenta reconoce intereses sobre lo guardado",
+        "El total ahorrado queda mayor que el deposito inicial"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "El ahorro se deposita, permanece guardado, gana intereses y el total termina siendo mayor que el deposito inicial."
+    },
+    {
+      "id": "9_w3_ord_06",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Ordena los pasos para priorizar el ahorro al recibir dinero, del primero al ultimo.",
+      "elementos": [
+        "Recibir el dinero",
+        "Apartar primero la parte del ahorro",
+        "Cubrir los gastos necesarios con lo restante",
+        "Evitar gastar la parte ya destinada al ahorro"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Ahorrar primero y luego gastar lo restante protege la parte destinada al ahorro."
+    },
+    {
+      "id": "9_w3_ord_07",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Ordena los pasos para revisar el avance de una meta de ahorro, del primero al ultimo.",
+      "elementos": [
+        "Recordar cual es la meta y su plazo",
+        "Comparar lo reunido con lo que falta",
+        "Ajustar el ritmo de ahorro si es necesario",
+        "Continuar ahorrando hasta cumplir la meta"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Revisar la meta, comparar el avance, ajustar el ritmo y seguir ahorrando hasta cumplirla."
+    },
+    {
+      "id": "9_w3_ord_08",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Ordena las acciones para decidir entre gastar de inmediato o ahorrar, del primero al ultimo.",
+      "elementos": [
+        "Identificar si el gasto es necesario o puede esperar",
+        "Pensar en la meta de ahorro pendiente",
+        "Decidir cuanto apartar para el ahorro",
+        "Guardar esa parte antes de gastar el resto"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Evaluar el gasto, recordar la meta, decidir cuanto ahorrar y apartarlo antes de gastar lo demas."
+    },
+    {
+      "id": "9_w3_ord_09",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Ordena los pasos para pasar de guardar dinero en casa a guardarlo en una cuenta vigilada, del primero al ultimo.",
+      "elementos": [
+        "Reunir el dinero ahorrado en casa",
+        "Buscar una entidad de ahorro vigilada",
+        "Trasladar el dinero a la cuenta de ahorros",
+        "Dejarlo guardado con mayor respaldo y posibilidad de ganar intereses"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Reunir el ahorro, elegir una entidad vigilada, trasladar el dinero y conservarlo con mas respaldo y posibilidad de intereses."
+    }
+  ]
+}

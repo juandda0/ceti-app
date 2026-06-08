@@ -1,0 +1,46 @@
+{
+  "bancoId": "10_world_2",
+  "grado": "10",
+  "worldId": "world_2",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "situaciones": [
+    {
+      "id": "10_w2_ec_01",
+      "enunciado": "Repartiste tu ingreso del periodo en necesidades, deseos y ahorro. A mitad de camino aparece un imprevisto que tendrás que cubrir y que se lleva buena parte de lo que tenías para deseos.",
+      "opcionA": {
+        "texto": "Recortas temporalmente tus deseos para liberar dinero y proteger lo esencial y tu ahorro.",
+        "consecuencia": "Cubres el imprevisto sin caer en déficit y mantienes tu meta de ahorro, aunque este periodo renuncias a varios gustos que tenías previstos."
+      },
+      "opcionB": {
+        "texto": "Tomas el dinero de tu parte de ahorro para no renunciar a ningún deseo.",
+        "consecuencia": "Conservas tus gustos del periodo, pero tu ahorro retrocede y tardarás más en avanzar hacia tu meta."
+      }
+    },
+    {
+      "id": "10_w2_ec_02",
+      "enunciado": "Al revisar lo planeado frente a lo real notas que varios gastos hormiga vienen desviando tu presupuesto periodo tras periodo, aunque cada uno por separado parece pequeño.",
+      "opcionA": {
+        "texto": "Registras esos pequeños gastos, ves cuánto influyen juntos y decides cuáles reducir.",
+        "consecuencia": "Recuperas el control de tu presupuesto y entiendes mejor a dónde se iba tu dinero, aunque debes renunciar a algunas costumbres cómodas."
+      },
+      "opcionB": {
+        "texto": "Los dejas como están porque cada uno es muy pequeño para preocuparte.",
+        "consecuencia": "Evitas el esfuerzo de seguirlos, pero su efecto sumado sigue desequilibrando tu presupuesto en los próximos periodos."
+      }
+    },
+    {
+      "id": "10_w2_ec_03",
+      "enunciado": "Quieres reunir lo necesario para un viaje de fin de curso con una fecha definida, y al mismo tiempo llevas tu presupuesto mensual de siempre.",
+      "opcionA": {
+        "texto": "Armas un presupuesto por proyecto para el viaje, además de tu presupuesto mensual.",
+        "consecuencia": "Organizas la meta con claridad y vas reuniendo lo necesario a tiempo, aunque debes ajustar algunos deseos del mes para que ambos planes encajen."
+      },
+      "opcionB": {
+        "texto": "Mezclas el viaje dentro del presupuesto mensual sin separarlo como proyecto.",
+        "consecuencia": "Te ahorras llevar dos planes, pero pierdes claridad sobre cuánto te falta para el viaje y corres el riesgo de no llegar a la fecha."
+      }
+    }
+  ]
+}

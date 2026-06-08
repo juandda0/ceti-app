@@ -1,0 +1,83 @@
+{
+  "bancoId": "10_world_5_true_false",
+  "grado": "10",
+  "worldId": "world_5",
+  "tipo": "true_false",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "10_w5_vf_01",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "Pagar siempre solo la cuota mínima es la forma más rápida de quedar libre de una deuda con intereses.",
+      "respuesta": false,
+      "explicacion": "La cuota mínima reduce el saldo lentamente; abonar más cuando se puede acelera la salida de la deuda y reduce los intereses."
+    },
+    {
+      "id": "10_w5_vf_02",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "El método avalancha prioriza pagar primero la deuda con la tasa de interés más alta.",
+      "respuesta": true,
+      "explicacion": "Atacar primero la tasa más alta reduce el total de intereses pagados a lo largo del tiempo."
+    },
+    {
+      "id": "10_w5_vf_03",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "El método bola de nieve consiste en pagar primero la deuda con el saldo más pequeño para ganar motivación.",
+      "respuesta": true,
+      "explicacion": "Bola de nieve ordena las deudas de menor a mayor saldo, buscando logros rápidos que sostengan el hábito de pago."
+    },
+    {
+      "id": "10_w5_vf_04",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "Necesitar nuevas deudas para pagar las cuotas de deudas anteriores es una señal de sobreendeudamiento.",
+      "respuesta": true,
+      "explicacion": "Endeudarse para cubrir deudas previas indica que los ingresos ya no alcanzan, lo que advierte sobreendeudamiento."
+    },
+    {
+      "id": "10_w5_vf_05",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "Renegociar una deuda significa dejar de pagarla por completo.",
+      "respuesta": false,
+      "explicacion": "Renegociar es acordar con la entidad nuevas condiciones, como plazo o cuota, para que el pago sea más manejable, no dejar de pagar."
+    },
+    {
+      "id": "10_w5_vf_06",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "Las centrales de información de riesgo registran el historial de cumplimiento en el pago de obligaciones.",
+      "respuesta": true,
+      "explicacion": "Estas centrales guardan el comportamiento de pago; un historial positivo facilita futuros créditos."
+    },
+    {
+      "id": "10_w5_vf_07",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "Con interés compuesto, los intereses no pagados se suman al saldo y empiezan a generar más intereses.",
+      "respuesta": true,
+      "explicacion": "Esa acumulación hace que una deuda atrasada crezca cada vez más rápido."
+    },
+    {
+      "id": "10_w5_vf_08",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "Toda deuda es perjudicial y nunca puede ayudar a alcanzar una meta.",
+      "respuesta": false,
+      "explicacion": "Existe la idea de 'deuda buena': la que financia algo con valor o ingresos a futuro y se asume con un plan de pago claro."
+    },
+    {
+      "id": "10_w5_vf_09",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "Ante dificultades para pagar, contactar pronto a la entidad permite explorar más alternativas que esperar a entrar en mora.",
+      "respuesta": true,
+      "explicacion": "Comunicarse a tiempo abre opciones de acuerdo; tener deudas no es motivo de juicio, sino una situación que se puede gestionar."
+    }
+  ]
+}

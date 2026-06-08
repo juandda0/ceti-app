@@ -1,0 +1,137 @@
+{
+  "bancoId": "10_world_3_ordenar",
+  "grado": "10",
+  "worldId": "world_3",
+  "tipo": "ordenar",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "10_w3_ord_01",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para construir un fondo de emergencia, del primero al último.",
+      "elementos": [
+        "Definir cuántos meses de gastos quieres cubrir",
+        "Elegir un lugar seguro y de fácil acceso para el dinero",
+        "Apartar una parte de forma periódica hasta llegar a la meta",
+        "Mantenerlo separado de los gastos diarios"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Primero se define la meta, luego dónde guardarlo, después se aporta hasta completarla y finalmente se mantiene separado para no gastarlo por error."
+    },
+    {
+      "id": "10_w3_ord_02",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "Ordena las etapas de una meta de ahorro de largo plazo, del inicio al final.",
+      "elementos": [
+        "Definir con claridad la meta y su plazo",
+        "Calcular cuánto apartar de forma periódica",
+        "Programar el ahorro para que sea automático",
+        "Revisar el avance y ajustar si cambia la situación"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Se parte de definir la meta, se calcula el aporte, se automatiza para sostener el hábito y se revisa el avance con el tiempo."
+    },
+    {
+      "id": "10_w3_ord_03",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "Ordena los plazos de las metas de ahorro, de la más corta a la más larga.",
+      "elementos": [
+        "Comprar algo que necesitas esta semana",
+        "Reunir para un viaje de fin de año",
+        "Ahorrar para estudios en unos años",
+        "Construir un ahorro para una meta lejana en la vida"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Las metas se ordenan por el tiempo que tardan en cumplirse, desde lo inmediato hasta lo más lejano."
+    },
+    {
+      "id": "10_w3_ord_04",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para automatizar el ahorro, del primero al último.",
+      "elementos": [
+        "Decidir qué parte de tus ingresos apartarás",
+        "Fijar una fecha periódica para hacerlo",
+        "Configurar que el ahorro se aparte solo en esa fecha",
+        "Verificar de vez en cuando que sigue funcionando"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Se decide cuánto, se elige cuándo, se automatiza y luego se verifica que el proceso continúe funcionando."
+    },
+    {
+      "id": "10_w3_ord_05",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "Ordena estas opciones según su liquidez, de la más líquida (más fácil de retirar) a la menos líquida.",
+      "elementos": [
+        "Dinero disponible para usar de inmediato",
+        "Ahorro que tarda unos días en estar disponible",
+        "Ahorro comprometido por un plazo definido",
+        "Ahorro pensado para una meta muy lejana"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "La liquidez ordena las opciones según qué tan rápido se puede disponer del dinero, de lo inmediato a lo más comprometido en el tiempo."
+    },
+    {
+      "id": "10_w3_ord_06",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para fijar una meta de ahorro clara, del primero al último.",
+      "elementos": [
+        "Identificar para qué quieres ahorrar",
+        "Definir en cuánto tiempo deseas lograrlo",
+        "Estimar cuánto necesitas reunir",
+        "Planear cuánto apartar en cada periodo"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Una meta clara surge de saber para qué, en cuánto tiempo, cuánto reunir y cómo repartir el aporte."
+    },
+    {
+      "id": "10_w3_ord_07",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "Ordena la prioridad de uso del ahorro al aparecer un imprevisto, del primer recurso al último.",
+      "elementos": [
+        "Usar el fondo de emergencia reservado para esto",
+        "Ajustar gastos no esenciales del mes",
+        "Posponer una meta de ahorro de largo plazo",
+        "Replantear el plan de ahorro hacia adelante"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Ante un imprevisto se recurre primero al fondo de emergencia, luego se ajustan gastos, se posponen metas lejanas y al final se replantea el plan."
+    },
+    {
+      "id": "10_w3_ord_08",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "Ordena cómo crece un ahorro con interés compuesto a lo largo del tiempo, del inicio al avance mayor.",
+      "elementos": [
+        "Apartas un ahorro inicial",
+        "Ese ahorro genera sus primeros intereses",
+        "Los intereses se suman al ahorro",
+        "El conjunto mayor genera aún más intereses"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "El interés compuesto avanza así: el ahorro genera intereses, esos intereses se suman y el total más grande produce todavía más intereses."
+    },
+    {
+      "id": "10_w3_ord_09",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "Ordena los hábitos para sostener el ahorro en el tiempo, del primero al último.",
+      "elementos": [
+        "Apartar el ahorro apenas recibes ingresos",
+        "Mantenerlo separado de los gastos diarios",
+        "Revisar tu avance con cierta frecuencia",
+        "Celebrar haber alcanzado la meta y plantear la siguiente"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Sostener el ahorro implica apartarlo primero, mantenerlo separado, revisar el avance y luego renovar la motivación con una nueva meta."
+    }
+  ]
+}

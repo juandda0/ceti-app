@@ -1,0 +1,138 @@
+{
+  "bancoId": "10_world_5_ordenar",
+  "grado": "10",
+  "worldId": "world_5",
+  "tipo": "ordenar",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "10_w5_ord_01",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "Ordena los pasos de un plan para empezar a salir de las deudas.",
+      "elementos": [
+        "Hacer una lista de todas las deudas con su saldo y su tasa",
+        "Revisar el presupuesto para liberar dinero hacia los pagos",
+        "Elegir un método de pago, como avalancha o bola de nieve",
+        "Pagar de forma constante según el método elegido",
+        "Revisar el avance y ajustar el plan cada cierto tiempo"
+      ],
+      "ordenCanonico": [0, 1, 2, 3, 4],
+      "explicacion": "Primero se conoce el panorama completo de las deudas, luego se libera dinero, se elige un método, se ejecuta con constancia y finalmente se revisa el avance."
+    },
+    {
+      "id": "10_w5_ord_02",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "Ordena las deudas según el método avalancha, de la primera a la última en pagarse.",
+      "elementos": [
+        "Deuda con la tasa de interés más alta",
+        "Deuda con tasa de interés media",
+        "Deuda con la tasa de interés más baja"
+      ],
+      "ordenCanonico": [0, 1, 2],
+      "explicacion": "El método avalancha paga primero la deuda de mayor tasa de interés y avanza hacia la de menor tasa."
+    },
+    {
+      "id": "10_w5_ord_03",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "Ordena las deudas según el método bola de nieve, de la primera a la última en pagarse.",
+      "elementos": [
+        "Deuda con el saldo más pequeño",
+        "Deuda con saldo intermedio",
+        "Deuda con el saldo más grande"
+      ],
+      "ordenCanonico": [0, 1, 2],
+      "explicacion": "El método bola de nieve paga primero el saldo más pequeño y avanza hacia el más grande para acumular logros."
+    },
+    {
+      "id": "10_w5_ord_04",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "Ordena los pasos para renegociar una deuda con la entidad.",
+      "elementos": [
+        "Reconocer la dificultad para pagar antes de entrar en mora",
+        "Reunir la información de la deuda y de la capacidad de pago",
+        "Contactar a la entidad para explicar la situación",
+        "Proponer y acordar nuevas condiciones de pago",
+        "Cumplir las condiciones acordadas"
+      ],
+      "ordenCanonico": [0, 1, 2, 3, 4],
+      "explicacion": "Renegociar empieza por reconocer la dificultad a tiempo, prepararse con datos, contactar a la entidad, acordar nuevas condiciones y cumplirlas."
+    },
+    {
+      "id": "10_w5_ord_05",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "Ordena los pasos recomendados antes de aceptar una nueva deuda.",
+      "elementos": [
+        "Definir para qué se necesita el dinero",
+        "Revisar la capacidad de pago dentro del presupuesto",
+        "Comparar las condiciones de distintas opciones",
+        "Confirmar que la cuota cabe durante todo el plazo",
+        "Tomar la decisión de aceptar o no la deuda"
+      ],
+      "ordenCanonico": [0, 1, 2, 3, 4],
+      "explicacion": "Una decisión informada parte del propósito, revisa la capacidad de pago, compara opciones, verifica la cuota a lo largo del plazo y solo entonces decide."
+    },
+    {
+      "id": "10_w5_ord_06",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "Ordena las etapas por las que suele pasar una deuda cuando deja de pagarse a tiempo.",
+      "elementos": [
+        "Se vence la fecha de pago sin abonar la cuota",
+        "Se acumulan intereses por el atraso",
+        "La entidad envía recordatorios y avisos de cobro",
+        "Se registra el incumplimiento en una central de riesgo"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Primero pasa la fecha sin pago, se acumulan intereses de mora, llegan los avisos y, de persistir, se registra el incumplimiento en una central de riesgo."
+    },
+    {
+      "id": "10_w5_ord_07",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "Ordena los pasos para construir un fondo que ayude a evitar caer en deudas por imprevistos.",
+      "elementos": [
+        "Definir una meta de ahorro para emergencias",
+        "Apartar una parte del ingreso de forma periódica",
+        "Guardar el dinero en un lugar accesible y seguro",
+        "Usar el fondo solo ante un imprevisto real"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Un fondo de emergencia parte de una meta, se alimenta poco a poco, se guarda en un lugar seguro y se reserva solo para imprevistos, reduciendo la necesidad de endeudarse."
+    },
+    {
+      "id": "10_w5_ord_08",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "Ordena estas situaciones según el nivel de riesgo de deuda, de menor a mayor.",
+      "elementos": [
+        "Pagar todas las cuotas a tiempo y mantener un fondo de emergencia",
+        "Pagar a tiempo pero sin ningún ahorro de respaldo",
+        "Pagar a veces solo la cuota mínima con dificultad",
+        "Tomar nuevas deudas para pagar las cuotas anteriores"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "El riesgo aumenta a medida que se pierde respaldo y capacidad de pago, hasta el punto crítico de endeudarse para cubrir deudas previas."
+    },
+    {
+      "id": "10_w5_ord_09",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "Ordena los pasos para construir y cuidar un buen historial crediticio.",
+      "elementos": [
+        "Asumir solo las deudas que caben en el presupuesto",
+        "Pagar las cuotas en las fechas acordadas",
+        "Mantener el cumplimiento de forma sostenida",
+        "Revisar de vez en cuando el propio reporte de riesgo"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Un buen historial se construye asumiendo deudas manejables, pagando a tiempo de forma sostenida y revisando el propio reporte para detectar errores."
+    }
+  ]
+}

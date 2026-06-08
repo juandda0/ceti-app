@@ -1,0 +1,83 @@
+{
+  "bancoId": "9_world_5_true_false",
+  "grado": "9",
+  "worldId": "world_5",
+  "tipo": "true_false",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "9_w5_vf_01",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "Una deuda es un compromiso de devolver algo que se recibió prestado.",
+      "respuesta": true,
+      "explicacion": "Endeudarse significa recibir algo prestado con la obligación de devolverlo, casi siempre con un costo adicional."
+    },
+    {
+      "id": "9_w5_vf_02",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "El interés hace que, con el tiempo, se termine devolviendo más de lo que se recibió en préstamo.",
+      "respuesta": true,
+      "explicacion": "El interés es el costo de usar dinero prestado; por eso el total a devolver supera la cantidad inicial."
+    },
+    {
+      "id": "9_w5_vf_03",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "Pagar una deuda en las fechas acordadas ayuda a evitar cargos por atraso.",
+      "respuesta": true,
+      "explicacion": "Cumplir los plazos evita la mora y mantiene la deuda controlada."
+    },
+    {
+      "id": "9_w5_vf_04",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "Pagar solo el mínimo de una cuenta hace que la deuda desaparezca de inmediato.",
+      "respuesta": false,
+      "explicacion": "Pagar solo el mínimo deja un saldo pendiente que sigue generando intereses; la deuda tarda más en terminar."
+    },
+    {
+      "id": "9_w5_vf_05",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "Dejar de pagar una deuda durante mucho tiempo no tiene ninguna consecuencia.",
+      "respuesta": false,
+      "explicacion": "El atraso prolongado suma cargos y puede dificultar conseguir préstamos en el futuro."
+    },
+    {
+      "id": "9_w5_vf_06",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "Antes de endeudarse conviene revisar si se podrá devolver lo prestado con los ingresos previstos.",
+      "respuesta": true,
+      "explicacion": "Pedir prestado solo lo que se puede pagar evita comprometer el futuro."
+    },
+    {
+      "id": "9_w5_vf_07",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "Tener que pedir un nuevo préstamo para pagar otro anterior puede ser una señal de tener demasiadas deudas.",
+      "respuesta": true,
+      "explicacion": "Endeudarse para cubrir otra deuda indica que los compromisos superan lo que se puede pagar; es una alerta."
+    },
+    {
+      "id": "9_w5_vf_08",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "Cuando una deuda se vuelve difícil de manejar, buscar ayuda o renegociar las condiciones es una opción válida.",
+      "respuesta": true,
+      "explicacion": "Conversar con quien prestó para ajustar plazos o condiciones ayuda a retomar el control de la deuda."
+    },
+    {
+      "id": "9_w5_vf_09",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "Una deuda y un ahorro son lo mismo, porque ambos son dinero propio.",
+      "respuesta": false,
+      "explicacion": "El ahorro es dinero propio que se guarda; la deuda es dinero ajeno que hay que devolver."
+    }
+  ]
+}

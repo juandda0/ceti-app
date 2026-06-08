@@ -1,0 +1,134 @@
+{
+  "bancoId": "9_world_2_ordenar",
+  "grado": "9",
+  "worldId": "world_2",
+  "tipo": "ordenar",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "9_w2_ord_01",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "enunciado": "Ordena los pasos para armar un presupuesto sencillo, del primero al último.",
+      "elementos": [
+        "Registrar los ingresos que vas a recibir",
+        "Anotar los egresos que vas a tener",
+        "Comparar ingresos con egresos",
+        "Decidir ajustes según el resultado"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Primero registras lo que entra, luego lo que sale, después comparas y al final decides ajustes. Es un orden procedimental."
+    },
+    {
+      "id": "9_w2_ord_02",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "Ordena las etapas del ciclo de un presupuesto, desde planear hasta volver a revisar.",
+      "elementos": [
+        "Planear el presupuesto del periodo",
+        "Llevar a cabo los gastos planeados",
+        "Registrar lo que realmente entró y salió",
+        "Comparar lo real con lo planeado",
+        "Ajustar el plan para el siguiente periodo"
+      ],
+      "ordenCanonico": [0, 1, 2, 3, 4],
+      "explicacion": "El ciclo va de planear, ejecutar, registrar, comparar y ajustar. Es un orden procedimental por etapas."
+    },
+    {
+      "id": "9_w2_ord_03",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "enunciado": "Ordena los pasos para decidir una compra dentro de tu presupuesto, del primero al último.",
+      "elementos": [
+        "Identificar si es una necesidad o un deseo",
+        "Revisar si hay dinero disponible en el presupuesto",
+        "Tomar la decisión de comprar o esperar"
+      ],
+      "ordenCanonico": [0, 1, 2],
+      "explicacion": "Primero clasificas la compra, luego revisas la disponibilidad y al final decides. Es un orden procedimental."
+    },
+    {
+      "id": "9_w2_ord_04",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "Ordena los pasos para corregir un presupuesto que quedó en déficit, del primero al último.",
+      "elementos": [
+        "Detectar que los egresos superaron a los ingresos",
+        "Revisar qué gastos pueden reducirse",
+        "Decidir qué ajustes aplicar",
+        "Aplicar los ajustes en el siguiente periodo"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Primero detectas el déficit, revisas gastos reducibles, decides los ajustes y los aplicas. Orden procedimental."
+    },
+    {
+      "id": "9_w2_ord_05",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "enunciado": "Ordena estos momentos del manejo del dinero según ocurren en el tiempo, del primero al último.",
+      "elementos": [
+        "Recibir el dinero del periodo",
+        "Planear cómo usarlo",
+        "Realizar los gastos",
+        "Revisar cómo te fue al final"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "El dinero primero se recibe, luego se planea, después se gasta y al final se revisa. Es un orden cronológico."
+    },
+    {
+      "id": "9_w2_ord_06",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "Ordena los pasos para preparar un presupuesto antes de un evento escolar, del primero al último.",
+      "elementos": [
+        "Listar lo que necesitas para el evento",
+        "Separar lo indispensable de lo deseable",
+        "Estimar los egresos de cada elemento",
+        "Comparar el total con tus ingresos disponibles"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Primero listas, luego priorizas, después estimas egresos y al final comparas con tus ingresos. Orden procedimental."
+    },
+    {
+      "id": "9_w2_ord_07",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "enunciado": "Ordena estos pasos para registrar tus gastos de la semana, del primero al último.",
+      "elementos": [
+        "Anotar cada gasto cuando ocurre",
+        "Reunir todas las anotaciones al final de la semana",
+        "Sumar los gastos registrados"
+      ],
+      "ordenCanonico": [0, 1, 2],
+      "explicacion": "Primero anotas, luego reúnes y al final sumas. Es un orden procedimental y cronológico."
+    },
+    {
+      "id": "9_w2_ord_08",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "Ordena los pasos para clasificar tus gastos en fijos y variables, del primero al último.",
+      "elementos": [
+        "Reunir la lista de todos tus gastos",
+        "Identificar cuáles se repiten con un monto parecido",
+        "Marcar esos como fijos y el resto como variables"
+      ],
+      "ordenCanonico": [0, 1, 2],
+      "explicacion": "Primero reúnes los gastos, luego identificas los regulares y al final los clasificas. Orden procedimental."
+    },
+    {
+      "id": "9_w2_ord_09",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "enunciado": "Ordena estos pasos para usar un superávit de tu presupuesto, del primero al último.",
+      "elementos": [
+        "Confirmar que recibiste más de lo que gastaste",
+        "Definir una meta para ese dinero a favor",
+        "Destinar el dinero a esa meta"
+      ],
+      "ordenCanonico": [0, 1, 2],
+      "explicacion": "Primero confirmas el superávit, luego defines la meta y al final destinas el dinero. Orden procedimental."
+    }
+  ]
+}

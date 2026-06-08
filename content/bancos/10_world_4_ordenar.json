@@ -1,0 +1,136 @@
+{
+  "bancoId": "10_world_4_ordenar",
+  "grado": "10",
+  "worldId": "world_4",
+  "tipo": "ordenar",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "10_w4_ord_01",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para evaluar tu capacidad de pago antes de tomar un crédito.",
+      "elementos": [
+        "Calcular cuánto recibes de ingresos en cada periodo.",
+        "Restar tus gastos esenciales y compromisos ya existentes.",
+        "Identificar cuánto te queda disponible para una cuota.",
+        "Comparar ese disponible con la cuota del crédito propuesto."
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Evaluar la capacidad de pago va de conocer tus ingresos, restar lo esencial, ver el disponible y compararlo con la cuota propuesta."
+    },
+    {
+      "id": "10_w4_ord_02",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "Ordena los pasos para comparar dos créditos por su costo real antes de decidir.",
+      "elementos": [
+        "Reunir las condiciones completas de cada oferta.",
+        "Mirar la tasa efectiva de cada crédito.",
+        "Revisar plazo, cuota y costo total de cada uno.",
+        "Elegir el de menor costo que se ajuste a tu capacidad de pago."
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Comparar por costo real implica reunir condiciones, mirar la tasa efectiva, revisar plazo, cuota y costo total, y luego elegir lo sostenible."
+    },
+    {
+      "id": "10_w4_ord_03",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "Ordena las acciones que construyen un buen historial crediticio en el tiempo.",
+      "elementos": [
+        "Tomar un crédito acorde con tu capacidad de pago.",
+        "Pagar cada cuota en la fecha acordada.",
+        "Terminar de pagar el crédito completo.",
+        "Acceder a mejores condiciones en futuros créditos."
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Un buen historial se forma al tomar un crédito acorde, pagar a tiempo, cerrarlo y, gracias a ese cumplimiento, lograr mejores condiciones después."
+    },
+    {
+      "id": "10_w4_ord_04",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "Ordena los pasos para decidir entre un crédito de plazo corto y uno de plazo largo, con igual monto y tasa.",
+      "elementos": [
+        "Estimar el valor de la cuota en cada opción.",
+        "Estimar el costo total de intereses en cada opción.",
+        "Verificar cuál cuota cabe en tu capacidad de pago.",
+        "Elegir buscando equilibrio entre cuota asumible y menor costo total."
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "La decisión va de estimar cuotas, estimar el costo total, verificar qué cuota puedes asumir y elegir el equilibrio entre cuota y costo."
+    },
+    {
+      "id": "10_w4_ord_05",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para usar un crédito de libre inversión de forma responsable.",
+      "elementos": [
+        "Definir con claridad para qué necesitas el dinero.",
+        "Pedir prestado solo el monto que cubre esa meta.",
+        "Acordar un plazo y una cuota que puedas cumplir.",
+        "Pagar puntualmente hasta saldar el crédito."
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Aunque sea de libre uso, conviene definir la meta, pedir solo lo necesario, acordar condiciones cumplibles y pagar puntualmente hasta saldar."
+    },
+    {
+      "id": "10_w4_ord_06",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "Ordena el razonamiento para entender por qué un plazo más largo suele subir el interés total, con igual monto y tasa.",
+      "elementos": [
+        "Mantener fijos el monto prestado y la tasa.",
+        "Repartir el pago en más cuotas a lo largo del tiempo.",
+        "Pagar intereses durante un periodo más prolongado.",
+        "Obtener un interés total acumulado mayor."
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Con monto y tasa fijos, repartir en más cuotas alarga el tiempo en que se cobran intereses, lo que acumula un interés total mayor."
+    },
+    {
+      "id": "10_w4_ord_07",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para revisar el costo real de un crédito antes de firmar.",
+      "elementos": [
+        "Leer con calma las condiciones del documento.",
+        "Ubicar la tasa efectiva del crédito.",
+        "Identificar otros costos asociados al crédito.",
+        "Calcular el costo total que terminarás pagando."
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Revisar el costo real implica leer las condiciones, ubicar la tasa efectiva, identificar otros costos y estimar el costo total final."
+    },
+    {
+      "id": "10_w4_ord_08",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "Ordena estos perfiles según el riesgo que suele percibir una entidad, de menor a mayor riesgo.",
+      "elementos": [
+        "Persona con buen historial y clara capacidad de pago.",
+        "Persona con buen historial pero capacidad de pago ajustada.",
+        "Persona sin historial previo y capacidad de pago ajustada."
+      ],
+      "ordenCanonico": [0, 1, 2],
+      "explicacion": "En general, un buen historial con capacidad sólida implica menor riesgo; la capacidad ajustada lo eleva, y la falta de historial sumada a ello lo aumenta más."
+    },
+    {
+      "id": "10_w4_ord_09",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos del ciclo de un crédito usado como herramienta, desde la decisión hasta el cierre.",
+      "elementos": [
+        "Confirmar la necesidad y tu capacidad de pago.",
+        "Comparar ofertas y elegir la más conveniente.",
+        "Recibir el dinero y emplearlo en la meta.",
+        "Pagar las cuotas a tiempo hasta saldar el crédito."
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Usado como herramienta, el crédito va de confirmar necesidad y capacidad, comparar y elegir, emplear el dinero y pagar a tiempo hasta saldarlo."
+    }
+  ]
+}

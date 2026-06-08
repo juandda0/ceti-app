@@ -1,0 +1,293 @@
+import { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Platform, ScrollView, Alert } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
+import { signInWithCustomToken } from 'firebase/auth';
+import { safeRouterBack } from '@shared/utils/safeRouterBack';
+import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
+import { Typography } from '@shared/constants/typography';
+import { Spacing, BorderRadius } from '@shared/constants/theme';
+import ScreenWrapper from '@shared/components/ScreenWrapper';
+import PageHeader from '@shared/components/PageHeader';
+import CetiButton from '@shared/components/CetiButton';
+import { useThemeColors } from '@shared/hooks/useThemeColors';
+import { useThemeStore } from '@shared/store/useThemeStore';
+import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/app';
+import { callFunction } from '@shared/lib/firebase/functions';
+import {
+  configureGoogleSignIn,
+  isAppleSignInAvailable,
+  signInWithApple,
+  signInWithGoogle,
+} from '@shared/lib/firebase/oauth';
+
+type DemoRole = 'admin' | 'rector' | 'coordinador' | 'profesor' | 'estudiante';
+
+export default function LoginScreen() {
+  const router = useRouter();
+  const colors = useThemeColors();
+  const mode = useThemeStore((s) => s.mode);
+  const styles = getStyles(colors, mode);
+  const { t } = useTranslation();
+
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [demoLoadingRole, setDemoLoadingRole] = useState<DemoRole | null>(null);
+
+  useEffect(() => {
+    configureGoogleSignIn();
+  }, []);
+
+  const goHome = () => router.replace('/');
+
+  const onGoogle = async () => {
+    setError('');
+    setBusy(true);
+    try {
+      await signInWithGoogle();
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      goHome();
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'No se pudo iniciar sesión';
+      setError(msg);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const onApple = async () => {
+    setError('');
+    setBusy(true);
+    try {
+      await signInWithApple();
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      goHome();
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'No se pudo iniciar sesión con Apple';
+      setError(msg);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const offlineContinue = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    router.replace('/(auth)/onboarding/user-setup');
+  };
+
+  const onDemoLogin = async (role: DemoRole) => {
+    setDemoLoadingRole(role);
+    try {
+      const { token } = await callFunction<{ token: string; role: string }>('demoLogin', { role });
+      const clients = getFirebaseClients();
+      if (!clients) throw new Error('Firebase no configurado');
+      await signInWithCustomToken(clients.auth, token);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      goHome();
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : t('demo.error');
+      Alert.alert(t('errors.genericTitle'), msg);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    } finally {
+      setDemoLoadingRole(null);
+    }
+  };
+
+  if (!isFirebaseConfigured()) {
+    return (
+      <ScreenWrapper style={styles.root}>
+        <View style={styles.content}>
+          <PageHeader
+            overline="Acceso"
+            title="Modo local"
+            subtitle="No hay proyecto Firebase en las variables EXPO_PUBLIC_FIREBASE_*. Puedes continuar solo en este dispositivo o configurar .env y reiniciar."
+            style={{ marginBottom: Spacing['2xl'] }}
+          />
+          <CetiButton
+            label="Continuar sin cuenta"
+            onPress={offlineContinue}
+            variant="primary"
+            size="large"
+          />
+          <CetiButton
+            label="Volver"
+            onPress={() => safeRouterBack(router, '/(auth)/welcome')}
+            variant="ghost"
+            size="medium"
+            style={{ marginTop: Spacing.md }}
+          />
+        </View>
+      </ScreenWrapper>
+    );
+  }
+
+  const showApple = isAppleSignInAvailable();
+
+  return (
+    <ScreenWrapper style={styles.root}>
+      <View style={styles.content}>
+        <CetiButton
+          label="← Volver"
+          onPress={() => safeRouterBack(router, '/(auth)/welcome')}
+          variant="ghost"
+          size="small"
+          style={{ alignSelf: 'flex-start', marginBottom: Spacing.md }}
+        />
+
+        <PageHeader
+          overline="Cuenta"
+          title="Entra a Ceti"
+          subtitle="Usa tu cuenta Google (o Apple en iOS) para guardar tu progreso en la nube de forma segura."
+          style={{ marginBottom: Spacing['2xl'] }}
+        />
+
+        {error ? (
+          <View
+            style={[
+              styles.errorBox,
+              { backgroundColor: colors.system.red + '22', borderColor: colors.system.red },
+            ]}
+          >
+            <Ionicons
+              name="alert-circle"
+              size={20}
+              color={colors.system.red}
+              style={styles.errorIcon}
+            />
+            <ScrollView
+              style={styles.errorScroll}
+              nestedScrollEnabled
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator
+            >
+              <Text style={[styles.errorText, { color: colors.system.red }]}>{error}</Text>
+            </ScrollView>
+          </View>
+        ) : null}
+
+        <CetiButton
+          label="Continuar con Google"
+          onPress={onGoogle}
+          variant="primary"
+          size="large"
+          disabled={busy}
+          isLoading={busy}
+        />
+
+        {showApple ? (
+          <CetiButton
+            label="Continuar con Apple"
+            onPress={onApple}
+            variant="secondary"
+            size="large"
+            disabled={busy}
+            isLoading={busy}
+            style={{ marginTop: Spacing.md }}
+          />
+        ) : null}
+
+        <View style={styles.demoSection}>
+          <View style={[styles.demoDivider, { borderColor: colors.materials.border }]} />
+          <Text style={[styles.demoTitle, { color: colors.text.primary }]}>{t('demo.title')}</Text>
+          <Text style={[styles.demoSubtitle, { color: colors.text.secondary }]}>
+            {t('demo.subtitle')}
+          </Text>
+          <View style={styles.demoGrid}>
+            {(['admin', 'rector', 'coordinador', 'profesor', 'estudiante'] as DemoRole[]).map(
+              (role) => (
+                <View key={role} style={styles.demoButtonWrap}>
+                  <CetiButton
+                    label={t(`demo.role.${role}`)}
+                    onPress={() => onDemoLogin(role)}
+                    variant="glass"
+                    size="small"
+                    disabled={demoLoadingRole !== null}
+                    isLoading={demoLoadingRole === role}
+                  />
+                </View>
+              )
+            )}
+          </View>
+        </View>
+
+        <Text style={[styles.hint, { color: colors.text.tertiary }]}>
+          Al continuar aceptas el uso de tu nombre y correo según la política de privacidad del
+          proyecto.
+        </Text>
+      </View>
+    </ScreenWrapper>
+  );
+}
+
+const getStyles = (colors: ReturnType<typeof useThemeColors>, _mode: string) =>
+  StyleSheet.create({
+    root: {
+      flex: 1,
+      backgroundColor: colors.background.base,
+    },
+    content: {
+      flex: 1,
+      paddingHorizontal: Spacing.xl,
+      paddingTop: Platform.OS === 'ios' ? 56 : 40,
+      paddingBottom: Spacing['2xl'],
+    },
+    errorBox: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      gap: 8,
+      padding: Spacing.base,
+      borderRadius: BorderRadius.md,
+      borderWidth: 1,
+      marginBottom: Spacing.lg,
+      maxHeight: 240,
+    },
+    errorIcon: {
+      marginTop: 2,
+    },
+    errorScroll: {
+      flex: 1,
+      flexShrink: 1,
+    },
+    errorText: {
+      ...Typography.caption1,
+      fontWeight: '600',
+      lineHeight: 20,
+    },
+    hint: {
+      ...Typography.caption2,
+      textAlign: 'center',
+      marginTop: Spacing['2xl'],
+      lineHeight: 18,
+    },
+    demoSection: {
+      marginTop: Spacing['2xl'],
+    },
+    demoDivider: {
+      borderTopWidth: 1,
+      marginBottom: Spacing['2xl'],
+    },
+    demoTitle: {
+      ...Typography.headline,
+      fontWeight: '700',
+      textAlign: 'center',
+      marginBottom: Spacing.xs,
+    },
+    demoSubtitle: {
+      ...Typography.caption1,
+      textAlign: 'center',
+      marginBottom: Spacing.lg,
+    },
+    demoGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: Spacing.sm,
+      justifyContent: 'center',
+    },
+    demoButtonWrap: {
+      minWidth: 120,
+      flex: 0,
+    },
+  });

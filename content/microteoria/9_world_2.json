@@ -1,0 +1,26 @@
+{
+  "grado": "9",
+  "worldId": "world_2",
+  "cards": [
+    {
+      "titulo": "Qué es un presupuesto",
+      "cuerpo": "Un presupuesto es un plan que organiza el dinero que recibes (ingresos) y el que vas a gastar (egresos) en un periodo. Te ayuda a decidir con conciencia y a evitar sorpresas.",
+      "ejemplo": "Antes de empezar la semana, anotas lo que vas a recibir y lo que piensas gastar para no quedarte corto a mitad de semana."
+    },
+    {
+      "titulo": "Ingresos y egresos",
+      "cuerpo": "Los ingresos son el dinero que entra; los egresos son el dinero que sale. Comparar ambos te muestra si te queda dinero a favor o si te falta.",
+      "ejemplo": "Recibes tu mesada y la comparas con lo que piensas gastar en transporte y onces durante la semana."
+    },
+    {
+      "titulo": "Gastos fijos y variables",
+      "cuerpo": "Los gastos fijos se repiten con regularidad y mantienen un monto parecido, así que son fáciles de prever. Los gastos variables cambian de un periodo a otro según lo que ocurra.",
+      "ejemplo": "El transporte diario al colegio es un gasto bastante fijo; salir a un paseo distinto cada vez es un gasto variable."
+    },
+    {
+      "titulo": "Superávit y déficit",
+      "cuerpo": "Si recibes más de lo que gastas, tu presupuesto tiene superávit (dinero a favor). Si gastas más de lo que recibes, queda en déficit y conviene ajustarlo.",
+      "ejemplo": "Si al final de la semana te sobra de tu mesada, tienes superávit; si tuviste que pedir prestado para llegar al fin de semana, hubo déficit."
+    }
+  ]
+}

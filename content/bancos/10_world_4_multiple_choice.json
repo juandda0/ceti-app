@@ -1,0 +1,179 @@
+{
+  "bancoId": "10_world_4_multiple_choice",
+  "grado": "10",
+  "worldId": "world_4",
+  "tipo": "multiple_choice",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "10_w4_mc_01",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "La capacidad de pago es un criterio clave antes de tomar un crédito. ¿A qué se refiere principalmente?",
+      "opciones": [
+        "A cuánto de tus ingresos te queda disponible para cubrir las cuotas sin descuidar tus gastos esenciales.",
+        "A la cantidad máxima de crédito que cualquier entidad podría ofrecerte.",
+        "Al número de entidades que conoces para pedir prestado.",
+        "Al valor del producto que quieres comprar a crédito."
+      ],
+      "correctIndex": 0,
+      "explicacion": "La capacidad de pago indica cuánto puedes destinar a las cuotas con tus ingresos sin dejar de cubrir lo esencial; por eso ayuda a no comprometerte por encima de lo que puedes sostener."
+    },
+    {
+      "id": "10_w4_mc_02",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "Un crédito menciona una tasa nominal y una tasa efectiva. ¿Cuál refleja mejor el costo real de usar el dinero prestado?",
+      "opciones": [
+        "La tasa nominal, porque siempre es la cifra más alta de las dos.",
+        "La tasa efectiva, porque tiene en cuenta cómo se aplican los intereses a lo largo del tiempo.",
+        "Ninguna de las dos influye en lo que terminas pagando.",
+        "La que la entidad decida resaltar en su publicidad."
+      ],
+      "correctIndex": 1,
+      "explicacion": "La tasa nominal es una referencia base, pero la tasa efectiva refleja mejor el costo real porque considera cómo se aplican los intereses durante el periodo; por eso conviene comparar créditos usando la tasa efectiva."
+    },
+    {
+      "id": "10_w4_mc_03",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "El historial crediticio de una persona registra cómo ha cumplido con sus créditos anteriores. ¿Por qué es importante mantenerlo en buen estado?",
+      "opciones": [
+        "Porque reemplaza la necesidad de tener capacidad de pago.",
+        "Porque permite dejar de pagar las cuotas sin consecuencias.",
+        "Porque un buen historial facilita el acceso a futuros créditos en mejores condiciones.",
+        "Porque obliga a las entidades a regalar dinero."
+      ],
+      "correctIndex": 2,
+      "explicacion": "El historial muestra tu cumplimiento pasado; cuando es bueno, las entidades confían más y suelen ofrecer condiciones más favorables en futuros créditos."
+    },
+    {
+      "id": "10_w4_mc_04",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "Comparas dos créditos por el mismo monto y la misma tasa efectiva. El crédito A tiene un plazo corto y el crédito B un plazo largo. ¿Qué afirmación es correcta en general?",
+      "opciones": [
+        "El plazo no influye ni en la cuota ni en el costo total.",
+        "El crédito A siempre cuesta más en total porque su cuota es más grande.",
+        "Ambos tienen exactamente el mismo costo total y la misma cuota.",
+        "El crédito B suele tener cuotas más pequeñas, pero un costo total mayor por pagar intereses durante más tiempo."
+      ],
+      "correctIndex": 3,
+      "explicacion": "A igual monto y tasa, alargar el plazo reduce el tamaño de cada cuota pero extiende el cobro de intereses, por lo que el costo total tiende a ser mayor."
+    },
+    {
+      "id": "10_w4_mc_05",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "¿Cuál de las siguientes situaciones refleja un buen uso del crédito como herramienta?",
+      "opciones": [
+        "Financiar algo importante y planeado, con cuotas que caben en tu capacidad de pago.",
+        "Pedir prestado para gastos por impulso sin pensar cómo lo pagarás.",
+        "Tomar varios créditos al tiempo solo porque te los aprueban.",
+        "Usar todo el cupo disponible aunque no lo necesites."
+      ],
+      "correctIndex": 0,
+      "explicacion": "El crédito se usa bien cuando responde a una necesidad planeada y las cuotas se ajustan a tu capacidad de pago; así sigue siendo una herramienta y no un problema."
+    },
+    {
+      "id": "10_w4_mc_06",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "¿Cuál de los siguientes factores tiende a encarecer un crédito?",
+      "opciones": [
+        "Una tasa de interés más baja, en condiciones iguales.",
+        "Una tasa de interés más alta, porque aumenta el costo de usar el dinero prestado.",
+        "Pagar las cuotas siempre a tiempo.",
+        "Pedir prestado únicamente lo que necesitas."
+      ],
+      "correctIndex": 1,
+      "explicacion": "A mayor tasa de interés, mayor es el costo de usar el dinero; por eso una tasa más alta encarece el crédito frente a otro con condiciones similares y tasa menor."
+    },
+    {
+      "id": "10_w4_mc_07",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "Un crédito de consumo y un crédito de libre inversión son dos tipos comunes. ¿Qué los diferencia principalmente?",
+      "opciones": [
+        "Solo el de libre inversión cobra intereses; el de consumo nunca.",
+        "El crédito de consumo no exige devolver el dinero y el de libre inversión sí.",
+        "El crédito de consumo suele financiar bienes o servicios concretos, mientras el de libre inversión deja al usuario decidir en qué emplearlo.",
+        "Ambos son exactamente lo mismo y no tienen diferencias."
+      ],
+      "correctIndex": 2,
+      "explicacion": "El crédito de consumo suele orientarse a comprar bienes o servicios concretos, mientras el de libre inversión permite usar el dinero según el criterio del usuario; ambos implican devolver lo prestado con su interés."
+    },
+    {
+      "id": "10_w4_mc_08",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "Dos personas piden el mismo crédito, con igual monto, tasa y plazo. Una elige una cuota fija y otra una cuota que empieza más baja y crece con el tiempo. ¿Qué debe tener en cuenta la segunda persona?",
+      "opciones": [
+        "Que la tasa de interés deja de aplicarse cuando la cuota crece.",
+        "Que nunca tendrá que revisar su capacidad de pago futura.",
+        "Que el costo total será siempre menor sin importar las condiciones.",
+        "Que sus cuotas futuras serán mayores, por lo que necesita asegurar que su capacidad de pago alcanzará más adelante."
+      ],
+      "correctIndex": 3,
+      "explicacion": "Una cuota que crece exige prever que tu capacidad de pago acompañe ese aumento; conviene evaluarlo antes de elegir, para no comprometerte por encima de lo que podrás sostener."
+    },
+    {
+      "id": "10_w4_mc_09",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "¿Por qué dos créditos con la misma tasa nominal pueden terminar costando distinto?",
+      "opciones": [
+        "Porque la frecuencia con que se aplican los intereses y otros costos asociados pueden cambiar la tasa efectiva real.",
+        "Porque la tasa nominal define por sí sola e igual todo el costo.",
+        "Porque el costo solo depende del nombre de la entidad.",
+        "Porque nunca puede haber diferencia entre dos créditos así."
+      ],
+      "correctIndex": 0,
+      "explicacion": "La tasa nominal es una referencia; la forma en que se aplican los intereses y los costos asociados modifican la tasa efectiva, que es la que refleja el costo real, así que pueden diferir."
+    },
+    {
+      "id": "10_w4_mc_10",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "Antes de aceptar un crédito conviene relacionar plazo, cuota e interés total. ¿Cuál relación describe mejor esta conexión?",
+      "opciones": [
+        "Un plazo más largo siempre sube la cuota y baja el interés total.",
+        "A igualdad de monto y tasa, un plazo más largo baja la cuota pero suele subir el interés total pagado.",
+        "El plazo no tiene ninguna relación con la cuota ni con el interés.",
+        "La cuota y el interés total son siempre idénticos entre créditos."
+      ],
+      "correctIndex": 1,
+      "explicacion": "Manteniendo monto y tasa, alargar el plazo reparte el pago en cuotas más pequeñas, pero como pagas intereses durante más tiempo, el interés total suele aumentar."
+    },
+    {
+      "id": "10_w4_mc_11",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "¿Qué conjunto de elementos conviene comparar para elegir entre dos créditos de forma informada?",
+      "opciones": [
+        "Solo la cuota mensual, sin mirar el costo total ni la tasa.",
+        "Únicamente el color del logo y la fama de la entidad.",
+        "La tasa efectiva, el plazo, el valor de la cuota y el costo total, frente a tu capacidad de pago.",
+        "Nada en particular; conviene firmar la primera oferta que aparezca."
+      ],
+      "correctIndex": 2,
+      "explicacion": "Una comparación informada mira la tasa efectiva, el plazo, la cuota y el costo total, y los contrasta con tu capacidad de pago para elegir la opción más sostenible."
+    },
+    {
+      "id": "10_w4_mc_12",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "Una persona con buen historial crediticio y clara capacidad de pago suele acceder a mejores condiciones. ¿Cómo se explica esto?",
+      "opciones": [
+        "Porque obliga a la entidad a prestar sin compromiso de devolución.",
+        "Porque la entidad deja de cobrar cualquier interés.",
+        "Porque el historial y la capacidad de pago no influyen en las condiciones.",
+        "Porque representa menor riesgo para la entidad, que entonces puede ofrecer una tasa más favorable."
+      ],
+      "correctIndex": 3,
+      "explicacion": "Un buen historial y una capacidad de pago sólida reducen el riesgo percibido por la entidad; ante menor riesgo, suele ofrecer condiciones más favorables, como una tasa más baja."
+    }
+  ]
+}

@@ -1,0 +1,179 @@
+{
+  "bancoId": "10_world_5_multiple_choice",
+  "grado": "10",
+  "worldId": "world_5",
+  "tipo": "multiple_choice",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "10_w5_mc_01",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "Al pagar solo la cuota mínima de una deuda con intereses, ¿qué suele ocurrir con el saldo total a lo largo del tiempo?",
+      "opciones": [
+        "Se reduce mucho más rápido que pagando una cuota mayor",
+        "El saldo baja muy lentamente y los intereses acumulados terminan encareciendo la deuda",
+        "El saldo desaparece en el siguiente periodo de cobro",
+        "El saldo deja de generar intereses automáticamente"
+      ],
+      "correctIndex": 1,
+      "explicacion": "La cuota mínima cubre sobre todo los intereses y muy poco del capital, así que el saldo baja lento y, sumando intereses periodo tras periodo, la deuda termina costando más."
+    },
+    {
+      "id": "10_w5_mc_02",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "Una persona tiene varias deudas. Decide pagar primero la de menor saldo para irlas eliminando una a una y motivarse. ¿Qué método describe esta estrategia?",
+      "opciones": [
+        "Método avalancha",
+        "Refinanciación",
+        "Método bola de nieve",
+        "Pago mínimo escalonado"
+      ],
+      "correctIndex": 2,
+      "explicacion": "El método bola de nieve ordena las deudas de menor a mayor saldo y las salda en ese orden, buscando logros rápidos que sostengan la motivación."
+    },
+    {
+      "id": "10_w5_mc_03",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "El método avalancha para pagar deudas propone priorizar según un criterio. ¿Cuál es ese criterio?",
+      "opciones": [
+        "Pagar primero la deuda con el plazo más corto",
+        "Pagar primero la deuda con el saldo más pequeño",
+        "Pagar primero la deuda más antigua",
+        "Pagar primero la deuda con la tasa de interés más alta"
+      ],
+      "correctIndex": 3,
+      "explicacion": "El método avalancha ataca primero la deuda con la tasa de interés más alta, porque es la que más encarece el total con el tiempo."
+    },
+    {
+      "id": "10_w5_mc_04",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "¿Cuál de las siguientes es una señal de posible sobreendeudamiento?",
+      "opciones": [
+        "Tener que adquirir nuevas deudas para poder pagar las cuotas de las anteriores",
+        "Pagar las cuotas con anticipación cada periodo",
+        "Mantener un fondo de emergencia disponible",
+        "Reducir voluntariamente los gastos no esenciales"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Endeudarse para cubrir cuotas de deudas previas indica que los ingresos ya no alcanzan: es una señal clara de sobreendeudamiento."
+    },
+    {
+      "id": "10_w5_mc_05",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "¿Qué significa renegociar o refinanciar una deuda?",
+      "opciones": [
+        "Dejar de pagarla hasta que la entidad la cancele",
+        "Acordar con la entidad nuevas condiciones, como plazo o cuota, para hacerla más manejable",
+        "Transferir la deuda a otra persona sin avisar",
+        "Convertir la deuda en un ahorro automático"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Renegociar o refinanciar es pactar con la entidad condiciones distintas (plazo, cuota u otras) para que el pago se ajuste mejor a la capacidad de la persona."
+    },
+    {
+      "id": "10_w5_mc_06",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "¿Qué registran principalmente las centrales de información de riesgo crediticio?",
+      "opciones": [
+        "Las opiniones personales de cada cliente",
+        "Las contraseñas de las cuentas bancarias",
+        "El historial de cumplimiento o incumplimiento en el pago de obligaciones",
+        "El saldo exacto de la cuenta de ahorros en tiempo real"
+      ],
+      "correctIndex": 2,
+      "explicacion": "Las centrales de riesgo guardan el historial de pago de las obligaciones; un buen comportamiento facilita futuros créditos y uno negativo los dificulta."
+    },
+    {
+      "id": "10_w5_mc_07",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "Si alguien quiere reducir lo que paga en intereses en total, ¿qué deuda conviene priorizar?",
+      "opciones": [
+        "La que venza dentro de más tiempo",
+        "La de la tasa de interés más baja",
+        "La que tenga el nombre más conocido",
+        "La de la tasa de interés más alta"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Priorizar la deuda con la tasa más alta reduce el total de intereses pagados, porque es la que más crece mientras siga pendiente."
+    },
+    {
+      "id": "10_w5_mc_08",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "En el concepto de 'deuda buena' frente a 'deuda mala', ¿qué caracteriza a una deuda considerada 'buena'?",
+      "opciones": [
+        "Financia algo que puede generar valor o ingresos futuros y se asume con un plan de pago",
+        "Sirve para comprar bienes que pierden valor de inmediato sin planear el pago",
+        "Nunca debe pagarse de vuelta",
+        "Se toma solo por impulso del momento"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Una deuda 'buena' financia algo que aporta valor o ingresos a futuro y se asume con un plan claro de pago; la 'mala' suele financiar consumo que pierde valor rápido sin planeación."
+    },
+    {
+      "id": "10_w5_mc_09",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "¿Cómo afecta el interés compuesto a una deuda que no se paga a tiempo?",
+      "opciones": [
+        "Detiene el crecimiento del saldo",
+        "Genera intereses no solo sobre el saldo inicial, sino también sobre los intereses ya acumulados, acelerando su crecimiento",
+        "Reduce la deuda de forma automática",
+        "Solo aplica a los ahorros, nunca a las deudas"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Con interés compuesto, los intereses no pagados se suman al saldo y empiezan a generar más intereses, por lo que la deuda crece cada vez más rápido."
+    },
+    {
+      "id": "10_w5_mc_10",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "Antes de aceptar una nueva deuda, ¿qué es lo más recomendable evaluar?",
+      "opciones": [
+        "Solo si la cuota del primer periodo es cómoda",
+        "Únicamente el nombre de la entidad",
+        "Si la cuota total cabe en el presupuesto a lo largo de todo el plazo y para qué se usará el dinero",
+        "Cuántas personas conocidas tienen esa misma deuda"
+      ],
+      "correctIndex": 2,
+      "explicacion": "Conviene revisar si la cuota cabe en el presupuesto durante todo el plazo y con qué propósito se usa el dinero, para que la deuda sea sostenible."
+    },
+    {
+      "id": "10_w5_mc_11",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "Una persona con dificultades para pagar siente vergüenza y evita responder a la entidad. ¿Cuál es una respuesta más útil ante el riesgo de mora?",
+      "opciones": [
+        "Ignorar las comunicaciones hasta que el problema se resuelva solo",
+        "Cambiar de número para evitar el contacto",
+        "Adquirir otra deuda para tapar la actual",
+        "Contactar a la entidad cuanto antes para buscar acuerdos o alternativas de pago"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Tener deudas no es motivo de juicio; lo más útil es comunicarse pronto con la entidad para buscar acuerdos antes de entrar en mora, cuando hay más alternativas."
+    },
+    {
+      "id": "10_w5_mc_12",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "enunciado": "¿Qué diferencia principal hay entre pagar la cuota mínima y pagar una cuota mayor cuando se puede?",
+      "opciones": [
+        "Pagar más que el mínimo reduce el capital más rápido y disminuye los intereses totales",
+        "No hay diferencia, ambas terminan igual",
+        "Pagar el mínimo siempre cancela la deuda antes",
+        "Pagar más que el mínimo aumenta la tasa de interés"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Abonar por encima del mínimo reduce más rápido el capital pendiente, lo que baja los intereses que se generan y acorta el tiempo para salir de la deuda."
+    }
+  ]
+}

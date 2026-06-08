@@ -1,0 +1,83 @@
+{
+  "bancoId": "11_world_4_true_false",
+  "grado": "11",
+  "worldId": "world_4",
+  "tipo": "true_false",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "11_w4_vf_01",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "La tasa efectiva anual refleja mejor el costo real de un crédito que la sola tasa nominal, porque considera cómo se acumulan los intereses durante el año.",
+      "respuesta": true,
+      "explicacion": "Es verdadero: la tasa efectiva anual incorpora la acumulación de intereses a lo largo del año, por lo que expresa el costo real con más fidelidad que la sola referencia nominal."
+    },
+    {
+      "id": "11_w4_vf_02",
+      "competencia": "credito",
+      "dificultad": 5,
+      "enunciado": "La tasa de usura es la tasa mínima que toda entidad está obligada a cobrar por un crédito.",
+      "respuesta": false,
+      "explicacion": "Es falso: la tasa de usura es un tope legal máximo. Las entidades no pueden cobrar por encima de ese límite; no se trata de un mínimo obligatorio."
+    },
+    {
+      "id": "11_w4_vf_03",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "El costo total de un crédito puede incluir, además del interés, costos asociados como seguros o comisiones.",
+      "respuesta": true,
+      "explicacion": "Es verdadero: el costo total no es solo el interés; los seguros, comisiones y cobros administrativos también se suman a lo que finalmente se paga."
+    },
+    {
+      "id": "11_w4_vf_04",
+      "competencia": "credito",
+      "dificultad": 5,
+      "enunciado": "Al comienzo de un crédito con cuotas, una parte mayor de la cuota cubre intereses y una parte menor abona al capital.",
+      "respuesta": true,
+      "explicacion": "Es verdadero: como los intereses se calculan sobre un saldo de capital aún alto, al inicio la cuota cubre más interés y menos capital; esa proporción se invierte con el tiempo."
+    },
+    {
+      "id": "11_w4_vf_05",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "Una garantía o colateral respalda el cumplimiento de un crédito y puede mejorar las condiciones que ofrece la entidad.",
+      "respuesta": true,
+      "explicacion": "Es verdadero: la garantía reduce el riesgo para la entidad porque sirve de respaldo si el crédito no se paga, lo que a veces se traduce en mejores condiciones."
+    },
+    {
+      "id": "11_w4_vf_06",
+      "competencia": "credito",
+      "dificultad": 5,
+      "enunciado": "Entre dos créditos, el de cuota más baja siempre resulta ser el más barato en costo total.",
+      "respuesta": false,
+      "explicacion": "Es falso: una cuota más baja puede deberse a un plazo más largo, lo que suele elevar el costo total por pagar intereses durante más tiempo. Conviene comparar por costo total."
+    },
+    {
+      "id": "11_w4_vf_07",
+      "competencia": "credito",
+      "dificultad": 5,
+      "enunciado": "El apalancamiento, al usar dinero prestado para impulsar un proyecto, puede ampliar tanto los resultados como el riesgo.",
+      "respuesta": true,
+      "explicacion": "Es verdadero: usar recursos prestados puede potenciar los resultados, pero también el riesgo, ya que la deuda y su costo deben cubrirse aunque el proyecto no rinda lo esperado."
+    },
+    {
+      "id": "11_w4_vf_08",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "Un crédito rotativo ofrece un cupo que puede usarse, abonarse y volver a usarse, a diferencia de un crédito de cuota fija.",
+      "respuesta": true,
+      "explicacion": "Es verdadero: el crédito rotativo funciona como un cupo reutilizable, mientras que el de cuota fija desembolsa un monto que se amortiza en cuotas definidas."
+    },
+    {
+      "id": "11_w4_vf_09",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "Un buen historial crediticio no influye en ningún caso sobre las condiciones que una entidad ofrece.",
+      "respuesta": false,
+      "explicacion": "Es falso: un buen historial reduce el riesgo percibido por la entidad y suele abrir condiciones más favorables, por lo que mantenerlo en buen estado tiene valor."
+    }
+  ]
+}

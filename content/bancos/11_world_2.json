@@ -1,0 +1,46 @@
+{
+  "bancoId": "11_world_2",
+  "grado": "11",
+  "worldId": "world_2",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "situaciones": [
+    {
+      "id": "11_w2_ec_01",
+      "enunciado": "Tus ingresos del mes variaron: este fue un mes mas bajo de lo habitual. Al revisar tu presupuesto, ves que cubres lo esencial pero queda poco margen. Tenias planeado un aporte a una meta de mediano plazo.",
+      "opcionA": {
+        "texto": "Mantener el aporte completo a la meta y recortar gastos esenciales del mes",
+        "consecuencia": "La meta avanza sin pausa, pero el mes queda apretado y aumenta el riesgo de tener que pedir prestado si surge algo inesperado."
+      },
+      "opcionB": {
+        "texto": "Reducir el aporte este mes y reponerlo en un mes de mayor ingreso",
+        "consecuencia": "La meta avanza mas lento este periodo, pero el presupuesto del mes se mantiene equilibrado y queda margen para imprevistos."
+      }
+    },
+    {
+      "id": "11_w2_ec_02",
+      "enunciado": "El costo de varias cosas que compras habitualmente subio de forma generalizada. Con el mismo dinero ahora alcanza para menos, y tu presupuesto anterior ya no cuadra como antes.",
+      "opcionA": {
+        "texto": "Dejar el presupuesto igual y cubrir la diferencia gastando del fondo de imprevistos cada mes",
+        "consecuencia": "A corto plazo todo sigue igual, pero el fondo de imprevistos se agota y quedas sin respaldo ante una emergencia real."
+      },
+      "opcionB": {
+        "texto": "Revisar las categorias y reasignar recursos, recortando lo menos esencial",
+        "consecuencia": "El presupuesto vuelve a cuadrar con la nueva realidad de precios y el fondo de imprevistos se conserva para lo que de verdad lo necesite."
+      }
+    },
+    {
+      "id": "11_w2_ec_03",
+      "enunciado": "Tienes un excedente este mes porque tu flujo de caja fue positivo. Aun no completas tu fondo de imprevistos, y al mismo tiempo apareció una oportunidad de un gasto opcional atractivo.",
+      "opcionA": {
+        "texto": "Destinar el excedente al gasto opcional ahora que esta disponible",
+        "consecuencia": "Disfrutas el gasto en el momento, pero el fondo de imprevistos sigue incompleto y un gasto inesperado podria desordenar tu presupuesto."
+      },
+      "opcionB": {
+        "texto": "Destinar el excedente a terminar de armar el fondo de imprevistos",
+        "consecuencia": "Renuncias al gasto opcional por ahora, pero ganas respaldo: una emergencia ya no te obligaria a endeudarte ni a frenar tus metas."
+      }
+    }
+  ]
+}

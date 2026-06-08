@@ -1,0 +1,179 @@
+{
+  "bancoId": "11_world_3_multiple_choice",
+  "grado": "11",
+  "worldId": "world_3",
+  "tipo": "multiple_choice",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "11_w3_mc_01",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "El interes compuesto se describe como ganar rendimientos no solo sobre lo que aportaste, sino tambien sobre los rendimientos acumulados. Para una misma cantidad inicial, cual factor potencia mas su efecto?",
+      "opciones": [
+        "Dejar el dinero invertido durante mas tiempo, porque el efecto se acumula sobre si mismo",
+        "Retirar los rendimientos apenas se generan para gastarlos",
+        "Cambiar de producto cada pocos dias buscando novedad",
+        "Mantener el dinero en efectivo guardado en casa"
+      ],
+      "correctIndex": 0,
+      "explicacion": "El interes compuesto crece con el tiempo porque los rendimientos generan nuevos rendimientos; cuanto mas largo el horizonte, mayor el efecto acumulado."
+    },
+    {
+      "id": "11_w3_mc_02",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "En la relacion entre riesgo y rentabilidad, que afirmacion describe mejor lo que suele observarse en los productos financieros?",
+      "opciones": [
+        "Mayor rentabilidad siempre llega sin ningun riesgo adicional",
+        "Las opciones con mayor rentabilidad potencial suelen implicar mayor riesgo de perder",
+        "El riesgo y la rentabilidad no tienen ninguna relacion entre si",
+        "Las opciones mas seguras siempre ofrecen la mayor rentabilidad"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Como regla general, buscar mayor rentabilidad implica aceptar mayor riesgo; no existe rentabilidad alta garantizada sin riesgo."
+    },
+    {
+      "id": "11_w3_mc_03",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "La diversificacion consiste en repartir el ahorro entre varias opciones distintas. Cual es su proposito principal?",
+      "opciones": [
+        "Concentrar todo en la opcion que parece mas de moda",
+        "Garantizar que ninguna opcion pueda perder valor jamas",
+        "Reducir el impacto de que a una sola opcion le vaya mal",
+        "Eliminar por completo la necesidad de ahorrar"
+      ],
+      "correctIndex": 2,
+      "explicacion": "Diversificar reparte el riesgo: si a una opcion le va mal, el efecto sobre el conjunto del ahorro es menor."
+    },
+    {
+      "id": "11_w3_mc_04",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "Liquidez es la facilidad para disponer del dinero cuando se necesita. Que suele ocurrir al comparar liquidez y rendimiento entre productos?",
+      "opciones": [
+        "Tener dinero disponible al instante nunca tiene contrapartida",
+        "Mayor liquidez siempre implica mayor rendimiento esperado",
+        "La liquidez y el rendimiento son exactamente lo mismo",
+        "Los productos de mayor liquidez suelen ofrecer menor rendimiento esperado"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Suele haber un equilibrio: a mayor liquidez (disponer del dinero al instante), menor rendimiento esperado; comprometer el dinero por mas tiempo tiende a ofrecer mas rendimiento."
+    },
+    {
+      "id": "11_w3_mc_05",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "La inflacion es el aumento general de los precios con el tiempo. Por que afecta al ahorro que se deja quieto sin generar rendimientos?",
+      "opciones": [
+        "Porque con el tiempo ese dinero alcanza para comprar menos cosas",
+        "Porque hace que el dinero guardado se multiplique solo",
+        "Porque obliga a los precios a bajar cada año",
+        "Porque no tiene ningun efecto sobre el ahorro"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Si los precios suben y el ahorro no genera rendimientos, ese dinero pierde poder de compra: con el tiempo alcanza para menos."
+    },
+    {
+      "id": "11_w3_mc_06",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "Comparando una cuenta de ahorro, un certificado de deposito a plazo fijo (CDT) y un fondo de inversion, cual ordenamiento por liquidez (de mayor a menor disponibilidad inmediata) es generalmente correcto?",
+      "opciones": [
+        "Certificado a plazo fijo, fondo de inversion, cuenta de ahorro",
+        "Cuenta de ahorro, fondo de inversion, certificado a plazo fijo",
+        "Fondo de inversion, cuenta de ahorro, certificado a plazo fijo",
+        "Los tres ofrecen exactamente la misma liquidez"
+      ],
+      "correctIndex": 1,
+      "explicacion": "La cuenta de ahorro permite disponer del dinero casi de inmediato; el fondo suele requerir un proceso de rescate; el certificado a plazo fijo compromete el dinero hasta su vencimiento."
+    },
+    {
+      "id": "11_w3_mc_07",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "El horizonte de inversion es el tiempo durante el cual se planea mantener el dinero invertido. Como influye un horizonte largo en la eleccion de opciones?",
+      "opciones": [
+        "Hace irrelevante cualquier consideracion de riesgo",
+        "Obliga a elegir solo opciones de la que se pueda salir el mismo dia",
+        "Permite considerar opciones con mas variabilidad, porque hay tiempo para sobreponerse a sus altibajos",
+        "Significa que conviene gastar el dinero de inmediato"
+      ],
+      "correctIndex": 2,
+      "explicacion": "Con un horizonte largo hay tiempo para que los altibajos se compensen, por lo que pueden considerarse opciones con mas variabilidad y potencial de rendimiento."
+    },
+    {
+      "id": "11_w3_mc_08",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "El ahorro para el retiro es un objetivo de muy largo plazo. Que estrategia se ajusta mejor a ese tipo de meta?",
+      "opciones": [
+        "Mantener todo en efectivo sin que genere rendimiento alguno",
+        "Esperar hasta el ultimo año antes del retiro para empezar a ahorrar",
+        "Retirar los aportes cada vez que el saldo crece un poco",
+        "Aportar de forma constante durante muchos años y dejar que los rendimientos se acumulen"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Para metas de muy largo plazo, aportar de forma constante y sostenida permite que el efecto del interes compuesto trabaje durante mas tiempo."
+    },
+    {
+      "id": "11_w3_mc_09",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "Dos personas ahorran de forma parecida, pero una empieza muchos años antes que la otra. Por que suele tener ventaja quien empieza temprano?",
+      "opciones": [
+        "Porque sus aportes tienen mas tiempo para generar rendimientos sobre rendimientos",
+        "Porque empezar temprano elimina por completo el riesgo",
+        "Porque quien empieza tarde siempre recupera la diferencia al instante",
+        "Porque el momento de empezar no influye en el resultado"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Empezar temprano da mas tiempo al interes compuesto: los rendimientos se acumulan durante mas años, lo que marca una diferencia notable."
+    },
+    {
+      "id": "11_w3_mc_10",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "Una persona quiere reservar dinero para una emergencia que podria surgir en cualquier momento. Que caracteristica deberia priorizar en el producto que elija?",
+      "opciones": [
+        "El plazo mas largo posible, sin poder retirar antes",
+        "Alta liquidez, para disponer del dinero rapidamente cuando lo necesite",
+        "La opcion con mas variabilidad y menor disponibilidad",
+        "Guardar el dinero donde no pueda recuperarlo durante años"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Un fondo de emergencia exige disponibilidad inmediata, por lo que prima la liquidez por encima del rendimiento."
+    },
+    {
+      "id": "11_w3_mc_11",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "Un certificado de deposito a plazo fijo compromete el dinero hasta una fecha de vencimiento. Que se obtiene a cambio de renunciar a esa disponibilidad inmediata?",
+      "opciones": [
+        "La eliminacion de todo tipo de riesgo y de la inflacion",
+        "La posibilidad de retirar el dinero en cualquier instante sin condicion",
+        "Generalmente un rendimiento mayor que el de una cuenta de ahorro",
+        "Ningun cambio frente a dejar el dinero en efectivo"
+      ],
+      "correctIndex": 2,
+      "explicacion": "Al comprometer el dinero por un plazo, el certificado suele ofrecer mayor rendimiento que una cuenta de ahorro de disponibilidad inmediata; esa es la contrapartida de la menor liquidez."
+    },
+    {
+      "id": "11_w3_mc_12",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "Una persona joven con un horizonte de muchos años y un perfil que tolera variaciones evalua donde poner su ahorro de largo plazo. Que decision es mas coherente con su situacion?",
+      "opciones": [
+        "Elegir solo productos de los que deba salir el mismo dia",
+        "Mantener todo en efectivo para evitar cualquier variacion",
+        "Concentrar todo el ahorro en una sola opcion de moda",
+        "Considerar opciones diversificadas con mas potencial de rendimiento, aprovechando el largo horizonte"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Con horizonte largo y tolerancia a variaciones, diversificar hacia opciones con mas potencial de rendimiento aprovecha mejor el tiempo disponible; mantener todo en efectivo desperdicia ese horizonte."
+    }
+  ]
+}

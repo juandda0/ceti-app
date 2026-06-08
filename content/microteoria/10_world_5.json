@@ -1,0 +1,26 @@
+{
+  "grado": "10",
+  "worldId": "world_5",
+  "cards": [
+    {
+      "titulo": "Por qué crece una deuda",
+      "cuerpo": "Cuando una deuda genera intereses y no se paga lo suficiente, los intereses se suman al saldo y empiezan a generar más intereses. Pagar solo el mínimo hace que el saldo baje muy lento y que la deuda termine costando más con el tiempo.",
+      "ejemplo": "Es como una bola de nieve que rueda cuesta abajo: si nadie la frena, se vuelve cada vez más grande."
+    },
+    {
+      "titulo": "Dos formas de ordenar los pagos",
+      "cuerpo": "El método avalancha paga primero la deuda con la tasa de interés más alta, para reducir el costo total. El método bola de nieve paga primero el saldo más pequeño, para ganar logros rápidos y mantener la motivación. Ambos sirven; lo importante es elegir uno y ser constante.",
+      "ejemplo": "Frente a una lista de tareas, algunas personas empiezan por la más difícil y otras por la más rápida; las dos avanzan si no se abandonan."
+    },
+    {
+      "titulo": "Señales de alerta y qué hacer",
+      "cuerpo": "Necesitar nuevas deudas para pagar las anteriores o no poder cubrir lo esencial son señales de sobreendeudamiento. Tener deudas no es motivo de juicio: lo útil es actuar a tiempo, contactar a la entidad y buscar acuerdos como renegociar el plazo o la cuota.",
+      "ejemplo": "Si notas que una mochila pesa demasiado, lo sensato es repartir la carga antes de seguir caminando, no esperar a caer."
+    },
+    {
+      "titulo": "Deuda con propósito e historial",
+      "cuerpo": "No toda deuda es igual: la que financia algo con valor o ingresos a futuro y se asume con un plan de pago suele llamarse deuda buena; la que financia consumo que pierde valor rápido y sin plan, deuda mala. Pagar a tiempo construye un buen historial en las centrales de riesgo, lo que facilita futuras oportunidades.",
+      "ejemplo": "Pedir prestado para una herramienta que ayudará a trabajar es distinto a endeudarse por impulso por algo que se usará una sola vez."
+    }
+  ]
+}

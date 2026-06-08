@@ -1,0 +1,83 @@
+{
+  "bancoId": "10_world_4_true_false",
+  "grado": "10",
+  "worldId": "world_4",
+  "tipo": "true_false",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "10_w4_vf_01",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "La capacidad de pago indica cuánto de tus ingresos puedes destinar a las cuotas sin descuidar tus gastos esenciales.",
+      "respuesta": true,
+      "explicacion": "Así es: la capacidad de pago mide cuánto puedes dedicar a las cuotas manteniendo cubierto lo esencial, y por eso ayuda a no comprometerte de más."
+    },
+    {
+      "id": "10_w4_vf_02",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "La tasa efectiva refleja mejor el costo real de un crédito que la tasa nominal, porque considera cómo se aplican los intereses en el tiempo.",
+      "respuesta": true,
+      "explicacion": "Correcto: la tasa nominal es una referencia base, mientras la tasa efectiva incorpora la forma en que se aplican los intereses, así que representa mejor el costo real."
+    },
+    {
+      "id": "10_w4_vf_03",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "Un buen historial crediticio suele facilitar el acceso a futuros créditos en mejores condiciones.",
+      "respuesta": true,
+      "explicacion": "Verdadero: cumplir a tiempo construye un buen historial, lo que genera confianza en las entidades y suele traducirse en condiciones más favorables."
+    },
+    {
+      "id": "10_w4_vf_04",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "A igual monto y tasa, alargar el plazo de un crédito hace que cada cuota sea más pequeña pero el costo total suele ser mayor.",
+      "respuesta": true,
+      "explicacion": "Cierto: un plazo más largo reparte el pago en cuotas menores, pero como pagas intereses durante más tiempo, el costo total tiende a aumentar."
+    },
+    {
+      "id": "10_w4_vf_05",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "Una tasa de interés más alta abarata el crédito frente a otro con condiciones similares.",
+      "respuesta": false,
+      "explicacion": "Es falso: una tasa más alta encarece el crédito, porque aumenta el costo de usar el dinero prestado en condiciones comparables."
+    },
+    {
+      "id": "10_w4_vf_06",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "Dos créditos con la misma tasa nominal siempre cuestan exactamente lo mismo, sin importar otros factores.",
+      "respuesta": false,
+      "explicacion": "Falso: la frecuencia con que se aplican los intereses y otros costos asociados pueden cambiar la tasa efectiva real, así que el costo final puede diferir."
+    },
+    {
+      "id": "10_w4_vf_07",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "El crédito de libre inversión permite al usuario decidir en qué emplear el dinero, mientras el de consumo suele orientarse a bienes o servicios concretos.",
+      "respuesta": true,
+      "explicacion": "Verdadero: esa es la diferencia principal; en ambos casos, eso sí, hay que devolver lo prestado junto con su interés."
+    },
+    {
+      "id": "10_w4_vf_08",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "Si eliges un crédito con cuotas que empiezan bajas y crecen con el tiempo, no necesitas pensar en tu capacidad de pago futura.",
+      "respuesta": false,
+      "explicacion": "Falso: justamente porque las cuotas crecen, debes prever que tu capacidad de pago alcance más adelante; ignorarlo puede comprometerte por encima de lo sostenible."
+    },
+    {
+      "id": "10_w4_vf_09",
+      "competencia": "credito",
+      "dificultad": 4,
+      "enunciado": "Una persona con buen historial y clara capacidad de pago representa menor riesgo para la entidad, que entonces puede ofrecerle una tasa más favorable.",
+      "respuesta": true,
+      "explicacion": "Cierto: al reducir el riesgo percibido, la entidad suele estar dispuesta a ofrecer condiciones mejores, como una tasa de interés más baja."
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "bancoId": "9_world_2_true_false",
+  "grado": "9",
+  "worldId": "world_2",
+  "tipo": "true_false",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "9_w2_vf_01",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "enunciado": "Un presupuesto es un plan que organiza el dinero que recibes y el que gastas.",
+      "respuesta": true,
+      "explicacion": "Esa es justamente la función del presupuesto: planear ingresos y egresos."
+    },
+    {
+      "id": "9_w2_vf_02",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "enunciado": "Los ingresos son el dinero que sale para pagar o comprar cosas.",
+      "respuesta": false,
+      "explicacion": "Los ingresos son el dinero que entra; lo que sale para pagar o comprar son los egresos."
+    },
+    {
+      "id": "9_w2_vf_03",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "enunciado": "Una necesidad es algo indispensable, mientras que un deseo es algo que te gustaría tener.",
+      "respuesta": true,
+      "explicacion": "Distinguir necesidades de deseos ayuda a priorizar en el presupuesto."
+    },
+    {
+      "id": "9_w2_vf_04",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "Un gasto fijo cambia mucho de un periodo a otro y es difícil de prever.",
+      "respuesta": false,
+      "explicacion": "El gasto fijo se mantiene regular y es fácil de prever; el que cambia mucho es el gasto variable."
+    },
+    {
+      "id": "9_w2_vf_05",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "Cuando gastas más de lo que recibes en un periodo, tu presupuesto queda en déficit.",
+      "respuesta": true,
+      "explicacion": "El déficit ocurre cuando los egresos superan a los ingresos."
+    },
+    {
+      "id": "9_w2_vf_06",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "Tener superávit significa que gastaste más de lo que recibiste.",
+      "respuesta": false,
+      "explicacion": "El superávit es lo contrario: recibiste más de lo que gastaste y queda dinero a favor."
+    },
+    {
+      "id": "9_w2_vf_07",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "enunciado": "Planear un gasto antes de hacerlo ayuda a revisar si encaja con tus prioridades.",
+      "respuesta": true,
+      "explicacion": "Planear antes de gastar permite comprobar si la compra cabe en el presupuesto."
+    },
+    {
+      "id": "9_w2_vf_08",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "Un presupuesto nunca debe ajustarse, aunque tu situación cambie.",
+      "respuesta": false,
+      "explicacion": "El presupuesto es una herramienta viva: conviene ajustarlo cuando cambian tus ingresos o gastos."
+    },
+    {
+      "id": "9_w2_vf_09",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "enunciado": "Al organizar un presupuesto, conviene atender primero las necesidades indispensables.",
+      "respuesta": true,
+      "explicacion": "Priorizar las necesidades antes que los deseos asegura cubrir primero lo esencial."
+    }
+  ]
+}

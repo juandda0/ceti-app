@@ -1,0 +1,716 @@
+{
+  "_comment": "PRIVADO — clave de respuesta del set dorado (Paso 0, Fase 5). NO abrir antes de clasificar: la verdad del set es la clasificación del usuario, no esta. El prefijo '_' hace que evalValidador.mjs lo ignore. Tras la clasificación del usuario, estos casos se materializan en content/eval/golden/caso-NN.json usando expected_verdict = etiqueta DEL USUARIO (no _intended_verdict). _defect/_design_note quedan solo para discutir desacuerdos.",
+  "cases": [
+    {
+      "caseNo": 1,
+      "_intended_verdict": "pass",
+      "_defect": null,
+      "_design_note": "MC limpio, def. de ingreso, grado 9 world_1 dif 1, neutro, coherente.",
+      "input": {
+        "bancoId": "9_world_1_multiple_choice",
+        "grado": "9",
+        "worldId": "world_1",
+        "tipo": "multiple_choice",
+        "pendiente_validacion_docente": true,
+        "generadoPor": "ia",
+        "version": 1,
+        "items": [
+          {
+            "id": "c01",
+            "competencia": "ingreso",
+            "dificultad": 1,
+            "enunciado": "¿Cuál de las siguientes opciones describe mejor qué es un ingreso?",
+            "opciones": [
+              "El dinero que una persona recibe por su trabajo o actividad",
+              "El dinero que una persona gasta cada mes",
+              "Una deuda que se debe pagar a un banco",
+              "Un objeto que se compra en una tienda"
+            ],
+            "correctIndex": 0,
+            "explicacion": "Un ingreso es el dinero que entra a una persona por su trabajo, ventas u otras fuentes."
+          }
+        ]
+      }
+    },
+
+    {
+      "caseNo": 2,
+      "_intended_verdict": "fail",
+      "_defect": "lenguaje_inapropiado",
+      "_design_note": "Jerga regional + insulto ('bobo','plata','vainas','pelado'); no neutro (CN04).",
+      "input": {
+        "bancoId": "9_world_2_multiple_choice",
+        "grado": "9",
+        "worldId": "world_2",
+        "tipo": "multiple_choice",
+        "pendiente_validacion_docente": true,
+        "generadoPor": "ia",
+        "version": 1,
+        "items": [
+          {
+            "id": "c02",
+            "competencia": "presupuesto",
+            "dificultad": 2,
+            "enunciado": "Solo un bobo gastaría toda su plata en vainas sin presupuesto. ¿Cuál es la mejor forma de no quedar pelado a fin de mes?",
+            "opciones": [
+              "Planear los gastos con un presupuesto antes de gastar",
+              "Gastar primero y ver qué queda",
+              "Pedir prestado cuando se acabe el dinero",
+              "No llevar ninguna cuenta"
+            ],
+            "correctIndex": 0,
+            "explicacion": "Planear con presupuesto ayuda a controlar el gasto."
+          }
+        ]
+      }
+    },
+
+    {
+      "caseNo": 3,
+      "_intended_verdict": "fail",
+      "_defect": "cifra_caducable_quemada",
+      "_design_note": "Quema SMMLV literal ($1.300.000) en vez de constRef (R14).",
+      "input": {
+        "bancoId": "10_world_1_multiple_choice",
+        "grado": "10",
+        "worldId": "world_1",
+        "tipo": "multiple_choice",
+        "pendiente_validacion_docente": true,
+        "generadoPor": "ia",
+        "version": 1,
+        "items": [
+          {
+            "id": "c03",
+            "competencia": "ingreso",
+            "dificultad": 2,
+            "enunciado": "Si el salario mínimo mensual en Colombia es de $1.300.000, ¿cuánto recibe en dos meses una persona que gana un salario mínimo?",
+            "opciones": ["$1.300.000", "$2.600.000", "$1.950.000", "$3.900.000"],
+            "correctIndex": 1,
+            "explicacion": "Dos salarios mínimos equivalen a 1.300.000 x 2 = 2.600.000."
+          }
+        ]
+      }
+    },
+
+    {
+      "caseNo": 4,
+      "_intended_verdict": "pass",
+      "_defect": null,
+      "_design_note": "VF limpio, pago mínimo de tarjeta, grado 10 world_4 dif 3, financieramente correcto.",
+      "input": {
+        "bancoId": "10_world_4_true_false",
+        "grado": "10",
+        "worldId": "world_4",
+        "tipo": "true_false",
+        "pendiente_validacion_docente": true,
+        "generadoPor": "ia",
+        "version": 1,
+        "items": [
+          {
+            "id": "c04",
+            "competencia": "credito",
+            "dificultad": 3,
+            "enunciado": "Pagar solo el monto mínimo de una tarjeta de crédito cada mes hace que la deuda se pague más lentamente y aumente el costo total por intereses.",
+            "respuesta": true,
+            "explicacion": "Al pagar el mínimo, la mayor parte de la deuda sigue generando intereses."
+          }
+        ]
+      }
+    },
+
+    {
+      "caseNo": 5,
+      "_intended_verdict": "pass",
+      "_defect": null,
+      "_design_note": "Ordenar limpio, pasos para ahorrar, grado 9 world_3 dif 2, orden objetivo.",
+      "input": {
+        "bancoId": "9_world_3_ordenar",
+        "grado": "9",
+        "worldId": "world_3",
+        "tipo": "ordenar",
+        "pendiente_validacion_docente": true,
+        "generadoPor": "ia",
+        "version": 1,
+        "items": [
+          {
+            "id": "c05",
+            "competencia": "ahorro",
+            "dificultad": 2,
+            "enunciado": "Ordena los pasos para empezar a ahorrar, del primero al último.",
+            "elementos": [
+              "Definir una meta de ahorro",
+              "Calcular cuánto se puede guardar cada mes",
+              "Apartar ese dinero apenas se recibe el ingreso",
+              "Revisar el avance de la meta"
+            ],
+            "ordenCanonico": [0, 1, 2, 3],
+            "explicacion": "Primero se define la meta, luego se calcula y aparta, y al final se revisa el avance."
+          }
+        ]
+      }
+    },
+
+    {
+      "caseNo": 6,
+      "_intended_verdict": "fail",
+      "_defect": "error_financiero",
+      "_design_note": "Define interés compuesto como simple; correcta marcada es la definición incorrecta.",
+      "input": {
+        "bancoId": "10_world_3_multiple_choice",
+        "grado": "10",
+        "worldId": "world_3",
+        "tipo": "multiple_choice",
+        "pendiente_validacion_docente": true,
+        "generadoPor": "ia",
+        "version": 1,
+        "items": [
+          {
+            "id": "c06",
+            "competencia": "ahorro",
+            "dificultad": 3,
+            "enunciado": "¿Qué significa que una cuenta de ahorros ofrezca 'interés compuesto'?",
+            "opciones": [
+              "Que los intereses se calculan solo sobre el dinero depositado al inicio",
+              "Que los intereses ganados se suman al saldo y luego también generan intereses",
+              "Que no se pagan intereses hasta el final del año",
+              "Que el banco cobra una comisión por ahorrar"
+            ],
+            "correctIndex": 0,
+            "explicacion": "El interés compuesto se calcula solo sobre el depósito inicial."
+          }
+        ]
+      }
+    },
+
+    {
+      "caseNo": 7,
+      "_intended_verdict": "fail",
+      "_defect": "dificultad_mal_calibrada",
+      "_design_note": "Grado 11 world_5 espera dif 5; ítem trivial marcado dif 1, muy por debajo y contenido pobre.",
+      "input": {
+        "bancoId": "11_world_5_true_false",
+        "grado": "11",
+        "worldId": "world_5",
+        "tipo": "true_false",
+        "pendiente_validacion_docente": true,
+        "generadoPor": "ia",
+        "version": 1,
+        "items": [
+          {
+            "id": "c07",
+            "competencia": "deuda",
+            "dificultad": 1,
+            "enunciado": "El dinero sirve para comprar cosas.",
+            "respuesta": true,
+            "explicacion": "El dinero permite comprar bienes y servicios."
+          }
+        ]
+      }
+    },
+
+    {
+      "caseNo": 8,
+      "_intended_verdict": "pass",
+      "_defect": null,
+      "_design_note": "MC limpio, gasto fijo en presupuesto, grado 10 world_2 dif 3.",
+      "input": {
+        "bancoId": "10_world_2_multiple_choice",
+        "grado": "10",
+        "worldId": "world_2",
+        "tipo": "multiple_choice",
+        "pendiente_validacion_docente": true,
+        "generadoPor": "ia",
+        "version": 1,
+        "items": [
+          {
+            "id": "c08",
+            "competencia": "presupuesto",
+            "dificultad": 3,
+            "enunciado": "En un presupuesto mensual, ¿cuál de los siguientes se considera un gasto fijo?",
+            "opciones": [
+              "El pago del arriendo de la vivienda",
+              "Una salida a cine el fin de semana",
+              "La compra de un regalo de cumpleaños",
+              "Un antojo en una tienda"
+            ],
+            "correctIndex": 0,
+            "explicacion": "El arriendo es un gasto fijo: se repite con el mismo valor cada mes."
+          }
+        ]
+      }
+    },
+
+    {
+      "caseNo": 9,
+      "_intended_verdict": "pass",
+      "_defect": null,
+      "_design_note": "EligeCamino limpio, crédito grado 11 world_4, 2 opciones sin correcta, consecuencias narradas.",
+      "input": {
+        "bancoId": "11_world_4",
+        "grado": "11",
+        "worldId": "world_4",
+        "pendiente_validacion_docente": true,
+        "generadoPor": "ia",
+        "version": 1,
+        "situaciones": [
+          {
+            "id": "s09",
+            "enunciado": "Recibes una oferta para tu primera tarjeta de crédito con un cupo amplio. ¿Qué decides?",
+            "opcionA": {
+              "texto": "Aceptarla y usarla solo para compras que ya tenías planeadas y puedes pagar de contado al corte",
+              "consecuencia": "Construyes historial de crédito y mantienes el control de tus gastos."
+            },
+            "opcionB": {
+              "texto": "Aceptarla y aprovechar el cupo para comprar cosas que querías pero aún no podías pagar",
+              "consecuencia": "Disfrutas las compras ahora, pero asumes una deuda con intereses que tendrás que pagar después."
+            }
+          }
+        ]
+      }
+    },
+
+    {
+      "caseNo": 10,
+      "_intended_verdict": "fail",
+      "_defect": "respuesta_ambigua",
+      "_design_note": "Dos opciones son ingreso válido (salario y pago independiente); correcta única es ambigua.",
+      "input": {
+        "bancoId": "10_world_1_multiple_choice",
+        "grado": "10",
+        "worldId": "world_1",
+        "tipo": "multiple_choice",
+        "pendiente_validacion_docente": true,
+        "generadoPor": "ia",
+        "version": 1,
+        "items": [
+          {
+            "id": "c10",
+            "competencia": "ingreso",
+            "dificultad": 2,
+            "enunciado": "¿Cuál de los siguientes es un ingreso?",
+            "opciones": [
+              "El salario mensual de un empleo",
+              "El pago recibido por un trabajo independiente",
+              "El dinero que se gasta en el mercado",
+              "Una factura de servicios públicos por pagar"
+            ],
+            "correctIndex": 0,
+            "explicacion": "El salario mensual es un ingreso."
+          }
+        ]
+      }
+    },
+
+    {
+      "caseNo": 11,
+      "_intended_verdict": "fail",
+      "_defect": "incoherencia_tematica",
+      "_design_note": "World_3 es Ahorro, pero la pregunta es de crédito (cupo de tarjeta) — tema de world_4.",
+      "input": {
+        "bancoId": "9_world_3_multiple_choice",
+        "grado": "9",
+        "worldId": "world_3",
+        "tipo": "multiple_choice",
+        "pendiente_validacion_docente": true,
+        "generadoPor": "ia",
+        "version": 1,
+        "items": [
+          {
+            "id": "c11",
+            "competencia": "ahorro",
+            "dificultad": 2,
+            "enunciado": "¿Qué es el cupo de una tarjeta de crédito?",
+            "opciones": [
+              "El monto máximo que el banco permite usar con la tarjeta",
+              "El interés que cobra el banco",
+              "La fecha límite de pago",
+              "El nombre del titular de la tarjeta"
+            ],
+            "correctIndex": 0,
+            "explicacion": "El cupo es el límite de gasto autorizado en la tarjeta."
+          }
+        ]
+      }
+    },
+
+    {
+      "caseNo": 12,
+      "_intended_verdict": "pass",
+      "_defect": null,
+      "_design_note": "VF limpio, def. de presupuesto, grado 9 world_2 dif 2.",
+      "input": {
+        "bancoId": "9_world_2_true_false",
+        "grado": "9",
+        "worldId": "world_2",
+        "tipo": "true_false",
+        "pendiente_validacion_docente": true,
+        "generadoPor": "ia",
+        "version": 1,
+        "items": [
+          {
+            "id": "c12",
+            "competencia": "presupuesto",
+            "dificultad": 2,
+            "enunciado": "Un presupuesto sirve para planear cómo se va a usar el dinero antes de gastarlo.",
+            "respuesta": true,
+            "explicacion": "El presupuesto organiza ingresos y gastos por anticipado."
+          }
+        ]
+      }
+    },
+
+    {
+      "caseNo": 13,
+      "_intended_verdict": "pass",
+      "_defect": null,
+      "_design_note": "Ordenar limpio por riesgo, grado 11 world_3 dif 4, orden objetivo de menor a mayor riesgo.",
+      "input": {
+        "bancoId": "11_world_3_ordenar",
+        "grado": "11",
+        "worldId": "world_3",
+        "tipo": "ordenar",
+        "pendiente_validacion_docente": true,
+        "generadoPor": "ia",
+        "version": 1,
+        "items": [
+          {
+            "id": "c13",
+            "competencia": "ahorro",
+            "dificultad": 4,
+            "enunciado": "Ordena de menor a mayor según el riesgo típico estas formas de mantener un ahorro.",
+            "elementos": [
+              "Cuenta de ahorros en un banco vigilado",
+              "Fondo de inversión diversificado",
+              "Inversión en acciones de una sola empresa"
+            ],
+            "ordenCanonico": [0, 1, 2],
+            "explicacion": "Una cuenta vigilada es la de menor riesgo; concentrar en una sola acción es la de mayor riesgo."
+          }
+        ]
+      }
+    },
+
+    {
+      "caseNo": 14,
+      "_intended_verdict": "fail",
+      "_defect": "cifra_caducable_quemada",
+      "_design_note": "Quema tasa de usura literal (25,5% E.A.); debería ser constRef tasaUsura (R14).",
+      "input": {
+        "bancoId": "11_world_4_true_false",
+        "grado": "11",
+        "worldId": "world_4",
+        "tipo": "true_false",
+        "pendiente_validacion_docente": true,
+        "generadoPor": "ia",
+        "version": 1,
+        "items": [
+          {
+            "id": "c14",
+            "competencia": "credito",
+            "dificultad": 4,
+            "enunciado": "En Colombia, la tasa de usura máxima vigente es del 25,5% efectivo anual; prestar por encima de ese valor es ilegal.",
+            "respuesta": true,
+            "explicacion": "La Superintendencia Financiera fija la tasa de usura como tope legal."
+          }
+        ]
+      }
+    },
+
+    {
+      "caseNo": 15,
+      "_intended_verdict": "fail",
+      "_defect": "error_financiero",
+      "_design_note": "Afirma que pagar el mínimo extingue la deuda más rápido; falso, marcado true.",
+      "input": {
+        "bancoId": "11_world_5_true_false",
+        "grado": "11",
+        "worldId": "world_5",
+        "tipo": "true_false",
+        "pendiente_validacion_docente": true,
+        "generadoPor": "ia",
+        "version": 1,
+        "items": [
+          {
+            "id": "c15",
+            "competencia": "deuda",
+            "dificultad": 5,
+            "enunciado": "Si una persona solo paga el pago mínimo de su tarjeta de crédito cada mes, su deuda desaparece más rápido que si pagara el total.",
+            "respuesta": true,
+            "explicacion": "Pagar el mínimo reduce la deuda más rápido."
+          }
+        ]
+      }
+    },
+
+    {
+      "caseNo": 16,
+      "_intended_verdict": "pass",
+      "_defect": null,
+      "_design_note": "MC limpio, ingreso pasivo, grado 10 world_1 dif 2.",
+      "input": {
+        "bancoId": "10_world_1_multiple_choice",
+        "grado": "10",
+        "worldId": "world_1",
+        "tipo": "multiple_choice",
+        "pendiente_validacion_docente": true,
+        "generadoPor": "ia",
+        "version": 1,
+        "items": [
+          {
+            "id": "c16",
+            "competencia": "ingreso",
+            "dificultad": 2,
+            "enunciado": "¿Cuál de los siguientes es un ejemplo de ingreso pasivo?",
+            "opciones": [
+              "El salario que se recibe por ir a trabajar cada día",
+              "El arriendo que produce una vivienda que se alquila",
+              "El pago por horas extra en el empleo",
+              "La propina recibida por un servicio"
+            ],
+            "correctIndex": 1,
+            "explicacion": "El ingreso pasivo no requiere trabajo activo continuo, como el arriendo de un inmueble."
+          }
+        ]
+      }
+    },
+
+    {
+      "caseNo": 17,
+      "_intended_verdict": "pass",
+      "_defect": null,
+      "_design_note": "EligeCamino limpio, ahorro grado 10 world_3, sin correcta.",
+      "input": {
+        "bancoId": "10_world_3",
+        "grado": "10",
+        "worldId": "world_3",
+        "pendiente_validacion_docente": true,
+        "generadoPor": "ia",
+        "version": 1,
+        "situaciones": [
+          {
+            "id": "s17",
+            "enunciado": "Te llega un dinero extra inesperado. ¿Qué haces con la mayor parte?",
+            "opcionA": {
+              "texto": "Guardarla para tu meta de ahorro",
+              "consecuencia": "Tu meta se acerca y tienes un respaldo para imprevistos."
+            },
+            "opcionB": {
+              "texto": "Gastarla en algo que querías en el momento",
+              "consecuencia": "Disfrutas una compra inmediata, pero tu meta de ahorro avanza más lento."
+            }
+          }
+        ]
+      }
+    },
+
+    {
+      "caseNo": 18,
+      "_intended_verdict": "fail",
+      "_defect": "incoherencia_tematica",
+      "_design_note": "World_2 es Presupuesto, pero los pasos son para invertir en bolsa — fuera de tema.",
+      "input": {
+        "bancoId": "10_world_2_ordenar",
+        "grado": "10",
+        "worldId": "world_2",
+        "tipo": "ordenar",
+        "pendiente_validacion_docente": true,
+        "generadoPor": "ia",
+        "version": 1,
+        "items": [
+          {
+            "id": "c18",
+            "competencia": "presupuesto",
+            "dificultad": 3,
+            "enunciado": "Ordena los pasos para invertir en la bolsa de valores.",
+            "elementos": [
+              "Abrir una cuenta con una comisionista de bolsa",
+              "Analizar las acciones disponibles",
+              "Comprar las acciones elegidas"
+            ],
+            "ordenCanonico": [0, 1, 2],
+            "explicacion": "Primero se abre la cuenta, luego se analiza y por último se compra."
+          }
+        ]
+      }
+    },
+
+    {
+      "caseNo": 19,
+      "_intended_verdict": "fail",
+      "_defect": "respuesta_ambigua",
+      "_design_note": "Ordenar por 'importancia' de metas: criterio subjetivo, no hay orden canónico objetivo.",
+      "input": {
+        "bancoId": "11_world_3_ordenar",
+        "grado": "11",
+        "worldId": "world_3",
+        "tipo": "ordenar",
+        "pendiente_validacion_docente": true,
+        "generadoPor": "ia",
+        "version": 1,
+        "items": [
+          {
+            "id": "c19",
+            "competencia": "ahorro",
+            "dificultad": 4,
+            "enunciado": "Ordena estas metas de ahorro de la más importante a la menos importante.",
+            "elementos": [
+              "Ahorrar para una emergencia",
+              "Ahorrar para estudiar",
+              "Ahorrar para un viaje"
+            ],
+            "ordenCanonico": [0, 1, 2],
+            "explicacion": "La emergencia es lo más importante, luego estudiar y por último el viaje."
+          }
+        ]
+      }
+    },
+
+    {
+      "caseNo": 20,
+      "_intended_verdict": "pass",
+      "_defect": null,
+      "_design_note": "VF limpio, def. de deuda, grado 9 world_5 dif 3.",
+      "input": {
+        "bancoId": "9_world_5_true_false",
+        "grado": "9",
+        "worldId": "world_5",
+        "tipo": "true_false",
+        "pendiente_validacion_docente": true,
+        "generadoPor": "ia",
+        "version": 1,
+        "items": [
+          {
+            "id": "c20",
+            "competencia": "deuda",
+            "dificultad": 3,
+            "enunciado": "Una deuda es dinero que se recibe prestado y que debe devolverse, normalmente con un costo adicional llamado interés.",
+            "respuesta": true,
+            "explicacion": "Al devolver un préstamo se suele pagar el monto más los intereses."
+          }
+        ]
+      }
+    },
+
+    {
+      "caseNo": 21,
+      "_intended_verdict": "pass",
+      "_defect": null,
+      "_design_note": "MC limpio y exigente (método avalancha), grado 11 world_5 dif 5.",
+      "input": {
+        "bancoId": "11_world_5_multiple_choice",
+        "grado": "11",
+        "worldId": "world_5",
+        "tipo": "multiple_choice",
+        "pendiente_validacion_docente": true,
+        "generadoPor": "ia",
+        "version": 1,
+        "items": [
+          {
+            "id": "c21",
+            "competencia": "deuda",
+            "dificultad": 5,
+            "enunciado": "Una persona tiene varias deudas con diferentes tasas de interés y un monto limitado para abonar. ¿Qué estrategia reduce más el costo total de intereses?",
+            "opciones": [
+              "Abonar primero a la deuda con la tasa de interés más alta",
+              "Abonar primero a la deuda con el saldo más pequeño",
+              "Repartir el abono en partes iguales entre todas",
+              "Abonar primero a la deuda más reciente"
+            ],
+            "correctIndex": 0,
+            "explicacion": "Atacar primero la tasa más alta reduce más el interés total pagado."
+          }
+        ]
+      }
+    },
+
+    {
+      "caseNo": 22,
+      "_intended_verdict": "fail",
+      "_defect": "dificultad_mal_calibrada",
+      "_design_note": "Grado 9 world_1 espera dif 1; ítem usa concepto avanzado (ingreso real vs nominal) y dif 5.",
+      "input": {
+        "bancoId": "9_world_1_multiple_choice",
+        "grado": "9",
+        "worldId": "world_1",
+        "tipo": "multiple_choice",
+        "pendiente_validacion_docente": true,
+        "generadoPor": "ia",
+        "version": 1,
+        "items": [
+          {
+            "id": "c22",
+            "competencia": "ingreso",
+            "dificultad": 5,
+            "enunciado": "¿Cuál es la diferencia entre el ingreso nominal y el ingreso real ajustado por inflación, y cómo afecta el poder adquisitivo intertemporal de un hogar?",
+            "opciones": [
+              "El nominal es el valor en dinero corriente y el real descuenta el efecto de la inflación sobre el poder de compra",
+              "Son sinónimos sin diferencia práctica",
+              "El real siempre es mayor que el nominal",
+              "El nominal solo aplica a empresas"
+            ],
+            "correctIndex": 0,
+            "explicacion": "El ingreso real ajusta el nominal por inflación para reflejar el poder adquisitivo."
+          }
+        ]
+      }
+    },
+
+    {
+      "caseNo": 23,
+      "_intended_verdict": "pass",
+      "_defect": null,
+      "_design_note": "MC limpio, def. de tasa de interés, grado 9 world_4 dif 2.",
+      "input": {
+        "bancoId": "9_world_4_multiple_choice",
+        "grado": "9",
+        "worldId": "world_4",
+        "tipo": "multiple_choice",
+        "pendiente_validacion_docente": true,
+        "generadoPor": "ia",
+        "version": 1,
+        "items": [
+          {
+            "id": "c23",
+            "competencia": "credito",
+            "dificultad": 2,
+            "enunciado": "¿Qué es la tasa de interés de un crédito?",
+            "opciones": [
+              "El costo que se paga por usar dinero prestado",
+              "La cantidad total de dinero que se pide prestada",
+              "El plazo que se tiene para pagar la deuda",
+              "El nombre del banco que presta el dinero"
+            ],
+            "correctIndex": 0,
+            "explicacion": "La tasa de interés es el costo de usar dinero prestado, expresado como porcentaje."
+          }
+        ]
+      }
+    },
+
+    {
+      "caseNo": 24,
+      "_intended_verdict": "fail",
+      "_defect": "lenguaje_inapropiado",
+      "_design_note": "Estigmatiza al deudor ('irresponsable y perdedora'); no neutro y juicio de valor (CN04). Además generaliza falsamente.",
+      "input": {
+        "bancoId": "11_world_5_true_false",
+        "grado": "11",
+        "worldId": "world_5",
+        "tipo": "true_false",
+        "pendiente_validacion_docente": true,
+        "generadoPor": "ia",
+        "version": 1,
+        "items": [
+          {
+            "id": "c24",
+            "competencia": "deuda",
+            "dificultad": 5,
+            "enunciado": "Endeudarse es de gente irresponsable y perdedora que no sabe manejar su vida.",
+            "respuesta": true,
+            "explicacion": "Las personas que se endeudan son irresponsables."
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "bancoId": "11_world_5_true_false",
+  "grado": "11",
+  "worldId": "world_5",
+  "tipo": "true_false",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "11_w5_vf_01",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "La estrategia avalancha prioriza pagar primero la deuda con la tasa de interes mas alta para reducir el costo total de intereses.",
+      "respuesta": true,
+      "explicacion": "Correcto. Atacar primero la tasa mas alta es lo que distingue a la avalancha y lo que minimiza el interes total pagado."
+    },
+    {
+      "id": "11_w5_vf_02",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "La estrategia bola de nieve siempre cuesta menos intereses totales que la avalancha.",
+      "respuesta": false,
+      "explicacion": "Falso. La bola de nieve prioriza el saldo mas pequeño por motivacion, pero al no atacar primero la tasa mas alta suele acumular mas intereses totales que la avalancha."
+    },
+    {
+      "id": "11_w5_vf_03",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "Refinanciar una deuda significa renegociar sus condiciones, como el plazo o la tasa, no hacerla desaparecer.",
+      "respuesta": true,
+      "explicacion": "Correcto. La refinanciacion cambia los terminos de una deuda existente para ajustarla a la capacidad de pago; la obligacion sigue existiendo."
+    },
+    {
+      "id": "11_w5_vf_04",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "Consolidar deudas conviene siempre, sin importar las condiciones de la nueva obligacion.",
+      "respuesta": false,
+      "explicacion": "Falso. Consolidar solo conviene si las nuevas condiciones son mejores. Si empeoran la tasa o alargan demasiado el plazo, el costo total puede subir."
+    },
+    {
+      "id": "11_w5_vf_05",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "Pagar solo el monto minimo de una deuda con interes, mes tras mes, tiende a alargar el plazo y a aumentar el total de intereses pagados.",
+      "respuesta": true,
+      "explicacion": "Correcto. El pago minimo cubre poco mas que los intereses del periodo, por lo que el saldo baja muy lento y se acumulan mas intereses, alimentando una espiral de deuda."
+    },
+    {
+      "id": "11_w5_vf_06",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "Un reporte negativo en una central de riesgo es permanente y nunca puede mejorar.",
+      "respuesta": false,
+      "explicacion": "Falso. Ponerse al dia y sostener pagos cumplidos permite que el historial mejore de forma gradual con el tiempo."
+    },
+    {
+      "id": "11_w5_vf_07",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "Una relacion alta entre la cuota de las deudas y el ingreso disponible es una señal de alerta de sobreendeudamiento.",
+      "respuesta": true,
+      "explicacion": "Correcto. Si las cuotas consumen una porcion alta del ingreso, queda poco margen ante imprevistos, lo que indica mayor riesgo de endeudamiento."
+    },
+    {
+      "id": "11_w5_vf_08",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "La diferencia conceptual entre deuda para invertir y deuda para consumo es que la primera busca financiar algo que puede generar valor o ingresos futuros.",
+      "respuesta": true,
+      "explicacion": "Correcto. La deuda para invertir financia algo con posible retorno futuro; la de consumo financia un gasto que no lo genera. Aun asi, invertir con deuda tambien implica riesgo."
+    },
+    {
+      "id": "11_w5_vf_09",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "Los mecanismos de insolvencia son una primera opcion recomendable apenas aparece cualquier deuda.",
+      "respuesta": false,
+      "explicacion": "Falso. La insolvencia es un recurso de ultima instancia, con consecuencias y condiciones, para cuando ya no es posible pagar por otras vias."
+    }
+  ]
+}

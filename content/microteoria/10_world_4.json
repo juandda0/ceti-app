@@ -1,0 +1,26 @@
+{
+  "grado": "10",
+  "worldId": "world_4",
+  "cards": [
+    {
+      "titulo": "Capacidad de pago",
+      "cuerpo": "La capacidad de pago es cuánto de tus ingresos te queda disponible para cubrir cuotas sin descuidar lo esencial. Tomar un crédito dentro de esa capacidad evita comprometerte por encima de lo que puedes sostener.",
+      "ejemplo": "Antes de aceptar un crédito, una persona revisa cuánto le queda cada mes después de sus gastos básicos y verifica que la cuota cabe allí."
+    },
+    {
+      "titulo": "Tasa nominal y tasa efectiva",
+      "cuerpo": "La tasa nominal es una referencia base, pero la tasa efectiva refleja mejor el costo real porque considera cómo se aplican los intereses y otros costos asociados. Por eso, para comparar créditos conviene mirar la tasa efectiva y no solo la nominal.",
+      "ejemplo": "Dos ofertas muestran la misma tasa nominal, pero al revisar con calma alguien descubre que su costo real no es igual."
+    },
+    {
+      "titulo": "Historial crediticio",
+      "cuerpo": "El historial registra cómo has cumplido tus créditos. Un buen historial genera confianza en las entidades y suele abrir mejores condiciones a futuro; mantenerlo en buen estado depende de pagar a tiempo.",
+      "ejemplo": "Una persona que ha pagado puntualmente sus créditos consigue, más adelante, una oferta con una tasa más favorable."
+    },
+    {
+      "titulo": "Comparar plazo, cuota y costo total",
+      "cuerpo": "Con igual monto y tasa, un plazo más largo baja la cuota pero suele subir el costo total por pagar intereses durante más tiempo. Elegir bien es buscar el equilibrio entre una cuota asumible y un costo total razonable, según tu capacidad de pago.",
+      "ejemplo": "Alguien compara dos plazos para el mismo crédito y escoge el que le deja una cuota cumplible sin disparar el costo total."
+    }
+  ]
+}

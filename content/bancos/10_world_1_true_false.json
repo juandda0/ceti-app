@@ -1,0 +1,83 @@
+{
+  "bancoId": "10_world_1_true_false",
+  "grado": "10",
+  "worldId": "world_1",
+  "tipo": "true_false",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "10_w1_vf_01",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "El ingreso pasivo puede mantenerse aunque la persona no esté trabajando de forma activa.",
+      "respuesta": true,
+      "explicacion": "El ingreso pasivo proviene de un activo o inversión, por lo que puede seguir llegando sin requerir trabajo continuo."
+    },
+    {
+      "id": "10_w1_vf_02",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "El ingreso bruto siempre es igual al ingreso neto.",
+      "respuesta": false,
+      "explicacion": "El neto resulta de restar las deducciones al bruto, así que normalmente el neto es menor que el bruto."
+    },
+    {
+      "id": "10_w1_vf_03",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "Las deducciones de nómina se descuentan del ingreso bruto para obtener el ingreso neto.",
+      "respuesta": true,
+      "explicacion": "Las deducciones se restan del bruto; el resultado disponible es el ingreso neto."
+    },
+    {
+      "id": "10_w1_vf_04",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "El ingreso formal suele incluir respaldo contractual y aportes a seguridad social.",
+      "respuesta": true,
+      "explicacion": "Una de las características del ingreso formal es contar con vínculo contractual y aportes a salud y pensión."
+    },
+    {
+      "id": "10_w1_vf_05",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "Diversificar las fuentes de ingreso aumenta el riesgo de quedarse sin dinero.",
+      "respuesta": false,
+      "explicacion": "Diversificar reduce el riesgo: si una fuente falla, las demás ayudan a sostener la economía personal."
+    },
+    {
+      "id": "10_w1_vf_06",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "Un ingreso variable mantiene siempre el mismo valor en cada periodo.",
+      "respuesta": false,
+      "explicacion": "El ingreso variable cambia entre periodos; el que mantiene un valor estable es el ingreso fijo."
+    },
+    {
+      "id": "10_w1_vf_07",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "Un ingreso estable facilita planear los gastos porque es más predecible.",
+      "respuesta": true,
+      "explicacion": "Al saber con certeza cuánto se recibirá, resulta más sencillo presupuestar y planear los gastos."
+    },
+    {
+      "id": "10_w1_vf_08",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "Los rendimientos de una inversión son un ejemplo de ingreso generado por el trabajo directo de la persona.",
+      "respuesta": false,
+      "explicacion": "Los rendimientos provienen de un activo, no del trabajo directo; por eso se consideran ingreso pasivo."
+    },
+    {
+      "id": "10_w1_vf_09",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "El ingreso activo se detiene si la persona deja de realizar la actividad que lo genera.",
+      "respuesta": true,
+      "explicacion": "El ingreso activo depende del trabajo de la persona; al dejar de realizar la actividad, ese ingreso cesa."
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "bancoId": "10_world_2_true_false",
+  "grado": "10",
+  "worldId": "world_2",
+  "tipo": "true_false",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "10_w2_vf_01",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "Un método para repartir el ingreso puede dividirlo en necesidades, deseos y ahorro sin necesidad de cifras fijas.",
+      "respuesta": true,
+      "explicacion": "Repartir el ingreso en esos tres grupos es un método conceptual válido; no requiere montos exactos para guiar tus decisiones."
+    },
+    {
+      "id": "10_w2_vf_02",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "Al priorizar gastos conviene atender primero los deseos y dejar las necesidades para el final.",
+      "respuesta": false,
+      "explicacion": "Es al revés: se atienden primero las necesidades indispensables y los deseos se cubren cuando lo esencial está asegurado."
+    },
+    {
+      "id": "10_w2_vf_03",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "Un gasto hormiga es pequeño y frecuente, y al acumularse puede afectar tu presupuesto.",
+      "respuesta": true,
+      "explicacion": "Cada gasto hormiga parece insignificante, pero su repetición hace que su efecto sumado sí afecte el presupuesto."
+    },
+    {
+      "id": "10_w2_vf_04",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "Tu presupuesto está en déficit cuando tus ingresos superan a tus egresos.",
+      "respuesta": false,
+      "explicacion": "Eso describe un superávit. El déficit ocurre cuando los egresos superan a los ingresos."
+    },
+    {
+      "id": "10_w2_vf_05",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "Un superávit representa dinero a favor que puedes destinar al ahorro o a una meta.",
+      "respuesta": true,
+      "explicacion": "El superávit es el dinero que queda cuando entra más de lo que sale; aprovecharlo en ahorro o metas es una buena decisión."
+    },
+    {
+      "id": "10_w2_vf_06",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "Ante un imprevisto, lo más sensato es ignorarlo y no ajustar el presupuesto.",
+      "respuesta": false,
+      "explicacion": "Un imprevisto exige ajustar el plan, normalmente recortando deseos para proteger lo esencial y evitar el déficit."
+    },
+    {
+      "id": "10_w2_vf_07",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "Un presupuesto por proyecto se arma para una meta puntual y termina cuando esa meta se cumple.",
+      "respuesta": true,
+      "explicacion": "A diferencia del mensual, que se repite, el presupuesto por proyecto se diseña para una meta concreta y concluye al alcanzarla."
+    },
+    {
+      "id": "10_w2_vf_08",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "Comparar lo planeado con lo que realmente ocurrió ayuda a mejorar el presupuesto del siguiente periodo.",
+      "respuesta": true,
+      "explicacion": "Revisar las diferencias entre lo planeado y lo real te muestra dónde ajustar para que el próximo plan sea más acertado."
+    },
+    {
+      "id": "10_w2_vf_09",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "En el presupuesto base cero cada gasto se copia del periodo anterior sin volver a justificarlo.",
+      "respuesta": false,
+      "explicacion": "El presupuesto base cero hace lo contrario: no arrastra lo anterior y obliga a justificar cada gasto desde cero."
+    }
+  ]
+}

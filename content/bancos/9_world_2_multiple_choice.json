@@ -1,0 +1,179 @@
+{
+  "bancoId": "9_world_2_multiple_choice",
+  "grado": "9",
+  "worldId": "world_2",
+  "tipo": "multiple_choice",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "9_w2_mc_01",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "enunciado": "¿Qué es un presupuesto personal?",
+      "opciones": [
+        "Un castigo por haber gastado de más el mes pasado",
+        "Una lista de deseos que quieres cumplir algún día",
+        "Un plan que organiza el dinero que recibes y el que vas a gastar",
+        "Un documento obligatorio que entrega el colegio"
+      ],
+      "correctIndex": 2,
+      "explicacion": "El presupuesto es un plan que organiza lo que recibes (ingresos) y lo que vas a gastar (egresos) en un periodo."
+    },
+    {
+      "id": "9_w2_mc_02",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "enunciado": "¿Para qué sirve principalmente hacer un presupuesto?",
+      "opciones": [
+        "Para que otra persona decida por ti",
+        "Para presumir frente a tus compañeros",
+        "Para evitar por completo cualquier gasto",
+        "Para tomar decisiones más conscientes sobre tu dinero"
+      ],
+      "correctIndex": 3,
+      "explicacion": "El presupuesto te ayuda a anticipar y decidir con conciencia cómo usar tu dinero, no a dejar de gastar ni a impresionar."
+    },
+    {
+      "id": "9_w2_mc_03",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "enunciado": "En un presupuesto, ¿qué representan los ingresos?",
+      "opciones": [
+        "El dinero que entra, como una mesada o un pago por una labor",
+        "El dinero que sale para comprar cosas",
+        "Las deudas que tienes pendientes",
+        "Los deseos que aún no has cumplido"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Los ingresos son el dinero que entra; los egresos son el dinero que sale."
+    },
+    {
+      "id": "9_w2_mc_04",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "enunciado": "En un presupuesto, ¿qué son los egresos?",
+      "opciones": [
+        "El dinero que recibes cada semana",
+        "El dinero que sale al pagar o comprar algo",
+        "El ahorro que guardas para el futuro",
+        "Una meta que quieres alcanzar"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Los egresos son las salidas de dinero: lo que pagas o compras."
+    },
+    {
+      "id": "9_w2_mc_05",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "¿Cuál de estas opciones describe mejor un gasto fijo?",
+      "opciones": [
+        "Un gasto que cambia mucho de un periodo a otro",
+        "Un gasto que aparece solo cuando hay una emergencia",
+        "Un gasto que se repite con regularidad y suele mantener su monto",
+        "Un gasto que nunca vuelve a ocurrir"
+      ],
+      "correctIndex": 2,
+      "explicacion": "Los gastos fijos se repiten de forma regular y su valor se mantiene parecido, lo que los hace fáciles de prever."
+    },
+    {
+      "id": "9_w2_mc_06",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "¿Cuál de los siguientes es un ejemplo de gasto variable?",
+      "opciones": [
+        "El ahorro que reservas de forma constante",
+        "El pago que haces siempre por el mismo servicio mensual",
+        "El dinero que entra como mesada cada semana",
+        "Lo que gastas en un paseo que cambia según el plan de cada vez"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Los gastos variables cambian de un periodo a otro según la situación; un paseo distinto cada vez es un buen ejemplo."
+    },
+    {
+      "id": "9_w2_mc_07",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "enunciado": "Al armar un presupuesto, ¿cómo se distingue una necesidad de un deseo?",
+      "opciones": [
+        "La necesidad es indispensable; el deseo es algo que te gustaría tener",
+        "La necesidad siempre cuesta más que el deseo",
+        "El deseo es indispensable y la necesidad es opcional",
+        "No existe ninguna diferencia entre ambos"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Una necesidad es algo indispensable; un deseo es algo deseable pero no esencial. Reconocerlo ayuda a priorizar."
+    },
+    {
+      "id": "9_w2_mc_08",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "enunciado": "¿Por qué conviene planear un gasto antes de hacerlo?",
+      "opciones": [
+        "Porque así gastas siempre más rápido sin pensar",
+        "Porque permite revisar si encaja con tu plan y tus prioridades",
+        "Porque planear elimina la necesidad de tener ingresos",
+        "Porque obliga a comprar lo más costoso"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Planear antes de gastar te da espacio para revisar si la compra cabe en tu presupuesto y respeta tus prioridades."
+    },
+    {
+      "id": "9_w2_mc_09",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "¿Qué suele ocurrir si gastas más de lo que recibes en un periodo?",
+      "opciones": [
+        "El presupuesto se equilibra solo sin hacer nada",
+        "Tus ingresos aumentan automáticamente",
+        "Tu presupuesto queda en déficit y debes ajustarlo",
+        "Tus gastos fijos desaparecen"
+      ],
+      "correctIndex": 2,
+      "explicacion": "Gastar más de lo que entra produce un déficit: hay que ajustar gastos o buscar más ingresos para equilibrar."
+    },
+    {
+      "id": "9_w2_mc_10",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "Si tus ingresos son mayores que tus egresos en un periodo, tu presupuesto tiene un...",
+      "opciones": [
+        "Ingreso negativo",
+        "Déficit, es decir, dinero faltante",
+        "Gasto fijo adicional",
+        "Superávit, es decir, dinero a favor"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Cuando entra más de lo que sale, hay superávit: queda dinero a favor que puedes ahorrar o destinar a una meta."
+    },
+    {
+      "id": "9_w2_mc_11",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "Notas que un gasto se está repitiendo más de lo previsto. ¿Qué acción de presupuesto es la más adecuada?",
+      "opciones": [
+        "Revisar y ajustar el presupuesto para reflejar la nueva realidad",
+        "Ignorarlo porque un presupuesto no se cambia nunca",
+        "Eliminar todos los ingresos del plan",
+        "Dejar de registrar ese gasto para que no aparezca"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Un presupuesto es una herramienta viva: ajustarlo cuando la realidad cambia lo mantiene útil."
+    },
+    {
+      "id": "9_w2_mc_12",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "enunciado": "Al organizar un presupuesto con varias necesidades y deseos, ¿qué conviene hacer primero?",
+      "opciones": [
+        "Atender primero los deseos más llamativos",
+        "Atender primero las necesidades indispensables",
+        "Gastar en lo primero que aparezca",
+        "No establecer ningún orden"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Priorizar las necesidades antes que los deseos ayuda a que el presupuesto cubra primero lo indispensable."
+    }
+  ]
+}

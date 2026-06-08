@@ -1,0 +1,136 @@
+{
+  "bancoId": "11_world_1_ordenar",
+  "grado": "11",
+  "worldId": "world_1",
+  "tipo": "ordenar",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "11_w1_ord_01",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para pasar del ingreso bruto al ingreso disponible.",
+      "elementos": [
+        "Identificar el ingreso bruto, antes de cualquier descuento",
+        "Aplicar las deducciones obligatorias correspondientes",
+        "Obtener el ingreso neto tras restar esas deducciones",
+        "Reconocer el ingreso disponible para gastar o ahorrar"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "El proceso parte del ingreso bruto, le resta las deducciones, llega al ingreso neto y, finalmente, queda el ingreso disponible."
+    },
+    {
+      "id": "11_w1_ord_02",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para evaluar tu ingreso real cuando los precios cambian.",
+      "elementos": [
+        "Conocer el ingreso nominal recibido en dinero",
+        "Observar cómo han variado los precios de lo que compras",
+        "Comparar el ingreso con la variación de precios",
+        "Concluir si tu poder de compra subió o bajó"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Primero se conoce el ingreso en dinero, luego se observan los precios, se comparan ambos y así se concluye qué ocurrió con el poder de compra."
+    },
+    {
+      "id": "11_w1_ord_03",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para diversificar tus fuentes de ingreso.",
+      "elementos": [
+        "Reconocer que dependes de una sola fuente de ingreso",
+        "Explorar otras actividades o activos que podrían generar ingreso",
+        "Sumar gradualmente una nueva fuente a la existente",
+        "Repartir el riesgo entre varias fuentes ya activas"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Se parte de reconocer la dependencia, se exploran alternativas, se incorpora una nueva fuente y, con varias activas, el riesgo queda repartido."
+    },
+    {
+      "id": "11_w1_ord_04",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para fortalecer tu ingreso potencial a través de tus habilidades.",
+      "elementos": [
+        "Identificar las habilidades que tienes actualmente",
+        "Reconocer cuáles habilidades son más demandadas",
+        "Formarte para desarrollar o actualizar esas habilidades",
+        "Acceder a mejores oportunidades de ingreso"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Primero se reconocen las habilidades propias, luego las demandadas, después se desarrollan mediante formación y así se abren mejores oportunidades de ingreso."
+    },
+    {
+      "id": "11_w1_ord_05",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "Ordena las etapas en el desarrollo de un emprendimiento como fuente de ingreso.",
+      "elementos": [
+        "Detectar una necesidad o problema que podrías resolver",
+        "Crear una propuesta o actividad para atender esa necesidad",
+        "Asumir el riesgo inicial y poner en marcha la actividad",
+        "Generar ingreso a medida que la actividad se consolida"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "El emprendimiento parte de detectar una necesidad, crear una propuesta, asumir el riesgo de iniciar y, al consolidarse, empieza a generar ingreso."
+    },
+    {
+      "id": "11_w1_ord_06",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "Ordena las fuentes de ingreso desde la que depende más del esfuerzo personal hasta la que depende más de poseer un activo.",
+      "elementos": [
+        "Ingreso por trabajo realizado de forma directa",
+        "Ingreso por una actividad de emprendimiento que gestionas",
+        "Ingreso por la renta de un activo que requiere poco esfuerzo diario"
+      ],
+      "ordenCanonico": [0, 1, 2],
+      "explicacion": "El trabajo directo depende casi por completo del esfuerzo; el emprendimiento combina esfuerzo y gestión; la renta de un activo depende sobre todo de poseerlo."
+    },
+    {
+      "id": "11_w1_ord_07",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para analizar la sostenibilidad de una fuente de ingreso en el tiempo.",
+      "elementos": [
+        "Describir de dónde proviene la fuente de ingreso",
+        "Evaluar si esa fuente puede mantenerse en el futuro",
+        "Identificar los riesgos que podrían interrumpirla",
+        "Decidir si conviene reforzarla o buscar alternativas"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Se describe el origen del ingreso, se evalúa su permanencia, se identifican sus riesgos y, con esa información, se decide reforzarla o complementarla."
+    },
+    {
+      "id": "11_w1_ord_08",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "Ordena los conceptos según el momento en que se aplican sobre el ingreso, de lo más temprano a lo más tardío.",
+      "elementos": [
+        "Ingreso bruto recibido en su totalidad",
+        "Deducciones que se descuentan del ingreso",
+        "Ingreso neto que queda tras los descuentos",
+        "Decisión de gastar o ahorrar el ingreso disponible"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "La secuencia natural va del ingreso bruto, a las deducciones, al ingreso neto y, por último, a la decisión sobre el ingreso disponible."
+    },
+    {
+      "id": "11_w1_ord_09",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para construir una estructura de ingreso más estable a largo plazo.",
+      "elementos": [
+        "Comenzar con una fuente principal de ingreso",
+        "Desarrollar habilidades que aumenten tu ingreso potencial",
+        "Agregar fuentes adicionales para diversificar",
+        "Mantener un ingreso sostenible y menos dependiente de una sola fuente"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Se parte de una fuente principal, se fortalecen las habilidades, se agregan fuentes para diversificar y así se logra un ingreso más estable y sostenible."
+    }
+  ]
+}

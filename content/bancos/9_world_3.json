@@ -1,0 +1,46 @@
+{
+  "bancoId": "9_world_3",
+  "grado": "9",
+  "worldId": "world_3",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "situaciones": [
+    {
+      "id": "9_w3_ec_01",
+      "enunciado": "Recibes algo de dinero por una ayuda que hiciste y tenias una meta de ahorro en marcha. Justo aparece la oferta de un articulo que te llama la atencion. Que decides?",
+      "opcionA": {
+        "texto": "Apartar primero la parte para tu meta de ahorro y luego ver si lo que queda alcanza para el articulo.",
+        "consecuencia": "Tu meta de ahorro sigue avanzando y mantienes el control sobre el gasto, porque decides despues de proteger el ahorro."
+      },
+      "opcionB": {
+        "texto": "Comprar el articulo de una vez y guardar despues lo que sobre, si es que sobra.",
+        "consecuencia": "El articulo entra rapido, pero tu meta de ahorro queda detenida y depende de que aun quede algo despues del gasto."
+      }
+    },
+    {
+      "id": "9_w3_ec_02",
+      "enunciado": "Tienes un dinero ahorrado guardado en casa. Un familiar te comenta que en una entidad vigilada podrias abrir una cuenta de ahorros. Que haces?",
+      "opcionA": {
+        "texto": "Mantener todo el ahorro en casa porque asi lo ves siempre a la mano.",
+        "consecuencia": "Tienes el dinero muy accesible, pero queda mas expuesto y no recibe respaldo ni la posibilidad de ganar intereses."
+      },
+      "opcionB": {
+        "texto": "Trasladar el ahorro a una cuenta de una entidad vigilada y conservar solo una parte pequena a la mano.",
+        "consecuencia": "Tu ahorro queda con mas respaldo y puede ganar intereses, y aun cuentas con algo disponible para lo inmediato."
+      }
+    },
+    {
+      "id": "9_w3_ec_03",
+      "enunciado": "Has logrado ahorrar de forma constante durante varias semanas. Una semana sientes pereza de apartar tu parte habitual de ahorro. Que decides?",
+      "opcionA": {
+        "texto": "Saltarte el ahorro esta semana y prometer compensarlo mas adelante.",
+        "consecuencia": "Se rompe la constancia del habito y se vuelve mas facil saltarse el ahorro otras veces, alejandote de tu meta."
+      },
+      "opcionB": {
+        "texto": "Apartar tu parte habitual aunque sea con menos animo, para no romper la rutina.",
+        "consecuencia": "Mantienes el habito de ahorro vivo y tu meta sigue avanzando, porque la constancia se sostiene."
+      }
+    }
+  ]
+}

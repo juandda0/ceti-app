@@ -1,0 +1,179 @@
+{
+  "bancoId": "11_world_5_multiple_choice",
+  "grado": "11",
+  "worldId": "world_5",
+  "tipo": "multiple_choice",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "11_w5_mc_01",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "Una persona tiene varias deudas con tasas de interes distintas. Si su objetivo es pagar la menor cantidad total de intereses, ¿que orden de pago describe la estrategia llamada avalancha?",
+      "opciones": [
+        "Repartir el pago por igual entre todas las deudas",
+        "Pagar primero la deuda con el saldo mas pequeño, sin importar la tasa",
+        "Pagar primero la deuda con la tasa de interes mas alta, manteniendo el pago minimo en las demas",
+        "Pagar primero la deuda mas antigua, sin importar la tasa"
+      ],
+      "correctIndex": 2,
+      "explicacion": "La estrategia avalancha ataca primero la deuda de mayor tasa de interes. Como el interes es lo que mas encarece la deuda, eliminar primero la tasa mas alta reduce el costo total acumulado."
+    },
+    {
+      "id": "11_w5_mc_02",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "La estrategia bola de nieve consiste en pagar primero la deuda de menor saldo. Frente a la avalancha, ¿cual es su principal diferencia en cuanto al costo total?",
+      "opciones": [
+        "Elimina por completo el pago de intereses",
+        "Siempre cuesta menos en intereses totales que la avalancha",
+        "No tiene ninguna diferencia de costo frente a la avalancha",
+        "Suele costar mas en intereses totales, pero da logros tempranos que ayudan a mantener la motivacion"
+      ],
+      "correctIndex": 3,
+      "explicacion": "La bola de nieve prioriza saldos pequeños para lograr victorias rapidas y sostener la motivacion, pero al no atacar primero las tasas mas altas suele acumular mas intereses totales que la avalancha."
+    },
+    {
+      "id": "11_w5_mc_03",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "¿Que es, en terminos generales, la refinanciacion de una deuda?",
+      "opciones": [
+        "Cambiar las condiciones de una deuda existente, por ejemplo plazo o tasa, para hacerla mas manejable",
+        "Dejar de pagar la deuda y esperar a que caduque",
+        "Pedir una nueva deuda exclusivamente para gastos de consumo",
+        "Eliminar la deuda sin ningun costo ni condicion"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Refinanciar es renegociar las condiciones de una deuda existente (plazo, tasa o cuota) para ajustarla a la capacidad de pago. No elimina la deuda: cambia sus terminos."
+    },
+    {
+      "id": "11_w5_mc_04",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "La consolidacion de deudas busca reunir varias obligaciones en una sola. ¿Cual es la ventaja que se persigue al consolidar?",
+      "opciones": [
+        "Aumentar el numero de cuotas distintas para pagar cada mes",
+        "Simplificar la gestion y, idealmente, obtener una tasa o cuota mas conveniente que la suma de las anteriores",
+        "Garantizar que la deuda desaparezca mas rapido sin pagar nada",
+        "Ocultar la deuda para que no aparezca registrada en ninguna parte"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Consolidar agrupa varias deudas en una sola obligacion. La idea es facilitar la gestion y, cuando es posible, conseguir mejores condiciones que el conjunto original. No hace desaparecer la deuda."
+    },
+    {
+      "id": "11_w5_mc_05",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "¿En cual de estas situaciones es MENOS recomendable consolidar varias deudas en una sola?",
+      "opciones": [
+        "Cuando reunir las cuotas ayuda a no olvidar pagos y reduce el riesgo de mora",
+        "Cuando se logra una tasa claramente mas baja que el promedio de las deudas actuales",
+        "Cuando la nueva obligacion termina con peores condiciones o alarga tanto el plazo que el costo total sube",
+        "Cuando las condiciones nuevas se ajustan mejor a la capacidad de pago"
+      ],
+      "correctIndex": 2,
+      "explicacion": "Consolidar no siempre conviene: si la nueva deuda tiene peores condiciones o un plazo tan largo que el costo total final aumenta, la consolidacion termina siendo perjudicial aunque la cuota mensual parezca menor."
+    },
+    {
+      "id": "11_w5_mc_06",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "Una persona paga mes a mes solo el monto minimo exigido en una deuda con interes. ¿Que efecto suele tener esta practica sostenida en el tiempo?",
+      "opciones": [
+        "No afecta en nada el costo total de la deuda",
+        "Salda la deuda mas rapido porque reduce los intereses",
+        "Hace que la deuda deje de generar intereses",
+        "Alarga mucho el tiempo de pago y aumenta el total de intereses, alimentando una espiral de deuda"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Pagar solo el minimo cubre poco mas que los intereses del periodo, por lo que el saldo baja muy lento. Esto extiende el plazo, eleva los intereses totales y puede derivar en una espiral de deuda."
+    },
+    {
+      "id": "11_w5_mc_07",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "Una central de riesgo registra el historial de pago de las personas. ¿Que afirmacion describe mejor el proceso de rehabilitacion del historial tras una mora?",
+      "opciones": [
+        "Ponerse al dia y mantener pagos cumplidos con el tiempo permite que el historial mejore de forma gradual",
+        "El reporte negativo es permanente y nunca puede mejorar",
+        "Basta con pagar un solo dia para borrar de inmediato todo el historial pasado",
+        "El historial se elimina si la persona simplemente deja de usar credito"
+      ],
+      "correctIndex": 0,
+      "explicacion": "La rehabilitacion del historial no es instantanea: requiere ponerse al dia y sostener un comportamiento de pago cumplido. Con el tiempo, el buen historial reciente pesa mas y la calificacion mejora gradualmente."
+    },
+    {
+      "id": "11_w5_mc_08",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "La relacion entre la cuota de las deudas y el ingreso disponible es una señal de riesgo de endeudamiento. ¿Que indica una relacion cuota/ingreso elevada?",
+      "opciones": [
+        "Que la persona tiene un colchon de ahorro muy amplio",
+        "Que una gran parte del ingreso se va en pagar deudas, dejando poco margen ante imprevistos",
+        "Que la deuda dejara de generar intereses pronto",
+        "Que conviene tomar mas deuda porque hay capacidad de sobra"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Cuando las cuotas consumen una porcion alta del ingreso, queda poco margen para gastos esenciales o imprevistos. Una relacion cuota/ingreso elevada es una señal de alerta de sobreendeudamiento."
+    },
+    {
+      "id": "11_w5_mc_09",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "Al evaluar si endeudarse, suele distinguirse entre deuda para invertir y deuda para consumo. ¿Cual es la diferencia conceptual clave?",
+      "opciones": [
+        "No hay diferencia: toda deuda produce el mismo resultado",
+        "La deuda para consumo siempre es mejor porque las cuotas son mas bajas",
+        "La deuda para invertir busca financiar algo que puede generar valor o ingresos futuros; la de consumo financia un gasto que no genera retorno",
+        "La deuda para invertir nunca implica ningun riesgo"
+      ],
+      "correctIndex": 2,
+      "explicacion": "La deuda para invertir financia algo que podria generar valor o ingresos en el futuro; la de consumo financia un gasto que no produce retorno. Aun asi, invertir con deuda tambien implica riesgo y exige evaluacion."
+    },
+    {
+      "id": "11_w5_mc_10",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "La insolvencia se entiende, en terminos generales, como la imposibilidad de cumplir con las obligaciones de pago. ¿Como conviene entender los mecanismos de insolvencia?",
+      "opciones": [
+        "Como un premio que mejora el historial de credito",
+        "Como una primera opcion recomendable apenas aparece una deuda",
+        "Como una forma sin consecuencias de no pagar lo que se debe",
+        "Como un recurso de ultima instancia, con consecuencias, cuando ya no es posible pagar por otras vias"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Los mecanismos de insolvencia existen para situaciones extremas en que ya no es posible pagar. Son un recurso de ultima instancia, con consecuencias y condiciones, no una via comoda para evitar pagar."
+    },
+    {
+      "id": "11_w5_mc_11",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "Una persona considera consolidar sus deudas en una sola con cuota mensual mas baja, pero a un plazo mucho mas largo. ¿Que debe revisar con mayor cuidado antes de decidir?",
+      "opciones": [
+        "El costo total al final del plazo, porque una cuota menor por mas tiempo puede salir mas cara en conjunto",
+        "Unicamente que la cuota mensual sea mas baja, sin mirar el plazo",
+        "Que la cuota baje, ignorando por completo la tasa de interes",
+        "Nada en particular: una cuota mas baja siempre es mejor decision"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Una cuota mensual mas baja puede ser atractiva, pero si se logra alargando mucho el plazo, el total pagado al final puede ser mayor. La decision debe mirar el costo total, no solo la cuota mensual."
+    },
+    {
+      "id": "11_w5_mc_12",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "Una persona con varias deudas decide aplicar la avalancha. Tras saldar por completo la deuda de mayor tasa, ¿que paso continua la estrategia?",
+      "opciones": [
+        "Repartir lo liberado por igual entre todas las deudas restantes",
+        "Dirigir el dinero que liberaba esa deuda hacia la siguiente deuda de mayor tasa, manteniendo los minimos en el resto",
+        "Dejar de pagar las demas deudas hasta el mes siguiente",
+        "Volver a pagar solo el minimo en todas las deudas restantes"
+      ],
+      "correctIndex": 1,
+      "explicacion": "En la avalancha, al saldar la deuda de mayor tasa se libera ese pago y se redirige a la siguiente deuda con la tasa mas alta, mientras se mantienen los minimos en las demas. Asi se ataca el costo en orden de tasa decreciente."
+    }
+  ]
+}

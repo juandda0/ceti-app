@@ -1,0 +1,179 @@
+{
+  "bancoId": "9_world_1_multiple_choice",
+  "grado": "9",
+  "worldId": "world_1",
+  "tipo": "multiple_choice",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "9_w1_mc_01",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "¿Qué es un ingreso?",
+      "opciones": [
+        "El dinero que una persona gasta cada día",
+        "El dinero o valor que una persona recibe por su trabajo o por una actividad",
+        "Una deuda que una persona debe pagar más adelante",
+        "Un objeto que una persona presta a otra"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Un ingreso es el dinero o valor que una persona recibe, por ejemplo a cambio de su trabajo o de vender algo."
+    },
+    {
+      "id": "9_w1_mc_02",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "¿Cuál de las siguientes es una fuente de ingreso por empleo?",
+      "opciones": [
+        "Una camiseta que alguien encuentra en la calle",
+        "Un regalo de cumpleaños que da un amigo",
+        "El salario que recibe alguien por trabajar en una empresa",
+        "El tiempo libre del fin de semana"
+      ],
+      "correctIndex": 2,
+      "explicacion": "El salario por trabajar en una empresa es un ingreso que proviene de un empleo."
+    },
+    {
+      "id": "9_w1_mc_03",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "Una persona tiene un puesto de jugos y vende a sus vecinos. ¿De qué tipo de fuente proviene su ingreso?",
+      "opciones": [
+        "De un objeto que recibió prestado",
+        "De un empleo en una empresa ajena",
+        "De una ayuda que le entrega un familiar",
+        "De un negocio propio"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Quien tiene su propio puesto y vende productos obtiene ingresos de un negocio propio."
+    },
+    {
+      "id": "9_w1_mc_04",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "¿Cuál de estos casos corresponde a un ingreso obtenido por una venta?",
+      "opciones": [
+        "Recibir dinero al vender la bicicleta que ya no usa",
+        "Prestarle la bicicleta a un amigo por una tarde",
+        "Guardar la bicicleta en la bodega de la casa",
+        "Pedir prestada una bicicleta a un vecino"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Vender un objeto y recibir dinero a cambio genera un ingreso por venta."
+    },
+    {
+      "id": "9_w1_mc_05",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "¿Cuál es la diferencia principal entre un ingreso y un gasto?",
+      "opciones": [
+        "El ingreso y el gasto significan exactamente lo mismo",
+        "El ingreso es dinero que entra y el gasto es dinero que sale",
+        "El ingreso es dinero que sale y el gasto es dinero que entra",
+        "Ninguno tiene relación con el dinero de una persona"
+      ],
+      "correctIndex": 1,
+      "explicacion": "El ingreso es el dinero que entra a la persona, mientras que el gasto es el dinero que sale."
+    },
+    {
+      "id": "9_w1_mc_06",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "Una familia recibe alimentos como pago por un trabajo, en lugar de dinero. ¿Cómo se llama este tipo de ingreso?",
+      "opciones": [
+        "Un gasto de la familia",
+        "Ingreso en dinero",
+        "Ingreso en especie",
+        "Una deuda de la familia"
+      ],
+      "correctIndex": 2,
+      "explicacion": "Cuando se recibe un bien o servicio en lugar de dinero, se trata de un ingreso en especie."
+    },
+    {
+      "id": "9_w1_mc_07",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "¿Cuál de los siguientes es un ejemplo de ingreso recibido en dinero?",
+      "opciones": [
+        "Recibir alojamiento a cambio de cuidar una casa",
+        "Recibir una canasta de frutas como pago",
+        "Recibir ropa usada de un familiar",
+        "Recibir el pago de un trabajo directamente en efectivo"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Recibir efectivo es un ingreso en dinero; las demás opciones son ingresos en especie."
+    },
+    {
+      "id": "9_w1_mc_08",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "Una persona cobra su salario una vez al mes. ¿Qué describe la frecuencia de ese ingreso?",
+      "opciones": [
+        "Es un ingreso mensual",
+        "Es un ingreso diario",
+        "Es un ingreso que recibe cada hora",
+        "Es un ingreso que nunca se repite"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Si el ingreso llega una vez cada mes, su frecuencia es mensual."
+    },
+    {
+      "id": "9_w1_mc_09",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "¿Qué caracteriza a un ingreso diario?",
+      "opciones": [
+        "Que la persona lo recibe una sola vez al año",
+        "Que la persona lo recibe todos los días por su actividad",
+        "Que la persona nunca lo vuelve a recibir",
+        "Que la persona lo recibe cada varios meses"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Un ingreso diario es el que una persona recibe cada día, por ejemplo por una venta diaria."
+    },
+    {
+      "id": "9_w1_mc_10",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "Una persona trabaja con un contrato y aparece registrada ante las autoridades laborales. ¿Cómo se describe ese ingreso?",
+      "opciones": [
+        "Como un ingreso que no proviene del trabajo",
+        "Como un ingreso de un trabajo informal",
+        "Como un ingreso de un trabajo formal",
+        "Como un gasto del trabajador"
+      ],
+      "correctIndex": 2,
+      "explicacion": "Cuando hay contrato y registro ante las autoridades, se trata de un ingreso de trabajo formal."
+    },
+    {
+      "id": "9_w1_mc_11",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "¿Cuál es un ejemplo cotidiano de ingreso para un estudiante?",
+      "opciones": [
+        "Caminar hasta el colegio por la mañana",
+        "Comprar un cuaderno para el colegio",
+        "Prestarle un lápiz a un compañero de clase",
+        "Recibir un pago por ayudar a un vecino con una tarea sencilla"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Recibir un pago por una actividad, aunque sea pequeña, es un ingreso; las demás opciones no implican recibir dinero o valor."
+    },
+    {
+      "id": "9_w1_mc_12",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "¿Por qué es útil que una persona sepa cuánto recibe de ingreso?",
+      "opciones": [
+        "Porque le ayuda a conocer con qué recursos cuenta para tomar decisiones",
+        "Porque así puede ignorar por completo el dinero que recibe",
+        "Porque le obliga a gastar todo de inmediato",
+        "Porque le impide trabajar en el futuro"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Conocer cuánto se recibe de ingreso ayuda a la persona a saber con qué recursos cuenta y a tomar mejores decisiones."
+    }
+  ]
+}

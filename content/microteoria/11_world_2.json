@@ -1,0 +1,26 @@
+{
+  "grado": "11",
+  "worldId": "world_2",
+  "cards": [
+    {
+      "titulo": "Presupuesto base cero",
+      "cuerpo": "En el presupuesto base cero no arrastras las cifras del periodo anterior: cada periodo partes desde cero y justificas cada gasto segun lo que de verdad necesitas hoy. Asi evitas que gastos viejos sigan solo por costumbre.",
+      "ejemplo": "Antes de un nuevo periodo escolar, en lugar de repetir tu plan de gastos anterior, revisas que necesitas realmente esta vez y armas el plan desde cero."
+    },
+    {
+      "titulo": "Metas por horizonte",
+      "cuerpo": "Las metas se planean segun cuanto falta para alcanzarlas: corto, mediano y largo plazo. Un buen presupuesto reserva aportes regulares para cada horizonte, en vez de atender solo la meta mas cercana o la mas grande.",
+      "ejemplo": "Apartas un poco cada periodo para algo cercano, algo intermedio y algo lejano, de modo que ninguna meta dependa de un solo esfuerzo al final."
+    },
+    {
+      "titulo": "Flujo de caja e ingresos que cambian",
+      "cuerpo": "El flujo de caja compara lo que entra con lo que sale en un periodo: positivo deja excedente, negativo deja faltante. Cuando los ingresos varian o son estacionales, presupuestas sobre un nivel prudente y guardas el excedente de los meses buenos para los meses bajos.",
+      "ejemplo": "En una temporada del ano recibes mas; apartas parte de ese excedente para sostener los meses en que entra menos."
+    },
+    {
+      "titulo": "Fondo de imprevistos y costo de oportunidad",
+      "cuerpo": "El fondo de imprevistos es una reserva dentro del presupuesto para gastos inesperados, asi una emergencia no desarma tus metas ni te lleva a endeudarte. Cada decision de gasto tiene costo de oportunidad: al elegir una opcion renuncias a la mejor alternativa.",
+      "ejemplo": "Si destinas tu excedente a completar el fondo en vez de a un gasto opcional, ganas respaldo; aquello a lo que renunciaste es el costo de oportunidad de esa decision."
+    }
+  ]
+}

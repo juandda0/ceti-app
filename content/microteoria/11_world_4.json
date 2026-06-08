@@ -1,0 +1,26 @@
+{
+  "grado": "11",
+  "worldId": "world_4",
+  "cards": [
+    {
+      "titulo": "Tasa efectiva anual y tasa de usura",
+      "cuerpo": "La tasa efectiva anual refleja el costo real de un crédito porque considera cómo se acumulan los intereses durante el año, más allá de la sola tasa nominal de referencia. Además, existe un tope legal máximo de interés, la tasa de usura: ninguna entidad puede cobrar por encima de ese límite.",
+      "ejemplo": "Antes de aceptar un crédito, una persona compara su tasa efectiva anual con la de otra oferta y confirma que está dentro del tope legal permitido."
+    },
+    {
+      "titulo": "Costo total y comparación de ofertas",
+      "cuerpo": "El costo de un crédito no es solo el interés: incluye seguros, comisiones y otros cobros asociados. Por eso conviene comparar ofertas por su costo total a lo largo del plazo, y no solo por el tamaño de la cuota, que puede ser baja a costa de un plazo más largo.",
+      "ejemplo": "Alguien revisa dos créditos: el de cuota más baja resulta más costoso al final, así que elige el de menor costo total que su presupuesto sostiene."
+    },
+    {
+      "titulo": "Amortización, garantías e historial",
+      "cuerpo": "En un crédito con cuotas, al inicio la cuota cubre más interés y menos capital, proporción que se invierte con el tiempo. Una garantía o colateral respalda el crédito y puede mejorar las condiciones, y un buen historial de pago reduce el riesgo percibido y abre mejores ofertas a futuro.",
+      "ejemplo": "Una persona que paga puntualmente y respalda su crédito con una garantía consigue, más adelante, condiciones más favorables."
+    },
+    {
+      "titulo": "Tipos de crédito y apalancamiento",
+      "cuerpo": "Cada propósito tiene un crédito más adecuado: el de consumo cubre necesidades generales, el hipotecario se asocia a vivienda con plazos largos, y el rotativo ofrece un cupo reutilizable. Usar crédito para impulsar un proyecto, el apalancamiento, puede ampliar resultados, pero también el riesgo, porque la deuda se paga aunque el proyecto no rinda lo esperado.",
+      "ejemplo": "Alguien elige un crédito rotativo para gastos recurrentes y reserva un crédito de plazo largo para una meta mayor, evaluando antes su capacidad de pago."
+    }
+  ]
+}

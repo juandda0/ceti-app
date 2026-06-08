@@ -1,0 +1,123 @@
+{
+  "bancoId": "9_world_1_ordenar",
+  "grado": "9",
+  "worldId": "world_1",
+  "tipo": "ordenar",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "9_w1_ord_01",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "Ordena los pasos para obtener un ingreso vendiendo un producto, desde el primero hasta el último.",
+      "elementos": [
+        "Conseguir el producto que se va a vender",
+        "Ofrecer el producto a un posible comprador",
+        "Entregar el producto al comprador",
+        "Recibir el dinero del comprador"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Primero se consigue el producto, luego se ofrece, después se entrega y finalmente se recibe el dinero, que es el ingreso."
+    },
+    {
+      "id": "9_w1_ord_02",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "Ordena los pasos para recibir un ingreso por un trabajo, desde el primero hasta el último.",
+      "elementos": [
+        "Acordar el trabajo que se va a realizar",
+        "Realizar el trabajo acordado",
+        "Recibir el pago por el trabajo"
+      ],
+      "ordenCanonico": [0, 1, 2],
+      "explicacion": "Primero se acuerda el trabajo, luego se realiza y al final se recibe el pago como ingreso."
+    },
+    {
+      "id": "9_w1_ord_03",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "Ordena estas frecuencias de ingreso de la más corta a la más larga.",
+      "elementos": ["Ingreso diario", "Ingreso semanal", "Ingreso mensual", "Ingreso anual"],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "De menor a mayor periodo: diario, semanal, mensual y anual."
+    },
+    {
+      "id": "9_w1_ord_04",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "Ordena los pasos para obtener un ingreso con un puesto de jugos, desde el primero hasta el último.",
+      "elementos": [
+        "Preparar los jugos para vender",
+        "Atender a las personas que llegan al puesto",
+        "Cobrar a quien compra un jugo"
+      ],
+      "ordenCanonico": [0, 1, 2],
+      "explicacion": "Primero se preparan los jugos, luego se atiende a las personas y al final se cobra, recibiendo el ingreso."
+    },
+    {
+      "id": "9_w1_ord_05",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "Ordena los pasos para conseguir un ingreso ayudando a un vecino con una tarea, desde el primero hasta el último.",
+      "elementos": [
+        "Ofrecer ayuda al vecino con la tarea",
+        "Completar la tarea que pidió el vecino",
+        "Recibir el pago acordado del vecino"
+      ],
+      "ordenCanonico": [0, 1, 2],
+      "explicacion": "Primero se ofrece la ayuda, luego se completa la tarea y al final se recibe el pago como ingreso."
+    },
+    {
+      "id": "9_w1_ord_06",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "Ordena los pasos para vender un objeto usado y obtener un ingreso, desde el primero hasta el último.",
+      "elementos": [
+        "Decidir qué objeto usado se va a vender",
+        "Anunciar el objeto a posibles compradores",
+        "Acordar la venta con un comprador interesado",
+        "Recibir el dinero por el objeto vendido"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Se decide el objeto, se anuncia, se acuerda la venta y por último se recibe el dinero."
+    },
+    {
+      "id": "9_w1_ord_07",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "Ordena las etapas que vive una persona con su ingreso por empleo, desde el primero hasta el último.",
+      "elementos": [
+        "Conseguir un empleo",
+        "Trabajar durante el periodo acordado",
+        "Recibir el salario al final del periodo"
+      ],
+      "ordenCanonico": [0, 1, 2],
+      "explicacion": "Primero se consigue el empleo, luego se trabaja el periodo y después llega el salario como ingreso."
+    },
+    {
+      "id": "9_w1_ord_08",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "Ordena estos periodos de tiempo del más corto al más largo para describir cada cuánto puede llegar un ingreso.",
+      "elementos": ["Un día", "Una semana", "Un mes"],
+      "ordenCanonico": [0, 1, 2],
+      "explicacion": "Un día es más corto que una semana, y una semana más corta que un mes."
+    },
+    {
+      "id": "9_w1_ord_09",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "Ordena los pasos para obtener un ingreso cultivando y vendiendo alimentos, desde el primero hasta el último.",
+      "elementos": [
+        "Sembrar los alimentos",
+        "Esperar a que los alimentos estén listos",
+        "Cosechar los alimentos",
+        "Vender los alimentos y recibir el dinero"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Se siembra, se espera el crecimiento, se cosecha y finalmente se vende para recibir el ingreso."
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "bancoId": "10_world_3",
+  "grado": "10",
+  "worldId": "world_3",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "situaciones": [
+    {
+      "id": "10_w3_ec_01",
+      "enunciado": "Llevas meses construyendo tu fondo de emergencia y aún no llegas a tu meta. Aparece la oportunidad de un plan que promete hacer crecer tu dinero más rápido, pero que dejaría tu ahorro comprometido por un buen tiempo.",
+      "opcionA": {
+        "texto": "Mantengo el dinero en mi fondo de emergencia, disponible para imprevistos.",
+        "consecuencia": "Conservas liquidez: si surge una urgencia, puedes usar tu ahorro de inmediato, aunque renuncies por ahora a un crecimiento mayor."
+      },
+      "opcionB": {
+        "texto": "Comprometo parte del ahorro en el plan que promete crecer más rápido.",
+        "consecuencia": "Buscas más rendimiento, pero reduces tu liquidez: si llega un imprevisto, tendrías menos dinero disponible al instante."
+      }
+    },
+    {
+      "id": "10_w3_ec_02",
+      "enunciado": "Recibes un ingreso extra inesperado este mes. Estás entre apartarlo de inmediato para tu meta de largo plazo o dejarlo en tu dinero del día a día para decidir después.",
+      "opcionA": {
+        "texto": "Lo aparto de inmediato para mi meta de largo plazo, antes de gastarlo.",
+        "consecuencia": "Refuerzas el hábito de ahorrar primero y das más tiempo a tu meta para crecer, reduciendo la tentación de gastarlo."
+      },
+      "opcionB": {
+        "texto": "Lo dejo junto a mi dinero diario y decido más adelante.",
+        "consecuencia": "Mantienes flexibilidad inmediata, pero aumenta la probabilidad de que se mezcle con gastos cotidianos y no llegue a tu meta."
+      }
+    },
+    {
+      "id": "10_w3_ec_03",
+      "enunciado": "Quieres empezar a ahorrar de forma constante, pero a veces se te olvida apartar el dinero. Tienes que decidir cómo organizar tu ahorro de aquí en adelante.",
+      "opcionA": {
+        "texto": "Programo mi ahorro para que se aparte de forma automática y periódica.",
+        "consecuencia": "El ahorro deja de depender de tu memoria; se sostiene solo y avanza de manera constante hacia tu meta."
+      },
+      "opcionB": {
+        "texto": "Sigo ahorrando solo cuando me acuerdo, según el mes.",
+        "consecuencia": "Conservas control manual, pero tu ahorro avanza de forma irregular y es más fácil que algunos periodos queden sin aporte."
+      }
+    }
+  ]
+}

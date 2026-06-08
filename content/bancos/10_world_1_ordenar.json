@@ -1,0 +1,132 @@
+{
+  "bancoId": "10_world_1_ordenar",
+  "grado": "10",
+  "worldId": "world_1",
+  "tipo": "ordenar",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "10_w1_ord_01",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "Ordena los pasos para pasar del ingreso bruto al ingreso disponible.",
+      "elementos": [
+        "Recibir el ingreso bruto total del periodo",
+        "Identificar las deducciones que se aplican",
+        "Restar las deducciones al ingreso bruto",
+        "Obtener el ingreso neto disponible"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "El cálculo del neto sigue una secuencia lógica: primero se conoce el bruto, luego se identifican y restan las deducciones, y al final queda el ingreso disponible."
+    },
+    {
+      "id": "10_w1_ord_02",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "Ordena las etapas para formalizar una fuente de ingreso por un servicio.",
+      "elementos": [
+        "Definir el servicio que se va a ofrecer",
+        "Acordar las condiciones con el cliente",
+        "Prestar el servicio acordado",
+        "Recibir el pago por el servicio"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Primero se define y acuerda el servicio, luego se presta y, como consecuencia, se recibe el pago."
+    },
+    {
+      "id": "10_w1_ord_03",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "Ordena los pasos para diversificar las fuentes de ingreso de forma planeada.",
+      "elementos": [
+        "Revisar la fuente de ingreso actual",
+        "Identificar otras posibles fuentes de ingreso",
+        "Evaluar cuáles son viables para la persona",
+        "Sumar una nueva fuente al conjunto de ingresos"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "La diversificación ordenada parte de revisar lo que ya se tiene, explorar alternativas, evaluarlas y luego incorporar una nueva fuente."
+    },
+    {
+      "id": "10_w1_ord_04",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "Ordena las etapas por las que pasa un ingreso variable a lo largo del proceso.",
+      "elementos": [
+        "Realizar la actividad que genera el ingreso",
+        "Registrar cuánto se produjo en el periodo",
+        "Comparar el resultado con periodos anteriores",
+        "Ajustar la planeación según lo recibido"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Con un ingreso variable conviene actuar, registrar el resultado, compararlo y ajustar la planeación, porque el monto cambia entre periodos."
+    },
+    {
+      "id": "10_w1_ord_05",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "Ordena los pasos para crear una fuente de ingreso pasivo a partir de un activo.",
+      "elementos": [
+        "Adquirir o construir el activo",
+        "Ponerlo a generar valor",
+        "Recibir el ingreso que produce el activo"
+      ],
+      "ordenCanonico": [0, 1, 2],
+      "explicacion": "El ingreso pasivo exige primero contar con el activo, luego ponerlo a producir y, finalmente, recibir lo que genera."
+    },
+    {
+      "id": "10_w1_ord_06",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "Ordena los pasos lógicos para clasificar un ingreso como fijo o variable.",
+      "elementos": [
+        "Observar el monto recibido en varios periodos",
+        "Verificar si el monto se mantiene o cambia",
+        "Clasificar el ingreso como fijo o variable"
+      ],
+      "ordenCanonico": [0, 1, 2],
+      "explicacion": "Para clasificar un ingreso se observa el comportamiento del monto en el tiempo, se verifica si es estable y luego se etiqueta como fijo o variable."
+    },
+    {
+      "id": "10_w1_ord_07",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "Ordena los pasos para distinguir si un ingreso es activo o pasivo.",
+      "elementos": [
+        "Observar de dónde proviene el ingreso",
+        "Preguntarse si requiere el trabajo de la persona",
+        "Determinar si es ingreso activo o pasivo"
+      ],
+      "ordenCanonico": [0, 1, 2],
+      "explicacion": "Se analiza el origen del ingreso, se evalúa si depende del trabajo de la persona y con ello se determina si es activo o pasivo."
+    },
+    {
+      "id": "10_w1_ord_08",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "Ordena los pasos para reconocer las deducciones en un ingreso formal.",
+      "elementos": [
+        "Conocer el ingreso bruto del periodo",
+        "Identificar cada deducción aplicada",
+        "Verificar el ingreso neto resultante"
+      ],
+      "ordenCanonico": [0, 1, 2],
+      "explicacion": "Se parte del bruto, se identifican las deducciones aplicadas y se verifica el neto que queda después de restarlas."
+    },
+    {
+      "id": "10_w1_ord_09",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "Ordena los pasos para evaluar la estabilidad de una fuente de ingreso.",
+      "elementos": [
+        "Reunir la información de los ingresos pasados",
+        "Analizar qué tan constantes han sido",
+        "Concluir si la fuente es estable o inestable"
+      ],
+      "ordenCanonico": [0, 1, 2],
+      "explicacion": "La estabilidad se evalúa reuniendo el historial de ingresos, analizando su constancia y concluyendo si la fuente es estable."
+    }
+  ]
+}

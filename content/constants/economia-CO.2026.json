@@ -1,0 +1,9 @@
+{
+  "_nota": "Cifras caducables de Colombia (R14). Rellenar/verificar con valores oficiales del año. El contenido referencia estos valores vía constRef (p. ej. constRef: 'SMMLV'); nunca se queman literales en los ítems. Cuando cambien las cifras, crea economia-CO.<nuevoAño>.json — el contenido no se reescribe.",
+  "anio": 2026,
+  "SMMLV": 0,
+  "auxilioTransporte": 0,
+  "UVT": 0,
+  "tasaUsura": 0,
+  "salarioMinimoIntegral": 0
+}

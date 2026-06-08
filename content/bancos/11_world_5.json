@@ -1,0 +1,46 @@
+{
+  "bancoId": "11_world_5",
+  "grado": "11",
+  "worldId": "world_5",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "situaciones": [
+    {
+      "id": "11_w5_ec_01",
+      "enunciado": "Tienes varias deudas con tasas de interes distintas y un poco de dinero extra este mes para abonar. Debes decidir hacia donde lo diriges.",
+      "opcionA": {
+        "texto": "Abonar todo el dinero extra a la deuda con la tasa de interes mas alta",
+        "consecuencia": "Atacas primero el costo mas caro de tu deuda. El total de intereses que pagaras tiende a bajar, aunque el alivio se siente mas adelante."
+      },
+      "opcionB": {
+        "texto": "Abonar todo el dinero extra a la deuda con el saldo mas pequeño",
+        "consecuencia": "Saldas pronto una deuda y ganas una victoria que motiva, pero como no atacas primero la tasa mas alta, podrias terminar pagando mas intereses en total."
+      }
+    },
+    {
+      "id": "11_w5_ec_02",
+      "enunciado": "Te ofrecen consolidar todas tus deudas en una sola obligacion. La cuota mensual seria mas baja, pero el plazo seria mucho mas largo.",
+      "opcionA": {
+        "texto": "Aceptar solo despues de comparar el costo total al final del plazo con tu situacion actual",
+        "consecuencia": "Tomas la decision con informacion completa. Si el costo total mejora, consolidas con criterio; si no, lo descartas a tiempo."
+      },
+      "opcionB": {
+        "texto": "Aceptar de inmediato porque la cuota mensual es mas baja",
+        "consecuencia": "El mes a mes se siente mas liviano, pero alargar mucho el plazo puede hacer que pagues mas en total. La cuota baja no siempre significa menor costo."
+      }
+    },
+    {
+      "id": "11_w5_ec_03",
+      "enunciado": "Una deuda se te volvio dificil de pagar y la cuota supera lo que puedes asumir cada mes. Debes decidir como responder.",
+      "opcionA": {
+        "texto": "Buscar a tiempo refinanciar o renegociar las condiciones para ajustarlas a tu capacidad real",
+        "consecuencia": "Actuar temprano abre opciones para reorganizar la deuda y reduce el riesgo de caer en mora o en una espiral de deuda."
+      },
+      "opcionB": {
+        "texto": "Pagar solo el minimo cada mes y esperar a que la situacion se resuelva sola",
+        "consecuencia": "Ganas un respiro momentaneo, pero el saldo baja muy lento, los intereses se acumulan y la deuda puede volverse mas dificil de manejar con el tiempo."
+      }
+    }
+  ]
+}

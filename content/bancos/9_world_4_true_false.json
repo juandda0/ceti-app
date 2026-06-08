@@ -1,0 +1,83 @@
+{
+  "bancoId": "9_world_4_true_false",
+  "grado": "9",
+  "worldId": "world_4",
+  "tipo": "true_false",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "9_w4_vf_01",
+      "competencia": "credito",
+      "dificultad": 2,
+      "enunciado": "Un crédito es dinero que te prestan y que te comprometes a devolver.",
+      "respuesta": true,
+      "explicacion": "Por definición, un crédito implica recibir dinero prestado bajo el compromiso de devolverlo."
+    },
+    {
+      "id": "9_w4_vf_02",
+      "competencia": "credito",
+      "dificultad": 2,
+      "enunciado": "La tasa de interés es el costo que pagas por usar el dinero prestado.",
+      "respuesta": true,
+      "explicacion": "La tasa de interés representa lo que cuesta usar el dinero que te prestaron."
+    },
+    {
+      "id": "9_w4_vf_03",
+      "competencia": "credito",
+      "dificultad": 2,
+      "enunciado": "El cupo de un crédito es el monto máximo que la entidad te autoriza a usar.",
+      "respuesta": true,
+      "explicacion": "El cupo define el límite máximo disponible; usarlo todo no es obligatorio."
+    },
+    {
+      "id": "9_w4_vf_04",
+      "competencia": "credito",
+      "dificultad": 2,
+      "enunciado": "Cuando recibes un préstamo, devolverlo es opcional.",
+      "respuesta": false,
+      "explicacion": "Devolver el dinero prestado es un compromiso, no una opción."
+    },
+    {
+      "id": "9_w4_vf_05",
+      "competencia": "credito",
+      "dificultad": 2,
+      "enunciado": "Pagar a cuotas significa dividir el valor total en varios pagos a lo largo del tiempo.",
+      "respuesta": true,
+      "explicacion": "Las cuotas reparten el pago del total en partes distribuidas durante el plazo."
+    },
+    {
+      "id": "9_w4_vf_06",
+      "competencia": "credito",
+      "dificultad": 2,
+      "enunciado": "El plazo de un crédito es el tiempo acordado para terminar de pagarlo.",
+      "respuesta": true,
+      "explicacion": "El plazo indica durante cuánto tiempo te comprometes a devolver el crédito."
+    },
+    {
+      "id": "9_w4_vf_07",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "Comprar a crédito suele costar lo mismo que comprar de contado.",
+      "respuesta": false,
+      "explicacion": "A crédito sueles pagar un costo adicional por los intereses, a diferencia de pagar de contado."
+    },
+    {
+      "id": "9_w4_vf_08",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "A igualdad de condiciones, un crédito con una tasa de interés más baja tiende a tener un costo total menor.",
+      "respuesta": true,
+      "explicacion": "Si todo lo demás es igual, una tasa más baja reduce el costo total de usar el dinero prestado."
+    },
+    {
+      "id": "9_w4_vf_09",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "El crédito puede ser una herramienta útil cuando existe un plan realista para pagarlo a tiempo.",
+      "respuesta": true,
+      "explicacion": "Usado con un plan de pago realista, el crédito ayuda a cubrir necesidades importantes de forma responsable."
+    }
+  ]
+}

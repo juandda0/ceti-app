@@ -1,0 +1,26 @@
+{
+  "grado": "10",
+  "worldId": "world_1",
+  "cards": [
+    {
+      "titulo": "Ingreso activo y pasivo",
+      "cuerpo": "El ingreso activo depende del trabajo directo de la persona: si deja de hacerlo, ese ingreso se detiene. El ingreso pasivo proviene de un activo y puede seguir llegando aunque la persona no trabaje de forma continua.",
+      "ejemplo": "Atender un puesto en el mercado genera ingreso activo; recibir el arriendo de un cuarto que se posee es un ejemplo de ingreso pasivo."
+    },
+    {
+      "titulo": "Del ingreso bruto al neto",
+      "cuerpo": "El ingreso bruto es el total recibido antes de cualquier descuento. Al restarle las deducciones se obtiene el ingreso neto, que es lo que realmente queda disponible para usar.",
+      "ejemplo": "Cuando alguien revisa su desprendible de pago, el valor de arriba suele ser el bruto y el valor final, después de los descuentos, es el neto."
+    },
+    {
+      "titulo": "Formal, informal y deducciones",
+      "cuerpo": "El ingreso formal suele tener respaldo contractual y aportes a seguridad social descontados de la nómina. Esas deducciones financian protecciones como salud y pensión, por lo que no son una pérdida sino un beneficio para la persona.",
+      "ejemplo": "Un empleo con contrato descuenta aportes cada mes; un ingreso informal puede sentirse mayor, pero queda sin esas protecciones."
+    },
+    {
+      "titulo": "Estabilidad y diversificación del ingreso",
+      "cuerpo": "Un ingreso fijo es estable y predecible, mientras que uno variable cambia entre periodos. Tener varias fuentes de ingreso reparte el riesgo: si una falla, las demás ayudan a sostener la economía personal.",
+      "ejemplo": "Quien combina un trabajo estable con una pequeña actividad adicional los fines de semana depende menos de una sola fuente."
+    }
+  ]
+}

@@ -1,0 +1,137 @@
+{
+  "bancoId": "11_world_2_ordenar",
+  "grado": "11",
+  "worldId": "world_2",
+  "tipo": "ordenar",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "11_w2_ord_01",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para construir un presupuesto base cero en un periodo nuevo.",
+      "elementos": [
+        "Partir de cero, sin arrastrar cifras del periodo anterior",
+        "Listar las necesidades reales del periodo actual",
+        "Justificar y asignar recursos a cada gasto segun su necesidad",
+        "Revisar que las asignaciones no superen las entradas previstas"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "El base cero empieza desde cero, identifica necesidades actuales, asigna justificando cada gasto y finalmente verifica que todo encaje con las entradas."
+    },
+    {
+      "id": "11_w2_ord_02",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "enunciado": "Ordena los pasos para planear metas de ahorro segun su horizonte dentro del presupuesto.",
+      "elementos": [
+        "Definir cada meta y clasificarla en corto, mediano o largo plazo",
+        "Asignar prioridad y plazo a cada meta",
+        "Reservar aportes regulares para cada horizonte en el presupuesto",
+        "Revisar el avance cada periodo y ajustar los aportes"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Primero se clasifican las metas por plazo, luego se priorizan, se reservan aportes para cada horizonte y se revisa el avance periodicamente."
+    },
+    {
+      "id": "11_w2_ord_03",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para calcular el flujo de caja personal de un periodo.",
+      "elementos": [
+        "Reunir todas las entradas de dinero del periodo",
+        "Reunir todas las salidas de dinero del periodo",
+        "Restar las salidas a las entradas",
+        "Interpretar si el resultado es excedente o faltante"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "El flujo de caja se obtiene reuniendo entradas y salidas, restandolas e interpretando si quedo excedente o faltante."
+    },
+    {
+      "id": "11_w2_ord_04",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "enunciado": "Ordena los pasos para presupuestar con ingresos variables a lo largo del ano.",
+      "elementos": [
+        "Estimar un nivel de ingreso prudente segun los meses tipicos",
+        "Fijar los gastos fijos dentro de ese nivel prudente",
+        "Apartar el excedente de los meses de mayor ingreso",
+        "Usar esa reserva para cubrir los meses de menor ingreso"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Con ingresos variables se estima un nivel prudente, se fijan gastos dentro de el, se guarda el excedente alto y se cubre con el los meses bajos."
+    },
+    {
+      "id": "11_w2_ord_05",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "enunciado": "Ordena los pasos para incorporar un fondo de imprevistos en el presupuesto.",
+      "elementos": [
+        "Reconocer que pueden surgir gastos inesperados",
+        "Definir el fondo como una categoria propia del presupuesto",
+        "Aportar a el de forma regular hasta darle respaldo",
+        "Reponer lo usado cuando se atiende un imprevisto"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "El fondo de imprevistos se reconoce, se define como categoria, se nutre con aportes regulares y se repone cada vez que se usa."
+    },
+    {
+      "id": "11_w2_ord_06",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "enunciado": "Ordena los pasos para ajustar el presupuesto cuando el costo de vida sube de forma generalizada.",
+      "elementos": [
+        "Reconocer que el mismo dinero ahora rinde para menos",
+        "Revisar cada categoria de gasto del presupuesto",
+        "Reasignar recursos protegiendo las prioridades",
+        "Buscar reducir gastos menos esenciales o aumentar entradas"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Ante una subida general de precios se reconoce el efecto, se revisan las categorias, se reasignan recursos por prioridad y se ajustan gastos o entradas."
+    },
+    {
+      "id": "11_w2_ord_07",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "enunciado": "Ordena los pasos para decidir entre dos gastos posibles considerando el costo de oportunidad.",
+      "elementos": [
+        "Identificar las dos opciones de gasto disponibles",
+        "Estimar el beneficio que aporta cada una",
+        "Reconocer que elegir una implica renunciar a la otra",
+        "Elegir la opcion cuyo beneficio supera lo que se renuncia"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Se identifican las opciones, se valora el beneficio de cada una, se reconoce la renuncia implicada y se elige la de mayor beneficio neto."
+    },
+    {
+      "id": "11_w2_ord_08",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "enunciado": "Ordena los pasos para presupuestar con ingresos estacionales a lo largo del ano.",
+      "elementos": [
+        "Identificar las temporadas de mayor y menor ingreso",
+        "Promediar el ingreso esperado de todo el ano",
+        "Apartar reservas durante la temporada alta",
+        "Usar esas reservas para sostener la temporada baja"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Con ingresos estacionales se identifican las temporadas, se promedia el ano, se ahorra en temporada alta y se cubre con ello la temporada baja."
+    },
+    {
+      "id": "11_w2_ord_09",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para armar un presupuesto familiar a partir de presupuestos individuales.",
+      "elementos": [
+        "Reunir los ingresos que aporta cada integrante",
+        "Listar los gastos comunes del hogar",
+        "Repartir las responsabilidades de cada gasto comun",
+        "Acordar metas conjuntas y revisar el plan en grupo"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "El presupuesto familiar reune los ingresos del grupo, lista los gastos comunes, reparte responsabilidades y acuerda metas conjuntas revisandolas juntos."
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+Veredictos de VC por banco (<bancoId>.json con rubricas + global). Los lee E3 (determinista, sin LLM).

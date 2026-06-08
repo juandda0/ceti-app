@@ -1,0 +1,46 @@
+{
+  "bancoId": "10_world_1",
+  "grado": "10",
+  "worldId": "world_1",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "situaciones": [
+    {
+      "id": "10_w1_ec_01",
+      "enunciado": "Tienes algo de tiempo libre los fines de semana y quieres generar un ingreso adicional. Te ofrecen dos caminos para empezar.",
+      "opcionA": {
+        "texto": "Aceptar trabajos puntuales cada vez que te llamen, sin acuerdo previo.",
+        "consecuencia": "Recibes ingresos de forma inmediata, pero son irregulares y difíciles de prever, así que tu ingreso resulta más variable e inestable."
+      },
+      "opcionB": {
+        "texto": "Acordar de antemano condiciones y horarios fijos con quien te contrata.",
+        "consecuencia": "Tu ingreso se vuelve más predecible y estable, lo que facilita planear tus gastos, aunque al inicio requiere organizarte y negociar."
+      }
+    },
+    {
+      "id": "10_w1_ec_02",
+      "enunciado": "Una persona cercana solo depende de una única fuente de ingreso y te pide consejo sobre cómo manejar su economía.",
+      "opcionA": {
+        "texto": "Sugerir mantener una sola fuente para no complicarse.",
+        "consecuencia": "La economía sigue siendo simple, pero queda muy expuesta: si esa única fuente falla, el ingreso desaparece por completo."
+      },
+      "opcionB": {
+        "texto": "Sugerir explorar poco a poco una segunda fuente de ingreso.",
+        "consecuencia": "Diversificar reparte el riesgo: si una fuente se interrumpe, la otra ayuda a sostener la economía, aunque al principio exige más esfuerzo."
+      }
+    },
+    {
+      "id": "10_w1_ec_03",
+      "enunciado": "Recibes tu primer pago de un trabajo formal y notas que el monto neto es menor al bruto que esperabas por las deducciones.",
+      "opcionA": {
+        "texto": "Pensar que las deducciones son una pérdida y buscar evitarlas trabajando de manera informal.",
+        "consecuencia": "Tendrías un neto aparentemente mayor, pero perderías protecciones como salud y pensión, dejando tu ingreso sin respaldo ante imprevistos."
+      },
+      "opcionB": {
+        "texto": "Entender qué financian las deducciones antes de juzgarlas.",
+        "consecuencia": "Comprendes que parte del ingreso sostiene protecciones que te benefician, así que valoras mejor la diferencia entre ingreso bruto y neto."
+      }
+    }
+  ]
+}

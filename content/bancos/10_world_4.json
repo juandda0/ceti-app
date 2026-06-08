@@ -1,0 +1,46 @@
+{
+  "bancoId": "10_world_4",
+  "grado": "10",
+  "worldId": "world_4",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "situaciones": [
+    {
+      "id": "10_w4_ec_01",
+      "enunciado": "Quieres tomar un crédito para una meta importante. Una oferta tiene una tasa efectiva más baja con un plazo más corto, lo que implica cuotas más grandes; otra tiene una tasa más alta con un plazo largo y cuotas más pequeñas. Revisas tu capacidad de pago. ¿Qué decides?",
+      "opcionA": {
+        "texto": "Elijo la de tasa efectiva más baja, asegurándome de que la cuota más grande cabe en mi capacidad de pago.",
+        "consecuencia": "El costo total tiende a ser menor y saldas el crédito antes, a cambio de cuotas más exigentes en cada periodo."
+      },
+      "opcionB": {
+        "texto": "Elijo la de cuotas más pequeñas para que cada periodo pese menos en mi presupuesto.",
+        "consecuencia": "Cada cuota es más liviana, pero pagas durante más tiempo y el costo total por intereses suele ser mayor."
+      }
+    },
+    {
+      "id": "10_w4_ec_02",
+      "enunciado": "Has cumplido a tiempo tus créditos anteriores y tienes un buen historial. Aparece la oportunidad de tomar un nuevo crédito que no necesitas con urgencia, solo porque te ofrecen condiciones favorables. ¿Qué decides?",
+      "opcionA": {
+        "texto": "Lo tomo solo si responde a una meta real y mi capacidad de pago lo sostiene.",
+        "consecuencia": "Conservas tu buen historial y usas el crédito como herramienta, sin comprometer dinero en algo que no necesitabas."
+      },
+      "opcionB": {
+        "texto": "Lo tomo de inmediato porque las condiciones son buenas, aunque no tenga una meta clara.",
+        "consecuencia": "Asumes un compromiso de pago sin un propósito definido, lo que puede pesar en tu presupuesto sin un beneficio real."
+      }
+    },
+    {
+      "id": "10_w4_ec_03",
+      "enunciado": "Comparas dos créditos para lo mismo. Ambos muestran la misma tasa nominal, pero al revisar con calma notas que difieren en cómo aplican los intereses y en otros costos asociados, por lo que su tasa efectiva no es igual. ¿Qué decides?",
+      "opcionA": {
+        "texto": "Comparo por la tasa efectiva y el costo total, no solo por la tasa nominal.",
+        "consecuencia": "Eliges con base en el costo real del crédito y evitas pagar de más por fijarte solo en la cifra nominal."
+      },
+      "opcionB": {
+        "texto": "Me decido mirando únicamente la tasa nominal, porque es igual en ambos.",
+        "consecuencia": "Podrías elegir el crédito que en realidad cuesta más, ya que la tasa nominal no refleja por sí sola el costo real."
+      }
+    }
+  ]
+}

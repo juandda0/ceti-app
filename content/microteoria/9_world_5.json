@@ -1,0 +1,26 @@
+{
+  "grado": "9",
+  "worldId": "world_5",
+  "cards": [
+    {
+      "titulo": "Qué es una deuda",
+      "cuerpo": "Una deuda es un compromiso de devolver algo que recibimos prestado. Casi siempre incluye un costo adicional, llamado interés, por usar ese dinero durante un tiempo.",
+      "ejemplo": "Le pides prestada una bicicleta a alguien con la promesa de devolverla en buen estado y, además, lavarla como agradecimiento."
+    },
+    {
+      "titulo": "Por qué crece una deuda",
+      "cuerpo": "Mientras quede un saldo sin pagar, el interés se sigue sumando. Por eso, entre más tiempo pase sin saldar la deuda, mayor suele ser la cantidad que hay que devolver.",
+      "ejemplo": "Es como un favor que cada día se vuelve un poco más grande si no lo devuelves a tiempo."
+    },
+    {
+      "titulo": "Pagar a tiempo y con plan",
+      "cuerpo": "Cumplir las fechas acordadas evita cargos por atraso y mantiene la deuda bajo control. Anotar lo que se debe y planear los pagos ayuda a no perder de vista ningún compromiso.",
+      "ejemplo": "Igual que apuntas en la agenda la fecha de entrega de un trabajo, anotas cuándo toca cada pago para no olvidarlo."
+    },
+    {
+      "titulo": "Pedir prestado con cabeza y pedir ayuda",
+      "cuerpo": "Conviene pedir prestado solo lo que se puede devolver. Si una deuda se vuelve difícil de manejar, buscar orientación y renegociar las condiciones es una decisión sensata, no un motivo de vergüenza.",
+      "ejemplo": "Si un compromiso te queda grande, hablarlo a tiempo con quien te prestó suele abrir opciones para reorganizarlo."
+    }
+  ]
+}

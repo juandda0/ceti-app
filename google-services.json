@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "21102897955",
+    "project_id": "ceti-a6475",
+    "storage_bucket": "ceti-a6475.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:21102897955:android:64a146b5e65a1806c93a96",
+        "android_client_info": {
+          "package_name": "com.juanndda.ceti"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "21102897955-3cl8vqtu7lru4tkkfev68pmsm1auov9s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbuV1vW1rUyVOk_rVVySS5uJEdhLPZVsw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "21102897955-3cl8vqtu7lru4tkkfev68pmsm1auov9s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

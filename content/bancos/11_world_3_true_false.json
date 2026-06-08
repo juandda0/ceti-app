@@ -1,0 +1,83 @@
+{
+  "bancoId": "11_world_3_true_false",
+  "grado": "11",
+  "worldId": "world_3",
+  "tipo": "true_false",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "11_w3_vf_01",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "El interes compuesto hace que los rendimientos generen, a su vez, nuevos rendimientos con el paso del tiempo.",
+      "respuesta": true,
+      "explicacion": "Esa es la esencia del interes compuesto: los rendimientos se suman al capital y empiezan a generar mas rendimientos."
+    },
+    {
+      "id": "11_w3_vf_02",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "Es posible obtener de forma garantizada una rentabilidad muy alta sin asumir ningun tipo de riesgo.",
+      "respuesta": false,
+      "explicacion": "Como regla general, mayor rentabilidad potencial implica mayor riesgo; una promesa de rentabilidad alta sin riesgo es una señal de alerta."
+    },
+    {
+      "id": "11_w3_vf_03",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "Diversificar el ahorro entre varias opciones ayuda a reducir el impacto de que a una de ellas le vaya mal.",
+      "respuesta": true,
+      "explicacion": "Repartir el ahorro distribuye el riesgo, de modo que un mal resultado en una opcion afecta menos al conjunto."
+    },
+    {
+      "id": "11_w3_vf_04",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "Un producto de mayor liquidez tiende a ofrecer un rendimiento esperado mayor que uno que compromete el dinero por mas tiempo.",
+      "respuesta": false,
+      "explicacion": "Suele ser al reves: a mayor liquidez, menor rendimiento esperado; comprometer el dinero por mas tiempo tiende a ofrecer mas rendimiento."
+    },
+    {
+      "id": "11_w3_vf_05",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "Si los precios suben con el tiempo y el ahorro se deja quieto sin generar rendimientos, ese dinero pierde poder de compra.",
+      "respuesta": true,
+      "explicacion": "La inflacion erosiona el ahorro que no genera rendimientos: con el tiempo, ese dinero alcanza para comprar menos."
+    },
+    {
+      "id": "11_w3_vf_06",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "Para una meta de muy largo plazo, como el retiro, empezar a aportar temprano da mas tiempo al interes compuesto para acumularse.",
+      "respuesta": true,
+      "explicacion": "Cuanto antes se empieza, mas años tienen los aportes para generar rendimientos sobre rendimientos."
+    },
+    {
+      "id": "11_w3_vf_07",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "Un certificado de deposito a plazo fijo permite retirar el dinero en cualquier momento sin ninguna condicion, igual que una cuenta de ahorro.",
+      "respuesta": false,
+      "explicacion": "El certificado a plazo fijo compromete el dinero hasta su vencimiento; su menor liquidez es la contrapartida de ofrecer, en general, mayor rendimiento."
+    },
+    {
+      "id": "11_w3_vf_08",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "Un horizonte de inversion largo permite considerar opciones con mas variabilidad, porque hay tiempo para sobreponerse a sus altibajos.",
+      "respuesta": true,
+      "explicacion": "Con mas tiempo por delante, los altibajos pueden compensarse, lo que amplia las opciones que tiene sentido considerar."
+    },
+    {
+      "id": "11_w3_vf_09",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "Para un fondo de emergencia, que podria necesitarse en cualquier momento, conviene priorizar productos de los que no se pueda disponer hasta dentro de varios años.",
+      "respuesta": false,
+      "explicacion": "Un fondo de emergencia exige alta liquidez: lo importante es poder disponer del dinero rapidamente, no comprometerlo a largo plazo."
+    }
+  ]
+}

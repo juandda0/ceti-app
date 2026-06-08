@@ -1,0 +1,83 @@
+{
+  "bancoId": "9_world_1_true_false",
+  "grado": "9",
+  "worldId": "world_1",
+  "tipo": "true_false",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "9_w1_vf_01",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "Un ingreso es el dinero o valor que una persona recibe por su trabajo o por una actividad.",
+      "respuesta": true,
+      "explicacion": "Esa es justamente la definición de ingreso: lo que la persona recibe."
+    },
+    {
+      "id": "9_w1_vf_02",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "Un gasto y un ingreso significan exactamente lo mismo.",
+      "respuesta": false,
+      "explicacion": "Son opuestos: el ingreso es dinero que entra y el gasto es dinero que sale."
+    },
+    {
+      "id": "9_w1_vf_03",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "El salario que recibe una persona por trabajar en una empresa es una fuente de ingreso.",
+      "respuesta": true,
+      "explicacion": "El salario es un ingreso que proviene del empleo."
+    },
+    {
+      "id": "9_w1_vf_04",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "Vender un objeto que ya no se usa y recibir dinero a cambio genera un ingreso.",
+      "respuesta": true,
+      "explicacion": "La venta de un bien a cambio de dinero es una fuente de ingreso."
+    },
+    {
+      "id": "9_w1_vf_05",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "Recibir alimentos como pago por un trabajo, en lugar de dinero, nunca se considera un ingreso.",
+      "respuesta": false,
+      "explicacion": "Recibir bienes en lugar de dinero también es un ingreso, llamado ingreso en especie."
+    },
+    {
+      "id": "9_w1_vf_06",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "Un ingreso que una persona recibe una vez cada mes se llama ingreso mensual.",
+      "respuesta": true,
+      "explicacion": "La frecuencia mensual significa que el ingreso llega una vez por mes."
+    },
+    {
+      "id": "9_w1_vf_07",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "Tener un negocio propio y vender productos a otras personas es una forma de obtener ingresos.",
+      "respuesta": true,
+      "explicacion": "El negocio propio es una fuente de ingreso distinta del empleo."
+    },
+    {
+      "id": "9_w1_vf_08",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "Un trabajo con contrato y registrado ante las autoridades laborales corresponde a un ingreso informal.",
+      "respuesta": false,
+      "explicacion": "Un trabajo con contrato y registro es formal; el informal carece de ese registro."
+    },
+    {
+      "id": "9_w1_vf_09",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "enunciado": "Saber cuánto recibe de ingreso ayuda a una persona a conocer con qué recursos cuenta.",
+      "respuesta": true,
+      "explicacion": "Conocer el ingreso permite tomar mejores decisiones sobre los recursos disponibles."
+    }
+  ]
+}

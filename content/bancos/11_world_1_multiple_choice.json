@@ -1,0 +1,179 @@
+{
+  "bancoId": "11_world_1_multiple_choice",
+  "grado": "11",
+  "worldId": "world_1",
+  "tipo": "multiple_choice",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "11_w1_mc_01",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "El ingreso nominal mide lo que recibes en dinero, mientras que el ingreso real considera el efecto de la inflación. Si tu ingreso en dinero se mantiene igual durante un año en el que los precios suben, ¿qué ocurre con tu ingreso real?",
+      "opciones": [
+        "Permanece exactamente igual, ya que el monto en dinero no cambió",
+        "Aumenta, porque el dinero recibido sigue siendo el mismo",
+        "Disminuye, porque con la misma cantidad de dinero puedes comprar menos cosas",
+        "Se vuelve irrelevante, porque la inflación no afecta a los ingresos"
+      ],
+      "correctIndex": 2,
+      "explicacion": "Cuando los precios suben y el ingreso en dinero no cambia, el poder de compra cae: ese poder de compra es lo que mide el ingreso real."
+    },
+    {
+      "id": "11_w1_mc_02",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "El ingreso bruto es la cantidad total antes de descuentos, y el ingreso neto es lo que finalmente queda disponible. ¿Cuál de las siguientes opciones describe correctamente la relación entre ambos?",
+      "opciones": [
+        "El ingreso bruto se obtiene restando deducciones al ingreso neto",
+        "El ingreso neto siempre es mayor que el bruto, porque incluye bonificaciones",
+        "El ingreso bruto y el neto son siempre idénticos en cualquier situación",
+        "El ingreso neto siempre es igual o menor que el ingreso bruto, por las deducciones aplicadas"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Las deducciones (como aportes obligatorios) se restan del ingreso bruto; por eso el neto, lo que realmente queda, nunca supera al bruto."
+    },
+    {
+      "id": "11_w1_mc_03",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "Las rentas de trabajo provienen del esfuerzo de una persona, y las rentas de capital provienen de bienes o activos que esa persona posee. ¿Cuál es un ejemplo de renta de capital?",
+      "opciones": [
+        "El arriendo que recibe quien alquila un local de su propiedad",
+        "El salario que recibe alguien por su jornada laboral",
+        "La propina que gana un mesero por atender mesas",
+        "El pago por horas de un trabajo independiente realizado a mano"
+      ],
+      "correctIndex": 0,
+      "explicacion": "El arriendo se genera por poseer un activo (el local), no por trabajar: es una renta de capital. El salario, la propina y el pago por horas son rentas de trabajo."
+    },
+    {
+      "id": "11_w1_mc_04",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "Diversificar las fuentes de ingreso significa obtener dinero de varios orígenes en lugar de uno solo. ¿Por qué esta estrategia reduce el riesgo financiero de una persona?",
+      "opciones": [
+        "Porque garantiza que ninguna fuente de ingreso pueda fallar nunca",
+        "Porque si una fuente falla, las demás pueden sostener parte del ingreso total",
+        "Porque elimina por completo la necesidad de planear los gastos",
+        "Porque obliga a depender exclusivamente de una sola actividad estable"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Con varias fuentes, la pérdida de una no deja a la persona sin ingresos; el riesgo se reparte en vez de concentrarse en una sola actividad."
+    },
+    {
+      "id": "11_w1_mc_05",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "El ingreso disponible es la parte del ingreso que queda para gastar o ahorrar después de cubrir los descuentos obligatorios. ¿Cuál afirmación lo describe mejor?",
+      "opciones": [
+        "Es únicamente la parte que se debe destinar de manera forzosa al ahorro",
+        "Es el total que se recibe antes de cualquier descuento",
+        "Es lo que la persona puede destinar libremente a consumo o ahorro tras las deducciones obligatorias",
+        "Es el dinero que se entrega obligatoriamente como aporte y no se puede usar"
+      ],
+      "correctIndex": 2,
+      "explicacion": "El ingreso disponible es lo que queda tras los descuentos obligatorios y sobre lo cual la persona decide: gastar o ahorrar."
+    },
+    {
+      "id": "11_w1_mc_06",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "La sostenibilidad del ingreso se refiere a la capacidad de mantener una fuente de ingreso a lo largo del tiempo. ¿Cuál de las siguientes fuentes tiende a ser más sostenible?",
+      "opciones": [
+        "Una entrada de dinero atada a una moda pasajera de corta duración",
+        "Un ingreso ocasional que depende de un suceso irrepetible",
+        "Una fuente que requiere agotar por completo un recurso no renovable",
+        "Una actividad basada en habilidades que se actualizan y siguen siendo demandadas"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Las habilidades que se mantienen vigentes y demandadas permiten generar ingreso de forma continua; las fuentes ocasionales o agotables no se sostienen en el tiempo."
+    },
+    {
+      "id": "11_w1_mc_07",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "El emprendimiento es una fuente de ingreso en la que una persona crea o gestiona su propia actividad económica. ¿Qué caracteriza al ingreso proveniente del emprendimiento frente a un ingreso por empleo?",
+      "opciones": [
+        "Suele ser más variable e incierto, pero con mayor potencial de crecimiento",
+        "Es siempre fijo y garantizado desde el primer momento",
+        "Nunca implica asumir riesgos ni esfuerzo de gestión",
+        "Está exento de cualquier deducción o costo asociado"
+      ],
+      "correctIndex": 0,
+      "explicacion": "El emprendimiento implica asumir riesgo y un ingreso menos predecible que un empleo, pero ofrece la posibilidad de que ese ingreso crezca con el tiempo."
+    },
+    {
+      "id": "11_w1_mc_08",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "Existe una relación entre la educación, las habilidades y el ingreso potencial de una persona. ¿Cuál afirmación refleja mejor esa relación?",
+      "opciones": [
+        "La educación no tiene ninguna relación con las oportunidades de ingreso",
+        "Desarrollar más conocimientos y habilidades suele ampliar las oportunidades de obtener mayores ingresos",
+        "Más habilidades siempre reducen las opciones de generar ingreso",
+        "El ingreso potencial depende únicamente del azar, sin relación con la formación"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Mayor formación y habilidades amplían las oportunidades laborales y de emprendimiento, lo que se asocia con un mayor ingreso potencial."
+    },
+    {
+      "id": "11_w1_mc_09",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "Una persona recibe el mismo ingreso en dinero que el año pasado, pero observa que ahora le alcanza para comprar menos productos. ¿Cómo se interpreta esta situación en términos de ingreso nominal y real?",
+      "opciones": [
+        "Tanto el ingreso nominal como el real aumentaron",
+        "Su ingreso real subió porque el dinero recibido fue el mismo",
+        "Su ingreso nominal se mantuvo, pero su ingreso real bajó por el alza de precios",
+        "Ni el ingreso nominal ni el real cambiaron en absoluto"
+      ],
+      "correctIndex": 2,
+      "explicacion": "El monto en dinero (nominal) no cambió, pero como los precios subieron, el poder de compra (real) disminuyó."
+    },
+    {
+      "id": "11_w1_mc_10",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "Las deducciones son descuentos que se aplican al ingreso bruto, como aportes obligatorios a salud o pensión. ¿Qué efecto tienen sobre el ingreso de una persona?",
+      "opciones": [
+        "Sustituyen por completo al ingreso bruto eliminándolo",
+        "Aumentan el ingreso bruto convirtiéndolo en uno mayor",
+        "No modifican en nada el ingreso que recibe la persona",
+        "Reducen el ingreso bruto hasta llegar al ingreso neto disponible"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Las deducciones se restan del ingreso bruto; el resultado de esa resta es el ingreso neto que la persona finalmente recibe."
+    },
+    {
+      "id": "11_w1_mc_11",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "Una persona depende de un único cliente para todo su ingreso. ¿Cómo afecta esto a la estabilidad de sus finanzas y qué estrategia la mejoraría?",
+      "opciones": [
+        "Su ingreso es frágil ante la pérdida de ese cliente; diversificar sus fuentes lo haría más estable",
+        "Su ingreso es totalmente seguro, así que no necesita ninguna estrategia",
+        "Concentrar aún más su ingreso en ese único cliente reduciría el riesgo",
+        "La estabilidad de su ingreso no depende del número de fuentes"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Depender de una sola fuente concentra el riesgo: si ese cliente se va, el ingreso desaparece. Diversificar reparte el riesgo y da más estabilidad."
+    },
+    {
+      "id": "11_w1_mc_12",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "Combinar un ingreso por trabajo con un ingreso por un activo que genera renta es una forma de fortalecer las finanzas personales. ¿Por qué esta combinación resulta ventajosa a largo plazo?",
+      "opciones": [
+        "Porque reemplaza el esfuerzo laboral por completo de inmediato",
+        "Porque suma una renta de capital al ingreso de trabajo, ampliando y diversificando las entradas",
+        "Porque elimina la necesidad de administrar o cuidar el activo",
+        "Porque convierte toda renta de capital en una renta de trabajo"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Al unir renta de trabajo y renta de capital, la persona obtiene ingreso de orígenes distintos, lo que amplía y diversifica sus entradas y reduce su dependencia de una sola."
+    }
+  ]
+}

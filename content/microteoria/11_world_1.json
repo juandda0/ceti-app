@@ -1,0 +1,26 @@
+{
+  "grado": "11",
+  "worldId": "world_1",
+  "cards": [
+    {
+      "titulo": "Ingreso nominal e ingreso real",
+      "cuerpo": "El ingreso nominal es lo que recibes en dinero. El ingreso real considera cuánto puedes comprar con ese dinero. Cuando los precios suben y tu ingreso en dinero no cambia, tu ingreso real baja, porque tu poder de compra disminuye.",
+      "ejemplo": "Si con tu mesada de hace un año comprabas cierta cantidad de cosas y hoy con la misma mesada compras menos, tu ingreso real bajó aunque la mesada siga igual."
+    },
+    {
+      "titulo": "Del ingreso bruto al ingreso disponible",
+      "cuerpo": "El ingreso bruto es el total antes de descuentos. A ese total se le restan las deducciones obligatorias y se obtiene el ingreso neto. Lo que finalmente queda para gastar o ahorrar es el ingreso disponible.",
+      "ejemplo": "Cuando alguien de tu familia comenta que de su pago le descuentan aportes y le queda una parte para los gastos del hogar, esa parte es su ingreso disponible."
+    },
+    {
+      "titulo": "Rentas de trabajo y rentas de capital",
+      "cuerpo": "Las rentas de trabajo provienen de tu esfuerzo, como un empleo o una actividad que realizas. Las rentas de capital provienen de bienes o activos que posees, como un local que alquilas. Combinar ambas diversifica tus entradas.",
+      "ejemplo": "El pago por un trabajo de fin de semana es renta de trabajo; el arriendo que recibe alguien por prestar un local de su propiedad es renta de capital."
+    },
+    {
+      "titulo": "Diversificar y sostener el ingreso",
+      "cuerpo": "Diversificar es obtener ingreso de varias fuentes, de modo que si una falla, las demás te sostienen. Un ingreso sostenible se mantiene en el tiempo, sobre todo cuando se apoya en habilidades demandadas que sigues actualizando.",
+      "ejemplo": "Alguien que ofrece varios servicios a clientes distintos y sigue aprendiendo cosas nuevas tiene un ingreso más diversificado y duradero que quien depende de un solo cliente."
+    }
+  ]
+}

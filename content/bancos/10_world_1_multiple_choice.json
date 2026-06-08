@@ -1,0 +1,179 @@
+{
+  "bancoId": "10_world_1_multiple_choice",
+  "grado": "10",
+  "worldId": "world_1",
+  "tipo": "multiple_choice",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "10_w1_mc_01",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "¿Cuál de estas situaciones describe un ingreso pasivo?",
+      "opciones": [
+        "Cobrar el sueldo del mes por asistir al trabajo",
+        "Recibir el pago de un arriendo por una propiedad que se posee",
+        "Ganar una propina por atender mesas en un restaurante",
+        "Recibir el pago por horas extra trabajadas"
+      ],
+      "correctIndex": 1,
+      "explicacion": "El ingreso pasivo proviene de un activo o inversión y no exige presencia laboral continua; el arriendo de una propiedad es un ejemplo típico."
+    },
+    {
+      "id": "10_w1_mc_02",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "El ingreso activo se caracteriza principalmente porque:",
+      "opciones": [
+        "Proviene siempre de bienes heredados",
+        "Se genera de forma automática aunque la persona no trabaje",
+        "Depende del tiempo y esfuerzo que la persona dedica a trabajar",
+        "No requiere ninguna acción de la persona para mantenerse"
+      ],
+      "correctIndex": 2,
+      "explicacion": "El ingreso activo exige la participación directa de la persona: si deja de trabajar, ese ingreso se detiene."
+    },
+    {
+      "id": "10_w1_mc_03",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "¿Qué representa el concepto de ingreso bruto?",
+      "opciones": [
+        "El dinero gastado durante el mes",
+        "Lo que queda disponible después de todos los descuentos",
+        "Solo la parte ahorrada del ingreso",
+        "El total de lo que se recibe antes de aplicar deducciones y descuentos"
+      ],
+      "correctIndex": 3,
+      "explicacion": "El ingreso bruto es el monto total recibido antes de restar deducciones; lo que queda luego de los descuentos es el ingreso neto."
+    },
+    {
+      "id": "10_w1_mc_04",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "El ingreso neto se entiende mejor como:",
+      "opciones": [
+        "Lo que efectivamente queda disponible tras aplicar las deducciones",
+        "El total recibido sin restar nada",
+        "El valor de los bienes que se poseen",
+        "La suma de todos los ingresos pasivos del año"
+      ],
+      "correctIndex": 0,
+      "explicacion": "El ingreso neto es el resultado de restar las deducciones al ingreso bruto; es el monto que realmente se puede usar."
+    },
+    {
+      "id": "10_w1_mc_05",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "En un empleo formal, ¿qué suele explicar la diferencia entre el ingreso bruto y el neto?",
+      "opciones": [
+        "El aumento del ahorro voluntario",
+        "Las deducciones de nómina, como los aportes a salud y pensión",
+        "Las propinas adicionales recibidas",
+        "El valor de los bienes comprados durante el mes"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Las deducciones de nómina (por ejemplo aportes a salud y pensión) se descuentan del bruto, por lo que el neto resulta menor."
+    },
+    {
+      "id": "10_w1_mc_06",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "¿Cuál es una característica del ingreso formal frente al informal?",
+      "opciones": [
+        "Siempre es de mayor cuantía que cualquier ingreso informal",
+        "Nunca permite ahorrar parte del dinero recibido",
+        "Suele estar respaldado por un contrato y aportes a seguridad social",
+        "No queda registrado en ningún documento"
+      ],
+      "correctIndex": 2,
+      "explicacion": "El ingreso formal se respalda con vínculo contractual y aportes a seguridad social, lo que ofrece protecciones que el informal no garantiza."
+    },
+    {
+      "id": "10_w1_mc_07",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "¿Por qué se recomienda diversificar las fuentes de ingreso?",
+      "opciones": [
+        "Para gastar más dinero cada mes",
+        "Para evitar por completo tener que trabajar",
+        "Porque tener una sola fuente siempre es ilegal",
+        "Para reducir el riesgo de quedarse sin ingresos si una fuente falla"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Tener varias fuentes de ingreso reparte el riesgo: si una se interrumpe, las demás ayudan a sostener la economía personal."
+    },
+    {
+      "id": "10_w1_mc_08",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "Un ingreso fijo se diferencia de un ingreso variable porque:",
+      "opciones": [
+        "Mantiene un valor estable y predecible en cada periodo",
+        "Cambia de monto de forma impredecible cada vez",
+        "Solo proviene de actividades informales",
+        "Nunca puede combinarse con otros ingresos"
+      ],
+      "correctIndex": 0,
+      "explicacion": "El ingreso fijo es estable y predecible periodo a periodo, mientras que el variable fluctúa según ventas, comisiones u otros factores."
+    },
+    {
+      "id": "10_w1_mc_09",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "¿Cuál de las siguientes es una ventaja de la estabilidad del ingreso?",
+      "opciones": [
+        "Garantiza que el ingreso crezca sin esfuerzo",
+        "Facilita planear los gastos al saber cuánto se recibirá",
+        "Elimina la necesidad de presupuestar",
+        "Impide tener cualquier ingreso adicional"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Un ingreso estable permite anticipar con mayor certeza lo que se recibirá, lo que facilita planear gastos y ahorrar."
+    },
+    {
+      "id": "10_w1_mc_10",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "¿Cuál de estos casos corresponde a un ingreso generado por un activo y no por el trabajo?",
+      "opciones": [
+        "El pago por un servicio prestado a un cliente",
+        "El salario recibido por cumplir la jornada laboral",
+        "Los rendimientos que produce una inversión",
+        "La bonificación por cumplir metas en el empleo"
+      ],
+      "correctIndex": 2,
+      "explicacion": "Los rendimientos de una inversión provienen de un activo que trabaja por la persona, a diferencia del salario o los pagos por trabajo directo."
+    },
+    {
+      "id": "10_w1_mc_11",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "Una persona con un emprendimiento de ventas recibe montos distintos cada mes. Su ingreso se clasifica como:",
+      "opciones": [
+        "Formal, solo por provenir de un negocio",
+        "Fijo, porque proviene de una sola actividad",
+        "Pasivo, porque no requiere su trabajo",
+        "Variable, porque depende de las ventas y cambia entre periodos"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Cuando el monto cambia entre periodos según factores como las ventas, el ingreso es variable, aunque provenga de una sola actividad."
+    },
+    {
+      "id": "10_w1_mc_12",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "enunciado": "¿Por qué las deducciones de nómina no significan que la persona haya 'perdido' ese dinero?",
+      "opciones": [
+        "Porque financian protecciones como salud y pensión que benefician a la persona",
+        "Porque siempre se devuelven completas al final del mes",
+        "Porque no afectan en nada el ingreso neto",
+        "Porque son un castigo por trabajar de manera formal"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Las deducciones de nómina destinan parte del ingreso a protecciones como salud y pensión, que constituyen un beneficio para la persona, no una pérdida."
+    }
+  ]
+}

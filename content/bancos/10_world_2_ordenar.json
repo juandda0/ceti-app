@@ -1,0 +1,137 @@
+{
+  "bancoId": "10_world_2_ordenar",
+  "grado": "10",
+  "worldId": "world_2",
+  "tipo": "ordenar",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "10_w2_ord_01",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "Ordena los pasos para armar un presupuesto, del primero al último.",
+      "elementos": [
+        "Calcular tus ingresos del periodo",
+        "Listar tus egresos previstos",
+        "Comparar ingresos con egresos",
+        "Ajustar el plan para quedar en equilibrio"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Primero conoces lo que entra, luego lo que piensas gastar, después los comparas y, por último, ajustas para no quedar en déficit."
+    },
+    {
+      "id": "10_w2_ord_02",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "Ordena estos gastos según la prioridad con que deberías atenderlos, del más prioritario al menos prioritario.",
+      "elementos": [
+        "Cubrir una necesidad indispensable",
+        "Apartar una parte para tu ahorro",
+        "Darte un deseo que te gusta",
+        "Comprar un capricho llamativo del momento"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Lo indispensable va primero, luego el ahorro como compromiso contigo, después un deseo razonable y, al final, los caprichos del momento."
+    },
+    {
+      "id": "10_w2_ord_03",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para repartir tu ingreso por el método de necesidades, deseos y ahorro, del primero al último.",
+      "elementos": [
+        "Separar la parte para tus necesidades indispensables",
+        "Reservar la parte destinada al ahorro",
+        "Asignar la parte para tus deseos",
+        "Revisar que las tres partes encajen con tu ingreso"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Aseguras primero lo indispensable, luego comprometes el ahorro, después asignas los deseos y al final verificas que todo encaje."
+    },
+    {
+      "id": "10_w2_ord_04",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para enfrentar un imprevisto que afecta tu presupuesto, del primero al último.",
+      "elementos": [
+        "Reconocer el imprevisto y su efecto en el plan",
+        "Revisar qué deseos puedes recortar temporalmente",
+        "Liberar dinero ajustando esos gastos",
+        "Cubrir el imprevisto manteniendo lo esencial"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Primero reconoces el problema, luego buscas dónde recortar, después liberas el dinero y finalmente cubres el imprevisto sin tocar lo indispensable."
+    },
+    {
+      "id": "10_w2_ord_05",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para detectar y controlar tus gastos hormiga, del primero al último.",
+      "elementos": [
+        "Registrar tus pequeños gastos frecuentes",
+        "Sumar cuánto influyen juntos en el periodo",
+        "Decidir cuáles reducir o eliminar",
+        "Revisar el efecto del ajuste en el siguiente periodo"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Para controlar los gastos hormiga los haces visibles registrándolos, mides su efecto sumado, decides qué recortar y revisas el resultado."
+    },
+    {
+      "id": "10_w2_ord_06",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "Ordena los pasos para armar un presupuesto por proyecto con una meta y una fecha, del primero al último.",
+      "elementos": [
+        "Definir la meta y la fecha en que la quieres cumplir",
+        "Estimar los gastos que implica esa meta",
+        "Organizar cómo reunir lo necesario antes de la fecha",
+        "Hacer seguimiento hasta cumplir la meta"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Un presupuesto por proyecto parte de la meta y su fecha, estima lo que costará, planea cómo reunirlo y se sigue hasta cumplirla."
+    },
+    {
+      "id": "10_w2_ord_07",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para revisar lo planeado frente a lo real al cerrar un periodo, del primero al último.",
+      "elementos": [
+        "Reunir lo que realmente recibiste y gastaste",
+        "Compararlo con lo que habías planeado",
+        "Identificar las diferencias más importantes",
+        "Ajustar el plan del próximo periodo con lo aprendido"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Reúnes lo real, lo comparas con lo planeado, ves dónde te desviaste y usas eso para mejorar el siguiente presupuesto."
+    },
+    {
+      "id": "10_w2_ord_08",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para aplicar un presupuesto base cero a un nuevo periodo, del primero al último.",
+      "elementos": [
+        "Empezar el plan sin arrastrar gastos del periodo anterior",
+        "Justificar cada gasto que quieras incluir",
+        "Asignar tu ingreso solo a lo que quedó justificado",
+        "Revisar que el plan se ajuste a tu ingreso"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "En el base cero partes de cero, justificas cada gasto, asignas el ingreso solo a lo justificado y verificas que todo encaje."
+    },
+    {
+      "id": "10_w2_ord_09",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "Ordena los pasos para corregir un presupuesto que viene quedando en déficit, del primero al último.",
+      "elementos": [
+        "Confirmar que los egresos vienen superando a los ingresos",
+        "Buscar qué gastos variables puedes reducir",
+        "Recortar primero los deseos antes que lo esencial",
+        "Comprobar que el presupuesto vuelve al equilibrio"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Confirmas el déficit, identificas gastos variables, recortas deseos antes que necesidades y verificas que el plan recupere el equilibrio."
+    }
+  ]
+}

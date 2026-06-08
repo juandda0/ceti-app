@@ -1,0 +1,26 @@
+{
+  "grado": "9",
+  "worldId": "world_3",
+  "cards": [
+    {
+      "titulo": "Que es ahorrar",
+      "cuerpo": "Ahorrar es apartar de forma intencional una parte del dinero disponible para usarla en el futuro, en lugar de gastarlo todo de inmediato.",
+      "ejemplo": "Cuando recibes dinero por una ayuda en casa y guardas una parte en lugar de gastarla toda ese mismo dia."
+    },
+    {
+      "titulo": "Metas y constancia",
+      "cuerpo": "Una meta de ahorro define un proposito y un plazo. Apartar una parte de forma constante convierte el ahorro en un habito y ayuda a reunir mas con el tiempo.",
+      "ejemplo": "Guardar una parte cada vez que recibes dinero para reunir poco a poco lo que necesitas para un proyecto."
+    },
+    {
+      "titulo": "Donde guardar el ahorro",
+      "cuerpo": "Una cuenta de ahorros en una entidad vigilada ofrece mas respaldo que guardar el dinero en casa, y ademas puede reconocer intereses sobre lo guardado.",
+      "ejemplo": "Llevar tu ahorro a una entidad vigilada en vez de dejarlo en una alcancia en tu habitacion."
+    },
+    {
+      "titulo": "Fondo para imprevistos",
+      "cuerpo": "Un fondo para imprevistos es una reserva separada del gasto diario que sirve para afrontar situaciones inesperadas sin afectar tus demas metas de ahorro.",
+      "ejemplo": "Tener una parte guardada aparte para cuando surge algo inesperado y no tener que tocar el resto de tus ahorros."
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "bancoId": "9_world_1",
+  "grado": "9",
+  "worldId": "world_1",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "situaciones": [
+    {
+      "id": "9_w1_ec_01",
+      "enunciado": "Tienes una tarde libre y un vecino te ofrece un pago por ayudarle a organizar su bodega. Al mismo tiempo, un amigo te invita a pasar la tarde sin hacer nada en particular.",
+      "opcionA": {
+        "texto": "Aceptar ayudar al vecino y recibir un ingreso por ese trabajo.",
+        "consecuencia": "Dedicas la tarde al trabajo, terminas algo cansado y obtienes un ingreso por tu esfuerzo, además de aprender cómo se gana dinero ayudando a otros."
+      },
+      "opcionB": {
+        "texto": "Pasar la tarde con tu amigo sin obtener ningún ingreso.",
+        "consecuencia": "Disfrutas un rato de descanso y compañía, aunque esta vez no recibes ningún ingreso por tu tiempo."
+      }
+    },
+    {
+      "id": "9_w1_ec_02",
+      "enunciado": "Quieres empezar a recibir ingresos por tu cuenta. Puedes montar un pequeño negocio propio de venta de jugos o buscar un empleo de medio tiempo con alguien que ya tiene un negocio.",
+      "opcionA": {
+        "texto": "Montar tu propio puesto de jugos como negocio propio.",
+        "consecuencia": "Tú decides cómo y cuándo trabajar, pero también te encargas de conseguir los materiales y de atender a los clientes; tu ingreso depende de cuánto vendas."
+      },
+      "opcionB": {
+        "texto": "Buscar un empleo de medio tiempo en el negocio de otra persona.",
+        "consecuencia": "Recibes un ingreso más estable por las horas trabajadas, aunque cumples el horario y las tareas que te indica quien te emplea."
+      }
+    },
+    {
+      "id": "9_w1_ec_03",
+      "enunciado": "Por ayudar en una tarea, alguien te ofrece pagarte de dos maneras: en dinero o con un bien útil que tú necesitas.",
+      "opcionA": {
+        "texto": "Recibir el pago en dinero como ingreso.",
+        "consecuencia": "Obtienes un ingreso en dinero que puedes usar como prefieras más adelante, según lo que decidas en su momento."
+      },
+      "opcionB": {
+        "texto": "Recibir el pago con el bien útil que necesitas, como ingreso en especie.",
+        "consecuencia": "Obtienes de inmediato algo que te hacía falta, aunque ese ingreso en especie no te deja dinero disponible para otras cosas."
+      }
+    }
+  ]
+}

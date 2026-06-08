@@ -1,0 +1,46 @@
+{
+  "bancoId": "11_world_1",
+  "grado": "11",
+  "worldId": "world_1",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "situaciones": [
+    {
+      "id": "11_w1_ec_01",
+      "enunciado": "Recibes una propuesta para dedicar tu tiempo libre a una sola actividad muy bien pagada que depende de un único cliente. Al mismo tiempo, podrías combinar varias actividades más pequeñas con clientes distintos. ¿Qué eliges para tu fuente de ingreso?",
+      "opcionA": {
+        "texto": "Apostar todo tu tiempo a la única actividad con el cliente que mejor paga.",
+        "consecuencia": "Tu ingreso es alto mientras ese cliente siga; pero queda concentrado en una sola fuente, así que si ese cliente se retira, pierdes todo tu ingreso de golpe."
+      },
+      "opcionB": {
+        "texto": "Repartir tu tiempo entre varias actividades con clientes distintos.",
+        "consecuencia": "Cada actividad aporta menos por separado, pero tu ingreso queda diversificado: si una falla, las demás sostienen parte de tus entradas y ganas estabilidad."
+      }
+    },
+    {
+      "id": "11_w1_ec_02",
+      "enunciado": "Tienes algo de tiempo disponible y dudas entre usarlo para formarte y desarrollar una habilidad demandada, o para tomar de inmediato un trabajo ocasional que paga en el momento pero no deja aprendizaje. ¿Qué decides para tu ingreso a futuro?",
+      "opcionA": {
+        "texto": "Invertir el tiempo en formarte y desarrollar una habilidad demandada.",
+        "consecuencia": "No obtienes ingreso de inmediato, pero amplías tu ingreso potencial: con esa habilidad accedes más adelante a mejores y más sostenibles oportunidades."
+      },
+      "opcionB": {
+        "texto": "Tomar el trabajo ocasional que paga ya, sin dejar aprendizaje.",
+        "consecuencia": "Recibes ingreso de inmediato, pero al terminar quedas igual que antes: sin nuevas habilidades que aumenten tu ingreso potencial en el futuro."
+      }
+    },
+    {
+      "id": "11_w1_ec_03",
+      "enunciado": "Logras reunir un activo que podría generarte una renta de capital con poco esfuerzo diario, pero también podrías usar ese mismo tiempo y recursos solo en tu trabajo habitual. ¿Cómo organizas tus fuentes de ingreso?",
+      "opcionA": {
+        "texto": "Mantener tu ingreso únicamente desde tu trabajo habitual.",
+        "consecuencia": "Tu ingreso sigue siendo estable mientras trabajes, pero depende por completo de tu esfuerzo: si dejas de trabajar, el ingreso se detiene."
+      },
+      "opcionB": {
+        "texto": "Sumar la renta del activo a tu ingreso por trabajo.",
+        "consecuencia": "Combinas renta de trabajo y renta de capital: tus entradas se diversifican y una parte de tu ingreso ya no depende solo de tu esfuerzo diario."
+      }
+    }
+  ]
+}

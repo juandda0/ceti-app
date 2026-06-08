@@ -1,0 +1,179 @@
+{
+  "bancoId": "9_world_3_multiple_choice",
+  "grado": "9",
+  "worldId": "world_3",
+  "tipo": "multiple_choice",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "9_w3_mc_01",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Qué significa ahorrar?",
+      "opciones": [
+        "Cambiar dinero por objetos sin ningun plan",
+        "Gastar todo el dinero apenas se recibe",
+        "Prestar dinero a otra persona para que lo devuelva",
+        "Apartar parte del dinero disponible para usarlo despues en lugar de gastarlo todo de inmediato"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Ahorrar es reservar de forma intencional una parte del dinero disponible para un uso futuro."
+    },
+    {
+      "id": "9_w3_mc_02",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Cual es una razon principal para ahorrar?",
+      "opciones": [
+        "Para poder cubrir necesidades o metas futuras con mas tranquilidad",
+        "Para no tener que volver a recibir dinero nunca",
+        "Para evitar usar dinero en cualquier circunstancia",
+        "Para que otras personas administren tu dinero por ti"
+      ],
+      "correctIndex": 0,
+      "explicacion": "El ahorro ayuda a estar preparado para metas o gastos futuros con mayor tranquilidad."
+    },
+    {
+      "id": "9_w3_mc_03",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Que es una meta de ahorro?",
+      "opciones": [
+        "Una lista de cosas que ya se compraron",
+        "Una cantidad de dinero que se quiere reunir para un proposito concreto en un plazo definido",
+        "Una deuda que alguien debe pagarte",
+        "Un gasto inesperado que no se puede planear"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Una meta de ahorro define un proposito y un plazo, lo que orienta el esfuerzo de guardar dinero."
+    },
+    {
+      "id": "9_w3_mc_04",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Por que ayuda ahorrar con constancia, es decir, una parte cada vez que se recibe dinero?",
+      "opciones": [
+        "Porque obliga a gastar mas rapido",
+        "Porque elimina la necesidad de planear",
+        "Porque el habito regular permite reunir mas con el tiempo sin grandes esfuerzos puntuales",
+        "Porque garantiza que el dinero nunca se necesitara"
+      ],
+      "correctIndex": 2,
+      "explicacion": "Ahorrar un poco de forma constante convierte el ahorro en un habito sostenible que crece con el tiempo."
+    },
+    {
+      "id": "9_w3_mc_05",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Entre guardar dinero en una alcancia en casa o en una cuenta de ahorros de una entidad vigilada, cual ofrece mayor respaldo y seguridad?",
+      "opciones": [
+        "La alcancia, porque esta siempre a la vista",
+        "Ninguna de las dos ofrece diferencia",
+        "La alcancia, porque permite gastar mas facil",
+        "La cuenta de ahorros en una entidad vigilada, porque esta regulada y resguarda el dinero"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Una cuenta en una entidad vigilada esta regulada y ofrece mayor respaldo que guardar el dinero en casa."
+    },
+    {
+      "id": "9_w3_mc_06",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Cual es la diferencia entre ahorrar y gastar todo el dinero que se recibe?",
+      "opciones": [
+        "Ahorrar reserva una parte para el futuro, mientras gastar todo deja sin reserva disponible",
+        "No hay ninguna diferencia",
+        "Gastar todo siempre reune mas dinero que ahorrar",
+        "Ahorrar significa nunca usar el dinero"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Ahorrar mantiene una reserva para el futuro; gastar todo no deja margen para imprevistos o metas."
+    },
+    {
+      "id": "9_w3_mc_07",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Para que sirve un fondo de ahorro para imprevistos?",
+      "opciones": [
+        "Para comprar caprichos sin pensar",
+        "Para tener dinero disponible ante situaciones inesperadas sin descuadrar el resto de los planes",
+        "Para prestarlo a quien lo pida",
+        "Para gastarlo cada fin de semana"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Un fondo para imprevistos da respaldo ante situaciones inesperadas sin afectar las demas metas."
+    },
+    {
+      "id": "9_w3_mc_08",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Que quiere decir que el ahorro sea un habito?",
+      "opciones": [
+        "Que se ahorra solo una vez en la vida",
+        "Que solo se ahorra cuando sobra mucho dinero",
+        "Que se repite de forma regular hasta volverse parte de la rutina",
+        "Que se deja de ahorrar apenas cuesta esfuerzo"
+      ],
+      "correctIndex": 2,
+      "explicacion": "Un habito de ahorro se sostiene en el tiempo porque se repite de forma regular como parte de la rutina."
+    },
+    {
+      "id": "9_w3_mc_09",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Cuando el dinero ahorrado en una cuenta gana intereses, que ocurre con el tiempo?",
+      "opciones": [
+        "El dinero ahorrado se reduce poco a poco",
+        "Los intereses obligan a retirar el dinero de inmediato",
+        "El dinero ahorrado desaparece por completo",
+        "El dinero ahorrado puede aumentar, ya que los intereses se suman a lo guardado"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Los intereses se suman a lo ahorrado, por lo que el dinero guardado puede crecer con el tiempo."
+    },
+    {
+      "id": "9_w3_mc_10",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Entre dos cuentas de ahorro, una que reconoce intereses mas altos y otra mas bajos, cual hace crecer el dinero mas rapido si todo lo demas es igual?",
+      "opciones": [
+        "La de intereses mas altos",
+        "La de intereses mas bajos",
+        "Las dos por igual",
+        "Ninguna hace crecer el dinero"
+      ],
+      "correctIndex": 0,
+      "explicacion": "A igualdad de las demas condiciones, mayores intereses hacen crecer el ahorro mas rapido."
+    },
+    {
+      "id": "9_w3_mc_11",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Que ayuda mas a cumplir una meta de ahorro?",
+      "opciones": [
+        "Esperar a tener mucho dinero de una sola vez",
+        "Apartar una parte de forma regular y dejarla destinada a esa meta",
+        "Gastar primero y ahorrar solo lo que quede por casualidad",
+        "Cambiar la meta cada vez que aparece un gasto"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Destinar una parte regular a la meta y mantenerla aparte facilita alcanzarla."
+    },
+    {
+      "id": "9_w3_mc_12",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Por que conviene separar el dinero del ahorro del dinero del gasto diario?",
+      "opciones": [
+        "Porque asi el ahorro se confunde con el gasto",
+        "Porque el dinero del gasto siempre debe ahorrarse",
+        "Porque tener el ahorro aparte reduce la tentacion de gastarlo y ayuda a conservarlo",
+        "Porque separar el dinero impide usarlo para siempre"
+      ],
+      "correctIndex": 2,
+      "explicacion": "Mantener el ahorro separado del gasto diario reduce la tentacion de usarlo y ayuda a conservarlo."
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "grado": "9",
+  "worldId": "world_1",
+  "cards": [
+    {
+      "titulo": "¿Qué es un ingreso?",
+      "cuerpo": "Un ingreso es el dinero o el valor que una persona recibe a cambio de su trabajo, de una venta o de una actividad. Es lo que entra a tus recursos, distinto del gasto, que es lo que sale.",
+      "ejemplo": "Una persona recibe un pago por ayudar a un vecino a pintar una pared."
+    },
+    {
+      "titulo": "Fuentes de ingreso",
+      "cuerpo": "Los ingresos pueden venir de distintas fuentes: de un empleo, de un negocio propio, de la venta de algo o de una ayuda que alguien entrega. Conocer la fuente ayuda a entender de dónde proviene cada ingreso.",
+      "ejemplo": "Una persona vende jugos en su propio puesto, mientras otra recibe un salario en una empresa."
+    },
+    {
+      "titulo": "En dinero o en especie",
+      "cuerpo": "Un ingreso puede recibirse en dinero o en especie. En dinero es cuando recibes efectivo; en especie es cuando recibes un bien o un servicio en lugar de dinero. Ambos son ingresos.",
+      "ejemplo": "Por un trabajo, alguien recibe efectivo y otra persona recibe una canasta de alimentos."
+    },
+    {
+      "titulo": "Frecuencia del ingreso",
+      "cuerpo": "Los ingresos también se distinguen por cada cuánto llegan: pueden ser diarios, semanales o mensuales. Saber con qué frecuencia recibes un ingreso te ayuda a conocer con qué recursos cuentas.",
+      "ejemplo": "Un vendedor recibe un ingreso cada día, mientras un empleado recibe su salario una vez al mes."
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "bancoId": "9_world_3_true_false",
+  "grado": "9",
+  "worldId": "world_3",
+  "tipo": "true_false",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "9_w3_vf_01",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Ahorrar es apartar una parte del dinero disponible para usarla en el futuro.",
+      "respuesta": true,
+      "explicacion": "Ahorrar consiste en reservar de forma intencional una parte del dinero para un uso posterior."
+    },
+    {
+      "id": "9_w3_vf_02",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Tener una meta de ahorro clara ayuda a mantener la motivacion para seguir guardando.",
+      "respuesta": true,
+      "explicacion": "Una meta concreta da un proposito al ahorro y facilita sostener el esfuerzo."
+    },
+    {
+      "id": "9_w3_vf_03",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Gastar todo el dinero apenas se recibe es lo mismo que ahorrar.",
+      "respuesta": false,
+      "explicacion": "Gastar todo no deja reserva; ahorrar implica apartar una parte para el futuro."
+    },
+    {
+      "id": "9_w3_vf_04",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Ahorrar un poco de forma constante puede reunir mas con el tiempo que esperar a tener una gran suma de una sola vez.",
+      "respuesta": true,
+      "explicacion": "La constancia convierte el ahorro en un habito que crece de forma sostenida."
+    },
+    {
+      "id": "9_w3_vf_05",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Guardar el dinero en una cuenta de ahorros de una entidad vigilada ofrece mas respaldo que guardarlo en casa.",
+      "respuesta": true,
+      "explicacion": "Una entidad vigilada esta regulada y resguarda el dinero mejor que tenerlo en casa."
+    },
+    {
+      "id": "9_w3_vf_06",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Un fondo para imprevistos solo sirve para comprar cosas que no se necesitan.",
+      "respuesta": false,
+      "explicacion": "Un fondo para imprevistos sirve para afrontar situaciones inesperadas, no para gastos innecesarios."
+    },
+    {
+      "id": "9_w3_vf_07",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "El ahorro se vuelve un habito cuando se repite de forma regular como parte de la rutina.",
+      "respuesta": true,
+      "explicacion": "Un habito se forma con la repeticion regular hasta integrarse a la rutina."
+    },
+    {
+      "id": "9_w3_vf_08",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Cuando el dinero ahorrado gana intereses, lo guardado se reduce con el tiempo.",
+      "respuesta": false,
+      "explicacion": "Los intereses se suman a lo ahorrado, por lo que el dinero guardado puede aumentar, no reducirse."
+    },
+    {
+      "id": "9_w3_vf_09",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "enunciado": "Mantener el dinero del ahorro separado del dinero del gasto diario ayuda a no gastarlo por impulso.",
+      "respuesta": true,
+      "explicacion": "Separar el ahorro del gasto diario reduce la tentacion de usarlo y ayuda a conservarlo."
+    }
+  ]
+}

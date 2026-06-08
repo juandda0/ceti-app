@@ -1,0 +1,135 @@
+{
+  "bancoId": "11_world_3_ordenar",
+  "grado": "11",
+  "worldId": "world_3",
+  "tipo": "ordenar",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "11_w3_ord_01",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "Ordena estos productos de MENOR a MAYOR riesgo asumido por quien ahorra.",
+      "elementos": [
+        "Cuenta de ahorro de disponibilidad inmediata",
+        "Certificado de deposito a plazo fijo",
+        "Fondo de inversion diversificado",
+        "Inversion concentrada en una sola accion"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Criterio: riesgo creciente. La cuenta de ahorro es la mas estable; el certificado a plazo fijo añade plazo; el fondo diversificado introduce mas variabilidad; concentrar todo en una sola accion es lo de mayor riesgo."
+    },
+    {
+      "id": "11_w3_ord_02",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "Ordena estos productos de MAYOR a MENOR liquidez (de mas a menos disponibilidad inmediata del dinero).",
+      "elementos": [
+        "Cuenta de ahorro",
+        "Fondo de inversion con rescate en pocos dias",
+        "Certificado de deposito a plazo fijo"
+      ],
+      "ordenCanonico": [0, 1, 2],
+      "explicacion": "Criterio: liquidez decreciente. La cuenta de ahorro permite disponer del dinero casi de inmediato; el fondo requiere un rescate de pocos dias; el certificado a plazo fijo compromete el dinero hasta su vencimiento."
+    },
+    {
+      "id": "11_w3_ord_03",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "Ordena las etapas del proceso de definir un plan de ahorro de largo plazo, de la PRIMERA a la ULTIMA.",
+      "elementos": [
+        "Definir la meta y el plazo en el que se necesita el dinero",
+        "Estimar cuanto se puede aportar de forma constante",
+        "Elegir productos acordes al plazo y al riesgo tolerado",
+        "Revisar periodicamente y ajustar los aportes"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Criterio: secuencia logica de planeacion. Primero se fija la meta y el plazo, luego se estima el aporte, despues se eligen los productos adecuados y finalmente se revisa y ajusta."
+    },
+    {
+      "id": "11_w3_ord_04",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "Ordena estos objetivos de ahorro de MENOR a MAYOR horizonte de tiempo habitual.",
+      "elementos": [
+        "Fondo de emergencia disponible al instante",
+        "Compra de un equipo en el proximo año",
+        "Estudios superiores en varios años",
+        "Ahorro para el retiro"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Criterio: horizonte creciente. El fondo de emergencia se usa en cualquier momento; la compra es de corto plazo; los estudios, de mediano; el retiro es la meta de mas largo plazo."
+    },
+    {
+      "id": "11_w3_ord_05",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "Ordena estas opciones de MENOR a MAYOR rendimiento esperado, segun la relacion general entre riesgo y rentabilidad.",
+      "elementos": [
+        "Efectivo guardado sin generar rendimiento",
+        "Cuenta de ahorro de disponibilidad inmediata",
+        "Certificado de deposito a plazo fijo",
+        "Fondo de inversion diversificado de largo plazo"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Criterio: rendimiento esperado creciente. El efectivo no genera rendimiento; la cuenta de ahorro ofrece poco; el certificado a plazo fijo algo mas por comprometer el dinero; el fondo de largo plazo tiende a mayor rendimiento esperado a cambio de mas variabilidad."
+    },
+    {
+      "id": "11_w3_ord_06",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "Ordena los pasos para construir un fondo de emergencia, de la PRIMERA a la ULTIMA accion.",
+      "elementos": [
+        "Decidir cuanto cubrir como reserva de seguridad",
+        "Apartar una porcion de cada ingreso de forma regular",
+        "Mantener la reserva en un producto de alta liquidez",
+        "Reponer la reserva despues de usarla en una emergencia"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Criterio: secuencia logica. Primero se define la meta de reserva, luego se aparta de forma regular, se guarda en un producto liquido y, si se usa, se repone."
+    },
+    {
+      "id": "11_w3_ord_07",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "Ordena estas situaciones de MENOR a MAYOR plazo de compromiso del dinero.",
+      "elementos": [
+        "Dinero disponible para retirar el mismo dia",
+        "Certificado a plazo fijo de corto vencimiento",
+        "Certificado a plazo fijo de vencimiento mas largo",
+        "Aporte destinado al retiro a muchos años"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Criterio: plazo de compromiso creciente. Desde el dinero disponible el mismo dia hasta el aporte para el retiro, el tiempo durante el cual el dinero queda comprometido va en aumento."
+    },
+    {
+      "id": "11_w3_ord_08",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "Ordena estas carteras de ahorro de MENOR a MAYOR diversificacion.",
+      "elementos": [
+        "Todo el ahorro en una sola opcion",
+        "El ahorro repartido entre dos opciones distintas",
+        "El ahorro repartido entre varias opciones de distinto tipo"
+      ],
+      "ordenCanonico": [0, 1, 2],
+      "explicacion": "Criterio: diversificacion creciente. Concentrar en una sola opcion es la menor diversificacion; repartir entre dos es mayor; repartir entre varias opciones de distinto tipo es la mayor."
+    },
+    {
+      "id": "11_w3_ord_09",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "enunciado": "Ordena el ciclo de revision de un plan de ahorro de largo plazo, de la PRIMERA a la ULTIMA etapa.",
+      "elementos": [
+        "Comparar el avance con la meta planteada",
+        "Identificar si cambiaron los ingresos o el plazo",
+        "Ajustar los aportes o los productos si hace falta",
+        "Fijar la fecha de la proxima revision"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Criterio: secuencia logica de revision. Primero se compara el avance, luego se revisa si cambiaron las circunstancias, despues se ajusta y finalmente se programa la siguiente revision."
+    }
+  ]
+}

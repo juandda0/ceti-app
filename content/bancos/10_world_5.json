@@ -1,0 +1,46 @@
+{
+  "bancoId": "10_world_5",
+  "grado": "10",
+  "worldId": "world_5",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "situaciones": [
+    {
+      "id": "10_w5_ec_01",
+      "enunciado": "Tienes varias deudas pequeñas y una grande con una tasa de interés alta. Tu ingreso extra de este periodo solo alcanza para hacer un abono adicional a una de ellas. ¿Qué decides?",
+      "opcionA": {
+        "texto": "Abonar a la deuda grande de tasa más alta, aunque tarde más en notarse el avance.",
+        "consecuencia": "Reduces más rápido los intereses que se acumulan en total, aunque al principio la sensación de progreso sea menor porque la deuda sigue siendo grande."
+      },
+      "opcionB": {
+        "texto": "Abonar a la deuda más pequeña para eliminarla por completo este periodo.",
+        "consecuencia": "Tachas una deuda de la lista y ganas motivación para seguir, aunque la deuda de tasa alta sigue creciendo más mientras tanto."
+      }
+    },
+    {
+      "id": "10_w5_ec_02",
+      "enunciado": "Este periodo tu presupuesto quedó ajustado y te cuesta cubrir la cuota de una deuda. La entidad te ofrece pagar solo el mínimo. ¿Qué haces?",
+      "opcionA": {
+        "texto": "Pagar solo el mínimo este periodo para no quedarte sin dinero para lo esencial.",
+        "consecuencia": "Evitas un apuro inmediato y mantienes la deuda al día, pero el saldo baja poco y los intereses siguen sumando, así que la deuda durará más."
+      },
+      "opcionB": {
+        "texto": "Recortar algunos gastos no esenciales del periodo para pagar algo más que el mínimo.",
+        "consecuencia": "Reduces más el capital y los intereses futuros, aunque sacrificas algunos gustos temporalmente para avanzar más rápido."
+      }
+    },
+    {
+      "id": "10_w5_ec_03",
+      "enunciado": "Sabes que el próximo periodo te costará pagar una cuota. Sientes algo de pena por reconocerlo. ¿Cómo actúas?",
+      "opcionA": {
+        "texto": "Contactar a la entidad antes de la fecha para explicar la situación y explorar alternativas.",
+        "consecuencia": "Adelantarte abre opciones como ajustar el plazo o la cuota, y evitas entrar en mora, que limitaría tus alternativas y afectaría tu historial."
+      },
+      "opcionB": {
+        "texto": "Esperar a ver si el próximo periodo mejora antes de avisar nada.",
+        "consecuencia": "Ganas algo de tiempo sin actuar, pero si no mejora podrías entrar en mora, con menos opciones de acuerdo y posible registro en una central de riesgo."
+      }
+    }
+  ]
+}

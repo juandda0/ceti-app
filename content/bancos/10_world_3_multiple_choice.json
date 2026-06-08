@@ -1,0 +1,179 @@
+{
+  "bancoId": "10_world_3_multiple_choice",
+  "grado": "10",
+  "worldId": "world_3",
+  "tipo": "multiple_choice",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "10_w3_mc_01",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "Un fondo de emergencia busca cubrir gastos cuando aparece un imprevisto. Como referencia general, ¿a cuántos meses de gastos suele apuntar como meta inicial?",
+      "opciones": [
+        "Cero, porque no hace falta planear",
+        "Un solo día de gastos",
+        "Toda la vida de gastos de una vez",
+        "Entre tres y seis meses de gastos"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Una meta inicial habitual del fondo de emergencia equivale a varios meses de gastos, comúnmente entre tres y seis, para sostener lo esencial mientras se resuelve el imprevisto."
+    },
+    {
+      "id": "10_w3_mc_02",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "¿Cuál es la diferencia principal entre ahorrar e invertir?",
+      "opciones": [
+        "Ahorrar guarda dinero de forma segura y disponible; invertir busca que ese dinero crezca asumiendo algo de riesgo",
+        "Ahorrar e invertir son exactamente lo mismo",
+        "Invertir significa esconder el dinero sin moverlo nunca",
+        "Ahorrar siempre hace perder dinero y por eso conviene evitarlo"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Al ahorrar se prioriza la seguridad y la disponibilidad del dinero; al invertir se busca hacerlo crecer aceptando cierto riesgo."
+    },
+    {
+      "id": "10_w3_mc_03",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "El interés compuesto se describe mejor como:",
+      "opciones": [
+        "Un descuento que se aplica solo al monto inicial sin cambios",
+        "Los intereses generados se suman al ahorro y empiezan a generar nuevos intereses",
+        "Una comisión que se cobra por retirar el dinero",
+        "El dinero que se pierde cada vez que se ahorra"
+      ],
+      "correctIndex": 1,
+      "explicacion": "En el interés compuesto, los intereses ganados se incorporan al capital y a su vez producen más intereses con el tiempo."
+    },
+    {
+      "id": "10_w3_mc_04",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "¿Qué describe mejor la liquidez de un ahorro?",
+      "opciones": [
+        "El nombre de la entidad donde se guarda",
+        "La cantidad de intereses que promete a futuro",
+        "La facilidad y rapidez con que se puede disponer del dinero cuando se necesita",
+        "El color de la tarjeta asociada"
+      ],
+      "correctIndex": 2,
+      "explicacion": "La liquidez indica qué tan fácil y rápido se puede usar el dinero; suele contraponerse al rendimiento, que apunta a hacerlo crecer."
+    },
+    {
+      "id": "10_w3_mc_05",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "Por lo general, entre dos opciones de ahorro, la que ofrece mayor rendimiento esperado tiende a tener:",
+      "opciones": [
+        "Ninguna relación con el riesgo",
+        "Menor riesgo asociado siempre",
+        "Riesgo cero garantizado",
+        "Mayor riesgo asociado"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Como idea general, buscar mayor rendimiento suele implicar asumir mayor riesgo; por eso conviene equilibrar ambos según la meta."
+    },
+    {
+      "id": "10_w3_mc_06",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "El ahorro programado o automático consiste en:",
+      "opciones": [
+        "Apartar una parte del dinero de forma periódica y planeada, sin depender de recordarlo cada vez",
+        "Gastar primero y ahorrar solo lo que sobre, si es que sobra",
+        "Ahorrar únicamente una vez en la vida",
+        "Pedir prestado para poder ahorrar"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Programar el ahorro de manera automática y periódica ayuda a sostener el hábito, porque no depende de la memoria ni del impulso del momento."
+    },
+    {
+      "id": "10_w3_mc_07",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "¿Cuál es la diferencia entre una meta de ahorro de corto plazo y una de largo plazo?",
+      "opciones": [
+        "Solo la de largo plazo es una meta real",
+        "La de corto plazo se alcanza en poco tiempo; la de largo plazo requiere ahorrar de forma sostenida durante un periodo mucho mayor",
+        "La de corto plazo siempre es más importante que cualquier otra",
+        "No existe ninguna diferencia entre ambas"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Las metas de corto plazo se logran pronto; las de largo plazo necesitan constancia durante más tiempo y suelen beneficiarse de planear con anticipación."
+    },
+    {
+      "id": "10_w3_mc_08",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "¿Dónde NO conviene guardar el dinero del fondo de emergencia?",
+      "opciones": [
+        "En una cuenta que permita disponer del dinero con rapidez",
+        "En un sitio seguro y de fácil acceso cuando se necesite",
+        "En un lugar difícil de retirar justo cuando ocurre el imprevisto",
+        "En un medio que mantenga el dinero disponible"
+      ],
+      "correctIndex": 2,
+      "explicacion": "El fondo de emergencia debe estar disponible y ser fácil de retirar; guardarlo donde sea difícil acceder a tiempo contradice su propósito."
+    },
+    {
+      "id": "10_w3_mc_09",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "Para una meta de ahorro de muy largo plazo, ¿qué característica suele volverse más relevante?",
+      "opciones": [
+        "Evitar por completo cualquier plan",
+        "La liquidez inmediata, porque se necesitará el dinero de un día para otro",
+        "Esconder el dinero para no usarlo nunca",
+        "El rendimiento, porque hay más tiempo para que el ahorro crezca"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Con horizontes largos suele priorizarse el rendimiento, ya que el tiempo ayuda a que el ahorro crezca; en cambio, para necesidades inmediatas pesa más la liquidez."
+    },
+    {
+      "id": "10_w3_mc_10",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "¿Por qué el interés compuesto suele favorecer a quien empieza a ahorrar con anticipación?",
+      "opciones": [
+        "Porque cuanto más tiempo pasa, más oportunidades tienen los intereses de generar nuevos intereses",
+        "Porque empezar tarde hace crecer el ahorro más rápido",
+        "Porque el tiempo no influye en absoluto",
+        "Porque ahorrar temprano elimina la necesidad de planear"
+      ],
+      "correctIndex": 0,
+      "explicacion": "El interés compuesto se apoya en el tiempo: empezar antes da más oportunidades para que los intereses se sumen y generen aún más intereses."
+    },
+    {
+      "id": "10_w3_mc_11",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "Una persona quiere que su dinero esté disponible de inmediato para cualquier urgencia. ¿Qué debería priorizar?",
+      "opciones": [
+        "El rendimiento máximo aunque sea difícil retirar el dinero",
+        "La liquidez, aunque eso implique un rendimiento más modesto",
+        "Bloquear el dinero por mucho tiempo",
+        "No tener ningún plan de acceso al dinero"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Si lo importante es poder usar el dinero de inmediato, conviene priorizar la liquidez, aun cuando el rendimiento sea menor."
+    },
+    {
+      "id": "10_w3_mc_12",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "enunciado": "¿Cuál es una buena razón para mantener el fondo de emergencia separado del dinero de los gastos del día a día?",
+      "opciones": [
+        "Garantiza que nunca se podrá usar en una emergencia",
+        "Hace que el dinero desaparezca más rápido",
+        "Ayuda a evitar gastarlo por error y a reservarlo solo para imprevistos",
+        "Obliga a gastar más en lo cotidiano"
+      ],
+      "correctIndex": 2,
+      "explicacion": "Separar el fondo de emergencia reduce la tentación de usarlo en gastos diarios y lo mantiene reservado para cuando de verdad surge un imprevisto."
+    }
+  ]
+}

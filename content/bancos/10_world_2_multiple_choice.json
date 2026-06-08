@@ -1,0 +1,179 @@
+{
+  "bancoId": "10_world_2_multiple_choice",
+  "grado": "10",
+  "worldId": "world_2",
+  "tipo": "multiple_choice",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "10_w2_mc_01",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "Al repartir tus ingresos con un método sencillo, ¿en qué tres grandes grupos conviene distribuirlos?",
+      "opciones": [
+        "Solo deseos, dejando el ahorro para después",
+        "Solo necesidades, sin reservar nada",
+        "Necesidades, deseos y ahorro",
+        "Préstamos, intereses y multas"
+      ],
+      "correctIndex": 2,
+      "explicacion": "Un método claro para repartir el ingreso lo divide en necesidades indispensables, deseos y una parte para ahorrar, sin necesidad de cifras fijas."
+    },
+    {
+      "id": "10_w2_mc_02",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "Tras destinar tu ingreso a necesidades, deseos y ahorro, notas que las necesidades no alcanzan a quedar cubiertas. ¿Qué ajuste es el más razonable?",
+      "opciones": [
+        "Mantener todo igual aunque las necesidades queden sin cubrir",
+        "Eliminar por completo el grupo de ahorro y dejar de planear",
+        "Aumentar la parte de deseos para compensar",
+        "Destinar una parte mayor a necesidades y reducir la de deseos"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Las necesidades son indispensables; ante un faltante, se les destina una parte mayor y se recortan los deseos antes de tocar lo esencial."
+    },
+    {
+      "id": "10_w2_mc_03",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "Al organizar tus egresos del periodo, ¿qué criterio te ayuda a priorizar mejor?",
+      "opciones": [
+        "Cubrir primero lo indispensable y dejar los deseos para después",
+        "Pagar primero lo más llamativo aunque no sea esencial",
+        "Atender los gastos en el orden en que se te ocurran",
+        "Gastar primero en lo que vean tus amistades"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Priorizar significa atender primero lo indispensable; los deseos se cubren cuando lo esencial ya está asegurado."
+    },
+    {
+      "id": "10_w2_mc_04",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "Un \"gasto hormiga\" es aquel que...",
+      "opciones": [
+        "Ocurre una sola vez y es de gran tamaño",
+        "Es pequeño y frecuente, y al sumarse termina afectando tu presupuesto",
+        "Siempre aparece registrado como gasto fijo",
+        "Nunca afecta tu presupuesto por ser tan pequeño"
+      ],
+      "correctIndex": 1,
+      "explicacion": "El gasto hormiga es pequeño y repetido; por sí solo parece insignificante, pero al acumularse afecta el presupuesto."
+    },
+    {
+      "id": "10_w2_mc_05",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "Descubres que varios gastos hormiga están desequilibrando tu plan. ¿Qué estrategia es la más adecuada?",
+      "opciones": [
+        "Aumentar tus gastos grandes para que los hormiga se noten menos",
+        "Ignorarlos porque son demasiado pequeños para importar",
+        "Identificarlos, registrarlos y decidir cuáles reducir o eliminar",
+        "Dejar de hacer presupuesto para no verlos"
+      ],
+      "correctIndex": 2,
+      "explicacion": "Hacer visibles los gastos hormiga registrándolos permite decidir con conciencia cuáles recortar para recuperar el equilibrio."
+    },
+    {
+      "id": "10_w2_mc_06",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "Tu presupuesto queda en déficit cuando...",
+      "opciones": [
+        "Tus gastos fijos y variables son iguales entre sí",
+        "Tus ingresos superan a tus egresos en el periodo",
+        "No registras ningún gasto en absoluto",
+        "Tus egresos superan a tus ingresos en el periodo"
+      ],
+      "correctIndex": 3,
+      "explicacion": "El déficit aparece cuando sale más de lo que entra; el superávit es lo contrario, cuando entra más de lo que sale."
+    },
+    {
+      "id": "10_w2_mc_07",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "Si en un periodo tus ingresos superan a tus egresos, tu presupuesto tiene un superávit. ¿Qué decisión aprovecha mejor ese dinero a favor?",
+      "opciones": [
+        "Destinarlo a tu ahorro o a una meta planeada",
+        "Dejarlo sin destino y olvidarlo hasta que se gaste solo",
+        "Gastarlo de inmediato en el primer deseo que aparezca",
+        "Convertirlo automáticamente en un gasto fijo nuevo"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Un superávit es una oportunidad: destinarlo al ahorro o a una meta hace que el dinero a favor trabaje por ti."
+    },
+    {
+      "id": "10_w2_mc_08",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "Surge un imprevisto que no estaba en tu plan y debes cubrirlo este periodo. ¿Cuál es el ajuste más sensato del presupuesto?",
+      "opciones": [
+        "Eliminar de golpe todas las necesidades indispensables",
+        "Recortar temporalmente algunos deseos para liberar dinero sin tocar lo esencial",
+        "Fingir que el imprevisto no existe y no ajustar nada",
+        "Aumentar tus deseos para sentirte mejor por el imprevisto"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Ante un imprevisto, ajustar el presupuesto reduciendo deseos protege lo indispensable y evita caer en déficit."
+    },
+    {
+      "id": "10_w2_mc_09",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "¿En qué se diferencia un presupuesto mensual de uno por proyecto?",
+      "opciones": [
+        "Ambos son exactamente lo mismo con distinto nombre",
+        "El mensual no sirve para planear y el de proyecto sí",
+        "El mensual cubre un periodo que se repite; el de proyecto se arma para una meta puntual y termina cuando esa meta se cumple",
+        "El de proyecto solo puede usarse para gastos fijos"
+      ],
+      "correctIndex": 2,
+      "explicacion": "El presupuesto mensual organiza un periodo recurrente; el de proyecto se diseña para una meta específica y concluye al alcanzarla."
+    },
+    {
+      "id": "10_w2_mc_10",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "enunciado": "Estás organizando el dinero para un viaje de fin de curso con una meta y una fecha concretas. ¿Qué tipo de presupuesto encaja mejor?",
+      "opciones": [
+        "Un presupuesto que ignore por completo la fecha del viaje",
+        "Un presupuesto mensual sin relación con el viaje",
+        "Ningún presupuesto, porque las metas no se planean",
+        "Un presupuesto por proyecto, centrado en esa meta puntual"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Cuando hay una meta y una fecha definidas, un presupuesto por proyecto permite reunir y organizar lo necesario para cumplirla."
+    },
+    {
+      "id": "10_w2_mc_11",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "Al cerrar el periodo comparas lo que habías planeado con lo que realmente ocurrió. ¿Para qué sirve principalmente esta revisión?",
+      "opciones": [
+        "Para detectar diferencias y mejorar el plan del siguiente periodo",
+        "Para castigarte por cada gasto que no salió igual",
+        "Para dejar de hacer presupuestos en adelante",
+        "Para repetir el plan sin cambiar nada nunca"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Comparar lo planeado con lo real revela dónde te desviaste y te da información para ajustar y mejorar el siguiente presupuesto."
+    },
+    {
+      "id": "10_w2_mc_12",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "El presupuesto base cero propone que, al planear un nuevo periodo, cada gasto...",
+      "opciones": [
+        "Se copia tal cual del periodo anterior sin revisarlo",
+        "Debe justificarse desde cero, sin dar por hecho lo del periodo anterior",
+        "Se elimina de forma definitiva por ser innecesario",
+        "Se decide al azar sin pensar en su utilidad"
+      ],
+      "correctIndex": 1,
+      "explicacion": "En el presupuesto base cero no se arrastra lo anterior: cada gasto se evalúa y justifica de nuevo, partiendo de cero."
+    }
+  ]
+}

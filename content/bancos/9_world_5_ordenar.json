@@ -1,0 +1,137 @@
+{
+  "bancoId": "9_world_5_ordenar",
+  "grado": "9",
+  "worldId": "world_5",
+  "tipo": "ordenar",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "9_w5_ord_01",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para salir de una deuda de forma organizada.",
+      "elementos": [
+        "Reconocer cuánto se debe en total",
+        "Anotar las fechas de pago de cada compromiso",
+        "Hacer un plan para pagar poco a poco",
+        "Cumplir el plan hasta saldar la deuda"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Primero se conoce el total, luego se ordenan las fechas, se diseña un plan y por último se cumple hasta terminar."
+    },
+    {
+      "id": "9_w5_ord_02",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos prudentes antes de pedir algo prestado.",
+      "elementos": [
+        "Identificar para qué se necesita el préstamo",
+        "Calcular si se podrá devolver con los ingresos previstos",
+        "Comparar las condiciones que ofrecen distintos prestamistas",
+        "Decidir pedir prestado solo lo que se puede pagar"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Se define la necesidad, se evalúa la capacidad de pago, se comparan opciones y se decide con prudencia."
+    },
+    {
+      "id": "9_w5_ord_03",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para actuar cuando una deuda se vuelve difícil de manejar.",
+      "elementos": [
+        "Reconocer que la deuda se volvió difícil de pagar",
+        "Buscar orientación de alguien de confianza",
+        "Conversar con el prestamista para renegociar las condiciones",
+        "Seguir el nuevo acuerdo de pago"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Primero se reconoce el problema, se busca apoyo, se renegocia y luego se cumple el nuevo acuerdo."
+    },
+    {
+      "id": "9_w5_ord_04",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "Ordena las etapas que vive una deuda desde que se adquiere hasta que termina.",
+      "elementos": [
+        "Recibir algo prestado con un compromiso de devolución",
+        "Empezar a pagar según lo acordado",
+        "Reducir poco a poco el saldo pendiente",
+        "Terminar de pagar y quedar sin deuda"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "La deuda nace al recibir el préstamo, avanza con los pagos, reduce su saldo y termina al saldarse por completo."
+    },
+    {
+      "id": "9_w5_ord_05",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para organizar el pago mensual de una deuda.",
+      "elementos": [
+        "Revisar cuánto se debe pagar en el mes",
+        "Apartar ese dinero antes de gastarlo en otras cosas",
+        "Realizar el pago dentro de la fecha acordada",
+        "Guardar el comprobante del pago"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Se revisa el monto del mes, se aparta el dinero, se paga a tiempo y se conserva el comprobante."
+    },
+    {
+      "id": "9_w5_ord_06",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para reconocer y atender señales de tener muchas deudas.",
+      "elementos": [
+        "Notar que cuesta cumplir con varios pagos a la vez",
+        "Revisar la lista completa de lo que se debe",
+        "Identificar cuáles compromisos son más urgentes",
+        "Pedir ayuda para reorganizar los pagos"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Se nota la dificultad, se revisa todo lo que se debe, se priorizan los compromisos y se busca ayuda para reorganizar."
+    },
+    {
+      "id": "9_w5_ord_07",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para evitar que una deuda crezca por intereses acumulados.",
+      "elementos": [
+        "Conocer cada cuánto se suman los intereses",
+        "Planear pagar antes de que se acumule más costo",
+        "Pagar lo más que se pueda del saldo, no solo el mínimo",
+        "Reducir el saldo hasta dejar la deuda en cero"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Entender cuándo se suman intereses permite pagar a tiempo, abonar más que el mínimo y reducir el saldo hasta cerrarlo."
+    },
+    {
+      "id": "9_w5_ord_08",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para decidir entre ahorrar y endeudarse para una meta.",
+      "elementos": [
+        "Definir con claridad la meta que se quiere alcanzar",
+        "Revisar si se puede ahorrar para lograrla con tiempo",
+        "Considerar el costo de endeudarse si no se puede esperar",
+        "Elegir la opción que se pueda sostener sin riesgo"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Se aclara la meta, se evalúa ahorrar, se compara con el costo de endeudarse y se elige lo que se pueda sostener."
+    },
+    {
+      "id": "9_w5_ord_09",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "Ordena los pasos para mantener un registro ordenado de las deudas.",
+      "elementos": [
+        "Anotar cada deuda con quién y por qué se adquirió",
+        "Registrar la fecha en que se debe pagar cada una",
+        "Actualizar el registro cada vez que se hace un pago",
+        "Revisar el registro con frecuencia para no olvidar nada"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Anotar las deudas, registrar sus fechas, actualizar tras cada pago y revisar a menudo mantiene todo bajo control."
+    }
+  ]
+}

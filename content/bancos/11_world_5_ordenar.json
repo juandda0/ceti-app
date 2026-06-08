@@ -1,0 +1,138 @@
+{
+  "bancoId": "11_world_5_ordenar",
+  "grado": "11",
+  "worldId": "world_5",
+  "tipo": "ordenar",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "11_w5_ord_01",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "Ordena estas deudas segun la estrategia avalancha: de la que se paga primero a la que se paga al final (de mayor a menor tasa de interes).",
+      "elementos": [
+        "Deuda con tasa muy alta",
+        "Deuda con tasa alta",
+        "Deuda con tasa media",
+        "Deuda con tasa baja"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "La avalancha ordena las deudas de mayor a menor tasa de interes y las ataca en ese orden, manteniendo los minimos en el resto, para minimizar el interes total."
+    },
+    {
+      "id": "11_w5_ord_02",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "Ordena estas deudas segun la estrategia bola de nieve: de la que se paga primero a la que se paga al final (del saldo mas pequeño al mas grande).",
+      "elementos": [
+        "Deuda de saldo muy pequeño",
+        "Deuda de saldo pequeño",
+        "Deuda de saldo mediano",
+        "Deuda de saldo grande"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "La bola de nieve ordena las deudas de menor a mayor saldo y las salda en ese orden, para lograr victorias tempranas que sostienen la motivacion."
+    },
+    {
+      "id": "11_w5_ord_03",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "Ordena los pasos para aplicar correctamente la estrategia avalancha, desde el inicio hasta el final del proceso.",
+      "elementos": [
+        "Listar todas las deudas con su tasa de interes",
+        "Identificar la deuda con la tasa mas alta",
+        "Pagar lo maximo posible en esa deuda y el minimo en las demas",
+        "Al saldarla, redirigir ese pago a la siguiente deuda de mayor tasa",
+        "Repetir hasta quedar libre de deudas"
+      ],
+      "ordenCanonico": [0, 1, 2, 3, 4],
+      "explicacion": "La avalancha exige primero conocer las tasas, atacar la mas alta, y al saldarla trasladar el pago a la siguiente mayor tasa, repitiendo hasta terminar."
+    },
+    {
+      "id": "11_w5_ord_04",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "Ordena las etapas de una espiral de deuda por pagar solo el minimo, desde el inicio hasta el agravamiento.",
+      "elementos": [
+        "Se paga solo el monto minimo cada mes",
+        "El saldo baja muy lento porque casi todo va a intereses",
+        "El plazo se alarga y los intereses totales crecen",
+        "El margen del ingreso se reduce y aumenta el riesgo de mora"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Pagar solo el minimo hace que el saldo baje muy lento, alarga el plazo y eleva los intereses, reduciendo el margen y aumentando el riesgo de mora."
+    },
+    {
+      "id": "11_w5_ord_05",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "Ordena los pasos para evaluar de forma responsable si conviene consolidar varias deudas, desde el primero hasta el ultimo.",
+      "elementos": [
+        "Reunir las condiciones actuales de cada deuda",
+        "Comparar la tasa y el plazo de la nueva obligacion frente al conjunto actual",
+        "Estimar el costo total al final del plazo en cada escenario",
+        "Decidir consolidar solo si el costo total y las condiciones mejoran"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Evaluar una consolidacion responsable implica conocer las deudas actuales, comparar condiciones, estimar el costo total y decidir solo si realmente mejora."
+    },
+    {
+      "id": "11_w5_ord_06",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "Ordena los pasos para rehabilitar el historial en una central de riesgo tras una mora, desde el primero hasta el ultimo.",
+      "elementos": [
+        "Reconocer la situacion y revisar el estado de las deudas",
+        "Acordar un plan de pago alcanzable",
+        "Ponerse al dia con las obligaciones pendientes",
+        "Sostener pagos cumplidos para que el historial mejore con el tiempo"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "La rehabilitacion comienza por reconocer la situacion, acordar un plan realista, ponerse al dia y sostener el cumplimiento para que el historial mejore gradualmente."
+    },
+    {
+      "id": "11_w5_ord_07",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "Ordena estos niveles de riesgo segun la relacion cuota/ingreso, de menor a mayor señal de alerta de sobreendeudamiento.",
+      "elementos": [
+        "Las cuotas usan una porcion baja del ingreso",
+        "Las cuotas usan una porcion moderada del ingreso",
+        "Las cuotas usan una porcion alta del ingreso",
+        "Las cuotas usan casi todo el ingreso disponible"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Cuanto mayor es la porcion del ingreso destinada a cuotas, mayor es la señal de alerta: el orden va de menor a mayor riesgo de sobreendeudamiento."
+    },
+    {
+      "id": "11_w5_ord_08",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "Ordena los pasos para refinanciar una deuda que se volvio dificil de pagar, desde el primero hasta el ultimo.",
+      "elementos": [
+        "Identificar que la cuota actual supera la capacidad de pago",
+        "Solicitar revisar las condiciones de la deuda",
+        "Acordar un nuevo plazo o tasa acorde a la capacidad real",
+        "Cumplir las nuevas condiciones de forma sostenida"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Refinanciar parte de reconocer que la cuota no es sostenible, pedir revisar las condiciones, acordar nuevos terminos realistas y cumplirlos."
+    },
+    {
+      "id": "11_w5_ord_09",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "enunciado": "Ordena estas opciones frente a una deuda dificil, segun el orden en que conviene considerarlas: de la primera alternativa al recurso de ultima instancia.",
+      "elementos": [
+        "Ajustar el presupuesto y priorizar pagos",
+        "Refinanciar o renegociar las condiciones",
+        "Buscar asesoria y un plan de pago acordado",
+        "Acudir a un mecanismo de insolvencia"
+      ],
+      "ordenCanonico": [0, 1, 2, 3],
+      "explicacion": "Ante una deuda dificil conviene primero ajustar el presupuesto, luego refinanciar, despues buscar asesoria con un plan acordado y, solo como ultima instancia, recurrir a la insolvencia."
+    }
+  ]
+}

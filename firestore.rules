@@ -1,0 +1,281 @@
+rules_version = '2';
+
+// Ceti B2B2C — multi-tenant rules. Authorization is driven ENTIRELY by CUSTOM
+// CLAIMS (role, colegioId, cursoId) set by a Cloud Function; never by
+// client-writable fields (R2). Students are identified by their Auth `uid` (R1):
+// there is no pseudonym key and no active sede claim. Tenant isolation: a request can
+// only ever touch its own colegioId. Implements the rol×acción matrix
+// (docs/requerimientos.md §1.3) as least-privilege rules (R12). Default deny.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---- helpers (claims only — R2) ----
+    function signedIn() {
+      return request.auth != null;
+    }
+    function role() {
+      return signedIn() ? request.auth.token.role : '';
+    }
+    function isRole(r) {
+      return role() == r;
+    }
+    // admin is global (no colegioId) and may act anywhere, without overriding
+    // the other roles' own capabilities.
+    function isAdmin() {
+      return isRole('admin');
+    }
+    // Demo cage (RQ-DM05): a token minted by demoLogin carries demo:true. The
+    // demo rector/coordinador/profesor/estudiante are ALREADY confined by their
+    // colegioId:'demo-colegio' claim (via sameColegio). The only global identity
+    // is admin, so `adminHere` caps a DEMO admin to the demo colegio while leaving
+    // a real admin global. Non-demo tokens are unaffected.
+    function isDemo() {
+      // .get(key, default) so a non-demo token (no `demo` claim) doesn't error.
+      return signedIn() && request.auth.token.get('demo', false) == true;
+    }
+    function adminHere(cid) {
+      return isAdmin() && (!isDemo() || cid == 'demo-colegio');
+    }
+    function sameColegio(cid) {
+      return signedIn() && request.auth.token.colegioId == cid;
+    }
+    function isStaff() {
+      return isRole('rector') || isRole('coordinador') || isRole('profesor');
+    }
+    // Student identity is the Auth uid (R1) — replaces the old token pseudonym.
+    function isEstudianteSelf(uid) {
+      return isRole('estudiante') && request.auth.uid == uid;
+    }
+    // uid is listed as a teacher of this course (one get()).
+    function isProfesorDe(cid, cursoId) {
+      return isRole('profesor')
+        && sameColegio(cid)
+        && request.auth.uid in
+          get(/databases/$(database)/documents/colegios/$(cid)/cursos/$(cursoId)).data.profesorUids;
+    }
+    // Who may OPERATE a course (assignments, codes, attestation, toggles):
+    // admin (global), coordinador (own colegio), or the course's teacher.
+    function canOperarCurso(cid, cursoId) {
+      return adminHere(cid)
+        || (sameColegio(cid) && isRole('coordinador'))
+        || isProfesorDe(cid, cursoId);
+    }
+    // Ley 1581 gate: a student only generates data once a staffer attested the
+    // acudiente authorization and estado flipped to 'activo'. get() on a missing
+    // doc errors → denied, so this also implies existence.
+    function estudianteActivo(cid, cursoId, uid) {
+      return get(
+        /databases/$(database)/documents/colegios/$(cid)/cursos/$(cursoId)/estudiantes/$(uid)
+      ).data.estado == 'activo';
+    }
+
+    // ---- tenancy tree ----
+    match /colegios/{cid} {
+      // Any member of the colegio reads its identity (nombre/logo for headers);
+      // admin reads any. Structure (create/edit/delete) is admin-only.
+      allow read: if adminHere(cid) || sameColegio(cid);
+      allow create, update, delete: if adminHere(cid);
+
+      // Dormant entity (RQ-FN01): readable by staff if it ever existed; never written.
+      match /sedes/{sedeId} {
+        allow read: if adminHere(cid) || (sameColegio(cid) && isStaff());
+        allow write: if false;
+      }
+
+      match /cursos/{cursoId} {
+        // Any member of the colegio may read course docs (students need their course).
+        allow read: if adminHere(cid) || sameColegio(cid);
+        // Course structure (create/delete) is admin-only (matriz §1.3).
+        allow create, delete: if adminHere(cid);
+        // admin edits anything; coordinador/teacher may toggle ONLY colaboracionAula.
+        // (The join code is set by the generateClassCode Function via Admin SDK.)
+        allow update: if adminHere(cid)
+          || (
+            canOperarCurso(cid, cursoId)
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['colaboracionAula'])
+          );
+
+        match /estudiantes/{uid} {
+          // Roster nominal (email+nombre): admin, coordinador, the course teacher,
+          // and the student themself. RECTOR is excluded — only aggregates (§1.3).
+          allow read: if adminHere(cid)
+            || (sameColegio(cid) && isRole('coordinador'))
+            || isProfesorDe(cid, cursoId)
+            || isEstudianteSelf(uid);
+          // Roster is mutated ONLY by Cloud Functions (joinByCode / atestar /
+          // suppressStudentData) via the Admin SDK — never by a client (D-B1-03).
+          allow write: if false;
+
+          match /progress/{worldId} {
+            allow read: if adminHere(cid)
+              || (sameColegio(cid) && isRole('coordinador'))
+              || isProfesorDe(cid, cursoId)
+              || isEstudianteSelf(uid);
+            // Only the student writes their OWN progress, only into a roster slot
+            // a Function already created, only while active, and only under their
+            // own course claim. Denormalized keys must match the path; values are
+            // type/range/size-checked (progress feeds the teacher report).
+            allow create, update: if isEstudianteSelf(uid)
+              && sameColegio(cid)
+              && request.auth.token.cursoId == cursoId
+              && estudianteActivo(cid, cursoId, uid)
+              && request.resource.data.colegioId == cid
+              && request.resource.data.cursoId == cursoId
+              && request.resource.data.uid == uid
+              && request.resource.data.competencia is string
+              && request.resource.data.xp is number
+              && request.resource.data.xp >= 0
+              && request.resource.data.nivel is number
+              && request.resource.data.nivel >= 0
+              && request.resource.data.mastery is number
+              && request.resource.data.mastery >= 0
+              && request.resource.data.mastery <= 1
+              && request.resource.data.completed is bool
+              && request.resource.data.updatedAt is number
+              && request.resource.data.badges is list
+              && request.resource.data.badges.size() <= 50;
+            allow delete: if false;
+          }
+
+          // Impact pre/post test (RQ-TS01..TS04). The student writes their own
+          // result while active; staff read it (admin/coordinador/teacher).
+          match /impactTest/{fase} {
+            allow read: if adminHere(cid)
+              || (sameColegio(cid) && isRole('coordinador'))
+              || isProfesorDe(cid, cursoId)
+              || isEstudianteSelf(uid);
+            allow create, update: if isEstudianteSelf(uid)
+              && sameColegio(cid)
+              && request.auth.token.cursoId == cursoId
+              && estudianteActivo(cid, cursoId, uid)
+              && (fase == 'pre' || fase == 'post')
+              && request.resource.data.score is number
+              && request.resource.data.total is number
+              && request.resource.data.takenAt is number;
+            allow delete: if false;
+          }
+        }
+
+        // Per-course aggregates (RQ-FN09): NO individual minor data. Readable by
+        // admin and any staff of the colegio (rector's only data view); written
+        // ONLY by a Function (Admin SDK).
+        match /agregados/{agregadoId} {
+          allow read: if adminHere(cid) || (sameColegio(cid) && isStaff());
+          allow write: if false;
+        }
+
+        // Class leaderboard (V2 collaboration). A student maintains their OWN
+        // minimal entry (label + xp); the course staff (admin/coordinador/teacher)
+        // read it, and course-mates read it only when the teacher enabled
+        // colaboracionAula (no global boards). XP is student-reported — the
+        // dashboard uses real progress as truth, so this never feeds compliance.
+        match /leaderboard/{uid} {
+          allow read: if adminHere(cid)
+            || (sameColegio(cid) && isRole('coordinador'))
+            || isProfesorDe(cid, cursoId)
+            || (
+              isRole('estudiante')
+              && request.auth.token.cursoId == cursoId
+              && get(/databases/$(database)/documents/colegios/$(cid)/cursos/$(cursoId)).data.colaboracionAula == true
+            );
+          allow create, update: if isEstudianteSelf(uid)
+            && sameColegio(cid)
+            && request.auth.token.cursoId == cursoId
+            && estudianteActivo(cid, cursoId, uid)
+            && request.resource.data.uid == uid
+            && request.resource.data.displayLabel is string
+            && request.resource.data.displayLabel.size() <= 60
+            && request.resource.data.xp is number
+            && request.resource.data.xp >= 0
+            && request.resource.data.updatedAt is number;
+          allow delete: if false;
+        }
+      }
+
+      match /asignaciones/{aid} {
+        // Staff and students of the colegio can see assignments.
+        allow read: if adminHere(cid) || sameColegio(cid);
+        // Create/operate: admin, coordinador (own colegio), or the target course's
+        // teacher (matriz §1.3: "Asignar mundo con deadline").
+        allow create: if adminHere(cid)
+          || (sameColegio(cid) && isRole('coordinador'))
+          || isProfesorDe(cid, request.resource.data.target.cursoId);
+        allow update, delete: if adminHere(cid)
+          || (sameColegio(cid) && isRole('coordinador'))
+          || isProfesorDe(cid, resource.data.target.cursoId);
+      }
+    }
+
+    // Collection-group read for aggregate/report queries (RQ-FN08). Scoped by
+    // role: admin (global); coordinador (whole colegio); teacher (own course);
+    // student (self). RECTOR is excluded from nominal progress — they read the
+    // precomputed agregados/* instead (invariante §1.3).
+    match /{path=**}/progress/{worldId} {
+      // Demo admin is capped to the demo colegio (RQ-DM05).
+      allow read: if isAdmin() && (!isDemo() || resource.data.colegioId == 'demo-colegio');
+      allow read: if isRole('coordinador')
+        && resource.data.colegioId == request.auth.token.colegioId;
+      allow read: if isProfesorDe(resource.data.colegioId, resource.data.cursoId);
+      allow read: if isEstudianteSelf(resource.data.uid);
+    }
+
+    // uid → tenant mapping, set by the Function; the user reads only their own.
+    match /membership/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // ---- account-scoped (auth user) ----
+    function isSelf(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    match /users/{userId} {
+      allow read: if isSelf(userId);
+      allow create: if isSelf(userId)
+        && request.resource.data.displayName is string
+        && request.resource.data.provider is string;
+      allow update: if isSelf(userId);
+      allow delete: if false;
+
+      // Simulated savings (virtual money) and per-account lesson cache.
+      match /goals/{goalId} {
+        allow read, write: if isSelf(userId);
+      }
+      match /deposits/{depositId} {
+        allow read, write: if isSelf(userId);
+      }
+      match /lessonProgress/{lessonId} {
+        allow read, write: if isSelf(userId);
+      }
+      match /wallet/{walletDocId} {
+        allow read: if isSelf(userId);
+        allow create, update: if isSelf(userId)
+          && request.resource.data.totalCetis is number
+          && request.resource.data.totalCetis >= 0;
+        allow delete: if false;
+      }
+      // aiProfile deferred for removal (no AI in MVP): readable, no client writes.
+      match /aiProfile/{docId} {
+        allow read: if isSelf(userId);
+        allow write: if false;
+      }
+    }
+
+    // Global, human-curated question bank: read-only to signed-in clients.
+    match /questionBank/{questionId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    // Class join codes: resolved only by the joinByCode Function (Admin SDK).
+    // Never exposed to clients (codes must not be enumerable).
+    match /classCodes/{code} {
+      allow read, write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

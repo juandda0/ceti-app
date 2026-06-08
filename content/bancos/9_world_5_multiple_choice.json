@@ -1,0 +1,179 @@
+{
+  "bancoId": "9_world_5_multiple_choice",
+  "grado": "9",
+  "worldId": "world_5",
+  "tipo": "multiple_choice",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "9_w5_mc_01",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "¿Qué es una deuda?",
+      "opciones": [
+        "Dinero que se regala y nunca hay que devolver",
+        "Un compromiso de devolver algo que recibimos prestado, normalmente con un costo adicional por el préstamo",
+        "Un ahorro que crece solo con el tiempo",
+        "Una cuenta que el banco abre sin que nadie la pida"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Una deuda es una obligación de devolver lo prestado; quien presta suele cobrar un costo extra por el servicio."
+    },
+    {
+      "id": "9_w5_mc_02",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "¿Por qué una deuda puede crecer con el paso del tiempo aunque no pidamos más prestado?",
+      "opciones": [
+        "Porque el banco cambia de nombre cada año",
+        "Porque el dinero pierde su número de serie",
+        "Porque el interés se suma sobre lo que aún se debe",
+        "Porque las deudas se reparten entre varias personas"
+      ],
+      "correctIndex": 2,
+      "explicacion": "El interés es el costo de tener el dinero prestado; mientras quede saldo sin pagar, se sigue sumando y la deuda crece."
+    },
+    {
+      "id": "9_w5_mc_03",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "¿Qué ventaja tiene pagar una deuda en las fechas acordadas?",
+      "opciones": [
+        "Elimina la necesidad de planear el dinero",
+        "Hace que la deuda se duplique más rápido",
+        "Obliga a pedir un nuevo préstamo",
+        "Se evita que se acumulen costos adicionales por atraso"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Pagar a tiempo evita cargos por mora y mantiene la deuda bajo control."
+    },
+    {
+      "id": "9_w5_mc_04",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "Cuando una cuenta permite pagar solo una parte (pago mínimo) en lugar del total, ¿qué suele ocurrir con el resto?",
+      "opciones": [
+        "Queda como saldo pendiente y sobre él se siguen sumando intereses",
+        "Desaparece automáticamente al mes siguiente",
+        "Se convierte en un ahorro a favor de quien debe",
+        "El prestamista lo perdona sin condiciones"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Pagar solo el mínimo deja un saldo que sigue generando intereses, por lo que la deuda total tarda más en terminar."
+    },
+    {
+      "id": "9_w5_mc_05",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "¿Cuál es una posible consecuencia de dejar de pagar una deuda durante mucho tiempo?",
+      "opciones": [
+        "Que la deuda se borre por completo sin avisar",
+        "Que se dificulte conseguir nuevos préstamos en el futuro",
+        "Que el dinero prestado regrese solo a quien lo pidió",
+        "Que el costo del préstamo baje cada mes"
+      ],
+      "correctIndex": 1,
+      "explicacion": "No pagar suele dejar un historial que dificulta acceder a futuros préstamos, además de sumar cargos por atraso."
+    },
+    {
+      "id": "9_w5_mc_06",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "Antes de pedir algo prestado, ¿qué es lo más prudente revisar?",
+      "opciones": [
+        "Si otras personas también están pidiendo prestado",
+        "Si el préstamo es el más grande disponible",
+        "Si se podrá devolver cómodamente con los ingresos previstos",
+        "Si se puede pedir sin pensar en cómo pagarlo"
+      ],
+      "correctIndex": 2,
+      "explicacion": "Conviene pedir prestado solo lo que se puede devolver según lo que se espera recibir, para no comprometer el futuro."
+    },
+    {
+      "id": "9_w5_mc_07",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "¿Cuál de estas puede ser una señal de que alguien tiene demasiadas deudas?",
+      "opciones": [
+        "Llevar un registro ordenado de lo que se debe",
+        "Tener un plan claro para terminar de pagar cada compromiso",
+        "Devolver lo prestado antes de la fecha acordada",
+        "Necesitar pedir un nuevo préstamo para poder pagar otro anterior"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Pedir prestado para pagar otra deuda es una señal de alerta: indica que los compromisos superan lo que se puede cubrir."
+    },
+    {
+      "id": "9_w5_mc_08",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "Si alguien siente que sus deudas se han vuelto difíciles de manejar, ¿cuál es una acción razonable?",
+      "opciones": [
+        "Buscar ayuda y conversar con el prestamista para renegociar las condiciones",
+        "Ignorar el problema hasta que desaparezca solo",
+        "Pedir más préstamos sin un plan",
+        "Esconder la situación de quien puede orientar"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Pedir ayuda y renegociar plazos o condiciones es una forma sensata de retomar el control de una deuda difícil."
+    },
+    {
+      "id": "9_w5_mc_09",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "¿Cuál es la diferencia principal entre una deuda y un ahorro?",
+      "opciones": [
+        "La deuda y el ahorro son exactamente lo mismo",
+        "La deuda es dinero que se debe devolver; el ahorro es dinero propio que se guarda",
+        "El ahorro siempre obliga a pagarle a otra persona",
+        "La deuda siempre pertenece a quien la debe sin condiciones"
+      ],
+      "correctIndex": 1,
+      "explicacion": "Ahorrar es guardar dinero propio para el futuro; endeudarse es recibir dinero ajeno con el compromiso de devolverlo."
+    },
+    {
+      "id": "9_w5_mc_10",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "¿Qué significa que una deuda tenga interés?",
+      "opciones": [
+        "Que el dinero prestado nunca debe devolverse",
+        "Que el préstamo no tiene ningún costo",
+        "Que devolver lo prestado cuesta más que la cantidad recibida al inicio",
+        "Que solo se paga si quien presta lo recuerda"
+      ],
+      "correctIndex": 2,
+      "explicacion": "El interés es el costo de usar dinero prestado; por eso, al final se devuelve más de lo recibido."
+    },
+    {
+      "id": "9_w5_mc_11",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "Para mantener las deudas bajo control, ¿qué hábito ayuda más?",
+      "opciones": [
+        "Pagar solo cuando se reciba un recordatorio insistente",
+        "Olvidar las fechas de pago para no preocuparse",
+        "Pedir prestado siempre que sea posible",
+        "Anotar lo que se debe y planear con anticipación cómo pagarlo"
+      ],
+      "correctIndex": 3,
+      "explicacion": "Registrar las deudas y planear los pagos permite cumplir a tiempo y evitar que se acumulen."
+    },
+    {
+      "id": "9_w5_mc_12",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "enunciado": "¿Por qué se dice que el atraso prolongado en los pagos hace que una deuda sea más difícil de saldar?",
+      "opciones": [
+        "Porque mientras no se paga, se suman intereses y cargos sobre el saldo pendiente",
+        "Porque el saldo pendiente se reparte entre los vecinos",
+        "Porque la deuda cambia de dueño cada semana",
+        "Porque el atraso reduce poco a poco lo que se debe"
+      ],
+      "correctIndex": 0,
+      "explicacion": "Cuanto más tiempo pasa sin pagar, más intereses y cargos se acumulan, y mayor termina siendo la cantidad por devolver."
+    }
+  ]
+}

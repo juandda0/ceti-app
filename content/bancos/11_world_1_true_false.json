@@ -1,0 +1,83 @@
+{
+  "bancoId": "11_world_1_true_false",
+  "grado": "11",
+  "worldId": "world_1",
+  "tipo": "true_false",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "11_w1_vf_01",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "El ingreso real puede disminuir aunque el ingreso nominal se mantenga igual, si los precios suben.",
+      "respuesta": true,
+      "explicacion": "Si el dinero recibido es el mismo pero los precios aumentan, el poder de compra (ingreso real) cae, aunque el ingreso nominal no cambie."
+    },
+    {
+      "id": "11_w1_vf_02",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "El ingreso neto siempre es mayor que el ingreso bruto, porque incluye las deducciones.",
+      "respuesta": false,
+      "explicacion": "Es al revés: las deducciones se restan del ingreso bruto, por lo que el ingreso neto es igual o menor que el bruto."
+    },
+    {
+      "id": "11_w1_vf_03",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "El arriendo que recibe el dueño de un local por alquilarlo es un ejemplo de renta de capital.",
+      "respuesta": true,
+      "explicacion": "La renta proviene de poseer un activo (el local) y no del trabajo personal, por lo que es una renta de capital."
+    },
+    {
+      "id": "11_w1_vf_04",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "Diversificar las fuentes de ingreso elimina por completo cualquier riesgo financiero.",
+      "respuesta": false,
+      "explicacion": "Diversificar reduce el riesgo al repartirlo entre varias fuentes, pero no lo elimina del todo: ninguna fuente está libre de fallar."
+    },
+    {
+      "id": "11_w1_vf_05",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "El ingreso disponible es la parte del ingreso que queda para gastar o ahorrar después de los descuentos obligatorios.",
+      "respuesta": true,
+      "explicacion": "Tras restar las deducciones obligatorias, lo que queda es el ingreso disponible, sobre el cual la persona decide gastar o ahorrar."
+    },
+    {
+      "id": "11_w1_vf_06",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "Un ingreso basado en habilidades demandadas y actualizadas tiende a ser más sostenible en el tiempo que uno proveniente de un suceso ocasional e irrepetible.",
+      "respuesta": true,
+      "explicacion": "Las habilidades vigentes permiten generar ingreso de forma continua, mientras que un suceso ocasional no se puede repetir ni sostener."
+    },
+    {
+      "id": "11_w1_vf_07",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "El ingreso proveniente del emprendimiento suele ser fijo y estar garantizado desde el primer momento.",
+      "respuesta": false,
+      "explicacion": "El ingreso del emprendimiento es variable e incierto y exige asumir riesgos; no está garantizado, aunque tenga potencial de crecimiento."
+    },
+    {
+      "id": "11_w1_vf_08",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "Desarrollar más educación y habilidades suele ampliar las oportunidades de obtener mayores ingresos.",
+      "respuesta": true,
+      "explicacion": "Mayor formación y habilidades amplían las oportunidades laborales y de emprendimiento, lo que se asocia con un mayor ingreso potencial."
+    },
+    {
+      "id": "11_w1_vf_09",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "enunciado": "Depender de una sola fuente de ingreso hace que las finanzas de una persona sean más frágiles ante la pérdida de esa fuente.",
+      "respuesta": true,
+      "explicacion": "Cuando todo el ingreso proviene de una sola fuente, perderla deja a la persona sin entradas; concentrar el ingreso aumenta la fragilidad."
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "bancoId": "11_world_3",
+  "grado": "11",
+  "worldId": "world_3",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "situaciones": [
+    {
+      "id": "11_w3_ec_01",
+      "enunciado": "Llevas un tiempo apartando una porcion de tus ingresos y ya reuniste una reserva. Tienes un horizonte de varios años por delante. Te planteas que hacer con ese ahorro.",
+      "opcionA": {
+        "texto": "Dejar todo en la cuenta de ahorro de disponibilidad inmediata",
+        "consecuencia": "Conservas maxima liquidez y estabilidad, pero el rendimiento es bajo y, si los precios suben, el poder de compra del dinero quieto se va erosionando."
+      },
+      "opcionB": {
+        "texto": "Mantener una parte liquida y destinar el resto a opciones diversificadas de mas largo plazo",
+        "consecuencia": "Conservas una reserva disponible y, al mismo tiempo, das al resto la oportunidad de generar mas rendimiento, asumiendo a cambio cierta variabilidad."
+      }
+    },
+    {
+      "id": "11_w3_ec_02",
+      "enunciado": "Te ofrecen comprometer una parte de tu ahorro en un certificado a plazo fijo. A cambio de no poder retirarlo hasta su vencimiento, ofrece un rendimiento mayor que el de tu cuenta de ahorro. No sabes si necesitaras ese dinero pronto.",
+      "opcionA": {
+        "texto": "Comprometer el dinero en el certificado a plazo fijo",
+        "consecuencia": "Obtendrias un rendimiento mayor, pero renuncias a disponer del dinero hasta el vencimiento; si surge una necesidad antes, no podrias usarlo con facilidad."
+      },
+      "opcionB": {
+        "texto": "Mantener el dinero en la cuenta de ahorro disponible",
+        "consecuencia": "Conservas la liquidez para cualquier imprevisto, a cambio de un rendimiento menor mientras el dinero permanece disponible."
+      }
+    },
+    {
+      "id": "11_w3_ec_03",
+      "enunciado": "Acabas de empezar a ahorrar y piensas en una meta muy lejana, como tu retiro. Dudas entre empezar ya con aportes pequeños o esperar a tener mas margen mas adelante.",
+      "opcionA": {
+        "texto": "Empezar ahora con aportes constantes, aunque sean pequeños",
+        "consecuencia": "Tus aportes tienen mas tiempo para que el interes compuesto se acumule; el habito constante suele pesar mas que el tamaño inicial de cada aporte."
+      },
+      "opcionB": {
+        "texto": "Esperar a tener mas margen antes de empezar",
+        "consecuencia": "Pospones el esfuerzo, pero reduces el tiempo disponible para que los rendimientos se acumulen, lo que suele restar ventaja a la meta de largo plazo."
+      }
+    }
+  ]
+}

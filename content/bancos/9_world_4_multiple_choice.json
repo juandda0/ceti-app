@@ -1,0 +1,179 @@
+{
+  "bancoId": "9_world_4_multiple_choice",
+  "grado": "9",
+  "worldId": "world_4",
+  "tipo": "multiple_choice",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "9_w4_mc_01",
+      "competencia": "credito",
+      "dificultad": 2,
+      "enunciado": "¿Qué es un crédito?",
+      "opciones": [
+        "Dinero que una entidad te presta y que te comprometes a devolver más adelante.",
+        "Dinero que recibes como regalo y nunca tienes que devolver.",
+        "Una cuenta donde guardas tus ahorros para el futuro.",
+        "Un descuento que te hacen al comprar de contado."
+      ],
+      "correctIndex": 0,
+      "explicacion": "Un crédito es dinero prestado por una entidad bajo el compromiso de devolverlo después según las condiciones acordadas."
+    },
+    {
+      "id": "9_w4_mc_02",
+      "competencia": "credito",
+      "dificultad": 2,
+      "enunciado": "Cuando recibes un préstamo, ¿cuál es tu responsabilidad principal?",
+      "opciones": [
+        "Gastarlo lo más rápido posible.",
+        "Devolver el dinero prestado en los plazos acordados.",
+        "Decidir tú mismo si lo devuelves o no.",
+        "Esperar a que la entidad olvide que te lo prestó."
+      ],
+      "correctIndex": 1,
+      "explicacion": "Quien recibe un préstamo asume el compromiso de devolverlo en los plazos pactados; es una responsabilidad, no una opción."
+    },
+    {
+      "id": "9_w4_mc_03",
+      "competencia": "credito",
+      "dificultad": 2,
+      "enunciado": "La tasa de interés de un crédito representa principalmente:",
+      "opciones": [
+        "El número de cuotas que tendrás que pagar.",
+        "El nombre de la entidad que presta el dinero.",
+        "El costo que pagas por usar el dinero que te prestaron.",
+        "Un premio que la entidad te entrega por pedir prestado."
+      ],
+      "correctIndex": 2,
+      "explicacion": "La tasa de interés es el costo de usar el dinero prestado; por eso devuelves algo más que la cantidad original."
+    },
+    {
+      "id": "9_w4_mc_04",
+      "competencia": "credito",
+      "dificultad": 2,
+      "enunciado": "El cupo de un crédito se refiere a:",
+      "opciones": [
+        "El nombre del producto que vas a comprar.",
+        "El día exacto en que debes pagar.",
+        "El interés que ganas por ahorrar.",
+        "El monto máximo que la entidad te autoriza a usar."
+      ],
+      "correctIndex": 3,
+      "explicacion": "El cupo es el límite máximo que la entidad te permite usar; no estás obligado a utilizarlo todo."
+    },
+    {
+      "id": "9_w4_mc_05",
+      "competencia": "credito",
+      "dificultad": 2,
+      "enunciado": "El plazo de un crédito es:",
+      "opciones": [
+        "El tiempo acordado para terminar de pagar lo prestado.",
+        "El lugar donde se firma el contrato.",
+        "La cantidad de personas que piden el préstamo.",
+        "El interés total que se cobra."
+      ],
+      "correctIndex": 0,
+      "explicacion": "El plazo es el periodo de tiempo en el que te comprometes a devolver el crédito completo."
+    },
+    {
+      "id": "9_w4_mc_06",
+      "competencia": "credito",
+      "dificultad": 2,
+      "enunciado": "Pagar una compra 'a cuotas' significa:",
+      "opciones": [
+        "Pagar todo el valor en un solo momento.",
+        "Dividir el pago total en partes que se entregan a lo largo del tiempo.",
+        "Recibir el producto sin pagar nunca.",
+        "Cambiar el producto por otro más barato."
+      ],
+      "correctIndex": 1,
+      "explicacion": "Pagar a cuotas reparte el valor en varios pagos a lo largo del plazo acordado."
+    },
+    {
+      "id": "9_w4_mc_07",
+      "competencia": "credito",
+      "dificultad": 2,
+      "enunciado": "¿Cuál es una diferencia entre comprar de contado y comprar a crédito?",
+      "opciones": [
+        "A crédito siempre es más barato que de contado.",
+        "De contado nunca recibes el producto; a crédito sí.",
+        "De contado pagas el valor de una vez; a crédito lo pagas después y suele tener un costo adicional por intereses.",
+        "No existe ninguna diferencia entre ambas formas."
+      ],
+      "correctIndex": 2,
+      "explicacion": "De contado pagas el total inmediatamente; a crédito difieres el pago, lo que suele implicar un costo adicional por intereses."
+    },
+    {
+      "id": "9_w4_mc_08",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "Un crédito puede ser una herramienta útil cuando:",
+      "opciones": [
+        "Deseas reemplazar por completo tus ahorros con préstamos.",
+        "Quieres gastar en algo que no necesitas sin pensar en cómo lo pagarás.",
+        "Buscas no devolver nunca el dinero recibido.",
+        "Necesitas algo importante hoy y tienes una forma realista de pagarlo en el plazo acordado."
+      ],
+      "correctIndex": 3,
+      "explicacion": "El crédito es una herramienta cuando cubre una necesidad real y existe un plan claro y realista para pagarlo a tiempo."
+    },
+    {
+      "id": "9_w4_mc_09",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "Tienes dos ofertas de crédito por el mismo monto. Una tiene una tasa de interés más baja que la otra, con condiciones similares. ¿Cuál suele convenir más?",
+      "opciones": [
+        "La de menor tasa de interés, porque su costo total tiende a ser menor.",
+        "La de mayor tasa de interés, porque siempre es mejor.",
+        "Cualquiera, porque la tasa de interés no influye en lo que pagas.",
+        "La que tenga el nombre más conocido, sin mirar las condiciones."
+      ],
+      "correctIndex": 0,
+      "explicacion": "A igualdad de condiciones, una tasa de interés más baja implica un costo total menor por usar el dinero prestado."
+    },
+    {
+      "id": "9_w4_mc_10",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "Dos créditos tienen la misma tasa de interés, pero uno ofrece un plazo más corto y otro un plazo más largo. ¿Qué conviene comparar antes de decidir?",
+      "opciones": [
+        "Solo el color del logo de cada entidad.",
+        "El tamaño de cada cuota y por cuánto tiempo deberás pagar, según lo que puedas asumir.",
+        "Cuál entidad queda más cerca de tu casa.",
+        "Nada, porque el plazo no cambia tu compromiso de pago."
+      ],
+      "correctIndex": 1,
+      "explicacion": "El plazo afecta el tamaño de la cuota y el tiempo de compromiso; conviene elegir lo que puedas pagar de forma sostenible."
+    },
+    {
+      "id": "9_w4_mc_11",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "Antes de aceptar un crédito, ¿qué es lo más sensato revisar?",
+      "opciones": [
+        "Solo la opinión de un amigo, sin leer las condiciones.",
+        "Únicamente si el producto te gusta mucho.",
+        "Las condiciones completas: tasa de interés, plazo, valor de las cuotas y tu capacidad de pago.",
+        "Nada en particular; basta con firmar rápido."
+      ],
+      "correctIndex": 2,
+      "explicacion": "Revisar tasa, plazo, cuotas y tu propia capacidad de pago te permite asumir el crédito de forma responsable."
+    },
+    {
+      "id": "9_w4_mc_12",
+      "competencia": "credito",
+      "dificultad": 3,
+      "enunciado": "¿Por qué suele devolverse más dinero del que se recibió en un crédito?",
+      "opciones": [
+        "Porque devolver más es opcional y casi nadie lo hace.",
+        "Porque la entidad se equivoca en las cuentas.",
+        "Porque el dinero prestado pierde valor al guardarlo.",
+        "Porque a la cantidad prestada se le suma el interés, que es el costo de usar ese dinero."
+      ],
+      "correctIndex": 3,
+      "explicacion": "Al devolver un crédito pagas la cantidad recibida más el interés, que representa el costo de haber usado ese dinero."
+    }
+  ]
+}

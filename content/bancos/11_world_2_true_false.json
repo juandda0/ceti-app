@@ -1,0 +1,83 @@
+{
+  "bancoId": "11_world_2_true_false",
+  "grado": "11",
+  "worldId": "world_2",
+  "tipo": "true_false",
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1,
+  "items": [
+    {
+      "id": "11_w2_vf_01",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "En el presupuesto base cero cada gasto se justifica de nuevo en cada periodo, sin asumir que continua solo por costumbre.",
+      "respuesta": true,
+      "explicacion": "El base cero parte de cero cada periodo y obliga a justificar cada gasto segun la necesidad actual."
+    },
+    {
+      "id": "11_w2_vf_02",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "enunciado": "Con ingresos variables conviene fijar los gastos fijos sobre el mes de mayor ingreso para aprovecharlo al maximo.",
+      "respuesta": false,
+      "explicacion": "Con ingresos variables se presupuesta sobre un nivel prudente; basarse en el mes mas alto deja sin respaldo los meses bajos."
+    },
+    {
+      "id": "11_w2_vf_03",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "Un flujo de caja positivo significa que en el periodo entro mas de lo que salio.",
+      "respuesta": true,
+      "explicacion": "El flujo de caja positivo se da cuando las entradas superan a las salidas, dejando un excedente."
+    },
+    {
+      "id": "11_w2_vf_04",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "enunciado": "El fondo de imprevistos sirve para cubrir gastos inesperados sin tener que abandonar las metas ni endeudarse.",
+      "respuesta": true,
+      "explicacion": "Esa es justamente la funcion del fondo de imprevistos dentro del presupuesto: absorber lo inesperado."
+    },
+    {
+      "id": "11_w2_vf_05",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "enunciado": "Cuando el costo de vida sube de forma generalizada, lo mejor es dejar el presupuesto exactamente igual porque los planes no deben cambiar.",
+      "respuesta": false,
+      "explicacion": "Si los precios suben de forma general, el dinero rinde menos; el presupuesto debe revisarse y reasignarse."
+    },
+    {
+      "id": "11_w2_vf_06",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "enunciado": "El costo de oportunidad de una decision de gasto es el valor de la mejor alternativa a la que se renuncia.",
+      "respuesta": true,
+      "explicacion": "El costo de oportunidad es aquello a lo que se renuncia al elegir una opcion con recursos limitados."
+    },
+    {
+      "id": "11_w2_vf_07",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "Un presupuesto por metas debe destinar todos los recursos a la meta de largo plazo e ignorar las de corto y mediano plazo.",
+      "respuesta": false,
+      "explicacion": "El presupuesto por metas reparte recursos entre los distintos horizontes segun prioridad y plazo, no en una sola meta."
+    },
+    {
+      "id": "11_w2_vf_08",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "enunciado": "Un presupuesto familiar coordina ingresos y gastos de varias personas y reparte responsabilidades comunes.",
+      "respuesta": true,
+      "explicacion": "A diferencia del individual, el presupuesto familiar integra los recursos de varias personas y distribuye obligaciones compartidas."
+    },
+    {
+      "id": "11_w2_vf_09",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "enunciado": "Con ingresos estacionales conviene apartar reservas en temporada alta para sostener los gastos de la temporada baja.",
+      "respuesta": true,
+      "explicacion": "Nivelar el ano guardando el excedente de la temporada alta permite cubrir la temporada baja sin endeudarse."
+    }
+  ]
+}
