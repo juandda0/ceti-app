@@ -1,7 +1,16 @@
+/**
+ * useQuestionBankStore — client state for the static quiz (R7, R9).
+ *
+ * fetchWorldQuestions(grado, worldId, seedKey) assembles exactly 10 items
+ * (4 MC + 3 VF + 3 ordenar) deterministically via QuestionBankRepository and
+ * caches them by worldId. The total per world is always 10.
+ *
+ * Progress (answers / mastery) is persisted via MMKV (no PII, R4).
+ */
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createZustandMmkvStorage } from '@shared/lib/storage/mmkv';
-import type { QuestionBankItem, WorldId } from '@features/learning/data/questionBank.types';
+import type { QuizItem, WorldId, Grado } from '@features/learning/data/quiz.types';
 import { isMastered } from '@features/learning/data/mastery';
 
 interface QuestionAnswer {
@@ -13,20 +22,31 @@ interface QuestionAnswer {
 }
 
 interface QuestionBankState {
-  questionsByWorld: Partial<Record<WorldId, QuestionBankItem[]>>;
-  fetchedWorlds: WorldId[];
+  questionsByWorld: Partial<Record<WorldId, QuizItem[]>>;
+  /**
+   * Cache key per world = `${grado}:${seedKey}`. The assembled 10 items depend on
+   * BOTH the grade (which banco) and the student (which 10 are sampled), so the
+   * guard must key on both — keying on worldId alone served the wrong grade's
+   * content after the real grado resolved, and one student's sample to another.
+   */
+  fetchedKeyByWorld: Partial<Record<WorldId, string>>;
   fetchStatus: Partial<Record<WorldId, 'idle' | 'loading' | 'success' | 'error'>>;
   answers: QuestionAnswer[];
   /**
    * Per-world mastery (0..1) hydrated from the Firestore tenant tree on app load.
-   * Lets unlock/progress survive logout/new-device, where the local `answers`
+   * Lets unlock/progress survive logout and new devices, where the local `answers`
    * cache is empty. Combined with local answers via max() (never summed).
    */
   remoteProgress: Partial<Record<WorldId, number>>;
 }
 
 interface QuestionBankActions {
-  fetchWorldQuestions: (worldId: WorldId) => Promise<void>;
+  /**
+   * Fetches and assembles 10 items for (grado, worldId) deterministically.
+   * seedKey should be the student's uid (or localProfileId in demo/offline mode)
+   * so the same 10 items are returned for the same student each time (R7).
+   */
+  fetchWorldQuestions: (grado: Grado, worldId: WorldId, seedKey?: string) => Promise<void>;
   recordAnswer: (uid: string, questionId: string, worldId: WorldId, isCorrect: boolean) => void;
   getWorldProgress: (uid: string, worldId: WorldId) => { done: number; total: number };
   getAnsweredIds: (uid: string, worldId: WorldId) => Set<string>;
@@ -38,9 +58,12 @@ interface QuestionBankActions {
 
 type QuestionBankStore = QuestionBankState & QuestionBankActions;
 
+/** Total items per world — fixed by R9 (4 MC + 3 VF + 3 ordenar = 10). */
+export const QUESTIONS_PER_WORLD = 10;
+
 const initialState: QuestionBankState = {
   questionsByWorld: {},
-  fetchedWorlds: [],
+  fetchedKeyByWorld: {},
   fetchStatus: {},
   answers: [],
   remoteProgress: {},
@@ -51,19 +74,33 @@ export const useQuestionBankStore = create<QuestionBankStore>()(
     (set, get) => ({
       ...initialState,
 
-      fetchWorldQuestions: async (worldId) => {
-        if (get().fetchedWorlds.includes(worldId)) return;
+      fetchWorldQuestions: async (grado, worldId, seedKey = 'default') => {
+        const key = `${grado}:${seedKey}`;
+        // Skip only if THIS exact (grado, seedKey) was already assembled for the
+        // world. A change of grade or student re-fetches and overwrites.
+        if (get().fetchedKeyByWorld[worldId] === key) return;
 
         set((s) => ({ fetchStatus: { ...s.fetchStatus, [worldId]: 'loading' } }));
 
         try {
           const { questionBankRepository } =
             await import('@features/learning/data/QuestionBankRepository');
-          const questions = await questionBankRepository.fetchByWorldId(worldId);
+          const questions = await questionBankRepository.fetchAssembledQuiz(
+            grado,
+            worldId,
+            seedKey
+          );
+
+          if (questions.length === 0) {
+            // Banco missing or insufficient — surface as error so the screen
+            // shows the offline/unavailable state instead of an empty quiz.
+            set((s) => ({ fetchStatus: { ...s.fetchStatus, [worldId]: 'error' } }));
+            return;
+          }
 
           set((s) => ({
             questionsByWorld: { ...s.questionsByWorld, [worldId]: questions },
-            fetchedWorlds: [...s.fetchedWorlds, worldId],
+            fetchedKeyByWorld: { ...s.fetchedKeyByWorld, [worldId]: key },
             fetchStatus: { ...s.fetchStatus, [worldId]: 'success' },
           }));
         } catch (err) {
@@ -82,12 +119,17 @@ export const useQuestionBankStore = create<QuestionBankStore>()(
       },
 
       getWorldProgress: (uid, worldId) => {
-        const total = (get().questionsByWorld[worldId] ?? []).length;
+        // Use the actual fetched question count. Falls back to QUESTIONS_PER_WORLD
+        // only when a fetch succeeded but returned questions (should always be 10
+        // per R9). If questions haven't been fetched yet, total stays 0 so remote
+        // mastery correctly contributes 0 while offline.
+        const fetched = get().questionsByWorld[worldId];
+        const total = fetched != null ? fetched.length || QUESTIONS_PER_WORLD : 0;
         const localDone = get().answers.filter(
           (a) => a.uid === uid && a.worldId === worldId && a.isCorrect
         ).length;
-        // Remote mastery (0..1) reconstructs the correct-answer count from the
-        // tenant tree. max() keeps progress monotonic without double-counting.
+        // Remote mastery (0..1) reconstructs the correct-answer count.
+        // max() keeps progress monotonic without double-counting.
         const remoteMastery = get().remoteProgress[worldId];
         const remoteDone =
           remoteMastery != null && total > 0 ? Math.round(remoteMastery * total) : 0;
@@ -103,22 +145,24 @@ export const useQuestionBankStore = create<QuestionBankStore>()(
         ),
 
       isWorldComplete: (uid, worldId) => {
-        // Mastery-based (80%), consistent with certificates and badges — a student
-        // who has mastered a world unlocks the next one (does not require 100%).
         const { done, total } = get().getWorldProgress(uid, worldId);
         return isMastered(done, total);
       },
 
       setRemoteProgress: (byWorld) => set({ remoteProgress: byWorld }),
 
-      resetUserProgress: () => set({ answers: [], remoteProgress: {} }),
+      // Reset on user switch (e.g. demo role swap): also drop the content cache so
+      // the next student re-assembles their own (grado, seedKey) set.
+      resetUserProgress: () =>
+        set({ answers: [], remoteProgress: {}, questionsByWorld: {}, fetchedKeyByWorld: {} }),
     }),
     {
       name: 'question-bank-store',
       storage: createJSONStorage(() => createZustandMmkvStorage()),
+      // Persist ONLY answered progress. The assembled-question cache is content
+      // that depends on (grado, seedKey); persisting it risked serving a stale
+      // grade/student's questions across restarts — always re-fetch on load.
       partialize: (state) => ({
-        questionsByWorld: state.questionsByWorld,
-        fetchedWorlds: state.fetchedWorlds,
         answers: state.answers,
       }),
     }

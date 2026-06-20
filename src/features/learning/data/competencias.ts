@@ -8,7 +8,7 @@
  * and fill `conpesCodigo` — but keep `id` stable, since it is persisted on every
  * `WorldProgress.competencia` and used in reports.
  */
-import type { WorldId } from '@features/learning/data/questionBank.types';
+import type { WorldId } from '@features/learning/data/quiz.types';
 
 export interface Competencia {
   /** Stable id stored on WorldProgress.competencia and in reports. Do not rename. */

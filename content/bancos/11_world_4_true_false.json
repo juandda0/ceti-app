@@ -1,0 +1,59 @@
+{
+  "bancoId": "11_world_4_true_false",
+  "grado": "11",
+  "worldId": "world_4",
+  "tipo": "true_false",
+  "items": [
+    {
+      "id": "11_world_4_true_false_1",
+      "enunciado": "Usar un crédito significa disponer hoy de recursos que se deberán devolver en el futuro.",
+      "competencia": "credito",
+      "dificultad": 4,
+      "explicacion": "El crédito adelanta capacidad de gasto a cambio del compromiso de devolver lo recibido más su costo.",
+      "respuesta": true
+    },
+    {
+      "id": "11_world_4_true_false_2",
+      "enunciado": "La tasa de interés es el costo que se paga por usar dinero prestado durante un tiempo.",
+      "competencia": "credito",
+      "dificultad": 4,
+      "explicacion": "El interés expresa el precio del crédito: cuánto cuesta usar recursos ajenos por un periodo.",
+      "respuesta": true
+    },
+    {
+      "id": "11_world_4_true_false_3",
+      "enunciado": "La capacidad de pago se mide solo por las ganas que tiene una persona de comprar algo.",
+      "competencia": "credito",
+      "dificultad": 5,
+      "explicacion": "La capacidad de pago depende de los ingresos disponibles frente a las obligaciones, no del deseo de comprar.",
+      "respuesta": false
+    },
+    {
+      "id": "11_world_4_true_false_4",
+      "enunciado": "A mayor plazo o mayor tasa de interés, el costo total acumulado de un crédito tiende a ser más alto.",
+      "competencia": "credito",
+      "dificultad": 5,
+      "explicacion": "El interés se acumula con el tiempo, así que plazos largos o tasas altas elevan el costo total del crédito.",
+      "respuesta": true
+    },
+    {
+      "id": "11_world_4_true_false_5",
+      "enunciado": "Pedir nuevos créditos de forma habitual para pagar las cuotas de créditos anteriores es una señal de uso responsable.",
+      "competencia": "credito",
+      "dificultad": 5,
+      "explicacion": "Endeudarse para pagar deudas suele indicar sobreendeudamiento, no un manejo responsable del crédito.",
+      "respuesta": false
+    },
+    {
+      "id": "11_world_4_true_false_6",
+      "enunciado": "Evaluar si la cuota cabe dentro de la capacidad de pago ayuda a evitar el sobreendeudamiento.",
+      "competencia": "credito",
+      "dificultad": 4,
+      "explicacion": "Tomar deuda solo hasta donde la capacidad de pago lo permite reduce el riesgo de no poder cumplir las obligaciones.",
+      "respuesta": true
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

@@ -7,9 +7,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUserStore } from '@features/auth/store/useUserStore';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
-import { useQuestionBankStore } from '@features/learning/store/useQuestionBankStore';
-import type { WorldId } from '@features/learning/data/questionBank.types';
+import {
+  useQuestionBankStore,
+  QUESTIONS_PER_WORLD,
+} from '@features/learning/store/useQuestionBankStore';
+import type { WorldId } from '@features/learning/data/quiz.types';
 import { worldProgressRepository } from '@features/dashboard/data/worldProgressRepository';
+import { useStudentGrado } from '@features/learning/hooks/useStudentGrado';
 import { competenciaForWorld } from '@features/learning/data/competencias';
 import StudentAssignmentsBanner from '@features/dashboard/components/StudentAssignmentsBanner';
 import JoinClassBanner from '@features/dashboard/components/JoinClassBanner';
@@ -21,8 +25,6 @@ import { Typography } from '@shared/constants/typography';
 import { Spacing, BorderRadius } from '@shared/constants/theme';
 import { motion } from '@shared/constants/motion';
 import type { ThemeColors } from '@shared/constants/colors';
-
-const QUESTIONS_PER_WORLD = 15;
 
 const WORLD_DEFS = [
   {
@@ -204,14 +206,24 @@ export default function WorldsScreen() {
   // Subscribe to remoteProgress so the cards re-render once hydration resolves.
   const remoteProgress = useQuestionBankStore((s) => s.remoteProgress);
 
-  // Prefetch all worlds on mount so progress is available immediately
+  // Grado comes from the course doc (R4 — never stored on the student). null
+  // while resolving so we never prefetch the wrong grade's banco.
+  const grado = useStudentGrado();
+
+  // seedKey = Firebase uid (stable per-account); fallback to local id in demo/offline.
+  const seedKey = userId ?? 'demo';
+
+  // Prefetch all worlds once the real grado is known. The store guard keys on
+  // (grado, seedKey), so this correctly re-fetches if the grade resolves later.
   useEffect(() => {
-    void fetchWorldQuestions('world_1');
-    void fetchWorldQuestions('world_2');
-    void fetchWorldQuestions('world_3');
-    void fetchWorldQuestions('world_4');
-    void fetchWorldQuestions('world_5');
-  }, []);
+    if (!grado) return;
+    void fetchWorldQuestions(grado, 'world_1', seedKey);
+    void fetchWorldQuestions(grado, 'world_2', seedKey);
+    void fetchWorldQuestions(grado, 'world_3', seedKey);
+    void fetchWorldQuestions(grado, 'world_4', seedKey);
+    void fetchWorldQuestions(grado, 'world_5', seedKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [grado, seedKey]);
 
   // Rehydrate per-world mastery from the tenant tree so unlock/progress survive
   // logout and new devices (the local answers cache is empty there).

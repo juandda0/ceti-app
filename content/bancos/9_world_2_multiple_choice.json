@@ -1,0 +1,123 @@
+{
+  "bancoId": "9_world_2_multiple_choice",
+  "grado": "9",
+  "worldId": "world_2",
+  "tipo": "multiple_choice",
+  "items": [
+    {
+      "id": "9_world_2_multiple_choice_1",
+      "enunciado": "¿Qué es un presupuesto personal?",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Un presupuesto es un plan que organiza tus ingresos y tus gastos para un periodo de tiempo.",
+      "opciones": [
+        "Una lista de deseos que quieres comprar algún día",
+        "Un plan que organiza tus ingresos y tus gastos en un periodo",
+        "El dinero que tienes guardado en el banco",
+        "Una deuda que debes pagar cada mes"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "9_world_2_multiple_choice_2",
+      "enunciado": "En un presupuesto, ¿qué representan los ingresos?",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Los ingresos son el dinero que entra, por ejemplo lo que recibes o ganas.",
+      "opciones": [
+        "El dinero que sale para cubrir gastos",
+        "El dinero que entra o recibes",
+        "Las deudas pendientes",
+        "El ahorro acumulado del año"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "9_world_2_multiple_choice_3",
+      "enunciado": "¿Qué son los egresos en un presupuesto?",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Los egresos son las salidas de dinero, es decir, los gastos que realizas.",
+      "opciones": [
+        "El dinero que entra cada mes",
+        "Las salidas de dinero o gastos que realizas",
+        "Una meta de ahorro a largo plazo",
+        "El interés que paga el banco"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "9_world_2_multiple_choice_4",
+      "enunciado": "¿Qué significa categorizar tus gastos?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Categorizar es agrupar los gastos por tipo, como transporte o alimentación, para entender en qué se va el dinero.",
+      "opciones": [
+        "Eliminar todos los gastos innecesarios",
+        "Agrupar los gastos por tipo, como transporte o alimentación",
+        "Guardar el dinero sin gastarlo",
+        "Pagar primero las deudas más grandes"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "9_world_2_multiple_choice_5",
+      "enunciado": "Si tus egresos son mayores que tus ingresos, tu presupuesto está...",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Cuando gastas más de lo que recibes, el presupuesto queda en déficit y debes ajustarlo.",
+      "opciones": [
+        "En equilibrio perfecto",
+        "En superávit, te sobra dinero",
+        "En déficit, gastas más de lo que recibes",
+        "Sin actividad ese mes"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "9_world_2_multiple_choice_6",
+      "enunciado": "¿Qué significa la idea de 'vivir dentro de tus medios'?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Vivir dentro de tus medios es gastar igual o menos de lo que recibes, evitando endeudarte sin necesidad.",
+      "opciones": [
+        "Gastar igual o menos de lo que recibes",
+        "Pedir prestado para comprar lo que quieras",
+        "Gastar todo el dinero apenas lo recibes",
+        "Evitar registrar tus gastos"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "9_world_2_multiple_choice_7",
+      "enunciado": "Al priorizar gastos, ¿qué debes cubrir primero?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Priorizar significa atender primero las necesidades básicas antes que los deseos o gustos.",
+      "opciones": [
+        "Los gustos y antojos del momento",
+        "Las necesidades básicas antes que los deseos",
+        "Lo más caro de la lista",
+        "Lo que compran tus amigos"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "9_world_2_multiple_choice_8",
+      "enunciado": "¿Para qué sirve registrar tus gastos con regularidad?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Registrar los gastos te permite saber en qué usas el dinero y tomar mejores decisiones.",
+      "opciones": [
+        "Para gastar más rápido",
+        "Para saber en qué usas el dinero y decidir mejor",
+        "Para impresionar a los demás",
+        "Para olvidar lo que compraste"
+      ],
+      "correctIndex": 1
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

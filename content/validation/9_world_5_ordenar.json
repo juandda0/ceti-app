@@ -1,0 +1,12 @@
+{
+  "bancoId": "9_world_5_ordenar",
+  "rubricas": {
+    "pedagogico": "pass",
+    "coherencia": "pass",
+    "dificultad": "pass",
+    "precision_financiera": "pass"
+  },
+  "global": "pass",
+  "_vc": "ceti-content-generation workflow (validador-contenido)",
+  "_note": "VC flagged a Cyrillic glyph in ordenar_6 enunciado; fixed (volviendo). Re-pass."
+}

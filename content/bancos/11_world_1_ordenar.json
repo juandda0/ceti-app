@@ -1,0 +1,95 @@
+{
+  "bancoId": "11_world_1_ordenar",
+  "grado": "11",
+  "worldId": "world_1",
+  "tipo": "ordenar",
+  "items": [
+    {
+      "id": "11_world_1_ordenar_1",
+      "enunciado": "Ordena los pasos para decidir de forma responsable si gastar el dinero en un deseo.",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Primero se identifica si es necesidad o deseo, luego se revisa el ingreso disponible, después se evalúa el costo de oportunidad y por último se decide.",
+      "elementos": [
+        "Identificar si se trata de una necesidad o de un deseo",
+        "Revisar cuánto ingreso disponible se tiene",
+        "Evaluar a qué otra alternativa se renunciaría",
+        "Tomar la decisión final de gasto"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "11_world_1_ordenar_2",
+      "enunciado": "Ordena estas fuentes de ingreso desde la que exige menos esfuerzo continuo hasta la que exige más esfuerzo continuo de la persona.",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "El ingreso pasivo casi no requiere esfuerzo continuo; sigue una venta ocasional, luego un trabajo por tareas puntuales y, por último, un empleo de tiempo completo.",
+      "elementos": [
+        "Ingreso pasivo que fluye sin trabajo continuo",
+        "Venta ocasional de un artículo propio",
+        "Trabajo por tareas puntuales y esporádicas",
+        "Empleo de tiempo completo"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "11_world_1_ordenar_3",
+      "enunciado": "Ordena las etapas históricas del intercambio según fueron apareciendo, desde la más antigua hasta la más reciente.",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Primero existió el trueque, luego se usaron objetos de valor común como medio, después surgió la moneda y finalmente el dinero digital.",
+      "elementos": [
+        "Trueque directo de bienes por otros bienes",
+        "Uso de objetos de valor común como medio de intercambio",
+        "Aparición de la moneda como dinero estándar",
+        "Dinero digital y pagos electrónicos"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "11_world_1_ordenar_4",
+      "enunciado": "Ordena los pasos para administrar una mesada de manera planificada.",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Se recibe la mesada, se separan las necesidades, luego se asigna una parte al ahorro y por último se destina lo restante a deseos.",
+      "elementos": [
+        "Recibir la mesada",
+        "Separar lo necesario para cubrir necesidades",
+        "Apartar una porción para el ahorro",
+        "Destinar lo restante a deseos"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "11_world_1_ordenar_5",
+      "enunciado": "Ordena el recorrido del dinero desde su origen como ingreso hasta convertirse en bienestar para la persona.",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "El dinero llega como ingreso, se administra mediante decisiones, se usa para intercambiar por bienes o servicios y finalmente aporta bienestar.",
+      "elementos": [
+        "El dinero llega como ingreso",
+        "Se administra tomando decisiones de uso",
+        "Se intercambia por bienes o servicios",
+        "Aporta bienestar a la persona"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "11_world_1_ordenar_6",
+      "enunciado": "Ordena los pasos para evaluar el costo de oportunidad antes de usar el dinero.",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Se listan las alternativas posibles, se identifica la mejor opción no elegida, se compara con la opción preferida y se decide considerando lo que se sacrifica.",
+      "elementos": [
+        "Listar las alternativas posibles de uso del dinero",
+        "Identificar la mejor opción que no se elegiría",
+        "Comparar esa alternativa con la opción preferida",
+        "Decidir considerando lo que se sacrifica"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

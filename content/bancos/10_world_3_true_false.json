@@ -1,0 +1,59 @@
+{
+  "bancoId": "10_world_3_true_false",
+  "grado": "10",
+  "worldId": "world_3",
+  "tipo": "true_false",
+  "items": [
+    {
+      "id": "10_world_3_true_false_1",
+      "enunciado": "Un fondo de emergencia está pensado para cubrir gastos imprevistos, no para financiar caprichos planificados.",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Su función es protegerte ante lo inesperado, como una reparación o una urgencia.",
+      "respuesta": true
+    },
+    {
+      "id": "10_world_3_true_false_2",
+      "enunciado": "Ahorrar solo cuando sobra dinero al final del mes es la forma más confiable de cumplir una meta.",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Es más confiable separar el ahorro al inicio, porque al final casi nunca sobra.",
+      "respuesta": false
+    },
+    {
+      "id": "10_world_3_true_false_3",
+      "enunciado": "Postergar la gratificación implica renunciar a un gusto inmediato para lograr un beneficio mayor más adelante.",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Esa capacidad de esperar es clave para alcanzar metas de ahorro.",
+      "respuesta": true
+    },
+    {
+      "id": "10_world_3_true_false_4",
+      "enunciado": "El ahorro a largo plazo y el ahorro a corto plazo persiguen exactamente el mismo tipo de meta.",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Se diferencian por el horizonte de tiempo y por el tipo de objetivo que persiguen.",
+      "respuesta": false
+    },
+    {
+      "id": "10_world_3_true_false_5",
+      "enunciado": "Convertir el ahorro en un hábito constante hace que resulte más fácil mantenerlo en el tiempo.",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "La repetición disciplinada reduce el esfuerzo y vuelve el ahorro algo natural.",
+      "respuesta": true
+    },
+    {
+      "id": "10_world_3_true_false_6",
+      "enunciado": "Tener una meta de ahorro clara y con plazo definido no influye en la probabilidad de cumplirla.",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Una meta clara y con plazo facilita el seguimiento y aumenta la probabilidad de cumplirla.",
+      "respuesta": false
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

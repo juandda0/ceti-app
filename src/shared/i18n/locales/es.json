@@ -75,10 +75,7 @@
     "studentItem": "Completar Mundo {{n}} antes del {{date}}",
     "error": "No se pudo crear la asignación."
   },
-  "learning": {
-    "certificateTitle": "Certificado",
-    "certificateWebOnly": "Descarga el certificado desde la versión web."
-  },
+  "learning": {},
   "school": {
     "reportLink": "Reporte del colegio",
     "title": "Cumplimiento del colegio",
@@ -207,16 +204,20 @@
     "offline": "Sin conexión",
     "offlineHint": "Verifica tu internet y vuelve a intentarlo.",
     "back": "Volver",
-    "difficultyBasic": "Básico",
-    "difficultyIntermediate": "Intermedio",
-    "difficultyAdvanced": "Avanzado",
     "check": "Comprobar",
     "result": "Ver resultado",
     "next": "Siguiente",
     "worldComplete": "¡Mundo completado!",
     "score": "respuestas correctas · {{pct}}% de precisión",
-    "downloadCertificate": "Descargar certificado",
-    "backToWorlds": "Volver a los mundos"
+    "backToWorlds": "Volver a los mundos",
+    "verdadero": "Verdadero",
+    "falso": "Falso",
+    "tipoMC": "Opción múltiple",
+    "tipoVF": "Verdadero / Falso",
+    "tipoOrdenar": "Ordenar",
+    "ordenarSequence": "Tu orden",
+    "ordenarTapToAdd": "Toca los elementos de abajo para ordenarlos",
+    "ordenarAvailable": "Elementos disponibles"
   },
   "lesson": {
     "choosePath": "Elige tu camino",
@@ -333,11 +334,6 @@
     "stepNameTitle": "¿Cómo te llamas?",
     "stepNameSubtitle": "Escribe tu nombre para personalizar tu experiencia",
     "namePlaceholder": "Tu nombre...",
-    "stepAgeOverline": "Datos",
-    "stepAgeTitle": "¿Cuántos años tienes?",
-    "stepAgeSubtitle": "Debes tener al menos {{minAge}} años para usar la app",
-    "agePlaceholder": "Ej. 18",
-    "ageHint": "Ingresa una edad entre {{minAge}} y {{maxAge}} años",
     "stepAvatarOverline": "Identidad",
     "stepAvatarTitle": "Elige tu avatar",
     "stepAvatarSubtitle": "Este te identificará en la app",

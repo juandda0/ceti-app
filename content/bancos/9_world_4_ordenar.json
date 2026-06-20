@@ -1,0 +1,93 @@
+{
+  "bancoId": "9_world_4_ordenar",
+  "grado": "9",
+  "worldId": "world_4",
+  "tipo": "ordenar",
+  "items": [
+    {
+      "id": "9_world_4_ordenar_1",
+      "enunciado": "Ordena los pasos para usar un crédito de forma responsable, del primero al último.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Primero se evalúa la necesidad y la capacidad de pago, luego se solicita el crédito y por último se pagan las cuotas a tiempo.",
+      "elementos": [
+        "Solicitar el crédito necesario",
+        "Evaluar si se necesita y si se puede pagar",
+        "Pagar las cuotas a tiempo"
+      ],
+      "ordenCanonico": [1, 0, 2]
+    },
+    {
+      "id": "9_world_4_ordenar_2",
+      "enunciado": "Ordena el ciclo de una deuda, desde que se origina hasta que termina.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "El crédito se recibe, genera una deuda con intereses, se paga en cuotas y finalmente queda saldado.",
+      "elementos": [
+        "Recibir el dinero prestado",
+        "Quedar la deuda completamente saldada",
+        "Acumular la deuda con su interés",
+        "Pagar las cuotas acordadas"
+      ],
+      "ordenCanonico": [0, 2, 3, 1]
+    },
+    {
+      "id": "9_world_4_ordenar_3",
+      "enunciado": "Ordena estas decisiones según el nivel de riesgo de endeudamiento, de menor a mayor.",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "Pedir poco y poder pagarlo es lo más seguro; pedir más de lo que se puede pagar es lo más riesgoso.",
+      "elementos": [
+        "Pedir prestado dentro de la capacidad de pago",
+        "Pedir más de lo que se puede pagar",
+        "Pedir prestado justo en el límite de lo que se puede pagar"
+      ],
+      "ordenCanonico": [0, 2, 1]
+    },
+    {
+      "id": "9_world_4_ordenar_4",
+      "enunciado": "Ordena los pasos para calcular tu capacidad de pago antes de un crédito.",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "Primero se identifican los ingresos, luego los gastos básicos, después se calcula lo que sobra y eso indica cuánto se puede destinar a la cuota.",
+      "elementos": [
+        "Identificar los ingresos disponibles",
+        "Determinar cuánto se puede destinar a una cuota",
+        "Restar los gastos básicos a los ingresos",
+        "Identificar los gastos básicos necesarios"
+      ],
+      "ordenCanonico": [0, 3, 2, 1]
+    },
+    {
+      "id": "9_world_4_ordenar_5",
+      "enunciado": "Ordena las consecuencias de no pagar un crédito a tiempo, desde la primera hasta la más grave.",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "Al no pagar, primero crece la deuda, luego se acumulan cargos, después se complica el acceso a nuevos créditos y finalmente se llega al sobreendeudamiento.",
+      "elementos": [
+        "Dificultad para acceder a nuevos créditos",
+        "La deuda empieza a crecer",
+        "Llegar al sobreendeudamiento",
+        "Se acumulan cargos adicionales"
+      ],
+      "ordenCanonico": [1, 3, 0, 2]
+    },
+    {
+      "id": "9_world_4_ordenar_6",
+      "enunciado": "Ordena estos elementos de un crédito según el momento en que aparecen.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Primero está el monto que se pide, luego el interés que lo encarece, después las cuotas para pagarlo y al final la deuda saldada.",
+      "elementos": [
+        "El interés que se suma al monto",
+        "El monto que se pide prestado",
+        "La deuda saldada",
+        "Las cuotas para devolver el dinero"
+      ],
+      "ordenCanonico": [1, 0, 3, 2]
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

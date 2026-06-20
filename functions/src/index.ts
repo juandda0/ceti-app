@@ -12,6 +12,7 @@
  * refresh; this writes a `claimsUpdatedAt` field the client can watch.
  */
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
+import { onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
@@ -532,3 +533,168 @@ export const demoLogin = onCall(async (request) => {
   const token = await auth.createCustomToken(demo.uid, demo.claims);
   return { token, role };
 });
+
+// ---------------------------------------------------------------------------
+// Per-course aggregates (RQ-FN09). The rector is EXCLUDED from nominal student
+// data and reads ONLY these aggregates (matriz §1.3). Nothing in the client or
+// firestore.rules can write them: rules say `write: if false` for agregados/*,
+// so the ONLY trusted writer is this trigger via the Admin SDK (bypasses rules).
+//
+// A Firestore onWrite trigger over every student's per-world progress doc keeps
+// the aggregate fresh automatically (no client call needed). On each progress
+// change we recompute the AFFECTED course's aggregate FROM SCRATCH by reading
+// all of its progress — recompute-from-truth, so it is idempotent and self-heals
+// (a missed/duplicated event still converges to the correct value).
+//
+// Privacy invariant (R4/R5/RQ-FN09): the aggregate stores ZERO nominal data — no
+// names, no emails, no per-student uids. Only counts and per-competency / per-world
+// averages. `estudiantesActivos` is a COUNT of distinct uids, never the uids.
+// ---------------------------------------------------------------------------
+
+/** Single rolled-up aggregate doc id under a course's agregados/ collection. */
+const AGREGADO_RESUMEN_ID = 'resumen';
+
+type CompetenciaAgregado = {
+  /** mastery promedio 0..1 across distinct students with data on this competencia. */
+  masteryPromedio: number;
+  /** # distinct students with at least one progress doc on this competencia. */
+  estudiantes: number;
+  /** # distinct students who completed at least one world of this competencia. */
+  completados: number;
+};
+
+type ResumenAgregado = {
+  colegioId: string;
+  cursoId: string;
+  /** Per-CONPES-competency roll-up (keyed by competencia id). */
+  porCompetencia: Record<string, CompetenciaAgregado>;
+  /** Per-world roll-up (keyed by worldId = progress doc id). */
+  porMundo: Record<string, { masteryPromedio: number; estudiantes: number; completados: number }>;
+  /** # distinct students with any progress in the course. */
+  estudiantesActivos: number;
+  /** Course-wide mastery promedio across all progress docs (0..1). */
+  masteryPromedio: number;
+  /** % of (estudiantesActivos × 5 worlds) progress slots marked completed, 0..1. */
+  porcentajeCompletado: number;
+  actualizadoAt: FieldValue;
+};
+
+const WORLDS_POR_CURSO = 5; // 5 worlds = 5 CONPES competencies (see competencias.ts).
+
+function promedio(values: number[]): number {
+  if (values.length === 0) return 0;
+  return values.reduce((a, b) => a + b, 0) / values.length;
+}
+
+/**
+ * Recompute the aggregate doc for one course from ALL its progress docs. Reads
+ * the tenant subtree via a collection-group query scoped to the course, then
+ * writes `agregados/resumen` with ONLY aggregate metrics (no nominal data).
+ */
+async function recomputeCursoAgregado(colegioId: string, cursoId: string): Promise<void> {
+  const db = getFirestore();
+  // Scope a collection-group read to this one course (denormalized keys on each
+  // progress doc, written under the rules' guard).
+  const snap = await db
+    .collectionGroup('progress')
+    .where('colegioId', '==', colegioId)
+    .where('cursoId', '==', cursoId)
+    .get();
+
+  const porCompetencia: Record<
+    string,
+    { masteries: number[]; uids: Set<string>; done: Set<string> }
+  > = {};
+  const porMundo: Record<string, { masteries: number[]; uids: Set<string>; done: Set<string> }> =
+    {};
+  const allMasteries: number[] = [];
+  const activeUids = new Set<string>();
+  let completedSlots = 0;
+
+  for (const d of snap.docs) {
+    const p = d.data() as {
+      uid?: string;
+      competencia?: string;
+      mastery?: number;
+      completed?: boolean;
+    };
+    const uid = typeof p.uid === 'string' ? p.uid : d.id;
+    const mastery = typeof p.mastery === 'number' ? p.mastery : 0;
+    const completed = p.completed === true;
+    const worldId = d.id;
+    const comp = typeof p.competencia === 'string' ? p.competencia : 'desconocida';
+
+    activeUids.add(uid);
+    allMasteries.push(mastery);
+    if (completed) completedSlots += 1;
+
+    const c = (porCompetencia[comp] ??= { masteries: [], uids: new Set(), done: new Set() });
+    c.masteries.push(mastery);
+    c.uids.add(uid);
+    if (completed) c.done.add(uid);
+
+    const m = (porMundo[worldId] ??= { masteries: [], uids: new Set(), done: new Set() });
+    m.masteries.push(mastery);
+    m.uids.add(uid);
+    if (completed) m.done.add(uid);
+  }
+
+  const agregadoRef = db.doc(
+    `colegios/${colegioId}/cursos/${cursoId}/agregados/${AGREGADO_RESUMEN_ID}`
+  );
+
+  // No progress left (e.g. last student suppressed/reset): delete the stale doc
+  // so the rector never sees a frozen aggregate.
+  if (snap.empty) {
+    await agregadoRef.delete().catch(() => undefined);
+    return;
+  }
+
+  const resumen: ResumenAgregado = {
+    colegioId,
+    cursoId,
+    porCompetencia: Object.fromEntries(
+      Object.entries(porCompetencia).map(([k, v]) => [
+        k,
+        {
+          masteryPromedio: promedio(v.masteries),
+          estudiantes: v.uids.size,
+          completados: v.done.size,
+        },
+      ])
+    ),
+    porMundo: Object.fromEntries(
+      Object.entries(porMundo).map(([k, v]) => [
+        k,
+        {
+          masteryPromedio: promedio(v.masteries),
+          estudiantes: v.uids.size,
+          completados: v.done.size,
+        },
+      ])
+    ),
+    estudiantesActivos: activeUids.size,
+    masteryPromedio: promedio(allMasteries),
+    porcentajeCompletado:
+      activeUids.size === 0 ? 0 : completedSlots / (activeUids.size * WORLDS_POR_CURSO),
+    actualizadoAt: FieldValue.serverTimestamp(),
+  };
+
+  // Full overwrite (not merge): recompute-from-truth replaces the prior snapshot.
+  await agregadoRef.set(resumen);
+}
+
+/**
+ * Trigger: any change to a student's per-world progress recomputes the affected
+ * course's aggregate. Writes via Admin SDK (bypasses rules). Demo colegio is
+ * excluded by design — the demo student is reset on each demoLogin and must not
+ * churn or pollute real aggregates (RQ-DM05/RQ-DM06).
+ */
+export const onProgressWriteAggregate = onDocumentWritten(
+  'colegios/{cid}/cursos/{cursoId}/estudiantes/{uid}/progress/{worldId}',
+  async (event) => {
+    const { cid, cursoId } = event.params;
+    if (cid === DEMO_COLEGIO) return;
+    await recomputeCursoAgregado(cid, cursoId);
+  }
+);

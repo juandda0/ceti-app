@@ -18,7 +18,7 @@ import type {
   WeaknessReport,
   AiUserProfile,
 } from './aiService.types';
-import type { WorldId } from '@features/learning/data/questionBank.types';
+import type { WorldId } from '@features/learning/data/quiz.types';
 
 // ─── adaptQuestion ────────────────────────────────────────────────────────────
 

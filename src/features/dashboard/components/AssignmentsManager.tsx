@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } fr
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
-import type { WorldId } from '@features/learning/data/questionBank.types';
+import type { WorldId } from '@features/learning/data/quiz.types';
 import {
   asignacionRepository,
   type AsignacionWithId,

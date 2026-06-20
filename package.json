@@ -24,11 +24,13 @@
     "lint:invariants:update": "node scripts/invariantLint.mjs --update-baseline",
     "content:schemas": "node scripts/contentSchemas.mjs",
     "content:gate": "node scripts/bankGate.mjs",
+    "content:coverage": "node scripts/contentCoverageGate.mjs",
     "validar-bancos": "node scripts/contentSchemas.mjs && node scripts/bankGate.mjs",
+    "seed:bancos": "ts-node --project tsconfig.scripts.json scripts/seedBancos.ts",
     "eval:validador": "node scripts/evalValidador.mjs",
     "rq:check": "node scripts/rqCitationCheck.mjs",
     "pre-pivot:check": "node scripts/prePivotTagGuard.mjs",
-    "gates": "node scripts/invariantLint.mjs && npm run i18n:check && npm run validar-bancos && npm run eval:validador"
+    "gates": "node scripts/invariantLint.mjs && npm run i18n:check && npm run validar-bancos && npm run content:coverage && npm run eval:validador"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json,md,css,yml,yaml}": [

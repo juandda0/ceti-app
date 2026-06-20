@@ -1,8 +1,20 @@
-import type {
-  QuestionBankItem,
-  WorldId,
-  QuestionDifficulty,
-} from '@features/learning/data/questionBank.types';
+import type { WorldId } from '@features/learning/data/quiz.types';
+
+/**
+ * Legacy difficulty enum (authoring-time only). R7: not used at runtime.
+ * @deprecated aiService is legacy/stub; these types remain only to avoid
+ * breaking compilation while the pivot baseline decrements.
+ */
+type QuestionDifficulty = 'basic' | 'intermediate' | 'advanced';
+
+/**
+ * Legacy question shape stub (authoring-time only, R5/R7).
+ * @deprecated This service is a no-op stub; no real QuestionBankItem exists.
+ */
+interface LegacyQuestionStub {
+  id: string;
+  content: { question: string; options: string[]; correctAnswer: string; explanation: string };
+}
 
 // ─── User AI Profile (Firestore: /users/{uid}/aiProfile/state) ───────────────
 
@@ -32,14 +44,13 @@ export interface QuestionAnswer {
 // ─── adaptQuestion ────────────────────────────────────────────────────────────
 
 export interface AdaptQuestionInput {
-  question: QuestionBankItem;
+  question: LegacyQuestionStub;
   profile: AiUserProfile;
 }
 
 export interface AdaptedQuestion {
   questionId: string;
-  /** Adapted content — same shape as QuestionBankItem.content */
-  content: QuestionBankItem['content'];
+  content: LegacyQuestionStub['content'];
   /** true when the AI actually modified the question context */
   wasAdapted: boolean;
 }

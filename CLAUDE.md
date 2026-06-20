@@ -126,10 +126,12 @@ el _check_ del enforcement).
 - **Agentes** (12 en 6 departamentos D1–D6): `.claude/agents/d{N}-{depto}/*.md`.
   Constructores (FE/BE/RF/TQ/GC/DR) producen diff; revisores (RC) y veto
   (AR/CP de D4) bloquean merge. Mapa completo en `docs/harness-design.md`.
-- **Enforcement** (E1–E11): hook `PostToolUse` (E1), gates de contenido (E2/E3),
+- **Enforcement** (E1–E12): hook `PostToolUse` (E1), gates de contenido (E2/E3),
   `invariant-lint` (E4), slash commands (E5), eval del validador (E6),
   rules-matrix-tests (E7), rq-citation (E8), pre-pivot-tag-guard (E9), CI (E10),
-  pre-commit husky (E11). Detalle en `docs/harness-design.md` → Capa 4.
+  pre-commit husky (E11), content-coverage-gate (E12, exige 45 celdas
+  `grado×mundo×tipo` presentes+aprobadas+validadas — cierra el verde-falso de
+  contenido ausente). Detalle en `docs/harness-design.md` → Capa 4.
 
 ## Quick conventions reference
 
@@ -144,19 +146,20 @@ el _check_ del enforcement).
 
 ## Tooling commands
 
-| Command                        | Purpose                                                 |
-| ------------------------------ | ------------------------------------------------------- |
-| `npm start`                    | Metro + Expo dev server                                 |
-| `npm run typecheck`            | `tsc --noEmit` — must pass                              |
-| `npm run lint`                 | ESLint flat config — must pass                          |
-| `npm test`                     | Jest — must pass                                        |
-| `npm run test:rules`           | Firestore rules vs. emulador                            |
-| `npm run i18n:check`           | Toda clave `t()` existe en es.json                      |
-| `npm run lint:invariants`      | E4 invariant-lint (R1–R14)                              |
-| `npm run validar-bancos`       | E2/E3 gate de contenido                                 |
-| `npm run gates`                | Gates rápidos: invariant-lint + i18n + contenido + eval |
-| `npm run format`               | Prettier write                                          |
-| `npm audit --audit-level=high` | Bloqueante en CI                                        |
+| Command                        | Purpose                                                             |
+| ------------------------------ | ------------------------------------------------------------------- |
+| `npm start`                    | Metro + Expo dev server                                             |
+| `npm run typecheck`            | `tsc --noEmit` — must pass                                          |
+| `npm run lint`                 | ESLint flat config — must pass                                      |
+| `npm test`                     | Jest — must pass                                                    |
+| `npm run test:rules`           | Firestore rules vs. emulador                                        |
+| `npm run i18n:check`           | Toda clave `t()` existe en es.json                                  |
+| `npm run lint:invariants`      | E4 invariant-lint (R1–R14)                                          |
+| `npm run validar-bancos`       | E2/E3 gate de contenido                                             |
+| `npm run content:coverage`     | E12 cobertura: 45 celdas grado×mundo×tipo listas                    |
+| `npm run gates`                | Gates rápidos: invariant-lint + i18n + contenido + cobertura + eval |
+| `npm run format`               | Prettier write                                                      |
+| `npm audit --audit-level=high` | Bloqueante en CI                                                    |
 
 ## Update protocol
 

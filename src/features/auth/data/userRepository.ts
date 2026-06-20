@@ -13,7 +13,6 @@ function providerFromAuthUser(u: User): 'google' | 'apple' | 'unknown' {
 export type UserProfileDraft = {
   nickname: string;
   fullName: string;
-  age: number;
   avatarId: string;
   avatarEmoji: string;
 };

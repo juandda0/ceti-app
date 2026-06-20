@@ -1,0 +1,94 @@
+{
+  "bancoId": "10_world_5_ordenar",
+  "grado": "10",
+  "worldId": "world_5",
+  "tipo": "ordenar",
+  "items": [
+    {
+      "id": "10_world_5_ordenar_1",
+      "enunciado": "Ordena los pasos para empezar a salir de tus deudas, del primero al último.",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Primero conoces lo que debes, luego priorizas, después diseñas el plan y finalmente lo ejecutas con disciplina.",
+      "elementos": [
+        "Hacer un plan de pagos realista según tu presupuesto",
+        "Listar todas tus deudas y a quién le debes",
+        "Cumplir el plan y evitar tomar deudas nuevas",
+        "Priorizar cuáles deudas pagar primero"
+      ],
+      "ordenCanonico": [1, 3, 0, 2]
+    },
+    {
+      "id": "10_world_5_ordenar_2",
+      "enunciado": "Ordena estos niveles de riesgo de una deuda, de menor a mayor riesgo.",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "El riesgo crece a medida que la cuota ocupa más de tu ingreso y dependes de nuevas deudas para pagar.",
+      "elementos": [
+        "Cuota cómoda que cabe sin afectar tus gastos esenciales",
+        "Cuota que aprieta el presupuesto y limita el ahorro",
+        "Necesitar pedir prestado para pagar las cuotas existentes"
+      ],
+      "ordenCanonico": [0, 1, 2]
+    },
+    {
+      "id": "10_world_5_ordenar_3",
+      "enunciado": "Ordena lo que deberías hacer antes de aceptar un crédito, del primer al último paso.",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Defines la necesidad, revisas tu capacidad de pago, comparas opciones y solo entonces decides.",
+      "elementos": [
+        "Comparar varias opciones y su costo total",
+        "Confirmar si la cuota cabe en tu presupuesto",
+        "Decidir con calma si vale la pena endeudarte",
+        "Identificar si realmente necesitas el crédito"
+      ],
+      "ordenCanonico": [3, 1, 0, 2]
+    },
+    {
+      "id": "10_world_5_ordenar_4",
+      "enunciado": "Ordena la secuencia de consecuencias de ignorar una deuda impaga, de lo inmediato a lo más grave.",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "El problema escala: primero te atrasas, luego se registra, después se acumula y finalmente pierdes acceso al crédito.",
+      "elementos": [
+        "Tu historial crediticio queda marcado negativamente",
+        "Te atrasas en el pago de una cuota",
+        "Pierdes acceso a futuros créditos por desconfianza",
+        "La deuda se acumula y se vuelve más difícil de pagar"
+      ],
+      "ordenCanonico": [1, 0, 3, 2]
+    },
+    {
+      "id": "10_world_5_ordenar_5",
+      "enunciado": "Ordena estos hábitos según cuándo aplicarlos para prevenir el sobreendeudamiento, de la prevención inicial al control continuo.",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Primero presupuestas, luego ahorras para imprevistos, después te endeudas con criterio y finalmente vigilas tus cuentas.",
+      "elementos": [
+        "Construir un fondo de emergencia",
+        "Llevar un presupuesto de ingresos y gastos",
+        "Revisar periódicamente el estado de tus deudas",
+        "Endeudarte solo por lo necesario y manejable"
+      ],
+      "ordenCanonico": [1, 0, 3, 2]
+    },
+    {
+      "id": "10_world_5_ordenar_6",
+      "enunciado": "Ordena las prioridades de tu presupuesto cuando ya tienes deudas, de mayor a menor prioridad.",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Cubres lo esencial para vivir, luego pagas tus deudas, después ahorras y al final destinas a gastos opcionales.",
+      "elementos": [
+        "Ahorrar una parte para imprevistos",
+        "Cubrir tus necesidades básicas",
+        "Gastos opcionales o de entretenimiento",
+        "Pagar las cuotas de tus deudas"
+      ],
+      "ordenCanonico": [1, 3, 0, 2]
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

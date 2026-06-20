@@ -204,10 +204,78 @@ seguridad en `firestore.rules` **y** Cloud Functions. Ver `docs/reporte-demo.md`
 **test:rules 78/78** ✓ · E4 sin violaciones nuevas (baseline 34) ✓ · functions
 build ✓ · **veto AR `pass`** · **veto CP `pass`**.
 
-**Deploy (RQ-DM07) — BLOQUEADO en credenciales del dueño:** Firebase CLI logueado
-(`ceti-d3769`) y `firebase.json` listo, pero (a) el seed `seedDemo.ts` necesita ADC
-/`serviceAccount.json` (no presentes; `firebase login` ≠ ADC) → sin seed no hay
-datos vivos; (b) el deploy es todo-o-nada (rules+functions+hosting+seed juntos) para
-no romper el sitio en vivo. Pasos copy-paste y detalle del bloqueo en
-`reporte-demo.md` §6. Es el único ítem de RQ-DM pendiente y requiere al dueño
-(`gcloud auth application-default login` y luego correr §6).
+**Deploy (RQ-DM07) — HECHO y verificado (2026-06-19):** Modo Demo en vivo en
+**https://ceti-d3769.web.app**. Desplegado todo-o-nada contra `ceti-d3769`:
+rules ✓ · 9 functions nuevas (`demoLogin`, `joinByCode`, `assignRole`, `atestar`,
+`createCurso`, `registerColegio`, `listColegios`, `suppressStudentData`,
+`generateClassCode`) ✓ · seed (`demo-colegio`: 60 estudiantes sintéticos +1 demo a
+cero, 3 cursos DEMO9A/10A/11A, 197 progresos, 21 post-tests, agregados) ✓ ·
+hosting (HTTP 200) ✓ · smoke test `demoLogin(rector)` → custom token ✓.
+
+Tres pasos de setup que hicieron falta (registrados para reproducir el deploy):
+
+1. **ADC del dueño** — `gcloud auth application-default login` con quota project
+   `ceti-d3769`; firebase-tools usa la cuenta `juandiegodiazave@gmail.com` (la que
+   ve `ceti-d3769`), no la default.
+2. **`FUNCTIONS_DISCOVERY_TIMEOUT=120`** — el discovery de functions excedía los
+   10 s por defecto en Windows/cold-start → timeout. Subirlo destraba el deploy.
+3. **3 functions legacy borradas** (`bootstrapColegio`, `setAuthorizationStatus`,
+   `setMemberClaims`) — restos del modelo pre-pivot, ya no en el código.
+4. **IAM `roles/iam.serviceAccountTokenCreator`** a la SA de runtime
+   (`932622471052-compute@developer.gserviceaccount.com`) sobre sí misma —
+   requisito de `auth.createCustomToken()`; sin él `demoLogin` daba 500
+   (`iam.serviceAccounts.signBlob denied`).
+
+Pendiente del dueño: verificación final en navegador entrando con los 5 accesos.
+
+### Auditoría completa + Bloque 2 (Contenido) + maduración ✅ (2026-06-19)
+
+Revisión integral del proyecto (coherencia, flujo lógico, "hace lo que debe"). La
+auditoría destapó que **los gates verdes ocultaban un proyecto a medio pivote**: la
+fundación (Bloque 1) era sólida, pero la capa estudiante seguía siendo legacy
+pre-pivot y **la Fase 5 estaba sobre-reportada — el contenido educativo NO existía**
+(los `content/approved/*.json` eran manifiestos vacíos; `content/bancos/` vacío; las
+carpetas microteoría/eligecamino/impacttest/revision-docente nunca existieron). Se
+encontraron y **resolvieron 7 bloqueantes**:
+
+1. **Contenido↔runtime desconectados** → coleccion Firestore `bancos`
+   (`grado×mundo×tipo`, read-only R8), `scripts/seedBancos.ts` (Admin SDK lee
+   `content/approved`→`content/bancos`), runtime lee por grado.
+2. **Quiz no cumplía R9/R7** → `QuestionBankRepository.fetchAssembledQuiz` ensambla
+   **4 MC + 3 VF + 3 ordenar = 10 determinista** por `(grado, seedKey)`; se eliminó
+   `adaptiveQuiz` (R7) y los tipos `fill_blank`/`calculation`; tipos nuevos en
+   español (`quiz.types.ts`); UI nueva de `ordenar`.
+3. **Certificados (R11)** → eliminado `certificate.ts` + UI de certificado.
+4. **PII de menor: `age`/edad (R4)** → eliminada la captura/persistencia (onboarding,
+   store, userRepository, userRemoteSync, index). PII mínima = email+nombre. El grado
+   viene del **curso** (`useStudentGrado` → `cursos/{cursoId}.grado`), nunca del menor.
+5. **Reportería del rector rota** → trigger `onProgressWriteAggregate` escribe
+   `agregados/resumen` (solo conteos/promedios, cero PII); el rector lee agregados
+   (excluido de dato nominal).
+6. **Scope admin UI↔Function** → `createCurso`/`assignRole` son admin-ONLY (§1.3,
+   ya correctas en Functions); se alineó la UI de staff: admin con navegación,
+   coordinador opera (no estructura), rector solo-lectura.
+7. **Gate de contenido en verde-falso sobre dir vacío** → nuevo **E12
+   `content-coverage-gate`**: exige las 45 celdas presentes+aprobadas+validadas.
+
+**Contenido real producido (Bloque 2):** workflow de 15 celdas (`generador-contenido`
+
+- `validador-contenido`) → **45 bancos, 300 ítems de quiz** (8 MC + 6 VF + 6 ordenar
+  por celda), conceptuales (sin cifras caducables, R14), dificultad calibrada por celda
+  (S6), VC 4 rúbricas. Gate E2/E3 **45/45 aprobados**, E12 **45/45**. Nace
+  `pendiente_validacion_docente:true` (revisión docente posterior, R8/CN02).
+
+**Veto trío (gate de merge del arnés):** AR `pass` · CP `pass` · RC `pass` (RC
+detectó y se corrigió BLOQUEANTE-1: el guard de fetch se indexaba solo por `worldId`
+→ servía el grado equivocado; ahora keyea por `grado:seedKey`, no se persiste el
+caché de contenido, y hay tests que lo cubren).
+
+**Gates (todos verdes):** typecheck ✓ · lint 0 ✓ · i18n ✓ · jest **126/126** ✓ ·
+**test:rules 79/79** ✓ · invariant-lint sin violaciones nuevas (baseline 80→**32**) ·
+gates+cobertura E12 ✓.
+
+**Pendiente (no bloqueante):** `EligeCamino`/micro-teoría no están cableados al flujo
+vivo (contenido de quiz priorizado); índice compuesto collection-group `(colegioId,
+cursoId)` para el trigger agregador en producción; limpieza de `aiProfile` (regla
+write:false + `services/ai` legacy, deuda registrada); deploy a producción
+(requiere ADC del dueño — ver pasos abajo).

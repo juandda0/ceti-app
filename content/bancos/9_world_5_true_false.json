@@ -1,0 +1,59 @@
+{
+  "bancoId": "9_world_5_true_false",
+  "grado": "9",
+  "worldId": "world_5",
+  "tipo": "true_false",
+  "items": [
+    {
+      "id": "9_world_5_true_false_1",
+      "enunciado": "Una deuda manejable es aquella cuyas cuotas se pueden pagar sin descuidar las necesidades básicas.",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Si las cuotas caben en el presupuesto sin sacrificar lo esencial, la deuda es manejable.",
+      "respuesta": true
+    },
+    {
+      "id": "9_world_5_true_false_2",
+      "enunciado": "El sobreendeudamiento ocurre cuando las deudas son tan grandes que los ingresos no alcanzan para pagarlas.",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Sobreendeudarse es deber más de lo que se puede pagar con los ingresos disponibles.",
+      "respuesta": true
+    },
+    {
+      "id": "9_world_5_true_false_3",
+      "enunciado": "Si dejas de pagar una deuda, esta desaparece sola y no trae consecuencias.",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "No pagar genera mal historial crediticio y dificulta acceder a crédito en el futuro.",
+      "respuesta": false
+    },
+    {
+      "id": "9_world_5_true_false_4",
+      "enunciado": "Pedir un nuevo préstamo solo para pagar otra deuda suele aumentar el riesgo de sobreendeudarse.",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Endeudarse para pagar deudas crea una bola de nieve que agrava la situación.",
+      "respuesta": true
+    },
+    {
+      "id": "9_world_5_true_false_5",
+      "enunciado": "Toda deuda es siempre mala y nunca debe tomarse bajo ninguna circunstancia.",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Una deuda puede ser útil si es manejable y sirve para algo que aporta valor; no toda deuda es mala.",
+      "respuesta": false
+    },
+    {
+      "id": "9_world_5_true_false_6",
+      "enunciado": "Hacer una lista de todo lo que se debe ayuda a planear cómo salir de las deudas.",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Conocer cuánto y a quién se debe es el punto de partida para un plan de pago realista.",
+      "respuesta": true
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

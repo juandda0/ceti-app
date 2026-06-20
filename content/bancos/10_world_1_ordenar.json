@@ -1,0 +1,89 @@
+{
+  "bancoId": "10_world_1_ordenar",
+  "grado": "10",
+  "worldId": "world_1",
+  "tipo": "ordenar",
+  "items": [
+    {
+      "id": "10_world_1_ordenar_1",
+      "enunciado": "Ordena los pasos por los que el dinero llega a las manos de una persona que trabaja.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "El ingreso laboral sigue una secuencia: se ofrece el trabajo, se realiza la labor y luego se recibe la remuneración.",
+      "elementos": [
+        "La persona realiza la labor acordada",
+        "La persona ofrece su trabajo o tiempo",
+        "La persona recibe una remuneración por su trabajo"
+      ],
+      "ordenCanonico": [1, 0, 2]
+    },
+    {
+      "id": "10_world_1_ordenar_2",
+      "enunciado": "Ordena los pasos para decidir, con responsabilidad, si comprar algo con tu ingreso.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Primero se identifica el deseo, luego se evalúa si es necesidad o deseo, y finalmente se decide el uso del ingreso.",
+      "elementos": [
+        "Decidir si usar el ingreso en esa compra",
+        "Identificar lo que quieres comprar",
+        "Evaluar si es una necesidad o un deseo"
+      ],
+      "ordenCanonico": [1, 2, 0]
+    },
+    {
+      "id": "10_world_1_ordenar_3",
+      "enunciado": "Ordena los pasos de un pequeño emprendimiento para obtener ingreso.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Para generar ingreso por emprendimiento se elabora el producto, se ofrece a otras personas y se recibe el pago.",
+      "elementos": [
+        "Ofrecer el producto a posibles compradores",
+        "Elaborar el producto que se va a vender",
+        "Recibir el pago por la venta"
+      ],
+      "ordenCanonico": [1, 0, 2]
+    },
+    {
+      "id": "10_world_1_ordenar_4",
+      "enunciado": "Ordena estas opciones de la más NECESIDAD a la más DESEO.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Alimentarse es una necesidad básica; la ropa adecuada es necesaria; un videojuego es un deseo que mejora el bienestar.",
+      "elementos": [
+        "Comprar un videojuego nuevo",
+        "Alimentarse para mantenerse con salud",
+        "Tener ropa adecuada para el clima"
+      ],
+      "ordenCanonico": [1, 2, 0]
+    },
+    {
+      "id": "10_world_1_ordenar_5",
+      "enunciado": "Ordena los pasos para administrar la mesada que recibes.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Conviene recibir la mesada, planear en qué usarla y luego gastarla o reservarla según lo planeado.",
+      "elementos": [
+        "Gastar o reservar según lo planeado",
+        "Recibir la mesada",
+        "Planear en qué se va a usar"
+      ],
+      "ordenCanonico": [1, 2, 0]
+    },
+    {
+      "id": "10_world_1_ordenar_6",
+      "enunciado": "Ordena el recorrido del dinero dentro de una familia, desde su origen hasta el gasto.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "El dinero primero se obtiene como ingreso, luego está disponible en el hogar y finalmente se usa para cubrir gastos.",
+      "elementos": [
+        "El dinero queda disponible en el hogar",
+        "Un integrante obtiene un ingreso",
+        "La familia usa el dinero para cubrir gastos"
+      ],
+      "ordenCanonico": [1, 0, 2]
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

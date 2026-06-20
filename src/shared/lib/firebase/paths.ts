@@ -8,9 +8,8 @@ export const FIRESTORE_COLLECTIONS = {
   deposits: 'deposits',
   lessonProgress: 'lessonProgress',
   wallet: 'wallet',
-  aiProfile: 'aiProfile',
-  // Global, human-curated, read-only to clients.
-  questionBank: 'questionBank',
+  // Global, human-curated, read-only to clients (R8). Doc id: `${grado}_${worldId}_${tipo}`.
+  bancos: 'bancos',
   // Tenancy tree (B2B2C). See docs/data-model.md.
   colegios: 'colegios',
   sedes: 'sedes',
@@ -85,12 +84,13 @@ export function userWalletDocRef(db: Firestore, uid: string) {
   );
 }
 
-export function userAiProfileDocRef(db: Firestore, uid: string) {
-  return doc(db, FIRESTORE_COLLECTIONS.users, uid, FIRESTORE_COLLECTIONS.aiProfile, 'state');
-}
-
-export function questionBankByWorldQuery(db: Firestore, worldId: string) {
-  return query(collection(db, FIRESTORE_COLLECTIONS.questionBank), where('worldId', '==', worldId));
+/**
+ * Reference to a single banco document.
+ * Doc id: `${grado}_${worldId}_${tipo}` (e.g. "9_world_1_multiple_choice").
+ * R8: bancos are read-only to clients; writes go through Admin SDK / pipeline.
+ */
+export function bancoDocRef(db: Firestore, grado: string, worldId: string, tipo: string) {
+  return doc(db, FIRESTORE_COLLECTIONS.bancos, `${grado}_${worldId}_${tipo}`);
 }
 
 // ---------------------------------------------------------------------------

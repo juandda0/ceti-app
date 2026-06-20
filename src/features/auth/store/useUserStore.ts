@@ -15,7 +15,6 @@ export interface UserState {
   id: string;
   nickname: string;
   fullName: string;
-  age: number;
   avatarId: string;
   avatarEmoji: string;
   isOnboarded: boolean;
@@ -35,13 +34,7 @@ export interface UserState {
 }
 
 interface UserActions {
-  setProfile: (
-    nickname: string,
-    fullName: string,
-    age: number,
-    avatarId: string,
-    avatarEmoji: string
-  ) => void;
+  setProfile: (nickname: string, fullName: string, avatarId: string, avatarEmoji: string) => void;
   loadProfile: (profile: Partial<UserState>) => void;
   addXP: (amount: number) => void;
   recordStreakOnMissionComplete: () => StreakCelebrationPayload | null;
@@ -66,7 +59,6 @@ const initialState: UserState = {
   id: '',
   nickname: '',
   fullName: '',
-  age: 0,
   avatarId: '',
   avatarEmoji: '',
   isOnboarded: false,
@@ -90,13 +82,12 @@ export const useUserStore = create<UserStore>()(
     (set, get) => ({
       ...initialState,
 
-      setProfile: (nickname, fullName, age, avatarId, avatarEmoji) => {
+      setProfile: (nickname, fullName, avatarId, avatarEmoji) => {
         set((state) => ({
           ...state,
           id: ensureId(state.id),
           nickname,
           fullName,
-          age,
           avatarId,
           avatarEmoji,
           isOnboarded: true,

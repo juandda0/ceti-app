@@ -35,7 +35,6 @@ function applyUserDocPartial(d: Partial<UserState> & Record<string, unknown>): v
   const patch: Record<string, unknown> = {};
   if (typeof d.nickname === 'string') patch.nickname = d.nickname;
   if (typeof d.fullName === 'string') patch.fullName = d.fullName;
-  if (typeof d.age === 'number') patch.age = d.age;
   if (typeof d.avatarId === 'string') patch.avatarId = d.avatarId;
   if (typeof d.avatarEmoji === 'string') patch.avatarEmoji = d.avatarEmoji;
   if (typeof d.level === 'number') patch.level = d.level;

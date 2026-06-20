@@ -1,0 +1,59 @@
+{
+  "bancoId": "10_world_5_true_false",
+  "grado": "10",
+  "worldId": "world_5",
+  "tipo": "true_false",
+  "items": [
+    {
+      "id": "10_world_5_true_false_1",
+      "enunciado": "Una deuda se considera manejable cuando puedes pagar las cuotas sin descuidar tus gastos esenciales.",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Si las cuotas caben en tu presupuesto sin afectar lo básico ni el ahorro, la deuda es manejable.",
+      "respuesta": true
+    },
+    {
+      "id": "10_world_5_true_false_2",
+      "enunciado": "Pedir un préstamo nuevo solo para pagar deudas anteriores es una buena señal de salud financiera.",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Endeudarse para cubrir otras deudas es una señal de sobreendeudamiento, no de buena salud financiera.",
+      "respuesta": false
+    },
+    {
+      "id": "10_world_5_true_false_3",
+      "enunciado": "Dejar de pagar una deuda puede dañar tu historial crediticio y dificultar futuros créditos.",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "El incumplimiento queda registrado y reduce la confianza de los prestamistas en el futuro.",
+      "respuesta": true
+    },
+    {
+      "id": "10_world_5_true_false_4",
+      "enunciado": "El riesgo financiero desaparece por completo cuando firmas un contrato de crédito.",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Firmar no elimina el riesgo; al contrario, asumes el compromiso de pagar aun si tu situación cambia.",
+      "respuesta": false
+    },
+    {
+      "id": "10_world_5_true_false_5",
+      "enunciado": "Hacer un inventario de todas tus deudas y priorizarlas ayuda a organizar un plan para salir de ellas.",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Conocer todas tus obligaciones y ordenarlas por prioridad es un primer paso clave para pagarlas.",
+      "respuesta": true
+    },
+    {
+      "id": "10_world_5_true_false_6",
+      "enunciado": "Endeudarse para un consumo que se agota rápido es tan seguro como hacerlo por algo que conserva su valor.",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Si lo comprado desaparece o pierde valor, quedas pagando una deuda sin respaldo, lo que es más riesgoso.",
+      "respuesta": false
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

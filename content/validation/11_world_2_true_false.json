@@ -1,0 +1,11 @@
+{
+  "bancoId": "11_world_2_true_false",
+  "rubricas": {
+    "pedagogico": "pass",
+    "coherencia": "pass",
+    "dificultad": "pass",
+    "precision_financiera": "pass"
+  },
+  "global": "pass",
+  "_vc": "ceti-content-generation workflow (validador-contenido)"
+}

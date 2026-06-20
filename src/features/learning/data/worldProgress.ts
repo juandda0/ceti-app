@@ -8,7 +8,7 @@
  * report ends up keyed by competency.
  */
 import type { WorldProgress } from '@shared/types/tenancy';
-import type { WorldId } from '@features/learning/data/questionBank.types';
+import type { WorldId } from '@features/learning/data/quiz.types';
 import { competenciaForWorld } from '@features/learning/data/competencias';
 import { computeMastery, isMastered } from '@features/learning/data/mastery';
 

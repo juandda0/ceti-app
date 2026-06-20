@@ -1,0 +1,123 @@
+{
+  "bancoId": "10_world_2_multiple_choice",
+  "grado": "10",
+  "worldId": "world_2",
+  "tipo": "multiple_choice",
+  "items": [
+    {
+      "id": "10_world_2_multiple_choice_1",
+      "enunciado": "¿Qué representa un presupuesto personal?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Un presupuesto es un plan que organiza los ingresos y los gastos esperados durante un periodo.",
+      "opciones": [
+        "Un plan que organiza los ingresos y gastos esperados de un periodo",
+        "Una lista de deudas que ya están vencidas",
+        "Un registro únicamente de las compras de lujo",
+        "Un documento que solo usan las grandes empresas"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "10_world_2_multiple_choice_2",
+      "enunciado": "En un presupuesto, ¿qué se entiende por egresos?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Los egresos son las salidas de dinero, es decir, los gastos y pagos que se realizan.",
+      "opciones": [
+        "El dinero que se recibe por trabajar o por una mesada",
+        "Las salidas de dinero destinadas a gastos y pagos",
+        "El dinero que se guarda en una cuenta de ahorro",
+        "Una meta financiera de largo plazo"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "10_world_2_multiple_choice_3",
+      "enunciado": "Cuando los egresos superan a los ingresos de forma sostenida, lo más probable es que la persona:",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Gastar más de lo que se ingresa de manera sostenida lleva a endeudarse o a agotar los ahorros.",
+      "opciones": [
+        "Aumente su capacidad de ahorro automáticamente",
+        "Termine endeudándose o agotando sus ahorros",
+        "Mejore de inmediato su historial financiero",
+        "Reduzca sin esfuerzo todos sus gastos fijos"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "10_world_2_multiple_choice_4",
+      "enunciado": "¿Cuál es el propósito de categorizar los gastos en un presupuesto?",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Agrupar los gastos por categorías ayuda a entender en qué se va el dinero y a tomar mejores decisiones.",
+      "opciones": [
+        "Hacer que el presupuesto parezca más largo",
+        "Ocultar los gastos que son innecesarios",
+        "Entender en qué se usa el dinero y decidir mejor",
+        "Evitar registrar las compras pequeñas"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "10_world_2_multiple_choice_5",
+      "enunciado": "¿Cuál de las siguientes suele considerarse una necesidad antes que un deseo?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Priorizar implica cubrir primero las necesidades básicas, como la alimentación, antes que los deseos.",
+      "opciones": [
+        "Un videojuego de moda",
+        "La alimentación diaria",
+        "Ropa de una marca exclusiva",
+        "Una salida al cine"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "10_world_2_multiple_choice_6",
+      "enunciado": "\"Vivir dentro de los propios medios\" significa principalmente:",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Vivir dentro de los medios es ajustar el nivel de gasto a los ingresos disponibles, sin gastar de más.",
+      "opciones": [
+        "Gastar más de lo que se gana para disfrutar más",
+        "Ajustar los gastos al dinero que realmente se ingresa",
+        "Dejar de registrar los gastos diarios",
+        "Pedir prestado siempre que se pueda"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "10_world_2_multiple_choice_7",
+      "enunciado": "¿Por qué es útil registrar los gastos a medida que ocurren?",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Registrar los gastos a tiempo permite comparar lo planeado con lo real y corregir desvíos.",
+      "opciones": [
+        "Porque así se gastan más rápido los ingresos",
+        "Porque permite comparar lo planeado con lo real y ajustar",
+        "Porque elimina la necesidad de tener un presupuesto",
+        "Porque garantiza que nunca haya imprevistos"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "10_world_2_multiple_choice_8",
+      "enunciado": "Al priorizar gastos con recursos limitados, la decisión más sensata es:",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Con recursos limitados se atienden primero las necesidades esenciales y luego, si queda margen, los deseos.",
+      "opciones": [
+        "Cubrir primero los deseos para no perder oportunidades",
+        "Repartir el dinero en partes iguales sin importar la urgencia",
+        "Cubrir primero las necesidades esenciales y luego los deseos",
+        "Posponer indefinidamente todo tipo de gasto"
+      ],
+      "correctIndex": 2
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

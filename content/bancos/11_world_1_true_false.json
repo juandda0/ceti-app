@@ -1,0 +1,59 @@
+{
+  "bancoId": "11_world_1_true_false",
+  "grado": "11",
+  "worldId": "world_1",
+  "tipo": "true_false",
+  "items": [
+    {
+      "id": "11_world_1_true_false_1",
+      "enunciado": "Diversificar las fuentes de ingreso reduce la dependencia de una sola entrada de dinero.",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Tener varias fuentes hace que, si una falla, las demás sostengan parte del ingreso, disminuyendo el riesgo.",
+      "respuesta": true
+    },
+    {
+      "id": "11_world_1_true_false_2",
+      "enunciado": "Todo lo que una persona desea comprar es una necesidad básica.",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Falso: los deseos mejoran el bienestar pero pueden postergarse, mientras que las necesidades son indispensables para vivir.",
+      "respuesta": false
+    },
+    {
+      "id": "11_world_1_true_false_3",
+      "enunciado": "El ingreso pasivo puede generarse sin que la persona trabaje de forma continua.",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Verdadero: el ingreso pasivo, a diferencia del activo, no exige intercambiar tiempo de trabajo de manera constante.",
+      "respuesta": true
+    },
+    {
+      "id": "11_world_1_true_false_4",
+      "enunciado": "El poder adquisitivo del dinero se mantiene siempre igual a lo largo del tiempo.",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Falso: con la inflación, una misma cantidad de dinero suele permitir comprar menos cosas con el paso del tiempo.",
+      "respuesta": false
+    },
+    {
+      "id": "11_world_1_true_false_5",
+      "enunciado": "Al elegir gastar el dinero en una opción, se renuncia a la mejor alternativa no elegida, lo que se conoce como costo de oportunidad.",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Verdadero: toda decisión de uso del dinero implica renunciar a otra opción, y ese valor sacrificado es el costo de oportunidad.",
+      "respuesta": true
+    },
+    {
+      "id": "11_world_1_true_false_6",
+      "enunciado": "El trabajo formal se caracteriza por un vínculo laboral con condiciones y protecciones acordadas.",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Verdadero: a diferencia de un ingreso ocasional sin contrato, el trabajo formal implica un acuerdo con derechos y deberes definidos.",
+      "respuesta": true
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

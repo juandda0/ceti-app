@@ -2,7 +2,7 @@
 import { LESSONS } from '@features/learning/data/lessons';
 import { WORLD_COMPETENCIAS } from '@features/learning/data/competencias';
 import { MASTERY_THRESHOLD } from '@features/learning/data/mastery';
-import type { WorldId } from '@features/learning/data/questionBank.types';
+import type { WorldId } from '@features/learning/data/quiz.types';
 
 export interface Badge {
   id: string;

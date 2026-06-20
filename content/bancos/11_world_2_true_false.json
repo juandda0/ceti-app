@@ -1,0 +1,59 @@
+{
+  "bancoId": "11_world_2_true_false",
+  "grado": "11",
+  "worldId": "world_2",
+  "tipo": "true_false",
+  "items": [
+    {
+      "id": "11_world_2_true_false_1",
+      "enunciado": "Un presupuesto equilibrado es aquel en el que los egresos planeados no superan a los ingresos disponibles.",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Verdadero: el equilibrio presupuestal ocurre cuando lo que se planea gastar cabe dentro de lo que se recibe.",
+      "respuesta": true
+    },
+    {
+      "id": "11_world_2_true_false_2",
+      "enunciado": "Hacer un presupuesto significa registrar solo lo que ya se gastó, sin planear nada hacia el futuro.",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Falso: el presupuesto es un plan que anticipa ingresos y egresos futuros, no únicamente un registro del pasado.",
+      "respuesta": false
+    },
+    {
+      "id": "11_world_2_true_false_3",
+      "enunciado": "Categorizar los gastos ayuda a entender en qué se concentra el dinero y dónde se puede ajustar.",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Verdadero: agrupar gastos por categorías hace visible el destino del dinero y facilita los ajustes.",
+      "respuesta": true
+    },
+    {
+      "id": "11_world_2_true_false_4",
+      "enunciado": "Cuando hay que priorizar, los gastos de ocio deben cubrirse antes que las necesidades básicas.",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "explicacion": "Falso: las necesidades básicas y los compromisos ineludibles tienen prioridad sobre los gastos de ocio.",
+      "respuesta": false
+    },
+    {
+      "id": "11_world_2_true_false_5",
+      "enunciado": "Vivir dentro de los medios implica que, de forma sostenida, los egresos no superen a los ingresos.",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "explicacion": "Verdadero: vivir dentro de los medios es no gastar de manera continua más de lo que se recibe.",
+      "respuesta": true
+    },
+    {
+      "id": "11_world_2_true_false_6",
+      "enunciado": "Un presupuesto debe revisarse y ajustarse cuando cambian los ingresos o los egresos reales.",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "explicacion": "Verdadero: el presupuesto es una herramienta dinámica que se actualiza ante cambios en ingresos o gastos.",
+      "respuesta": true
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

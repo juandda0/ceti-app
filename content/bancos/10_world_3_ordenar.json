@@ -1,0 +1,94 @@
+{
+  "bancoId": "10_world_3_ordenar",
+  "grado": "10",
+  "worldId": "world_3",
+  "tipo": "ordenar",
+  "items": [
+    {
+      "id": "10_world_3_ordenar_1",
+      "enunciado": "Ordena los pasos para empezar a ahorrar con una meta, del primero al último.",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Primero defines la meta, luego cuánto y cada cuánto separar, después reservas el dinero y por último revisas tu avance.",
+      "elementos": [
+        "Definir una meta de ahorro clara y con plazo",
+        "Decidir cuánto y cada cuánto vas a separar",
+        "Reservar ese dinero apenas recibes el ingreso",
+        "Revisar periódicamente tu avance hacia la meta"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "10_world_3_ordenar_2",
+      "enunciado": "Ordena estas metas según su horizonte de tiempo, del corto plazo al largo plazo.",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Va de lo más cercano (un gasto en semanas) a lo más lejano (un objetivo de muchos años).",
+      "elementos": [
+        "Reunir para un regalo de cumpleaños de este mes",
+        "Ahorrar para un viaje de fin de año escolar",
+        "Juntar para los estudios superiores en unos años",
+        "Construir un ahorro para la jubilación lejana"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "10_world_3_ordenar_3",
+      "enunciado": "Ordena el ciclo de uso responsable de un fondo de emergencia, de principio a fin.",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Se construye poco a poco, se mantiene intacto, se usa solo ante un imprevisto real y luego se repone.",
+      "elementos": [
+        "Construir el fondo aportando de forma constante",
+        "Mantenerlo intacto mientras no haya imprevistos",
+        "Usarlo solo ante una emergencia real",
+        "Reponer lo gastado una vez pasada la emergencia"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "10_world_3_ordenar_4",
+      "enunciado": "Ordena el proceso de postergar la gratificación frente a un antojo, del inicio al final.",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Reconoces el impulso, lo comparas con tu meta, decides esperar y mantienes tu ahorro intacto.",
+      "elementos": [
+        "Reconocer el impulso de comprar algo de inmediato",
+        "Compararlo con la meta de ahorro que persigues",
+        "Decidir esperar en lugar de gastar ahora",
+        "Mantener el ahorro intacto y seguir hacia la meta"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "10_world_3_ordenar_5",
+      "enunciado": "Ordena estas prioridades de ahorro según conviene atenderlas primero.",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Conviene asegurar primero el colchón ante imprevistos, luego las metas cercanas y al final las metas lejanas.",
+      "elementos": [
+        "Asegurar un fondo de emergencia básico",
+        "Cumplir una meta de ahorro a corto plazo",
+        "Avanzar en una meta de ahorro a largo plazo"
+      ],
+      "ordenCanonico": [0, 1, 2]
+    },
+    {
+      "id": "10_world_3_ordenar_6",
+      "enunciado": "Ordena cómo se forma el hábito de ahorrar, desde el primer paso hasta consolidarlo.",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Empieza con una decisión, se repite con constancia, se vuelve rutina y termina siendo un hábito firme.",
+      "elementos": [
+        "Tomar la decisión de empezar a ahorrar",
+        "Repetir el aporte de forma constante",
+        "Convertir esa repetición en una rutina",
+        "Consolidar el ahorro como un hábito firme"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

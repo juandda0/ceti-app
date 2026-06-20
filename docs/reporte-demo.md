@@ -114,26 +114,36 @@ npx firebase-tools@latest deploy --only hosting --project <PROJECT_ID>
 # 4. Verificar en la URL real: entrar con los 5 accesos y confirmar datos.
 ```
 
-**Estado del deploy (BLOQUEADO — requiere credenciales del dueño):**
+**Estado del deploy (HECHO — 2026-06-19):** Modo Demo en vivo en
+**https://ceti-d3769.web.app**. El deploy todo-o-nada se completó con éxito; el
+smoke test (`demoLogin(rector)` → custom token, hosting HTTP 200) pasó.
 
-El Firebase CLI está logueado (`firebase login`, proyecto `ceti-d3769`) y
-`firebase.json` está configurado (rules + functions + hosting SPA). **Pero el
-deploy correcto no puede completarse de forma autónoma**, por dos razones reales
-(no se ejecutó un deploy parcial para no romper el sitio):
+**Setup real que hizo falta** (más allá de los pasos 1–4 de arriba), documentado
+para reproducir un futuro deploy:
 
-1. **El seed (`seedDemo.ts`) necesita credenciales Admin SDK** (ADC o
-   `serviceAccount.json`), que **no** están presentes (`firebase login` ≠ ADC).
-   Sin el seed no hay "datos vivos" → dashboards vacíos, lo que contradice el
-   principio rector. El dueño debe primero:
+1. **ADC del dueño** — `gcloud auth application-default login` y luego
+   `gcloud auth application-default set-quota-project ceti-d3769`. firebase-tools
+   debe usar la cuenta `juandiegodiazave@gmail.com` (es la que ve `ceti-d3769`):
+   `firebase login:use juandiegodiazave@gmail.com`.
+2. **`FUNCTIONS_DISCOVERY_TIMEOUT=120`** antes del deploy de functions — en
+   Windows/cold-start el discovery excede los 10 s por defecto y aborta con
+   `Cannot determine backend specification. Timeout after 10000`.
+3. **Borrar 3 functions legacy** del modelo pre-pivot que aún vivían en el
+   proyecto y bloqueaban el deploy en modo no-interactivo:
    ```bash
-   gcloud auth application-default login   # (o colocar serviceAccount.json en la raíz)
+   firebase functions:delete bootstrapColegio setAuthorizationStatus setMemberClaims --region us-central1 --force
    ```
-2. **El deploy es todo-o-nada**: desplegar rules+functions nuevos **sin** el nuevo
-   build web rompería el sitio en vivo (el cliente viejo llama Functions retiradas
-   y choca con las reglas nuevas). Por eso se despliega junto: rules + functions +
-   hosting + seed, en el orden de §6 arriba.
+4. **Conceder Token Creator a la SA de runtime** (requisito de
+   `auth.createCustomToken()` que usa `demoLogin`; sin esto da 500
+   `iam.serviceAccounts.signBlob denied`):
+   ```bash
+   gcloud iam service-accounts add-iam-policy-binding \
+     932622471052-compute@developer.gserviceaccount.com \
+     --member="serviceAccount:932622471052-compute@developer.gserviceaccount.com" \
+     --role="roles/iam.serviceAccountTokenCreator" --project=ceti-d3769
+   ```
+   (La propagación IAM tarda ~1 min antes de que `demoLogin` deje de dar 500.)
 
-**Una vez el dueño provea ADC**, los pasos 1–4 de §6 son copy-paste y dejan el
-modo demo activo en la URL real. La verificación en navegador (entrar con los 5
-accesos) es el paso final del dueño. Todo el código está commit+tag (`demo-mode`),
-con gates verdes y vetos AR+CP en `pass`.
+**Pendiente del dueño:** verificación final en navegador entrando con los 5
+accesos en https://ceti-d3769.web.app. Todo el código está commit+tag
+(`demo-mode`), con gates verdes y vetos AR+CP en `pass`.

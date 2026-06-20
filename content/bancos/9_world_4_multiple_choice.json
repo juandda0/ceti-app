@@ -1,0 +1,123 @@
+{
+  "bancoId": "9_world_4_multiple_choice",
+  "grado": "9",
+  "worldId": "world_4",
+  "tipo": "multiple_choice",
+  "items": [
+    {
+      "id": "9_world_4_multiple_choice_1",
+      "enunciado": "¿Qué significa usar crédito?",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "El crédito es recibir dinero ahora con el compromiso de devolverlo después, normalmente con un costo adicional.",
+      "opciones": [
+        "Recibir dinero prestado ahora y comprometerse a devolverlo después",
+        "Recibir dinero que nunca hay que devolver",
+        "Guardar dinero en una alcancía",
+        "Regalar dinero a otra persona"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "9_world_4_multiple_choice_2",
+      "enunciado": "Cuando alguien pide prestado, ¿en qué se convierte ese dinero para quien lo recibe?",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "El dinero prestado es una deuda: una obligación de pago que debe devolverse a quien lo prestó.",
+      "opciones": [
+        "En un regalo",
+        "En un ahorro propio",
+        "En una deuda que debe pagar",
+        "En una ganancia sin compromiso"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "9_world_4_multiple_choice_3",
+      "enunciado": "¿Qué es la tasa de interés de un crédito?",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "La tasa de interés es el costo de pedir dinero prestado: lo que se paga de más por encima del monto recibido.",
+      "opciones": [
+        "Un descuento por pagar tarde",
+        "El costo de pedir dinero prestado",
+        "El nombre del documento del préstamo",
+        "Una multa solo si no se paga"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "9_world_4_multiple_choice_4",
+      "enunciado": "¿Qué describe mejor la capacidad de pago de una persona?",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "La capacidad de pago es cuánto puede destinar alguien a pagar una deuda sin descuidar sus gastos necesarios.",
+      "opciones": [
+        "El total de dinero que desearía tener",
+        "Cuánto puede pagar de una deuda sin afectar sus gastos básicos",
+        "La cantidad máxima que un banco quiere prestarle",
+        "El dinero que gasta en entretenimiento"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "9_world_4_multiple_choice_5",
+      "enunciado": "¿Cuál es un uso responsable del crédito?",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Usar crédito de forma responsable implica pedir solo lo que se puede pagar y cumplir con las cuotas a tiempo.",
+      "opciones": [
+        "Pedir prestado todo lo que ofrezcan",
+        "Pedir solo lo necesario y pagar las cuotas a tiempo",
+        "Pagar la deuda solo cuando sobre dinero",
+        "Pedir un nuevo crédito para no pagar el anterior"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "9_world_4_multiple_choice_6",
+      "enunciado": "¿Por qué normalmente devolver un crédito cuesta más que el monto recibido?",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "Quien presta cobra un interés por el servicio y por el tiempo que cede su dinero, por eso se devuelve más de lo recibido.",
+      "opciones": [
+        "Porque el dinero pierde su valor al guardarlo",
+        "Porque quien presta cobra un interés por el préstamo",
+        "Porque siempre hay que pagar un impuesto fijo",
+        "Porque el banco devuelve parte del dinero después"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "9_world_4_multiple_choice_7",
+      "enunciado": "¿Qué puede pasar si alguien pide un crédito mayor a su capacidad de pago?",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "Endeudarse por encima de la capacidad de pago dificulta cumplir las cuotas y puede llevar a un sobreendeudamiento.",
+      "opciones": [
+        "El crédito se vuelve gratis automáticamente",
+        "Se le perdona la deuda con el tiempo",
+        "Puede tener dificultades para pagar y sobreendeudarse",
+        "La tasa de interés desaparece"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "9_world_4_multiple_choice_8",
+      "enunciado": "Antes de pedir un crédito, ¿qué es más prudente revisar?",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Conviene revisar si se necesita realmente y si se podrá pagar la cuota con los ingresos disponibles.",
+      "opciones": [
+        "Si los amigos también tienen créditos",
+        "Si de verdad se necesita y si se podrá pagar la cuota",
+        "Si el color del producto que se quiere comprar gusta",
+        "Si es el último día de una promoción"
+      ],
+      "correctIndex": 1
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

@@ -29,17 +29,6 @@ const AVATARS = [
   { id: 'avatar_8', emoji: '🐨' },
 ];
 
-const MIN_AGE = 13;
-const MAX_AGE = 100;
-
-function parseAge(text: string): number | null {
-  const t = text.trim();
-  if (t === '' || !/^\d+$/.test(t)) return null;
-  const n = parseInt(t, 10);
-  if (!Number.isFinite(n) || n < MIN_AGE || n > MAX_AGE) return null;
-  return n;
-}
-
 export default function UserSetupScreen() {
   const router = useRouter();
   const { t } = useTranslation();
@@ -48,22 +37,21 @@ export default function UserSetupScreen() {
 
   const [step, setStep] = useState(0);
   const [name, setName] = useState('');
-  const [ageText, setAgeText] = useState('');
   const [avatarId, setAvatarId] = useState('');
   const [error, setError] = useState('');
   const [finishing, setFinishing] = useState(false);
 
+  // Steps: 0 = name, 1 = avatar, 2 = welcome
   const canAdvance = useCallback(() => {
     if (step === 0) return name.trim().length >= 2;
-    if (step === 1) return parseAge(ageText) !== null;
-    if (step === 2) return avatarId !== '';
+    if (step === 1) return avatarId !== '';
     return true;
-  }, [step, name, ageText, avatarId]);
+  }, [step, name, avatarId]);
 
   const handleNext = () => {
     if (!canAdvance()) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    if (step < 3) {
+    if (step < 2) {
       setError('');
       setStep(step + 1);
     } else {
@@ -72,11 +60,10 @@ export default function UserSetupScreen() {
   };
 
   const finishSetup = async () => {
-    const age = parseAge(ageText) ?? 0;
     const emoji = AVATARS.find((a) => a.id === avatarId)?.emoji ?? '🦁';
     const nickname = name.trim();
 
-    setProfile(nickname, nickname, age, avatarId, emoji);
+    setProfile(nickname, nickname, avatarId, emoji);
 
     if (isFirebaseConfigured()) {
       const u = getFirebaseClients()?.auth.currentUser;
@@ -97,7 +84,7 @@ export default function UserSetupScreen() {
             : u.providerData?.some((p) => p.providerId?.includes('apple'))
               ? 'apple'
               : 'unknown',
-          profile: { nickname, fullName: nickname, age, avatarId, avatarEmoji: emoji },
+          profile: { nickname, fullName: nickname, avatarId, avatarEmoji: emoji },
         });
       } catch (e) {
         setError(e instanceof Error ? e.message : t('onboarding.saveError'));
@@ -117,7 +104,7 @@ export default function UserSetupScreen() {
   return (
     <ScreenWrapper style={styles.container}>
       <View style={styles.progressContainer}>
-        {[0, 1, 2, 3].map((i) => (
+        {[0, 1, 2].map((i) => (
           <View
             key={i}
             style={[
@@ -169,45 +156,6 @@ export default function UserSetupScreen() {
 
         {step === 1 && (
           <Animated.View
-            key="age"
-            entering={motion.stepEnter}
-            exiting={motion.stepExit}
-            style={styles.stepContainer}
-          >
-            <PageHeader
-              overline={t('onboarding.stepAgeOverline')}
-              title={t('onboarding.stepAgeTitle')}
-              subtitle={t('onboarding.stepAgeSubtitle', { minAge: MIN_AGE })}
-              style={{ alignItems: 'center' }}
-            />
-            <TextInput
-              style={[
-                styles.input,
-                Typography.headline,
-                {
-                  color: colors.text.primary,
-                  borderColor: colors.materials.border,
-                  backgroundColor: colors.materials.highlight,
-                },
-              ]}
-              placeholder={t('onboarding.agePlaceholder')}
-              placeholderTextColor={colors.text.tertiary}
-              value={ageText}
-              onChangeText={(text) => setAgeText(text.replace(/[^0-9]/g, ''))}
-              keyboardType="number-pad"
-              maxLength={3}
-              autoFocus
-            />
-            {ageText.trim() !== '' && parseAge(ageText) === null && (
-              <Text style={[styles.hint, { color: colors.system.red }]}>
-                {t('onboarding.ageHint', { minAge: MIN_AGE, maxAge: MAX_AGE })}
-              </Text>
-            )}
-          </Animated.View>
-        )}
-
-        {step === 2 && (
-          <Animated.View
             key="avatar"
             entering={motion.stepEnter}
             exiting={motion.stepExit}
@@ -249,7 +197,7 @@ export default function UserSetupScreen() {
           </Animated.View>
         )}
 
-        {step === 3 && (
+        {step === 2 && (
           <Animated.View
             key="welcome"
             entering={motion.stepEnter}
@@ -284,7 +232,7 @@ export default function UserSetupScreen() {
           <Text style={[styles.errorText, { color: colors.system.red }]}>{error}</Text>
         )}
         <CetiButton
-          label={step === 3 ? t('onboarding.start') : t('onboarding.next')}
+          label={step === 2 ? t('onboarding.start') : t('onboarding.next')}
           onPress={handleNext}
           disabled={!canAdvance() || finishing}
           variant="primary"
@@ -311,7 +259,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     borderWidth: 1,
   },
-  hint: { ...Typography.caption1, marginTop: Spacing.sm, textAlign: 'center' },
   avatarGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 16 },
   avatarButton: {
     width: 80,

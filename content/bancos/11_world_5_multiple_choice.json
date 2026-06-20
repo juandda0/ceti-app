@@ -1,0 +1,123 @@
+{
+  "bancoId": "11_world_5_multiple_choice",
+  "grado": "11",
+  "worldId": "world_5",
+  "tipo": "multiple_choice",
+  "items": [
+    {
+      "id": "11_world_5_multiple_choice_1",
+      "enunciado": "¿Qué característica distingue una deuda manejable de una deuda riesgosa?",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "explicacion": "Una deuda es manejable cuando las cuotas caben con holgura dentro del ingreso disponible sin sacrificar gastos esenciales.",
+      "opciones": [
+        "Que las cuotas se paguen sin comprometer los gastos básicos ni el ahorro",
+        "Que la entidad que la otorga sea reconocida",
+        "Que el plazo de pago sea lo más largo posible",
+        "Que el monto prestado sea elevado"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "11_world_5_multiple_choice_2",
+      "enunciado": "El sobreendeudamiento ocurre principalmente cuando una persona:",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "explicacion": "El sobreendeudamiento se da cuando las obligaciones superan la capacidad real de pago del ingreso.",
+      "opciones": [
+        "Tiene una sola deuda con plazo definido",
+        "Asume más obligaciones de las que su ingreso puede cubrir",
+        "Paga sus cuotas antes de la fecha límite",
+        "Ahorra una parte de su ingreso cada mes"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "11_world_5_multiple_choice_3",
+      "enunciado": "Una consecuencia directa de no pagar una deuda a tiempo es:",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "explicacion": "El incumplimiento genera reportes negativos en centrales de riesgo que dificultan acceder a crédito futuro.",
+      "opciones": [
+        "La reducción automática del monto adeudado",
+        "Un aumento del límite de crédito disponible",
+        "Un reporte negativo que dificulta obtener crédito en el futuro",
+        "La cancelación de la obligación sin costo"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "11_world_5_multiple_choice_4",
+      "enunciado": "¿Cuál es una estrategia sensata para salir de varias deudas?",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "explicacion": "Priorizar el pago de la deuda más costosa o renegociar plazos ayuda a reducir la carga de manera ordenada.",
+      "opciones": [
+        "Solicitar un nuevo préstamo grande para gastar más",
+        "Ignorar las deudas hasta que prescriban",
+        "Priorizar el pago de la deuda más costosa y ajustar el presupuesto",
+        "Pagar solo la deuda de menor valor y dejar las demás"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "11_world_5_multiple_choice_5",
+      "enunciado": "El 'riesgo financiero' asociado a endeudarse se refiere a:",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "explicacion": "El riesgo financiero es la posibilidad de no poder cumplir las obligaciones ante imprevistos o caídas del ingreso.",
+      "opciones": [
+        "La certeza de obtener ganancias con el préstamo",
+        "La posibilidad de no poder cumplir los pagos ante un imprevisto",
+        "La garantía de que la cuota nunca cambiará",
+        "La obligación de ahorrar antes de pedir crédito"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "11_world_5_multiple_choice_6",
+      "enunciado": "¿Por qué endeudarse para un activo que pierde valor rápido suele ser más riesgoso?",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "explicacion": "Si el bien se deprecia más rápido de lo que se paga, se sigue debiendo por algo que ya vale poco.",
+      "opciones": [
+        "Porque el bien siempre aumenta de valor con el tiempo",
+        "Porque la deuda desaparece al usar el bien",
+        "Porque se puede seguir debiendo por algo que ya casi no vale",
+        "Porque las entidades no prestan para esos bienes"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "11_world_5_multiple_choice_7",
+      "enunciado": "Antes de asumir una nueva deuda, lo más prudente es evaluar:",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "explicacion": "Comparar la cuota futura con el ingreso y los gastos fijos permite anticipar si la deuda será sostenible.",
+      "opciones": [
+        "Si la cuota es sostenible frente al ingreso y los gastos fijos",
+        "Si los amigos también tienen deudas similares",
+        "Si el producto está de moda en el momento",
+        "Si el plazo permite olvidarse del pago por un tiempo"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "11_world_5_multiple_choice_8",
+      "enunciado": "Renegociar o reestructurar una deuda con la entidad sirve principalmente para:",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "explicacion": "La reestructuración busca ajustar plazos o cuotas a la capacidad real de pago y evitar el incumplimiento.",
+      "opciones": [
+        "Eliminar por completo la obligación sin pagar nada",
+        "Ajustar las condiciones a la capacidad real de pago",
+        "Aumentar intencionalmente el costo total de la deuda",
+        "Evitar para siempre ser reportado a centrales de riesgo"
+      ],
+      "correctIndex": 1
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

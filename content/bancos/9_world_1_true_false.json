@@ -1,0 +1,59 @@
+{
+  "bancoId": "9_world_1_true_false",
+  "grado": "9",
+  "worldId": "world_1",
+  "tipo": "true_false",
+  "items": [
+    {
+      "id": "9_world_1_true_false_1",
+      "enunciado": "Un ingreso es el dinero que una persona recibe.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Por definición, el ingreso es el dinero que entra a una persona u hogar.",
+      "respuesta": true
+    },
+    {
+      "id": "9_world_1_true_false_2",
+      "enunciado": "Una necesidad y un deseo son exactamente lo mismo.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Una necesidad es indispensable para vivir; un deseo es algo que quieres pero no es esencial.",
+      "respuesta": false
+    },
+    {
+      "id": "9_world_1_true_false_3",
+      "enunciado": "La mesada puede considerarse una fuente de ingreso para un estudiante.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "La mesada es dinero que el estudiante recibe de manera periódica, por lo que es una fuente de ingreso.",
+      "respuesta": true
+    },
+    {
+      "id": "9_world_1_true_false_4",
+      "enunciado": "El dinero aparece solo en la billetera sin que nadie trabaje ni lo aporte.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "El dinero proviene del trabajo y otras fuentes de ingreso; no se genera por sí mismo.",
+      "respuesta": false
+    },
+    {
+      "id": "9_world_1_true_false_5",
+      "enunciado": "El dinero tiene valor porque permite intercambiarlo por bienes y servicios.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "El valor del dinero está en su capacidad de intercambiarse por lo que las personas necesitan o desean.",
+      "respuesta": true
+    },
+    {
+      "id": "9_world_1_true_false_6",
+      "enunciado": "Trabajar es una de las formas más comunes de obtener ingresos.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "El trabajo, ya sea un empleo o un servicio prestado, es una fuente habitual de ingresos.",
+      "respuesta": true
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

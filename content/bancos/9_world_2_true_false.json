@@ -1,0 +1,59 @@
+{
+  "bancoId": "9_world_2_true_false",
+  "grado": "9",
+  "worldId": "world_2",
+  "tipo": "true_false",
+  "items": [
+    {
+      "id": "9_world_2_true_false_1",
+      "enunciado": "Un presupuesto sirve para planear cómo usar tu dinero antes de gastarlo.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Planear con anticipación es justamente el propósito de un presupuesto.",
+      "respuesta": true
+    },
+    {
+      "id": "9_world_2_true_false_2",
+      "enunciado": "Los ingresos son el dinero que sale para pagar tus gastos.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Falso: los ingresos son el dinero que entra; lo que sale son los egresos.",
+      "respuesta": false
+    },
+    {
+      "id": "9_world_2_true_false_3",
+      "enunciado": "Categorizar los gastos ayuda a entender en qué se va tu dinero.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Agrupar gastos por tipo muestra con claridad dónde se concentra el dinero.",
+      "respuesta": true
+    },
+    {
+      "id": "9_world_2_true_false_4",
+      "enunciado": "Vivir dentro de tus medios significa gastar más de lo que recibes.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Falso: vivir dentro de tus medios es gastar igual o menos de lo que recibes.",
+      "respuesta": false
+    },
+    {
+      "id": "9_world_2_true_false_5",
+      "enunciado": "Al priorizar, las necesidades básicas se cubren antes que los deseos.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Priorizar correctamente atiende primero lo esencial y luego lo opcional.",
+      "respuesta": true
+    },
+    {
+      "id": "9_world_2_true_false_6",
+      "enunciado": "Cuando los egresos superan a los ingresos, el presupuesto está en déficit.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Gastar más de lo que entra genera un déficit que debe corregirse.",
+      "respuesta": true
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

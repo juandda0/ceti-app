@@ -143,7 +143,17 @@ await env.withSecurityRulesDisabled(async (ctx) => {
   await setDoc(doc(db, 'membership/uStuA1'), { role: 'estudiante', colegioId: 'A', cursoId: 'c1' });
   await setDoc(doc(db, 'colegios/A/sedes/sede1'), { nombre: 'Sede 1' });
   await setDoc(doc(db, 'classCodes/CODE1'), { colegioId: 'A', cursoId: 'c1' });
-  await setDoc(doc(db, 'questionBank/q1'), { worldId: 'world_1', competencia: 'ahorro' });
+  // Shared content bank (R8): doc id is `${grado}_${worldId}_${tipo}`.
+  await setDoc(doc(db, 'bancos/9_world_1_multiple_choice'), {
+    bancoId: '9_world_1_multiple_choice',
+    grado: '9',
+    worldId: 'world_1',
+    tipo: 'multiple_choice',
+    version: 1,
+    generadoPor: 'ia',
+    pendiente_validacion_docente: true,
+    items: [],
+  });
   // Leaderboard (V2): two courses, collaboration on vs off, with active students.
   await setDoc(doc(db, 'colegios/A/cursos/cLbOn'), {
     nombre: 'Lb On',
@@ -446,11 +456,26 @@ await check(
   assertSucceeds(setDoc(doc(stuA1, 'users/uStuA1/wallet/state'), { totalCetis: 10 }))
 );
 
-console.log('Question bank (read-only):');
-await check('signed-in reads questionBank', assertSucceeds(getDoc(doc(stuA1, 'questionBank/q1'))));
+console.log('Content banks (bancos — shared global, read-only to clients):');
 await check(
-  'client cannot write questionBank',
-  assertFails(setDoc(doc(stuA1, 'questionBank/q2'), { worldId: 'world_1' }))
+  'signed-in student reads bancos',
+  assertSucceeds(getDoc(doc(stuA1, 'bancos/9_world_1_multiple_choice')))
+);
+await check(
+  'signed-in staff reads bancos',
+  assertSucceeds(getDoc(doc(profA1, 'bancos/9_world_1_multiple_choice')))
+);
+await check(
+  'client cannot write bancos (Admin SDK only)',
+  assertFails(
+    setDoc(doc(stuA1, 'bancos/9_world_2_true_false'), {
+      bancoId: '9_world_2_true_false',
+      grado: '9',
+      worldId: 'world_2',
+      tipo: 'true_false',
+      items: [],
+    })
+  )
 );
 
 console.log('Class leaderboard (V2 collaboration):');

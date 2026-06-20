@@ -8,28 +8,18 @@
 import { ALL_COMPETENCIAS, competenciaLabel } from '@features/learning/data/competencias';
 import type { CompetencyAverage } from '@features/dashboard/data/courseReport';
 import type { WorldProgress } from '@shared/types/tenancy';
+import type { ResumenAgregado } from '@features/dashboard/data/agregadosRepository';
 
 export interface CursoMeta {
   id: string;
   nombre: string;
   grado: string;
-  /** Sede this course belongs to (V2). Undefined = sin sede (single implicit). */
-  sedeId?: string;
 }
 
 export interface CourseSummary {
   cursoId: string;
   nombre: string;
   grado: string;
-  sedeId: string | null;
-  avgMastery: number;
-  studentsWithData: number;
-}
-
-/** Per-sede roll-up (V2 sede dashboard). `sedeId` null groups courses without a sede. */
-export interface SedeSummary {
-  sedeId: string | null;
-  courseCount: number;
   avgMastery: number;
   studentsWithData: number;
 }
@@ -39,8 +29,6 @@ export interface SchoolReport {
   generatedAt: number;
   competencyAverages: CompetencyAverage[];
   courseSummaries: CourseSummary[];
-  /** Per-sede aggregates (empty when no course has a sede assigned). */
-  sedeSummaries: SedeSummary[];
   weakestCompetencia: CompetencyAverage | null;
   /** School-wide average mastery across all progress records (0..1). */
   overallMastery: number;
@@ -77,31 +65,10 @@ export function buildSchoolReport(input: BuildSchoolReportInput): SchoolReport {
       cursoId: c.id,
       nombre: c.nombre,
       grado: c.grado,
-      sedeId: c.sedeId ?? null,
       avgMastery: average(cursoProgress.map((p) => p.mastery)),
       studentsWithData: new Set(cursoProgress.map((p) => p.uid)).size,
     };
   });
-
-  // Per-sede roll-up (V2). Empty unless at least one course has a sede assigned.
-  // Sedes are dormant (RQ-FN01) so this stays an optional passthrough on the curso.
-  // TODO(RQ-IN02 / Block 6): replace sede grouping with the institutional redesign
-  // (aggregate by grado/curso) once sedes are formally retired.
-  const anySede = input.cursos.some((c) => c.sedeId != null);
-  const sedeSummaries: SedeSummary[] = anySede
-    ? Array.from(new Set(input.cursos.map((c) => c.sedeId ?? null))).map((key) => {
-        const cursoIds = new Set(
-          input.cursos.filter((c) => (c.sedeId ?? null) === key).map((c) => c.id)
-        );
-        const sedeProgress = input.progress.filter((p) => cursoIds.has(p.cursoId));
-        return {
-          sedeId: key,
-          courseCount: cursoIds.size,
-          avgMastery: average(sedeProgress.map((p) => p.mastery)),
-          studentsWithData: new Set(sedeProgress.map((p) => p.uid)).size,
-        };
-      })
-    : [];
 
   const withData = competencyAverages.filter((c) => c.studentsWithData > 0);
   const weakestCompetencia =
@@ -114,9 +81,82 @@ export function buildSchoolReport(input: BuildSchoolReportInput): SchoolReport {
     generatedAt: input.now,
     competencyAverages,
     courseSummaries,
-    sedeSummaries,
     weakestCompetencia,
     overallMastery: average(input.progress.map((p) => p.mastery)),
+  };
+}
+
+/**
+ * Build the school report from PRECOMPUTED per-course aggregates — the rector's
+ * path. The rector is denied nominal collection-group progress by firestore.rules
+ * (matriz §1.3); they read `agregados/resumen` per course instead. The aggregates
+ * carry ZERO nominal data, so this report exposes only counts and averages.
+ *
+ * The per-competency average is weighted by the number of students with data on
+ * that competency in each course, matching the unweighted-per-student semantics of
+ * buildSchoolReport closely enough for a high-level compliance view.
+ */
+export function buildSchoolReportFromAggregates(input: {
+  colegioId: string;
+  now: number;
+  cursos: CursoMeta[];
+  /** Per-course aggregate (null when the course has no progress yet). */
+  resumenes: { cursoId: string; resumen: ResumenAgregado | null }[];
+}): SchoolReport {
+  const byCurso = new Map(input.resumenes.map((r) => [r.cursoId, r.resumen]));
+
+  const courseSummaries: CourseSummary[] = input.cursos.map((c) => {
+    const r = byCurso.get(c.id) ?? null;
+    return {
+      cursoId: c.id,
+      nombre: c.nombre,
+      grado: c.grado,
+      avgMastery: r?.masteryPromedio ?? 0,
+      studentsWithData: r?.estudiantesActivos ?? 0,
+    };
+  });
+
+  const competencyAverages: CompetencyAverage[] = ALL_COMPETENCIAS.map((comp) => {
+    // Weight each course's competency average by its #students-with-data so the
+    // school-wide number reflects per-student mastery, not per-course.
+    let weighted = 0;
+    let students = 0;
+    for (const { resumen } of input.resumenes) {
+      const agg = resumen?.porCompetencia?.[comp.id];
+      if (!agg || agg.estudiantes === 0) continue;
+      weighted += agg.masteryPromedio * agg.estudiantes;
+      students += agg.estudiantes;
+    }
+    return {
+      competenciaId: comp.id,
+      label: comp.label,
+      averageMastery: students === 0 ? 0 : weighted / students,
+      studentsWithData: students,
+    };
+  });
+
+  // School-wide mastery: weight each course's mastery by its active students.
+  let masteryWeighted = 0;
+  let activeTotal = 0;
+  for (const { resumen } of input.resumenes) {
+    if (!resumen || resumen.estudiantesActivos === 0) continue;
+    masteryWeighted += resumen.masteryPromedio * resumen.estudiantesActivos;
+    activeTotal += resumen.estudiantesActivos;
+  }
+
+  const withData = competencyAverages.filter((c) => c.studentsWithData > 0);
+  const weakestCompetencia =
+    withData.length === 0
+      ? null
+      : withData.reduce((min, c) => (c.averageMastery < min.averageMastery ? c : min));
+
+  return {
+    colegioId: input.colegioId,
+    generatedAt: input.now,
+    competencyAverages,
+    courseSummaries,
+    weakestCompetencia,
+    overallMastery: activeTotal === 0 ? 0 : masteryWeighted / activeTotal,
   };
 }
 

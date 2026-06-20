@@ -120,7 +120,6 @@ export default function Index() {
             id: u.uid,
             nickname: typeof p.nickname === 'string' ? p.nickname : '',
             fullName: typeof p.fullName === 'string' ? p.fullName : '',
-            age: typeof p.age === 'number' ? p.age : 0,
             avatarId: typeof p.avatarId === 'string' ? p.avatarId : '',
             avatarEmoji: typeof p.avatarEmoji === 'string' ? p.avatarEmoji : '',
           });

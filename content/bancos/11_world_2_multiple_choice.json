@@ -1,0 +1,123 @@
+{
+  "bancoId": "11_world_2_multiple_choice",
+  "grado": "11",
+  "worldId": "world_2",
+  "tipo": "multiple_choice",
+  "items": [
+    {
+      "id": "11_world_2_multiple_choice_1",
+      "enunciado": "Un presupuesto personal es, ante todo, una herramienta que sirve para:",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "El presupuesto es un plan que anticipa ingresos y egresos para tomar decisiones, no un registro que solo mira el pasado.",
+      "opciones": [
+        "Anticipar y planear cómo se usarán los ingresos frente a los egresos",
+        "Registrar únicamente las compras ya realizadas el mes anterior",
+        "Eliminar por completo la necesidad de tomar decisiones de gasto",
+        "Garantizar que los ingresos aumenten cada periodo"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "11_world_2_multiple_choice_2",
+      "enunciado": "Si en un periodo los egresos superan a los ingresos, se dice que el presupuesto presenta:",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Cuando se gasta más de lo que se recibe, el resultado es un déficit; lo contrario sería un superávit.",
+      "opciones": [
+        "Un equilibrio perfecto entre lo recibido y lo gastado",
+        "Un superávit que puede destinarse al ahorro",
+        "Un déficit que obliga a ajustar gastos o buscar más ingresos",
+        "Una categoría fija imposible de modificar"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "11_world_2_multiple_choice_3",
+      "enunciado": "Categorizar los gastos (transporte, alimentación, ocio, etc.) sirve principalmente para:",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Agrupar los gastos por categorías permite ver en qué se va el dinero e identificar dónde ajustar.",
+      "opciones": [
+        "Hacer el presupuesto más largo sin ningún beneficio práctico",
+        "Identificar en qué se concentra el dinero y dónde es posible ajustar",
+        "Aumentar automáticamente el ingreso disponible",
+        "Evitar tener que registrar los gastos"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "11_world_2_multiple_choice_4",
+      "enunciado": "La expresión \"vivir dentro de los medios\" se refiere a:",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "explicacion": "Vivir dentro de los medios implica que los egresos no superen de forma sostenida a los ingresos, evitando endeudarse para sostener el gasto.",
+      "opciones": [
+        "Gastar todo lo que se recibe sin dejar margen",
+        "Pedir prestado siempre que se desee algo nuevo",
+        "Ajustar el nivel de gasto para que no exceda los ingresos disponibles",
+        "Renunciar a cualquier gasto que no sea estrictamente vital"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "11_world_2_multiple_choice_5",
+      "enunciado": "Al priorizar gastos en un presupuesto ajustado, lo más sensato es cubrir primero:",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "explicacion": "Las necesidades básicas y compromisos ineludibles tienen prioridad sobre los gastos discrecionales o de ocio.",
+      "opciones": [
+        "Los gastos de ocio y entretenimiento del periodo",
+        "Las necesidades básicas y los compromisos ya adquiridos",
+        "Los caprichos que aparecen de último momento",
+        "Lo que recomienden las tendencias de redes sociales"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "11_world_2_multiple_choice_6",
+      "enunciado": "Un gasto fijo se distingue de un gasto variable porque el gasto fijo:",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "explicacion": "Los gastos fijos se mantienen relativamente constantes cada periodo (como una mensualidad), mientras los variables cambian según el consumo.",
+      "opciones": [
+        "Cambia drásticamente cada periodo según el consumo",
+        "Solo aparece una vez en la vida de la persona",
+        "Tiende a repetirse con un valor similar en cada periodo",
+        "Nunca debe incluirse en el presupuesto"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "11_world_2_multiple_choice_7",
+      "enunciado": "Registrar los gastos a medida que ocurren es útil porque:",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "El registro oportuno evita olvidos y permite comparar lo planeado con lo realmente gastado para corregir a tiempo.",
+      "opciones": [
+        "Permite comparar lo planeado con lo realmente gastado y corregir",
+        "Hace que el dinero rinda más sin cambiar de hábitos",
+        "Sustituye la necesidad de tener ingresos",
+        "Solo sirve para presentar reportes a otras personas"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "11_world_2_multiple_choice_8",
+      "enunciado": "Antes de incorporar un nuevo gasto recurrente, una decisión presupuestal responsable consiste en:",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "explicacion": "Verificar que el nuevo compromiso recurrente cabe dentro de los ingresos sin generar déficit es clave antes de asumirlo.",
+      "opciones": [
+        "Asumirlo de inmediato y revisar las consecuencias después",
+        "Comprobar que cabe en los ingresos sin generar déficit sostenido",
+        "Recortar primero las necesidades básicas para que quepa",
+        "Ignorarlo porque los gastos pequeños no afectan el plan"
+      ],
+      "correctIndex": 1
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

@@ -1,0 +1,59 @@
+{
+  "bancoId": "10_world_1_true_false",
+  "grado": "10",
+  "worldId": "world_1",
+  "tipo": "true_false",
+  "items": [
+    {
+      "id": "10_world_1_true_false_1",
+      "enunciado": "El trabajo es una de las principales fuentes de ingreso de las personas.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Muchas personas obtienen su ingreso a cambio de su trabajo, ya sea como empleados o de forma independiente.",
+      "respuesta": true
+    },
+    {
+      "id": "10_world_1_true_false_2",
+      "enunciado": "Todos los deseos son necesidades que se deben cubrir de inmediato.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Los deseos mejoran el bienestar pero no son indispensables; las necesidades sí lo son. Confundirlos lleva a gastar mal el ingreso.",
+      "respuesta": false
+    },
+    {
+      "id": "10_world_1_true_false_3",
+      "enunciado": "El dinero tiene valor porque las personas lo aceptan para intercambiar bienes y servicios.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "El valor del dinero proviene de la confianza y de su aceptación como medio de intercambio.",
+      "respuesta": true
+    },
+    {
+      "id": "10_world_1_true_false_4",
+      "enunciado": "El dinero que gasta una familia aparece solo, sin que nadie lo haya obtenido antes.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Todo el dinero que se gasta proviene primero de un ingreso obtenido por trabajo u otra fuente.",
+      "respuesta": false
+    },
+    {
+      "id": "10_world_1_true_false_5",
+      "enunciado": "Un emprendimiento, como vender un producto propio, puede ser una fuente de ingreso.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Ofrecer un producto o servicio propio a cambio de un pago genera ingreso por emprendimiento.",
+      "respuesta": true
+    },
+    {
+      "id": "10_world_1_true_false_6",
+      "enunciado": "La mesada se debe gastar siempre por completo y nunca conviene reservar una parte.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "La mesada es un ingreso que se puede administrar; reservar una parte permite planear y tomar mejores decisiones.",
+      "respuesta": false
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

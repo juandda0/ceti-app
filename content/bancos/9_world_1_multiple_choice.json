@@ -1,0 +1,118 @@
+{
+  "bancoId": "9_world_1_multiple_choice",
+  "grado": "9",
+  "worldId": "world_1",
+  "tipo": "multiple_choice",
+  "items": [
+    {
+      "id": "9_world_1_multiple_choice_1",
+      "enunciado": "¿Qué es una fuente de ingreso?",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Una fuente de ingreso es cualquier actividad o circunstancia de la que recibes dinero de forma legítima.",
+      "opciones": [
+        "El lugar donde guardas el dinero ahorrado",
+        "Una actividad de la que recibes dinero, como un trabajo",
+        "Una lista de las cosas que quieres comprar",
+        "El dinero que le debes a otra persona"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "9_world_1_multiple_choice_2",
+      "enunciado": "¿Cuál de las siguientes opciones es un ejemplo de necesidad?",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Una necesidad es algo indispensable para vivir, como los alimentos; los demás ejemplos son deseos.",
+      "opciones": [
+        "La consola de videojuegos más reciente",
+        "Ropa de una marca específica de moda",
+        "Los alimentos diarios para nutrirte",
+        "Una entrada para un concierto"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "9_world_1_multiple_choice_3",
+      "enunciado": "La mesada que recibe un estudiante de su familia es un ejemplo de:",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "La mesada es un ingreso recibido de forma periódica, aunque no provenga de un trabajo propio.",
+      "opciones": [
+        "Un gasto fijo del estudiante",
+        "Una fuente de ingreso del estudiante",
+        "Una deuda con la familia",
+        "Un ahorro de la familia"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "9_world_1_multiple_choice_4",
+      "enunciado": "¿Por qué se dice que el dinero tiene valor?",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "El dinero vale porque permite intercambiarlo por bienes y servicios que las personas necesitan o desean.",
+      "opciones": [
+        "Porque sirve para intercambiarlo por bienes y servicios",
+        "Porque el papel con que se hace es costoso",
+        "Porque siempre aumenta sin que nadie haga nada",
+        "Porque es bonito de coleccionar"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "9_world_1_multiple_choice_5",
+      "enunciado": "¿Cuál de estos es un ejemplo de ingreso por trabajo?",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "El ingreso por trabajo se recibe a cambio de un esfuerzo o servicio prestado, como ayudar a un vecino por una paga.",
+      "opciones": [
+        "Encontrar una moneda en la calle",
+        "Recibir un regalo de cumpleaños",
+        "Cobrar por cuidar la mascota de un vecino",
+        "Ganar un premio en una rifa"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "9_world_1_multiple_choice_6",
+      "enunciado": "Antes de comprar algo, distinguir entre necesidad y deseo te ayuda a:",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Reconocer la diferencia permite priorizar lo indispensable y usar mejor el dinero disponible.",
+      "opciones": [
+        "Gastar más rápido sin pensarlo",
+        "Priorizar lo indispensable y decidir mejor",
+        "Conseguir más dinero automáticamente",
+        "Olvidar lo que de verdad necesitas"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "9_world_1_multiple_choice_7",
+      "enunciado": "El dinero que recibe una persona a cambio de su empleo se llama:",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "El salario es el pago que recibe un trabajador por el empleo que desempeña.",
+      "opciones": ["Ahorro", "Salario", "Deuda", "Donación"],
+      "correctIndex": 1
+    },
+    {
+      "id": "9_world_1_multiple_choice_8",
+      "enunciado": "¿De dónde proviene principalmente el dinero que circula en una familia?",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "El dinero familiar suele provenir del trabajo y de otras fuentes de ingreso legítimas, no aparece por sí solo.",
+      "opciones": [
+        "Aparece solo dentro de la billetera con el tiempo",
+        "Del trabajo y otras fuentes de ingreso de sus integrantes",
+        "Únicamente de premios y juegos de azar",
+        "De pedirlo prestado siempre a los vecinos"
+      ],
+      "correctIndex": 1
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

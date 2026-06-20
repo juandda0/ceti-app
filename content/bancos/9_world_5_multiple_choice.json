@@ -1,0 +1,123 @@
+{
+  "bancoId": "9_world_5_multiple_choice",
+  "grado": "9",
+  "worldId": "world_5",
+  "tipo": "multiple_choice",
+  "items": [
+    {
+      "id": "9_world_5_multiple_choice_1",
+      "enunciado": "¿Qué caracteriza a una deuda manejable?",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Una deuda manejable se paga a tiempo sin afectar las necesidades básicas ni el ahorro.",
+      "opciones": [
+        "Las cuotas caben en el presupuesto sin sacrificar lo esencial",
+        "Obliga a dejar de comer bien para poder pagarla",
+        "Se toma sin saber cómo se va a devolver",
+        "Crece cada mes porque no se alcanza a pagar"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "9_world_5_multiple_choice_2",
+      "enunciado": "¿Cuál de estas situaciones describe mejor el sobreendeudamiento?",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "El sobreendeudamiento ocurre cuando las deudas superan la capacidad de pago de la persona.",
+      "opciones": [
+        "Pagar una deuda pequeña antes de la fecha límite",
+        "Deber tanto que los ingresos no alcanzan para cubrir las cuotas",
+        "Ahorrar una parte del ingreso cada mes",
+        "Tener una sola deuda que se paga puntualmente"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "9_world_5_multiple_choice_3",
+      "enunciado": "¿Por qué se considera más riesgosa una deuda para comprar algo que pierde valor rápido?",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Si el bien pierde valor, se sigue debiendo aunque ya no valga lo que costó, lo que aumenta el riesgo.",
+      "opciones": [
+        "Porque siempre tiene cuotas más bajas",
+        "Porque el banco la regala después de un tiempo",
+        "Porque se sigue debiendo aunque el bien ya casi no valga",
+        "Porque no hay que devolver ese dinero"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "9_world_5_multiple_choice_4",
+      "enunciado": "¿Qué consecuencia puede tener no pagar una deuda a tiempo?",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "El historial crediticio se ve afectado, lo que dificulta acceder a créditos en el futuro.",
+      "opciones": [
+        "La deuda desaparece automáticamente",
+        "Se reduce el monto que se debía",
+        "El banco premia con más crédito",
+        "Queda un mal historial que dificulta pedir crédito después"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "9_world_5_multiple_choice_5",
+      "enunciado": "¿Cuál es un primer paso útil para empezar a salir de las deudas?",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Hacer una lista clara de todo lo que se debe permite organizar un plan de pago realista.",
+      "opciones": [
+        "Listar todas las deudas para saber cuánto y a quién se debe",
+        "Pedir un nuevo préstamo para gastar más",
+        "Ignorar las deudas hasta que pasen solas",
+        "Dejar de revisar el presupuesto"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "9_world_5_multiple_choice_6",
+      "enunciado": "¿Qué significa el riesgo financiero de una deuda?",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "El riesgo financiero es la posibilidad de no poder cumplir con el pago si cambian los ingresos o gastos.",
+      "opciones": [
+        "Que la deuda nunca cambia de valor",
+        "Que el préstamo siempre se paga solo",
+        "La posibilidad de no poder pagar si cambia la situación económica",
+        "Que el banco garantiza no cobrar intereses"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "9_world_5_multiple_choice_7",
+      "enunciado": "Antes de tomar una deuda, ¿qué pregunta ayuda a evaluar si es buena idea?",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Preguntarse cómo y con qué se va a pagar ayuda a evitar el sobreendeudamiento.",
+      "opciones": [
+        "¿Cuántos amigos tienen la misma deuda?",
+        "¿Podré pagar las cuotas con mis ingresos sin descuidar lo necesario?",
+        "¿El producto está de moda este mes?",
+        "¿La tienda tiene buena decoración?"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "9_world_5_multiple_choice_8",
+      "enunciado": "¿Cuál es una estrategia sana para no caer en sobreendeudamiento?",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Evitar tomar nuevas deudas para pagar otras previene la bola de nieve de deudas.",
+      "opciones": [
+        "Pedir prestado para pagar otras deudas una y otra vez",
+        "Gastar más de lo que se gana cada mes",
+        "Usar todas las tarjetas hasta su límite",
+        "Evitar pedir nuevas deudas para pagar las que ya se tienen"
+      ],
+      "correctIndex": 3
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

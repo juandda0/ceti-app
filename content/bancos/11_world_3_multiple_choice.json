@@ -1,0 +1,123 @@
+{
+  "bancoId": "11_world_3_multiple_choice",
+  "grado": "11",
+  "worldId": "world_3",
+  "tipo": "multiple_choice",
+  "items": [
+    {
+      "id": "11_world_3_multiple_choice_1",
+      "enunciado": "Una meta de ahorro bien formulada combina varias características. ¿Cuál de las siguientes describe mejor una meta de ahorro sólida?",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "explicacion": "Una meta sólida es específica, medible y tiene un plazo definido; eso permite verificar el avance y mantener la disciplina.",
+      "opciones": [
+        "Un propósito específico, con una cantidad clara y un plazo definido para lograrlo",
+        "Una intención general de gastar menos cuando se pueda",
+        "El deseo de tener más dinero sin un fin concreto",
+        "Guardar lo que sobre al final del mes, si es que sobra algo"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "11_world_3_multiple_choice_2",
+      "enunciado": "El concepto de 'postergar la gratificación' aplicado al ahorro significa principalmente:",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "explicacion": "Postergar la gratificación implica renunciar a un consumo inmediato para obtener un beneficio mayor o más importante en el futuro.",
+      "opciones": [
+        "Gastar de inmediato en lo que se desea para no perder la oportunidad",
+        "Renunciar a un gusto inmediato para alcanzar un beneficio futuro mayor",
+        "Evitar para siempre cualquier tipo de gasto en cosas que gustan",
+        "Pedir prestado hoy y pagar más adelante con el ahorro futuro"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "11_world_3_multiple_choice_3",
+      "enunciado": "¿Cuál es la función principal de un fondo de emergencia dentro de una estrategia financiera personal?",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "explicacion": "El fondo de emergencia está reservado para imprevistos, lo que evita recurrir a deudas costosas cuando ocurre algo inesperado.",
+      "opciones": [
+        "Financiar viajes y compras grandes planeadas con anticipación",
+        "Invertir en proyectos de alto riesgo para crecer rápido",
+        "Cubrir gastos imprevistos sin tener que endeudarse",
+        "Reemplazar por completo la necesidad de presupuestar"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "11_world_3_multiple_choice_4",
+      "enunciado": "Al distinguir entre ahorro a corto plazo y ahorro a largo plazo, ¿qué criterio los diferencia mejor?",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "explicacion": "Lo que distingue ambos tipos es el horizonte de tiempo en que se necesitará el dinero, lo que orienta qué tan disponible debe mantenerse.",
+      "opciones": [
+        "El horizonte de tiempo en el que se planea usar el dinero",
+        "La cantidad exacta de dinero que se logra guardar",
+        "El color de la cuenta o alcancía donde se guarda",
+        "Si el dinero proviene de un regalo o de un trabajo"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "11_world_3_multiple_choice_5",
+      "enunciado": "Convertir el ahorro en un hábito sostenible se logra mejor cuando una persona:",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "explicacion": "Ahorrar de forma automática y constante, antes de gastar, convierte la conducta en hábito y reduce la dependencia de la fuerza de voluntad.",
+      "opciones": [
+        "Espera a tener un ingreso muy alto para empezar a ahorrar",
+        "Ahorra una parte de forma regular y automática antes de gastar",
+        "Ahorra solo cuando se siente motivada en algún momento",
+        "Guarda únicamente el dinero que queda sin planear nada"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "11_world_3_multiple_choice_6",
+      "enunciado": "Una persona define una meta de ahorro para un objetivo que tardará varios años en cumplir. ¿Qué decisión es más coherente con un objetivo de largo plazo?",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "explicacion": "Para metas lejanas conviene mantener un aporte constante y sostenido en el tiempo, sin necesidad de disponibilidad inmediata del dinero.",
+      "opciones": [
+        "Mantener el dinero disponible para retirarlo cualquier día",
+        "Suspender los aportes apenas surja cualquier deseo de compra",
+        "Hacer aportes constantes y sostenidos durante todo el periodo",
+        "Cambiar la meta cada semana según el estado de ánimo"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "11_world_3_multiple_choice_7",
+      "enunciado": "¿Por qué se recomienda que el fondo de emergencia se mantenga separado del dinero destinado al gasto diario?",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "explicacion": "Separarlo reduce la tentación de usarlo para gastos cotidianos y asegura que esté disponible solo cuando ocurra un verdadero imprevisto.",
+      "opciones": [
+        "Porque así genera más rendimiento que cualquier inversión",
+        "Para evitar la tentación de gastarlo y reservarlo a imprevistos",
+        "Porque la ley obliga a tener cuentas separadas para esto",
+        "Para que rinda menos y así durar más tiempo guardado"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "11_world_3_multiple_choice_8",
+      "enunciado": "Una persona joven afirma: 'No vale la pena empezar a ahorrar ahora porque guardo muy poco'. ¿Cuál es la mejor respuesta basada en el hábito de ahorro?",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "explicacion": "Empezar temprano, aunque sea con aportes pequeños, consolida el hábito y aprovecha el tiempo, que es un factor clave del ahorro a largo plazo.",
+      "opciones": [
+        "Tiene razón: solo conviene ahorrar cuando se puede guardar mucho",
+        "Empezar temprano consolida el hábito y aprovecha el factor tiempo",
+        "Es mejor esperar a tener deudas para luego ahorrar todo junto",
+        "El monto inicial es lo único que determina el éxito del ahorro"
+      ],
+      "correctIndex": 1
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

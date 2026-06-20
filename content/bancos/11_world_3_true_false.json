@@ -1,0 +1,59 @@
+{
+  "bancoId": "11_world_3_true_false",
+  "grado": "11",
+  "worldId": "world_3",
+  "tipo": "true_false",
+  "items": [
+    {
+      "id": "11_world_3_true_false_1",
+      "enunciado": "Una meta de ahorro con un plazo definido es más fácil de seguir y evaluar que un deseo general de 'ahorrar más'.",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "explicacion": "Un plazo definido permite medir el avance y ajustar el comportamiento, mientras que un deseo vago no ofrece referencia para evaluar el progreso.",
+      "respuesta": true
+    },
+    {
+      "id": "11_world_3_true_false_2",
+      "enunciado": "El fondo de emergencia está pensado para financiar compras planeadas, como un viaje de vacaciones.",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "explicacion": "El fondo de emergencia se reserva exclusivamente para imprevistos; las compras planeadas se cubren con otro tipo de ahorro orientado a esa meta.",
+      "respuesta": false
+    },
+    {
+      "id": "11_world_3_true_false_3",
+      "enunciado": "Postergar la gratificación implica renunciar a un consumo inmediato para obtener un beneficio mayor en el futuro.",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "explicacion": "Esa es la definición central de postergar la gratificación: priorizar un objetivo futuro sobre una satisfacción inmediata.",
+      "respuesta": true
+    },
+    {
+      "id": "11_world_3_true_false_4",
+      "enunciado": "El ahorro a corto plazo y el ahorro a largo plazo se diferencian únicamente por la cantidad de dinero que se guarda.",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "explicacion": "Lo que los diferencia es el horizonte de tiempo en que se usará el dinero, no la cantidad guardada.",
+      "respuesta": false
+    },
+    {
+      "id": "11_world_3_true_false_5",
+      "enunciado": "Convertir el ahorro en un hábito automático reduce la dependencia de la fuerza de voluntad para lograrlo.",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "explicacion": "Al automatizar el ahorro, la conducta deja de depender de la motivación del momento y se vuelve más constante y sostenible.",
+      "respuesta": true
+    },
+    {
+      "id": "11_world_3_true_false_6",
+      "enunciado": "Empezar a ahorrar a una edad temprana no ofrece ninguna ventaja frente a empezar muchos años después.",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "explicacion": "Empezar temprano consolida el hábito y aprovecha el factor tiempo, lo que sí representa una ventaja frente a comenzar tarde.",
+      "respuesta": false
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

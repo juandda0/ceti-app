@@ -3,21 +3,18 @@ import { useAuthStore, useIsAdmin } from '@features/auth/store/useAuthStore';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 
 /**
- * Admin console (course/role management). Restricted to rector/coordinador
- * (whole-school scope) or a platform super-admin. A profesor is staff and clears
- * the (staff) group guard, so this nested guard is what keeps them out of the
- * admin surfaces — authorization is enforced server-side by firestore.rules and
- * the Cloud Functions, this is the matching client-side gate.
+ * Admin console (course/role structure management). Restricted to the platform
+ * admin (role:'admin') ONLY — §1.3 matrix: createCurso and assignRole are
+ * admin-only Cloud Functions; this is the matching client-side gate.
+ * rector/coordinador/profesor are explicitly excluded (they clear the (staff)
+ * group guard but must not reach these screens).
  */
 export default function AdminLayout() {
   const authReady = useAuthStore((s) => s.authReady);
-  const role = useAuthStore((s) => s.role);
   const isAdmin = useIsAdmin();
   const colors = useThemeColors();
 
-  const canManageSchool = role === 'rector' || role === 'coordinador' || isAdmin;
-
-  if (authReady && !canManageSchool) {
+  if (authReady && !isAdmin) {
     // Cast: typed-routes union regenerates from the filesystem on build.
     return <Redirect href={'/(staff)' as Href} />;
   }

@@ -1,0 +1,123 @@
+{
+  "bancoId": "10_world_5_multiple_choice",
+  "grado": "10",
+  "worldId": "world_5",
+  "tipo": "multiple_choice",
+  "items": [
+    {
+      "id": "10_world_5_multiple_choice_1",
+      "enunciado": "¿Qué caracteriza a una deuda manejable frente a una deuda riesgosa?",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Una deuda es manejable cuando las cuotas caben dentro de tus ingresos sin sacrificar gastos esenciales ni el ahorro.",
+      "opciones": [
+        "Que las cuotas puedas pagarlas sin descuidar tus necesidades básicas",
+        "Que el plazo sea lo más largo posible sin importar nada más",
+        "Que la pidas para comprar algo que no necesitas",
+        "Que nunca tengas que devolver el dinero prestado"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "10_world_5_multiple_choice_2",
+      "enunciado": "¿Qué situación es una señal clara de sobreendeudamiento?",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Pedir prestado para pagar otras deudas indica que los ingresos ya no alcanzan para cubrir las obligaciones.",
+      "opciones": [
+        "Pagar una deuda antes del plazo acordado",
+        "Necesitar nuevos préstamos solo para pagar deudas anteriores",
+        "Ahorrar una parte del ingreso cada mes",
+        "Comparar opciones antes de pedir un crédito"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "10_world_5_multiple_choice_3",
+      "enunciado": "¿Cuál es una consecuencia típica de dejar de pagar una deuda?",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "El incumplimiento se registra en tu historial crediticio, lo que dificulta acceder a futuros créditos.",
+      "opciones": [
+        "El prestamista te perdona la deuda automáticamente",
+        "Tu historial crediticio mejora con el tiempo",
+        "Se daña tu historial crediticio y pierdes confianza ante prestamistas",
+        "No ocurre ninguna consecuencia si solo te atrasas un poco"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "10_world_5_multiple_choice_4",
+      "enunciado": "¿Qué es el riesgo financiero asociado a tomar una deuda?",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "El riesgo financiero es la posibilidad de no poder cumplir con los pagos si cambian tus ingresos o gastos.",
+      "opciones": [
+        "La certeza de que siempre podrás pagar sin problemas",
+        "La posibilidad de no poder cumplir los pagos si tu situación cambia",
+        "Una garantía de que la deuda crecerá a tu favor",
+        "Un beneficio que reduce el valor de lo que debes"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "10_world_5_multiple_choice_5",
+      "enunciado": "Para empezar a salir de varias deudas, ¿qué estrategia es más sensata?",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Hacer un inventario de todas las deudas y priorizar su pago es el primer paso para organizar un plan realista.",
+      "opciones": [
+        "Ignorar las deudas hasta que el prestamista las olvide",
+        "Pedir un préstamo nuevo más grande para gastar en otras cosas",
+        "Listar todas tus deudas y priorizar cuáles pagar primero",
+        "Dejar de revisar tus cuentas para no preocuparte"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "10_world_5_multiple_choice_6",
+      "enunciado": "¿Por qué endeudarse para gastos de consumo que se agotan rápido es más riesgoso que para algo que conserva valor?",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Si lo comprado pierde valor o desaparece, quedas pagando una deuda sin un respaldo que la justifique.",
+      "opciones": [
+        "Porque seguirás pagando algo que ya no tiene valor ni te sirve",
+        "Porque el consumo siempre genera ingresos futuros",
+        "Porque ese tipo de deuda nunca cobra intereses",
+        "Porque el prestamista prefiere ese tipo de gastos"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "10_world_5_multiple_choice_7",
+      "enunciado": "Antes de aceptar un crédito, ¿qué deberías evaluar para juzgar si es manejable?",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Comparar la cuota con tu capacidad de pago y el costo total te permite decidir si puedes asumir la deuda con seguridad.",
+      "opciones": [
+        "Solo si el producto que comprarás está de moda",
+        "Únicamente la opinión de tus amigos",
+        "Si la cuota cabe en tu presupuesto y cuál es el costo total a pagar",
+        "Si el trámite se puede hacer muy rápido"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "10_world_5_multiple_choice_8",
+      "enunciado": "¿Cuál es un hábito que ayuda a prevenir el sobreendeudamiento?",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Mantener un presupuesto y un fondo de emergencia reduce la necesidad de endeudarse ante imprevistos.",
+      "opciones": [
+        "Llevar un presupuesto y tener un fondo de emergencia",
+        "Pedir el máximo crédito disponible aunque no lo necesites",
+        "Pagar siempre solo el mínimo de cada obligación",
+        "Tener varias deudas abiertas al mismo tiempo por costumbre"
+      ],
+      "correctIndex": 0
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

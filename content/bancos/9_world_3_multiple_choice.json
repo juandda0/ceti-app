@@ -1,0 +1,123 @@
+{
+  "bancoId": "9_world_3_multiple_choice",
+  "grado": "9",
+  "worldId": "world_3",
+  "tipo": "multiple_choice",
+  "items": [
+    {
+      "id": "9_world_3_multiple_choice_1",
+      "enunciado": "¿Qué es principalmente un fondo de emergencia?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "El fondo de emergencia es dinero reservado para imprevistos, no para gastos planeados ni para inversión.",
+      "opciones": [
+        "Un dinero guardado para gastos divertidos del fin de semana",
+        "Un dinero reservado para imprevistos como una reparación urgente",
+        "Un préstamo que se pide cuando falta dinero",
+        "Un premio que entrega el banco por abrir una cuenta"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "9_world_3_multiple_choice_2",
+      "enunciado": "¿Qué caracteriza a una meta de ahorro bien definida?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Una buena meta de ahorro es concreta y tiene un propósito y un plazo claros, lo que facilita mantener el hábito.",
+      "opciones": [
+        "Es concreta, con un propósito y un plazo claros",
+        "Es vaga y sin fecha para cumplirla",
+        "Cambia cada día según el estado de ánimo",
+        "Solo sirve si otra persona la decide por ti"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "9_world_3_multiple_choice_3",
+      "enunciado": "¿Cuál es un ejemplo de ahorro a corto plazo?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "El ahorro a corto plazo busca metas cercanas en el tiempo, como un objeto que se quiere comprar pronto.",
+      "opciones": [
+        "Ahorrar durante muchos años para estudiar una carrera",
+        "Ahorrar para comprar un regalo en las próximas semanas",
+        "Ahorrar para la jubilación al final de la vida laboral",
+        "Ahorrar para comprar una vivienda en el futuro lejano"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "9_world_3_multiple_choice_4",
+      "enunciado": "¿Qué significa postergar la gratificación al ahorrar?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Postergar la gratificación es esperar y resistir un gasto inmediato para alcanzar un beneficio mayor más adelante.",
+      "opciones": [
+        "Gastar de inmediato apenas se recibe el dinero",
+        "Renunciar para siempre a comprar cosas que gustan",
+        "Esperar y resistir un gasto inmediato para lograr algo mayor después",
+        "Pedir prestado para conseguir lo que se quiere hoy"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "9_world_3_multiple_choice_5",
+      "enunciado": "¿Por qué ayuda convertir el ahorro en un hábito?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Ahorrar de forma regular y constante hace que la conducta sea automática y facilita alcanzar las metas sin depender solo de la voluntad.",
+      "opciones": [
+        "Porque obliga a ahorrar grandes cantidades de una sola vez",
+        "Porque ahorrar de forma regular vuelve la conducta más automática",
+        "Porque evita por completo tener que planear las metas",
+        "Porque garantiza que nunca habrá imprevistos en la vida"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "9_world_3_multiple_choice_6",
+      "enunciado": "¿Cuál es la diferencia entre ahorro a corto y a largo plazo?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Se diferencian por el horizonte de tiempo: el corto plazo es para metas cercanas y el largo plazo para metas distantes.",
+      "opciones": [
+        "El corto plazo es para metas cercanas y el largo plazo para metas distantes",
+        "El corto plazo solo lo usan los adultos y el largo plazo los jóvenes",
+        "No existe ninguna diferencia entre ambos",
+        "El largo plazo siempre significa ahorrar menos dinero"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "9_world_3_multiple_choice_7",
+      "enunciado": "¿Qué es lo más recomendable hacer apenas se recibe un ingreso si se quiere ahorrar?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Apartar primero una parte para el ahorro (ahorrar antes de gastar) ayuda a cumplir la meta con más constancia.",
+      "opciones": [
+        "Gastar primero y ahorrar solo lo que sobre al final",
+        "Apartar primero una parte para el ahorro antes de gastar",
+        "Prestar el ingreso a un amigo para que lo guarde",
+        "Esperar a tener un imprevisto para decidir qué hacer"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "9_world_3_multiple_choice_8",
+      "enunciado": "¿Para qué sirve principalmente tener un fondo de emergencia antes que otras metas?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "El fondo de emergencia da un respaldo ante imprevistos y evita tener que endeudarse o abandonar otras metas de ahorro.",
+      "opciones": [
+        "Para gastarlo en compras de gusto cuando hay rebajas",
+        "Para tener un respaldo ante imprevistos y no endeudarse",
+        "Para prestárselo a quien lo necesite y cobrar más después",
+        "Para reemplazar por completo cualquier otra meta de ahorro"
+      ],
+      "correctIndex": 1
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

@@ -28,10 +28,10 @@ export default function SchoolReportScreen() {
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
   const colegioId = useAuthStore((s) => s.colegioId);
-  // Sedes are dormant (RQ-FN01): the sedeId claim no longer exists, so a
-  // coordinador scopes by their whole colegioId (same as rector). The full
-  // institutional redesign (aggregate by grado/curso) is deferred.
-  // TODO(RQ-IN02 / Block 6): re-scope institutional reports by grado/curso.
+  const role = useAuthStore((s) => s.role);
+  // The rector reads precomputed aggregates (nominal progress is denied by
+  // rules); coordinador/admin read collection-group progress. loadSchoolReport
+  // routes by role. Sedes are dormant (RQ-FN01) so there is no per-sede view.
 
   const [report, setReport] = useState<SchoolReport | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
@@ -43,7 +43,7 @@ export default function SchoolReportScreen() {
       return;
     }
     setStatus('loading');
-    void loadSchoolReport(colegioId, Date.now())
+    void loadSchoolReport(colegioId, Date.now(), role)
       .then((r) => {
         if (!cancelled) {
           setReport(r);
@@ -56,7 +56,7 @@ export default function SchoolReportScreen() {
     return () => {
       cancelled = true;
     };
-  }, [colegioId]);
+  }, [colegioId, role]);
 
   const onExportCsv = useCallback(() => {
     if (!report) return;
@@ -130,32 +130,6 @@ export default function SchoolReportScreen() {
                 </Text>
               </TouchableOpacity>
             </View>
-
-            {report.sedeSummaries.length > 0 && (
-              <>
-                <Text style={[styles.section, { color: colors.text.secondary }]}>
-                  {t('school.bySede')}
-                </Text>
-                {report.sedeSummaries.map((s) => (
-                  <View
-                    key={s.sedeId ?? 'none'}
-                    style={[styles.row, { borderColor: colors.background.secondary }]}
-                  >
-                    <View style={{ flex: 1 }}>
-                      <Text style={[styles.rowName, { color: colors.text.primary }]}>
-                        {s.sedeId ?? t('school.noSede')}
-                      </Text>
-                      <Text style={[styles.rowSub, { color: colors.text.tertiary }]}>
-                        {t('school.sedeCourses', { count: s.courseCount })}
-                      </Text>
-                    </View>
-                    <Text style={[styles.rowValue, { color: colors.brand.primary }]}>
-                      {pct(s.avgMastery)}
-                    </Text>
-                  </View>
-                ))}
-              </>
-            )}
 
             <Text style={[styles.section, { color: colors.text.secondary }]}>
               {t('school.byCourse')}

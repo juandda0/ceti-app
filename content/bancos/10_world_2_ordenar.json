@@ -1,0 +1,93 @@
+{
+  "bancoId": "10_world_2_ordenar",
+  "grado": "10",
+  "worldId": "world_2",
+  "tipo": "ordenar",
+  "items": [
+    {
+      "id": "10_world_2_ordenar_1",
+      "enunciado": "Ordena los pasos para elaborar un presupuesto personal básico.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Primero se identifican los ingresos, luego se listan los gastos, después se comparan y al final se ajusta.",
+      "elementos": [
+        "Identificar los ingresos del periodo",
+        "Listar y categorizar los gastos esperados",
+        "Comparar ingresos con egresos",
+        "Ajustar el plan según el resultado"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "10_world_2_ordenar_2",
+      "enunciado": "Ordena estos gastos según su prioridad, de la más esencial a la menos esencial.",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Las necesidades básicas van primero; los deseos y caprichos quedan al final.",
+      "elementos": [
+        "Alimentación diaria",
+        "Transporte para estudiar",
+        "Suscripción de entretenimiento",
+        "Compra de un capricho de moda"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "10_world_2_ordenar_3",
+      "enunciado": "Ordena los pasos para registrar correctamente un gasto que acabas de hacer.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Se anota el gasto, se le asigna una categoría y luego se compara con lo planeado.",
+      "elementos": [
+        "Anotar el gasto apenas ocurre",
+        "Asignarle una categoría",
+        "Compararlo con lo presupuestado"
+      ],
+      "ordenCanonico": [0, 1, 2]
+    },
+    {
+      "id": "10_world_2_ordenar_4",
+      "enunciado": "Ordena las etapas de un ciclo de seguimiento de presupuesto a lo largo del periodo.",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Se planea, se registra durante el periodo, se revisa el avance y se ajusta para el siguiente.",
+      "elementos": [
+        "Planear ingresos y gastos",
+        "Registrar los movimientos del periodo",
+        "Revisar el avance frente al plan",
+        "Ajustar para el periodo siguiente"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "10_world_2_ordenar_5",
+      "enunciado": "Ordena estas decisiones para vivir dentro de los propios medios cuando los gastos crecen.",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Primero se detecta el desbalance, luego se revisan los gastos, se recorta lo no esencial y se equilibra el plan.",
+      "elementos": [
+        "Detectar que los egresos se acercan a los ingresos",
+        "Revisar las categorías de gasto",
+        "Recortar los gastos no esenciales",
+        "Equilibrar el presupuesto"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "10_world_2_ordenar_6",
+      "enunciado": "Ordena los pasos para clasificar un gasto entre necesidad y deseo.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Se identifica el gasto, se pregunta si es indispensable y según la respuesta se clasifica.",
+      "elementos": [
+        "Identificar el gasto a evaluar",
+        "Preguntar si es indispensable para vivir o estudiar",
+        "Clasificarlo como necesidad o como deseo"
+      ],
+      "ordenCanonico": [0, 1, 2]
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

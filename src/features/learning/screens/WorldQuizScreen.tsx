@@ -1,3 +1,13 @@
+/**
+ * WorldQuizScreen — static quiz (R7, R9, R11).
+ *
+ * Traverses 10 assembled items linearly (indices 0..9). No adaptive selection
+ * (R7). No certificate generation (R11). Supports three item types:
+ *   - multiple_choice: tap one of opciones[]
+ *   - true_false: tap Verdadero / Falso
+ *   - ordenar: tap items in sequence to build an order; submit and compare to
+ *     ordenCanonico (never shown before submission — R9)
+ */
 import { useEffect, useMemo, useState } from 'react';
 import {
   View,
@@ -7,7 +17,6 @@ import {
   TouchableOpacity,
   Platform,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -15,23 +24,27 @@ import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import { useQuestionBankStore } from '@features/learning/store/useQuestionBankStore';
+import {
+  useQuestionBankStore,
+  QUESTIONS_PER_WORLD,
+} from '@features/learning/store/useQuestionBankStore';
+import { useStudentGrado } from '@features/learning/hooks/useStudentGrado';
 import { useUserStore } from '@features/auth/store/useUserStore';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { buildWorldProgress } from '@features/learning/data/worldProgress';
 import { worldProgressRepository } from '@features/dashboard/data/worldProgressRepository';
-import { colegioRepository } from '@features/dashboard/data/colegioRepository';
-import { competenciaForWorld } from '@features/learning/data/competencias';
-import { isMastered } from '@features/learning/data/mastery';
-import { selectNextQuestion, type AnswerResult } from '@features/learning/data/adaptiveQuiz';
-import { buildCertificateHtml } from '@features/learning/data/certificate';
-import { printHtml } from '@shared/lib/export/downloadFile';
 import { useRewards } from '@shared/hooks/useRewards';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { Typography } from '@shared/constants/typography';
 import { Spacing, BorderRadius } from '@shared/constants/theme';
-import type { QuestionBankItem, WorldId } from '@features/learning/data/questionBank.types';
+import type {
+  QuizItem,
+  MultipleChoiceItem,
+  TrueFalseItem,
+  OrdenarItem,
+  WorldId,
+} from '@features/learning/data/quiz.types';
 import type { ThemeColors } from '@shared/constants/colors';
 
 // ─── World metadata ───────────────────────────────────────────────────────────
@@ -44,101 +57,24 @@ const WORLD_META: Record<string, { name: string; color: string }> = {
   world_5: { name: 'Agujero Negro de las Deudas', color: '#5B9EF5' },
 };
 
-// ─── Option generation utilities ──────────────────────────────────────────────
+// ─── Correctness helpers ───────────────────────────────────────────────────────
 
-function hashStr(s: string): number {
-  let h = 0;
-  for (let i = 0; i < s.length; i++) h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
-  return Math.abs(h);
+function isMCCorrect(item: MultipleChoiceItem, selectedIndex: number): boolean {
+  return selectedIndex === item.correctIndex;
 }
 
-function stableShuffle<T>(arr: T[], seed: number): T[] {
-  const result = [...arr];
-  let s = seed;
-  for (let i = result.length - 1; i > 0; i--) {
-    s = (Math.imul(s, 1664525) + 1013904223) | 0;
-    const j = Math.abs(s) % (i + 1);
-    [result[i], result[j]] = [result[j], result[i]];
-  }
-  return result;
+function isTFCorrect(item: TrueFalseItem, selected: boolean): boolean {
+  return selected === item.respuesta;
 }
 
-function getCalculationOptions(q: QuestionBankItem): string[] {
-  const correct = q.content.correctAnswer;
-  const seed = hashStr(q.id);
-
-  // Match dollar amounts like "$300,000" or "$2,340,000"
-  const dollarAmounts = [...correct.matchAll(/\$([\d,]+)/g)];
-  if (dollarAmounts.length > 0) {
-    const firstMatch = dollarAmounts[0];
-    const num = parseInt(firstMatch[1].replace(/,/g, ''), 10);
-    if (!isNaN(num) && num > 0) {
-      const fmtCOP = (n: number) =>
-        `$${Math.round(n / 1000) * 1000}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-      const makeVariant = (mult: number) => correct.replace(firstMatch[0], fmtCOP(num * mult));
-      return stableShuffle([correct, makeVariant(0.75), makeVariant(1.25), makeVariant(0.5)], seed);
-    }
-  }
-
-  // Match "X meses"
-  const mesesMatch = correct.match(/^(\d+) meses?$/);
-  if (mesesMatch) {
-    const n = parseInt(mesesMatch[1], 10);
-    return stableShuffle(
-      [correct, `${Math.round(n * 0.5)} meses`, `${Math.round(n * 1.5)} meses`, `${n + 2} meses`],
-      seed
-    );
-  }
-
-  return [correct, 'No corresponde', 'Dato insuficiente', 'Ninguna de las anteriores'];
-}
-
-function getFillBlankOptions(q: QuestionBankItem): string[] {
-  const correct = q.content.correctAnswer; // "word1, word2"
-  const correctWords = correct.split(', ').map((w) => w.trim());
-  const otherWords = q.content.options.filter((o) => !correctWords.includes(o));
-  const seed = hashStr(q.id);
-
-  const distractors: string[] = [];
-  // Generate combos from the other words
-  for (let i = 0; i + 1 < otherWords.length && distractors.length < 3; i += 2) {
-    distractors.push(`${otherWords[i]} / ${otherWords[i + 1]}`);
-  }
-  // Mix correct[0] with wrong[1] if needed
-  if (distractors.length < 3 && otherWords.length > 0) {
-    const mix = `${correctWords[0]} / ${otherWords[0]}`;
-    if (mix !== correctWords.join(' / ')) distractors.push(mix);
-  }
-  while (distractors.length < 3) distractors.push(`${otherWords[0] ?? '?'} / ?`);
-
-  return stableShuffle([correctWords.join(' / '), ...distractors.slice(0, 3)], seed);
-}
-
-function getOptions(q: QuestionBankItem): string[] {
-  switch (q.type) {
-    case 'multiple_choice':
-      return q.content.options;
-    case 'true_false':
-      return ['Verdadero', 'Falso'];
-    case 'fill_blank':
-      return getFillBlankOptions(q);
-    case 'calculation':
-      return getCalculationOptions(q);
-    default:
-      return q.content.options;
-  }
-}
-
-function isAnswerCorrect(selected: string, q: QuestionBankItem): boolean {
-  if (q.type === 'fill_blank') {
-    const selectedWords = selected.split(' / ').map((w) => w.trim());
-    const correctWords = q.content.correctAnswer.split(', ').map((w) => w.trim());
-    return (
-      selectedWords.length === correctWords.length &&
-      selectedWords.every((w, i) => w === correctWords[i])
-    );
-  }
-  return selected === q.content.correctAnswer;
+/**
+ * Checks an ordenar submission. `chosen` is the sequence of indices into
+ * `item.elementos[]` in the order the student built. Correct iff it equals
+ * `item.ordenCanonico` element-by-element.
+ */
+function isOrdenarCorrect(item: OrdenarItem, chosen: number[]): boolean {
+  if (chosen.length !== item.ordenCanonico.length) return false;
+  return chosen.every((v, i) => v === item.ordenCanonico[i]);
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -282,14 +218,151 @@ function FeedbackBanner({
   );
 }
 
+// ─── Ordenar UI ───────────────────────────────────────────────────────────────
+
+/**
+ * Tap-to-sequence ordenar widget.
+ *
+ * Two panels:
+ *   - "available": elementos not yet chosen, shown in the initial shuffled order.
+ *   - "chosen": sequence the student is building (top→bottom = position 1→N).
+ *
+ * Tapping an available element appends it to chosen.
+ * Tapping a chosen element removes it (returns to available in original position).
+ * After submission, shows each element with correct/wrong coloring per position.
+ *
+ * IMPORTANT: ordenCanonico is NEVER displayed (R9). Correctness is only revealed
+ * after the student submits.
+ */
+function OrdenarWidget({
+  item,
+  submitted,
+  chosen,
+  onChosen,
+  colors,
+  t,
+}: {
+  item: OrdenarItem;
+  submitted: boolean;
+  chosen: number[];
+  onChosen: (indices: number[]) => void;
+  colors: ThemeColors;
+  t: (key: string, options?: Record<string, unknown>) => string;
+}) {
+  const available = item.elementos
+    .map((el, idx) => ({ el, idx }))
+    .filter(({ idx }) => !chosen.includes(idx));
+
+  const handlePickAvailable = (idx: number) => {
+    if (submitted) return;
+    onChosen([...chosen, idx]);
+  };
+
+  const handleRemoveChosen = (pos: number) => {
+    if (submitted) return;
+    onChosen(chosen.filter((_, i) => i !== pos));
+  };
+
+  return (
+    <View style={ordenarSt.wrap}>
+      {/* Chosen sequence */}
+      <Text style={[ordenarSt.panelLabel, { color: colors.text.tertiary }]}>
+        {t('quiz.ordenarSequence')}
+      </Text>
+      <View style={ordenarSt.panel}>
+        {chosen.length === 0 ? (
+          <Text style={[ordenarSt.emptyHint, { color: colors.text.quaternary }]}>
+            {t('quiz.ordenarTapToAdd')}
+          </Text>
+        ) : (
+          chosen.map((elIdx, pos) => {
+            let state: 'idle' | 'correct' | 'wrong' = 'idle';
+            if (submitted) {
+              state = item.ordenCanonico[pos] === elIdx ? 'correct' : 'wrong';
+            }
+            const bg =
+              state === 'correct'
+                ? (colors.fill?.greenSubtle ?? '#1A3B2B')
+                : state === 'wrong'
+                  ? (colors.fill?.redSubtle ?? '#3B1A1A')
+                  : colors.materials.highlight;
+            const border =
+              state === 'correct'
+                ? colors.system.green
+                : state === 'wrong'
+                  ? colors.system.red
+                  : colors.materials.borderFocus;
+            const textColor =
+              state === 'correct'
+                ? colors.system.green
+                : state === 'wrong'
+                  ? colors.system.red
+                  : colors.text.primary;
+            return (
+              <TouchableOpacity
+                key={`chosen-${pos}`}
+                onPress={() => handleRemoveChosen(pos)}
+                activeOpacity={submitted ? 1 : 0.75}
+                style={[ordenarSt.item, { backgroundColor: bg, borderColor: border }]}
+              >
+                <Text style={[ordenarSt.posNum, { color: textColor }]}>{pos + 1}.</Text>
+                <Text style={[ordenarSt.itemText, { color: textColor }]}>
+                  {item.elementos[elIdx]}
+                </Text>
+                {state === 'correct' && (
+                  <Ionicons name="checkmark-circle" size={16} color={colors.system.green} />
+                )}
+                {state === 'wrong' && (
+                  <Ionicons name="close-circle" size={16} color={colors.system.red} />
+                )}
+                {state === 'idle' && !submitted && (
+                  <Ionicons name="remove-circle-outline" size={16} color={colors.text.tertiary} />
+                )}
+              </TouchableOpacity>
+            );
+          })
+        )}
+      </View>
+
+      {/* Available elements */}
+      {!submitted && available.length > 0 && (
+        <>
+          <Text style={[ordenarSt.panelLabel, { color: colors.text.tertiary }]}>
+            {t('quiz.ordenarAvailable')}
+          </Text>
+          <View style={ordenarSt.panel}>
+            {available.map(({ el, idx }) => (
+              <TouchableOpacity
+                key={`avail-${idx}`}
+                onPress={() => handlePickAvailable(idx)}
+                activeOpacity={0.75}
+                style={[
+                  ordenarSt.item,
+                  {
+                    backgroundColor: colors.background.elevated,
+                    borderColor: colors.materials.border,
+                  },
+                ]}
+              >
+                <Text style={[ordenarSt.itemText, { color: colors.text.primary }]}>{el}</Text>
+                <Ionicons name="add-circle-outline" size={16} color={colors.text.tertiary} />
+              </TouchableOpacity>
+            ))}
+          </View>
+        </>
+      )}
+    </View>
+  );
+}
+
+// ─── CompletionScreen ─────────────────────────────────────────────────────────
+
 function CompletionScreen({
   worldName,
   accentColor,
   correct,
   total,
   onBack,
-  canCertify,
-  onCertificate,
   colors,
   insetTop,
   insetBottom,
@@ -300,8 +373,6 @@ function CompletionScreen({
   correct: number;
   total: number;
   onBack: () => void;
-  canCertify: boolean;
-  onCertificate: () => void;
   colors: ThemeColors;
   insetTop: number;
   insetBottom: number;
@@ -343,20 +414,6 @@ function CompletionScreen({
         </Animated.View>
 
         <View style={completeSt.actions}>
-          {canCertify && (
-            <TouchableOpacity
-              onPress={onCertificate}
-              activeOpacity={0.85}
-              style={[completeSt.certBtn, { borderColor: accentColor }]}
-              accessibilityRole="button"
-              accessibilityLabel={t('quiz.downloadCertificate')}
-            >
-              <Ionicons name="ribbon-outline" size={18} color={accentColor} />
-              <Text style={[completeSt.certText, { color: accentColor }]}>
-                {t('quiz.downloadCertificate')}
-              </Text>
-            </TouchableOpacity>
-          )}
           <TouchableOpacity
             onPress={onBack}
             activeOpacity={0.85}
@@ -374,23 +431,20 @@ function CompletionScreen({
 
 // ─── Main screen ──────────────────────────────────────────────────────────────
 
-const EMPTY_QUESTIONS: QuestionBankItem[] = [];
+const EMPTY_QUESTIONS: QuizItem[] = [];
 
 export default function WorldQuizScreen() {
   const { worldId } = useLocalSearchParams<{ worldId: string }>();
   const router = useRouter();
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
-  // Key progress by the Firebase auth uid (unique per account). The local
-  // useUserStore.id is a device-local profile id shared across accounts on the
-  // same browser, which mixed different users' progress. Fallback to it only in
-  // offline/local mode (no Firebase user). Both hooks run every render.
+
+  // Per-account key (Firebase uid); fallback to local profile id in offline/demo mode.
   const firebaseUid = useAuthStore((s) => s.firebaseUid);
   const localProfileId = useUserStore((s) => s.id);
   const userId = firebaseUid ?? localProfileId;
   const xp = useUserStore((s) => s.xp);
   const level = useUserStore((s) => s.level);
-  const nickname = useUserStore((s) => s.nickname);
 
   // Tenant identity (set only for provisioned students). Used to mirror progress
   // to the school tree for the teacher dashboard; no-op when not provisioned.
@@ -403,63 +457,38 @@ export default function WorldQuizScreen() {
   const recordAnswer = useQuestionBankStore((s) => s.recordAnswer);
   const { checkBadges } = useRewards();
   const { t } = useTranslation();
+
   const questions = useQuestionBankStore(
     (s) => s.questionsByWorld[worldId as WorldId] ?? EMPTY_QUESTIONS
   );
   const fetchStatus = useQuestionBankStore((s) => s.fetchStatus[worldId as WorldId] ?? 'idle');
-  const answers = useQuestionBankStore((s) => s.answers);
-  const answeredIds = useMemo(
-    () =>
-      new Set(
-        answers
-          .filter(
-            (a) => a.uid === (userId ?? '') && a.worldId === (worldId as WorldId) && a.isCorrect
-          )
-          .map((a) => a.questionId)
-      ),
-    [answers, userId, worldId]
-  );
 
   const meta = WORLD_META[worldId ?? ''] ?? { name: 'Mundo', color: '#FF8A1F' };
 
-  // Pre-compute stable options for all questions once
-  const optionsByQuestion = useMemo(
-    () => Object.fromEntries(questions.map((q) => [q.id, getOptions(q)])),
-    [questions]
-  );
-
-  // Quiz state. Adaptive engine: `currentId` is the shown question, `consumed`
-  // are the questions done this session, `results` drives the difficulty ladder.
-  const [currentId, setCurrentId] = useState<string | null>(null);
-  const [consumed, setConsumed] = useState<string[]>([]);
-  const [results, setResults] = useState<AnswerResult[]>([]);
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [hasSubmitted, setHasSubmitted] = useState(false);
+  // Linear traversal state (R7: no adaptive selection)
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
-  const [certBusy, setCertBusy] = useState(false);
 
-  useEffect(() => {
-    if (worldId) void fetchWorldQuestions(worldId as WorldId);
-  }, [worldId]);
+  // Per-question answer state (reset on each new question)
+  // For multiple_choice/true_false: selectedOption (string representation)
+  // For ordenar: chosenOrder (array of element indices)
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [chosenOrder, setChosenOrder] = useState<number[]>([]);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
-  // Seed already-correct questions as consumed (so re-entry skips them), then pick
-  // the first question adaptively (rule-based difficulty ladder — no AI).
+  // Grado resolved from the student's course (R4 — never stored on the minor).
+  // null while resolving so we never fetch the wrong grade's banco (works for
+  // direct deep-link navigation too, not just via WorldsScreen).
+  const grado = useStudentGrado();
+
+  // Fetch once the grade is known. The store guard keys on (grado, seedKey), so
+  // this assembles the correct grade's 10 items for this student.
   useEffect(() => {
-    if (questions.length === 0) return;
-    const seed = questions.filter((q) => answeredIds.has(q.id)).map((q) => q.id);
-    const first = selectNextQuestion(questions, new Set(seed), []);
-    setConsumed(seed);
-    setResults([]);
-    if (!first) {
-      setIsComplete(true);
-    } else {
-      setCurrentId(first.id);
-    }
+    if (worldId && grado) void fetchWorldQuestions(grado, worldId as WorldId, userId ?? 'demo');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [questions.length]);
+  }, [worldId, grado, userId]);
 
   // On completion, mirror progress to the tenant tree for the teacher dashboard.
-  // Best-effort: only for provisioned students; rules also gate on estado=='activo'.
   useEffect(() => {
     if (!isComplete) return;
     if (role !== 'estudiante' || !colegioId || !cursoId || !firebaseUid || !worldId) return;
@@ -490,85 +519,79 @@ export default function WorldQuizScreen() {
     getWorldProgress,
   ]);
 
-  // Award mastery/achievement badges on completion (idempotent — skips already
-  // unlocked). Runs for every student, not just provisioned ones (gamification).
+  // Award mastery/achievement badges on completion (idempotent).
   useEffect(() => {
     if (!isComplete) return;
     checkBadges();
   }, [isComplete, checkBadges]);
 
-  const currentQuestion = questions.find((q) => q.id === currentId) ?? null;
-  const options = currentQuestion ? (optionsByQuestion[currentQuestion.id] ?? []) : [];
-  // The question that would follow the current one (null = current is the last).
-  const nextAfterCurrent = currentQuestion
-    ? selectNextQuestion(questions, new Set([...consumed, currentQuestion.id]), results)
-    : null;
+  const currentQuestion = questions[currentIndex] ?? null;
 
-  const handleSelect = (option: string) => {
-    if (hasSubmitted) return;
-    setSelectedAnswer(option);
-  };
+  // Derived: has the student provided a full answer for the current item?
+  const hasAnswer = useMemo(() => {
+    if (!currentQuestion) return false;
+    if (currentQuestion.tipo === 'ordenar') {
+      return chosenOrder.length === currentQuestion.elementos.length;
+    }
+    return selectedOption !== null;
+  }, [currentQuestion, selectedOption, chosenOrder]);
+
+  // Derived: is the current submitted answer correct?
+  const isCorrect = useMemo<boolean | null>(() => {
+    if (!hasSubmitted || !currentQuestion) return null;
+    switch (currentQuestion.tipo) {
+      case 'multiple_choice':
+        return (
+          selectedOption !== null && isMCCorrect(currentQuestion, parseInt(selectedOption, 10))
+        );
+      case 'true_false':
+        return selectedOption !== null && isTFCorrect(currentQuestion, selectedOption === 'true');
+      case 'ordenar':
+        return isOrdenarCorrect(currentQuestion, chosenOrder);
+      default:
+        return false;
+    }
+  }, [hasSubmitted, currentQuestion, selectedOption, chosenOrder]);
 
   const handleSubmit = () => {
-    if (!selectedAnswer || !currentQuestion || !userId) return;
-    const correct = isAnswerCorrect(selectedAnswer, currentQuestion);
+    if (!hasAnswer || !currentQuestion || !userId || hasSubmitted) return;
+
+    let correct = false;
+    switch (currentQuestion.tipo) {
+      case 'multiple_choice':
+        correct =
+          selectedOption !== null && isMCCorrect(currentQuestion, parseInt(selectedOption, 10));
+        break;
+      case 'true_false':
+        correct =
+          selectedOption !== null && isTFCorrect(currentQuestion, selectedOption === 'true');
+        break;
+      case 'ordenar':
+        correct = isOrdenarCorrect(currentQuestion, chosenOrder);
+        break;
+    }
+
     void Haptics.impactAsync(
       correct ? Haptics.ImpactFeedbackStyle.Light : Haptics.ImpactFeedbackStyle.Heavy
     );
     recordAnswer(userId, currentQuestion.id, worldId as WorldId, correct);
-    setResults((prev) => [...prev, { difficulty: currentQuestion.difficulty, correct }]);
     setHasSubmitted(true);
   };
 
   const handleNext = () => {
-    if (!currentQuestion) return;
-    const newConsumed = [...consumed, currentQuestion.id];
-    setConsumed(newConsumed);
-    const next = selectNextQuestion(questions, new Set(newConsumed), results);
-    if (!next) {
+    const nextIndex = currentIndex + 1;
+    if (nextIndex >= questions.length) {
       setIsComplete(true);
     } else {
-      setCurrentId(next.id);
-      setSelectedAnswer(null);
+      setCurrentIndex(nextIndex);
+      setSelectedOption(null);
+      setChosenOrder([]);
       setHasSubmitted(false);
     }
   };
 
   const handleBack = () => {
     if (router.canGoBack()) router.back();
-  };
-
-  // Certificate is earned when the world is mastered (achievement, not time).
-  const { done: worldDone, total: worldTotal } = getWorldProgress(userId ?? '', worldId as WorldId);
-  const canCertify = isMastered(worldDone, worldTotal);
-
-  const handleCertificate = async () => {
-    if (certBusy) return; // guard against double-print while the colegio loads
-    setCertBusy(true);
-    try {
-      // The colegio name/logo is best-effort: a fetch failure must not block the
-      // certificate — fall back to the product name.
-      let colegio: Awaited<ReturnType<typeof colegioRepository.getColegio>> = null;
-      try {
-        colegio = colegioId ? await colegioRepository.getColegio(colegioId) : null;
-      } catch {
-        colegio = null;
-      }
-      const html = buildCertificateHtml({
-        colegioNombre: colegio?.nombre ?? 'Ceti',
-        colegioLogoUrl: colegio?.logoUrl,
-        studentName: nickname || 'Estudiante',
-        competenciaLabel: competenciaForWorld(worldId as WorldId).label,
-        worldName: meta.name,
-        masteryPct: worldTotal > 0 ? Math.round((worldDone / worldTotal) * 100) : 0,
-        dateLabel: new Date().toLocaleDateString('es-CO', { dateStyle: 'long' }),
-      });
-      if (!printHtml(html)) {
-        Alert.alert(t('learning.certificateTitle'), t('learning.certificateWebOnly'));
-      }
-    } finally {
-      setCertBusy(false);
-    }
   };
 
   // ── Loading ────────────────────────────────────────────────────────────────
@@ -632,15 +655,17 @@ export default function WorldQuizScreen() {
 
   // ── Completion ─────────────────────────────────────────────────────────────
   if (isComplete) {
+    const { done: worldDone, total: worldTotal } = getWorldProgress(
+      userId ?? '',
+      worldId as WorldId
+    );
     return (
       <CompletionScreen
         worldName={meta.name}
         accentColor={meta.color}
         correct={worldDone}
-        total={worldTotal > 0 ? worldTotal : questions.length}
+        total={worldTotal > 0 ? worldTotal : QUESTIONS_PER_WORLD}
         onBack={handleBack}
-        canCertify={canCertify}
-        onCertificate={() => void handleCertificate()}
         colors={colors}
         insetTop={insets.top}
         insetBottom={insets.bottom}
@@ -651,16 +676,15 @@ export default function WorldQuizScreen() {
 
   if (!currentQuestion) return null;
 
-  const isCorrect =
-    hasSubmitted && selectedAnswer ? isAnswerCorrect(selectedAnswer, currentQuestion) : null;
-
   // ── Quiz ───────────────────────────────────────────────────────────────────
+  const isLastQuestion = currentIndex === questions.length - 1;
+
   return (
     <ScreenWrapper style={{ flex: 1, backgroundColor: colors.background.base }}>
       <QuizHeader
         worldName={meta.name}
         accentColor={meta.color}
-        currentIndex={consumed.length}
+        currentIndex={currentIndex}
         total={questions.length}
         onBack={handleBack}
         colors={colors}
@@ -673,57 +697,96 @@ export default function WorldQuizScreen() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        {/* Difficulty badge */}
+        {/* Type badge + competencia */}
         <Animated.View entering={FadeIn.duration(200)} style={styles.badgeRow}>
           <View style={[styles.badge, { backgroundColor: colors.materials.highlight }]}>
             <Text style={[styles.badgeText, { color: colors.text.tertiary }]}>
-              {currentQuestion.difficulty === 'basic'
-                ? t('quiz.difficultyBasic')
-                : currentQuestion.difficulty === 'intermediate'
-                  ? t('quiz.difficultyIntermediate')
-                  : t('quiz.difficultyAdvanced')}
+              {currentQuestion.tipo === 'multiple_choice'
+                ? t('quiz.tipoMC')
+                : currentQuestion.tipo === 'true_false'
+                  ? t('quiz.tipoVF')
+                  : t('quiz.tipoOrdenar')}
             </Text>
           </View>
           <Text style={[styles.concept, { color: colors.text.quaternary }]} numberOfLines={1}>
-            {currentQuestion.concept}
+            {currentQuestion.competencia}
           </Text>
         </Animated.View>
 
         {/* Question text */}
         <Animated.View entering={FadeInDown.duration(250).delay(40)}>
           <Text style={[styles.questionText, { color: colors.text.primary }]}>
-            {currentQuestion.content.question}
+            {currentQuestion.enunciado}
           </Text>
         </Animated.View>
 
-        {/* Options */}
+        {/* ── Answer area per tipo ── */}
         <Animated.View entering={FadeInDown.duration(250).delay(100)} style={styles.options}>
-          {options.map((opt) => {
-            let state: 'idle' | 'selected' | 'correct' | 'wrong' = 'idle';
-            if (hasSubmitted) {
-              const optIsCorrect = isAnswerCorrect(opt, currentQuestion);
-              if (optIsCorrect) state = 'correct';
-              else if (opt === selectedAnswer) state = 'wrong';
-            } else if (opt === selectedAnswer) {
-              state = 'selected';
-            }
-            return (
-              <OptionButton
-                key={opt}
-                label={opt}
-                state={state}
-                onPress={() => handleSelect(opt)}
-                colors={colors}
-              />
-            );
-          })}
+          {currentQuestion.tipo === 'multiple_choice' && (
+            <>
+              {currentQuestion.opciones.map((opt, idx) => {
+                let state: 'idle' | 'selected' | 'correct' | 'wrong' = 'idle';
+                if (hasSubmitted) {
+                  if (idx === currentQuestion.correctIndex) state = 'correct';
+                  else if (String(idx) === selectedOption) state = 'wrong';
+                } else if (String(idx) === selectedOption) {
+                  state = 'selected';
+                }
+                return (
+                  <OptionButton
+                    key={idx}
+                    label={opt}
+                    state={state}
+                    onPress={() => !hasSubmitted && setSelectedOption(String(idx))}
+                    colors={colors}
+                  />
+                );
+              })}
+            </>
+          )}
+
+          {currentQuestion.tipo === 'true_false' && (
+            <>
+              {(['true', 'false'] as const).map((val) => {
+                const label = val === 'true' ? t('quiz.verdadero') : t('quiz.falso');
+                const isThisCorrect = currentQuestion.respuesta === (val === 'true');
+                let state: 'idle' | 'selected' | 'correct' | 'wrong' = 'idle';
+                if (hasSubmitted) {
+                  if (isThisCorrect) state = 'correct';
+                  else if (val === selectedOption) state = 'wrong';
+                } else if (val === selectedOption) {
+                  state = 'selected';
+                }
+                return (
+                  <OptionButton
+                    key={val}
+                    label={label}
+                    state={state}
+                    onPress={() => !hasSubmitted && setSelectedOption(val)}
+                    colors={colors}
+                  />
+                );
+              })}
+            </>
+          )}
+
+          {currentQuestion.tipo === 'ordenar' && (
+            <OrdenarWidget
+              item={currentQuestion}
+              submitted={hasSubmitted}
+              chosen={chosenOrder}
+              onChosen={setChosenOrder}
+              colors={colors}
+              t={t}
+            />
+          )}
         </Animated.View>
 
         {/* Feedback */}
         {hasSubmitted && isCorrect !== null && (
           <FeedbackBanner
             isCorrect={isCorrect}
-            explanation={currentQuestion.content.explanation}
+            explanation={currentQuestion.explicacion ?? ''}
             colors={colors}
             t={t}
           />
@@ -743,24 +806,21 @@ export default function WorldQuizScreen() {
       >
         {!hasSubmitted ? (
           <TouchableOpacity
-            activeOpacity={selectedAnswer ? 0.85 : 0.4}
-            onPress={selectedAnswer ? handleSubmit : undefined}
+            activeOpacity={hasAnswer ? 0.85 : 0.4}
+            onPress={hasAnswer ? handleSubmit : undefined}
             accessibilityRole="button"
             accessibilityLabel={t('quiz.check')}
-            accessibilityState={{ disabled: !selectedAnswer }}
+            accessibilityState={{ disabled: !hasAnswer }}
             style={[
               styles.actionBtn,
               {
-                backgroundColor: selectedAnswer ? meta.color : colors.materials.highlight,
-                opacity: selectedAnswer ? 1 : 0.6,
+                backgroundColor: hasAnswer ? meta.color : colors.materials.highlight,
+                opacity: hasAnswer ? 1 : 0.6,
               },
             ]}
           >
             <Text
-              style={[
-                styles.actionBtnText,
-                { color: selectedAnswer ? '#fff' : colors.text.tertiary },
-              ]}
+              style={[styles.actionBtnText, { color: hasAnswer ? '#fff' : colors.text.tertiary }]}
             >
               {t('quiz.check')}
             </Text>
@@ -770,11 +830,11 @@ export default function WorldQuizScreen() {
             activeOpacity={0.85}
             onPress={handleNext}
             accessibilityRole="button"
-            accessibilityLabel={!nextAfterCurrent ? t('quiz.result') : t('quiz.next')}
+            accessibilityLabel={isLastQuestion ? t('quiz.result') : t('quiz.next')}
             style={[styles.actionBtn, { backgroundColor: meta.color }]}
           >
             <Text style={[styles.actionBtnText, { color: '#fff' }]}>
-              {!nextAfterCurrent ? t('quiz.result') : t('quiz.next')}
+              {isLastQuestion ? t('quiz.result') : t('quiz.next')}
             </Text>
             <Ionicons name="arrow-forward" size={18} color="#fff" />
           </TouchableOpacity>
@@ -975,19 +1035,6 @@ const completeSt = StyleSheet.create({
   actions: {
     gap: 10,
   },
-  certBtn: {
-    height: 50,
-    borderRadius: BorderRadius.md,
-    borderWidth: 1.5,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  certText: {
-    ...Typography.headline,
-    fontWeight: '700',
-  },
   btn: {
     height: 54,
     borderRadius: BorderRadius.md,
@@ -997,5 +1044,46 @@ const completeSt = StyleSheet.create({
   btnText: {
     ...Typography.headline,
     fontWeight: '800',
+  },
+});
+
+const ordenarSt = StyleSheet.create({
+  wrap: {
+    gap: 10,
+  },
+  panelLabel: {
+    ...Typography.caption1,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: 2,
+  },
+  panel: {
+    gap: 8,
+  },
+  emptyHint: {
+    ...Typography.footnote,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    paddingVertical: 12,
+  },
+  item: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderRadius: BorderRadius.md,
+    paddingHorizontal: Spacing.base,
+    paddingVertical: 12,
+    gap: 8,
+  },
+  posNum: {
+    ...Typography.headline,
+    fontWeight: '800',
+    minWidth: 20,
+  },
+  itemText: {
+    ...Typography.body,
+    flex: 1,
+    lineHeight: 20,
   },
 });

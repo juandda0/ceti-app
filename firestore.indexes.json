@@ -1,4 +1,13 @@
 {
-  "indexes": [],
+  "indexes": [
+    {
+      "collectionGroup": "progress",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        { "fieldPath": "colegioId", "order": "ASCENDING" },
+        { "fieldPath": "cursoId", "order": "ASCENDING" }
+      ]
+    }
+  ],
   "fieldOverrides": []
 }

@@ -1,0 +1,59 @@
+{
+  "bancoId": "10_world_2_true_false",
+  "grado": "10",
+  "worldId": "world_2",
+  "tipo": "true_false",
+  "items": [
+    {
+      "id": "10_world_2_true_false_1",
+      "enunciado": "Un presupuesto solo sirve si la persona tiene ingresos muy altos.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "El presupuesto es útil con cualquier nivel de ingreso, porque ayuda a organizar el dinero disponible.",
+      "respuesta": false
+    },
+    {
+      "id": "10_world_2_true_false_2",
+      "enunciado": "Los ingresos son las entradas de dinero y los egresos son las salidas de dinero.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Por definición, los ingresos entran y los egresos salen; el presupuesto compara ambos.",
+      "respuesta": true
+    },
+    {
+      "id": "10_world_2_true_false_3",
+      "enunciado": "Categorizar los gastos ayuda a identificar en qué se está gastando más.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Agrupar los gastos en categorías revela los patrones de consumo y dónde se concentra el gasto.",
+      "respuesta": true
+    },
+    {
+      "id": "10_world_2_true_false_4",
+      "enunciado": "Para vivir dentro de los propios medios conviene que los egresos no superen a los ingresos.",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Vivir dentro de los medios exige que lo que sale no sea mayor que lo que entra de manera sostenida.",
+      "respuesta": true
+    },
+    {
+      "id": "10_world_2_true_false_5",
+      "enunciado": "Una vez hecho, un presupuesto no debe revisarse ni ajustarse nunca.",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "El presupuesto debe revisarse periódicamente y ajustarse cuando cambian los ingresos o los gastos.",
+      "respuesta": false
+    },
+    {
+      "id": "10_world_2_true_false_6",
+      "enunciado": "Al priorizar gastos, las necesidades esenciales deben atenderse antes que los deseos.",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Priorizar bien implica cubrir primero lo esencial y dejar los deseos para cuando haya margen.",
+      "respuesta": true
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

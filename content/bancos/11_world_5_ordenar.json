@@ -1,0 +1,95 @@
+{
+  "bancoId": "11_world_5_ordenar",
+  "grado": "11",
+  "worldId": "world_5",
+  "tipo": "ordenar",
+  "items": [
+    {
+      "id": "11_world_5_ordenar_1",
+      "enunciado": "Ordena los pasos para evaluar de forma responsable si asumir una nueva deuda.",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "explicacion": "Primero se revisa el ingreso disponible, luego se estima la cuota, se compara con los gastos fijos y finalmente se decide.",
+      "elementos": [
+        "Decidir si la deuda es sostenible",
+        "Revisar el ingreso disponible",
+        "Comparar la cuota con los gastos fijos",
+        "Estimar el valor de la cuota futura"
+      ],
+      "ordenCanonico": [1, 3, 2, 0]
+    },
+    {
+      "id": "11_world_5_ordenar_2",
+      "enunciado": "Ordena la secuencia que lleva del manejo prudente al sobreendeudamiento cuando se pierde el control.",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "explicacion": "El proceso avanza de una deuda controlada a sumar obligaciones, superar la capacidad de pago y caer en mora.",
+      "elementos": [
+        "Las obligaciones superan la capacidad de pago",
+        "Se mantiene una deuda manejable",
+        "Comienza el incumplimiento y la mora",
+        "Se acumulan nuevas obligaciones"
+      ],
+      "ordenCanonico": [1, 3, 0, 2]
+    },
+    {
+      "id": "11_world_5_ordenar_3",
+      "enunciado": "Ordena los pasos de un plan para salir de varias deudas.",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "explicacion": "Se listan las deudas, se identifica la más costosa, se ajusta el presupuesto y se paga de forma priorizada.",
+      "elementos": [
+        "Ajustar el presupuesto para liberar dinero",
+        "Hacer la lista de todas las deudas",
+        "Pagar de forma priorizada hasta saldarlas",
+        "Identificar la deuda más costosa"
+      ],
+      "ordenCanonico": [1, 3, 0, 2]
+    },
+    {
+      "id": "11_world_5_ordenar_4",
+      "enunciado": "Ordena las consecuencias que suelen encadenarse al dejar de pagar una deuda.",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "explicacion": "Tras el atraso llega la mora, luego el reporte negativo y finalmente la mayor dificultad para acceder a crédito.",
+      "elementos": [
+        "Reporte negativo en centrales de riesgo",
+        "Atraso en el pago de la cuota",
+        "Mayor dificultad para obtener crédito",
+        "Acumulación de mora"
+      ],
+      "ordenCanonico": [1, 3, 0, 2]
+    },
+    {
+      "id": "11_world_5_ordenar_5",
+      "enunciado": "Ordena los pasos para reestructurar una deuda que se volvió difícil de pagar.",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "explicacion": "Se reconoce el problema, se contacta a la entidad, se acuerdan nuevas condiciones y se cumple el nuevo plan.",
+      "elementos": [
+        "Acordar nuevas condiciones de pago",
+        "Reconocer que la cuota es insostenible",
+        "Cumplir el nuevo plan acordado",
+        "Contactar a la entidad acreedora"
+      ],
+      "ordenCanonico": [1, 3, 0, 2]
+    },
+    {
+      "id": "11_world_5_ordenar_6",
+      "enunciado": "Ordena los criterios para clasificar una deuda de menor a mayor riesgo financiero.",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "explicacion": "El riesgo crece a medida que la cuota pesa más sobre el ingreso y el bien financiado pierde valor más rápido.",
+      "elementos": [
+        "Cuota holgada sobre un bien que conserva valor",
+        "Cuota ajustada sobre un bien que se deprecia poco",
+        "Cuota exigente sobre un bien que se deprecia rápido",
+        "Cuota moderada sobre un bien de valor estable"
+      ],
+      "ordenCanonico": [0, 3, 1, 2]
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

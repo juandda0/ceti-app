@@ -1,0 +1,95 @@
+{
+  "bancoId": "11_world_4_ordenar",
+  "grado": "11",
+  "worldId": "world_4",
+  "tipo": "ordenar",
+  "items": [
+    {
+      "id": "11_world_4_ordenar_1",
+      "enunciado": "Ordena los pasos de una decisión de crédito responsable, desde el primero hasta el último.",
+      "competencia": "credito",
+      "dificultad": 4,
+      "explicacion": "Primero se identifica la necesidad, luego se revisa la capacidad de pago, después se compara el costo y finalmente se cumplen los pagos.",
+      "elementos": [
+        "Identificar la necesidad que justifica pedir prestado",
+        "Revisar la propia capacidad de pago",
+        "Comparar el costo total de las opciones de crédito",
+        "Cumplir los pagos acordados a tiempo"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "11_world_4_ordenar_2",
+      "enunciado": "Ordena las etapas conceptuales del ciclo de un crédito, de inicio a fin.",
+      "competencia": "credito",
+      "dificultad": 4,
+      "explicacion": "El crédito se solicita, se recibe el dinero, se usa para su fin y luego se devuelve con su costo hasta saldarlo.",
+      "elementos": [
+        "Solicitar el crédito al prestamista",
+        "Recibir los recursos prestados",
+        "Pagar las cuotas que incluyen capital e interés",
+        "Saldar por completo la deuda"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "11_world_4_ordenar_3",
+      "enunciado": "Ordena del concepto más amplio al más específico dentro del lenguaje del crédito.",
+      "competencia": "credito",
+      "dificultad": 5,
+      "explicacion": "El crédito como categoría general contiene la deuda asumida; dentro de ella se distingue el capital y, sobre este, el interés.",
+      "elementos": [
+        "El crédito como mecanismo financiero",
+        "La deuda que adquiere quien pide prestado",
+        "El capital, que es el monto efectivamente recibido",
+        "El interés, que es el costo aplicado sobre ese capital"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "11_world_4_ordenar_4",
+      "enunciado": "Ordena las acciones para evaluar la capacidad de pago antes de endeudarse, de la primera a la última.",
+      "competencia": "credito",
+      "dificultad": 5,
+      "explicacion": "Se estiman los ingresos disponibles, se restan los gastos básicos, se mira el margen libre y se decide cuánta cuota es sostenible.",
+      "elementos": [
+        "Estimar los ingresos disponibles",
+        "Restar los gastos básicos y obligaciones actuales",
+        "Identificar el margen que queda libre",
+        "Decidir qué cuota resulta sostenible"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "11_world_4_ordenar_5",
+      "enunciado": "Ordena del nivel de riesgo más bajo al más alto en el manejo de una deuda.",
+      "competencia": "credito",
+      "dificultad": 5,
+      "explicacion": "Pagar dentro de la capacidad es el menor riesgo; al acercarse al límite el riesgo sube, y endeudarse para pagar deudas es el escenario más riesgoso.",
+      "elementos": [
+        "Pagar cómodamente dentro de la capacidad de pago",
+        "Pagar justo al límite de la capacidad de pago",
+        "Atrasarse en algunas cuotas por falta de margen",
+        "Tomar nuevos créditos para cubrir cuotas anteriores"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "11_world_4_ordenar_6",
+      "enunciado": "Ordena los efectos de aumentar el plazo de un crédito sobre su costo, en secuencia lógica.",
+      "competencia": "credito",
+      "dificultad": 5,
+      "explicacion": "Al alargar el plazo, la cuota periódica baja, pero el interés se acumula durante más tiempo y el costo total termina siendo mayor.",
+      "elementos": [
+        "Se amplía el plazo para devolver el crédito",
+        "La cuota de cada periodo se reduce",
+        "El interés se acumula durante más tiempo",
+        "El costo total del crédito termina siendo mayor"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

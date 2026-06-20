@@ -1,0 +1,123 @@
+{
+  "bancoId": "10_world_4_multiple_choice",
+  "grado": "10",
+  "worldId": "world_4",
+  "tipo": "multiple_choice",
+  "items": [
+    {
+      "id": "10_world_4_multiple_choice_1",
+      "enunciado": "¿Qué significa, en esencia, usar un crédito?",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "El crédito consiste en recibir un recurso ahora con el compromiso de devolverlo después, normalmente con un costo adicional.",
+      "opciones": [
+        "Recibir dinero ahora a cambio de devolverlo en el futuro",
+        "Ahorrar una parte de tus ingresos cada mes",
+        "Cambiar un producto por otro sin usar dinero",
+        "Recibir un regalo que no hay que devolver"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "10_world_4_multiple_choice_2",
+      "enunciado": "Cuando una persona pide prestado, ¿qué adquiere junto con el dinero?",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "Pedir prestado genera una deuda: la obligación de devolver lo recibido en las condiciones acordadas.",
+      "opciones": [
+        "Un ahorro disponible para emergencias",
+        "Una deuda que debe pagar según lo acordado",
+        "Una ganancia que aumenta su patrimonio",
+        "Un descuento permanente en sus compras"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "10_world_4_multiple_choice_3",
+      "enunciado": "¿Qué representa la tasa de interés en un crédito?",
+      "competencia": "credito",
+      "dificultad": 4,
+      "explicacion": "La tasa de interés es el costo de usar dinero prestado: lo que se paga de más por encima de lo que se pidió.",
+      "opciones": [
+        "El plazo total que dura el préstamo",
+        "La cantidad exacta de dinero que se pidió prestada",
+        "El costo de usar el dinero prestado durante un tiempo",
+        "Una multa que solo aplica si no se paga"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "10_world_4_multiple_choice_4",
+      "enunciado": "¿Qué evalúa principalmente la capacidad de pago de una persona?",
+      "competencia": "credito",
+      "dificultad": 4,
+      "explicacion": "La capacidad de pago mide si los ingresos alcanzan para cubrir las cuotas de una deuda sin descuidar los gastos esenciales.",
+      "opciones": [
+        "Cuántos amigos pueden prestarle dinero",
+        "Si sus ingresos alcanzan para pagar las cuotas sin afectar lo esencial",
+        "La cantidad de productos que desea comprar",
+        "El tiempo que lleva usando una tarjeta"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "10_world_4_multiple_choice_5",
+      "enunciado": "¿Cuál es una característica del uso responsable del crédito?",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "Usar el crédito de forma responsable implica pedir solo lo que se puede devolver y cumplir los pagos a tiempo.",
+      "opciones": [
+        "Pedir el máximo posible aunque no se necesite",
+        "Endeudarse para pagar otras deudas continuamente",
+        "Pedir solo lo necesario y pagar las cuotas a tiempo",
+        "Ignorar las condiciones del crédito antes de firmar"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "10_world_4_multiple_choice_6",
+      "enunciado": "¿Por qué suele ser más costoso devolver un crédito que el monto que se pidió?",
+      "competencia": "credito",
+      "dificultad": 4,
+      "explicacion": "Al devolver un crédito se paga el monto prestado más los intereses, que son el precio por usar ese dinero.",
+      "opciones": [
+        "Porque siempre se pierde parte del dinero por error",
+        "Porque al monto prestado se suman los intereses",
+        "Porque el banco devuelve menos de lo acordado",
+        "Porque el dinero pierde valor solo al pedirlo"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "10_world_4_multiple_choice_7",
+      "enunciado": "Antes de adquirir un crédito, ¿qué decisión refleja un manejo prudente?",
+      "competencia": "credito",
+      "dificultad": 4,
+      "explicacion": "Un manejo prudente compara el costo total del crédito con la propia capacidad de pago antes de comprometerse.",
+      "opciones": [
+        "Firmar rápido para no perder la oportunidad",
+        "Comparar el costo total con la capacidad de pago propia",
+        "Elegir siempre el plazo más largo disponible",
+        "Aceptar cualquier cuota sin revisar los ingresos"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "10_world_4_multiple_choice_8",
+      "enunciado": "¿Qué consecuencia puede tener endeudarse por encima de la capacidad de pago?",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "Cuando las cuotas superan lo que se puede pagar, la deuda se vuelve difícil de manejar y puede crecer con el tiempo.",
+      "opciones": [
+        "Que el crédito desaparezca por sí solo",
+        "Que los ingresos aumenten automáticamente",
+        "Que la deuda se vuelva difícil de pagar y crezca",
+        "Que las cuotas se eliminen sin costo"
+      ],
+      "correctIndex": 2
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

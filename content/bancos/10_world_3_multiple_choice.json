@@ -1,0 +1,123 @@
+{
+  "bancoId": "10_world_3_multiple_choice",
+  "grado": "10",
+  "worldId": "world_3",
+  "tipo": "multiple_choice",
+  "items": [
+    {
+      "id": "10_world_3_multiple_choice_1",
+      "enunciado": "¿Cuál es el propósito principal de un fondo de emergencia?",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "El fondo de emergencia existe para cubrir gastos imprevistos sin recurrir a deudas.",
+      "opciones": [
+        "Cubrir gastos imprevistos sin tener que endeudarse",
+        "Comprar bienes de lujo planificados",
+        "Invertir en activos de alto riesgo",
+        "Pagar las compras cotidianas del día a día"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "10_world_3_multiple_choice_2",
+      "enunciado": "¿Qué caracteriza a una meta de ahorro bien formulada?",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Una meta clara es específica, medible y tiene un plazo definido, lo que facilita seguirla.",
+      "opciones": [
+        "Es vaga y se ajusta cada semana al estado de ánimo",
+        "Es específica, medible y tiene un plazo definido",
+        "Depende solo de lo que sobre al final del mes",
+        "No requiere ningún seguimiento para cumplirse"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "10_world_3_multiple_choice_3",
+      "enunciado": "Postergar la gratificación, en el contexto del ahorro, significa principalmente:",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Es renunciar a un gusto inmediato para alcanzar un beneficio mayor en el futuro.",
+      "opciones": [
+        "Gastar de inmediato para no perder la oportunidad",
+        "Pedir prestado para satisfacer un deseo ahora",
+        "Renunciar a un gusto inmediato por un beneficio futuro mayor",
+        "Olvidarse por completo de cualquier deseo de consumo"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "10_world_3_multiple_choice_4",
+      "enunciado": "¿Qué distingue al ahorro a corto plazo del ahorro a largo plazo?",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "El corto plazo busca metas cercanas y accesibles; el largo plazo, objetivos lejanos que requieren constancia.",
+      "opciones": [
+        "El corto plazo siempre rinde más que el largo plazo",
+        "El largo plazo no necesita ninguna meta",
+        "El corto plazo es solo para personas adultas",
+        "El horizonte de tiempo en que se quiere usar el dinero"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "10_world_3_multiple_choice_5",
+      "enunciado": "¿Por qué se dice que el ahorro es un hábito y no un acto aislado?",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Ahorrar de forma constante y repetida fortalece la disciplina y produce resultados sostenidos.",
+      "opciones": [
+        "Porque la constancia repetida produce resultados sostenidos",
+        "Porque solo se ahorra una vez en la vida",
+        "Porque depende únicamente de la suerte",
+        "Porque ahorrar una sola vez basta para siempre"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "10_world_3_multiple_choice_6",
+      "enunciado": "¿Cuál es una estrategia útil para mantener el hábito de ahorrar?",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Separar el ahorro apenas se recibe el ingreso evita gastarlo antes de reservarlo.",
+      "opciones": [
+        "Esperar a ver qué sobra al final para ahorrarlo",
+        "Separar el ahorro tan pronto se recibe el ingreso",
+        "Ahorrar solo cuando se siente con ganas",
+        "Posponer el ahorro hasta tener un ingreso muy alto"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "10_world_3_multiple_choice_7",
+      "enunciado": "Si una persona ahorra para un viaje de fin de año dentro de unos meses, ¿de qué tipo de ahorro se trata?",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Una meta cercana en el tiempo corresponde al ahorro a corto plazo.",
+      "opciones": [
+        "Ahorro a largo plazo para la jubilación",
+        "Fondo de emergencia exclusivamente",
+        "Ahorro a corto plazo para una meta cercana",
+        "Inversión de alto riesgo a futuro lejano"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "10_world_3_multiple_choice_8",
+      "enunciado": "¿Qué actitud refleja mejor a alguien que sabe postergar la gratificación?",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Resistir un impulso de gasto para seguir avanzando hacia una meta muestra autocontrol financiero.",
+      "opciones": [
+        "Compra todo lo que desea apenas lo ve",
+        "Abandona sus metas ante el primer antojo",
+        "Cambia de meta cada vez que aparece una promoción",
+        "Resiste un impulso de gasto para seguir hacia su meta"
+      ],
+      "correctIndex": 3
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

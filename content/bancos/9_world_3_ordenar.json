@@ -1,0 +1,92 @@
+{
+  "bancoId": "9_world_3_ordenar",
+  "grado": "9",
+  "worldId": "world_3",
+  "tipo": "ordenar",
+  "items": [
+    {
+      "id": "9_world_3_ordenar_1",
+      "enunciado": "Ordena los pasos para empezar a ahorrar con una meta.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Primero se define la meta, luego se planea cuánto apartar, después se aparta de forma regular y por último se revisa el avance.",
+      "elementos": [
+        "Definir una meta de ahorro clara",
+        "Planear cuánto apartar cada vez",
+        "Apartar el ahorro de forma regular",
+        "Revisar el avance hacia la meta"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "9_world_3_ordenar_2",
+      "enunciado": "Ordena estas metas según su horizonte de tiempo, de la más cercana a la más lejana.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "El orden va del corto al largo plazo: un regalo próximo, un viaje del próximo año y la educación superior futura.",
+      "elementos": [
+        "Comprar un regalo en pocas semanas",
+        "Hacer un viaje el próximo año",
+        "Pagar la educación superior en varios años"
+      ],
+      "ordenCanonico": [0, 1, 2]
+    },
+    {
+      "id": "9_world_3_ordenar_3",
+      "enunciado": "Ordena los pasos para reaccionar bien ante un gasto imprevisto.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Lo ideal es reconocer el imprevisto, usar el fondo de emergencia, cubrir el gasto y luego volver a llenar el fondo.",
+      "elementos": [
+        "Reconocer que ocurrió un imprevisto",
+        "Usar el fondo de emergencia disponible",
+        "Cubrir el gasto urgente con ese dinero",
+        "Volver a llenar el fondo de emergencia"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "9_world_3_ordenar_4",
+      "enunciado": "Ordena los pasos para construir el hábito de ahorrar al recibir un ingreso.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Primero se recibe el ingreso, luego se aparta el ahorro antes de gastar y por último se gasta el resto con lo planeado.",
+      "elementos": [
+        "Recibir el ingreso",
+        "Apartar el ahorro antes de gastar",
+        "Gastar el resto según lo planeado"
+      ],
+      "ordenCanonico": [0, 1, 2]
+    },
+    {
+      "id": "9_world_3_ordenar_5",
+      "enunciado": "Ordena el proceso de postergar la gratificación frente a un capricho.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Se reconoce el deseo de comprar ya, se piensa en la meta mayor, se decide esperar y finalmente se obtiene el beneficio mayor.",
+      "elementos": [
+        "Sentir el deseo de comprar algo de inmediato",
+        "Pensar en la meta de ahorro más importante",
+        "Decidir esperar y no gastar ahora",
+        "Alcanzar el beneficio mayor más adelante"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "9_world_3_ordenar_6",
+      "enunciado": "Ordena las prioridades recomendadas al organizar el ahorro.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Conviene primero formar un fondo de emergencia, luego ahorrar para metas de corto plazo y después para metas de largo plazo.",
+      "elementos": [
+        "Formar un fondo de emergencia",
+        "Ahorrar para metas de corto plazo",
+        "Ahorrar para metas de largo plazo"
+      ],
+      "ordenCanonico": [0, 1, 2]
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

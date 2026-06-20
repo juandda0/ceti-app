@@ -1,0 +1,93 @@
+{
+  "bancoId": "11_world_3_ordenar",
+  "grado": "11",
+  "worldId": "world_3",
+  "tipo": "ordenar",
+  "items": [
+    {
+      "id": "11_world_3_ordenar_1",
+      "enunciado": "Ordena los pasos para definir y poner en marcha una meta de ahorro, desde el primero hasta el último.",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "explicacion": "Primero se define el objetivo, luego se fija el plazo, después se calcula el aporte periódico y finalmente se hace seguimiento al avance.",
+      "elementos": [
+        "Calcular cuánto aportar de forma periódica",
+        "Definir el objetivo específico que se quiere lograr",
+        "Hacer seguimiento al avance y ajustar si es necesario",
+        "Establecer el plazo en el que se quiere cumplir"
+      ],
+      "ordenCanonico": [1, 3, 0, 2]
+    },
+    {
+      "id": "11_world_3_ordenar_2",
+      "enunciado": "Ordena estas metas según su horizonte de tiempo, de la más a corto plazo a la más a largo plazo.",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "explicacion": "El criterio es el horizonte temporal: comprar un útil escolar es inmediato, un curso se planea en meses y la educación superior es un objetivo de varios años.",
+      "elementos": [
+        "Ahorrar para la educación superior en varios años",
+        "Reunir dinero para un útil escolar esta semana",
+        "Juntar para un curso de formación en unos meses"
+      ],
+      "ordenCanonico": [1, 2, 0]
+    },
+    {
+      "id": "11_world_3_ordenar_3",
+      "enunciado": "Ordena las acciones para construir un fondo de emergencia, desde lo primero hasta lo último.",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "explicacion": "Se decide separar el fondo, se elige dónde guardarlo aparte, se aporta de forma constante y se mantiene reservado solo para imprevistos.",
+      "elementos": [
+        "Aportar de manera constante hasta alcanzar la reserva deseada",
+        "Decidir destinar una parte del ingreso al fondo",
+        "Mantener el fondo reservado solo para imprevistos reales",
+        "Elegir un lugar separado del gasto diario para guardarlo"
+      ],
+      "ordenCanonico": [1, 3, 0, 2]
+    },
+    {
+      "id": "11_world_3_ordenar_4",
+      "enunciado": "Ordena los momentos que reflejan el proceso de postergar la gratificación frente a una compra deseada.",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "explicacion": "Surge el deseo, se evalúa si compite con una meta, se decide esperar y aportar, y finalmente se logra el objetivo mayor.",
+      "elementos": [
+        "Decidir esperar y destinar ese dinero a la meta",
+        "Surge el deseo de una compra inmediata",
+        "Alcanzar el objetivo más importante que se priorizó",
+        "Evaluar si esa compra compite con una meta de ahorro"
+      ],
+      "ordenCanonico": [1, 3, 0, 2]
+    },
+    {
+      "id": "11_world_3_ordenar_5",
+      "enunciado": "Ordena los pasos para convertir el ahorro en un hábito automático, del primero al último.",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "explicacion": "Se decide ahorrar antes de gastar, se programa el aporte de forma automática, se repite cada periodo y con el tiempo se consolida como hábito.",
+      "elementos": [
+        "Repetir el aporte en cada periodo de ingreso",
+        "Decidir separar el ahorro antes de gastar",
+        "Consolidar la conducta como un hábito estable",
+        "Programar el aporte para que se haga de forma automática"
+      ],
+      "ordenCanonico": [1, 3, 0, 2]
+    },
+    {
+      "id": "11_world_3_ordenar_6",
+      "enunciado": "Ordena las prioridades de uso del ahorro, desde lo que debería atenderse primero hasta lo último.",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "explicacion": "Primero conviene cubrir la reserva para imprevistos, luego las metas de corto plazo y por último las metas de largo plazo.",
+      "elementos": [
+        "Aportar a metas de largo plazo",
+        "Asegurar el fondo de emergencia para imprevistos",
+        "Atender las metas de corto plazo ya planeadas"
+      ],
+      "ordenCanonico": [1, 2, 0]
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

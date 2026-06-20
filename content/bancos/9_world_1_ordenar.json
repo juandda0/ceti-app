@@ -1,0 +1,89 @@
+{
+  "bancoId": "9_world_1_ordenar",
+  "grado": "9",
+  "worldId": "world_1",
+  "tipo": "ordenar",
+  "items": [
+    {
+      "id": "9_world_1_ordenar_1",
+      "enunciado": "Ordena los pasos para obtener un ingreso por un pequeño trabajo, desde el primero hasta el último.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Primero se ofrece el servicio, luego se realiza el trabajo y por último se recibe el pago.",
+      "elementos": [
+        "Recibir el pago acordado",
+        "Ofrecer tu ayuda o servicio a alguien",
+        "Realizar el trabajo acordado"
+      ],
+      "ordenCanonico": [1, 2, 0]
+    },
+    {
+      "id": "9_world_1_ordenar_2",
+      "enunciado": "Ordena estas opciones de gasto de la más necesaria a la menos necesaria.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Los alimentos son una necesidad básica, el transporte es útil y el videojuego es un deseo.",
+      "elementos": [
+        "Un videojuego nuevo",
+        "Alimentos para la semana",
+        "El transporte para ir al colegio"
+      ],
+      "ordenCanonico": [1, 2, 0]
+    },
+    {
+      "id": "9_world_1_ordenar_3",
+      "enunciado": "Ordena los pasos que sigue el dinero de una mesada, desde que la recibes.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Primero recibes la mesada, luego decides en qué usarla y finalmente la gastas o ahorras.",
+      "elementos": [
+        "Decidir en qué usar el dinero",
+        "Recibir la mesada",
+        "Gastar o ahorrar el dinero"
+      ],
+      "ordenCanonico": [1, 0, 2]
+    },
+    {
+      "id": "9_world_1_ordenar_4",
+      "enunciado": "Ordena estos pasos para decidir una compra de forma responsable.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Primero identificas si es necesidad o deseo, luego revisas tu dinero disponible y por último decides.",
+      "elementos": [
+        "Revisar cuánto dinero tienes disponible",
+        "Preguntarte si es una necesidad o un deseo",
+        "Tomar la decisión de comprar o no"
+      ],
+      "ordenCanonico": [1, 0, 2]
+    },
+    {
+      "id": "9_world_1_ordenar_5",
+      "enunciado": "Ordena estas fuentes de dinero según el esfuerzo de trabajo que implican, de menor a mayor.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Un regalo no exige trabajo, una mesada implica responsabilidades en casa y un empleo requiere mayor esfuerzo.",
+      "elementos": [
+        "Recibir un regalo",
+        "Tener un empleo",
+        "Recibir una mesada por tareas del hogar"
+      ],
+      "ordenCanonico": [0, 2, 1]
+    },
+    {
+      "id": "9_world_1_ordenar_6",
+      "enunciado": "Ordena las etapas del valor del dinero en un intercambio, desde el inicio.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Primero tienes el dinero, luego eliges el bien o servicio y por último realizas el intercambio.",
+      "elementos": [
+        "Entregar el dinero y recibir el bien o servicio",
+        "Tener dinero disponible",
+        "Elegir el bien o servicio que quieres"
+      ],
+      "ordenCanonico": [1, 2, 0]
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

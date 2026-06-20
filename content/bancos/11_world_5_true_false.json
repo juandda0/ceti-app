@@ -1,0 +1,59 @@
+{
+  "bancoId": "11_world_5_true_false",
+  "grado": "11",
+  "worldId": "world_5",
+  "tipo": "true_false",
+  "items": [
+    {
+      "id": "11_world_5_true_false_1",
+      "enunciado": "Una deuda se considera manejable cuando sus cuotas pueden pagarse sin afectar los gastos esenciales ni el ahorro.",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "explicacion": "Esa holgura frente al ingreso es justamente lo que define a una deuda como manejable.",
+      "respuesta": true
+    },
+    {
+      "id": "11_world_5_true_false_2",
+      "enunciado": "Pagar solo el mínimo de una deuda rotativa la cancela rápidamente y reduce el costo total.",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "explicacion": "Falso: pagar solo el mínimo alarga la deuda y aumenta el costo total acumulado.",
+      "respuesta": false
+    },
+    {
+      "id": "11_world_5_true_false_3",
+      "enunciado": "El sobreendeudamiento aparece cuando las obligaciones superan la capacidad de pago del ingreso.",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "explicacion": "Verdadero: ese desbalance entre obligaciones e ingreso es la definición de sobreendeudamiento.",
+      "respuesta": true
+    },
+    {
+      "id": "11_world_5_true_false_4",
+      "enunciado": "No pagar una deuda no tiene ninguna consecuencia sobre el acceso futuro al crédito.",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "explicacion": "Falso: el incumplimiento genera reportes negativos que dificultan obtener crédito más adelante.",
+      "respuesta": false
+    },
+    {
+      "id": "11_world_5_true_false_5",
+      "enunciado": "Renegociar plazos y cuotas con la entidad puede ayudar a salir de una deuda difícil de pagar.",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "explicacion": "Verdadero: la reestructuración ajusta las condiciones a la capacidad real de pago.",
+      "respuesta": true
+    },
+    {
+      "id": "11_world_5_true_false_6",
+      "enunciado": "Endeudarse para un bien que se deprecia rápido reduce el riesgo financiero de la persona.",
+      "competencia": "deuda",
+      "dificultad": 5,
+      "explicacion": "Falso: aumenta el riesgo, porque se puede seguir debiendo por algo que ya perdió valor.",
+      "respuesta": false
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

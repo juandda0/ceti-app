@@ -1,0 +1,123 @@
+{
+  "bancoId": "11_world_1_multiple_choice",
+  "grado": "11",
+  "worldId": "world_1",
+  "tipo": "multiple_choice",
+  "items": [
+    {
+      "id": "11_world_1_multiple_choice_1",
+      "enunciado": "¿Qué distingue al ingreso pasivo del ingreso activo?",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "El ingreso pasivo no requiere intercambiar tiempo de trabajo de forma continua; el activo depende directamente del esfuerzo presente.",
+      "opciones": [
+        "El ingreso pasivo se genera sin requerir trabajo continuo de la persona",
+        "El ingreso pasivo siempre proviene de un empleo formal",
+        "El ingreso activo no implica ningún esfuerzo",
+        "El ingreso activo solo lo reciben los adultos mayores"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "11_world_1_multiple_choice_2",
+      "enunciado": "Una persona recibe una mesada y además vende manualidades. Desde el punto de vista financiero, esto representa:",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Tener más de una entrada de dinero se llama diversificación de fuentes de ingreso, lo cual reduce la dependencia de una sola.",
+      "opciones": [
+        "Una sola fuente de ingreso",
+        "Diversificación de fuentes de ingreso",
+        "Un gasto innecesario",
+        "Una deuda a futuro"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "11_world_1_multiple_choice_3",
+      "enunciado": "¿Por qué se dice que el dinero es principalmente un medio de intercambio?",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "El dinero facilita intercambiar bienes y servicios sin necesidad de trueque, sirviendo como referencia común de valor.",
+      "opciones": [
+        "Porque tiene valor solo cuando se guarda y nunca se usa",
+        "Porque permite intercambiar bienes y servicios sin recurrir al trueque",
+        "Porque su valor nunca cambia con el tiempo",
+        "Porque únicamente lo emiten las empresas privadas"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "11_world_1_multiple_choice_4",
+      "enunciado": "Al diferenciar necesidades de deseos para tomar decisiones de gasto, lo más correcto es entender que:",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Las necesidades son indispensables para vivir; los deseos mejoran el bienestar pero pueden postergarse. La distinción depende del contexto de cada persona.",
+      "opciones": [
+        "Todo lo que una persona quiere es una necesidad",
+        "Las necesidades son indispensables, mientras que los deseos pueden postergarse",
+        "Los deseos nunca deben satisfacerse",
+        "Necesidades y deseos significan exactamente lo mismo"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "11_world_1_multiple_choice_5",
+      "enunciado": "El concepto de costo de oportunidad al usar el dinero se refiere a:",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Cada vez que se usa dinero en algo, se renuncia a la mejor alternativa no elegida; ese valor sacrificado es el costo de oportunidad.",
+      "opciones": [
+        "El precio exacto que aparece en una etiqueta",
+        "Lo que se deja de obtener al elegir una opción en lugar de otra",
+        "Un impuesto que cobra el banco",
+        "El dinero que sobra al final del mes"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "11_world_1_multiple_choice_6",
+      "enunciado": "¿Cuál de las siguientes describe mejor el ingreso derivado del trabajo formal?",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "El trabajo formal implica un vínculo laboral con condiciones acordadas y protecciones, a diferencia de un ingreso ocasional sin contrato.",
+      "opciones": [
+        "Dinero recibido de forma ocasional sin ningún acuerdo",
+        "Dinero recibido por una relación laboral con condiciones y protecciones acordadas",
+        "Dinero prestado que debe devolverse con recargo",
+        "Dinero que se obtiene únicamente por juegos de azar"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "11_world_1_multiple_choice_7",
+      "enunciado": "Cuando el valor del dinero se reduce con el tiempo y permite comprar menos cosas, este fenómeno se relaciona con:",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "La pérdida de poder adquisitivo a lo largo del tiempo se asocia con la inflación, que afecta cuánto se puede comprar con la misma cantidad.",
+      "opciones": [
+        "El aumento permanente del poder adquisitivo",
+        "La pérdida de poder adquisitivo del dinero en el tiempo",
+        "La eliminación total del valor del dinero",
+        "La imposibilidad de ahorrar"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "11_world_1_multiple_choice_8",
+      "enunciado": "Una mesada puede entenderse como una herramienta de aprendizaje financiero porque:",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Administrar una mesada permite practicar decisiones de gasto, ahorro y priorización con recursos limitados, una habilidad clave a cualquier edad.",
+      "opciones": [
+        "Permite practicar decisiones de gasto y priorización con recursos limitados",
+        "Garantiza que nunca falte dinero",
+        "Reemplaza por completo la necesidad de trabajar",
+        "Solo sirve para gastarla de inmediato"
+      ],
+      "correctIndex": 0
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

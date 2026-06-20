@@ -1,0 +1,59 @@
+{
+  "bancoId": "10_world_4_true_false",
+  "grado": "10",
+  "worldId": "world_4",
+  "tipo": "true_false",
+  "items": [
+    {
+      "id": "10_world_4_true_false_1",
+      "enunciado": "Usar un crédito significa recibir dinero ahora con el compromiso de devolverlo después.",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "Esa es la definición básica de crédito: disponer de un recurso hoy a cambio de pagarlo en el futuro.",
+      "respuesta": true
+    },
+    {
+      "id": "10_world_4_true_false_2",
+      "enunciado": "Pedir prestado no genera ninguna obligación de devolver lo recibido.",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "Es falso: al pedir prestado se asume una deuda y el deber de devolverla según lo acordado.",
+      "respuesta": false
+    },
+    {
+      "id": "10_world_4_true_false_3",
+      "enunciado": "La tasa de interés representa el costo de usar el dinero prestado.",
+      "competencia": "credito",
+      "dificultad": 4,
+      "explicacion": "Verdadero: la tasa de interés es el precio que se paga por usar dinero ajeno durante un tiempo.",
+      "respuesta": true
+    },
+    {
+      "id": "10_world_4_true_false_4",
+      "enunciado": "La capacidad de pago indica si los ingresos alcanzan para cubrir las cuotas de una deuda.",
+      "competencia": "credito",
+      "dificultad": 4,
+      "explicacion": "Verdadero: la capacidad de pago mide si se puede asumir una deuda sin descuidar los gastos esenciales.",
+      "respuesta": true
+    },
+    {
+      "id": "10_world_4_true_false_5",
+      "enunciado": "Devolver un crédito siempre cuesta exactamente lo mismo que el monto que se pidió.",
+      "competencia": "credito",
+      "dificultad": 4,
+      "explicacion": "Es falso: al monto prestado se suman los intereses, por lo que normalmente se devuelve más de lo recibido.",
+      "respuesta": false
+    },
+    {
+      "id": "10_world_4_true_false_6",
+      "enunciado": "Usar el crédito de forma responsable implica pedir solo lo necesario y pagar a tiempo.",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "Verdadero: el uso responsable consiste en endeudarse según la capacidad de pago y cumplir las cuotas acordadas.",
+      "respuesta": true
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

@@ -1,0 +1,123 @@
+{
+  "bancoId": "10_world_1_multiple_choice",
+  "grado": "10",
+  "worldId": "world_1",
+  "tipo": "multiple_choice",
+  "items": [
+    {
+      "id": "10_world_1_multiple_choice_1",
+      "enunciado": "¿Qué es una fuente de ingreso?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Una fuente de ingreso es cualquier origen del que una persona recibe dinero de forma regular u ocasional.",
+      "opciones": [
+        "Un gasto que se hace cada mes de forma obligatoria",
+        "Un origen del que una persona recibe dinero",
+        "Una deuda que se debe pagar con intereses",
+        "Un objeto que se compra para revender más caro"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "10_world_1_multiple_choice_2",
+      "enunciado": "Una persona recibe dinero por las horas que trabaja en un empleo. ¿Cómo se clasifica ese ingreso?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "El ingreso laboral proviene de vender el propio trabajo o tiempo a cambio de una remuneración.",
+      "opciones": [
+        "Ingreso laboral, porque proviene del trabajo",
+        "Ingreso pasivo, porque no requiere esfuerzo",
+        "Un regalo, porque no se devuelve",
+        "Una herencia, porque se recibe una sola vez"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "10_world_1_multiple_choice_3",
+      "enunciado": "¿Cuál de las siguientes opciones es una NECESIDAD y no un deseo?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Las necesidades son indispensables para vivir, como la alimentación; los deseos mejoran el bienestar pero no son imprescindibles.",
+      "opciones": [
+        "Un videojuego de última generación",
+        "Una marca de ropa específica de moda",
+        "Alimentarse para mantenerse con salud",
+        "Un teléfono con la cámara más reciente"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "10_world_1_multiple_choice_4",
+      "enunciado": "La mesada que un estudiante recibe en casa se entiende mejor como:",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "La mesada es un ingreso que el estudiante administra, y sirve para practicar la toma de decisiones financieras.",
+      "opciones": [
+        "Un préstamo que deberá devolver con el tiempo",
+        "Un ingreso que puede administrar y decidir cómo usar",
+        "Un castigo por cumplir con sus tareas",
+        "Una inversión que siempre genera ganancias"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "10_world_1_multiple_choice_5",
+      "enunciado": "¿Por qué se dice que el dinero tiene valor?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "El dinero tiene valor porque las personas lo aceptan como medio de intercambio para obtener bienes y servicios.",
+      "opciones": [
+        "Porque el papel y el metal con que se hace son costosos",
+        "Porque se acepta para intercambiarlo por bienes y servicios",
+        "Porque cambia de color según la persona que lo tenga",
+        "Porque nunca pierde ni gana poder de compra"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "10_world_1_multiple_choice_6",
+      "enunciado": "Alguien vende postres que prepara en su casa y cobra por cada uno. Ese dinero es un ingreso de tipo:",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "El emprendimiento genera ingreso al ofrecer un producto o servicio propio a cambio de un pago.",
+      "opciones": [
+        "Por emprendimiento, al ofrecer un producto propio",
+        "Por herencia, al recibir bienes de un familiar",
+        "Por subsidio, al recibir una ayuda del Estado",
+        "Por azar, al ganar un sorteo o una rifa"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "10_world_1_multiple_choice_7",
+      "enunciado": "¿Cuál de estas afirmaciones describe mejor de dónde viene el dinero que una familia gasta?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "El dinero disponible para gastar proviene de los ingresos que la familia obtiene por trabajo u otras fuentes; no aparece por sí solo.",
+      "opciones": [
+        "Aparece automáticamente en las cuentas cada mes",
+        "Proviene de los ingresos que sus integrantes obtienen",
+        "Lo entrega gratis y sin límite cualquier banco",
+        "Surge solamente cuando se pide prestado a otros"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "10_world_1_multiple_choice_8",
+      "enunciado": "Antes de comprar algo, una buena pregunta para distinguir necesidad de deseo es:",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Preguntarse si realmente lo necesita para vivir o estudiar ayuda a priorizar el uso del ingreso de forma responsable.",
+      "opciones": [
+        "¿Es la opción más cara que puedo encontrar?",
+        "¿Lo tienen también mis amistades?",
+        "¿Realmente lo necesito o solo lo quiero ahora?",
+        "¿Está de moda esta temporada?"
+      ],
+      "correctIndex": 2
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

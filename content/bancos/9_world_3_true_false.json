@@ -1,0 +1,59 @@
+{
+  "bancoId": "9_world_3_true_false",
+  "grado": "9",
+  "worldId": "world_3",
+  "tipo": "true_false",
+  "items": [
+    {
+      "id": "9_world_3_true_false_1",
+      "enunciado": "Un fondo de emergencia está pensado para cubrir gastos imprevistos, no para compras planeadas de gusto.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "El propósito del fondo de emergencia es responder ante imprevistos; usarlo para gustos lo deja desprotegido.",
+      "respuesta": true
+    },
+    {
+      "id": "9_world_3_true_false_2",
+      "enunciado": "Postergar la gratificación significa renunciar para siempre a las cosas que nos gustan.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "No es renunciar para siempre, sino esperar el momento adecuado para obtener un beneficio mayor.",
+      "respuesta": false
+    },
+    {
+      "id": "9_world_3_true_false_3",
+      "enunciado": "Tener una meta de ahorro clara facilita mantener el hábito de ahorrar.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Una meta concreta da motivación y sentido al esfuerzo, lo que ayuda a sostener el hábito.",
+      "respuesta": true
+    },
+    {
+      "id": "9_world_3_true_false_4",
+      "enunciado": "El ahorro a largo plazo sirve para metas que están muy cerca en el tiempo.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "El ahorro a largo plazo es para metas distantes; las metas cercanas corresponden al corto plazo.",
+      "respuesta": false
+    },
+    {
+      "id": "9_world_3_true_false_5",
+      "enunciado": "Ahorrar de forma regular ayuda a convertir el ahorro en un hábito.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "La constancia hace que la conducta se vuelva automática y más fácil de mantener en el tiempo.",
+      "respuesta": true
+    },
+    {
+      "id": "9_world_3_true_false_6",
+      "enunciado": "Apartar el ahorro solo con lo que sobra al final del mes es la forma más segura de cumplir una meta.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Esperar a lo que sobra suele dejar poco o nada; es más efectivo apartar el ahorro primero, antes de gastar.",
+      "respuesta": false
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

@@ -1,0 +1,90 @@
+{
+  "bancoId": "9_world_5_ordenar",
+  "grado": "9",
+  "worldId": "world_5",
+  "tipo": "ordenar",
+  "items": [
+    {
+      "id": "9_world_5_ordenar_1",
+      "enunciado": "Ordena los pasos para empezar a salir de las deudas, del primero al último.",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Primero se conoce lo que se debe, luego se organiza un plan y por último se cumple y se evita endeudarse de nuevo.",
+      "elementos": [
+        "Hacer una lista de todas las deudas que se tienen",
+        "Organizar un plan de pago según el presupuesto",
+        "Pagar las cuotas a tiempo y evitar nuevas deudas"
+      ],
+      "ordenCanonico": [0, 1, 2]
+    },
+    {
+      "id": "9_world_5_ordenar_2",
+      "enunciado": "Ordena estas deudas de la menos riesgosa a la más riesgosa.",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Es menos riesgosa la que cabe holgada en el presupuesto y más riesgosa la que no se puede pagar con los ingresos.",
+      "elementos": [
+        "Una cuota pequeña que se paga fácil cada mes",
+        "Una cuota que ajusta justo el presupuesto",
+        "Una cuota que no alcanza a pagarse con los ingresos"
+      ],
+      "ordenCanonico": [0, 1, 2]
+    },
+    {
+      "id": "9_world_5_ordenar_3",
+      "enunciado": "Ordena los pasos para decidir de forma responsable si tomar una deuda.",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Primero se evalúa la necesidad, luego la capacidad de pago y al final se decide y se compromete a pagar.",
+      "elementos": [
+        "Evaluar si realmente se necesita aquello que se va a financiar",
+        "Revisar si los ingresos alcanzan para pagar las cuotas",
+        "Decidir tomar la deuda y comprometerse a pagarla a tiempo"
+      ],
+      "ordenCanonico": [0, 1, 2]
+    },
+    {
+      "id": "9_world_5_ordenar_4",
+      "enunciado": "Ordena la secuencia que lleva al sobreendeudamiento si no se controla.",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Tomar deudas sin control lleva a no alcanzar a pagar, pedir más prestado y terminar sobreendeudado.",
+      "elementos": [
+        "Tomar varias deudas sin revisar el presupuesto",
+        "No alcanzar a pagar todas las cuotas del mes",
+        "Pedir más préstamos para cubrir las cuotas",
+        "Quedar sobreendeudado y sin poder pagar"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "9_world_5_ordenar_5",
+      "enunciado": "Ordena las prioridades de pago cuando hay varias deudas, de la más a la menos prioritaria.",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Conviene atender primero lo esencial y las deudas que más crecen o más afectan si no se pagan.",
+      "elementos": [
+        "Cubrir primero las necesidades básicas del hogar",
+        "Pagar la deuda que más rápido crece o más penaliza el atraso",
+        "Pagar las deudas más pequeñas y menos urgentes"
+      ],
+      "ordenCanonico": [0, 1, 2]
+    },
+    {
+      "id": "9_world_5_ordenar_6",
+      "enunciado": "Ordena qué hacer cuando te das cuenta de que una deuda se está volviendo difícil de pagar, del primer al último paso.",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Lo primero es reconocer el problema, luego buscar ayuda o negociar y por último ajustar los gastos para cumplir.",
+      "elementos": [
+        "Reconocer a tiempo que la deuda se está volviendo difícil",
+        "Buscar orientación o hablar con quien prestó para negociar",
+        "Ajustar los gastos para poder cumplir con el nuevo plan"
+      ],
+      "ordenCanonico": [0, 1, 2]
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

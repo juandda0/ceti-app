@@ -1,0 +1,95 @@
+{
+  "bancoId": "11_world_2_ordenar",
+  "grado": "11",
+  "worldId": "world_2",
+  "tipo": "ordenar",
+  "items": [
+    {
+      "id": "11_world_2_ordenar_1",
+      "enunciado": "Ordena los pasos para elaborar un presupuesto personal desde el inicio:",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Primero se estiman los ingresos, luego se listan y categorizan los egresos, se comparan ambos y finalmente se ajusta para lograr equilibrio.",
+      "elementos": [
+        "Comparar el total de ingresos con el total de egresos",
+        "Estimar los ingresos disponibles del periodo",
+        "Ajustar los gastos para alcanzar el equilibrio",
+        "Listar y categorizar los egresos previstos"
+      ],
+      "ordenCanonico": [1, 3, 0, 2]
+    },
+    {
+      "id": "11_world_2_ordenar_2",
+      "enunciado": "Ordena las prioridades de gasto, de la más alta a la más baja, en un presupuesto ajustado:",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "explicacion": "Se cubren primero las necesidades básicas, luego los compromisos adquiridos, después el ahorro y por último los gastos de ocio.",
+      "elementos": [
+        "Gastos de ocio y entretenimiento",
+        "Necesidades básicas como alimentación y transporte",
+        "Aporte al ahorro del periodo",
+        "Compromisos ya adquiridos del periodo"
+      ],
+      "ordenCanonico": [1, 3, 2, 0]
+    },
+    {
+      "id": "11_world_2_ordenar_3",
+      "enunciado": "Ordena el ciclo de seguimiento de un presupuesto a lo largo del periodo:",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Se planean los gastos, se registran a medida que ocurren, se comparan con lo planeado y se corrige para el siguiente periodo.",
+      "elementos": [
+        "Registrar cada gasto a medida que ocurre",
+        "Planear los gastos del periodo",
+        "Corregir el plan para el siguiente periodo",
+        "Comparar lo gastado con lo planeado"
+      ],
+      "ordenCanonico": [1, 0, 3, 2]
+    },
+    {
+      "id": "11_world_2_ordenar_4",
+      "enunciado": "Ordena los pasos para decidir si incorporar un nuevo gasto recurrente al presupuesto:",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "explicacion": "Primero se identifica el costo del compromiso, luego se revisa el margen disponible, se evalúa si genera déficit y al final se decide.",
+      "elementos": [
+        "Decidir si se asume o se descarta el gasto",
+        "Identificar el costo recurrente del nuevo gasto",
+        "Evaluar si el gasto genera un déficit sostenido",
+        "Revisar el margen disponible entre ingresos y egresos"
+      ],
+      "ordenCanonico": [1, 3, 2, 0]
+    },
+    {
+      "id": "11_world_2_ordenar_5",
+      "enunciado": "Ordena los pasos para reaccionar ante un presupuesto que muestra déficit:",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "explicacion": "Se detecta el déficit, se revisan las categorías de gasto, se recortan los gastos discrecionales y se verifica que el plan quede equilibrado.",
+      "elementos": [
+        "Recortar o aplazar los gastos discrecionales",
+        "Detectar que los egresos superan a los ingresos",
+        "Verificar que el presupuesto ajustado queda equilibrado",
+        "Revisar cada categoría de gasto para hallar excesos"
+      ],
+      "ordenCanonico": [1, 3, 0, 2]
+    },
+    {
+      "id": "11_world_2_ordenar_6",
+      "enunciado": "Ordena, de lo más urgente a lo menos urgente, estas decisiones cuando se distribuye un ingreso recién recibido:",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Primero se separan los compromisos ineludibles, luego las necesidades básicas, después el ahorro planeado y por último el gasto libre.",
+      "elementos": [
+        "Destinar el gasto libre que sobre",
+        "Separar los compromisos ineludibles del periodo",
+        "Apartar el ahorro planeado",
+        "Reservar lo necesario para las necesidades básicas"
+      ],
+      "ordenCanonico": [1, 3, 2, 0]
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

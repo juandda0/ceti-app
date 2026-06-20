@@ -1,0 +1,85 @@
+{
+  "bancoId": "9_world_2_ordenar",
+  "grado": "9",
+  "worldId": "world_2",
+  "tipo": "ordenar",
+  "items": [
+    {
+      "id": "9_world_2_ordenar_1",
+      "enunciado": "Ordena los pasos para armar un presupuesto, del primero al último.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Primero calculas lo que entra, luego anotas lo que gastas y al final comparas para ajustar.",
+      "elementos": [
+        "Calcular tus ingresos",
+        "Anotar tus gastos",
+        "Comparar ingresos y gastos para ajustar"
+      ],
+      "ordenCanonico": [0, 1, 2]
+    },
+    {
+      "id": "9_world_2_ordenar_2",
+      "enunciado": "Ordena estos gastos según su prioridad, de la mayor a la menor.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Primero las necesidades básicas, luego los compromisos y al final los gustos opcionales.",
+      "elementos": ["Alimentación diaria", "Útiles para estudiar", "Salida con amigos al cine"],
+      "ordenCanonico": [0, 1, 2]
+    },
+    {
+      "id": "9_world_2_ordenar_3",
+      "enunciado": "Ordena el proceso de registrar un gasto, del primer paso al último.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Realizas la compra, guardas el comprobante y luego lo anotas en tu registro.",
+      "elementos": [
+        "Realizar la compra",
+        "Guardar el comprobante",
+        "Anotar el gasto en tu registro"
+      ],
+      "ordenCanonico": [0, 1, 2]
+    },
+    {
+      "id": "9_world_2_ordenar_4",
+      "enunciado": "Ordena los pasos para categorizar tus gastos del mes.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Reúnes los registros, los agrupas por tipo y luego revisas qué categoría pesa más.",
+      "elementos": [
+        "Reunir todos tus gastos registrados",
+        "Agrupar cada gasto por categoría",
+        "Revisar qué categoría consume más dinero"
+      ],
+      "ordenCanonico": [0, 1, 2]
+    },
+    {
+      "id": "9_world_2_ordenar_5",
+      "enunciado": "Ordena los pasos para ajustar un presupuesto en déficit.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Identificas el déficit, revisas qué gastos puedes reducir y aplicas el recorte para equilibrarlo.",
+      "elementos": [
+        "Detectar que gastas más de lo que recibes",
+        "Identificar gastos que puedes reducir",
+        "Recortar esos gastos para equilibrar"
+      ],
+      "ordenCanonico": [0, 1, 2]
+    },
+    {
+      "id": "9_world_2_ordenar_6",
+      "enunciado": "Ordena estas decisiones de gasto, de la más prioritaria a la menos prioritaria.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Primero el transporte para estudiar, luego ahorrar una parte y al final un antojo.",
+      "elementos": [
+        "Pagar el transporte para ir a estudiar",
+        "Guardar una parte como ahorro",
+        "Comprar un dulce como antojo"
+      ],
+      "ordenCanonico": [0, 1, 2]
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

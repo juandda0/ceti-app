@@ -23,7 +23,11 @@ import type { Grado, Role } from '@shared/types/tenancy';
 const ASSIGNABLE: Exclude<Role, 'estudiante' | 'admin' | 'rector'>[] = ['coordinador', 'profesor'];
 const GRADOS: Grado[] = ['9', '10', '11'];
 
-/** Admin console home (rector/coordinador): create courses, list them, assign staff. */
+/**
+ * Admin console home (platform admin only — §1.3 matrix): create courses,
+ * list them, assign staff. Access is enforced by AdminLayout which redirects
+ * any non-admin role back to the staff home before reaching this screen.
+ */
 export default function AdminHomeScreen() {
   const router = useRouter();
   const { t } = useTranslation();
@@ -184,9 +188,7 @@ export default function AdminHomeScreen() {
               <Ionicons name="people-outline" size={20} color={colors.brand.primary} />
               <View style={{ flex: 1 }}>
                 <Text style={[styles.rowName, { color: colors.text.primary }]}>{c.nombre}</Text>
-                <Text style={[styles.rowSub, { color: colors.text.tertiary }]}>
-                  {c.sedeId ? `${c.grado} · ${c.sedeId}` : c.grado}
-                </Text>
+                <Text style={[styles.rowSub, { color: colors.text.tertiary }]}>{c.grado}</Text>
               </View>
               <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
             </TouchableOpacity>

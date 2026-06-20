@@ -57,4 +57,22 @@ export const rosterRepository = {
     if (!snap.exists()) return null;
     return { uid: snap.id, ...(snap.data() as Estudiante) };
   },
+
+  /**
+   * Reads only the `grado` field of a course doc (R4: grado comes from the
+   * course, never from the student record). Used to determine which banco set
+   * to load for the quiz (R7/R9). Rules allow any colegio member to read cursos.
+   * Falls back to null when offline / course not found.
+   */
+  async getCursoGrado(
+    colegioId: string,
+    cursoId: string
+  ): Promise<import('@shared/types/tenancy').Grado | null> {
+    const clients = getFirebaseClients();
+    if (!clients?.firestore) return null;
+    const snap = await getDoc(cursoDocRef(clients.firestore, colegioId, cursoId));
+    if (!snap.exists()) return null;
+    const data = snap.data() as import('@shared/types/tenancy').Curso;
+    return data.grado ?? null;
+  },
 };

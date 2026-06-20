@@ -1,29 +1,33 @@
-import { useQuestionBankStore } from '@features/learning/store/useQuestionBankStore';
-import type { QuestionBankItem, WorldId } from '@features/learning/data/questionBank.types';
+import {
+  useQuestionBankStore,
+  QUESTIONS_PER_WORLD,
+} from '@features/learning/store/useQuestionBankStore';
+import type { QuizItem, WorldId } from '@features/learning/data/quiz.types';
+
+jest.mock('@features/learning/data/QuestionBankRepository', () => ({
+  questionBankRepository: { fetchAssembledQuiz: jest.fn() },
+}));
+// eslint-disable-next-line import/first
+import { questionBankRepository } from '@features/learning/data/QuestionBankRepository';
+const mockFetch = questionBankRepository.fetchAssembledQuiz as jest.Mock;
 
 const UID = 'user-1';
 const WORLD: WorldId = 'world_1';
 
-function makeQuestion(id: string): QuestionBankItem {
+function makeQuestion(id: string): QuizItem {
   return {
     id,
-    worldId: WORLD,
-    concept: 'ahorro',
-    difficulty: 'basic',
-    type: 'multiple_choice',
-    isAdaptable: false,
-    content: {
-      question: `q-${id}`,
-      options: ['a', 'b'],
-      correctAnswer: 'a',
-      explanation: 'because',
-    },
-    aiHints: { neutralContext: '', adaptableElements: [] },
-    metadata: { createdAt: 0, version: 1, reviewedBy: 'system' },
+    tipo: 'multiple_choice',
+    enunciado: `q-${id}`,
+    opciones: ['a', 'b'],
+    correctIndex: 0,
+    competencia: 'ahorro',
+    dificultad: 1,
+    explicacion: 'because',
   };
 }
 
-/** Seed N fake questions into world_1 (fetch hits the network, so bypass it). */
+/** Seed N fake questions into world_1 (bypasses network fetch). */
 function seedQuestions(count: number) {
   const questions = Array.from({ length: count }, (_, i) => makeQuestion(`q${i + 1}`));
   useQuestionBankStore.setState({ questionsByWorld: { [WORLD]: questions } });
@@ -32,9 +36,10 @@ function seedQuestions(count: number) {
 
 describe('useQuestionBankStore', () => {
   beforeEach(() => {
+    mockFetch.mockReset();
     useQuestionBankStore.setState({
       questionsByWorld: {},
-      fetchedWorlds: [],
+      fetchedKeyByWorld: {},
       fetchStatus: {},
       answers: [],
       remoteProgress: {},
@@ -103,6 +108,15 @@ describe('useQuestionBankStore', () => {
         done: 0,
         total: 0,
       });
+    });
+
+    it(`in-progress quiz reports total = ${QUESTIONS_PER_WORLD} when 10 questions are fetched`, () => {
+      seedQuestions(QUESTIONS_PER_WORLD);
+      const store = useQuestionBankStore.getState();
+      store.recordAnswer(UID, 'q1', WORLD, true);
+      expect(useQuestionBankStore.getState().getWorldProgress(UID, WORLD).total).toBe(
+        QUESTIONS_PER_WORLD
+      );
     });
   });
 
@@ -241,10 +255,33 @@ describe('useQuestionBankStore', () => {
       expect(s.remoteProgress).toEqual({});
     });
 
-    it('does not clear fetched questions', () => {
+    it('clears the assembled-question cache so the next student re-fetches', () => {
       seedQuestions(2);
       useQuestionBankStore.getState().resetUserProgress();
-      expect(useQuestionBankStore.getState().questionsByWorld[WORLD]).toHaveLength(2);
+      expect(useQuestionBankStore.getState().questionsByWorld[WORLD]).toBeUndefined();
+    });
+  });
+
+  describe('fetchWorldQuestions — cache guard keys on (grado, seedKey)', () => {
+    const tenItems = Array.from({ length: 10 }, (_, i) => makeQuestion(`a${i}`));
+
+    it('refetches when grado changes (does not serve the wrong grade — BLOQUEANTE-1)', async () => {
+      mockFetch.mockResolvedValue(tenItems);
+      const { fetchWorldQuestions } = useQuestionBankStore.getState();
+      await fetchWorldQuestions('9', WORLD, 'uid-1');
+      await fetchWorldQuestions('9', WORLD, 'uid-1'); // identical → deduped
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      await fetchWorldQuestions('11', WORLD, 'uid-1'); // grade changed → refetch
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(mockFetch).toHaveBeenLastCalledWith('11', WORLD, 'uid-1');
+    });
+
+    it('refetches when seedKey (student) changes so one student is not served another sample', async () => {
+      mockFetch.mockResolvedValue(tenItems);
+      const { fetchWorldQuestions } = useQuestionBankStore.getState();
+      await fetchWorldQuestions('9', WORLD, 'uid-1');
+      await fetchWorldQuestions('9', WORLD, 'uid-2'); // different student → refetch
+      expect(mockFetch).toHaveBeenCalledTimes(2);
     });
   });
 });

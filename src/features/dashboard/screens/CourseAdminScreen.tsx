@@ -11,29 +11,49 @@ import {
   Platform,
   Switch,
 } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import QRCode from 'react-native-qrcode-svg';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
-import { useAuthStore } from '@features/auth/store/useAuthStore';
+import { useAuthStore, useIsAdmin } from '@features/auth/store/useAuthStore';
 import { rosterRepository, type EstudianteWithId } from '@features/dashboard/data/rosterRepository';
 import { adminService } from '@features/dashboard/data/adminService';
 
 const POLICY_VERSION = 'v1';
 
-/** Per-course admin: roster (add students, Ley 1581 authorization) + assign teacher. */
+/**
+ * Per-course operations screen. Access by role (§1.3 matrix):
+ *   admin         — all controls (roster, code, attest, colaboracion, assign teacher)
+ *   coordinador   — roster, code, attest, colaboracion (no assign teacher / no role change)
+ *   profesor      — same as coordinador, scoped to their own course
+ *   rector        — redirect; rector is read-only at the school aggregate level
+ */
 export default function CourseAdminScreen() {
+  const router = useRouter();
   const { t } = useTranslation();
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
   const colegioId = useAuthStore((s) => s.colegioId);
   const role = useAuthStore((s) => s.role);
-  // Suppression (Ley 1581 erasure) is irreversible → rector/coordinador only.
+  const isAdmin = useIsAdmin();
+
+  // Rector has no operational controls here → redirect to staff home.
+  useEffect(() => {
+    if (role === 'rector') {
+      router.replace('/(staff)' as Href);
+    }
+  }, [role, router]);
+
+  // Suppression (Ley 1581 erasure) is irreversible → coordinador/admin only.
+  // rector is excluded because they don't reach this screen.
   // The Cloud Function independently enforces this; this is the client gate.
-  const canSuppress = role === 'rector' || role === 'coordinador';
+  const canSuppress = role === 'coordinador' || isAdmin;
+
+  // Assigning/changing a staff role is admin-only (§1.3: assignRole CF is admin-only).
+  const canAssignTeacher = isAdmin;
   const params = useLocalSearchParams<{ cursoId: string; nombre?: string }>();
   const cursoId = params.cursoId;
   const cursoNombre = params.nombre ?? cursoId;
@@ -284,35 +304,41 @@ export default function CourseAdminScreen() {
           })
         )}
 
-        {/* Assign teacher */}
-        <Text style={[styles.section, { color: colors.text.secondary }]}>
-          {t('admin.assignTeacher')}
-        </Text>
-        <Text style={[styles.hint, { color: colors.text.tertiary }]}>{t('admin.assignHint')}</Text>
-        <View style={styles.addRow}>
-          <TextInput
-            style={[styles.field, input, { flex: 1 }]}
-            placeholder={t('admin.email')}
-            placeholderTextColor={colors.text.tertiary}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            value={teacherEmail}
-            onChangeText={setTeacherEmail}
-          />
-          <TouchableOpacity
-            style={[
-              styles.addBtn,
-              {
-                backgroundColor: colors.brand.primary,
-                opacity: busy || !teacherEmail.trim() ? 0.6 : 1,
-              },
-            ]}
-            onPress={onAssignTeacher}
-            disabled={busy || !teacherEmail.trim()}
-          >
-            <Ionicons name="person-add-outline" size={18} color="#fff" />
-          </TouchableOpacity>
-        </View>
+        {/* Assign teacher — admin-only (§1.3: assignRole CF requires admin claim). */}
+        {canAssignTeacher && (
+          <>
+            <Text style={[styles.section, { color: colors.text.secondary }]}>
+              {t('admin.assignTeacher')}
+            </Text>
+            <Text style={[styles.hint, { color: colors.text.tertiary }]}>
+              {t('admin.assignHint')}
+            </Text>
+            <View style={styles.addRow}>
+              <TextInput
+                style={[styles.field, input, { flex: 1 }]}
+                placeholder={t('admin.email')}
+                placeholderTextColor={colors.text.tertiary}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                value={teacherEmail}
+                onChangeText={setTeacherEmail}
+              />
+              <TouchableOpacity
+                style={[
+                  styles.addBtn,
+                  {
+                    backgroundColor: colors.brand.primary,
+                    opacity: busy || !teacherEmail.trim() ? 0.6 : 1,
+                  },
+                ]}
+                onPress={onAssignTeacher}
+                disabled={busy || !teacherEmail.trim()}
+              >
+                <Ionicons name="person-add-outline" size={18} color="#fff" />
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
       </ScrollView>
     </ScreenWrapper>
   );

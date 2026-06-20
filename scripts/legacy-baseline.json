@@ -1,20 +1,13 @@
 {
   "note": "Baseline de deuda legacy (E4 / CR1). SOLO-DECRECIMIENTO: prohibido agregar entradas. Debe llegar a cero al cerrar el refactor del pivot. Cada entrada cita su conflicto de docs/empresa/conflictos.md.",
   "generatedBy": "scripts/invariantLint.mjs --update-baseline",
-  "totalEntries": 34,
+  "totalEntries": 32,
   "entries": [
     {
       "group": "bancos-global",
       "R": "R8",
       "file": "firestore.rules",
       "count": 1,
-      "conflicto": 8
-    },
-    {
-      "group": "bancos-global",
-      "R": "R8",
-      "file": "scripts/seedQuestionBank.ts",
-      "count": 4,
       "conflicto": 8
     },
     {
@@ -170,13 +163,6 @@
       "file": "src/shared/lib/firebase/paths.ts",
       "count": 2,
       "conflicto": 2
-    },
-    {
-      "group": "quiz-tipos",
-      "R": "R9",
-      "file": "scripts/seedQuestionBank.ts",
-      "count": 17,
-      "conflicto": 9
     },
     {
       "group": "quiz-tipos",

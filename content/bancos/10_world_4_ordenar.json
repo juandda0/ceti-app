@@ -1,0 +1,92 @@
+{
+  "bancoId": "10_world_4_ordenar",
+  "grado": "10",
+  "worldId": "world_4",
+  "tipo": "ordenar",
+  "items": [
+    {
+      "id": "10_world_4_ordenar_1",
+      "enunciado": "Ordena los pasos de un proceso responsable para adquirir un crédito, del primero al último.",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "Primero se identifica la necesidad, luego se revisa la capacidad de pago, después se comparan las condiciones y al final se asume el crédito.",
+      "elementos": [
+        "Identificar la necesidad real de pedir prestado",
+        "Revisar la propia capacidad de pago",
+        "Comparar las condiciones de distintas opciones",
+        "Adquirir el crédito que mejor se ajuste"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "10_world_4_ordenar_2",
+      "enunciado": "Ordena las etapas de un crédito a lo largo del tiempo, de la primera a la última.",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "Un crédito empieza al recibir el dinero, continúa con el pago de las cuotas y termina cuando se salda toda la deuda.",
+      "elementos": [
+        "Recibir el dinero prestado",
+        "Pagar las cuotas acordadas en cada periodo",
+        "Saldar por completo la deuda"
+      ],
+      "ordenCanonico": [0, 1, 2]
+    },
+    {
+      "id": "10_world_4_ordenar_3",
+      "enunciado": "Ordena de menor a mayor el efecto de una deuda sobre las finanzas, según cómo se maneje.",
+      "competencia": "credito",
+      "dificultad": 4,
+      "explicacion": "El impacto crece según el manejo: pagar a tiempo afecta poco, retrasarse afecta más y endeudarse sin capacidad de pago es lo más riesgoso.",
+      "elementos": [
+        "Pagar las cuotas a tiempo según lo planeado",
+        "Atrasarse en algunos pagos de las cuotas",
+        "Endeudarse por encima de la capacidad de pago"
+      ],
+      "ordenCanonico": [0, 1, 2]
+    },
+    {
+      "id": "10_world_4_ordenar_4",
+      "enunciado": "Ordena los conceptos según su secuencia lógica al pensar en un préstamo, del más general al más específico.",
+      "competencia": "credito",
+      "dificultad": 4,
+      "explicacion": "Se parte del crédito como idea general, luego la deuda que genera, después el interés como su costo y al final la cuota concreta que se paga.",
+      "elementos": [
+        "Crédito como posibilidad de pedir prestado",
+        "Deuda que se asume al pedir prestado",
+        "Interés que representa el costo de la deuda",
+        "Cuota periódica que combina deuda e interés"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "10_world_4_ordenar_5",
+      "enunciado": "Ordena los pasos para evaluar la capacidad de pago antes de endeudarse, del primero al último.",
+      "competencia": "credito",
+      "dificultad": 4,
+      "explicacion": "Primero se conocen los ingresos, luego los gastos esenciales, después lo que sobra disponible y por último se decide si la cuota cabe.",
+      "elementos": [
+        "Conocer los ingresos disponibles",
+        "Restar los gastos esenciales del mes",
+        "Calcular el margen que queda libre",
+        "Decidir si la cuota cabe en ese margen"
+      ],
+      "ordenCanonico": [0, 1, 2, 3]
+    },
+    {
+      "id": "10_world_4_ordenar_6",
+      "enunciado": "Ordena las acciones de un uso responsable del crédito, desde antes de pedirlo hasta después de obtenerlo.",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "El uso responsable empieza por leer las condiciones, sigue con pedir solo lo necesario y termina con cumplir los pagos acordados.",
+      "elementos": [
+        "Leer y entender las condiciones del crédito",
+        "Pedir solo el monto que se necesita",
+        "Cumplir con los pagos en las fechas acordadas"
+      ],
+      "ordenCanonico": [0, 1, 2]
+    }
+  ],
+  "pendiente_validacion_docente": true,
+  "generadoPor": "ia",
+  "version": 1
+}

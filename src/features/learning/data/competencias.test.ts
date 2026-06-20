@@ -1,5 +1,5 @@
 import { WORLD_COMPETENCIAS, competenciaForWorld } from '@features/learning/data/competencias';
-import type { WorldId } from '@features/learning/data/questionBank.types';
+import type { WorldId } from '@features/learning/data/quiz.types';
 
 const WORLD_IDS: WorldId[] = ['world_1', 'world_2', 'world_3', 'world_4', 'world_5'];
 
