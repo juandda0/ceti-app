@@ -154,6 +154,22 @@ await env.withSecurityRulesDisabled(async (ctx) => {
     pendiente_validacion_docente: true,
     items: [],
   });
+  // EligeCamino shared content (R8): doc id is `${grado}_${worldId}`.
+  await setDoc(doc(db, 'bancosEligeCamino/9_world_1'), {
+    bancoId: '9_world_1',
+    grado: '9',
+    worldId: 'world_1',
+    situaciones: [],
+    pendiente_validacion_docente: true,
+  });
+  // Micro-teoría shared content (R8): doc id is `${grado}_${worldId}`.
+  await setDoc(doc(db, 'microteoria/9_world_1'), {
+    grado: '9',
+    worldId: 'world_1',
+    cards: [],
+    generadoPor: 'ia',
+    pendiente_validacion_docente: true,
+  });
   // Leaderboard (V2): two courses, collaboration on vs off, with active students.
   await setDoc(doc(db, 'colegios/A/cursos/cLbOn'), {
     nombre: 'Lb On',
@@ -474,6 +490,45 @@ await check(
       worldId: 'world_2',
       tipo: 'true_false',
       items: [],
+    })
+  )
+);
+
+console.log('EligeCamino + micro-teoría (shared global content, read-only to clients):');
+await check(
+  'signed-in student reads bancosEligeCamino',
+  assertSucceeds(getDoc(doc(stuA1, 'bancosEligeCamino/9_world_1')))
+);
+await check(
+  'signed-in staff reads bancosEligeCamino',
+  assertSucceeds(getDoc(doc(profA1, 'bancosEligeCamino/9_world_1')))
+);
+await check(
+  'client cannot write bancosEligeCamino (Admin SDK only)',
+  assertFails(
+    setDoc(doc(stuA1, 'bancosEligeCamino/9_world_2'), {
+      bancoId: '9_world_2',
+      grado: '9',
+      worldId: 'world_2',
+      situaciones: [],
+    })
+  )
+);
+await check(
+  'signed-in student reads microteoria',
+  assertSucceeds(getDoc(doc(stuA1, 'microteoria/9_world_1')))
+);
+await check(
+  'signed-in staff reads microteoria',
+  assertSucceeds(getDoc(doc(profA1, 'microteoria/9_world_1')))
+);
+await check(
+  'client cannot write microteoria (Admin SDK only)',
+  assertFails(
+    setDoc(doc(stuA1, 'microteoria/9_world_2'), {
+      grado: '9',
+      worldId: 'world_2',
+      cards: [],
     })
   )
 );

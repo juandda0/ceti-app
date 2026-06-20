@@ -1,0 +1,44 @@
+{
+  "bancoId": "11_world_3",
+  "grado": "11",
+  "worldId": "world_3",
+  "situaciones": [
+    {
+      "id": "11_world_3_sit_1",
+      "enunciado": "Llevas meses ahorrando para una meta importante que te propusiste. De repente aparece una oferta por tiempo limitado de algo que te gusta mucho, pero que no estaba en tus planes. Comprarlo significaría usar buena parte de lo que ya habías reservado para tu meta.",
+      "opcionA": {
+        "texto": "Aprovecho la oferta ahora y retomo el ahorro de mi meta más adelante.",
+        "consecuencia": "Disfrutas algo inmediato, pero tu meta se aleja en el tiempo y tendrás que reconstruir parte del ahorro. Aprendes en carne propia el costo de postergar tus objetivos por una gratificación inmediata."
+      },
+      "opcionB": {
+        "texto": "Dejo pasar la oferta y mantengo intacto lo que ahorré para mi meta.",
+        "consecuencia": "Renuncias a un gusto puntual, pero conservas el avance hacia tu meta y fortaleces tu capacidad de postergar la gratificación. Tu objetivo se vuelve más alcanzable y refuerzas el hábito de priorizar lo importante sobre lo urgente."
+      }
+    },
+    {
+      "id": "11_world_3_sit_2",
+      "enunciado": "Comienzas a recibir ingresos de forma ocasional. Quieres empezar a ahorrar, pero no sabes cómo organizarte para que el ahorro no dependa de lo que 'sobre' a fin de mes, que casi nunca es nada.",
+      "opcionA": {
+        "texto": "Ahorro solo cuando me queda algo después de cubrir mis gastos y gustos.",
+        "consecuencia": "El ahorro queda al final de la fila y depende del azar. Algunos meses logras guardar algo y otros nada, por lo que el hábito nunca se consolida y avanzas muy lento hacia cualquier objetivo."
+      },
+      "opcionB": {
+        "texto": "Aparto una porción para el ahorro apenas recibo el ingreso, antes de gastar.",
+        "consecuencia": "Conviertes el ahorro en lo primero y no en lo último. Te acostumbras a vivir con el resto y el ahorro crece de forma constante. Construyes un hábito sostenible que no depende de tu fuerza de voluntad cada mes."
+      }
+    },
+    {
+      "id": "11_world_3_sit_3",
+      "enunciado": "Has logrado reunir un fondo de emergencia que reservaste para imprevistos reales. Surge la oportunidad de hacer un plan llamativo con tus amigos que no es una urgencia, pero que te entusiasma mucho y se acaba pronto.",
+      "opcionA": {
+        "texto": "Uso parte del fondo de emergencia para no perderme el plan.",
+        "consecuencia": "Vives la experiencia, pero te quedas sin colchón ante un imprevisto verdadero. Si surge una urgencia justo después, no tendrás de dónde echar mano y entenderás para qué servía realmente ese fondo."
+      },
+      "opcionB": {
+        "texto": "Dejo el fondo de emergencia intacto y busco financiar el plan de otra forma o lo dejo pasar.",
+        "consecuencia": "Quizás te pierdes el plan o tienes que ajustarlo, pero tu fondo de emergencia sigue cumpliendo su única función: estar disponible cuando de verdad lo necesites. Mantienes una red de seguridad que te da tranquilidad."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

@@ -181,13 +181,6 @@ export default function RootLayout() {
             <Stack.Screen name="(auth)" options={{ animation: 'fade' }} />
             <Stack.Screen name="(app)" options={{ animation: 'fade' }} />
             <Stack.Screen name="(staff)" options={{ animation: 'fade' }} />
-            <Stack.Screen
-              name="lesson/[id]"
-              options={{
-                animation: 'slide_from_bottom',
-                presentation: 'fullScreenModal',
-              }}
-            />
           </Stack>
           <StatusBar style={mode === 'light' ? 'dark' : 'light'} />
           <StreakCelebrationModal />

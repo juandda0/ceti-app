@@ -1,0 +1,44 @@
+{
+  "bancoId": "11_world_2",
+  "grado": "11",
+  "worldId": "world_2",
+  "situaciones": [
+    {
+      "id": "11_world_2_sit_1",
+      "enunciado": "Recibes un ingreso extra inesperado al terminar un proyecto. Ya tenías un presupuesto mensual ajustado que cubría tus necesidades. ¿Cómo decides integrar ese ingreso a tu plan?",
+      "opcionA": {
+        "texto": "Destinar la mayor parte a reforzar tu fondo de imprevistos antes de gastar.",
+        "consecuencia": "Tu margen de seguridad crece, así que un gasto inesperado futuro deja de descuadrar tu presupuesto. A cambio, renuncias por ahora a una recompensa inmediata, lo que exige paciencia y una visión a más largo plazo."
+      },
+      "opcionB": {
+        "texto": "Asignarlo a una experiencia o compra que venías posponiendo.",
+        "consecuencia": "Disfrutas de inmediato algo que valorabas y reconoces tu esfuerzo, lo que puede sostener tu motivación. A cambio, tu colchón ante imprevistos sigue igual de delgado y dependes de que nada se salga del plan."
+      }
+    },
+    {
+      "id": "11_world_2_sit_2",
+      "enunciado": "Al revisar tu presupuesto del mes notas que tus egresos vienen creciendo y se acercan peligrosamente a tus ingresos. Identificas que dos categorías son las que más subieron. ¿Qué estrategia adoptas?",
+      "opcionA": {
+        "texto": "Recortar de forma pareja un poco en cada categoría de gasto.",
+        "consecuencia": "El ajuste se siente menos drástico y ninguna área queda muy afectada, así que es más fácil de sostener emocionalmente. Sin embargo, atacas poco el origen real del desbalance y el problema podría reaparecer el mes siguiente."
+      },
+      "opcionB": {
+        "texto": "Recortar a fondo solo en las dos categorías que más crecieron.",
+        "consecuencia": "Atacas directamente la causa del desequilibrio y recuperas margen con rapidez. A cambio, sentirás más el sacrificio en esas dos áreas concretas y necesitarás disciplina para no compensar gastando de más en otras."
+      }
+    },
+    {
+      "id": "11_world_2_sit_3",
+      "enunciado": "Surge la oportunidad de comprometerte a un gasto fijo mensual atractivo (una suscripción o membresía que usarías). Tu presupuesto actual lo permitiría, pero te dejaría con muy poca holgura. ¿Qué decisión tomas?",
+      "opcionA": {
+        "texto": "Asumir el compromiso ahora porque encaja justo dentro de tus medios actuales.",
+        "consecuencia": "Accedes de inmediato a algo que querías y tu plan, en teoría, lo soporta. El riesgo es que un gasto fijo nuevo reduce tu flexibilidad: si bajan tus ingresos o sube otro gasto, vivir dentro de tus medios se vuelve mucho más difícil."
+      },
+      "opcionB": {
+        "texto": "Posponer el compromiso hasta tener un margen más amplio en tu presupuesto.",
+        "consecuencia": "Mantienes flexibilidad para absorber cambios sin tensión y decides desde la holgura, no desde la presión. A cambio, renuncias por ahora a algo que te interesa y debes tolerar la espera mientras fortaleces tu plan."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

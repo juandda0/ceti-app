@@ -1,0 +1,28 @@
+{
+  "grado": "11",
+  "worldId": "world_5",
+  "cards": [
+    {
+      "titulo": "La deuda como herramienta, no como trampa",
+      "cuerpo": "Una deuda no es buena ni mala en sí misma: es una herramienta que adelanta recursos que aún no tienes a cambio de un costo. Su valor depende de para qué la uses y de si su pago cabe con holgura en tu capacidad real. Bien usada, te ayuda a alcanzar metas antes; mal usada, compromete tu futuro a cambio de un alivio pasajero.",
+      "ejemplo": "Endeudarte para algo que aumenta tus oportunidades no es lo mismo que endeudarte para un gusto que se consume y desaparece dejándote solo la cuota."
+    },
+    {
+      "titulo": "Deuda manejable vs. deuda riesgosa",
+      "cuerpo": "Lo que separa una deuda sana de una peligrosa no es tanto el monto como el peso que su pago tiene sobre tus ingresos. Una deuda es manejable cuando la cuota cabe sin esfuerzo y aún te deja margen para imprevistos y para ahorrar. Se vuelve riesgosa cuando te deja al límite, sin colchón: cualquier sobresalto te empuja a incumplir o a endeudarte más.",
+      "ejemplo": "Dos personas pueden deber lo mismo: para quien le sobra margen es una deuda tranquila, y para quien queda al borde es una bomba de tiempo."
+    },
+    {
+      "titulo": "El sobreendeudamiento y la bola de nieve",
+      "cuerpo": "El sobreendeudamiento aparece cuando tienes tantas deudas a la vez que tus ingresos ya no alcanzan para sostenerlas. La señal más clara es empezar a pedir prestado para pagar otra deuda: ahí los intereses se acumulan sobre intereses y la carga crece sola, como una bola de nieve que baja por la pendiente. Cuanto más tarde se frena, más difícil y costoso resulta detenerla.",
+      "ejemplo": "Tapar una deuda con otra puede calmar el mes, pero a la larga es cavar un hueco más hondo cada vez que intentas salir."
+    },
+    {
+      "titulo": "El camino para salir de las deudas",
+      "cuerpo": "Salir de una deuda empieza por mirarla de frente: saber con exactitud cuánto debes, a quién y en qué condiciones. A partir de ahí conviene dejar de tomar deuda nueva, ordenar los pagos y dirigir cualquier recurso extra a reducir lo que ya debes, cerrando una deuda a la vez. Es un proceso de disciplina sostenida, no de un solo golpe: cada deuda que liberas te devuelve un poco de margen y de tranquilidad.",
+      "ejemplo": "Destinar un ingreso inesperado a cerrar una deuda pendiente, en vez de gastarlo, libera tus próximos meses y acelera todo el proceso."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

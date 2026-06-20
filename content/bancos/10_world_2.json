@@ -1,0 +1,44 @@
+{
+  "bancoId": "10_world_2",
+  "grado": "10",
+  "worldId": "world_2",
+  "situaciones": [
+    {
+      "id": "10_world_2_sit_1",
+      "enunciado": "Recibes tu mesada del mes y, al revisar tus planes, notas que ya tienes apartado lo necesario para tus gastos fijos. Justo ese día aparece la preventa de un videojuego que esperabas. ¿Qué decides hacer con el dinero que te queda libre?",
+      "opcionA": {
+        "texto": "Comprar el videojuego de inmediato aprovechando la preventa",
+        "consecuencia": "Disfrutas el juego desde el primer día, pero tu dinero libre del mes queda corto, así que tendrás que ajustar otros planes o esperar a la próxima mesada si surge un imprevisto."
+      },
+      "opcionB": {
+        "texto": "Esperar y guardar ese dinero hasta tener claro qué otros gastos vienen en el mes",
+        "consecuencia": "Pierdes el descuento de la preventa, pero llegas al final del mes con un margen disponible que te da tranquilidad si aparece algo inesperado o una mejor oportunidad."
+      }
+    },
+    {
+      "id": "10_world_2_sit_2",
+      "enunciado": "Estás planeando tus gastos de la semana y haces una lista de lo que quieres: salir con amigos, un snack diario en el colegio y recargar datos para tu celular. Al sumarlo todo, ves que no alcanza para las tres cosas al mismo tiempo. ¿Cómo organizas tu plan?",
+      "opcionA": {
+        "texto": "Priorizar primero lo que usas a diario y dejar la salida con amigos para cuando puedas",
+        "consecuencia": "Cubres tus necesidades constantes de la semana sin contratiempos, aunque postergas un plan social que tendrás que reagendar más adelante."
+      },
+      "opcionB": {
+        "texto": "Reservar para la salida con amigos y recortar el snack diario esos días",
+        "consecuencia": "Vives la experiencia con tus amigos esta semana, pero te toca cambiar tu rutina diaria y llevar comida de casa para que las cuentas cuadren."
+      }
+    },
+    {
+      "id": "10_world_2_sit_3",
+      "enunciado": "Durante un par de meses lograste reunir un ahorro guardando una parte de cada ingreso. Tu primo te propone entrar juntos a un plan para revender productos que, según él, deja buenas ganancias rápido, pero implica usar casi todo tu ahorro. ¿Qué haces?",
+      "opcionA": {
+        "texto": "Invertir buena parte de tu ahorro en el plan de reventa con tu primo",
+        "consecuencia": "Tienes la posibilidad de aumentar tu dinero si el plan funciona, pero quedas sin colchón de ahorro y asumes el riesgo de perder lo reunido si las ventas no salen como esperaban."
+      },
+      "opcionB": {
+        "texto": "Conservar tu ahorro y proponer empezar solo con una parte pequeña para probar",
+        "consecuencia": "Avanzas con más cautela y mantienes tu colchón de seguridad, aunque tus posibles ganancias sean menores y tu primo podría preferir buscar otro socio más decidido."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

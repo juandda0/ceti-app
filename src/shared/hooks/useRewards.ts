@@ -2,7 +2,6 @@
 import { useCallback } from 'react';
 import { useUserStore } from '@features/auth/store/useUserStore';
 import { useWalletStore } from '@features/savings/store/useWalletStore';
-import { useLessonsStore } from '@features/learning/store/useLessonsStore';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
 import { useQuestionBankStore } from '@features/learning/store/useQuestionBankStore';
 import { masteryPercent } from '@features/learning/data/mastery';
@@ -15,7 +14,6 @@ import { BADGES, Badge, BadgeConditionType } from '@shared/data/badges';
 export function useRewards() {
   const store = useUserStore();
   const wallet = useWalletStore();
-  const lessons = useLessonsStore();
   const savingsGoals = useSavingsStore((s) => s.goals);
   const getWorldProgress = useQuestionBankStore((s) => s.getWorldProgress);
 
@@ -32,14 +30,7 @@ export function useRewards() {
 
   const getConditionValue = useCallback(
     (type: BadgeConditionType): number => {
-      const userId = (store.id || '').trim();
-      const lessonCount = userId
-        ? lessons.completedLessons.filter((l) => l.uid === userId).length
-        : 0;
-
       switch (type) {
-        case 'lessons_completed':
-          return lessonCount;
         case 'saved_cetis':
           return wallet.savedCetis;
         case 'streak':
@@ -60,10 +51,8 @@ export function useRewards() {
       }
     },
     [
-      lessons.completedLessons,
       wallet.savedCetis,
       store.streak,
-      store.id,
       store.savingsDecisions,
       wallet.savingsGoal,
       savingsGoals,

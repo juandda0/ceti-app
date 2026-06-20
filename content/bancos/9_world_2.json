@@ -1,0 +1,44 @@
+{
+  "bancoId": "9_world_2",
+  "grado": "9",
+  "worldId": "world_2",
+  "situaciones": [
+    {
+      "id": "9_world_2_sit_1",
+      "enunciado": "Recibes tu mesada del mes y, el mismo día, sale a la venta un videojuego que querías hace tiempo. Si lo compras de una vez, te queda muy poco para el resto del mes. Tienes que decidir qué hacer con ese dinero.",
+      "opcionA": {
+        "texto": "Comprar el videojuego apenas sale, sin planear el resto de tus gastos.",
+        "consecuencia": "Disfrutas el juego enseguida, pero a mitad de mes te quedas sin dinero para los gastos pequeños del día a día (un refrigerio, el transporte, salir con amigos). Aprendes que gastar todo de golpe te deja sin margen para lo que viene después."
+      },
+      "opcionB": {
+        "texto": "Apartar primero lo que necesitas para el mes y ahorrar poco a poco para el juego.",
+        "consecuencia": "Tienes que esperar varias semanas y aguantar las ganas, pero llegas tranquilo al final del mes con tus gastos cubiertos y luego compras el juego sin angustia. Aprendes que planear primero te da control, aunque pidas paciencia."
+      }
+    },
+    {
+      "id": "9_world_2_sit_2",
+      "enunciado": "Tu curso organiza una salida y cada estudiante debe cubrir su parte. Tú ya tenías ese dinero apartado para otra cosa que te gusta. Ahora debes decidir cómo manejar tus dos prioridades con lo que tienes.",
+      "opcionA": {
+        "texto": "Usar todo el dinero apartado en la salida y dejar la otra cosa para más adelante.",
+        "consecuencia": "Vas a la salida con tus amigos y vives la experiencia, pero pospones lo que querías y quizá no vuelva a aparecer la misma oportunidad. Aprendes que cuando los recursos no alcanzan para todo, elegir una prioridad significa renunciar a otra por ahora."
+      },
+      "opcionB": {
+        "texto": "Quedarte con tu plan original y buscar la forma de cubrir solo una parte de la salida.",
+        "consecuencia": "Mantienes lo que ya habías decidido, pero participas de la salida de forma más limitada y sientes que te perdiste algo del momento con el grupo. Aprendes que priorizar es comparar lo que cada opción te da y decidir según lo que más valoras."
+      }
+    },
+    {
+      "id": "9_world_2_sit_3",
+      "enunciado": "Empiezas a hacer pequeños trabajos los fines de semana y ahora tienes algo más de ingreso del que estabas acostumbrado. Sientes la tentación de gastar más porque ahora 'entra más'. Debes decidir cómo manejar ese ingreso extra.",
+      "opcionA": {
+        "texto": "Subir tus gastos al mismo ritmo que subió tu ingreso, gastando casi todo lo que entra.",
+        "consecuencia": "Te das más gustos y disfrutas el momento, pero no te queda nada guardado y, si un fin de semana no consigues trabajo, te quedas corto. Aprendes que si los egresos crecen igual que los ingresos, nunca queda margen ni respaldo."
+      },
+      "opcionB": {
+        "texto": "Mantener tus gastos parecidos a antes y reservar una parte del ingreso extra.",
+        "consecuencia": "Vives con un ritmo de gasto más moderado del que podrías, pero acumulas un respaldo que te da tranquilidad cuando una semana no entre dinero. Aprendes que vivir dentro de tus medios deja espacio para imprevistos y metas."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

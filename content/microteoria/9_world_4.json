@@ -1,0 +1,28 @@
+{
+  "grado": "9",
+  "worldId": "world_4",
+  "cards": [
+    {
+      "titulo": "Qué es el crédito",
+      "cuerpo": "El crédito es un acuerdo en el que alguien te presta dinero ahora y tú te comprometes a devolverlo después. No es dinero gratis ni dinero tuyo: es dinero prestado que tendrás que pagar. Por eso pedir prestado siempre implica una responsabilidad a futuro.",
+      "ejemplo": "Una tienda te deja llevar algo hoy y tú lo pagas en partes durante los siguientes meses."
+    },
+    {
+      "titulo": "La tasa de interés",
+      "cuerpo": "Cuando te prestan dinero, casi siempre debes devolver un poco más de lo que recibiste. Ese extra se llama interés y es como el costo de usar el dinero de otra persona. Mientras más tiempo tardes en pagar, más interés se suele acumular.",
+      "ejemplo": "Si pides prestado y lo devuelves en muchas cuotas, al final habrás entregado más que el valor original de lo que compraste."
+    },
+    {
+      "titulo": "Capacidad de pago",
+      "cuerpo": "Tu capacidad de pago es cuánto puedes destinar a una cuota sin descuidar tus gastos necesarios. Antes de pedir prestado conviene revisar qué te queda después de cubrir lo esencial. Pedir más de lo que puedes pagar te deja sin margen para imprevistos.",
+      "ejemplo": "Si después de tus gastos fijos te queda poco, una cuota muy alta te dejaría sin nada para una emergencia."
+    },
+    {
+      "titulo": "Uso responsable del crédito",
+      "cuerpo": "El crédito puede ayudarte cuando lo usas con cuidado: para algo que realmente necesitas y que sí puedes pagar a tiempo. Pagar puntualmente y solo pedir lo necesario evita que la deuda crezca y te genere estrés. Usado con cabeza, es una herramienta; usado sin pensar, se vuelve un problema.",
+      "ejemplo": "Pedir prestado solo lo que cabe en tu presupuesto y pagar cada cuota a tiempo te mantiene libre de deudas que se salen de control."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

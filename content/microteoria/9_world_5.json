@@ -1,0 +1,28 @@
+{
+  "grado": "9",
+  "worldId": "world_5",
+  "cards": [
+    {
+      "titulo": "¿Qué es una deuda?",
+      "cuerpo": "Una deuda es algo que recibes ahora y te comprometes a devolver después, casi siempre devolviendo un poco más de lo que recibiste. No es buena ni mala por sí sola: lo importante es para qué la usas y si vas a poder pagarla a tiempo.",
+      "ejemplo": "Le pides prestado un cuaderno a un compañero y prometes traerle otro igual la próxima semana: estás asumiendo una deuda."
+    },
+    {
+      "titulo": "Deuda manejable vs. deuda riesgosa",
+      "cuerpo": "Una deuda manejable es la que puedes pagar sin dejar de cubrir lo que de verdad necesitas. Una deuda riesgosa es la que te obliga a apretarte demasiado o a pedir prestado otra vez para pagarla. Antes de endeudarte, piensa si tus ingresos alcanzan para cumplir.",
+      "ejemplo": "Pagar en cuotas algo necesario que sí puedes cubrir es manejable; endeudarte por un capricho que te deja sin dinero para lo básico es riesgoso."
+    },
+    {
+      "titulo": "El sobreendeudamiento",
+      "cuerpo": "El sobreendeudamiento ocurre cuando tienes tantas deudas al mismo tiempo que ya no alcanzas a pagarlas todas. Cada nueva deuda para tapar otra hace el problema más grande, porque los intereses se acumulan y la presión aumenta.",
+      "ejemplo": "Pedir un préstamo para pagar otro préstamo es una señal de alarma: la bola de nieve crece en lugar de achicarse."
+    },
+    {
+      "titulo": "Cómo salir de una deuda",
+      "cuerpo": "Para salir de una deuda, lo primero es reconocer cuánto debes y no esconder el problema. Luego puedes hacer un plan de pagos pequeños y constantes, y hablar con quien te prestó para acordar algo realista. Cumplir poco a poco es mejor que evitar el tema.",
+      "ejemplo": "En vez de ignorar una deuda atrasada, propones pagarla en partes cada semana hasta saldarla por completo."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

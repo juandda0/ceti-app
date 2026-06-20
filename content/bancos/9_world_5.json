@@ -1,0 +1,44 @@
+{
+  "bancoId": "9_world_5",
+  "grado": "9",
+  "worldId": "world_5",
+  "situaciones": [
+    {
+      "id": "9_world_5_sit_1",
+      "enunciado": "Quieres comprar un celular nuevo aunque el tuyo todavía funciona. Una tienda te ofrece pagarlo en muchas cuotas pequeñas durante mucho tiempo. ¿Qué decides?",
+      "opcionA": {
+        "texto": "Acepto las cuotas y me llevo el celular hoy mismo.",
+        "consecuencia": "Tienes el celular de inmediato, pero al final terminas pagando bastante más que su precio real por los intereses, y quedas comprometido a pagar cada mes durante mucho tiempo, aunque algo más urgente aparezca."
+      },
+      "opcionB": {
+        "texto": "Sigo con mi celular actual y ahorro un poco cada semana para comprarlo después.",
+        "consecuencia": "Esperas más tiempo para tener el celular nuevo, pero al pagarlo de una sola vez evitas los intereses y no quedas atado a una deuda que limite tus decisiones futuras."
+      }
+    },
+    {
+      "id": "9_world_5_sit_2",
+      "enunciado": "Ya tienes una deuda que estás pagando. Un amigo te propone un plan emocionante que requiere pedir prestado otra vez para participar. ¿Qué haces?",
+      "opcionA": {
+        "texto": "Pido el nuevo préstamo; encontraré la forma de pagar las dos deudas.",
+        "consecuencia": "Te diviertes ahora, pero ahora debes cubrir dos pagos al mismo tiempo. Si una cuota se atrasa, las deudas se acumulan y se vuelven difíciles de controlar: eso es sobreendeudamiento."
+      },
+      "opcionB": {
+        "texto": "Espero a terminar de pagar lo que ya debo antes de asumir algo nuevo.",
+        "consecuencia": "Te pierdes el plan por ahora, pero mantienes una sola deuda bajo control. Cuando la termines de pagar quedarás libre para decidir con tranquilidad, sin la presión de varias obligaciones a la vez."
+      }
+    },
+    {
+      "id": "9_world_5_sit_3",
+      "enunciado": "Tienes una deuda atrasada que te preocupa. Puedes hablar con quien te prestó para buscar una solución, o evitar el tema esperando que se resuelva solo. ¿Qué eliges?",
+      "opcionA": {
+        "texto": "Evito el tema y dejo de responder hasta tener cómo pagar.",
+        "consecuencia": "Por un momento sientes menos presión, pero la deuda no desaparece: sigue creciendo con el tiempo y la relación de confianza se daña, así que salir de ella se vuelve aún más difícil."
+      },
+      "opcionB": {
+        "texto": "Hablo con la persona, explico mi situación y propongo un plan de pagos pequeños.",
+        "consecuencia": "Es incómodo dar la cara, pero al acordar pagos que sí puedes cumplir empiezas a salir de la deuda de forma ordenada y conservas la confianza para el futuro."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

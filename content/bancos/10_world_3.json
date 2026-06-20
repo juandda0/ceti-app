@@ -1,0 +1,44 @@
+{
+  "bancoId": "10_world_3",
+  "grado": "10",
+  "worldId": "world_3",
+  "situaciones": [
+    {
+      "id": "10_world_3_sit_1",
+      "enunciado": "Te propusiste juntar lo necesario para un curso que quieres tomar el próximo semestre. Este mes recibiste algo de dinero extra que no esperabas. Justo hoy una tienda anuncia una promoción por tiempo limitado de unos audífonos que te gustan mucho.",
+      "opcionA": {
+        "texto": "Aprovechas la promoción y compras los audífonos ahora.",
+        "consecuencia": "Disfrutas los audífonos de inmediato, pero tu meta del curso queda más lejos. Tendrás que ahorrar varios meses más o renunciar a inscribirte cuando se abra el cupo."
+      },
+      "opcionB": {
+        "texto": "Guardas el dinero extra y lo sumas a tu meta del curso.",
+        "consecuencia": "Postergas un gusto inmediato, pero tu meta se acerca y es probable que alcances a inscribirte a tiempo. Aprendes que retrasar una compra puede valer más que el impulso del momento."
+      }
+    },
+    {
+      "id": "10_world_3_sit_2",
+      "enunciado": "Decidiste empezar a ahorrar de forma constante. Tienes dos maneras de hacerlo: apartar una pequeña cantidad fija cada vez que recibes dinero, o esperar a que te sobre algo al final del mes para guardarlo.",
+      "opcionA": {
+        "texto": "Apartas una cantidad fija apenas recibes el dinero, antes de gastar.",
+        "consecuencia": "Conviertes el ahorro en un hábito automático. Aunque al principio cuesta acostumbrarse, con el tiempo ahorras de manera estable sin depender de tu voluntad cada mes."
+      },
+      "opcionB": {
+        "texto": "Esperas a ver qué te queda al final del mes para guardarlo.",
+        "consecuencia": "A veces logras ahorrar algo, pero muchos meses no sobra nada porque los gastos se llevan todo. Tu ahorro depende del azar y avanza de forma irregular."
+      }
+    },
+    {
+      "id": "10_world_3_sit_3",
+      "enunciado": "Llevas un tiempo formando un fondo para imprevistos, ese dinero que se guarda solo para emergencias. De repente surge un plan muy atractivo con tus amigos que te gustaría aprovechar, pero pagarlo significaría usar parte de ese fondo.",
+      "opcionA": {
+        "texto": "Usas parte del fondo de emergencia para el plan con tus amigos.",
+        "consecuencia": "Vives una buena experiencia hoy, pero te quedas con menos respaldo. Si más adelante aparece un gasto inesperado y urgente, no tendrás con qué cubrirlo y podrías quedar en aprietos."
+      },
+      "opcionB": {
+        "texto": "Dejas intacto el fondo de emergencia y buscas otra forma de costear el plan o lo dejas pasar.",
+        "consecuencia": "Tal vez te pierdas este plan, pero conservas tu red de seguridad. Cuando surja un imprevisto real, estarás preparado y evitarás endeudarte o pedir ayuda con urgencia."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

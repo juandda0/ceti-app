@@ -1,0 +1,28 @@
+{
+  "grado": "11",
+  "worldId": "world_3",
+  "cards": [
+    {
+      "titulo": "Ahorrar con metas",
+      "cuerpo": "Ahorrar sin un propósito claro es difícil de sostener. Cuando defines una meta concreta y le pones un plazo, el ahorro deja de ser un sacrificio abstracto y se convierte en un camino con un destino visible. Una buena meta es específica, medible y tiene una fecha.",
+      "ejemplo": "En lugar de 'quiero ahorrar', te propones 'reunir lo necesario para un curso al terminar el año'."
+    },
+    {
+      "titulo": "El ahorro como hábito, no como sobra",
+      "cuerpo": "El error más común es ahorrar solo lo que queda al final del mes, que suele ser poco o nada. La estrategia opuesta es apartar una porción para el ahorro apenas recibes un ingreso, antes de gastar. Así el ahorro se vuelve automático y deja de depender de tu voluntad en cada momento.",
+      "ejemplo": "Apenas recibes dinero, separas una parte fija y vives con el resto, como si esa porción no existiera."
+    },
+    {
+      "titulo": "El fondo de emergencia",
+      "cuerpo": "Un fondo de emergencia es un ahorro reservado exclusivamente para imprevistos reales, no para gustos ni planes. Su función es servir de red de seguridad para que una urgencia no te obligue a endeudarte ni a abandonar tus metas. Por eso solo se toca cuando ocurre algo verdaderamente inesperado y necesario.",
+      "ejemplo": "Si se daña algo indispensable o surge un gasto urgente, recurres al fondo; para un plan con amigos, no."
+    },
+    {
+      "titulo": "Postergar la gratificación",
+      "cuerpo": "Postergar la gratificación es la capacidad de renunciar a un gusto inmediato para alcanzar un beneficio mayor en el futuro. Cada vez que eliges esperar y mantener tu ahorro, fortaleces esa habilidad. No se trata de no disfrutar nunca, sino de decidir con conciencia qué es lo más importante para ti.",
+      "ejemplo": "Dejar pasar una compra impulsiva hoy para que tu meta de mañana siga en pie."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

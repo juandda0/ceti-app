@@ -1,0 +1,44 @@
+{
+  "bancoId": "10_world_1",
+  "grado": "10",
+  "worldId": "world_1",
+  "situaciones": [
+    {
+      "id": "10_world_1_sit_1",
+      "enunciado": "Recibes tu mesada de la semana. Un compañero te invita a una salida que se gastaría casi todo lo que tienes, pero también querías empezar a guardar algo para un plan que tienes a futuro.",
+      "opcionA": {
+        "texto": "Vas a la salida y disfrutas el momento con tu compañero.",
+        "consecuencia": "Pasas un buen rato y fortaleces la amistad, pero te quedas sin nada para empezar tu plan de ahorro esta semana, así que tendrás que esperar a la siguiente mesada para arrancar."
+      },
+      "opcionB": {
+        "texto": "Guardas una parte para tu plan y propones un plan más económico con tu compañero.",
+        "consecuencia": "Avanzas en tu meta de ahorro y aun así compartes con tu compañero, aunque renuncias al plan más llamativo y tienes que ser creativo para que la salida económica también sea divertida."
+      }
+    },
+    {
+      "id": "10_world_1_sit_2",
+      "enunciado": "Un vecino te ofrece ayudarle los fines de semana en una tarea sencilla a cambio de un ingreso extra. Aceptar significaría usar parte de tu tiempo libre, que hoy dedicas a descansar y a tus pasatiempos.",
+      "opcionA": {
+        "texto": "Aceptas el trabajo de fin de semana para tener un ingreso propio.",
+        "consecuencia": "Empiezas a generar un ingreso por tu propio esfuerzo y entiendes mejor el valor del dinero, pero reduces tu tiempo de descanso y debes organizarte para que no te afecte el estudio."
+      },
+      "opcionB": {
+        "texto": "Rechazas la oferta para conservar tu tiempo libre.",
+        "consecuencia": "Mantienes tu descanso y tus pasatiempos intactos, pero dependes solo de tu mesada como fuente de ingreso y pospones la experiencia de ganar dinero con tu trabajo."
+      }
+    },
+    {
+      "id": "10_world_1_sit_3",
+      "enunciado": "Estás en una tienda y ves dos cosas: unos audífonos nuevos que te encantan pero los actuales todavía funcionan, y unos útiles que necesitas para una tarea de esta semana. Con lo que tienes solo alcanza para una.",
+      "opcionA": {
+        "texto": "Compras los audífonos que tanto te gustan.",
+        "consecuencia": "Disfrutas algo que deseabas, pero te quedas sin lo que necesitabas para la tarea y tendrás que conseguir los útiles de otra forma o entregar el trabajo incompleto."
+      },
+      "opcionB": {
+        "texto": "Compras los útiles que necesitas para la tarea.",
+        "consecuencia": "Resuelves una necesidad real y cumples con tu responsabilidad, aunque dejas pasar por ahora algo que querías y aprendes a distinguir entre lo que necesitas y lo que deseas."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

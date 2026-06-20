@@ -1,0 +1,44 @@
+{
+  "bancoId": "11_world_1",
+  "grado": "11",
+  "worldId": "world_1",
+  "situaciones": [
+    {
+      "id": "11_world_1_sit_1",
+      "enunciado": "Te ofrecen un trabajo de medio tiempo que te dejaría un ingreso propio y constante, pero coincide con la temporada en que necesitas concentrarte para tus pruebas finales. Aceptar significaría tener dinero ahora; rechazar significaría priorizar tu rendimiento académico de cara a lo que viene después del colegio.",
+      "opcionA": {
+        "texto": "Aceptas el trabajo para generar tu propio ingreso desde ya.",
+        "consecuencia": "Empiezas a construir independencia económica y experiencia laboral temprana, pero asumes el riesgo de que tu desempeño académico se resienta en una etapa decisiva, lo cual podría afectar oportunidades futuras que valen más que el ingreso inmediato."
+      },
+      "opcionB": {
+        "texto": "Pospones el trabajo para enfocarte en tus pruebas finales.",
+        "consecuencia": "Proteges tu rendimiento en un momento clave y mantienes abiertas tus opciones a futuro, aunque renuncias por ahora a un ingreso propio y sigues dependiendo de las fuentes que ya tenías."
+      }
+    },
+    {
+      "id": "11_world_1_sit_2",
+      "enunciado": "Recibes una suma inesperada como reconocimiento por un proyecto. Podrías destinarla a un curso que te prepararía para algo que quieres lograr más adelante, o a una experiencia que disfrutarías de inmediato con tus amigos. Ambas usan el mismo dinero, pero responden a horizontes de tiempo distintos.",
+      "opcionA": {
+        "texto": "Inviertes la suma en el curso que aporta a tu futuro.",
+        "consecuencia": "Conviertes un ingreso puntual en una herramienta que aumenta tu capacidad de generar valor más adelante, aunque renuncias a una satisfacción inmediata y los resultados de esa decisión tardan en notarse."
+      },
+      "opcionB": {
+        "texto": "Usas la suma en la experiencia que disfrutarías ahora.",
+        "consecuencia": "Obtienes una recompensa inmediata y un buen recuerdo compartido, pero el dinero se agota en el presente y no queda nada que siga rindiendo hacia tus metas de largo plazo."
+      }
+    },
+    {
+      "id": "11_world_1_sit_3",
+      "enunciado": "Tienes la posibilidad de obtener un ingreso extra dedicando tu tiempo libre a una tarea que no te aporta aprendizaje ni te interesa, o de usar ese mismo tiempo en desarrollar una habilidad que aún no te paga, pero que podría volverse una fuente de ingreso valiosa con el tiempo.",
+      "opcionA": {
+        "texto": "Tomas la tarea que te da dinero de inmediato.",
+        "consecuencia": "Aseguras un ingreso a corto plazo y cubres lo que necesitas hoy, pero inviertes tu tiempo en algo que no aumenta tu capacidad futura de generar ingresos ni desarrolla nada que te diferencie."
+      },
+      "opcionB": {
+        "texto": "Dedicas el tiempo a desarrollar la habilidad sin pago inmediato.",
+        "consecuencia": "Apuestas por construir una fuente de ingreso potencialmente mayor y más alineada contigo, aunque debes sostener el esfuerzo sin recompensa visible durante un tiempo y asumir que tal vez no se concrete como esperas."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

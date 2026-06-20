@@ -1,0 +1,44 @@
+{
+  "bancoId": "10_world_4",
+  "grado": "10",
+  "worldId": "world_4",
+  "situaciones": [
+    {
+      "id": "10_world_4_sit_1",
+      "enunciado": "Quieres comprar un celular nuevo que cuesta más de lo que tienes ahorrado. Una tienda te ofrece pagarlo en cuotas con un crédito, sumando intereses. ¿Qué decides?",
+      "opcionA": {
+        "texto": "Tomar el crédito y llevarte el celular hoy mismo.",
+        "consecuencia": "Disfrutas el celular de inmediato, pero terminas pagando más que su precio original por los intereses, y durante varios meses una parte de tu dinero ya está comprometida en las cuotas."
+      },
+      "opcionB": {
+        "texto": "Esperar y seguir ahorrando hasta poder pagarlo de contado.",
+        "consecuencia": "Tardas más en tener el celular y resistes la tentación, pero pagas solo su precio real, sin intereses, y conservas tu libertad para usar el dinero en otras cosas mientras tanto."
+      }
+    },
+    {
+      "id": "10_world_4_sit_2",
+      "enunciado": "Un amigo te ofrece prestarte dinero para una salida, sin intereses, pero pidiéndote que se lo devuelvas la próxima semana. Sabes que la próxima semana tendrás otros gastos. ¿Qué haces?",
+      "opcionA": {
+        "texto": "Aceptar el préstamo y comprometerte a devolverlo en una semana.",
+        "consecuencia": "Vas a la salida sin problema, pero asumes una deuda con un plazo corto; si tus otros gastos aparecen, podrías quedar sin con qué pagarle, y eso puede afectar la confianza de tu amigo."
+      },
+      "opcionB": {
+        "texto": "Declinar el préstamo y ajustar tu plan a lo que sí tienes.",
+        "consecuencia": "Quizá disfrutas una salida más modesta o la dejas para otra ocasión, pero no quedas debiendo nada ni dependes de cuadrar tu presupuesto futuro para cumplir una promesa."
+      }
+    },
+    {
+      "id": "10_world_4_sit_3",
+      "enunciado": "Estás evaluando pedir un crédito para un proyecto. Antes de decidir, puedes revisar cuánto entra y cuánto sale de tu dinero cada mes para saber si podrías asumir una cuota. ¿Qué priorizas?",
+      "opcionA": {
+        "texto": "Pedir el crédito de una vez porque la oportunidad te entusiasma.",
+        "consecuencia": "Avanzas rápido con tu proyecto, pero sin conocer tu capacidad de pago corres el riesgo de comprometer una cuota que no alcanzas a cubrir y de acumular una deuda difícil de manejar."
+      },
+      "opcionB": {
+        "texto": "Calcular primero tu capacidad de pago y luego decidir.",
+        "consecuencia": "Te tomas más tiempo antes de actuar, pero tomas la decisión sabiendo si la cuota cabe en tu presupuesto, lo que reduce el riesgo de endeudarte por encima de lo que puedes sostener."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

@@ -2,7 +2,6 @@ import { goalsRepository } from '@features/savings/data/goalsRepository';
 import { depositsRepository } from '@features/savings/data/depositsRepository';
 import { walletRepository } from '@features/savings/data/walletRepository';
 import { useUserStore } from '@features/auth/store/useUserStore';
-import { useLessonsStore } from '@features/learning/store/useLessonsStore';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
 import { useWalletStore } from '@features/savings/store/useWalletStore';
 import { isApplyingSnapshot } from '@shared/session/userRemoteSync';
@@ -13,7 +12,6 @@ let activeUid = '';
 let unsubscribers: (() => void)[] = [];
 
 let savingsTimer: ReturnType<typeof setTimeout> | null = null;
-let lessonsTimer: ReturnType<typeof setTimeout> | null = null;
 let walletTimer: ReturnType<typeof setTimeout> | null = null;
 
 let lastGoalIds = new Set<string>();
@@ -75,10 +73,8 @@ function scheduleWalletPush(): void {
 
 export function resetUserProgressPushSubscriptions(): void {
   if (savingsTimer) clearTimeout(savingsTimer);
-  if (lessonsTimer) clearTimeout(lessonsTimer);
   if (walletTimer) clearTimeout(walletTimer);
   savingsTimer = null;
-  lessonsTimer = null;
   walletTimer = null;
   unsubscribers.forEach((u) => u());
   unsubscribers = [];

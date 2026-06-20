@@ -1,0 +1,28 @@
+{
+  "grado": "10",
+  "worldId": "world_1",
+  "cards": [
+    {
+      "titulo": "Qué es el ingreso y de dónde viene",
+      "cuerpo": "El ingreso es el dinero que recibes durante un periodo de tiempo. Puede venir de distintas fuentes, como una mesada, un regalo, o el pago por un trabajo o servicio que realizas. Conocer tus fuentes de ingreso te ayuda a saber con cuánto cuentas para tomar decisiones.",
+      "ejemplo": "La mesada que te dan en casa y lo que te pagan por ayudarle a un vecino con una tarea son dos fuentes de ingreso distintas."
+    },
+    {
+      "titulo": "El valor del dinero",
+      "cuerpo": "El dinero representa el esfuerzo y el tiempo que cuesta conseguirlo. Cuando entiendes cuánto trabajo hay detrás de cada cantidad, lo cuidas mejor y piensas más antes de gastarlo. El dinero es una herramienta para conseguir lo que valoras, no un fin en sí mismo.",
+      "ejemplo": "Si te toma varias horas de trabajo reunir lo necesario para algo, pensarás dos veces antes de gastarlo en un capricho."
+    },
+    {
+      "titulo": "Trabajo y mesada: dos formas de obtener dinero",
+      "cuerpo": "La mesada es un ingreso que recibes sin que dependa directamente de un esfuerzo tuyo. El trabajo, en cambio, es dinero que ganas a cambio de tu tiempo y tu esfuerzo. Ganar tu propio dinero te da independencia, pero también implica responsabilidad y organización con tu tiempo.",
+      "ejemplo": "Recibir tu mesada cada semana es distinto de ganar dinero ayudando a organizar un evento del colegio: lo segundo lo ganaste con tu trabajo."
+    },
+    {
+      "titulo": "Necesidades y deseos",
+      "cuerpo": "Una necesidad es algo indispensable para tu bienestar o tus responsabilidades, como los útiles para estudiar. Un deseo es algo que te gustaría tener pero con lo que puedes vivir sin problema. Distinguir entre ambos te ayuda a usar tu dinero en lo que de verdad importa primero.",
+      "ejemplo": "Necesitas un cuaderno para la clase; quieres unos audífonos nuevos aunque los tuyos aún funcionan."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

@@ -76,6 +76,24 @@
     "error": "No se pudo crear la asignación."
   },
   "learning": {},
+  "microteoria": {
+    "badge": "Micro-teoría",
+    "ejemplo": "Ejemplo",
+    "counter": "{{current}} de {{total}}",
+    "siguiente": "Siguiente",
+    "continuar": "Entendido, ir al quiz"
+  },
+  "eligeCamino": {
+    "badge": "Elige tu camino",
+    "titulo": "¿Qué harías en esta situación?",
+    "opcionesLabel": "Elige una opción",
+    "consecuenciaLabel": "Consecuencia",
+    "reflexionHint": "Reflexiona: cada decisión financiera tiene un impacto en tu futuro.",
+    "continuar": "Continuar al quiz"
+  },
+  "saga": {
+    "loading": "Preparando la lección…"
+  },
   "school": {
     "reportLink": "Reporte del colegio",
     "title": "Cumplimiento del colegio",
@@ -218,43 +236,6 @@
     "ordenarSequence": "Tu orden",
     "ordenarTapToAdd": "Toca los elementos de abajo para ordenarlos",
     "ordenarAvailable": "Elementos disponibles"
-  },
-  "lesson": {
-    "choosePath": "Elige tu camino",
-    "need": "Necesidad",
-    "want": "Deseo",
-    "interactiveWrong": "No era esa categoría. Mira si es algo básico o algo que puede esperar.",
-    "interactiveCorrect": "Bien clasificado. ¡Sigue así!",
-    "simulationCorrect": "Excelente. {{hint}}",
-    "simulationWrong": "Respuesta incorrecta. Pista: {{hint}}",
-    "answerPlaceholder": "Tu respuesta...",
-    "validate": "Validar",
-    "hint": "Pista: {{hint}}",
-    "noAnswer": "(sin respuesta)",
-    "lostTitle": "Perdiste la lección",
-    "lostMessage": "Te quedaste sin vidas. Vuelve al mapa y cuando quieras la intentas de nuevo.",
-    "completed": "LECCIÓN COMPLETADA",
-    "completedSub": "Has dado un gran paso",
-    "xpPoints": "PUNTOS XP",
-    "cetisEarned": "CETIS GANADOS",
-    "continue": "CONTINUAR",
-    "almost": "¡CASI!",
-    "almostSub": "Necesitas un 70% para ganar premios.",
-    "retry": "REINTENTAR",
-    "exit": "SALIR",
-    "rewardLabel": "Lección: {{title}}",
-    "finish": "Finalizar",
-    "continueStep": "Continuar",
-    "answerCorrectTitle": "¡Bien hecho!",
-    "answerWrongTitle": "¡Sigue intentando!",
-    "answerCorrectSubtitle": "Decisión acertada",
-    "answerWrongSubtitle": "Había una mejor opción",
-    "seeExplanation": "VER EXPLICACIÓN",
-    "understandError": "ENTENDER MI ERROR",
-    "nextBtn": "SIGUIENTE",
-    "notebookCorrect": "Explicación",
-    "notebookWrong": "¿Por qué esa era la mejor opción?",
-    "close": "Cerrar"
   },
   "goals": {
     "pageTitle": "Mis metas",

@@ -1,0 +1,44 @@
+{
+  "bancoId": "9_world_1",
+  "grado": "9",
+  "worldId": "world_1",
+  "situaciones": [
+    {
+      "id": "9_world_1_sit_1",
+      "enunciado": "Recibes tu mesada del mes y ves en una tienda unos audífonos que te encantan, pero también querías empezar a guardar algo para una salida con tus amigos más adelante. Tienes que decidir qué hacer con ese dinero ahora.",
+      "opcionA": {
+        "texto": "Compras los audífonos hoy mismo.",
+        "consecuencia": "Disfrutas los audífonos de inmediato y satisfaces un deseo, pero te quedas sin nada guardado para la salida, así que tendrás que esperar a tu próxima mesada o renunciar al plan con tus amigos."
+      },
+      "opcionB": {
+        "texto": "Guardas una parte y dejas los audífonos para después.",
+        "consecuencia": "Pospones un gusto inmediato, pero vas reuniendo dinero para la salida que valoras. Aprendes que esperar te permite cumplir una meta que escogiste tú mismo, aunque al principio cueste resistir la tentación."
+      }
+    },
+    {
+      "id": "9_world_1_sit_2",
+      "enunciado": "Un vecino te ofrece ayudarle los sábados con tareas sencillas a cambio de un ingreso. Eso significaría usar parte de tu tiempo libre, que hoy dedicas a descansar y ver series.",
+      "opcionA": {
+        "texto": "Aceptas el trabajo de los sábados.",
+        "consecuencia": "Empiezas a generar tu propio ingreso por tu esfuerzo y entiendes que el dinero suele venir del trabajo. A cambio, dispones de menos tiempo de descanso y debes organizarte para cumplir tus compromisos."
+      },
+      "opcionB": {
+        "texto": "Prefieres conservar tu tiempo libre completo.",
+        "consecuencia": "Mantienes todo tu fin de semana para ti y tu descanso, lo cual también es valioso. Sin embargo, no generas un ingreso adicional, así que dependes solo de tu mesada para tus gustos y metas."
+      }
+    },
+    {
+      "id": "9_world_1_sit_3",
+      "enunciado": "Se dañó tu morral del colegio y, al mismo tiempo, salió a la venta un videojuego que esperabas hace tiempo. Con el dinero que tienes solo alcanzas para una de las dos cosas.",
+      "opcionA": {
+        "texto": "Compras un morral nuevo.",
+        "consecuencia": "Cubres una necesidad: algo que de verdad usas todos los días para estudiar. Postergas el videojuego, pero resuelves un problema real y evitas un apuro mayor en el colegio."
+      },
+      "opcionB": {
+        "texto": "Compras el videojuego.",
+        "consecuencia": "Satisfaces un deseo y disfrutas algo que querías mucho, pero sigues sin morral, así que tendrás que arreglártelas con uno improvisado o esperar para resolver una necesidad que continúa pendiente."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

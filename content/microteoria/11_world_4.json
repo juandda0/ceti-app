@@ -1,0 +1,28 @@
+{
+  "grado": "11",
+  "worldId": "world_4",
+  "cards": [
+    {
+      "titulo": "Qué es el crédito",
+      "cuerpo": "El crédito es un acuerdo en el que alguien te presta dinero hoy y tú te comprometes a devolverlo en el futuro, normalmente en partes a lo largo del tiempo. Permite acceder antes a algo que aún no podrías pagar de contado, a cambio de adquirir una obligación. En el fondo, es usar ingresos futuros para cubrir una necesidad presente.",
+      "ejemplo": "Una entidad financia un computador que necesitas y tú lo pagas en varias cuotas durante los meses siguientes."
+    },
+    {
+      "titulo": "La tasa de interés",
+      "cuerpo": "Cuando pides prestado, no solo devuelves lo que recibiste, sino también un costo adicional llamado interés, que es el precio de usar dinero ajeno por un tiempo. La tasa de interés indica qué tan grande es ese costo en proporción a lo prestado. A mayor tasa o mayor plazo, más terminas pagando por encima del monto original.",
+      "ejemplo": "Pides prestada una cantidad y, al terminar de pagar, ves que devolviste algo más que esa cantidad: esa diferencia es el interés."
+    },
+    {
+      "titulo": "Capacidad de pago",
+      "cuerpo": "La capacidad de pago es cuánto puedes destinar a una deuda sin descuidar tus gastos esenciales ni quedarte sin margen para imprevistos. Antes de endeudarte conviene comparar la cuota futura con tus ingresos y compromisos actuales. Endeudarte por encima de tu capacidad es lo que vuelve riesgoso al crédito.",
+      "ejemplo": "Si una cuota se llevaría casi todo lo que te queda tras pagar lo indispensable, esa deuda supera tu capacidad de pago."
+    },
+    {
+      "titulo": "Uso responsable del crédito",
+      "cuerpo": "El crédito no es bueno ni malo por sí mismo: depende de cómo se use. Usado con criterio sirve para metas que valen la pena y se pueden pagar; usado a la ligera puede convertirse en una deuda que crece y te limita. La clave es pedir solo lo que necesitas, entender su costo y asegurarte de poder cumplir.",
+      "ejemplo": "Antes de aceptar un préstamo, revisas para qué lo quieres, cuánto te costará en total y si la cuota cabe con holgura en tu presupuesto."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

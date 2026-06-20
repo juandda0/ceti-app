@@ -3,15 +3,12 @@ import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/a
 import { useUserStore, type UserState } from '@features/auth/store/useUserStore';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
 import type { SavingsGoal, SavingsDeposit } from '@features/savings/store/useSavingsStore';
-import { useLessonsStore } from '@features/learning/store/useLessonsStore';
-import type { RemoteLessonProgress } from '@features/learning/data/lessonProgressRepository';
 import { useWalletStore } from '@features/savings/store/useWalletStore';
 import type { RemoteWalletState } from '@features/savings/data/walletRepository';
 import { recordError } from '@shared/lib/analytics/crashlytics';
 import {
   userGoalsCollectionRef,
   userDepositsCollectionRef,
-  userLessonProgressCollectionRef,
   userWalletDocRef,
 } from '@shared/lib/firebase/paths';
 import {
@@ -146,40 +143,6 @@ export function startUserRemoteSync(uid: string): void {
     );
   }
 
-  function listenLessonProgress(listenUid: string) {
-    unsubs.push(
-      onSnapshot(
-        userLessonProgressCollectionRef(db, listenUid),
-        (snap) => {
-          if (snap.metadata.hasPendingWrites) return;
-          beginRemoteApply();
-          try {
-            const rows: RemoteLessonProgress[] = snap.docs
-              .map((x) => x.data() as RemoteLessonProgress)
-              .filter((l) => l && typeof l.lessonId === 'string')
-              .map((l) => ({
-                uid: listenUid,
-                lessonId: l.lessonId,
-                completedAt: typeof l.completedAt === 'number' ? l.completedAt : Date.now(),
-                quizScore: typeof l.quizScore === 'number' ? l.quizScore : 0,
-                perfectQuiz: Boolean(l.perfectQuiz),
-              }));
-            useLessonsStore.setState((s) => ({
-              completedLessons: [
-                ...s.completedLessons.filter((lp) => lp.uid !== listenUid),
-                ...rows,
-              ],
-            }));
-          } finally {
-            endRemoteApply();
-          }
-        },
-        (err) =>
-          retryOnPermissionDenied(listenUid, listenLessonProgress, 'user_remote_lessons', err)
-      )
-    );
-  }
-
   function listenWallet(listenUid: string) {
     unsubs.push(
       onSnapshot(
@@ -201,6 +164,5 @@ export function startUserRemoteSync(uid: string): void {
 
   listenGoals(uid);
   listenDeposits(uid);
-  listenLessonProgress(uid);
   listenWallet(uid);
 }

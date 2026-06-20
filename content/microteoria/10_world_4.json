@@ -1,0 +1,28 @@
+{
+  "grado": "10",
+  "worldId": "world_4",
+  "cards": [
+    {
+      "titulo": "Qué es el crédito",
+      "cuerpo": "El crédito es dinero que alguien te presta para usarlo ahora con el compromiso de devolverlo después. No es dinero que se regala: es una deuda que adquieres y que tendrás que pagar más adelante, normalmente en partes llamadas cuotas.",
+      "ejemplo": "Cuando una tienda te deja llevar un producto hoy y pagarlo en varias cuotas durante los próximos meses, te está dando un crédito."
+    },
+    {
+      "titulo": "La tasa de interés",
+      "cuerpo": "Cuando pides prestado, casi siempre devuelves un poco más de lo que te prestaron. Ese costo adicional por usar el dinero ajeno se llama interés, y la tasa de interés indica qué tan alto es ese costo. A mayor tasa, más caro te sale el crédito.",
+      "ejemplo": "Si pides prestado para un computador y lo pagas a plazos, al final habrás entregado más dinero que su precio original: esa diferencia es el interés."
+    },
+    {
+      "titulo": "Capacidad de pago",
+      "cuerpo": "Antes de tomar un crédito conviene revisar tu capacidad de pago: cuánto dinero te entra y cuánto te sale, para saber si te queda suficiente para cubrir la cuota. Pedir prestado más de lo que puedes devolver lleva a deudas que crecen y se vuelven difíciles de controlar.",
+      "ejemplo": "Si cada mes apenas te alcanza para tus gastos, asumir una cuota nueva podría dejarte sin con qué cubrir lo demás."
+    },
+    {
+      "titulo": "Uso responsable del crédito",
+      "cuerpo": "El crédito no es bueno ni malo en sí mismo: depende de cómo lo uses. Usado con cuidado, puede ayudarte a alcanzar una meta importante; usado sin pensar, puede convertirse en una carga. La clave es pedir solo lo que necesitas, entender el costo y asegurarte de poder pagarlo.",
+      "ejemplo": "Tomar un crédito pequeño para algo planeado y pagarlo a tiempo es muy distinto a endeudarte por un impulso que luego no puedes sostener."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

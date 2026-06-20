@@ -6,10 +6,13 @@ export const FIRESTORE_COLLECTIONS = {
   users: 'users',
   goals: 'goals',
   deposits: 'deposits',
-  lessonProgress: 'lessonProgress',
   wallet: 'wallet',
   // Global, human-curated, read-only to clients (R8). Doc id: `${grado}_${worldId}_${tipo}`.
   bancos: 'bancos',
+  // EligeCamino situational banks. Doc id: `${grado}_${worldId}`.
+  bancosEligeCamino: 'bancosEligeCamino',
+  // Micro-theory card banks. Doc id: `${grado}_${worldId}`.
+  microteoria: 'microteoria',
   // Tenancy tree (B2B2C). See docs/data-model.md.
   colegios: 'colegios',
   sedes: 'sedes',
@@ -57,21 +60,6 @@ export function userDepositDocRef(
   depositId: string
 ) {
   return doc(db, FIRESTORE_COLLECTIONS.users, uid, FIRESTORE_COLLECTIONS.deposits, depositId);
-}
-
-export function userLessonProgressCollectionRef(
-  db: import('firebase/firestore').Firestore,
-  uid: string
-) {
-  return collection(db, FIRESTORE_COLLECTIONS.users, uid, FIRESTORE_COLLECTIONS.lessonProgress);
-}
-
-export function userLessonProgressDocRef(
-  db: import('firebase/firestore').Firestore,
-  uid: string,
-  lessonId: string
-) {
-  return doc(db, FIRESTORE_COLLECTIONS.users, uid, FIRESTORE_COLLECTIONS.lessonProgress, lessonId);
 }
 
 export function userWalletDocRef(db: Firestore, uid: string) {
@@ -212,4 +200,22 @@ export function leaderboardDocRef(db: Firestore, colegioId: string, cursoId: str
  */
 export function progressGroupByColegioQuery(db: Firestore, colegioId: string) {
   return query(collectionGroup(db, C.progress), where('colegioId', '==', colegioId));
+}
+
+/**
+ * Reference to an EligeCamino banco document.
+ * Doc id: `${grado}_${worldId}` (e.g. "9_world_1").
+ * R8: read-only to clients; written via Admin SDK / content pipeline.
+ */
+export function eligeCaminoDocRef(db: Firestore, grado: string, worldId: string) {
+  return doc(db, FIRESTORE_COLLECTIONS.bancosEligeCamino, `${grado}_${worldId}`);
+}
+
+/**
+ * Reference to a micro-theory banco document.
+ * Doc id: `${grado}_${worldId}` (e.g. "9_world_1").
+ * R8: read-only to clients; written via Admin SDK / content pipeline.
+ */
+export function microteoriaDocRef(db: Firestore, grado: string, worldId: string) {
+  return doc(db, FIRESTORE_COLLECTIONS.microteoria, `${grado}_${worldId}`);
 }

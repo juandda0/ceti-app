@@ -1,0 +1,44 @@
+{
+  "bancoId": "9_world_3",
+  "grado": "9",
+  "worldId": "world_3",
+  "situaciones": [
+    {
+      "id": "9_world_3_sit_1",
+      "enunciado": "Llevas varios meses ahorrando para una meta que te importa mucho. Hoy aparece de repente una oferta por tiempo limitado de algo que te gusta, pero comprarlo te dejaría sin casi nada de lo que habías reunido. Tienes que decidir qué hacer con ese dinero.",
+      "opcionA": {
+        "texto": "Usas tus ahorros para aprovechar la oferta de hoy.",
+        "consecuencia": "Disfrutas algo agradable de inmediato, pero tu meta vuelve a quedar lejos y tendrás que empezar a juntar casi desde el principio. Aprendes que la gratificación inmediata a veces cuesta el progreso que ya habías logrado."
+      },
+      "opcionB": {
+        "texto": "Dejas pasar la oferta y conservas tus ahorros para tu meta.",
+        "consecuencia": "Sientes algo de antojo por lo que no compraste, pero tu meta sigue en pie y cada vez más cerca. Practicas postergar la gratificación a cambio de algo que valoras más a largo plazo."
+      }
+    },
+    {
+      "id": "9_world_3_sit_2",
+      "enunciado": "Decides que quieres empezar a ahorrar, pero te cuesta porque siempre que te queda algo, lo gastas. Estás pensando cómo organizarte para que el ahorro se vuelva un hábito y no algo que pasa solo cuando sobra.",
+      "opcionA": {
+        "texto": "Decides ahorrar lo que te quede al final, cuando termines de gastar.",
+        "consecuencia": "Algunos periodos logras guardar algo y otros no te queda nada, así que tu ahorro avanza de forma irregular. Descubres que dejar el ahorro para el final lo vuelve frágil e impredecible."
+      },
+      "opcionB": {
+        "texto": "Apartas una parte para ahorrar apenas recibes dinero, antes de gastar.",
+        "consecuencia": "Al separar primero lo del ahorro, te acostumbras a vivir con el resto y tu fondo crece de forma constante. Conviertes el ahorro en un hábito en lugar de dejarlo al azar."
+      }
+    },
+    {
+      "id": "9_world_3_sit_3",
+      "enunciado": "Has logrado reunir un fondo de emergencia, ese dinero que guardas por si pasa algo inesperado. Esta semana surge un imprevisto pequeño que sí puedes cubrir con lo que normalmente tienes disponible, pero te tienta usar el fondo para no tocar tu dinero del momento.",
+      "opcionA": {
+        "texto": "Sacas del fondo de emergencia para cubrir este imprevisto menor.",
+        "consecuencia": "Resuelves cómodamente hoy, pero tu colchón para emergencias de verdad queda más bajo. Aprendes que usar el fondo para cosas pequeñas lo debilita cuando llegue algo grande."
+      },
+      "opcionB": {
+        "texto": "Cubres el imprevisto con tu dinero del momento y dejas intacto el fondo.",
+        "consecuencia": "Te ajustas un poco esta semana, pero tu fondo de emergencia sigue completo y listo para lo realmente inesperado. Refuerzas para qué sirve un fondo y cuándo conviene no tocarlo."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

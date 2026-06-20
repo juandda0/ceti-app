@@ -1,0 +1,28 @@
+{
+  "grado": "9",
+  "worldId": "world_1",
+  "cards": [
+    {
+      "titulo": "¿De dónde viene el dinero?",
+      "cuerpo": "El dinero no aparece solo: casi siempre llega como resultado de un trabajo o de un esfuerzo. A las distintas maneras de obtener dinero las llamamos fuentes de ingreso. Conocer tus fuentes de ingreso te ayuda a entender con qué cuentas realmente.",
+      "ejemplo": "Una mesada que te dan en casa, el dinero que ganas ayudando a un vecino o lo que recibes por una tarea bien hecha son distintas fuentes de ingreso."
+    },
+    {
+      "titulo": "El dinero representa esfuerzo",
+      "cuerpo": "El dinero tiene valor porque podemos intercambiarlo por cosas que necesitamos o queremos. Detrás de cada ingreso hay tiempo y esfuerzo de alguien. Por eso, gastar dinero también significa gastar el esfuerzo que costó conseguirlo.",
+      "ejemplo": "Si para reunir un dinero tuviste que trabajar varios sábados, gastarlo de golpe en algo pasajero significa usar de golpe todo ese esfuerzo."
+    },
+    {
+      "titulo": "Trabajo y mesada",
+      "cuerpo": "La mesada es un dinero que recibes de forma periódica y que puedes aprender a administrar. El trabajo es otra forma de obtener ingreso, dando tu tiempo y habilidades a cambio. Ambos te dan la oportunidad de decidir y de practicar el manejo del dinero.",
+      "ejemplo": "Administrar bien tu mesada o un pequeño ingreso por una labor te prepara para manejar cantidades más grandes en el futuro."
+    },
+    {
+      "titulo": "Necesidades y deseos",
+      "cuerpo": "Las necesidades son cosas indispensables para vivir y funcionar, como alimentarte o tener lo básico para estudiar. Los deseos son cosas que nos gustan pero que no son imprescindibles. Distinguirlos te ayuda a decidir mejor en qué usar tu dinero, sobre todo cuando no alcanza para todo.",
+      "ejemplo": "Un morral para el colegio suele ser una necesidad; un videojuego nuevo suele ser un deseo. Ambos son válidos, pero conviene cubrir primero lo necesario."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

@@ -1,0 +1,44 @@
+{
+  "bancoId": "9_world_4",
+  "grado": "9",
+  "worldId": "world_4",
+  "situaciones": [
+    {
+      "id": "9_world_4_sit_1",
+      "enunciado": "Quieres comprar un celular nuevo que cuesta más de lo que tienes ahorrado. Una tienda te ofrece llevártelo hoy mismo pagando a cuotas con interés, o puedes seguir ahorrando unos meses más y comprarlo de contado.",
+      "opcionA": {
+        "texto": "Lo compras hoy a cuotas con interés.",
+        "consecuencia": "Disfrutas el celular de inmediato, pero al final terminas pagando más de lo que cuesta por el interés. Cada mes una parte de tu dinero queda comprometida con la cuota, así que tienes menos libertad para otros gastos hasta terminar de pagar."
+      },
+      "opcionB": {
+        "texto": "Sigues ahorrando y lo compras de contado más adelante.",
+        "consecuencia": "Esperas un tiempo sin el celular nuevo, pero pagas solo lo que vale, sin interés. Llegas a la compra sin deudas y conservas tu dinero libre para imprevistos. Aprendes que la paciencia evita pagar de más."
+      }
+    },
+    {
+      "id": "9_world_4_sit_2",
+      "enunciado": "Un familiar te ofrece un préstamo para un proyecto. Antes de aceptar, revisas tus ingresos y notas que las cuotas mensuales ocuparían casi todo lo que te queda después de tus gastos fijos.",
+      "opcionA": {
+        "texto": "Aceptas el préstamo completo y ajustas tu vida a la cuota.",
+        "consecuencia": "Pones en marcha tu proyecto cuanto antes, pero quedas con muy poco margen. Si surge un gasto inesperado, te cuesta cumplir la cuota a tiempo. Vives la presión de tener tu capacidad de pago casi al límite."
+      },
+      "opcionB": {
+        "texto": "Pides un monto menor que sí encaje en tu capacidad de pago.",
+        "consecuencia": "Tu proyecto avanza más despacio porque cuentas con menos dinero, pero las cuotas caben con holgura en tu presupuesto. Mantienes un colchón para imprevistos y cumples sin estrés. Aprendes a pedir prestado según lo que realmente puedes pagar."
+      }
+    },
+    {
+      "id": "9_world_4_sit_3",
+      "enunciado": "Tienes una deuda con cuotas mensuales. Este mes te llega dinero extra inesperado y debes decidir qué hacer con él.",
+      "opcionA": {
+        "texto": "Usas el dinero extra en un gusto que querías darte.",
+        "consecuencia": "Disfrutas una recompensa inmediata, pero tu deuda sigue igual y el interés se sigue acumulando con el tiempo. Tardas más en quedar libre de la deuda y al final pagas más interés en total."
+      },
+      "opcionB": {
+        "texto": "Adelantas parte de la deuda con ese dinero extra.",
+        "consecuencia": "Renuncias al gusto por ahora, pero reduces lo que debes y, al bajar el saldo, pagas menos interés en adelante. Sales de la deuda más rápido y recuperas antes tu libertad financiera. Aprendes que pagar deuda también es una forma de cuidar tu dinero."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

@@ -1,0 +1,44 @@
+{
+  "bancoId": "11_world_5",
+  "grado": "11",
+  "worldId": "world_5",
+  "situaciones": [
+    {
+      "id": "11_world_5_sit_1",
+      "enunciado": "Para arrancar un proyecto personal que te ilusiona necesitas más recursos de los que tienes ahora mismo. Te ofrecen un préstamo que cubriría todo de inmediato, pero cuya cuota mensual ocuparía casi todo el margen que te queda libre cada mes, dejándote sin colchón ante cualquier imprevisto.",
+      "opcionA": {
+        "texto": "Acepto el préstamo completo y empiezo el proyecto ya, asumiendo una cuota que me deja al límite.",
+        "consecuencia": "Arrancas de inmediato, pero quedas sin margen de maniobra: si surge un gasto inesperado o tus ingresos bajan un mes, no tendrás de dónde responder y la deuda pasará de ser una palanca a convertirse en una carga que ahoga el propio proyecto."
+      },
+      "opcionB": {
+        "texto": "Pido un monto menor y arranco el proyecto más pequeño, dejando un margen de pago holgado.",
+        "consecuencia": "El proyecto crece más despacio y quizás te frustra no tenerlo todo de una vez, pero la cuota cabe con comodidad en tu presupuesto. Conservas capacidad de reacción ante imprevistos y mantienes la deuda en un nivel que puedes sostener sin angustia."
+      }
+    },
+    {
+      "id": "11_world_5_sit_2",
+      "enunciado": "Tienes varias deudas pequeñas al mismo tiempo y empiezas a perder el control de cuánto debes y a quién. Te llega la opción de juntarlas todas en un solo compromiso con una cuota única más baja, pero que se extiende durante mucho más tiempo del que llevarías pagando por separado.",
+      "opcionA": {
+        "texto": "Junto todas mis deudas en una sola cuota más baja, aunque tarde mucho más en terminar de pagar.",
+        "consecuencia": "Recuperas orden y alivio inmediato: una sola fecha, un solo pago manejable. A cambio, al alargar tanto el plazo terminas pagando bastante más en intereses con el tiempo, y corres el riesgo de relajarte y volver a endeudarte mientras dura ese respiro."
+      },
+      "opcionB": {
+        "texto": "Mantengo las deudas separadas y me concentro en cerrar primero la más pequeña para ir liberándome.",
+        "consecuencia": "El esfuerzo es más exigente al principio porque cargas con varios pagos a la vez, pero ves resultados concretos cada vez que cierras una deuda. Pagas menos intereses en total y refuerzas el hábito de reducir lo que debes en lugar de solo reacomodarlo."
+      }
+    },
+    {
+      "id": "11_world_5_sit_3",
+      "enunciado": "Te das cuenta de que para llegar a fin de mes has empezado a pedir prestado con el fin de pagar una deuda anterior. La situación todavía no es grave, pero notas que cada mes el hueco se hace un poco más profundo y que los pagos te dejan cada vez menos para vivir.",
+      "opcionA": {
+        "texto": "Sigo cubriendo cada deuda con un préstamo nuevo mientras encuentro la forma de equilibrarme.",
+        "consecuencia": "Ganas tiempo en el corto plazo y evitas un mal rato hoy, pero entras en una espiral donde los intereses se acumulan sobre intereses. La bola de nieve crece y, cuanto más tardes en frenarla, más drástico y doloroso será el ajuste que tendrás que hacer."
+      },
+      "opcionB": {
+        "texto": "Freno en seco: no tomo más deuda, recorto gastos al mínimo y enfrento el desbalance ahora.",
+        "consecuencia": "Atraviesas unos meses incómodos de mucha disciplina y renuncias, pero cortas la espiral antes de que se vuelva inmanejable. Recuperas el control de tus cuentas y evitas que un problema todavía pequeño se convierta en una crisis difícil de revertir."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

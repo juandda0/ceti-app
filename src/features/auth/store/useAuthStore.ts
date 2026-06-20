@@ -2,8 +2,8 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createZustandMmkvStorage } from '@shared/lib/storage/mmkv';
 import { useUserStore } from '@features/auth/store/useUserStore';
-import { useLessonsStore } from '@features/learning/store/useLessonsStore';
 import { useQuestionBankStore } from '@features/learning/store/useQuestionBankStore';
+import { useLearningFlowStore } from '@features/learning/store/useLearningFlowStore';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
 import { useWalletStore } from '@features/savings/store/useWalletStore';
 import { STAFF_ROLES, type CetiClaims, type Role } from '@shared/types/tenancy';
@@ -88,8 +88,8 @@ export const useAuthStore = create<AuthStore>()(
         }
         useSavingsStore.getState().resetSavings();
         useWalletStore.getState().resetWallet();
-        useLessonsStore.getState().resetLessons();
         useQuestionBankStore.getState().resetUserProgress();
+        useLearningFlowStore.getState().reset();
         useUserStore.getState().resetUser();
         try {
           const m = await import('@shared/lib/firebase/authSession');

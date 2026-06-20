@@ -1,0 +1,28 @@
+{
+  "grado": "10",
+  "worldId": "world_2",
+  "cards": [
+    {
+      "titulo": "Qué es un presupuesto",
+      "cuerpo": "Un presupuesto es un plan que organiza el dinero que esperas recibir y el dinero que piensas gastar en un periodo, como una semana o un mes. Sirve para anticipar tus decisiones en lugar de improvisar. Tener un plan te ayuda a saber con qué cuentas antes de gastar.",
+      "ejemplo": "Antes de que empiece el mes, anotas tu mesada y haces una lista de en qué esperas usarla: transporte, comida y un poco para salir."
+    },
+    {
+      "titulo": "Ingresos y egresos",
+      "cuerpo": "Los ingresos son el dinero que entra, como una mesada o lo que ganas por una tarea. Los egresos son el dinero que sale cuando gastas o pagas algo. La idea central es que tus egresos no superen tus ingresos, para no quedarte sin fondos antes de tiempo.",
+      "ejemplo": "Si tu ingreso de la semana es tu mesada y tus egresos son el transporte y los snacks, comparar ambos te dice si te alcanza o si debes ajustar."
+    },
+    {
+      "titulo": "Priorizar tus gastos",
+      "cuerpo": "Priorizar es decidir qué va primero cuando el dinero no alcanza para todo a la vez. Las necesidades, como el transporte para llegar al colegio, suelen ir antes que los gustos, como un plan extra. Distinguir lo necesario de lo deseado te ayuda a elegir con claridad.",
+      "ejemplo": "Si esta semana debes escoger entre datos para estudiar y un postre, priorizas los datos porque cubren algo que necesitas a diario."
+    },
+    {
+      "titulo": "Vivir dentro de tus medios",
+      "cuerpo": "Vivir dentro de tus medios significa gastar igual o menos de lo que recibes, sin depender de prestado para cubrir lo cotidiano. Cuando logras que sobre una parte, puedes ahorrarla para imprevistos o metas. Este hábito te da tranquilidad y libertad para decidir.",
+      "ejemplo": "Al final de la semana te quedó un margen sin gastar; en vez de buscar en qué usarlo de inmediato, lo guardas para algo que quieras más adelante."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

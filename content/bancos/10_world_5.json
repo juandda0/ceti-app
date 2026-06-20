@@ -1,0 +1,44 @@
+{
+  "bancoId": "10_world_5",
+  "grado": "10",
+  "worldId": "world_5",
+  "situaciones": [
+    {
+      "id": "10_world_5_sit_1",
+      "enunciado": "Quieres comprar un celular nuevo que cuesta más de lo que tienes ahorrado. La tienda te ofrece pagarlo en muchas cuotas pequeñas que parecen fáciles de asumir, aunque al final terminarías pagando bastante más por los intereses.",
+      "opcionA": {
+        "texto": "Aceptar el plan de cuotas y llevarte el celular hoy mismo.",
+        "consecuencia": "Estrenas el celular de inmediato, pero te comprometes con un pago fijo durante varios meses. Si tu situación cambia o aparece un gasto inesperado, esa cuota se vuelve una carga difícil de sostener y, sumando los intereses, el celular te sale mucho más caro."
+      },
+      "opcionB": {
+        "texto": "Seguir ahorrando unos meses más y comprarlo cuando tengas el dinero completo.",
+        "consecuencia": "Tienes que esperar y resistir la tentación, pero cuando lo compres no deberás nada a nadie. Pagas solo el precio real del celular, sin intereses, y tu dinero del futuro queda libre para otras metas."
+      }
+    },
+    {
+      "id": "10_world_5_sit_2",
+      "enunciado": "Le prestaste algo de dinero a una amistad y aún no te lo devuelve. Justo ahora un familiar te pide prestado para cubrir una necesidad, pero para ayudarle tendrías que usar dinero que tenías guardado para tus propios gastos del mes.",
+      "opcionA": {
+        "texto": "Prestar el dinero igual para no quedar mal con tu familiar.",
+        "consecuencia": "Ayudas en el momento y quedas bien, pero te dejas a ti mismo corto para el resto del mes. Si tampoco te devuelven pronto, podrías terminar tú mismo necesitando pedir prestado, encadenando una deuda con otra."
+      },
+      "opcionB": {
+        "texto": "Explicar con sinceridad que ahora no puedes y ofrecer otra forma de ayudar.",
+        "consecuencia": "Es incómodo decir que no y puede haber un momento de tensión, pero proteges tu propio equilibrio y evitas comprometer un dinero que ya tenía un propósito. Aprendes que prestar solo lo que te sobra evita que un favor se convierta en un problema para ti."
+      }
+    },
+    {
+      "id": "10_world_5_sit_3",
+      "enunciado": "Tienes varias deudas pequeñas acumuladas al mismo tiempo y te cuesta seguirles el rastro. Recibes un dinero extra inesperado, suficiente para empezar a ordenar la situación, pero también te tienta gastarlo en algo que querías hace rato.",
+      "opcionA": {
+        "texto": "Usar el dinero extra para empezar a pagar las deudas que tienes pendientes.",
+        "consecuencia": "Renuncias a un gusto inmediato, pero reduces lo que debes y recuperas algo de tranquilidad. Cada deuda que cierras te quita una preocupación y libera tus próximos ingresos para que no se vayan completos en pagos atrasados."
+      },
+      "opcionB": {
+        "texto": "Darte el gusto ahora y seguir pagando las deudas poco a poco como venías.",
+        "consecuencia": "Disfrutas algo que querías, pero las deudas siguen ahí y pueden seguir creciendo con el tiempo. Mantener varias obligaciones abiertas a la vez hace más difícil llevar la cuenta y aumenta el riesgo de que se te pase un pago y todo se complique."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

@@ -1,0 +1,44 @@
+{
+  "bancoId": "11_world_4",
+  "grado": "11",
+  "worldId": "world_4",
+  "situaciones": [
+    {
+      "id": "11_world_4_sit_1",
+      "enunciado": "Quieres adquirir un equipo que necesitas para un proyecto, pero no tienes ahorrado el monto completo. Una entidad te ofrece financiarlo en cuotas, lo que implica devolver con el tiempo una cantidad mayor a la del equipo por concepto de intereses. ¿Qué camino eliges?",
+      "opcionA": {
+        "texto": "Tomar el crédito y empezar a usar el equipo desde ya, pagándolo en cuotas",
+        "consecuencia": "Accedes de inmediato a lo que necesitas y avanzas en tu proyecto, pero asumes un compromiso de pago durante varios periodos y, al final, habrás entregado más de lo que costaba el equipo por los intereses."
+      },
+      "opcionB": {
+        "texto": "Posponer la compra y reunir primero el dinero ahorrando una parte cada periodo",
+        "consecuencia": "Demoras el inicio del proyecto y podrías perder oportunidades por la espera, pero terminas pagando solo el precio del equipo sin intereses y sin quedar con deudas pendientes."
+      }
+    },
+    {
+      "id": "11_world_4_sit_2",
+      "enunciado": "Te ofrecen una tarjeta de crédito con un cupo amplio. Sabes que te permite comprar ahora y pagar después, pero también que, si no cancelas el total a tiempo, se cobran intereses sobre el saldo que quede. ¿Cómo decides usarla?",
+      "opcionA": {
+        "texto": "Usar el cupo con libertad y pagar cada periodo solo la cuota mínima que te exigen",
+        "consecuencia": "Mantienes acceso constante a dinero disponible y flexibilidad para gastar, pero el saldo sin pagar genera intereses que se acumulan, de modo que la deuda crece y termina costándote bastante más de lo que compraste."
+      },
+      "opcionB": {
+        "texto": "Usarla solo para compras que sabes que podrás pagar completas al llegar el cobro",
+        "consecuencia": "Aprovechas la comodidad y el respaldo de la tarjeta sin pagar intereses, aunque te exige más disciplina y renunciar a comprar cosas que aún no puedes cubrir con tus ingresos."
+      }
+    },
+    {
+      "id": "11_world_4_sit_3",
+      "enunciado": "Estás evaluando pedir un préstamo y revisas tus ingresos y tus gastos fijos. Notas que la cuota mensual ocuparía una porción importante de lo que recibes, dejándote un margen muy ajustado para imprevistos. ¿Qué decisión tomas frente a tu capacidad de pago?",
+      "opcionA": {
+        "texto": "Tomar el préstamo por el monto mayor posible, confiando en que te las arreglarás cada mes",
+        "consecuencia": "Consigues más recursos para lo que quieres hacer, pero quedas con poco margen, así que cualquier gasto inesperado o baja en tus ingresos podría dificultar el pago de la cuota y comprometer tus finanzas."
+      },
+      "opcionB": {
+        "texto": "Pedir un monto menor cuya cuota deje un margen holgado dentro de tus ingresos",
+        "consecuencia": "Recibes menos dinero del que podrías y avanzas más despacio en tus planes, pero conservas un colchón para imprevistos y reduces el riesgo de incumplir el pago si algo cambia."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

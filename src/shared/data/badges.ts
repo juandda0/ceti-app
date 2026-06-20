@@ -1,5 +1,4 @@
 // data/badges.ts — Logros del sistema Ceti
-import { LESSONS } from '@features/learning/data/lessons';
 import { WORLD_COMPETENCIAS } from '@features/learning/data/competencias';
 import { MASTERY_THRESHOLD } from '@features/learning/data/mastery';
 import type { WorldId } from '@features/learning/data/quiz.types';
@@ -17,7 +16,6 @@ export interface Badge {
 }
 
 export type BadgeConditionType =
-  | 'lessons_completed'
   | 'saved_cetis'
   | 'streak'
   | 'savings_decisions'
@@ -44,14 +42,6 @@ const WORLD_MASTERY_BADGES: Badge[] = (Object.keys(WORLD_COMPETENCIAS) as WorldI
 );
 
 export const BADGES: Badge[] = [
-  {
-    id: 'first_lesson',
-    name: 'Primera Lección',
-    emoji: '📖',
-    description: 'Completaste tu primera lección',
-    conditionType: 'lessons_completed',
-    conditionValue: 1,
-  },
   {
     id: 'first_save',
     name: 'Primer Ahorrador',
@@ -83,14 +73,6 @@ export const BADGES: Badge[] = [
     description: 'Elegiste ahorrar en vez de gastar 3 veces',
     conditionType: 'savings_decisions',
     conditionValue: 3,
-  },
-  {
-    id: 'all_lessons',
-    name: 'Maestro Ceti',
-    emoji: '🎓',
-    description: 'Completaste todas las lecciones',
-    conditionType: 'lessons_completed',
-    conditionValue: LESSONS.length,
   },
   {
     id: 'goal_setter',
