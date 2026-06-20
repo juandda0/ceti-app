@@ -322,3 +322,20 @@ hosting (HTTP 200) ✓ · seed: `bancos` 45 / `bancosEligeCamino` 15 / `microteo
 
 **Pendiente menor:** agregación por curso de las elecciones EligeCamino (hoy reflexivo
 sin persistir, RQ-FN09 — requeriría una Function); limpieza de `services/ai` ya hecha.
+
+### Hotfixes en producción (verificados en navegador, 2026-06-19)
+
+Pruebas en vivo sobre el deploy destaparon 3 bugs, todos corregidos y re-desplegados:
+
+- **El quiz no pintaba las opciones:** los items del banco no traen `tipo` (vive en el
+  doc, schema S5); `fetchAssembledQuiz` ahora lo estampa por tipo → WorldQuizScreen
+  renderiza MC/VF/ordenar. Test del repo corregido (cazaba el verde-falso).
+- **Admin Ceti se veía como estudiante:** `app/index.tsx` solo enrutaba a `/(staff)`
+  con `isStaffRole` (excluye admin por §1.3); ahora admin también va al Panel docente.
+- **Hydration React #418** (export estático per-ruta rompía la navegación in-app):
+  `web.output` `static`→`single` (SPA, sin prerender). + i18n `roles.admin`.
+
+Nota de despliegue: un build intermedio se construyó con caché de Metro stale (no
+incluía un fix); además los chunks JS se sirven con `max-age=3600`+ETag, así que un
+navegador que vio el build malo se autocorrige en ≤1 h o con un hard-refresh. Para
+builds limpios garantizados: nukear `%TEMP%/metro-*` + `.expo` antes de `expo export`.
