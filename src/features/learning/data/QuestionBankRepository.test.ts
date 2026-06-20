@@ -9,7 +9,13 @@
  *  5. Returns [] when any banco is missing (null from Firestore).
  */
 import { jest } from '@jest/globals';
-import type { MultipleChoiceItem, TrueFalseItem, OrdenarItem, BancoDoc } from './quiz.types';
+import type {
+  MultipleChoiceItem,
+  TrueFalseItem,
+  OrdenarItem,
+  BancoDoc,
+  QuizItem,
+} from './quiz.types';
 
 // ── Typed Firestore snap stub ─────────────────────────────────────────────────
 
@@ -72,7 +78,12 @@ function makeBancoDoc(tipo: BancoDoc['tipo'], items: BancoDoc['items']): BancoDo
     version: 1,
     generadoPor: 'test',
     pendiente_validacion_docente: false,
-    items,
+    // Real Firestore banco items carry NO `tipo` (it lives on the doc, S5 schema).
+    // Strip it so the test proves fetchAssembledQuiz stamps the discriminator.
+    items: items.map((it) => {
+      const { tipo: _omit, ...rest } = it as QuizItem & { tipo: string };
+      return rest;
+    }) as unknown as BancoDoc['items'],
   };
 }
 

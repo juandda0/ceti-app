@@ -72,7 +72,9 @@ export default function Index() {
       if (cancelled || mySeq !== seq.current) return;
       useAuthStore.getState().setClaims(claims);
 
-      if (claims && isStaffRole(claims.role)) {
+      // admin (Ceti, global) is staff-level for routing — the (staff) layout
+      // already admits it; isStaffRole is the §1.3 school-staff set (excludes admin).
+      if (claims && (claims.role === 'admin' || isStaffRole(claims.role))) {
         useAuthStore.getState().login();
         // Cast: typed-routes union regenerates from the filesystem on build.
         setTarget('/(staff)' as Href);

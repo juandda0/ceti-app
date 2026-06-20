@@ -65,10 +65,20 @@ export const questionBankRepository = {
       fetchBancoDoc(grado, worldId, 'ordenar'),
     ]);
 
-    // Guard: all bancos must exist with enough items
-    const mcItems = (mcDoc?.items ?? []) as MultipleChoiceItem[];
-    const vfItems = (vfDoc?.items ?? []) as TrueFalseItem[];
-    const ordItems = (ordDoc?.items ?? []) as OrdenarItem[];
+    // Stamp the discriminator `tipo` onto each item — it lives on the banco doc,
+    // not on the items (S5 schema), but the UI renders by item.tipo.
+    const mcItems = (mcDoc?.items ?? []).map((it) => ({
+      ...it,
+      tipo: 'multiple_choice',
+    })) as MultipleChoiceItem[];
+    const vfItems = (vfDoc?.items ?? []).map((it) => ({
+      ...it,
+      tipo: 'true_false',
+    })) as TrueFalseItem[];
+    const ordItems = (ordDoc?.items ?? []).map((it) => ({
+      ...it,
+      tipo: 'ordenar',
+    })) as OrdenarItem[];
 
     if (
       mcItems.length < REQUIRED_MC ||

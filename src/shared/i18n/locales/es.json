@@ -16,6 +16,7 @@
     "footer": "Diseñado para el futuro de la educación financiera"
   },
   "roles": {
+    "admin": "Admin Ceti",
     "rector": "Rector(a)",
     "coordinador": "Coordinador(a)",
     "profesor": "Profesor(a)",
