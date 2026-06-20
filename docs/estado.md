@@ -275,7 +275,23 @@ caché de contenido, y hay tests que lo cubren).
 gates+cobertura E12 ✓.
 
 **Pendiente (no bloqueante):** `EligeCamino`/micro-teoría no están cableados al flujo
-vivo (contenido de quiz priorizado); índice compuesto collection-group `(colegioId,
-cursoId)` para el trigger agregador en producción; limpieza de `aiProfile` (regla
-write:false + `services/ai` legacy, deuda registrada); deploy a producción
-(requiere ADC del dueño — ver pasos abajo).
+vivo (contenido de quiz priorizado); limpieza de `aiProfile` (regla write:false +
+`services/ai` legacy, deuda registrada).
+
+**Deploy a producción HECHO y verificado (2026-06-19) → https://ceti-d3769.web.app:**
+
+- **Contenido:** `npm run seed:bancos` → **45 bancos / 300 ítems** en la colección
+  `bancos` de producción (Admin SDK, read-only R8).
+- **Functions:** las 10 desplegadas, incluida la nueva `onProgressWriteAggregate`
+  (el trigger falló en el primer intento por propagación de Eventarc 2nd-gen —
+  "Permission denied while using the Eventarc Service Agent"— y entró al reintentar).
+- **Índice:** compuesto collection-group `progress (colegioId, cursoId)` desplegado
+  (lo requiere la query del agregador).
+- **Reglas:** compiladas y liberadas (`questionBank`→`bancos`).
+- **Hosting:** bundle web (`expo export`, 71 archivos) desplegado, HTTP 200.
+- **Agregados demo:** `scripts/backfillDemoAgregados.ts` escribió `agregados/resumen`
+  (shape nuevo) para los 3 cursos demo — el trigger excluye `demo-colegio` por
+  diseño (RQ-DM06), así que el reporte del rector demo se llena por este backfill.
+
+Pendiente del dueño: verificación final en navegador entrando con los 5 accesos
+(estudiante con quiz 4+3+3 real, profesor/coordinador/rector con reportería, admin).
