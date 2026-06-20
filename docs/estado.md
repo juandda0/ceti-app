@@ -295,3 +295,30 @@ vivo (contenido de quiz priorizado); limpieza de `aiProfile` (regla write:false 
 
 Pendiente del dueño: verificación final en navegador entrando con los 5 accesos
 (estudiante con quiz 4+3+3 real, profesor/coordinador/rector con reportería, admin).
+
+### Bloque 2 completo + demolición legacy + EligeCamino/micro-teoría ✅ (2026-06-19)
+
+Cierre de la maduración: cableadas las dos features de spec que faltaban y demolido
+el legacy pre-pivot. Re-desplegado y verificado en producción.
+
+- **Micro-teoría (RQ-ES02):** se muestra antes del quiz (primera entrada al mundo);
+  colección read-only `microteoria/{grado}_{worldId}`; 15 docs / 60 cards en prod.
+- **EligeCamino (RQ-FN09/ES06):** 30% determinista al entrar a un mundo; situación con
+  consecuencia, **sin respuesta correcta ni puntaje, elección NO persistida (R5)**;
+  colección read-only `bancosEligeCamino/{grado}_{worldId}`; 15 docs / 45 situaciones.
+- **Orquestador del flujo** extraído a hook `useWorldFlow` (EligeCamino → micro-teoría
+  → quiz) con degradación grácil (null/throw → quiz); 21 tests de comportamiento.
+- **Demolición legacy:** eliminado el sistema lesson/quiz paralelo (`/lesson/[id]`,
+  `LESSONS`, `Math.random`, LessonScreen/LearnScreen/LessonSagaMap), `services/ai` y la
+  regla muerta `aiProfile`. **Baseline legacy 32 → 1** (≈ cero).
+- **Fixes de veto RC:** reset de `useLearningFlowStore` en logout (anti mezcla
+  cross-usuario); fix de spinner infinito si `Promise.all` lanzaba.
+
+**Vetos:** AR `pass` · CP `pass` · RC `pass`. **Gates:** typecheck/lint/i18n ✓ ·
+**jest 163/163** ✓ · **test:rules 85/85** ✓ · gates+cobertura ✓ · baseline 1.
+
+**Re-deploy verificado (ceti-d3769):** reglas (`bancosEligeCamino`+`microteoria`) ✓ ·
+hosting (HTTP 200) ✓ · seed: `bancos` 45 / `bancosEligeCamino` 15 / `microteoria` 15 ✓.
+
+**Pendiente menor:** agregación por curso de las elecciones EligeCamino (hoy reflexivo
+sin persistir, RQ-FN09 — requeriría una Function); limpieza de `services/ai` ya hecha.
