@@ -32,6 +32,21 @@ if (!admin.apps.length) {
 }
 
 const db = admin.firestore();
+
+// GOTCHA: without GOOGLE_CLOUD_PROJECT (or a serviceAccount.json), the Admin SDK
+// resolves the project from ADC's default — which may NOT be the intended
+// Firebase project, silently seeding the wrong database. Surface the target so a
+// wrong-project seed is obvious (and bail if none resolved).
+const TARGET_PROJECT =
+  admin.app().options.projectId || process.env.GOOGLE_CLOUD_PROJECT || process.env.GCLOUD_PROJECT;
+if (!TARGET_PROJECT) {
+  console.error(
+    '✗ No se pudo resolver el proyecto. Exporta GOOGLE_CLOUD_PROJECT=<tu-proyecto> (p.ej. ceti-d3769).'
+  );
+  process.exit(1);
+}
+console.log(`→ Sembrando bancos en el proyecto: ${TARGET_PROJECT}`);
+
 const ROOT = path.resolve(__dirname, '..');
 const APPROVED_DIR = path.join(ROOT, 'content', 'approved');
 const BANKS_DIR = path.join(ROOT, 'content', 'bancos');
