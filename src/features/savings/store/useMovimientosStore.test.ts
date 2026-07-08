@@ -1,0 +1,110 @@
+// El store dispara sync fire-and-forget vía dynamic import(); mockeamos esos
+// módulos para que el side-effect resuelva limpio. La lógica pura queda intacta.
+import { useMovimientosStore } from '@features/savings/store/useMovimientosStore';
+import { useSavingsStore } from '@features/savings/store/useSavingsStore';
+import { logEvent } from '@shared/lib/analytics/logEvent';
+
+jest.mock('@shared/lib/analytics/logEvent', () => ({ logEvent: jest.fn() }));
+jest.mock('@shared/lib/analytics/crashlytics', () => ({ recordError: jest.fn() }));
+jest.mock('@features/savings/data/movimientosRepository', () => ({
+  movimientosRepository: {
+    upsertMovimiento: jest.fn().mockResolvedValue(true),
+    removeMovimiento: jest.fn().mockResolvedValue(true),
+  },
+}));
+jest.mock('@features/savings/data/depositsRepository', () => ({
+  depositsRepository: { upsertDeposit: jest.fn().mockResolvedValue(true) },
+}));
+jest.mock('@features/savings/data/goalsRepository', () => ({
+  goalsRepository: {
+    upsertGoal: jest.fn().mockResolvedValue(true),
+    removeGoal: jest.fn().mockResolvedValue(true),
+  },
+}));
+
+const baseMovimiento = {
+  tipo: 'gasto' as const,
+  monto: 5000,
+  descripcion: 'helado',
+  categoria: 'comida' as const,
+  origen: 'voz' as const,
+};
+
+// flush de las microtareas de los dynamic import() del store
+const flush = () => new Promise((r) => setTimeout(r, 0));
+
+describe('useMovimientosStore', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    useMovimientosStore.setState({ movimientos: [] });
+    useSavingsStore.setState({ goals: [], deposits: [] });
+  });
+
+  it('agrega un movimiento con id y createdAt', () => {
+    const mov = useMovimientosStore.getState().addMovimiento(baseMovimiento);
+    expect(mov.id).toMatch(/^mov_/);
+    expect(typeof mov.createdAt).toBe('number');
+    expect(useMovimientosStore.getState().movimientos).toHaveLength(1);
+  });
+
+  it('analytics recibe SOLO origen y tipo — jamás monto/descripcion/categoria (CA6)', () => {
+    useMovimientosStore.getState().addMovimiento(baseMovimiento);
+    expect(logEvent).toHaveBeenCalledWith('movimiento_registrado', {
+      origen: 'voz',
+      tipo: 'gasto',
+    });
+    const params = (logEvent as jest.Mock).mock.calls[0][1] as Record<string, unknown>;
+    expect(Object.keys(params).sort()).toEqual(['origen', 'tipo']);
+  });
+
+  it('un ahorro con goalId alimenta la meta vía addDeposit (puente D-ES10-04)', async () => {
+    const goal = useSavingsStore.getState().addGoal({
+      title: 'Bici',
+      description: '',
+      emoji: '🚲',
+      targetAmount: 100000,
+      frequency: 'total',
+      category: 'custom',
+    });
+
+    useMovimientosStore.getState().addMovimiento({
+      ...baseMovimiento,
+      tipo: 'ahorro',
+      monto: 20000,
+      goalId: goal.id,
+    });
+    await flush();
+
+    const updated = useSavingsStore.getState().goals.find((g) => g.id === goal.id);
+    expect(updated?.currentAmount).toBe(20000);
+    expect(useSavingsStore.getState().deposits).toHaveLength(1);
+  });
+
+  it('un gasto con goalId NO toca las metas', async () => {
+    const goal = useSavingsStore.getState().addGoal({
+      title: 'Bici',
+      description: '',
+      emoji: '🚲',
+      targetAmount: 100000,
+      frequency: 'total',
+      category: 'custom',
+    });
+
+    useMovimientosStore.getState().addMovimiento({ ...baseMovimiento, goalId: goal.id });
+    await flush();
+
+    expect(useSavingsStore.getState().deposits).toHaveLength(0);
+  });
+
+  it('removeMovimiento elimina del estado', () => {
+    const mov = useMovimientosStore.getState().addMovimiento(baseMovimiento);
+    useMovimientosStore.getState().removeMovimiento(mov.id);
+    expect(useMovimientosStore.getState().movimientos).toHaveLength(0);
+  });
+
+  it('resetMovimientos vacía el estado', () => {
+    useMovimientosStore.getState().addMovimiento(baseMovimiento);
+    useMovimientosStore.getState().resetMovimientos();
+    expect(useMovimientosStore.getState().movimientos).toHaveLength(0);
+  });
+});

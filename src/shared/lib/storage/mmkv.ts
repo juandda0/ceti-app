@@ -52,6 +52,7 @@ export const ZUSTAND_PERSIST_KEYS = [
   'question-bank-store',
   'savings-store',
   'wallet-store',
+  'movimientos-store',
   'ceti-theme-storage',
 ] as const;
 

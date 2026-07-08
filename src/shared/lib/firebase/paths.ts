@@ -7,6 +7,9 @@ export const FIRESTORE_COLLECTIONS = {
   goals: 'goals',
   deposits: 'deposits',
   wallet: 'wallet',
+  // Pocket-money diary (RQ-ES10): REAL self-declared movements, self-only
+  // (isSelf; no staff/admin read — CA5). Deleted by suppressStudentData (CA7).
+  movimientos: 'movimientos',
   // Global, human-curated, read-only to clients (R8). Doc id: `${grado}_${worldId}_${tipo}`.
   bancos: 'bancos',
   // EligeCamino situational banks. Doc id: `${grado}_${worldId}`.
@@ -60,6 +63,14 @@ export function userDepositDocRef(
   depositId: string
 ) {
   return doc(db, FIRESTORE_COLLECTIONS.users, uid, FIRESTORE_COLLECTIONS.deposits, depositId);
+}
+
+export function userMovimientosCollectionRef(db: Firestore, uid: string) {
+  return collection(db, FIRESTORE_COLLECTIONS.users, uid, FIRESTORE_COLLECTIONS.movimientos);
+}
+
+export function userMovimientoDocRef(db: Firestore, uid: string, movimientoId: string) {
+  return doc(db, FIRESTORE_COLLECTIONS.users, uid, FIRESTORE_COLLECTIONS.movimientos, movimientoId);
 }
 
 export function userWalletDocRef(db: Firestore, uid: string) {

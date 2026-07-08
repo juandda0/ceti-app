@@ -99,7 +99,9 @@ export const useSavingsStore = create<SavingsStore>()(
           };
         });
 
-        void logEvent('deposit_created', { amount, has_goal: Boolean(goalId) });
+        // CA6 (RQ-ES10): los deposits pueden originarse en movimientos reales
+        // vía el puente D-ES10-04 — analytics jamás recibe montos.
+        void logEvent('deposit_created', { has_goal: Boolean(goalId) });
 
         void (async () => {
           try {
