@@ -252,6 +252,21 @@ service cloud.firestore {
           && request.resource.data.totalCetis >= 0;
         allow delete: if false;
       }
+
+      // Pocket-money diary (RQ-ES10). Self-only by design: NO staff role — not
+      // even admin — may read a student's individual movimientos (CA5). Hard
+      // type validation mirrors the function's classification enum.
+      match /movimientos/{movimientoId} {
+        allow read, delete: if isSelf(userId);
+        allow create, update: if isSelf(userId)
+          && request.resource.data.tipo in ['ahorro', 'gasto']
+          && request.resource.data.monto is number
+          && request.resource.data.monto >= 0
+          && request.resource.data.descripcion is string
+          && request.resource.data.descripcion.size() <= 140
+          && request.resource.data.categoria in ['comida', 'transporte', 'entretenimiento', 'ropa', 'educacion', 'tecnologia', 'regalos', 'otros']
+          && request.resource.data.origen in ['voz', 'manual'];
+      }
     }
 
     // Global, shared content banks (grado×mundo×tipo). Doc id is

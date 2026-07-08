@@ -64,3 +64,6 @@ content/approved/*.json
 
 # Claude Code — settings personales (no compartir; settings.json sí se versiona)
 .claude/settings.local.json
+
+# Secrets locales del emulador de functions (RQ-ES10)
+functions/.secret.local

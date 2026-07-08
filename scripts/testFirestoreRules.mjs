@@ -472,6 +472,102 @@ await check(
   assertSucceeds(setDoc(doc(stuA1, 'users/uStuA1/wallet/state'), { totalCetis: 10 }))
 );
 
+console.log('Pocket-money diary users/{uid}/movimientos (RQ-ES10):');
+const validMovimiento = {
+  tipo: 'gasto',
+  monto: 5000,
+  descripcion: 'helado',
+  categoria: 'comida',
+  origen: 'voz',
+  createdAt: 1,
+};
+await check(
+  'student creates own valid movimiento',
+  assertSucceeds(setDoc(doc(stuA1, 'users/uStuA1/movimientos/m1'), validMovimiento))
+);
+await check(
+  'student deletes own movimiento',
+  assertSucceeds(deleteDoc(doc(stuA1, 'users/uStuA1/movimientos/m1')))
+);
+await check(
+  'movimiento rejects negative monto',
+  assertFails(setDoc(doc(stuA1, 'users/uStuA1/movimientos/m2'), { ...validMovimiento, monto: -100 }))
+);
+await check(
+  'movimiento rejects string monto',
+  assertFails(setDoc(doc(stuA1, 'users/uStuA1/movimientos/m2'), { ...validMovimiento, monto: '5000' }))
+);
+await check(
+  'movimiento rejects invalid tipo',
+  assertFails(setDoc(doc(stuA1, 'users/uStuA1/movimientos/m2'), { ...validMovimiento, tipo: 'prestamo' }))
+);
+await check(
+  'movimiento rejects invalid categoria',
+  assertFails(
+    setDoc(doc(stuA1, 'users/uStuA1/movimientos/m2'), { ...validMovimiento, categoria: 'apuestas' })
+  )
+);
+await check(
+  'movimiento rejects long descripcion',
+  assertFails(
+    setDoc(doc(stuA1, 'users/uStuA1/movimientos/m2'), {
+      ...validMovimiento,
+      descripcion: 'x'.repeat(200),
+    })
+  )
+);
+await check(
+  'movimiento rejects invalid origen',
+  assertFails(setDoc(doc(stuA1, 'users/uStuA1/movimientos/m2'), { ...validMovimiento, origen: 'api' }))
+);
+// Solo-vista-propia (CA5): ni otro estudiante, ni profesor, ni rector, ni
+// coordinador, ni admin leen movimientos individuales.
+await env.withSecurityRulesDisabled(async (ctx) => {
+  await setDoc(doc(ctx.firestore(), 'users/uStuA1/movimientos/mSeed'), validMovimiento);
+});
+await check(
+  'another student cannot read movimientos',
+  assertFails(getDoc(doc(stuA2, 'users/uStuA1/movimientos/mSeed')))
+);
+await check(
+  'profesor cannot read movimientos',
+  assertFails(getDoc(doc(profA1, 'users/uStuA1/movimientos/mSeed')))
+);
+await check(
+  'rector cannot read movimientos',
+  assertFails(getDoc(doc(rectorA, 'users/uStuA1/movimientos/mSeed')))
+);
+await check(
+  'coordinador cannot read movimientos',
+  assertFails(getDoc(doc(coordA, 'users/uStuA1/movimientos/mSeed')))
+);
+await check(
+  'admin cannot read movimientos (self-only)',
+  assertFails(getDoc(doc(adminG, 'users/uStuA1/movimientos/mSeed')))
+);
+// vozUso/* (cap diario, RQ-ES10 CA8): solo Admin SDK — default deny para clientes.
+await check(
+  'client cannot read vozUso',
+  assertFails(getDoc(doc(stuA1, 'vozUso/uStuA1_2026-07-08')))
+);
+await check(
+  'client cannot write vozUso',
+  assertFails(setDoc(doc(stuA1, 'vozUso/uStuA1_2026-07-08'), { count: 0 }))
+);
+// Demo student (RQ-DM05): su propio users/{uid} sigue siendo self-scoped.
+const demoStuMov = env
+  .authenticatedContext('demo-estudiante', {
+    role: 'estudiante',
+    demo: true,
+    colegioId: 'demo-colegio',
+    cursoId: 'dc1',
+  })
+  .firestore();
+await check(
+  'demo student creates own movimiento',
+  assertSucceeds(setDoc(doc(demoStuMov, 'users/demo-estudiante/movimientos/m1'), validMovimiento))
+);
+
 console.log('Content banks (bancos — shared global, read-only to clients):');
 await check(
   'signed-in student reads bancos',

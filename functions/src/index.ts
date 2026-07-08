@@ -13,9 +13,12 @@
  */
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { onDocumentWritten } from 'firebase-functions/v2/firestore';
+import { defineSecret } from 'firebase-functions/params';
 import { initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+import Anthropic from '@anthropic-ai/sdk';
+import { clasificarTexto } from './vozClasificacion';
 
 initializeApp();
 
@@ -374,6 +377,8 @@ export const suppressStudentData = onCall(async (request) => {
   // Delete all per-world progress + impact tests (the minor's generated data).
   await db.recursiveDelete(estRef.collection('progress'));
   await db.recursiveDelete(estRef.collection('impactTest'));
+  // Pocket-money diary (RQ-ES10 CA7) — account-scoped, so it lives under users/.
+  await db.recursiveDelete(db.doc(`users/${uid}`).collection('movimientos'));
 
   await estRef.set(
     {
@@ -490,6 +495,69 @@ export const joinByCode = onCall(async (request) => {
   await applyClaims(caller.uid, { role: 'estudiante', colegioId, cursoId });
 
   return { ok: true, colegioId, cursoId };
+});
+
+// ---------------------------------------------------------------------------
+// Voice diary classification (RQ-ES10). The ONLY runtime AI in Ceti — the
+// narrow R7 exception (D-ES10-01). Receives the browser-transcribed TEXT of a
+// student's pocket-money entry (audio never reaches our servers), classifies it
+// via Claude with structured output, and RETURNS the classification. It never
+// writes the movimiento — the client persists only after the student confirms
+// (CA3), under the isSelf rules of users/{uid}/movimientos.
+// ---------------------------------------------------------------------------
+
+const ANTHROPIC_API_KEY = defineSecret('ANTHROPIC_API_KEY');
+const VOZ_CAP_DIARIO = 30;
+const VOZ_MAX_CHARS = 300;
+
+/**
+ * Daily per-uid budget (CA8): a counter doc at vozUso/{uid}_{YYYY-MM-DD},
+ * written only by this function via the Admin SDK (clients are default-denied).
+ * Throws resource-exhausted at the cap.
+ */
+async function assertVozBudget(uid: string): Promise<void> {
+  const db = getFirestore();
+  const day = new Date().toISOString().slice(0, 10);
+  const ref = db.doc(`vozUso/${uid}_${day}`);
+  await db.runTransaction(async (tx) => {
+    const snap = await tx.get(ref);
+    const count = (snap.data()?.count as number | undefined) ?? 0;
+    if (count >= VOZ_CAP_DIARIO) {
+      throw new HttpsError('resource-exhausted', 'Límite diario de registros por voz alcanzado.');
+    }
+    tx.set(ref, { count: count + 1, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+  });
+}
+
+export const procesarRegistroVoz = onCall({ secrets: [ANTHROPIC_API_KEY] }, async (request) => {
+  const caller = request.auth;
+  requireAuth(caller);
+  if (caller.token.role !== 'estudiante') {
+    throw new HttpsError('permission-denied', 'Solo estudiantes registran movimientos.');
+  }
+  const texto = requireString(request.data?.texto, 'texto');
+  if (texto.length > VOZ_MAX_CHARS) {
+    throw new HttpsError('invalid-argument', `'texto' supera ${VOZ_MAX_CHARS} caracteres.`);
+  }
+
+  await assertVozBudget(caller.uid);
+
+  const client = new Anthropic({
+    apiKey: ANTHROPIC_API_KEY.value(),
+    timeout: 15_000,
+    maxRetries: 1,
+  });
+
+  try {
+    return await clasificarTexto(texto, client);
+  } catch (e) {
+    if (e instanceof Anthropic.APIError) {
+      // 429/5xx/red tras el retry del SDK: el cliente puede reintentar.
+      throw new HttpsError('unavailable', 'El clasificador no está disponible, intenta de nuevo.');
+    }
+    // JSON/forma inválida del modelo: bug nuestro o del modelo, no del usuario.
+    throw new HttpsError('internal', 'No se pudo clasificar el registro.');
+  }
 });
 
 // ---------------------------------------------------------------------------
