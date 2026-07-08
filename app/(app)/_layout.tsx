@@ -68,6 +68,15 @@ export default function AppTabLayout() {
         }}
       />
       <Tabs.Screen
+        name="movimientos"
+        options={{
+          title: 'Movimientos',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? 'mic' : 'mic-outline'} size={TAB_ICON_SIZE} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           title: 'Perfil',

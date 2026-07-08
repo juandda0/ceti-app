@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
   Platform,
 } from 'react-native';
 import Animated from 'react-native-reanimated';
+import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { motion } from '@shared/constants/motion';
 import { Ionicons } from '@expo/vector-icons';
@@ -138,19 +139,18 @@ export default function GoalsScreen() {
   const insets = useSafeAreaInsets();
   const { totalCetis } = useWalletStore();
   const { nickname } = useUserStore();
-  const [showDeposit, setShowDeposit] = useState(false);
   const [showNewGoal, setShowNewGoal] = useState(false);
-  const [preSelectedGoal, setPreSelectedGoal] = useState<{ id: string; title: string } | null>(
-    null
-  );
 
   const goals = useSavingsStore((s) => s.goals);
   const deposits = useSavingsStore((s) => s.deposits);
   const totalSaved = useSavingsStore((s) => s.getTotalSaved)();
 
+  // RQ-ES10 (D-ES10-03): el registro es SOLO por voz — "Ahorrar" navega al
+  // diario de movimientos (con la meta preseleccionada si venía de una tarjeta).
   const openDeposit = (goal?: SavingsGoal) => {
-    setPreSelectedGoal(goal ? { id: goal.id, title: goal.title } : null);
-    setShowDeposit(true);
+    router.push(
+      goal ? { pathname: '/(app)/movimientos', params: { goalId: goal.id } } : '/(app)/movimientos'
+    );
   };
 
   return (
@@ -338,170 +338,8 @@ export default function GoalsScreen() {
         </ScrollView>
       </ScreenWrapper>
 
-      <DepositModal
-        visible={showDeposit}
-        onClose={() => setShowDeposit(false)}
-        goals={goals}
-        preSelected={preSelectedGoal}
-        colors={colors}
-      />
-
       <NewGoalModal visible={showNewGoal} onClose={() => setShowNewGoal(false)} colors={colors} />
     </>
-  );
-}
-
-function DepositModal({
-  visible,
-  onClose,
-  goals,
-  preSelected,
-  colors,
-}: {
-  visible: boolean;
-  onClose: () => void;
-  goals: SavingsGoal[];
-  preSelected: { id: string; title: string } | null;
-  colors: ReturnType<typeof useThemeColors>;
-}) {
-  const { t } = useTranslation();
-  const [amount, setAmount] = useState('');
-  const [desc, setDesc] = useState('');
-  const [selectedGoalId, setSelectedGoalId] = useState('');
-  const addDeposit = useSavingsStore((s) => s.addDeposit);
-
-  useEffect(() => {
-    if (!visible) return;
-    setSelectedGoalId(preSelected?.id ?? goals[0]?.id ?? '');
-  }, [visible, preSelected?.id, goals]);
-
-  const handleDeposit = () => {
-    const num = parseMoneyAmountInt(amount);
-    if (!goals.length) {
-      showCetiNotice({
-        variant: 'info',
-        title: t('goals.needGoalTitle'),
-        message: t('goals.needGoalMsg'),
-      });
-      return;
-    }
-    if (!num || !desc.trim()) {
-      showCetiNotice({
-        variant: 'error',
-        title: t('goals.reviewTitle'),
-        message: t('goals.reviewMsg'),
-      });
-      return;
-    }
-    addDeposit(num, desc.trim(), selectedGoalId || undefined);
-    showCetiNotice({
-      variant: 'success',
-      title: t('goals.savedTitle'),
-      message: t('goals.savedMsg'),
-    });
-    setAmount('');
-    setDesc('');
-    onClose();
-  };
-
-  return (
-    <CetiBottomSheet
-      visible={visible}
-      onClose={onClose}
-      title={t('goals.registerSaving')}
-      subtitle={t('goals.registerSavingSub')}
-      closeOnBackdropPress
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View>
-          <TextInput
-            style={[
-              mStyles.input,
-              {
-                backgroundColor: colors.materials.highlight,
-                color: colors.text.primary,
-                borderColor: colors.materials.border,
-              },
-            ]}
-            placeholder={t('goals.amountPlaceholder')}
-            placeholderTextColor={colors.text.tertiary}
-            keyboardType="numeric"
-            value={amount}
-            onChangeText={(text) => setAmount(formatMoneyInputThousands(text))}
-          />
-          <TextInput
-            style={[
-              mStyles.input,
-              {
-                backgroundColor: colors.materials.highlight,
-                color: colors.text.primary,
-                borderColor: colors.materials.border,
-              },
-            ]}
-            placeholder={t('goals.sourcePlaceholder')}
-            placeholderTextColor={colors.text.tertiary}
-            value={desc}
-            onChangeText={setDesc}
-          />
-          {goals.length > 0 && (
-            <>
-              <Text style={[mStyles.label, { color: colors.text.secondary }]}>
-                {t('goals.whichGoal')}
-              </Text>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={{ marginBottom: 12 }}
-              >
-                {goals.map((g) => (
-                  <TouchableOpacity
-                    key={g.id}
-                    onPress={() => setSelectedGoalId(g.id)}
-                    style={[
-                      mStyles.goalChip,
-                      {
-                        backgroundColor: colors.materials.highlight,
-                        borderColor: colors.materials.border,
-                      },
-                      selectedGoalId === g.id && {
-                        borderColor: colors.brand.primary,
-                        backgroundColor: colors.fill.brandSubtle,
-                      },
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        mStyles.chipText,
-                        { color: colors.text.primary },
-                        selectedGoalId === g.id && { color: colors.brand.primary },
-                      ]}
-                    >
-                      {g.title}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </>
-          )}
-          <View style={mStyles.row}>
-            <CetiButton
-              label={t('goals.cancel')}
-              onPress={onClose}
-              variant="glass"
-              size="medium"
-              style={{ flex: 1 }}
-            />
-            <CetiButton
-              label={t('goals.saveBtn')}
-              onPress={handleDeposit}
-              variant="primary"
-              size="medium"
-              style={{ flex: 1 }}
-            />
-          </View>
-        </View>
-      </TouchableWithoutFeedback>
-    </CetiBottomSheet>
   );
 }
 
@@ -769,15 +607,6 @@ const styles = StyleSheet.create({
 });
 
 const mStyles = StyleSheet.create({
-  label: { ...Typography.caption1, marginTop: 10 },
   input: { borderRadius: 20, padding: 20, ...Typography.body, borderWidth: 1, marginBottom: 12 },
   row: { flexDirection: 'row', gap: 12, marginTop: 12 },
-  goalChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 12,
-    marginRight: 8,
-    borderWidth: 1,
-  },
-  chipText: { ...Typography.caption1, fontWeight: '700' },
 });

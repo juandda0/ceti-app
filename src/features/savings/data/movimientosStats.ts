@@ -30,7 +30,7 @@ export function totalesPorCategoria(
   movimientos: Movimiento[],
   tipo: MovimientoTipo,
   ref: Date = new Date()
-): Array<{ categoria: MovimientoCategoria; total: number }> {
+): { categoria: MovimientoCategoria; total: number }[] {
   const acc = new Map<MovimientoCategoria, number>();
   for (const m of movimientos) {
     if (m.tipo !== tipo || !esDelMes(m.createdAt, ref)) continue;
