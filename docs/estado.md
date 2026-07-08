@@ -3,6 +3,46 @@
 > Bitácora de avance por fases. La fuente de verdad permanente vive en
 > `docs/empresa/`.
 
+## RQ-ES10 — Registro de movimientos por voz + dashboard propio ✅ (2026-07-08)
+
+Feature nueva: el estudiante registra sus movimientos de dinero de bolsillo
+**por voz** en vez del formulario manual. Botón de micrófono → STT del navegador
+(Web Speech API, el audio jamás toca nuestros servidores) → Cloud Function
+`procesarRegistroVoz` clasifica el texto con `claude-haiku-4-5` → tarjeta de
+confirmación editable → diario solo-vista-propia con dashboard (totales del mes,
+ahorro vs gasto, barras por categoría, historial).
+
+**Cambio de spec coordinado (R15, autorizado por el dueño — D-ES10-01..05):**
+primera excepción a **R7** (IA solo authoring-time) — acotada a clasificar texto
+server-side, prohibida en cliente; y a **R10** (sin dinero real) — diario
+autodeclarado de bolsillo real, solo-vista-propia, sigue prohibido lo
+transaccional. Materializado en `requerimientos.md` (RQ-ES10, 9 CAs),
+`ceti-invariants.mdc` + `CLAUDE.md`, `decisiones.md`, y producto/visión/compliance.
+
+**Decisiones del dueño:** dinero de bolsillo **real** (no simulado); voz como
+**único** camino de registro (DepositModal demolido, −185 líneas en GoalsScreen;
+metas conservadas vía puente `addMovimiento`→`addDeposit`, D-ES10-04). Riesgo
+aceptado: navegadores sin `SpeechRecognition` (Firefox) no registran.
+
+**Salvaguardas Ley 1581:** `users/{uid}/movimientos` con reglas `isSelf`
+(ni profesor/rector/coordinador/admin leen); analytics solo `{origen, tipo}`;
+borrado por el estudiante + incluido en `suppressStudentData` (CA7); prompt
+descarta PII; sin permisos nuevos en `app.json`. Gate E4 endurecido con el grupo
+`ia-cliente` (SDK/host de IA prohibido en `src/`+`app/`) para acotar la excepción
+estructuralmente.
+
+**Verificación:** typecheck ✓, ESLint ✓ (0 errores), i18n:check ✓,
+lint:invariants ✓ (sin baseline nuevo), rq:check ✓, Jest **181/181**,
+test:rules **107/107** (16 escenarios nuevos de movimientos/vozUso/demo).
+Vetos **AR PASS** (aislamiento tenant intacto) y **CP PASS** (Ley 1581); RC
+pendiente al cierre de esta entrada.
+
+**Pendiente de despliegue (requiere login del owner):**
+`firebase functions:secrets:set ANTHROPIC_API_KEY` (primer secret del proyecto),
+luego `firebase deploy --only functions,firestore:rules`. La prueba end-to-end
+del flujo completo (mic→clasificación→guardar) exige el deploy o el emulador con
+`functions/.secret.local`.
+
 ## Fase 1 — completa ✅
 
 Construido `docs/empresa/` como cerebro/fuente de verdad de la empresa,
