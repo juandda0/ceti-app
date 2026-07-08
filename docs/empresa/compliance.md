@@ -50,9 +50,13 @@ de perfilamiento de menores y anticipa la reforma 2025.
   reconocimiento de voz lo ejecuta el **navegador** (Web Speech API); Ceti no
   graba, almacena ni transmite audio a sus servidores. Solo el **texto**
   transcrito (≤300 caracteres) viaja a la Cloud Function de clasificación.
-- **Revelar en la política de tratamiento:** el vendor del navegador (p. ej.
+- **Revelar en la política de tratamiento:** (a) el vendor del navegador (p. ej.
   Google en Chrome) puede procesar el audio en sus servidores como parte del
-  servicio de dictado del propio navegador.
+  servicio de dictado del propio navegador; (b) **Anthropic** actúa como
+  encargado que recibe el **texto transcrito** (≤300 caracteres, transmisión
+  internacional a EE. UU.) únicamente para clasificarlo — no lo persiste en
+  nuestro sistema y la política debe cubrirla con cláusula de transmisión
+  (Decreto 1377).
 - La clasificación server-side instruye al modelo **omitir nombres propios y
   cualquier PII** del texto; solo se persisten campos estructurados
   (tipo/monto/categoría) y una descripción corta neutra.

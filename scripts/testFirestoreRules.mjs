@@ -545,6 +545,30 @@ await check(
   'admin cannot read movimientos (self-only)',
   assertFails(getDoc(doc(adminG, 'users/uStuA1/movimientos/mSeed')))
 );
+await check(
+  'another student cannot write movimientos',
+  assertFails(setDoc(doc(stuA2, 'users/uStuA1/movimientos/mSeed'), validMovimiento))
+);
+await check(
+  'admin cannot delete movimientos (self-only)',
+  assertFails(deleteDoc(doc(adminG, 'users/uStuA1/movimientos/mSeed')))
+);
+await check(
+  'collection-group query over movimientos denied',
+  assertFails(getDocs(query(collectionGroup(profA1, 'movimientos'), where('tipo', '==', 'gasto'))))
+);
+await check(
+  'merge update cannot smuggle invalid monto',
+  assertFails(
+    setDoc(doc(stuA1, 'users/uStuA1/movimientos/mSeed'), { monto: -1 }, { merge: true })
+  )
+);
+await check(
+  'merge update with valid monto passes',
+  assertSucceeds(
+    setDoc(doc(stuA1, 'users/uStuA1/movimientos/mSeed'), { monto: 7000 }, { merge: true })
+  )
+);
 // vozUso/* (cap diario, RQ-ES10 CA8): solo Admin SDK — default deny para clientes.
 await check(
   'client cannot read vozUso',
