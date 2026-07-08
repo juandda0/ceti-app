@@ -99,9 +99,14 @@ banco: ninguna generación/adaptación/selección por modelo en vivo. Prohibido 
 runtime `aiService.adaptQuestion`, `getRecommendedPath`, `analyzeWeaknesses`,
 `adaptiveQuiz`, campos `aiHints`/`isAdaptable`. La selección de las 10 preguntas
 es estática/aleatoria simple. IA solo en authoring-time (D6, offline). El
-diagnóstico por reglas (no ML) se conserva. *(RQ-CN03, RQ-PR05 CA3, D5 ·
-conflicto #7)* — Espejo: E4 grupo `runtime-ia` (discrimina por ruta;
-`content/`+`scripts/` exentos), agente RC.
+diagnóstico por reglas (no ML) se conserva. **Excepción única y estrecha
+(RQ-ES10, D-ES10)**: la Cloud Function `procesarRegistroVoz` clasifica el texto
+transcrito del registro de movimientos de bolsillo; prohibida la IA en el cliente
+(`src/`+`app/`), prohibido almacenar/transmitir audio a servidores propios, y
+prohibido usar el resultado para generar/adaptar/seleccionar contenido o perfilar
+al menor. *(RQ-CN03, RQ-PR05 CA3, D5 · conflicto #7)* — Espejo: E4 grupos
+`runtime-ia` e `ia-cliente` (discriminan por ruta; `content/`+`scripts/` exentos,
+IA solo en `functions/`), agente RC.
 
 **R8 — Bancos por `grado×mundo×tipo`, read-only, sembrados.** Contenido en
 `bancos/{grado}_{worldId}_{tipo}` (tipos `multiple_choice|true_false|ordenar`) y
@@ -127,8 +132,12 @@ cuentas bancarias, gift cards. Gamificación atada a `mastery`, no al tiempo.
 Prohibido leaderboard global/público/inter-colegio; permitido solo leaderboard
 de aula (acotado al curso, `curso.colaboracionAula`), sin más PII que el nombre
 dentro del curso. Pre/post-test no otorga XP/badges ni altera `mastery`/desbloqueo.
-*(RQ-ES05, ES08, ES09, TS04)* — Espejo: E4 grupo `dinero-leaderboard`, E7 scope
-de aula, TQ.
+**Excepción estrecha (RQ-ES10, D-ES10)**: se permite el diario **autodeclarado**
+de movimientos de bolsillo reales (`users/{uid}/movimientos`), solo-vista-propia
+y con fin pedagógico; sigue prohibido todo lo transaccional (cuentas, pagos,
+transferencias, gift cards) y mezclar Cetis con COP reales. *(RQ-ES05, ES08,
+ES09, ES10, TS04)* — Espejo: E4 grupo `dinero-leaderboard`, E7 scope de aula +
+`movimientos` isSelf, TQ.
 
 **R11 — Features excluidas (permanente).** Excluidos y prohibidos sin R15:
 certificados/diplomas PDF (`buildCertificateHtml`), reporte/app para padres y

@@ -312,6 +312,28 @@ del aula; leaderboard **de aula opcional**. **Nunca** ranking global público.
 - _CA2_: Si `colaboracionAula=true`, el leaderboard es **de aula** (acotado al curso), nunca global ni inter-colegio.
 - _CA3_: El leaderboard de aula no expone PII más allá del nombre dentro del propio curso.
 
+**RQ-ES10 — Registro de movimientos por voz + dashboard propio (diario de bolsillo)**
+
+> Adición formal a la spec (autorizada por el dueño, 2026-07-08; excepciones
+> estrechas a R7 y R10 registradas en `docs/decisiones.md` D-ES10-\*).
+
+El estudiante registra sus movimientos de dinero de bolsillo **por voz**: presiona
+un botón de micrófono, dice qué ahorró o gastó ("gasté cinco mil en un helado"),
+una IA server-side clasifica `{tipo, monto, descripcion, categoria}`, el
+estudiante **confirma o corrige**, y el movimiento queda en su diario personal con
+un dashboard **solo-vista-propia** (totales del mes, ahorro vs gasto, desglose por
+categoría, historial). La voz es el único camino de registro.
+
+- _CA1_: El reconocimiento de voz ocurre 100% en el navegador (Web Speech API, es-CO); el audio **jamás** se graba, almacena ni transmite a servidores propios; solo el texto transcrito (≤300 caracteres) viaja a la Cloud Function.
+- _CA2_: Única excepción a R7: la callable `procesarRegistroVoz` (server-side) clasifica el texto y devuelve `{tipo, monto, descripcion, categoria, confianza}` sin escribir en Firestore; la categoría sale de un enum fijo de 8 (`comida, transporte, entretenimiento, ropa, educacion, tecnologia, regalos, otros`); la IA sigue prohibida en el cliente y para generación/adaptación/selección de contenido.
+- _CA3_: Nada se persiste sin confirmación explícita del estudiante; la tarjeta de confirmación permite corregir tipo/monto/categoría/descripción antes de guardar. No existe formulario manual independiente.
+- _CA4_: Excepción estrecha a R10: los movimientos son un **diario autodeclarado de dinero de bolsillo real** con fin pedagógico; sigue prohibido todo lo transaccional (cuentas bancarias, pagos, transferencias, gift cards, dinero moviéndose por la app). La moneda virtual (Cetis) no se mezcla con COP reales.
+- _CA5_: `users/{uid}/movimientos` es legible/escribible/borrable **únicamente** por el propio estudiante (`isSelf`); ni profesor, ni rector, ni coordinador, ni admin leen movimientos individuales; no existen agregados de movimientos para staff.
+- _CA6_: Sin perfilamiento: la categoría es atributo de la transacción, no del menor; ningún rasgo derivado se persiste ni adapta contenido; analytics recibe solo `{origen, tipo}` — nunca montos, descripciones ni categorías.
+- _CA7_: El estudiante puede borrar cualquier movimiento propio; `suppressStudentData` elimina también `users/{uid}/movimientos` (Ley 1581).
+- _CA8_: La función aplica cap diario por uid y cap de longitud; la API key vive en `defineSecret('ANTHROPIC_API_KEY')`, nunca en el cliente.
+- _CA9_: Sin `SpeechRecognition` o micrófono denegado, la app muestra un mensaje claro ("usa Chrome/Edge/Safari"); el dashboard sigue visible (riesgo aceptado por el dueño: sin voz no hay registro).
+
 ### Conflictos resueltos en esta sección
 
 #2-UI (RQ-ES06), #9 (RQ-ES03/ES04), #10 (RQ-ES01).

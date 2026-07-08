@@ -51,6 +51,11 @@ const GROUPS = [
     re: /services[\\/]+ai|adaptiveQuiz|adaptQuestion|getRecommendedPath|analyzeWeaknesses|\baiHints\b|\bisAdaptable\b/,
     skipScripts: true,
     msg: 'runtime estático; IA solo authoring-time (R7)' },
+  // Acota estructuralmente la excepción RQ-ES10: SDKs/hosts de IA solo en functions/.
+  { group: 'ia-cliente', R: 'R7', conflicto: 7,
+    re: /@anthropic-ai\/|['"`]openai['"`]|@google\/generative-ai|\bai-sdk\b|api\.anthropic\.com|api\.openai\.com|generativelanguage\.googleapis\.com|openrouter\.ai/,
+    clientOnly: true,
+    msg: 'IA solo server-side (functions/) — RQ-ES10; prohibido SDK/fetch de IA en cliente (R7)' },
   { group: 'bancos-global', R: 'R8', conflicto: 8,
     re: /\bquestionBank\b/,
     msg: 'bancos grado×mundo×tipo; sin questionBank global (R8)' },
@@ -91,6 +96,7 @@ for (const file of files) {
   const lines = src.split(/\r?\n/);
   for (const g of GROUPS) {
     if (g.skipScripts && relPath.startsWith('scripts/')) continue;
+    if (g.clientOnly && !(relPath.startsWith('src/') || relPath.startsWith('app/'))) continue;
     for (let i = 0; i < lines.length; i++) {
       if (g.re.test(lines[i])) {
         const key = `${g.group}::${relPath}`;

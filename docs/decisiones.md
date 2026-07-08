@@ -6,6 +6,65 @@
 > ante una ambigüedad de spec llevan el tag **[AUTO-DECIDIDO]** y eligen la
 > interpretación más conservadora.
 
+## RQ-ES10 — Registro de movimientos por voz + dashboard propio
+
+### D-ES10-01 — Excepción estrecha a R7: clasificación por IA server-side del registro por voz
+
+- **Contexto:** el dueño ordenó (2026-07-08) que el registro de ahorros/gastos del
+  estudiante sea por voz, clasificado por IA. R7/D5 prohíben IA en runtime; R15
+  exige cambio coordinado y decisión humana.
+- **Decisión (del dueño):** se abre una **excepción única y estrecha**: la Cloud
+  Function `procesarRegistroVoz` clasifica el **texto** transcrito (nunca audio)
+  con `claude-haiku-4-5` y devuelve `{tipo, monto, descripcion, categoria,
+confianza}` sin escribir en BD. Sigue prohibido: IA en el cliente, almacenar o
+  transmitir audio a servidores propios, y usar el resultado para
+  generar/adaptar/seleccionar contenido o perfilar al menor. El gate E4 gana el
+  grupo `ia-cliente` (SDKs/hosts de IA bloqueados en `src/`+`app/`) para acotar la
+  excepción estructuralmente. Cambio coordinado aplicado: `ceti-invariants.mdc` +
+  `CLAUDE.md` + `requerimientos.md` (RQ-ES10) en el mismo commit.
+
+### D-ES10-02 — Excepción estrecha a R10: diario autodeclarado de bolsillo real
+
+- **Contexto:** el dueño decidió que los movimientos dictados son **dinero de
+  bolsillo real** del estudiante (no moneda simulada), contra la recomendación de
+  mantener el marco simulado.
+- **Decisión (del dueño):** se permite el **diario autodeclarado** en
+  `users/{uid}/movimientos`, solo-vista-propia (isSelf; ni staff ni admin leen),
+  con borrado por el estudiante e inclusión en `suppressStudentData`. Sigue
+  prohibido todo lo transaccional (cuentas, pagos, transferencias, gift cards) y
+  mezclar Cetis con COP reales. `docs/empresa/compliance.md`, `producto.md` y
+  `vision.md` se actualizan en el mismo cambio.
+
+### D-ES10-03 — La voz es el único camino de registro; el formulario manual se elimina
+
+- **Contexto:** el dueño ordenó eliminar el registro manual (DepositModal), contra
+  la recomendación técnica de conservarlo como fallback.
+- **Decisión (del dueño):** solo voz. La tarjeta de confirmación/edición
+  post-clasificación se conserva (el estudiante corrige tipo/monto/categoría/
+  descripción antes de guardar; también sirve de entrada cuando la clasificación
+  falla, pre-llenada con el transcript). **Riesgo aceptado:** navegadores sin
+  `SpeechRecognition` (p. ej. Firefox) no pueden registrar; se muestra "usa
+  Chrome/Edge/Safari". La creación de metas (NewGoalModal) se conserva.
+
+### [AUTO-DECIDIDO] D-ES10-04 — Puente movimientos→metas: doble escritura deposit+movimiento
+
+- **Contexto:** al eliminar el DepositModal, las metas (RQ-ES08) perderían su única
+  fuente de progreso. Un movimiento `ahorro` puede apuntar a una meta.
+- **Decisión:** si el movimiento confirmado es `ahorro` con `goalId`,
+  `useMovimientosStore.addMovimiento` invoca además
+  `useSavingsStore.addDeposit(monto, descripcion, goalId)` (firma existente
+  verificada). Reusa el 100% de la lógica de progreso/sync de metas; el doble
+  registro (deposit + movimiento) queda documentado como intencional.
+- **Conservador:** sí — cero cambios en el modelo de metas existente.
+
+### [AUTO-DECIDIDO] D-ES10-05 — Deuda preexistente: la supresión no borra `users/{uid}/goals|deposits|wallet`
+
+- **Contexto:** al incluir `users/{uid}/movimientos` en `suppressStudentData` se
+  verificó que la supresión hoy tampoco borra las subcolecciones account-scoped
+  previas (`goals`, `deposits`, `wallet`).
+- **Decisión:** fuera del alcance de RQ-ES10 (tocarlas es unidad propia con su
+  revisión CP); se registra aquí como deuda candidata a unidad de compliance.
+
 ## RQ-DM (RQ-DEMO) — Modo Demo (simulación en el login)
 
 ### [AUTO-DECIDIDO] D-DEMO-05 — La familia "RQ-DEMO" se registra como `RQ-DM01..RQ-DM07`

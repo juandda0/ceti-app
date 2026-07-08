@@ -52,6 +52,11 @@
 - **Simulador de proyecto de vida** con **dinero virtual** (estilo Banzai:
   renta, gastos, imprevistos). Lenguaje "proyecto de vida" (MEN/Proyecta-T).
   **Sin dinero real, sin cuentas bancarias.**
+- **Diario de bolsillo por voz (RQ-ES10):** el estudiante dicta sus movimientos
+  reales de bolsillo ("gasté cinco mil en un helado"); una IA server-side los
+  clasifica, el estudiante confirma, y los explora en su propio dashboard.
+  **Solo registro autodeclarado, solo-vista-propia** — nunca cuentas, pagos ni
+  transacciones (D-ES10-02).
 - **Modo colaborativo de aula** activable/desactivable por el profesor (equipos),
   con leaderboard **de aula opcional** — **nunca** ranking global público.
 
@@ -101,5 +106,8 @@
 - ❌ Facturación dentro del sistema (se gestiona por fuera).
 - ❌ Sedes (jerarquía efectiva `colegio→curso→estudiante`; código de sede queda
   **dormante**, ver `conflictos.md`).
-- ❌ IA generativa/adaptativa en runtime, dinero real, gift cards, leaderboard
-  público individual, perfil individual del menor.
+- ❌ IA generativa/adaptativa en runtime (única excepción estrecha: clasificación
+  server-side del registro por voz, RQ-ES10 / D-ES10-01), dinero real
+  **transaccional** (cuentas, pagos, gift cards; el diario autodeclarado RQ-ES10
+  es la única excepción, D-ES10-02), leaderboard público individual, perfil
+  individual del menor.

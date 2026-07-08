@@ -62,10 +62,10 @@ archivo **y** la rule en el mismo cambio).
 - **R4** — PII mínima del menor: solo `email`+`nombre`; prohibido edad/fecha/documento/teléfono/dirección/grado; analytics sin PII. _(RQ-FN02)_
 - **R5** — Sin perfil individual del menor; sin `aiProfile`; Elige-camino/diagnóstico solo agregados por curso. _(RQ-FN09)_
 - **R6** — Atestación ligera; cero PII de acudiente; booleano `atestado` activa al estudiante; acudiente sin cuenta/pantalla. _(RQ-FN10)_
-- **R7** — Runtime estático; IA solo authoring-time; prohibida adaptación/selección por modelo en vivo. _(RQ-CN03)_
+- **R7** — Runtime estático; IA solo authoring-time; prohibida adaptación/selección por modelo en vivo. Excepción única RQ-ES10: `procesarRegistroVoz` (server-side) clasifica el texto del registro de bolsillo; IA prohibida en cliente y para contenido/perfilamiento. _(RQ-CN03, RQ-ES10)_
 - **R8** — Bancos `grado×mundo×tipo`, read-only, sembrados vía Admin SDK; flag `pendiente_validacion_docente`. _(RQ-FN07)_
 - **R9** — Quiz de exactamente 10 ítems = 4 MC + 3 V/F + 3 ordenar. _(RQ-ES03/ES04)_
-- **R10** — Sin dinero real; sin ranking público; solo leaderboard de aula. _(RQ-ES05/ES08/ES09)_
+- **R10** — Sin dinero real; sin ranking público; solo leaderboard de aula. Excepción RQ-ES10: diario autodeclarado de bolsillo real (`users/{uid}/movimientos`), solo-vista-propia; lo transaccional sigue prohibido. _(RQ-ES05/ES08/ES09/ES10)_
 - **R11** — Features excluidas (certificados PDF, app/reporte de padres, facturación, sedes activas, IA runtime, `parent/child/family`). _(D2/§9)_
 - **R12** — Reglas least-privilege según matriz §1.3; default deny `/{document=**}`. _(RQ-FN12)_
 - **R13** — Todo trabajo mapea a un `RQ-id` de `requerimientos.md`. _(§9)_

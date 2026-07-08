@@ -25,7 +25,13 @@
 
 - ❌ Edad/fecha de nacimiento, documento, teléfono, dirección del menor.
 - ❌ **Datos del acudiente** dentro del sistema (su autorización vive por fuera).
-- ❌ Datos financieros reales del menor (no hay cuentas; todo es simulado).
+- ❌ Datos financieros **verificables/transaccionales** del menor: no hay cuentas,
+  saldos bancarios, pagos ni vínculo con dinero real moviéndose por la app.
+  **Excepción RQ-ES10 (D-ES10-02):** el **diario autodeclarado** de movimientos de
+  bolsillo (`users/{uid}/movimientos`) sí se guarda, con salvaguardas: solo-vista-
+  propia (ni staff ni admin leen movimientos individuales), borrable por el
+  estudiante, incluido en la supresión, sin perfilamiento derivado y sin
+  montos/descripciones/categorías en analytics.
 - ❌ **Perfil individual persistente** construido a partir de decisiones del menor
   (ver "No perfilamiento").
 - ❌ PII de menores en analytics (`logEvent.ts`): nunca nombre, email ni
@@ -37,6 +43,21 @@ El evento **"Elige tu camino"** NO construye un perfil individual del menor. Sus
 decisiones se agregan **por curso** para el diagnóstico del profesor; **no** se
 persiste un rasgo/etiqueta individual del estudiante. Esto cumple la prohibición
 de perfilamiento de menores y anticipa la reforma 2025.
+
+## Registro por voz (RQ-ES10)
+
+- **El audio del menor nunca toca nuestra infraestructura.** El
+  reconocimiento de voz lo ejecuta el **navegador** (Web Speech API); Ceti no
+  graba, almacena ni transmite audio a sus servidores. Solo el **texto**
+  transcrito (≤300 caracteres) viaja a la Cloud Function de clasificación.
+- **Revelar en la política de tratamiento:** el vendor del navegador (p. ej.
+  Google en Chrome) puede procesar el audio en sus servidores como parte del
+  servicio de dictado del propio navegador.
+- La clasificación server-side instruye al modelo **omitir nombres propios y
+  cualquier PII** del texto; solo se persisten campos estructurados
+  (tipo/monto/categoría) y una descripción corta neutra.
+- **Sin permisos nuevos en `app.json`:** el micrófono lo gestiona el navegador
+  con su propio prompt de permiso (permisos de la app se mantienen mínimos).
 
 ## Autorización del acudiente — recolección **POR FUERA del sistema**
 
