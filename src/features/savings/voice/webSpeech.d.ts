@@ -5,9 +5,11 @@
  */
 interface WebSpeechRecognitionResult {
   readonly 0: { readonly transcript: string };
+  readonly isFinal: boolean;
 }
 
 interface WebSpeechRecognitionEvent {
+  readonly resultIndex: number;
   readonly results: ArrayLike<WebSpeechRecognitionResult>;
 }
 

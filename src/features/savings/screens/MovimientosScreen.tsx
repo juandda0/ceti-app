@@ -5,7 +5,7 @@
  * la tarjeta de confirmación se abre pre-llenada con el transcript.
  */
 import { useState } from 'react';
-import { ActivityIndicator, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -19,6 +19,7 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { showCetiNotice } from '@shared/store/useCetiOverlayStore';
 import ConfirmMovimientoSheet from '@features/savings/components/ConfirmMovimientoSheet';
 import MicButton from '@features/savings/components/MicButton';
+import VoiceCaptureSheet from '@features/savings/components/VoiceCaptureSheet';
 import MovimientoListItem from '@features/savings/components/MovimientoListItem';
 import MovimientosCharts from '@features/savings/components/MovimientosCharts';
 import { movimientosOrdenados } from '@features/savings/data/movimientosStats';
@@ -84,8 +85,9 @@ export default function MovimientosScreen() {
     })();
   };
 
-  const { state, start, stop } = useVoiceCapture(onTranscript);
+  const { state, transcript, start, stop, cancel } = useVoiceCapture(onTranscript);
   const historial = movimientosOrdenados(movimientos).slice(0, HISTORIAL_MAX);
+  const capturando = state === 'listening' || processing;
 
   return (
     <>
@@ -136,9 +138,8 @@ export default function MovimientosScreen() {
                 </Text>
               </View>
             ) : (
-              <MicButton state={state} processing={processing} onStart={start} onStop={stop} />
+              <MicButton state={state} processing={capturando} onStart={start} onStop={stop} />
             )}
-            {processing && <ActivityIndicator color={colors.brand.primary} />}
           </Animated.View>
 
           <Animated.View entering={motion.enterDown(104)}>
@@ -175,6 +176,14 @@ export default function MovimientosScreen() {
           </Animated.View>
         </ScrollView>
       </ScreenWrapper>
+
+      <VoiceCaptureSheet
+        visible={capturando}
+        processing={processing}
+        transcript={transcript}
+        onStop={stop}
+        onCancel={cancel}
+      />
 
       <ConfirmMovimientoSheet
         visible={sheetVisible}
