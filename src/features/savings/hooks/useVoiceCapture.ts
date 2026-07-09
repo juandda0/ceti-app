@@ -1,8 +1,9 @@
 /**
  * Captura de voz vía Web Speech API del navegador (RQ-ES10 CA1). El audio no
  * se graba ni sube a servidores propios: solo entregamos el transcript. Con
- * `interimResults` exponemos el texto EN VIVO mientras la persona habla; con
- * `continuous` seguimos capturando hasta que toca "Listo" (stop). En nativo o
+ * `interimResults` exponemos el texto EN VIVO mientras la persona habla, y con
+ * `continuous:false` la captura se detiene sola al hacer silencio y clasifica
+ * automáticamente (el botón "Listo" solo adelanta ese fin). En nativo o
  * navegadores sin SpeechRecognition (Firefox) el estado queda 'unavailable'.
  */
 import { useEffect, useRef, useState } from 'react';
@@ -48,7 +49,9 @@ export function useVoiceCapture(onTranscript: (texto: string) => void): {
 
     const recognition = new Ctor();
     recognition.lang = 'es-CO';
-    recognition.continuous = true;
+    // false = una sola frase: se detiene sola al hacer silencio y dispara onend
+    // (clasificación automática), como funcionaba antes de la transcripción en vivo.
+    recognition.continuous = false;
     recognition.interimResults = true;
     recognition.maxAlternatives = 1;
 
