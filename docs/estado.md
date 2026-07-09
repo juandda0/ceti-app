@@ -32,10 +32,20 @@ descarta PII; sin permisos nuevos en `app.json`. Gate E4 endurecido con el grupo
 estructuralmente.
 
 **Verificación:** typecheck ✓, ESLint ✓ (0 errores), i18n:check ✓,
-lint:invariants ✓ (sin baseline nuevo), rq:check ✓, Jest **181/181**,
-test:rules **107/107** (16 escenarios nuevos de movimientos/vozUso/demo).
-Vetos **AR PASS** (aislamiento tenant intacto) y **CP PASS** (Ley 1581); RC
-pendiente al cierre de esta entrada.
+lint:invariants ✓ (sin baseline nuevo), rq:check ✓, Jest **182/182**,
+test:rules **109/109**. Vetos **AR PASS** (aislamiento tenant) y **CP PASS**
+(Ley 1581). **RC** corrió como workflow adversarial (4 lentes → verificación
+que refutó 5 de 11 hallazgos) y confirmó 4 bugs reales, todos corregidos
+(commit `aaaff71`):
+
+- Puente sin reversa: borrar un ahorro ligado a meta dejaba progreso/total
+  fantasma → depósito ligado 1:1 al movimiento + `removeDeposit` que revierte.
+- Cuota gastada antes de clasificar: separada en check read-only (antes) +
+  cargo (solo tras éxito) para no autobloquear al niño en un outout del modelo.
+- Gate `ia-cliente` no cubría `@google/genai` ni subpaths de OpenAI → regex
+  ampliada.
+- Reglas `movimientos` sin tope de monto ni `hasOnly` → añadidos (el cliente
+  escribe directo, las reglas son el gate real).
 
 **Pendiente de despliegue (requiere login del owner):**
 `firebase functions:secrets:set ANTHROPIC_API_KEY` (primer secret del proyecto),
