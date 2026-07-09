@@ -3,7 +3,6 @@ import { getFirebaseClients } from '@shared/lib/firebase/app';
 import {
   estudianteProgressCollectionRef,
   estudianteProgressDocRef,
-  progressGroupByColegioQuery,
 } from '@shared/lib/firebase/paths';
 import { stripUndefinedValues } from '@shared/lib/firebase/sanitizeForFirestore';
 import type { WorldProgress } from '@shared/types/tenancy';
@@ -42,13 +41,5 @@ export const worldProgressRepository = {
     // The doc id is the worldId (path key); callers need it to rehydrate per-world
     // unlock/progress state, so surface it alongside the denormalized data.
     return snap.docs.map((d) => ({ ...(d.data() as WorldProgress), worldId: d.id }));
-  },
-
-  /** All progress in a colegio (collection-group; rector/coordinador only per rules). */
-  async getColegioProgress(colegioId: string): Promise<WorldProgress[]> {
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return [];
-    const snap = await getDocs(progressGroupByColegioQuery(clients.firestore, colegioId));
-    return snap.docs.map((d) => d.data() as WorldProgress);
   },
 };

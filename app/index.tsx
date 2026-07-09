@@ -72,8 +72,9 @@ export default function Index() {
       if (cancelled || mySeq !== seq.current) return;
       useAuthStore.getState().setClaims(claims);
 
-      // admin (Ceti, global) is staff-level for routing — the (staff) layout
-      // already admits it; isStaffRole is the §1.3 school-staff set (excludes admin).
+      // profesor routes to the (staff) panel. admin is a backend-only claim
+      // (D-PIVOT) with no app UI; if one ever signs in, the (staff) layout admits
+      // it but there are no admin screens — an empty staff panel, by design.
       if (claims && (claims.role === 'admin' || isStaffRole(claims.role))) {
         useAuthStore.getState().login();
         // Cast: typed-routes union regenerates from the filesystem on build.

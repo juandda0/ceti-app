@@ -22,7 +22,8 @@ import {
   signInWithGoogle,
 } from '@shared/lib/firebase/oauth';
 
-type DemoRole = 'admin' | 'rector' | 'coordinador' | 'profesor' | 'estudiante';
+// D-PIVOT: only profesor + estudiante demo profiles (demoLogin never mints admin).
+type DemoRole = 'profesor' | 'estudiante';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -196,20 +197,18 @@ export default function LoginScreen() {
             {t('demo.subtitle')}
           </Text>
           <View style={styles.demoGrid}>
-            {(['admin', 'rector', 'coordinador', 'profesor', 'estudiante'] as DemoRole[]).map(
-              (role) => (
-                <View key={role} style={styles.demoButtonWrap}>
-                  <CetiButton
-                    label={t(`demo.role.${role}`)}
-                    onPress={() => onDemoLogin(role)}
-                    variant="glass"
-                    size="small"
-                    disabled={demoLoadingRole !== null}
-                    isLoading={demoLoadingRole === role}
-                  />
-                </View>
-              )
-            )}
+            {(['profesor', 'estudiante'] as DemoRole[]).map((role) => (
+              <View key={role} style={styles.demoButtonWrap}>
+                <CetiButton
+                  label={t(`demo.role.${role}`)}
+                  onPress={() => onDemoLogin(role)}
+                  variant="glass"
+                  size="small"
+                  disabled={demoLoadingRole !== null}
+                  isLoading={demoLoadingRole === role}
+                />
+              </View>
+            ))}
           </View>
         </View>
 

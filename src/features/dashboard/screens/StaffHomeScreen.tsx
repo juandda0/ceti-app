@@ -14,13 +14,13 @@ import { Ionicons } from '@expo/vector-icons';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import PrivacyPolicyLink from '@shared/components/PrivacyPolicyLink';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
-import { useAuthStore, useIsAdmin } from '@features/auth/store/useAuthStore';
+import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { performLogoutAndGo } from '@features/auth/performLogout';
 import { rosterRepository, type CursoWithId } from '@features/dashboard/data/rosterRepository';
 
 /**
- * Landing for school staff (rector/coordinador/profesor): their courses, each
- * linking to the course dashboard (roster + progress + export).
+ * Landing for the profesor: the school compliance report plus their courses,
+ * each linking to the course dashboard (roster + progress + export).
  */
 export default function StaffHomeScreen() {
   const router = useRouter();
@@ -30,7 +30,6 @@ export default function StaffHomeScreen() {
   const role = useAuthStore((s) => s.role);
   const colegioId = useAuthStore((s) => s.colegioId);
   const uid = useAuthStore((s) => s.firebaseUid);
-  const isAdmin = useIsAdmin();
 
   const [cursos, setCursos] = useState<CursoWithId[]>([]);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
@@ -75,58 +74,8 @@ export default function StaffHomeScreen() {
           <Text style={[styles.cardValue, { color: colors.text.primary }]}>{colegioId ?? '—'}</Text>
         </View>
 
-        {/* admin (Ceti): platform management + course structure */}
-        {isAdmin && (
-          <>
-            <TouchableOpacity
-              style={[styles.courseRow, { borderColor: colors.brand.primary }]}
-              accessibilityRole="button"
-              onPress={() => router.push('/(staff)/superadmin' as Href)}
-            >
-              <Ionicons name="business-outline" size={20} color={colors.brand.primary} />
-              <View style={styles.courseInfo}>
-                <Text style={[styles.courseName, { color: colors.text.primary }]}>
-                  {t('superadmin.link')}
-                </Text>
-              </View>
-              <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.courseRow, { borderColor: colors.brand.primary }]}
-              accessibilityRole="button"
-              onPress={() => router.push('/(staff)/admin' as Href)}
-            >
-              <Ionicons name="settings-outline" size={20} color={colors.brand.primary} />
-              <View style={styles.courseInfo}>
-                <Text style={[styles.courseName, { color: colors.text.primary }]}>
-                  {t('admin.link')}
-                </Text>
-              </View>
-              <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
-            </TouchableOpacity>
-          </>
-        )}
-
-        {/* rector: aggregated school report (read-only). No management controls. */}
-        {role === 'rector' && (
-          <TouchableOpacity
-            style={[styles.courseRow, { borderColor: colors.brand.primary }]}
-            accessibilityRole="button"
-            onPress={() => router.push('/(staff)/colegio' as Href)}
-          >
-            <Ionicons name="stats-chart-outline" size={20} color={colors.brand.primary} />
-            <View style={styles.courseInfo}>
-              <Text style={[styles.courseName, { color: colors.text.primary }]}>
-                {t('school.reportLink')}
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
-          </TouchableOpacity>
-        )}
-
-        {/* coordinador: school report + course operations (roster, codes, attestation).
-            No structure creation (admin-only per §1.3). */}
-        {role === 'coordinador' && (
+        {/* profesor: aggregated school compliance report (non-nominal, D-PIVOT). */}
+        {role === 'profesor' && (
           <TouchableOpacity
             style={[styles.courseRow, { borderColor: colors.brand.primary }]}
             accessibilityRole="button"

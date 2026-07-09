@@ -120,7 +120,7 @@ export const useAuthStore = create<AuthStore>()(
   )
 );
 
-/** True for rector/coordinador/profesor (school staff), false for estudiante/none. */
+/** True for profesor (the only in-app staff role), false for estudiante/admin/none. */
 export function isStaffRole(role: Role | null): boolean {
   return role != null && (STAFF_ROLES as readonly string[]).includes(role);
 }

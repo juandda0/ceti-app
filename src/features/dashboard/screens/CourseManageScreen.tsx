@@ -4,56 +4,36 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TextInput,
   TouchableOpacity,
   ActivityIndicator,
   Alert,
   Platform,
   Switch,
 } from 'react-native';
-import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import QRCode from 'react-native-qrcode-svg';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
-import { useAuthStore, useIsAdmin } from '@features/auth/store/useAuthStore';
+import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { rosterRepository, type EstudianteWithId } from '@features/dashboard/data/rosterRepository';
 import { adminService } from '@features/dashboard/data/adminService';
 
 const POLICY_VERSION = 'v1';
 
 /**
- * Per-course operations screen. Access by role (§1.3 matrix):
- *   admin         — all controls (roster, code, attest, colaboracion, assign teacher)
- *   coordinador   — roster, code, attest, colaboracion (no assign teacher / no role change)
- *   profesor      — same as coordinador, scoped to their own course
- *   rector        — redirect; rector is read-only at the school aggregate level
+ * Per-course operations screen for the profesor (D-PIVOT): class code, class
+ * collaboration toggle, roster with Ley 1581 attestation, and suppression. The
+ * profesor operates ONLY their own course (firestore.rules + the Cloud Functions
+ * enforce it). Assigning teachers / creating structure is Admin SDK only (backend).
  */
-export default function CourseAdminScreen() {
-  const router = useRouter();
+export default function CourseManageScreen() {
   const { t } = useTranslation();
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
   const colegioId = useAuthStore((s) => s.colegioId);
-  const role = useAuthStore((s) => s.role);
-  const isAdmin = useIsAdmin();
-
-  // Rector has no operational controls here → redirect to staff home.
-  useEffect(() => {
-    if (role === 'rector') {
-      router.replace('/(staff)' as Href);
-    }
-  }, [role, router]);
-
-  // Suppression (Ley 1581 erasure) is irreversible → coordinador/admin only.
-  // rector is excluded because they don't reach this screen.
-  // The Cloud Function independently enforces this; this is the client gate.
-  const canSuppress = role === 'coordinador' || isAdmin;
-
-  // Assigning/changing a staff role is admin-only (§1.3: assignRole CF is admin-only).
-  const canAssignTeacher = isAdmin;
   const params = useLocalSearchParams<{ cursoId: string; nombre?: string }>();
   const cursoId = params.cursoId;
   const cursoNombre = params.nombre ?? cursoId;
@@ -61,7 +41,6 @@ export default function CourseAdminScreen() {
   const [roster, setRoster] = useState<EstudianteWithId[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
-  const [teacherEmail, setTeacherEmail] = useState('');
   const [code, setCode] = useState<string | null>(null);
   const [codeBusy, setCodeBusy] = useState(false);
   const [colaboracion, setColaboracion] = useState(false);
@@ -128,19 +107,6 @@ export default function CourseAdminScreen() {
       await adminService.setColaboracion(colegioId, cursoId, value);
     });
 
-  const onAssignTeacher = () =>
-    guard(async () => {
-      if (!colegioId || !cursoId || !teacherEmail.trim()) return;
-      await adminService.assignRole({
-        email: teacherEmail.trim(),
-        role: 'profesor',
-        colegioId,
-        cursoId,
-      });
-      setTeacherEmail('');
-      Alert.alert(t('admin.assignOkTitle'), t('admin.teacherOk', { email: teacherEmail.trim() }));
-    });
-
   const onCopyCode = () => {
     if (!code || Platform.OS !== 'web') return;
     const nav = typeof navigator !== 'undefined' ? navigator : undefined;
@@ -162,8 +128,6 @@ export default function CourseAdminScreen() {
       setCodeBusy(false);
     }
   };
-
-  const input = { backgroundColor: colors.background.secondary, color: colors.text.primary };
 
   return (
     <ScreenWrapper style={styles.root}>
@@ -287,7 +251,7 @@ export default function CourseAdminScreen() {
                       </Text>
                     </TouchableOpacity>
                   )}
-                  {canSuppress && !suprimido && (
+                  {!suprimido && (
                     <TouchableOpacity
                       style={[styles.iconBtn, { borderColor: colors.system.red }]}
                       onPress={() => onSuppress(s.uid)}
@@ -303,42 +267,6 @@ export default function CourseAdminScreen() {
             );
           })
         )}
-
-        {/* Assign teacher — admin-only (§1.3: assignRole CF requires admin claim). */}
-        {canAssignTeacher && (
-          <>
-            <Text style={[styles.section, { color: colors.text.secondary }]}>
-              {t('admin.assignTeacher')}
-            </Text>
-            <Text style={[styles.hint, { color: colors.text.tertiary }]}>
-              {t('admin.assignHint')}
-            </Text>
-            <View style={styles.addRow}>
-              <TextInput
-                style={[styles.field, input, { flex: 1 }]}
-                placeholder={t('admin.email')}
-                placeholderTextColor={colors.text.tertiary}
-                autoCapitalize="none"
-                keyboardType="email-address"
-                value={teacherEmail}
-                onChangeText={setTeacherEmail}
-              />
-              <TouchableOpacity
-                style={[
-                  styles.addBtn,
-                  {
-                    backgroundColor: colors.brand.primary,
-                    opacity: busy || !teacherEmail.trim() ? 0.6 : 1,
-                  },
-                ]}
-                onPress={onAssignTeacher}
-                disabled={busy || !teacherEmail.trim()}
-              >
-                <Ionicons name="person-add-outline" size={18} color="#fff" />
-              </TouchableOpacity>
-            </View>
-          </>
-        )}
       </ScrollView>
     </ScreenWrapper>
   );
@@ -349,7 +277,6 @@ const styles = StyleSheet.create({
   scroll: { paddingHorizontal: 24, paddingBottom: 48, gap: 10 },
   title: { fontSize: 24, fontWeight: '800' },
   subtitle: { fontSize: 14 },
-  section: { fontSize: 13, fontWeight: '700', marginTop: 16 },
   hint: { fontSize: 12, lineHeight: 16 },
   muted: { fontSize: 13, marginTop: 4 },
   codeCard: { borderRadius: 14, padding: 16, gap: 6, alignItems: 'center', marginTop: 4 },
@@ -369,15 +296,6 @@ const styles = StyleSheet.create({
   },
   codeBtnText: { fontSize: 14, fontWeight: '700' },
   toggleRow: { flexDirection: 'row', alignItems: 'center', gap: 12, width: '100%' },
-  addRow: { flexDirection: 'row', gap: 8, alignItems: 'center', marginTop: 4 },
-  field: { borderRadius: 10, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15 },
-  addBtn: {
-    width: 48,
-    height: 46,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',

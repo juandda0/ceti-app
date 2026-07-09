@@ -1,8 +1,7 @@
 /**
  * Loads a course's report from Firestore: roster + each student's tenant-tree
- * progress, aggregated by buildCourseReport. Teachers read per-student progress
- * (authorized by the nested isProfesorDe rule), avoiding the rector/coordinador
- * collection-group path.
+ * progress, aggregated by buildCourseReport. The profesor reads per-student
+ * progress for their own course (authorized by the nested isProfesorDe rule).
  */
 import { rosterRepository } from '@features/dashboard/data/rosterRepository';
 import { worldProgressRepository } from '@features/dashboard/data/worldProgressRepository';

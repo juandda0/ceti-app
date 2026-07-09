@@ -22,16 +22,14 @@ function pct(m: number): string {
   return `${Math.round(m * 100)}%`;
 }
 
-/** Rector/coordinador high-level compliance view across the whole colegio. */
+/** Profesor high-level compliance view across the whole colegio (non-nominal). */
 export default function SchoolReportScreen() {
   const { t } = useTranslation();
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
   const colegioId = useAuthStore((s) => s.colegioId);
-  const role = useAuthStore((s) => s.role);
-  // The rector reads precomputed aggregates (nominal progress is denied by
-  // rules); coordinador/admin read collection-group progress. loadSchoolReport
-  // routes by role. Sedes are dormant (RQ-FN01) so there is no per-sede view.
+  // Built purely from per-course aggregates (nominal progress outside the
+  // profesor's own courses is denied by rules). Sedes are dormant (RQ-FN01).
 
   const [report, setReport] = useState<SchoolReport | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
@@ -43,7 +41,7 @@ export default function SchoolReportScreen() {
       return;
     }
     setStatus('loading');
-    void loadSchoolReport(colegioId, Date.now(), role)
+    void loadSchoolReport(colegioId, Date.now())
       .then((r) => {
         if (!cancelled) {
           setReport(r);
@@ -56,7 +54,7 @@ export default function SchoolReportScreen() {
     return () => {
       cancelled = true;
     };
-  }, [colegioId, role]);
+  }, [colegioId]);
 
   const onExportCsv = useCallback(() => {
     if (!report) return;

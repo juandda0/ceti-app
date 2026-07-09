@@ -17,8 +17,6 @@
   },
   "roles": {
     "admin": "Admin Ceti",
-    "rector": "Rector(a)",
-    "coordinador": "Coordinador(a)",
     "profesor": "Profesor(a)",
     "estudiante": "Estudiante"
   },
@@ -32,6 +30,7 @@
   },
   "dashboard": {
     "courseReport": "Reporte de progreso por competencia",
+    "manageCourse": "Gestionar curso",
     "error": "No se pudo cargar el reporte.",
     "noData": "Aún no hay progreso registrado en este curso.",
     "weakest": "Competencia más floja del curso: {{competencia}} ({{pct}} promedio)",
@@ -108,31 +107,12 @@
     "studentsCount": "{{count}} estudiantes con actividad"
   },
   "admin": {
-    "link": "Administrar",
-    "title": "Administración",
     "error": "No se pudo completar la acción",
-    "newCourse": "Nuevo curso",
-    "courseId": "ID del curso (ej. 9a)",
-    "courseName": "Nombre del curso (ej. 9A)",
-    "courseGrade": "Grado (ej. 9)",
-    "courseSede": "Sede (opcional)",
-    "gradoChip": "Grado {{grado}}",
-    "createCourse": "Crear curso",
-    "courses": "Cursos",
-    "noCourses": "Aún no hay cursos.",
-    "assignMember": "Asignar miembro",
-    "assignHint": "El usuario debe haber iniciado sesión al menos una vez.",
-    "email": "Correo del usuario",
-    "assign": "Asignar rol",
-    "assignOkTitle": "Listo",
-    "assignOk": "{{email}} quedó asignado. Debe re-iniciar sesión para aplicar el rol.",
-    "teacherOk": "{{email}} es ahora profesor del curso. Debe re-iniciar sesión.",
     "rosterTitle": "Roster del curso",
     "rosterSelfJoinHint": "Los estudiantes se unen con el código de clase. No se agregan manualmente.",
     "emptyRoster": "Aún no hay estudiantes en este curso.",
     "authorize": "Autorizar",
     "revoke": "Revocar",
-    "assignTeacher": "Asignar profesor",
     "classCode": "Código de clase",
     "classCodeHint": "Genera un código para que los estudiantes se unan a este curso.",
     "classCodeGen": "Generar código",
@@ -160,21 +140,6 @@
     "errorTitle": "No se pudo unir",
     "pendingTitle": "Pendiente de autorización",
     "pendingBody": "Tu acudiente debe autorizar el tratamiento de tus datos para que tu progreso quede registrado. Mientras tanto puedes explorar, pero tu avance no se guardará en el colegio."
-  },
-  "superadmin": {
-    "link": "Super-admin (colegios)",
-    "title": "Administración de colegios",
-    "newColegio": "Registrar colegio",
-    "colegioId": "Identificador corto (ej. san-jose)",
-    "colegioNombre": "Nombre del colegio",
-    "rectorEmail": "Correo del rector (opcional)",
-    "rectorHint": "El rector se asigna después, desde la administración, cuando haya iniciado sesión.",
-    "register": "Registrar",
-    "colegios": "Colegios",
-    "none": "Aún no hay colegios registrados.",
-    "okTitle": "Colegio registrado",
-    "okWithRector": "Colegio creado y rector asignado. El rector debe re-iniciar sesión.",
-    "okNoRector": "Colegio creado. Asigna el rector cuando haya iniciado sesión."
   },
   "savings": {
     "walletTitle": "Mi alcancía",
@@ -376,9 +341,6 @@
     "title": "Simulación Ceti",
     "subtitle": "Explora cada perfil sin credenciales",
     "role": {
-      "admin": "Admin Ceti",
-      "rector": "Rector",
-      "coordinador": "Coordinador",
       "profesor": "Profesor",
       "estudiante": "Estudiante"
     },

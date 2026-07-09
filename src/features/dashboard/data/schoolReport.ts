@@ -1,9 +1,10 @@
 /**
- * School-wide aggregate report for rector/coordinador — the high-level
- * compliance view (distinct from the teacher's per-course operational report).
- * This is the contract-renewal argument: "the school is covering CONPES 4005".
- * Pure & testable; fed by the collection-group progress query (rector/coordinador
- * only per firestore.rules).
+ * School-wide aggregate report for the profesor — the high-level compliance view
+ * (distinct from the per-course operational report). This is the contract-renewal
+ * argument: "the school is covering CONPES 4005". Pure & testable. Production
+ * builds it from per-course aggregates (buildSchoolReportFromAggregates); the
+ * collection-group variant below (buildSchoolReport) is the reference impl the
+ * tests validate the aggregate path against.
  */
 import { ALL_COMPETENCIAS, competenciaLabel } from '@features/learning/data/competencias';
 import type { CompetencyAverage } from '@features/dashboard/data/courseReport';
@@ -87,10 +88,11 @@ export function buildSchoolReport(input: BuildSchoolReportInput): SchoolReport {
 }
 
 /**
- * Build the school report from PRECOMPUTED per-course aggregates — the rector's
- * path. The rector is denied nominal collection-group progress by firestore.rules
- * (matriz §1.3); they read `agregados/resumen` per course instead. The aggregates
- * carry ZERO nominal data, so this report exposes only counts and averages.
+ * Build the school report from PRECOMPUTED per-course aggregates — the profesor's
+ * path (D-PIVOT). The profesor is denied nominal collection-group progress outside
+ * their own courses by firestore.rules (matriz §1.3); they read `agregados/resumen`
+ * per course instead. The aggregates carry ZERO nominal data, so this report
+ * exposes only counts and averages.
  *
  * The per-competency average is weighted by the number of students with data on
  * that competency in each course, matching the unweighted-per-student semantics of

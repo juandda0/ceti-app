@@ -77,7 +77,7 @@ function resumen(
   };
 }
 
-describe('buildSchoolReportFromAggregates (rector path — no nominal data)', () => {
+describe('buildSchoolReportFromAggregates (profesor path — no nominal data)', () => {
   it('mirrors the collection-group report for the same underlying data', () => {
     // c1: 2 students on ahorro avg 0.7; c2: 1 student on credito 0.2.
     const r = buildSchoolReportFromAggregates({

@@ -1,4 +1,4 @@
-import { collection, collectionGroup, doc, query, where } from 'firebase/firestore';
+import { collection, doc, query, where } from 'firebase/firestore';
 import type { Firestore } from 'firebase/firestore';
 
 export const FIRESTORE_COLLECTIONS = {
@@ -202,15 +202,6 @@ export function leaderboardCollectionRef(db: Firestore, colegioId: string, curso
 
 export function leaderboardDocRef(db: Firestore, colegioId: string, cursoId: string, uid: string) {
   return doc(db, C.colegios, colegioId, C.cursos, cursoId, C.leaderboard, uid);
-}
-
-/**
- * Collection-group query over every student's per-world progress.
- * Used by teacher/rector aggregate reports (F6/F9). Reads are gated by
- * role/tenant rules; callers must still scope by colegioId in the query.
- */
-export function progressGroupByColegioQuery(db: Firestore, colegioId: string) {
-  return query(collectionGroup(db, C.progress), where('colegioId', '==', colegioId));
 }
 
 /**

@@ -8,15 +8,17 @@
  * and NO active sede claim.
  */
 
-export const ROLES = ['admin', 'rector', 'coordinador', 'profesor', 'estudiante'] as const;
+// D-PIVOT: only two app roles (profesor + estudiante). `admin` is a backend-only
+// claim (provisioning via Admin SDK) with no UI; rector/coordinador removed.
+export const ROLES = ['admin', 'profesor', 'estudiante'] as const;
 export type Role = (typeof ROLES)[number];
 
 export function isRole(value: unknown): value is Role {
   return typeof value === 'string' && (ROLES as readonly string[]).includes(value);
 }
 
-/** Staff roles that can read aggregates/operate beyond a single student. */
-export const STAFF_ROLES = ['rector', 'coordinador', 'profesor'] as const;
+/** In-app staff role that operates a course / reads aggregates. */
+export const STAFF_ROLES = ['profesor'] as const;
 
 /**
  * Custom claims set on the Firebase Auth token (see functions/). The ONLY

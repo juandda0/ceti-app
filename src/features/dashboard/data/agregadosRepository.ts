@@ -6,8 +6,9 @@ import { agregadoDocRef } from '@shared/lib/firebase/paths';
  * Per-course aggregate doc (`agregados/resumen`), written ONLY by the
  * onProgressWriteAggregate Cloud Function (Admin SDK). Contains ZERO nominal
  * data — only counts and per-competency / per-world averages (RQ-FN09). This is
- * the rector's ONLY data view: the rector is denied nominal progress by
- * firestore.rules and reads aggregates instead (matriz §1.3).
+ * the profesor's colegio-wide reporting view (D-PIVOT): nominal progress outside
+ * their own courses is denied by firestore.rules, so the school report is built
+ * from these aggregates instead (matriz §1.3).
  */
 export const AGREGADO_RESUMEN_ID = 'resumen';
 

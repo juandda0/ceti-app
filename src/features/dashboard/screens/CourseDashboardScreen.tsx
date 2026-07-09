@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -34,6 +34,7 @@ function pct(m: number): string {
 
 export default function CourseDashboardScreen() {
   const { t } = useTranslation();
+  const router = useRouter();
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
   const colegioId = useAuthStore((s) => s.colegioId);
@@ -86,6 +87,21 @@ export default function CourseDashboardScreen() {
         <Text style={[styles.subtitle, { color: colors.text.secondary }]}>
           {t('dashboard.courseReport')}
         </Text>
+
+        <TouchableOpacity
+          style={[styles.manageBtn, { borderColor: colors.brand.primary }]}
+          accessibilityRole="button"
+          onPress={() =>
+            router.push(
+              `/(staff)/gestionar/${cursoId}?nombre=${encodeURIComponent(cursoNombre)}` as Href
+            )
+          }
+        >
+          <Ionicons name="settings-outline" size={16} color={colors.brand.primary} />
+          <Text style={[styles.manageText, { color: colors.brand.primary }]}>
+            {t('dashboard.manageCourse')}
+          </Text>
+        </TouchableOpacity>
 
         {status === 'loading' && (
           <ActivityIndicator style={styles.loader} color={colors.brand.primary} />
@@ -269,6 +285,18 @@ const styles = StyleSheet.create({
   scroll: { paddingHorizontal: 24, paddingBottom: 48, gap: 12 },
   title: { fontSize: 24, fontWeight: '800' },
   subtitle: { fontSize: 14 },
+  manageBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    gap: 6,
+    borderWidth: 1.5,
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    marginTop: 4,
+  },
+  manageText: { fontSize: 14, fontWeight: '700' },
   loader: { marginTop: 24 },
   error: { marginTop: 24, fontSize: 14 },
   empty: { fontSize: 14, marginTop: 8 },

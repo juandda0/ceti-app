@@ -21,7 +21,7 @@ export const rosterRepository = {
     return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Curso) }));
   },
 
-  /** All courses in the colegio (rector/coordinador school-wide report). */
+  /** All courses in the colegio (profesor school-wide report). */
   async getAllCursos(colegioId: string): Promise<CursoWithId[]> {
     const clients = getFirebaseClients();
     if (!clients?.firestore) return [];
