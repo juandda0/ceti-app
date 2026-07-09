@@ -80,6 +80,38 @@ describe('useMovimientosStore', () => {
     expect(useSavingsStore.getState().deposits).toHaveLength(1);
   });
 
+  it('borrar un ahorro ligado a meta revierte progreso y depósito (sin plata fantasma)', async () => {
+    const goal = useSavingsStore.getState().addGoal({
+      title: 'Bici',
+      description: '',
+      emoji: '🚲',
+      targetAmount: 100000,
+      frequency: 'total',
+      category: 'custom',
+    });
+
+    const mov = useMovimientosStore.getState().addMovimiento({
+      ...baseMovimiento,
+      tipo: 'ahorro',
+      monto: 100000,
+      goalId: goal.id,
+    });
+    await flush();
+    // El puente completó la meta.
+    expect(useSavingsStore.getState().goals.find((g) => g.id === goal.id)?.currentAmount).toBe(
+      100000
+    );
+
+    useMovimientosStore.getState().removeMovimiento(mov.id);
+    await flush();
+
+    const revertida = useSavingsStore.getState().goals.find((g) => g.id === goal.id);
+    expect(revertida?.currentAmount).toBe(0);
+    expect(revertida?.completedAt).toBeUndefined();
+    expect(useSavingsStore.getState().getTotalSaved()).toBe(0);
+    expect(useSavingsStore.getState().deposits).toHaveLength(0);
+  });
+
   it('un gasto con goalId NO toca las metas', async () => {
     const goal = useSavingsStore.getState().addGoal({
       title: 'Bici',

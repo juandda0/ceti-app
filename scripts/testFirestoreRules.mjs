@@ -520,6 +520,29 @@ await check(
   'movimiento rejects invalid origen',
   assertFails(setDoc(doc(stuA1, 'users/uStuA1/movimientos/m2'), { ...validMovimiento, origen: 'api' }))
 );
+await check(
+  'movimiento rejects monto over cap',
+  assertFails(
+    setDoc(doc(stuA1, 'users/uStuA1/movimientos/m2'), { ...validMovimiento, monto: 100000001 })
+  )
+);
+await check(
+  'movimiento rejects unknown extra field (hasOnly)',
+  assertFails(
+    setDoc(doc(stuA1, 'users/uStuA1/movimientos/m2'), { ...validMovimiento, hacker: true })
+  )
+);
+await check(
+  'movimiento accepts optional goalId',
+  assertSucceeds(
+    setDoc(doc(stuA1, 'users/uStuA1/movimientos/m3'), {
+      ...validMovimiento,
+      id: 'm3',
+      tipo: 'ahorro',
+      goalId: 'goal_x',
+    })
+  )
+);
 // Solo-vista-propia (CA5): ni otro estudiante, ni profesor, ni rector, ni
 // coordinador, ni admin leen movimientos individuales.
 await env.withSecurityRulesDisabled(async (ctx) => {

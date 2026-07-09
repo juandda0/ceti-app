@@ -54,7 +54,7 @@ function uid() {
 
 export const useMovimientosStore = create<MovimientosStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       movimientos: [],
 
       addMovimiento: (data) => {
@@ -82,13 +82,21 @@ export const useMovimientosStore = create<MovimientosStore>()(
         })();
 
         // Puente con Metas (D-ES10-04): un ahorro dirigido a una meta reusa el
-        // circuito de deposits para que el progreso de la meta siga vivo.
+        // circuito de deposits para que el progreso de la meta siga vivo. El
+        // depósito se liga 1:1 con el movimiento (mismo id) para poder revertirlo
+        // si el estudiante borra el movimiento.
         if (movimiento.tipo === 'ahorro' && movimiento.goalId) {
           void (async () => {
             const { useSavingsStore } = await import('@features/savings/store/useSavingsStore');
             useSavingsStore
               .getState()
-              .addDeposit(movimiento.monto, movimiento.descripcion, movimiento.goalId);
+              .addDeposit(
+                movimiento.monto,
+                movimiento.descripcion,
+                movimiento.goalId,
+                undefined,
+                movimiento.id
+              );
           })();
         }
 
@@ -96,7 +104,18 @@ export const useMovimientosStore = create<MovimientosStore>()(
       },
 
       removeMovimiento: (movimientoId) => {
+        const movimiento = get().movimientos.find((m) => m.id === movimientoId);
         set((s) => ({ movimientos: s.movimientos.filter((m) => m.id !== movimientoId) }));
+
+        // Revierte el puente: si era un ahorro ligado a una meta, deshace el
+        // depósito para no dejar progreso de meta ni total ahorrado fantasma.
+        if (movimiento?.tipo === 'ahorro' && movimiento.goalId) {
+          void (async () => {
+            const { useSavingsStore } = await import('@features/savings/store/useSavingsStore');
+            useSavingsStore.getState().removeDeposit(movimiento.id);
+          })();
+        }
+
         void (async () => {
           try {
             const { useAuthStore } = await import('@features/auth/store/useAuthStore');

@@ -53,7 +53,7 @@ const GROUPS = [
     msg: 'runtime estático; IA solo authoring-time (R7)' },
   // Acota estructuralmente la excepción RQ-ES10: SDKs/hosts de IA solo en functions/.
   { group: 'ia-cliente', R: 'R7', conflicto: 7,
-    re: /@anthropic-ai\/|['"`]openai['"`]|@google\/generative-ai|\bai-sdk\b|api\.anthropic\.com|api\.openai\.com|generativelanguage\.googleapis\.com|openrouter\.ai/,
+    re: /@anthropic-ai\/|['"`]openai(?:\/[\w-]+)?['"`]|@google\/gen(?:erative-)?ai|@mistralai\/|\bai-sdk\b|api\.anthropic\.com|api\.openai\.com|generativelanguage\.googleapis\.com|openrouter\.ai/,
     clientOnly: true,
     msg: 'IA solo server-side (functions/) — RQ-ES10; prohibido SDK/fetch de IA en cliente (R7)' },
   { group: 'bancos-global', R: 'R8', conflicto: 8,

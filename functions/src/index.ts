@@ -510,23 +510,36 @@ const ANTHROPIC_API_KEY = defineSecret('ANTHROPIC_API_KEY');
 const VOZ_CAP_DIARIO = 30;
 const VOZ_MAX_CHARS = 300;
 
-/**
- * Daily per-uid budget (CA8): a counter doc at vozUso/{uid}_{YYYY-MM-DD},
- * written only by this function via the Admin SDK (clients are default-denied).
- * Throws resource-exhausted at the cap.
- */
-async function assertVozBudget(uid: string): Promise<void> {
-  const db = getFirestore();
+/** Counter doc for the daily voice cap (CA8), keyed by uid + UTC day. */
+function vozUsoRef(uid: string) {
   const day = new Date().toISOString().slice(0, 10);
-  const ref = db.doc(`vozUso/${uid}_${day}`);
-  await db.runTransaction(async (tx) => {
-    const snap = await tx.get(ref);
-    const count = (snap.data()?.count as number | undefined) ?? 0;
-    if (count >= VOZ_CAP_DIARIO) {
-      throw new HttpsError('resource-exhausted', 'Límite diario de registros por voz alcanzado.');
-    }
-    tx.set(ref, { count: count + 1, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
-  });
+  return getFirestore().doc(`vozUso/${uid}_${day}`);
+}
+
+/**
+ * Read-only budget check (CA8): throws resource-exhausted at the cap WITHOUT
+ * incrementing. The increment happens only after a successful classification
+ * (`chargeVozBudget`), so model failures never consume the student's quota —
+ * otherwise an Anthropic outage would let a student burn all 30/day on retries
+ * without a single successful registration and lock themselves out.
+ * ponytail: read-then-charge is not atomic, but the cap is a soft cost guard and
+ * the UI serializes requests (single `processing` flag) — per-account races are
+ * benign. Tighten to a transaction only if concurrent abuse shows up.
+ */
+async function assertVozBudgetAvailable(uid: string): Promise<void> {
+  const snap = await vozUsoRef(uid).get();
+  const count = (snap.data()?.count as number | undefined) ?? 0;
+  if (count >= VOZ_CAP_DIARIO) {
+    throw new HttpsError('resource-exhausted', 'Límite diario de registros por voz alcanzado.');
+  }
+}
+
+/** Charge one unit — called ONLY after a successful classification. */
+async function chargeVozBudget(uid: string): Promise<void> {
+  await vozUsoRef(uid).set(
+    { count: FieldValue.increment(1), updatedAt: FieldValue.serverTimestamp() },
+    { merge: true }
+  );
 }
 
 export const procesarRegistroVoz = onCall({ secrets: [ANTHROPIC_API_KEY] }, async (request) => {
@@ -540,7 +553,7 @@ export const procesarRegistroVoz = onCall({ secrets: [ANTHROPIC_API_KEY] }, asyn
     throw new HttpsError('invalid-argument', `'texto' supera ${VOZ_MAX_CHARS} caracteres.`);
   }
 
-  await assertVozBudget(caller.uid);
+  await assertVozBudgetAvailable(caller.uid);
 
   const client = new Anthropic({
     apiKey: ANTHROPIC_API_KEY.value(),
@@ -548,16 +561,22 @@ export const procesarRegistroVoz = onCall({ secrets: [ANTHROPIC_API_KEY] }, asyn
     maxRetries: 1,
   });
 
+  let resultado;
   try {
-    return await clasificarTexto(texto, client);
+    resultado = await clasificarTexto(texto, client);
   } catch (e) {
     if (e instanceof Anthropic.APIError) {
-      // 429/5xx/red tras el retry del SDK: el cliente puede reintentar.
+      // 429/5xx/red tras el retry del SDK: el cliente puede reintentar. No se
+      // cobra cuota — el fallo es del servidor, no del estudiante.
       throw new HttpsError('unavailable', 'El clasificador no está disponible, intenta de nuevo.');
     }
     // JSON/forma inválida del modelo: bug nuestro o del modelo, no del usuario.
     throw new HttpsError('internal', 'No se pudo clasificar el registro.');
   }
+
+  // Solo un éxito consume cuota (CA8).
+  await chargeVozBudget(caller.uid);
+  return resultado;
 });
 
 // ---------------------------------------------------------------------------

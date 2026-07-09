@@ -255,13 +255,17 @@ service cloud.firestore {
 
       // Pocket-money diary (RQ-ES10). Self-only by design: NO staff role — not
       // even admin — may read a student's individual movimientos (CA5). Hard
-      // type validation mirrors the function's classification enum.
+      // validation mirrors the function's classifier (enums + monto 0..1e8) and
+      // pins the field set with hasOnly, since the client writes this doc
+      // directly (setDoc) — the rules are the only server-side gate.
       match /movimientos/{movimientoId} {
         allow read, delete: if isSelf(userId);
         allow create, update: if isSelf(userId)
+          && request.resource.data.keys().hasOnly(['id', 'tipo', 'monto', 'descripcion', 'categoria', 'origen', 'goalId', 'createdAt'])
           && request.resource.data.tipo in ['ahorro', 'gasto']
           && request.resource.data.monto is number
           && request.resource.data.monto >= 0
+          && request.resource.data.monto <= 100000000
           && request.resource.data.descripcion is string
           && request.resource.data.descripcion.size() <= 140
           && request.resource.data.categoria in ['comida', 'transporte', 'entretenimiento', 'ropa', 'educacion', 'tecnologia', 'regalos', 'otros']

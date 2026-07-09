@@ -37,7 +37,14 @@ interface SavingsState {
 
 interface SavingsActions {
   addGoal: (data: Omit<SavingsGoal, 'id' | 'createdAt' | 'currentAmount'>) => SavingsGoal;
-  addDeposit: (amount: number, description: string, goalId?: string, note?: string) => void;
+  addDeposit: (
+    amount: number,
+    description: string,
+    goalId?: string,
+    note?: string,
+    depositId?: string
+  ) => void;
+  removeDeposit: (depositId: string) => void;
   removeGoal: (goalId: string) => void;
   resetSavings: () => void;
   getTotalSaved: () => number;
@@ -68,9 +75,11 @@ export const useSavingsStore = create<SavingsStore>()(
         return goal;
       },
 
-      addDeposit: (amount, description, goalId, note) => {
+      addDeposit: (amount, description, goalId, note, depositId) => {
         const deposit: SavingsDeposit = {
-          id: `dep_${uid()}`,
+          // depositId permite al puente de movimientos (RQ-ES10 D-ES10-04) ligar
+          // 1:1 el depósito con el movimiento, para poder revertirlo al borrar.
+          id: depositId ?? `dep_${uid()}`,
           goalId,
           amount,
           description,
@@ -119,6 +128,51 @@ export const useSavingsStore = create<SavingsStore>()(
           } catch (e) {
             void import('@shared/lib/analytics/crashlytics').then((m) =>
               m.recordError(e instanceof Error ? e : new Error(String(e)), 'savings_add_deposit')
+            );
+          }
+        })();
+      },
+
+      removeDeposit: (depositId) => {
+        const deposit = get().deposits.find((d) => d.id === depositId);
+        if (!deposit) return;
+
+        set((s) => {
+          const updatedGoals = deposit.goalId
+            ? s.goals.map((g) => {
+                if (g.id !== deposit.goalId) return g;
+                const currentAmount = Math.max(0, g.currentAmount - deposit.amount);
+                // Si el retiro baja del objetivo, la meta deja de estar completa.
+                const stillComplete = g.targetAmount > 0 && currentAmount >= g.targetAmount;
+                return {
+                  ...g,
+                  currentAmount,
+                  completedAt: stillComplete ? g.completedAt : undefined,
+                };
+              })
+            : s.goals;
+          return {
+            deposits: s.deposits.filter((d) => d.id !== depositId),
+            goals: updatedGoals,
+          };
+        });
+
+        void (async () => {
+          try {
+            const { useAuthStore } = await import('@features/auth/store/useAuthStore');
+            const uid = useAuthStore.getState().firebaseUid;
+            if (!uid) return;
+            const { depositsRepository } =
+              await import('@features/savings/data/depositsRepository');
+            await depositsRepository.removeDeposit(uid, depositId);
+            if (deposit.goalId) {
+              const { goalsRepository } = await import('@features/savings/data/goalsRepository');
+              const goal = useSavingsStore.getState().goals.find((g) => g.id === deposit.goalId);
+              if (goal) await goalsRepository.upsertGoal(uid, goal);
+            }
+          } catch (e) {
+            void import('@shared/lib/analytics/crashlytics').then((m) =>
+              m.recordError(e instanceof Error ? e : new Error(String(e)), 'savings_remove_deposit')
             );
           }
         })();
