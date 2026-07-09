@@ -7,7 +7,7 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { formatDisplayCopGoals } from '@shared/utils/formatDisplayCop';
 import type { Movimiento, MovimientoCategoria } from '@features/savings/store/useMovimientosStore';
 
-const CATEGORIA_ICONS: Record<MovimientoCategoria, keyof typeof Ionicons.glyphMap> = {
+export const CATEGORIA_ICONS: Record<MovimientoCategoria, keyof typeof Ionicons.glyphMap> = {
   comida: 'fast-food-outline',
   transporte: 'bus-outline',
   entretenimiento: 'game-controller-outline',

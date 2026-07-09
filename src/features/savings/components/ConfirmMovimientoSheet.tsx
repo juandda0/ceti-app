@@ -6,6 +6,7 @@
  */
 import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import CetiBottomSheet from '@shared/components/CetiBottomSheet';
 import CetiButton from '@shared/components/CetiButton';
@@ -14,6 +15,7 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { showCetiNotice } from '@shared/store/useCetiOverlayStore';
 import { formatMoneyInputThousands, parseMoneyAmountInt } from '@shared/utils/moneyInputFormat';
 import { formatDisplayCopGoals } from '@shared/utils/formatDisplayCop';
+import { CATEGORIA_ICONS } from '@features/savings/components/MovimientoListItem';
 import type { ClasificacionMovimiento } from '@features/savings/data/vozService';
 import {
   MOVIMIENTO_CATEGORIAS,
@@ -117,7 +119,7 @@ export default function ConfirmMovimientoSheet({
         )}
 
         {!editing && (
-          <View style={[styles.summary, { backgroundColor: colors.materials.highlight }]}>
+          <View style={styles.summary}>
             <Text
               style={[
                 styles.summaryAmount,
@@ -130,9 +132,33 @@ export default function ConfirmMovimientoSheet({
             <Text style={[styles.summaryDesc, { color: colors.text.primary }]} numberOfLines={2}>
               {descripcion}
             </Text>
-            <Text style={[styles.summaryMeta, { color: colors.text.tertiary }]}>
-              {t(`movimientos.tipo_${tipo}`)} · {t(`movimientos.categorias.${categoria}`)}
-            </Text>
+            <View style={styles.summaryChips}>
+              <View style={[styles.sumChip, { backgroundColor: colors.materials.highlight }]}>
+                <Ionicons
+                  name={tipo === 'ahorro' ? 'trending-up' : 'trending-down'}
+                  size={15}
+                  color={tipo === 'ahorro' ? colors.system.green : colors.system.red}
+                />
+                <Text
+                  style={[
+                    styles.sumChipText,
+                    { color: tipo === 'ahorro' ? colors.system.green : colors.system.red },
+                  ]}
+                >
+                  {t(`movimientos.tipo_${tipo}`)}
+                </Text>
+              </View>
+              <View style={[styles.sumChip, { backgroundColor: colors.materials.highlight }]}>
+                <Ionicons
+                  name={CATEGORIA_ICONS[categoria]}
+                  size={15}
+                  color={colors.text.secondary}
+                />
+                <Text style={[styles.sumChipText, { color: colors.text.secondary }]}>
+                  {t(`movimientos.categorias.${categoria}`)}
+                </Text>
+              </View>
+            </View>
           </View>
         )}
 
@@ -237,8 +263,8 @@ export default function ConfirmMovimientoSheet({
           </>
         )}
 
-        <View style={styles.row}>
-          {editing ? (
+        {editing ? (
+          <View style={styles.row}>
             <CetiButton
               label={t('movimientos.cancelar')}
               onPress={onClose}
@@ -246,23 +272,36 @@ export default function ConfirmMovimientoSheet({
               size="medium"
               style={{ flex: 1 }}
             />
-          ) : (
             <CetiButton
-              label={t('movimientos.editar')}
-              onPress={() => setEditing(true)}
-              variant="glass"
+              label={t('movimientos.confirmar')}
+              onPress={handleConfirm}
+              variant="primary"
               size="medium"
               style={{ flex: 1 }}
             />
-          )}
-          <CetiButton
-            label={t('movimientos.confirmar')}
-            onPress={handleConfirm}
-            variant="primary"
-            size="medium"
-            style={{ flex: 1 }}
-          />
-        </View>
+          </View>
+        ) : (
+          <View style={styles.summaryActions}>
+            <CetiButton
+              label={t('movimientos.confirmar')}
+              onPress={handleConfirm}
+              variant="primary"
+              size="medium"
+              style={{ alignSelf: 'stretch' }}
+            />
+            <TouchableOpacity
+              onPress={() => setEditing(true)}
+              hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel={t('movimientos.editar')}
+              style={styles.editLink}
+            >
+              <Text style={[styles.editLinkText, { color: colors.text.tertiary }]}>
+                {t('movimientos.editar')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     </CetiBottomSheet>
   );
@@ -271,10 +310,22 @@ export default function ConfirmMovimientoSheet({
 const styles = StyleSheet.create({
   banner: { borderRadius: 14, padding: 12, marginBottom: 12 },
   bannerText: { ...Typography.caption1 },
-  summary: { borderRadius: 20, padding: 20, gap: 6, marginBottom: 12, alignItems: 'center' },
+  summary: { alignItems: 'center', gap: 12, paddingVertical: 12, marginBottom: 16 },
   summaryAmount: { ...Typography.title1, fontWeight: '900' },
   summaryDesc: { ...Typography.headline, fontWeight: '700', textAlign: 'center' },
-  summaryMeta: { ...Typography.subheadline },
+  summaryChips: { flexDirection: 'row', gap: 8, marginTop: 2 },
+  sumChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 999,
+  },
+  sumChipText: { ...Typography.caption1, fontWeight: '700' },
+  summaryActions: { gap: 6 },
+  editLink: { alignSelf: 'center', paddingVertical: 10, paddingHorizontal: 16 },
+  editLinkText: { ...Typography.subheadline, fontWeight: '600' },
   tipoRow: { flexDirection: 'row', gap: 8, marginBottom: 12 },
   input: { borderRadius: 20, padding: 20, ...Typography.body, borderWidth: 1, marginBottom: 12 },
   label: { ...Typography.caption1, fontWeight: '700', marginBottom: 8 },
