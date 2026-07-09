@@ -1,15 +1,14 @@
 /**
  * Seeds Ceti's Demo Mode (RQ-DM): a synthetic, realistic, Spanish demo school
- * `demo-colegio` so every dashboard (admin / rector / coordinador / profesor /
- * estudiante) is full of believable data. Idempotent (upsert). Run with ADC or a
- * service account:
+ * `demo-colegio` so both dashboards (profesor / estudiante) are full of
+ * believable data. Idempotent (upsert). Run with ADC or a service account:
  *
  *   $env:GOOGLE_APPLICATION_CREDENTIALS = "$env:APPDATA\gcloud\application_default_credentials.json"
  *   $env:GOOGLE_CLOUD_PROJECT = "ceti-d3769"
  *   npx ts-node --project tsconfig.scripts.json scripts/seedDemo.ts
  *
  * Identity is by Auth uid (R1); only email + nombre are stored per student (R4).
- * Lightweight attestation is pre-set (no acudiente PII, R6). The 5 fixed demo
+ * Lightweight attestation is pre-set (no acudiente PII, R6). The 2 fixed demo
  * login users get FIXED uids + claims (must match functions DEMO_USERS); claims
  * are set only here via Admin SDK (R2). Aggregates are computed ONLY from the
  * ~60 synthetic students and NEVER include `demo-estudiante` (RQ-DM06/D-DEMO-03):
@@ -161,15 +160,10 @@ const COURSES: CourseDef[] = [
 
 const STUDENTS_PER_COURSE = 20;
 
-// ---- The 5 fixed demo login users (uids/claims must match functions DEMO_USERS) ----
+// ---- The 2 fixed demo login users (uids/claims must match functions DEMO_USERS) ----
+// D-PIVOT: only profesor + estudiante. No demo-admin (demoLogin is public and must
+// not mint an admin token); rector/coordinador removed.
 const DEMO_USERS: { key: string; uid: string; claims: Record<string, unknown> }[] = [
-  { key: 'admin', uid: 'demo-admin', claims: { role: 'admin', demo: true, colegioId: COLEGIO } },
-  { key: 'rector', uid: 'demo-rector', claims: { role: 'rector', demo: true, colegioId: COLEGIO } },
-  {
-    key: 'coordinador',
-    uid: 'demo-coordinador',
-    claims: { role: 'coordinador', demo: true, colegioId: COLEGIO },
-  },
   {
     key: 'profesor',
     uid: 'demo-profesor',

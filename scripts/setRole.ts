@@ -10,7 +10,7 @@
  *
  * Examples:
  *   ... scripts/setRole.ts juandiegodiazave@gmail.com admin            # global admin (no colegio)
- *   ... scripts/setRole.ts rector@colegio.edu rector demo              # rector of "demo"
+ *   ... scripts/setRole.ts profe@colegio.edu profesor demo c1          # profesor of "demo" course c1
  *
  * `admin` is global and carries no colegioId. `estudiante` is NOT settable here
  * (students join by code). After running, the user must refresh their token
@@ -30,7 +30,7 @@ if (!admin.apps.length) {
   }
 }
 
-const ROLES = ['admin', 'rector', 'coordinador', 'profesor', 'estudiante'];
+const ROLES = ['admin', 'profesor', 'estudiante'];
 
 async function main(): Promise<void> {
   const [, , email, role, colegioId, cursoId] = process.argv;

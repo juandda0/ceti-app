@@ -22,7 +22,9 @@ import { clasificarTexto } from './vozClasificacion';
 
 initializeApp();
 
-const ROLES = ['admin', 'rector', 'coordinador', 'profesor', 'estudiante'] as const;
+// Tres roles (D-PIVOT): en la app solo profesor+estudiante; admin es claim de
+// backend para aprovisionamiento. Rector y coordinador eliminados.
+const ROLES = ['admin', 'profesor', 'estudiante'] as const;
 type Role = (typeof ROLES)[number];
 
 function isRole(v: unknown): v is Role {
@@ -48,13 +50,9 @@ function isAdmin(caller: Caller): boolean {
 
 // ---- Demo cage (RQ-DM05) ----
 const DEMO_COLEGIO = 'demo-colegio';
+// D-PIVOT: solo profesor + estudiante en el demo. Se retira demo-admin porque
+// demoLogin es un callable PÚBLICO y no debe acuñar un token admin (riesgo).
 const DEMO_USERS: Record<string, { uid: string; claims: Record<string, unknown> }> = {
-  admin: { uid: 'demo-admin', claims: { role: 'admin', demo: true, colegioId: DEMO_COLEGIO } },
-  rector: { uid: 'demo-rector', claims: { role: 'rector', demo: true, colegioId: DEMO_COLEGIO } },
-  coordinador: {
-    uid: 'demo-coordinador',
-    claims: { role: 'coordinador', demo: true, colegioId: DEMO_COLEGIO },
-  },
   profesor: {
     uid: 'demo-profesor',
     claims: { role: 'profesor', demo: true, colegioId: DEMO_COLEGIO },
@@ -126,25 +124,20 @@ async function assertProfesorDeCurso(
 }
 
 /**
- * Caller must be authorized staff for an operational action on `cursoId`.
- * admin → always. coordinador → own colegio. rector → own colegio if allowRector.
- * profesor → own colegio + own course if allowProfesor.
+ * Caller must be authorized for an operational action on `cursoId` (D-PIVOT).
+ * admin (backend) → always. profesor → own colegio + own course.
  */
 async function assertStaffOfCurso(
   caller: Caller,
   colegioId: string,
-  cursoId: string,
-  opts: { allowProfesor: boolean; allowRector: boolean }
+  cursoId: string
 ): Promise<void> {
   assertDemoScope(caller, colegioId);
   if (isAdmin(caller)) return;
   if (caller.token.colegioId !== colegioId) {
     throw new HttpsError('permission-denied', 'Outside your colegio.');
   }
-  const r = caller.token.role;
-  if (r === 'coordinador') return;
-  if (r === 'rector' && opts.allowRector) return;
-  if (r === 'profesor' && opts.allowProfesor) {
+  if (caller.token.role === 'profesor') {
     await assertProfesorDeCurso(caller.uid, colegioId, cursoId);
     return;
   }
@@ -167,7 +160,7 @@ export const assignRole = onCall(async (request) => {
   if (!isAdmin(caller)) {
     throw new HttpsError('permission-denied', 'Solo un admin puede asignar roles.');
   }
-  assertNotDemo(caller); // demo admin cannot create/assign real adult roles (RQ-DM05)
+  assertNotDemo(caller); // a demo token can never assign real adult roles (RQ-DM05)
 
   const role = request.data?.role;
   if (!isRole(role)) {
@@ -323,7 +316,7 @@ export const createCurso = onCall(async (request) => {
  * Record (or revoke) the lightweight acudiente attestation for a student and gate
  * activation accordingly. NO acudiente PII is stored — only the boolean + who/when
  * + policy version (RQ-FN10). atestado:true → estudiante activo; false → pendiente.
- * Allowed: admin, rector, coordinador, profesor of the course.
+ * Allowed: admin (backend), profesor of the course.
  */
 export const atestar = onCall(async (request) => {
   const caller = request.auth;
@@ -335,7 +328,7 @@ export const atestar = onCall(async (request) => {
   const atestado = request.data?.atestado === true;
   const politicaVersion = requireString(request.data?.politicaVersion, 'politicaVersion');
 
-  await assertStaffOfCurso(caller, colegioId, cursoId, { allowProfesor: true, allowRector: true });
+  await assertStaffOfCurso(caller, colegioId, cursoId);
 
   const estRef = getFirestore().doc(`colegios/${colegioId}/cursos/${cursoId}/estudiantes/${uid}`);
   if (!(await estRef.get()).exists) {
@@ -359,7 +352,7 @@ export const atestar = onCall(async (request) => {
 /**
  * Ley 1581 right to suppression: deletes the student's progress + impact data,
  * marks the roster slot 'suprimido', unlinks the auth claims. Irreversible.
- * Restricted to admin / rector / coordinador (NOT profesor).
+ * Allowed: admin (backend) + profesor of the course (D-PIVOT).
  */
 export const suppressStudentData = onCall(async (request) => {
   const caller = request.auth;
@@ -369,7 +362,7 @@ export const suppressStudentData = onCall(async (request) => {
   const cursoId = requireString(request.data?.cursoId, 'cursoId');
   const uid = requireString(request.data?.uid, 'uid');
 
-  await assertStaffOfCurso(caller, colegioId, cursoId, { allowProfesor: false, allowRector: true });
+  await assertStaffOfCurso(caller, colegioId, cursoId);
 
   const db = getFirestore();
   const estRef = db.doc(`colegios/${colegioId}/cursos/${cursoId}/estudiantes/${uid}`);
@@ -423,15 +416,15 @@ async function mintUniqueCode(db: FirebaseFirestore.Firestore): Promise<string> 
 }
 
 /**
- * Staff (re)generates the join code for a course (admin/coordinador/profesor —
- * NOT rector, matriz §1.3). Regenerating invalidates the previous code.
+ * Staff (re)generates the join code for a course (admin backend / profesor of
+ * the course, matriz §1.3). Regenerating invalidates the previous code.
  */
 export const generateClassCode = onCall(async (request) => {
   const caller = request.auth;
   requireAuth(caller);
   const colegioId = requireString(request.data?.colegioId, 'colegioId');
   const cursoId = requireString(request.data?.cursoId, 'cursoId');
-  await assertStaffOfCurso(caller, colegioId, cursoId, { allowProfesor: true, allowRector: false });
+  await assertStaffOfCurso(caller, colegioId, cursoId);
 
   const db = getFirestore();
   const cursoRef = db.doc(`colegios/${colegioId}/cursos/${cursoId}`);
@@ -581,8 +574,9 @@ export const procesarRegistroVoz = onCall({ secrets: [ANTHROPIC_API_KEY] }, asyn
 
 // ---------------------------------------------------------------------------
 // Demo mode (RQ-DM). A PUBLIC (unauthenticated) callable that mints a custom
-// token for ONE of the 5 fixed demo identities. It cannot be parameterized into
-// arbitrary claims — only the role selects a fixed (uid, claims) pair. All demo
+// token for ONE of the 2 fixed demo identities (profesor | estudiante — never
+// admin, D-PIVOT). It cannot be parameterized into arbitrary claims — only the
+// role selects a fixed (uid, claims) pair. All demo
 // tokens carry demo:true, which firestore.rules + the Functions cage confine to
 // `demo-colegio`. Signing in as the demo student first resets their progress so
 // every demo starts fresh (RQ-DM06).
@@ -622,8 +616,8 @@ export const demoLogin = onCall(async (request) => {
 });
 
 // ---------------------------------------------------------------------------
-// Per-course aggregates (RQ-FN09). The rector is EXCLUDED from nominal student
-// data and reads ONLY these aggregates (matriz §1.3). Nothing in the client or
+// Per-course aggregates (RQ-FN09). The profesor reads these non-nominal
+// aggregates for reporting (matriz §1.3, D-PIVOT). Nothing in the client or
 // firestore.rules can write them: rules say `write: if false` for agregados/*,
 // so the ONLY trusted writer is this trigger via the Admin SDK (bypasses rules).
 //
@@ -731,7 +725,7 @@ async function recomputeCursoAgregado(colegioId: string, cursoId: string): Promi
   );
 
   // No progress left (e.g. last student suppressed/reset): delete the stale doc
-  // so the rector never sees a frozen aggregate.
+  // so the profesor never sees a frozen aggregate.
   if (snap.empty) {
     await agregadoRef.delete().catch(() => undefined);
     return;

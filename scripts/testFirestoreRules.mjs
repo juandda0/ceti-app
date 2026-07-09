@@ -1,13 +1,15 @@
 /**
- * Firestore rules role-scenario tests (B2B2C multi-tenant, 5 roles).
+ * Firestore rules role-scenario tests (B2B2C multi-tenant — D-PIVOT).
  * Run via the emulator so FIRESTORE_EMULATOR_HOST is set:
  *   firebase emulators:exec --only firestore --project demo-ceti "node scripts/testFirestoreRules.mjs"
  *
  * Exits non-zero on any failed assertion. Standalone (no jest). Covers the §1.3
- * matrix: tenant isolation, the 5 roles, uid-identity (R1), the Ley 1581
- * attestation gate, rector excluded from nominal data, the collection-group
- * report rule, aggregates, and progress write guards. At least one allow + one
- * deny per critical cell.
+ * matrix after the pivot: only two app roles (profesor + estudiante); `admin` is
+ * a BACKEND-ONLY claim, so its token gets NOTHING from these client rules
+ * (structure provisioning goes through the Admin SDK, which bypasses rules).
+ * Tenant isolation, uid-identity (R1), the Ley 1581 attestation gate, the
+ * collection-group report rule, aggregates (profesor), and progress write
+ * guards. At least one allow + one deny per critical cell.
  */
 import { readFileSync } from 'node:fs';
 import {
@@ -17,6 +19,7 @@ import {
 } from '@firebase/rules-unit-testing';
 import {
   doc,
+  collection,
   getDoc,
   setDoc,
   deleteDoc,
@@ -45,20 +48,16 @@ async function check(name, promise) {
 }
 
 // Auth contexts (second arg = custom claims). Student identity = the uid (R1).
+// admin is a backend-only claim: its token must get NOTHING from client rules.
 const adminG = env.authenticatedContext('uAdmin', { role: 'admin' }).firestore();
-// Demo cage (RQ-DM05): the demo admin carries demo:true + colegioId 'demo-colegio'.
-const demoAdmin = env
-  .authenticatedContext('demo-admin', { role: 'admin', demo: true, colegioId: 'demo-colegio' })
-  .firestore();
-const rectorA = env.authenticatedContext('uRectorA', { role: 'rector', colegioId: 'A' }).firestore();
-const coordA = env
-  .authenticatedContext('uCoordA', { role: 'coordinador', colegioId: 'A' })
-  .firestore();
 const profA1 = env
   .authenticatedContext('uProfA1', { role: 'profesor', colegioId: 'A' })
   .firestore();
 const profA2 = env
   .authenticatedContext('uProfA2', { role: 'profesor', colegioId: 'A' })
+  .firestore();
+const profB = env
+  .authenticatedContext('uProfB', { role: 'profesor', colegioId: 'B' })
   .firestore();
 const stuA1 = env
   .authenticatedContext('uStuA1', { role: 'estudiante', colegioId: 'A', cursoId: 'c1' })
@@ -72,7 +71,6 @@ const stuA3 = env
 const stuA4 = env
   .authenticatedContext('uStuA4', { role: 'estudiante', colegioId: 'A', cursoId: 'c1' })
   .firestore();
-const rectorB = env.authenticatedContext('uRectorB', { role: 'rector', colegioId: 'B' }).firestore();
 // Leaderboard (V2) contexts: students carry a cursoId claim.
 const stuLb1 = env
   .authenticatedContext('uLb1', { role: 'estudiante', colegioId: 'A', cursoId: 'cLbOn' })
@@ -171,10 +169,11 @@ await env.withSecurityRulesDisabled(async (ctx) => {
     pendiente_validacion_docente: true,
   });
   // Leaderboard (V2): two courses, collaboration on vs off, with active students.
+  // uProfA1 also teaches cLbOn so we can assert the teacher-read cell.
   await setDoc(doc(db, 'colegios/A/cursos/cLbOn'), {
     nombre: 'Lb On',
     grado: '9',
-    profesorUids: [],
+    profesorUids: ['uProfA1'],
     colaboracionAula: true,
   });
   await setDoc(doc(db, 'colegios/A/cursos/cLbOff'), {
@@ -209,42 +208,26 @@ await env.withSecurityRulesDisabled(async (ctx) => {
     xp: 100,
     updatedAt: 1,
   });
-  // Demo colegio (RQ-DM): the cage confines demo tokens here.
-  await setDoc(doc(db, 'colegios/demo-colegio'), {
-    nombre: 'Colegio Demo Ceti',
-    sedesEnabled: false,
-    createdAt: 1,
-  });
-  await setDoc(doc(db, 'colegios/demo-colegio/cursos/dc1'), {
-    nombre: 'Demo 9A',
-    grado: '9',
-    profesorUids: [],
-    colaboracionAula: false,
-  });
-  await setDoc(doc(db, 'colegios/demo-colegio/cursos/dc1/estudiantes/demo-estudiante'), {
-    email: 'demo@demo.ceti',
-    nombre: 'Demo Estudiante',
-    estado: 'activo',
-    atestado: true,
-    joinedAt: 1,
-  });
 });
 
 console.log('Tenant isolation:');
-await check('rector A reads own colegio', assertSucceeds(getDoc(doc(rectorA, 'colegios/A'))));
+await check('profesor A reads own colegio', assertSucceeds(getDoc(doc(profA1, 'colegios/A'))));
 await check('student A reads own colegio', assertSucceeds(getDoc(doc(stuA1, 'colegios/A'))));
-await check('rector B cannot read colegio A', assertFails(getDoc(doc(rectorB, 'colegios/A'))));
-await check('admin reads any colegio (global)', assertSucceeds(getDoc(doc(adminG, 'colegios/A'))));
-
-console.log('Structure provisioning (admin-only):');
+await check('profesor B cannot read colegio A', assertFails(getDoc(doc(profB, 'colegios/A'))));
 await check(
-  'admin creates a colegio',
-  assertSucceeds(setDoc(doc(adminG, 'colegios/X'), { nombre: 'X', sedesEnabled: false, createdAt: 1 }))
+  'admin token gets NOTHING from client rules (backend-only)',
+  assertFails(getDoc(doc(adminG, 'colegios/A')))
+);
+
+console.log('Structure provisioning is Admin SDK only (client denied):');
+await check(
+  'admin token cannot create a colegio from the client',
+  assertFails(setDoc(doc(adminG, 'colegios/X'), { nombre: 'X', sedesEnabled: false, createdAt: 1 }))
 );
 await check(
-  'coordinador cannot create a curso (structure = admin)',
+  'profesor cannot create a curso (structure = backend)',
   assertFails(
-    setDoc(doc(coordA, 'colegios/A/cursos/cNew'), {
+    setDoc(doc(profA1, 'colegios/A/cursos/cNew'), {
       nombre: 'cNew',
       grado: '9',
       profesorUids: [],
@@ -252,30 +235,15 @@ await check(
     })
   )
 );
-await check(
-  'admin creates a curso',
-  assertSucceeds(
-    setDoc(doc(adminG, 'colegios/A/cursos/cAdmin'), {
-      nombre: 'cAdmin',
-      grado: '9',
-      profesorUids: [],
-      colaboracionAula: false,
-    })
-  )
-);
 
-console.log('Roster nominal read (rector EXCLUDED — only aggregates):');
-await check(
-  'coordinador reads roster',
-  assertSucceeds(getDoc(doc(coordA, 'colegios/A/cursos/c1/estudiantes/uStuA1')))
-);
+console.log('Roster nominal read (teacher of course + self only):');
 await check(
   'teacher of course reads roster',
   assertSucceeds(getDoc(doc(profA1, 'colegios/A/cursos/c1/estudiantes/uStuA1')))
 );
 await check(
-  'rector CANNOT read nominal roster',
-  assertFails(getDoc(doc(rectorA, 'colegios/A/cursos/c1/estudiantes/uStuA1')))
+  'teacher NOT of course cannot read roster',
+  assertFails(getDoc(doc(profA2, 'colegios/A/cursos/c1/estudiantes/uStuA1')))
 );
 await check(
   'student reads own roster doc',
@@ -286,10 +254,10 @@ await check(
   assertFails(getDoc(doc(stuA2, 'colegios/A/cursos/c1/estudiantes/uStuA1')))
 );
 await check(
-  'roster is Function-only: coordinador cannot client-write it',
+  'roster is Function-only: profesor cannot client-write it',
   assertFails(
     setDoc(
-      doc(coordA, 'colegios/A/cursos/c1/estudiantes/uStuA1'),
+      doc(profA1, 'colegios/A/cursos/c1/estudiantes/uStuA1'),
       { atestado: true },
       { merge: true }
     )
@@ -306,22 +274,28 @@ await check(
   'teacher of course reads student progress',
   assertSucceeds(getDoc(doc(profA1, progPath('A', 'c1', 'uStuA1', 'w1'))))
 );
+// The real consumer (loadCourseReport → getStudentProgress) does a LIST over the
+// progress subcollection, not a single getDoc — cover that path explicitly.
+await check(
+  'teacher of course list-reads the progress subcollection',
+  assertSucceeds(
+    getDocs(collection(profA1, 'colegios/A/cursos/c1/estudiantes/uStuA1/progress'))
+  )
+);
 await check(
   'teacher NOT of course cannot read it directly',
   assertFails(getDoc(doc(profA2, progPath('A', 'c1', 'uStuA1', 'w1'))))
 );
-await check(
-  'rector cannot read nominal progress',
-  assertFails(getDoc(doc(rectorA, progPath('A', 'c1', 'uStuA1', 'w1'))))
-);
 
-console.log('Collection-group report rule (rector EXCLUDED):');
+console.log('Collection-group progress reads are removed post-pivot (all denied):');
+// The profesor reads per-course progress via direct nested reads (tested above)
+// and colegio-wide compliance via agregados/*. No collection-group progress rule
+// exists, so every such query default-denies — including the course teacher's.
 const cg = (db) => getDocs(query(collectionGroup(db, 'progress'), where('colegioId', '==', 'A')));
-await check('coordinador collection-group read', assertSucceeds(cg(coordA)));
-await check('admin collection-group read', assertSucceeds(cg(adminG)));
-await check('rector collection-group read DENIED (nominal)', assertFails(cg(rectorA)));
+await check('teacher of course collection-group DENIED (uses per-course reads)', assertFails(cg(profA1)));
 await check('profesor not-of-course collection-group denied', assertFails(cg(profA2)));
-await check('rector B collection-group on A denied', assertFails(cg(rectorB)));
+await check('admin token collection-group denied (backend-only)', assertFails(cg(adminG)));
+await check('profesor B collection-group on A denied', assertFails(cg(profB)));
 
 console.log('Student progress write guards:');
 await check(
@@ -373,14 +347,19 @@ await check(
   assertSucceeds(getDoc(doc(profA1, impactPath('uStuA1', 'pre'))))
 );
 
-console.log('Aggregates (rector ALLOWED, students denied):');
+console.log('Aggregates (profesor ALLOWED colegio-wide, students denied):');
 await check(
-  'rector reads aggregates',
-  assertSucceeds(getDoc(doc(rectorA, 'colegios/A/cursos/c1/agregados/ag1')))
+  'profesor reads aggregates of own course',
+  assertSucceeds(getDoc(doc(profA1, 'colegios/A/cursos/c1/agregados/ag1')))
 );
+// LOAD-BEARING: the school report (loadSchoolReport) iterates EVERY course and
+// reads agregados/resumen — so a profesor must read aggregates of a course they
+// do NOT teach (institutional reporting moved to profesor, D-PIVOT). profA2
+// teaches no course; asserting this pins the colegio-wide capability so tightening
+// the rule back to isProfesorDe would fail here instead of silently breaking the report.
 await check(
-  'coordinador reads aggregates',
-  assertSucceeds(getDoc(doc(coordA, 'colegios/A/cursos/c1/agregados/ag1')))
+  'profesor reads aggregates of a course they do NOT teach (colegio-wide report)',
+  assertSucceeds(getDoc(doc(profA2, 'colegios/A/cursos/c1/agregados/ag1')))
 );
 await check(
   'student cannot read aggregates',
@@ -388,7 +367,7 @@ await check(
 );
 await check(
   'client cannot write aggregates (Function only)',
-  assertFails(setDoc(doc(coordA, 'colegios/A/cursos/c1/agregados/ag2'), { updatedAt: 1 }))
+  assertFails(setDoc(doc(profA1, 'colegios/A/cursos/c1/agregados/ag2'), { updatedAt: 1 }))
 );
 
 console.log('Course update field guard:');
@@ -403,19 +382,14 @@ await check(
   )
 );
 await check(
-  'coordinador toggles colaboracionAula',
-  assertSucceeds(setDoc(doc(coordA, 'colegios/A/cursos/c1'), { colaboracionAula: false }, { merge: true }))
-);
-await check(
-  'rector cannot toggle colaboracionAula',
-  assertFails(setDoc(doc(rectorA, 'colegios/A/cursos/c1'), { colaboracionAula: true }, { merge: true }))
+  'teacher NOT of course cannot toggle colaboracionAula',
+  assertFails(setDoc(doc(profA2, 'colegios/A/cursos/c1'), { colaboracionAula: false }, { merge: true }))
 );
 
 console.log('Assignments:');
 const asigPath = 'colegios/A/asignaciones/a1';
 const asig = { worldId: 'world_1', target: { tipo: 'curso', cursoId: 'c1' }, fechaInicio: 1, deadline: 2, createdByUid: 'uProfA1', createdAt: 1 };
 await check('teacher of course creates assignment', assertSucceeds(setDoc(doc(profA1, asigPath), asig)));
-await check('coordinador creates assignment', assertSucceeds(setDoc(doc(coordA, 'colegios/A/asignaciones/aC'), asig)));
 await check(
   'teacher NOT of course cannot create assignment',
   assertFails(setDoc(doc(profA2, 'colegios/A/asignaciones/aX'), asig))
@@ -425,14 +399,14 @@ await check(
   'student cannot create assignment',
   assertFails(setDoc(doc(stuA2, 'colegios/A/asignaciones/a2'), asig))
 );
-await check('rector B cannot read A assignment', assertFails(getDoc(doc(rectorB, asigPath))));
+await check('profesor B cannot read A assignment', assertFails(getDoc(doc(profB, asigPath))));
 
 console.log('Membership:');
 await check('user reads own membership', assertSucceeds(getDoc(doc(stuA1, 'membership/uStuA1'))));
 await check('user cannot read other membership', assertFails(getDoc(doc(stuA2, 'membership/uStuA1'))));
 await check(
   'client cannot write membership',
-  assertFails(setDoc(doc(stuA1, 'membership/uStuA1'), { role: 'rector', colegioId: 'A' }))
+  assertFails(setDoc(doc(stuA1, 'membership/uStuA1'), { role: 'profesor', colegioId: 'A' }))
 );
 
 console.log('Class codes (deny-all to clients):');
@@ -443,17 +417,17 @@ await check(
 );
 
 console.log('Sedes (dormant):');
-await check('staff reads sede', assertSucceeds(getDoc(doc(profA1, 'colegios/A/sedes/sede1'))));
+await check('profesor reads sede', assertSucceeds(getDoc(doc(profA1, 'colegios/A/sedes/sede1'))));
 await check('student cannot read sede', assertFails(getDoc(doc(stuA1, 'colegios/A/sedes/sede1'))));
 await check(
   'client cannot write sede',
-  assertFails(setDoc(doc(rectorA, 'colegios/A/sedes/sede2'), { nombre: 'Sede 2' }))
+  assertFails(setDoc(doc(profA1, 'colegios/A/sedes/sede2'), { nombre: 'Sede 2' }))
 );
 
-console.log('Colegio doc is read-only to clients (non-admin):');
+console.log('Colegio doc is read-only to clients:');
 await check(
-  'rector cannot mutate colegio doc',
-  assertFails(setDoc(doc(rectorA, 'colegios/A'), { nombre: 'hack' }, { merge: true }))
+  'profesor cannot mutate colegio doc',
+  assertFails(setDoc(doc(profA1, 'colegios/A'), { nombre: 'hack' }, { merge: true }))
 );
 
 console.log('Account-scoped users/{uid}:');
@@ -543,8 +517,8 @@ await check(
     })
   )
 );
-// Solo-vista-propia (CA5): ni otro estudiante, ni profesor, ni rector, ni
-// coordinador, ni admin leen movimientos individuales.
+// Solo-vista-propia (CA5): ni otro estudiante, ni profesor, ni admin leen
+// movimientos individuales.
 await env.withSecurityRulesDisabled(async (ctx) => {
   await setDoc(doc(ctx.firestore(), 'users/uStuA1/movimientos/mSeed'), validMovimiento);
 });
@@ -555,14 +529,6 @@ await check(
 await check(
   'profesor cannot read movimientos',
   assertFails(getDoc(doc(profA1, 'users/uStuA1/movimientos/mSeed')))
-);
-await check(
-  'rector cannot read movimientos',
-  assertFails(getDoc(doc(rectorA, 'users/uStuA1/movimientos/mSeed')))
-);
-await check(
-  'coordinador cannot read movimientos',
-  assertFails(getDoc(doc(coordA, 'users/uStuA1/movimientos/mSeed')))
 );
 await check(
   'admin cannot read movimientos (self-only)',
@@ -621,7 +587,7 @@ await check(
   assertSucceeds(getDoc(doc(stuA1, 'bancos/9_world_1_multiple_choice')))
 );
 await check(
-  'signed-in staff reads bancos',
+  'signed-in profesor reads bancos',
   assertSucceeds(getDoc(doc(profA1, 'bancos/9_world_1_multiple_choice')))
 );
 await check(
@@ -643,7 +609,7 @@ await check(
   assertSucceeds(getDoc(doc(stuA1, 'bancosEligeCamino/9_world_1')))
 );
 await check(
-  'signed-in staff reads bancosEligeCamino',
+  'signed-in profesor reads bancosEligeCamino',
   assertSucceeds(getDoc(doc(profA1, 'bancosEligeCamino/9_world_1')))
 );
 await check(
@@ -662,7 +628,7 @@ await check(
   assertSucceeds(getDoc(doc(stuA1, 'microteoria/9_world_1')))
 );
 await check(
-  'signed-in staff reads microteoria',
+  'signed-in profesor reads microteoria',
   assertSucceeds(getDoc(doc(profA1, 'microteoria/9_world_1')))
 );
 await check(
@@ -687,7 +653,7 @@ await check(
   'classmate cannot read leaderboard when colaboracionAula off',
   assertFails(getDoc(doc(stuLb4, 'colegios/A/cursos/cLbOff/leaderboard/uLb3')))
 );
-await check('coordinador reads any course leaderboard', assertSucceeds(getDoc(doc(coordA, lbPath))));
+await check('teacher of course reads its leaderboard', assertSucceeds(getDoc(doc(profA1, lbPath))));
 await check(
   'student writes own leaderboard entry',
   assertSucceeds(setDoc(doc(stuLb1, lbPath), lbEntry))
@@ -699,54 +665,6 @@ await check(
 await check(
   'leaderboard rejects negative xp',
   assertFails(setDoc(doc(stuLb1, lbPath), { ...lbEntry, xp: -1 }))
-);
-
-console.log('Demo cage (RQ-DM05 — demo admin confined to demo-colegio):');
-await check(
-  'demo admin reads own demo colegio',
-  assertSucceeds(getDoc(doc(demoAdmin, 'colegios/demo-colegio')))
-);
-await check(
-  'demo admin reads demo roster',
-  assertSucceeds(getDoc(doc(demoAdmin, 'colegios/demo-colegio/cursos/dc1/estudiantes/demo-estudiante')))
-);
-await check(
-  'demo admin CANNOT read a real colegio',
-  assertFails(getDoc(doc(demoAdmin, 'colegios/A')))
-);
-await check(
-  'demo admin CANNOT read a real colegio roster',
-  assertFails(getDoc(doc(demoAdmin, 'colegios/A/cursos/c1/estudiantes/uStuA1')))
-);
-await check(
-  'demo admin CANNOT create a real colegio',
-  assertFails(setDoc(doc(demoAdmin, 'colegios/REAL'), { nombre: 'x', sedesEnabled: false, createdAt: 1 }))
-);
-await check(
-  'demo admin CANNOT create a course in a real colegio',
-  assertFails(
-    setDoc(doc(demoAdmin, 'colegios/A/cursos/hack'), {
-      nombre: 'h',
-      grado: '9',
-      profesorUids: [],
-      colaboracionAula: false,
-    })
-  )
-);
-await check(
-  'demo admin CAN create a course in the demo colegio',
-  assertSucceeds(
-    setDoc(doc(demoAdmin, 'colegios/demo-colegio/cursos/dcNew'), {
-      nombre: 'Demo 10A',
-      grado: '10',
-      profesorUids: [],
-      colaboracionAula: false,
-    })
-  )
-);
-await check(
-  'demo admin collection-group on real colegio A denied',
-  assertFails(cg(demoAdmin))
 );
 
 console.log('Default deny:');

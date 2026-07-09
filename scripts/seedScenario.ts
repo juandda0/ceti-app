@@ -1,6 +1,7 @@
 /**
- * One-off demo scenario: a colegio + curso with an admin, a rector and a student
- * across three real Google accounts. Idempotent. Identity is by Auth uid (R1);
+ * One-off demo scenario: a colegio + curso with an admin (backend), a profesor
+ * and a student across three real Google accounts. Idempotent. Identity is by
+ * Auth uid (R1);
  * only email + nombre are stored for the student (R4). Lightweight attestation is
  * pre-set for the demo (no acudiente PII).
  *
@@ -34,7 +35,7 @@ const COLEGIO_NOMBRE = 'Colegio Piloto Ceti';
 const CURSO = '10A';
 
 const ADMIN = 'juandiegodiazave@gmail.com';
-const RECTOR = 'juandiegodiazave12@gmail.com';
+const PROFESOR = 'juandiegodiazave12@gmail.com';
 const STUDENT = 'danielportacio09@gmail.com';
 const STUDENT_NOMBRE = 'Daniel Portacio';
 
@@ -59,22 +60,23 @@ async function main(): Promise<void> {
   await db
     .doc(`colegios/${COLEGIO}`)
     .set({ nombre: COLEGIO_NOMBRE, sedesEnabled: false, createdAt: NOW }, { merge: true });
-  await db
-    .doc(`colegios/${COLEGIO}/cursos/${CURSO}`)
-    .set(
-      { nombre: CURSO, grado: '10', profesorUids: [], colaboracionAula: false },
-      { merge: true }
-    );
-
-  // Global admin Ceti
+  // Global admin Ceti (backend provisioning only)
   const adminUid = await ensureUser(ADMIN);
   await setClaims(adminUid, { role: 'admin' });
 
-  // Rector of ceti-piloto
-  const rectorUid = await ensureUser(RECTOR);
-  await setClaims(rectorUid, { role: 'rector', colegioId: COLEGIO });
+  // Profesor of ceti-piloto / 10A (must be in the course roster to operate it).
+  const profesorUid = await ensureUser(PROFESOR);
+  await setClaims(profesorUid, { role: 'profesor', colegioId: COLEGIO, cursoId: CURSO });
 
-  // Student in 10A — keyed by uid, only email + nombre, active (demo attestation).
+  await db
+    .doc(`colegios/${COLEGIO}/cursos/${CURSO}`)
+    .set(
+      { nombre: CURSO, grado: '10', profesorUids: [profesorUid], colaboracionAula: false },
+      { merge: true }
+    );
+
+  // Student in 10A — keyed by uid, only email + nombre, active (demo attestation
+  // by the profesor).
   const studentUid = await ensureUser(STUDENT);
   await db.doc(`colegios/${COLEGIO}/cursos/${CURSO}/estudiantes/${studentUid}`).set(
     {
@@ -82,7 +84,7 @@ async function main(): Promise<void> {
       nombre: STUDENT_NOMBRE,
       estado: 'activo',
       atestado: true,
-      atestadoPor: rectorUid,
+      atestadoPor: profesorUid,
       atestadoAt: NOW,
       politicaVersion: 'v1',
       joinedAt: NOW,
@@ -93,7 +95,7 @@ async function main(): Promise<void> {
 
   console.log(`✅ Escenario listo en "${COLEGIO}" / "${CURSO}":`);
   console.log(`   admin Ceti:  ${ADMIN}`);
-  console.log(`   rector:      ${RECTOR}`);
+  console.log(`   profesor:    ${PROFESOR}`);
   console.log(`   estudiante:  ${STUDENT} (${studentUid}, activo)`);
   console.log('   Cada cuenta debe (re)iniciar sesión para aplicar su rol.');
 }

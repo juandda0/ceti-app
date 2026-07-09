@@ -6,7 +6,7 @@
  *   npx ts-node --project tsconfig.scripts.json scripts/seedDemoColegio.ts
  *
  * Does NOT set anyone's claims (those need a real auth uid). After you sign into
- * the web app, set yourself rector of "demo" (see scripts/setRole.ts).
+ * the web app, set yourself profesor of "demo" (see scripts/setRole.ts).
  */
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const admin = require('firebase-admin');

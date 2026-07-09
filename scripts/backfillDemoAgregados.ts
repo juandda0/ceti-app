@@ -5,7 +5,7 @@
  *
  * Why this exists: the live aggregator trigger (`onProgressWriteAggregate`)
  * EXCLUDES demo-colegio by design (the demo student is reset on each login and
- * must not churn real aggregates). So the rector's demo report — which reads
+ * must not churn real aggregates). So the profesor's demo report — which reads
  * `agregados/resumen` — would be empty unless we compute it here. This replicates
  * the trigger's `recomputeCursoAgregado` logic for the demo tenant only.
  *
