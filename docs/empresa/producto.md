@@ -13,11 +13,13 @@
 
 ## Roles y acceso
 
-- **5 roles:** admin Ceti, rector, coordinador, profesor, estudiante.
+- **3 roles (D-PIVOT):** `admin` (Ceti, claim **solo de backend**, sin UI),
+  `profesor`, `estudiante`. En la app solo existen `profesor` y `estudiante`;
+  `rector` y `coordinador` quedan eliminados.
 - **Auth:** OAuth 2.0; cualquier cuenta puede registrarse (login con email).
-- **Provisión de roles:** **admin Ceti asigna el rol de todos los adultos**
-  (rector/coordinador/profesor); ellos solo inician sesión con OAuth, nadie
-  auto-asigna su rol. El **estudiante se une a un curso con código**.
+- **Provisión de roles:** **admin Ceti (backend) asigna el rol de profesor**; el
+  profesor solo inicia sesión con OAuth, nadie auto-asigna su rol. El **estudiante
+  se une a un curso con código**.
 - **Gate de acceso:** primer login **sin curso** → única pantalla disponible es
   "unirse a curso con código". **Sin curso asignado NO hay acceso al juego.**
 
@@ -68,19 +70,24 @@
   competencia. Output del "Elige tu camino" agregado por curso.
 - **Calificación automática** de quizzes.
 - **Exportación CSV / PDF** de progreso y reportes.
+- **Reportería agregada de cumplimiento** por grado / curso y **mapping curricular
+  CONPES 4005 / MEN / PISA descargable** — reasignados al profesor por D-PIVOT (antes
+  de la capa institucional); son el argumento de renovación del contrato (que
+  gestiona admin Ceti backend con el colegio).
 
-## (c) Capa institucional (rector / coordinador)
+## (c) Capa institucional — **RETIRADA (D-PIVOT)**
 
-- **Reportes agregados** por grado / curso (distintos del reporte operativo del
-  profesor) — son el argumento de renovación del contrato.
-- **Mapping curricular CONPES 4005 / MEN / PISA descargable** (documento de
-  evidencia de cumplimiento; lo más barato de producir y de mayor valor de venta).
+- Los roles `rector` y `coordinador` se eliminan; no hay usuario-directivo en el
+  producto. La **reportería agregada** y el **mapping curricular** que vivían aquí se
+  **absorben en la capa profesor (b)**, ahora consumidos por el profesor sobre sus
+  cursos.
 
-## (d) Capa admin Ceti
+## (d) Capa admin Ceti (backend, sin UI)
 
-- **Dashboard propio** donde el admin **registra y administra todo**: colegios,
-  rectores, coordinadores, profesores y códigos. **No anula** las capacidades
-  propias de los demás roles (el profesor sigue gestionando su curso, etc.).
+- **Aprovisionamiento por backend** (Admin SDK / scripts): el admin **registra y
+  administra** colegios, cursos, profesores y códigos, y asigna el rol de profesor.
+  **No tiene interfaz, ruta ni dashboard en la app** (D-PIVOT) y **no anula** la
+  operación del profesor sobre su curso.
 
 ## (e) Pre-test y post-test de impacto
 

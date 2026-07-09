@@ -64,7 +64,8 @@
 ## Nuestros diferenciadores
 
 1. **Cumplimiento como producto:** mapping curricular CONPES 4005 / MEN / PISA
-   descargable + reportes para rector/coordinador (lo que renueva el contrato).
+   descargable + reportes agregados que consume el profesor (lo que renueva el
+   contrato, gestionado por admin Ceti backend con el colegio).
 2. **Ahorro de tiempo docente:** diagnóstico del curso **por reglas**,
    calificación automática, exportación CSV/PDF.
 3. **Tecnología real** donde Nueva Pangea no llega: dashboard, roster, asignación

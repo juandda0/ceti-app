@@ -40,7 +40,7 @@ const GROUPS = [
     msg: 'identidad por uid; prohibido el seudónimo studentId (R1)' },
   { group: 'roles-superadmin', R: 'R3', conflicto: 4,
     re: /isSuperAdmin|CETI_SUPERADMIN|setSuperadmin/,
-    msg: '5 roles; admin es claim, no allowlist superadmin (R3)' },
+    msg: '3 roles {admin, profesor, estudiante}; admin es claim de backend, no allowlist superadmin (R3)' },
   { group: 'perfilamiento', R: 'R5', conflicto: 2,
     re: /\baiProfile\b/,
     msg: 'sin perfil individual del menor; no aiProfile (R5)' },

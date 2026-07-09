@@ -172,11 +172,12 @@ escribible por el cliente es autoritativo; los claims los fija solo una Cloud
 Function. No existen claims `sedeId` ni `studentId` activos. _(RQ-FN03, RQ-FN01)_ —
 Espejo: E4 grupo `claims`, E7 "campo cliente miente vs. claim".
 
-**R3 — Cinco roles; `admin` es claim.** Enum exacto `{admin, rector, coordinador,
-profesor, estudiante}` en `tenancy.ts`, `functions/`, `firestore.rules`. `admin` es
-rol con claim de alcance global (sin `colegioId`), no allowlist de email. Ningún
+**R3 — Tres roles; `admin` es claim de backend.** Enum exacto `{admin, profesor,
+estudiante}` en `tenancy.ts`, `functions/`, `firestore.rules` (D-PIVOT: `rector` y
+`coordinador` eliminados). `admin` es rol con claim de alcance global (sin
+`colegioId`), **solo de backend** (Admin SDK, sin UI), no allowlist de email. Ningún
 adulto se auto-asigna rol. Retirado `isSuperAdmin`/`CETI_SUPERADMIN_EMAILS`.
-_(RQ-FN06, RQ-AD03, D7 · conflicto #4)_ — Espejo: E4 grupo `roles`, E7 fila "admin G".
+_(RQ-FN06, RQ-AD03, D7, D-PIVOT · conflicto #4)_ — Espejo: E4 grupo `roles`, E7 fila "admin G".
 
 **R4 — PII mínima del menor.** En el perfil del estudiante solo `email` y `nombre`.
 Prohibido edad, fecha de nacimiento, documento, teléfono, dirección o **grado** en
@@ -246,10 +247,11 @@ Espejo: E4 grupo `features-excluidas`, E7 sede inerte, agente CP.
 **R12 — Reglas least-privilege según matriz §1.3.** Toda acción cross-tenant se
 autoriza con reglas de mínimo privilegio derivadas de la matriz rol×acción (§1.3),
 con helpers `isRole`, `sameColegio`, `isProfesorDe`, `isEstudianteSelf`,
-`estudianteActivo`. Invariantes: rector nunca lee datos nominales del menor (solo
-agregados; sus únicas escrituras son atestación y supresión); profesor no suprime;
-crear estructura = admin, operar = coordinador/profesor; admin opera global sin
-anular a los demás. `/{document=**}` → deny. _(RQ-FN12, IN01..IN05, AD06)_ — La
+`estudianteActivo`. Invariantes (D-PIVOT): el profesor solo lee/opera datos de sus
+cursos (`profesorUids`), nunca de otro curso/colegio; el profesor atesta y **suprime**
+a sus propios estudiantes; crear estructura y asignar roles = admin (backend), operar
+= profesor; `admin` es claim solo de backend (sin UI) y opera global sin anular al
+profesor. `/{document=**}` → deny. _(RQ-FN12, IN03/IN05, AD06)_ — La
 traducción operativa vive en S4. Espejo: E7 (un escenario por celda crítica), E4
 grupo `default-deny`.
 
@@ -352,20 +354,21 @@ pantallas que muestran datos cross-estudiante se gatean por claim
 - _Propósito:_ traducir la matriz §1.3 a reglas least-privilege + helpers de claim +
   un escenario de emulador por celda.
 - _Helpers canónicos (firmas exactas):_ `signedIn()`, `role()`, `isRole(r)`,
-  `isAdmin()` (global, sin `colegioId`), `sameColegio(cid)`, `isStaff()` (rector|
-  coordinador|profesor), `isEstudianteSelf(sid)` = `isRole('estudiante') &&
+  `isAdmin()` (global, sin `colegioId`; backend-only), `sameColegio(cid)`,
+  `isStaff()` (solo `profesor` — D-PIVOT), `isEstudianteSelf(sid)` = `isRole('estudiante') &&
 request.auth.uid == sid` _(por uid — R1, reemplaza `request.auth.token.studentId`)_,
   `isProfesorDe(cid,cursoId)` (1 `get()` sobre `curso.profesorUids`),
   `canManageCurso(cid,cursoId)`, `estudianteActivo(cid,cursoId,uid)` (`get()` →
   `estado=='activo'`, R6).
 - _Tabla matriz→predicado:_ por cada fila de §1.3, el predicado de claim que la
-  autoriza (admin=`isAdmin()`; rector/coordinador=`isStaff()&&sameColegio`;
-  profesor=`isProfesorDe`; estudiante=`isEstudianteSelf`+`estudianteActivo`).
-  Invariantes codificados: rector **no** lee progreso nominal (solo agregados);
-  profesor **no** suprime; crear estructura = admin; `admin` global sin anular.
-- _Collection-group:_ `progress` denormaliza `{colegioId,cursoId,uid}`; lectura
-  group gated por `(rector|coordinador) && resource.data.colegioId ==
-token.colegioId`; profesor lee por-curso vía `isProfesorDe`.
+  autoriza (admin=`isAdmin()`, backend; profesor=`isProfesorDe`;
+  estudiante=`isEstudianteSelf`+`estudianteActivo`).
+  Invariantes codificados (D-PIVOT): el profesor solo lee/opera datos de sus cursos;
+  el profesor atesta y **suprime** a sus propios estudiantes; crear estructura y
+  asignar roles = admin (backend); `admin` global sin anular al profesor.
+- _Collection-group:_ `progress` denormaliza `{colegioId,cursoId,uid}`; el profesor
+  lee por-curso vía `isProfesorDe`; no hay lectura group por rol directivo (rector/
+  coordinador eliminados).
 - _Default deny:_ `/{document=**}` → `read,write:false`.
 - _Ejemplos válido/inválido:_ válido = `allow read: if isProfesorDe(cid,cursoId) ||
 isEstudianteSelf(sid)`; inválido = `allow read: if signedIn()` (demasiado amplio),
@@ -433,7 +436,7 @@ telefono/direccion/grado`, `studentId`, `aiProfile`, decisión individual de
   `estudianteActivo`. Acudiente sin cuenta/pantalla.
 - _Analytics:_ sin `name/email/age/nombre/edad`.
 - _Procedimiento de revisión de un feature:_ ¿escribe datos? ¿dónde? ¿agrega campo
-  por-menor fuera de la lista blanca? ¿perfila? ¿expone nominal al rector? ¿pasa PII
+  por-menor fuera de la lista blanca? ¿perfila? ¿expone nominal fuera del profesor de su curso? ¿pasa PII
   a analytics o a texto libre? Cualquier "sí" → veto.
 
 **S8 — `refactor-pivot` (NUEVO).** _Playbook de demolición._ Lo usa RF.
@@ -463,10 +466,10 @@ Lo usa BE.
 
 - _`applyClaims` v2:_ claims **solo** `{role, colegioId?, cursoId?}` (sin
   `studentId/sedeId`); espejo `membership/{uid}`; `admin` sin `colegioId`.
-- _Reglas de asignación (D7/R3):_ `admin` asigna cualquier rol de adulto global;
-  `coordinador` limitado (no rector/coordinador); estudiante vía `joinByCode` →
+- _Reglas de asignación (D7/R3/D-PIVOT):_ `admin` (backend) asigna el rol de
+  `profesor` (único rol de adulto asignable); estudiante vía `joinByCode` →
   `{role:'estudiante', colegioId, cursoId}`. Ningún adulto se auto-asigna.
-- _Validación:_ `requireString`, `isRole` (5), idempotencia; nota de refresh de token
+- _Validación:_ `requireString`, `isRole` (3: admin/profesor/estudiante), idempotencia; nota de refresh de token
   (`getIdToken(true)`, `claimsUpdatedAt`).
 - _Checklist:_ la Function es el único escritor de claims/membership; sin
   `studentId`; sin allowlist `superadmin`.
@@ -506,7 +509,7 @@ read-only; los constructores escriben; los de veto no escriben código).
 
 **BE — `backend-firebase`** · _modelo: opus._
 
-- _Responsabilidad:_ `firestore.rules`, `functions/`, índices, claims (5 roles), paths
+- _Responsabilidad:_ `firestore.rules`, `functions/`, índices, claims (3 roles), paths
   nuevos.
 - _Input:_ issue backend + matriz §1.3. _Output:_ diff reglas/Functions/índices/
   `paths.ts`.
@@ -583,7 +586,7 @@ read-only; los constructores escriben; los de veto no escriben código).
   (pre-release). _Output:_ hallazgos PII/perfilamiento + `pass|block`. _Skills:_ S7,
   `security-review`. _Rules:_ R1, R4, R5, R6, R11.
 - _Tools:_ Read, Grep, Glob, Bash. _Acepta:_ solo email+nombre por menor, sin
-  perfilamiento, sin PII de acudiente, sin nominal-al-rector, analytics limpio.
+  perfilamiento, sin PII de acudiente, sin exponer nominal fuera del profesor de su curso, analytics limpio.
   _Rechaza:_ PII de menor fuera de la lista blanca, perfilamiento, reaparición de
   login/dashboard de acudiente.
 
@@ -717,9 +720,9 @@ rationale}` (lo llena el usuario); `scripts/evalValidador.mjs` reporta
 **E7 — `rules-matrix-tests`** (extiende `testFirestoreRules.mjs`). _Bloqueante._
 
 - _Verifica:_ un escenario de emulador por **celda crítica** de §1.3 — mínimo:
-  estudiante↔otro estudiante (deny), profesor↔curso ajeno (deny), rector↔progreso
-  nominal (deny) / rector↔agregados (allow), coordinador↔operación (allow),
-  admin↔global (allow), `bancos/**` write cliente (deny), `/{document=**}` (deny).
+  estudiante↔otro estudiante (deny), profesor↔curso ajeno (deny), profesor↔progreso
+  de su curso (allow), profesor↔supresión de su estudiante (allow), admin↔global
+  (allow), `bancos/**` write cliente (deny), `/{document=**}` (deny).
 - _Dispara:_ cambio en `firestore.rules`/`paths.ts` → pre-commit (si aplica) + CI job
   `rules`.
 - _Si falla:_ bloquea. _Nota Windows:_ el runner libera el puerto `8099` (java
@@ -832,7 +835,7 @@ compuertas + todo gate aplicable. La migración `studentId` añade **aprobación
 
 0. **`git tag pre-pivot`** (E9) — punto de retorno único.
 1. **#1 + #4 (identidad + roles)** — _unidad atómica, aprobación manual del diff_:
-   `studentId`→`uid` en rules/paths/tenancy/functions; 5º rol `admin`; retiro
+   `studentId`→`uid` en rules/paths/tenancy/functions; rol `admin` (claim backend); retiro
    `isSuperAdmin`/`setSuperadmin.ts`. Gate: RF + **AR + CP** + E4 + E7.
 2. **#6 (atestación)** — `autorizaciones`+`Autorizacion`-PII + `setAuthorizationStatus`
    → booleano `atestado` + Function de atestación sin PII; estado
@@ -853,58 +856,57 @@ compuertas + todo gate aplicable. La migración `studentId` añade **aprobación
 
 Leyenda: **constructor** · _rule guard_ · `enforcement`. Agentes por código (Capa 3).
 
-| RQ                               | Construye  | Rule    | Verifica |
-| -------------------------------- | ---------- | ------- | -------- |
-| FN01 sedes dormantes             | RF, BE     | R2, R11 | E4, E7   |
-| FN02 identidad email/uid         | RF, BE     | R1, R4  | E4, E7   |
-| FN03 claims única fuente         | BE, AR     | R2, R12 | E7       |
-| FN04 OAuth + gate por curso      | FE, BE     | R2      | E7, TQ   |
-| FN05 unión por código            | BE         | R2      | E7, TQ   |
-| FN06 5º rol admin                | BE, RF     | R3      | E4, E7   |
-| FN07 bancos+flag+EligeCamino     | BE, GC     | R8      | E2, E3   |
-| FN08 progreso bajo tenant        | FE, BE     | R12     | E7       |
-| FN09 agregados sin perfil        | BE, FE     | R5      | E4, E7   |
-| FN10 atestación ligera           | BE, CP     | R6      | E4, E7   |
-| FN11 supresión de datos          | BE         | R4      | E7, TQ   |
-| FN12 reglas = matriz             | BE, AR     | R12     | E7       |
-| ES01 5 mundos                    | FE         | R9      | TQ       |
-| ES02 micro-teoría                | FE, GC     | R7      | E2       |
-| ES03 quiz 10/3 tipos             | FE         | R9      | E2, TQ   |
-| ES04 ordenar/secuenciar          | FE         | R9      | E2, TQ   |
-| ES05 XP/niveles/badges           | FE         | R10     | TQ       |
-| ES06 Elige tu camino             | FE, GC     | R5      | E4       |
-| ES07 feedback refuerzo           | FE         | —       | TQ       |
-| ES08 simulador vida              | FE         | R10     | TQ       |
-| ES09 colaborativo aula           | FE         | R10     | E7, TQ   |
-| PR01 dashboard profesor          | FE, CF     | R12     | TQ       |
-| PR02 roster/atestación/código    | FE, BE, CP | R6      | E7       |
-| PR03 progreso por estudiante     | FE         | R12     | E7       |
-| PR04 asignación + deadline       | FE, BE     | —       | TQ       |
-| PR05 diagnóstico por reglas      | FE         | R7      | E4       |
-| PR06 calificación automática     | FE         | —       | TQ       |
-| PR07 export CSV/PDF (sin cert.)  | FE, RF     | R11     | E4       |
-| PR08 validación docente banco    | FE, BE     | R8      | E3       |
-| PR09 toggle colaborativo         | FE, BE     | R10     | E7       |
-| IN01 dashboard institucional     | FE, CF     | R12     | E7       |
-| IN02 reportes agregados          | FE, CF     | R5, R12 | E7       |
-| IN03 mapping CONPES              | FE, GC     | —       | TQ       |
-| IN04 coordinador operación       | BE, AR     | R12     | E7       |
-| IN05 acciones legales directivo  | BE, CP     | R4, R6  | E7       |
-| AD01 dashboard admin             | FE, BE     | R3      | E7       |
-| AD02 gestión colegios            | BE         | R3      | E7, TQ   |
-| AD03 gestión adultos/roles       | BE, RF     | R3      | E4, E7   |
-| AD04 cursos + vínculo profesor   | BE         | R12     | E7       |
-| AD05 códigos de unión            | BE         | —       | E7       |
-| AD06 admin no anula roles        | AR         | R12     | E7       |
-| TS01 pre-test                    | FE, BE, GC | —       | E2, TQ   |
-| TS02 post-test                   | FE, BE, GC | —       | E2, TQ   |
-| TS03 delta agregado              | FE, CF     | R5      | TQ       |
-| TS04 no afecta gamificación      | FE         | R10     | TQ       |
-| CN01 pipeline authoring IA       | GC         | R7, R8  | E3, E6   |
-| CN02 validación no bloqueante    | GC, VC     | R8      | E3       |
-| CN03 runtime estático            | RF         | R7      | E4       |
-| CN04 lenguaje neutro             | VC, GC     | R14     | E6       |
-| CN05 siembra Admin SDK read-only | BE         | R8      | E3, E7   |
+| RQ                                     | Construye            | Rule    | Verifica |
+| -------------------------------------- | -------------------- | ------- | -------- |
+| FN01 sedes dormantes                   | RF, BE               | R2, R11 | E4, E7   |
+| FN02 identidad email/uid               | RF, BE               | R1, R4  | E4, E7   |
+| FN03 claims única fuente               | BE, AR               | R2, R12 | E7       |
+| FN04 OAuth + gate por curso            | FE, BE               | R2      | E7, TQ   |
+| FN05 unión por código                  | BE                   | R2      | E7, TQ   |
+| FN06 rol admin (backend)               | BE, RF               | R3      | E4, E7   |
+| FN07 bancos+flag+EligeCamino           | BE, GC               | R8      | E2, E3   |
+| FN08 progreso bajo tenant              | FE, BE               | R12     | E7       |
+| FN09 agregados sin perfil              | BE, FE               | R5      | E4, E7   |
+| FN10 atestación ligera                 | BE, CP               | R6      | E4, E7   |
+| FN11 supresión de datos                | BE                   | R4      | E7, TQ   |
+| FN12 reglas = matriz                   | BE, AR               | R12     | E7       |
+| ES01 5 mundos                          | FE                   | R9      | TQ       |
+| ES02 micro-teoría                      | FE, GC               | R7      | E2       |
+| ES03 quiz 10/3 tipos                   | FE                   | R9      | E2, TQ   |
+| ES04 ordenar/secuenciar                | FE                   | R9      | E2, TQ   |
+| ES05 XP/niveles/badges                 | FE                   | R10     | TQ       |
+| ES06 Elige tu camino                   | FE, GC               | R5      | E4       |
+| ES07 feedback refuerzo                 | FE                   | —       | TQ       |
+| ES08 simulador vida                    | FE                   | R10     | TQ       |
+| ES09 colaborativo aula                 | FE                   | R10     | E7, TQ   |
+| PR01 dashboard profesor                | FE, CF               | R12     | TQ       |
+| PR02 roster/atestación/código          | FE, BE, CP           | R6      | E7       |
+| PR03 progreso por estudiante           | FE                   | R12     | E7       |
+| PR04 asignación + deadline             | FE, BE               | —       | TQ       |
+| PR05 diagnóstico por reglas            | FE                   | R7      | E4       |
+| PR06 calificación automática           | FE                   | —       | TQ       |
+| PR07 export CSV/PDF (sin cert.)        | FE, RF               | R11     | E4       |
+| PR08 validación docente banco          | FE, BE               | R8      | E3       |
+| PR09 toggle colaborativo               | FE, BE               | R10     | E7       |
+| IN01 dashboard institucional           | — [RETIRADO D-PIVOT] | —       | —        |
+| IN02 reportes agregados (→profesor)    | FE, CF               | R5, R12 | E7       |
+| IN03 mapping CONPES (→profesor/admin)  | FE, GC               | —       | TQ       |
+| IN05 acciones legales (profesor/admin) | BE, CP               | R4, R6  | E7       |
+| AD01 aprovisionamiento admin (backend) | BE                   | R3      | E7       |
+| AD02 gestión colegios                  | BE                   | R3      | E7, TQ   |
+| AD03 gestión profesor/rol              | BE, RF               | R3      | E4, E7   |
+| AD04 cursos + vínculo profesor         | BE                   | R12     | E7       |
+| AD05 códigos de unión                  | BE                   | —       | E7       |
+| AD06 admin no anula roles              | AR                   | R12     | E7       |
+| TS01 pre-test                          | FE, BE, GC           | —       | E2, TQ   |
+| TS02 post-test                         | FE, BE, GC           | —       | E2, TQ   |
+| TS03 delta agregado                    | FE, CF               | R5      | TQ       |
+| TS04 no afecta gamificación            | FE                   | R10     | TQ       |
+| CN01 pipeline authoring IA             | GC                   | R7, R8  | E3, E6   |
+| CN02 validación no bloqueante          | GC, VC               | R8      | E3       |
+| CN03 runtime estático                  | RF                   | R7      | E4       |
+| CN04 lenguaje neutro                   | VC, GC               | R14     | E6       |
+| CN05 siembra Admin SDK read-only       | BE                   | R8      | E3, E7   |
 
 ### Orden de implementación recomendado de los RQ (fundación §1 primero)
 

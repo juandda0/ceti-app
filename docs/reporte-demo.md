@@ -1,6 +1,9 @@
 # Reporte — Modo Demo (Simulación Ceti) · RQ-DM
 
-> Acceso de un toque a los 5 perfiles sobre un colegio simulado, con jaula de
+> **[Actualizado por D-PIVOT 2026-07-09]** El demo ahora expone solo 2 perfiles
+> (profesor, estudiante); admin es backend sin UI.
+
+> Acceso de un toque a los 2 perfiles sobre un colegio simulado, con jaula de
 > seguridad en `firestore.rules` **y** Cloud Functions. Gates verdes; vetos D4
 > (AR + CP) en `pass`. Spec: `docs/requerimientos.md` §10. Decisiones:
 > `docs/decisiones.md` (D-DEMO-01..04).
@@ -8,26 +11,23 @@
 ## 1. Cómo funciona el acceso demo
 
 1. En la pantalla de login (`src/features/auth/screens/LoginScreen.tsx`), bajo el
-   auth normal, hay una sección **"Simulación Ceti"** con 5 botones: Admin Ceti ·
-   Rector · Coordinador · Profesor · Estudiante.
+   auth normal, hay una sección **"Simulación Ceti"** con 2 botones:
+   Profesor · Estudiante.
 2. Al tocar un botón, el cliente llama la Cloud Function pública
    **`demoLogin({ role })`** → devuelve `{ token }` (custom token).
 3. El cliente hace `signInWithCustomToken(auth, token)`. El pipeline normal
    (`onAuthStateChanged` → `readCetiClaims`) toma el control y enruta al
    dashboard/juego del rol — **sin credenciales, sin tocar `firestore.rules`**.
-4. Los 5 usuarios demo llevan los **mismos** claims que un usuario real
+4. Los 2 usuarios demo llevan los **mismos** claims que un usuario real
    (`role` + `colegioId`/`cursoId`) **+ `demo:true`** (D-DEMO-01).
 
-| Botón       | uid (fijo)         | claims                                                                          |
-| ----------- | ------------------ | ------------------------------------------------------------------------------- |
-| Admin Ceti  | `demo-admin`       | `{ role:'admin', demo:true, colegioId:'demo-colegio' }`                         |
-| Rector      | `demo-rector`      | `{ role:'rector', demo:true, colegioId:'demo-colegio' }`                        |
-| Coordinador | `demo-coordinador` | `{ role:'coordinador', demo:true, colegioId:'demo-colegio' }`                   |
-| Profesor    | `demo-profesor`    | `{ role:'profesor', demo:true, colegioId:'demo-colegio' }`                      |
-| Estudiante  | `demo-estudiante`  | `{ role:'estudiante', demo:true, colegioId:'demo-colegio', cursoId:'demo-9A' }` |
+| Botón      | uid (fijo)        | claims                                                                          |
+| ---------- | ----------------- | ------------------------------------------------------------------------------- |
+| Profesor   | `demo-profesor`   | `{ role:'profesor', demo:true, colegioId:'demo-colegio' }`                      |
+| Estudiante | `demo-estudiante` | `{ role:'estudiante', demo:true, colegioId:'demo-colegio', cursoId:'demo-9A' }` |
 
 `demoLogin` es público pero **no parametrizable**: `role` solo selecciona uno de
-los 5 pares `(uid, claims)` fijos en `DEMO_USERS`; ningún input produce uid/claims
+los 2 pares `(uid, claims)` fijos en `DEMO_USERS`; ningún input produce uid/claims
 arbitrarios (verificado por AR + CP).
 
 ## 2. Mapa del colegio simulado (`colegios/demo-colegio`)
@@ -55,9 +55,10 @@ Sembrado por `scripts/seedDemo.ts` (Admin SDK, idempotente):
 
 ## 3. Jaula de seguridad (RQ-DM05, en rules + functions)
 
-**Insight:** el rector/coordinador/profesor/estudiante demo ya quedan confinados
-por su claim `colegioId:'demo-colegio'` (vía `sameColegio`). El único global es el
-admin, así que la jaula se centra en él.
+**Insight:** el profesor/estudiante demo ya quedan confinados
+por su claim `colegioId:'demo-colegio'` (vía `sameColegio`). El único rol global es
+el `admin` (backend, sin UI ni perfil demo), sobre el que la jaula `isDemo()` sigue
+vigente en `firestore.rules` por diseño defensivo.
 
 - **`firestore.rules`:** `isDemo()` (accessor seguro `token.get('demo',false)`) +
   `adminHere(cid) = isAdmin() && (!isDemo() || cid=='demo-colegio')`. **Todo**
@@ -85,12 +86,9 @@ corrompe.
    flujo desde el inicio (pre-test → Mundo 1). Deja claro que es "el alumno nuevo".
 2. **Profesor demo** (mismo salón `demo-9A`): dashboard lleno — roster de ~20,
    progreso por estudiante/mundo, diagnóstico por reglas, asignaciones, exporte.
-3. **Coordinador demo**: operación del colegio — los 3 cursos, códigos, atestación,
-   reportes agregados por grado/curso.
-4. **Rector demo**: lectura institucional agregada (sin dato nominal del menor) +
+   También opera su curso (código de unión, atestación) y consume la reportería
+   institucional agregada (sin dato nominal del menor, por grado/curso) con el
    delta de impacto pre/post.
-5. **Admin Ceti demo**: panel global **confinado al colegio demo** — gestión de
-   estructura del demo, prueba de que la jaula sostiene (no ve otros colegios).
 
 ## 6. Deploy (RQ-DM07)
 
@@ -102,7 +100,7 @@ corrompe.
 cd functions && npm run build && cd ..
 npx firebase-tools@latest deploy --only firestore:rules,functions --project <PROJECT_ID>
 
-# 2. Sembrar el colegio demo (Admin SDK; crea los 5 usuarios demo + datos vivos)
+# 2. Sembrar el colegio demo (Admin SDK; crea los 2 usuarios demo + datos vivos)
 $env:GOOGLE_APPLICATION_CREDENTIALS = "<ruta service account>"
 $env:GOOGLE_CLOUD_PROJECT = "<PROJECT_ID>"
 npx ts-node --project tsconfig.scripts.json scripts/seedDemo.ts
@@ -111,12 +109,12 @@ npx ts-node --project tsconfig.scripts.json scripts/seedDemo.ts
 npx expo export --platform web
 npx firebase-tools@latest deploy --only hosting --project <PROJECT_ID>
 
-# 4. Verificar en la URL real: entrar con los 5 accesos y confirmar datos.
+# 4. Verificar en la URL real: entrar con los 2 accesos y confirmar datos.
 ```
 
 **Estado del deploy (HECHO — 2026-06-19):** Modo Demo en vivo en
 **https://ceti-d3769.web.app**. El deploy todo-o-nada se completó con éxito; el
-smoke test (`demoLogin(rector)` → custom token, hosting HTTP 200) pasó.
+smoke test (`demoLogin(profesor)` → custom token, hosting HTTP 200) pasó.
 
 **Setup real que hizo falta** (más allá de los pasos 1–4 de arriba), documentado
 para reproducir un futuro deploy:
@@ -144,6 +142,6 @@ para reproducir un futuro deploy:
    ```
    (La propagación IAM tarda ~1 min antes de que `demoLogin` deje de dar 500.)
 
-**Pendiente del dueño:** verificación final en navegador entrando con los 5
+**Pendiente del dueño:** verificación final en navegador entrando con los 2
 accesos en https://ceti-d3769.web.app. Todo el código está commit+tag
 (`demo-mode`), con gates verdes y vetos AR+CP en `pass`.

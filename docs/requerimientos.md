@@ -57,8 +57,9 @@ membership/{uid}   (doc) { role, colegioId?, cursoId? }                         
 ```
 
 **Custom claims (única fuente de autorización):**
-`{ role: 'admin'|'rector'|'coordinador'|'profesor'|'estudiante', colegioId?, cursoId? }`.
-Sin `studentId`, sin `sedeId` activo. `admin` no lleva `colegioId` (alcance global).
+`{ role: 'admin'|'profesor'|'estudiante', colegioId?, cursoId? }`.
+Sin `studentId`, sin `sedeId` activo. `admin` es claim **solo de backend**
+(aprovisionamiento vía Admin SDK, sin UI) y no lleva `colegioId` (alcance global).
 El `cursoId` solo aplica al estudiante; el profesor se autoriza vía
 `curso.profesorUids`.
 
@@ -107,13 +108,15 @@ claims.
 - _CA2_: Código válido ⇒ crea `estudiantes/{uid}` con `email`+`nombre`+`estado:'pendiente_atestacion'`, claims `{role:'estudiante', colegioId, cursoId}`.
 - _CA3_: Un mismo `uid` no puede duplicarse en el curso (idempotente).
 
-**RQ-FN06 — 5º rol: admin Ceti**
-`admin` es un **rol con claim** (no un allowlist de email). Registra colegios,
-crea cuentas de adulto y les asigna rol, crea cursos y vincula profesores.
+**RQ-FN06 — Rol admin Ceti (claim de backend, sin UI)**
+`admin` es un **rol con claim** (no un allowlist de email), **solo de backend**:
+aprovisiona vía Admin SDK / scripts (registra colegios, crea cursos, vincula
+profesores y les asigna el rol `profesor`). **No tiene interfaz, ruta ni dashboard
+en la app** (D-PIVOT).
 
-- _CA1_: `role:'admin'` existe en el enum de roles (`tenancy.ts`, Functions) y en `firestore.rules`.
+- _CA1_: `role:'admin'` existe en el enum de roles `{admin, profesor, estudiante}` (`tenancy.ts`, Functions) y en `firestore.rules`.
 - _CA2_: El antiguo `isSuperAdmin` por allowlist de email queda retirado/reemplazado.
-- _CA3_: Solo un `admin` existente puede crear otro adulto y asignarle rol (ningún adulto auto-asigna su rol — D7).
+- _CA3_: Solo un `admin` existente (backend) puede crear una cuenta de profesor y asignarle rol (ningún adulto auto-asigna su rol — D7).
 - _Resuelve:_ **#4**.
 
 **RQ-FN07 — Bancos por `grado × mundo × tipo` + flag de validación + banco "Elige tu camino" separado**
@@ -133,7 +136,7 @@ denormalizado (`colegioId`,`cursoId`,`competencia`) para reportes
 collection-group.
 
 - _CA1_: El estudiante escribe **solo** su propio progreso (`isStudentSelf` por `uid`) y solo si `estado=='activo'`.
-- _CA2_: Profesor/coordinador del tenant leen el progreso por regla de rol; rector **no** lee progreso nominal (solo agregados — matriz §1.3).
+- _CA2_: El profesor del tenant lee el progreso de sus cursos por regla de rol (`profesorUids`); ningún otro rol de usuario lee progreso nominal del menor (matriz §1.3).
 
 **RQ-FN09 — Agregados por curso (sin perfil individual del menor)**
 La salida de "Elige tu camino" y el diagnóstico se computan como **agregados por
@@ -148,8 +151,8 @@ individual del menor (D4).
 **RQ-FN10 — Atestación ligera del acudiente (sin PII de acudiente) + gating**
 Dentro del sistema solo hay un **booleano de atestación** ("el colegio confirma
 tener la autorización") + quién/cuándo. **No** se guardan datos del acudiente ni
-registro de consentimiento con su PII (D9). Pueden atestar:
-profesor/coordinador/rector/admin.
+registro de consentimiento con su PII (D9). Pueden atestar: el **profesor** (de su
+curso) y el **admin** (backend).
 
 - _CA1_: `estudiantes/{uid}` pasa a `estado:'activo'` solo cuando un rol autorizado marca `atestado:true`; se guarda `atestadoPor`+`atestadoAt`+`politicaVersion`.
 - _CA2_: No existe colección `autorizaciones` con `canalEvidencia`/`acudienteRef` ni ningún campo con PII del acudiente.
@@ -159,7 +162,8 @@ profesor/coordinador/rector/admin.
 
 **RQ-FN11 — Supresión de datos del estudiante (derecho del titular)**
 Una Function borra `progress` + `impactTest`, marca `estado:'suprimido'`,
-desvincula la cuenta. Solo rector/coordinador/admin. Irreversible.
+desvincula la cuenta. Solo el **profesor** (de su curso) y el **admin** (backend).
+Irreversible.
 
 - _CA1_: Tras suprimir, no quedan docs de progreso/impacto del `uid` bajo el curso; el cupo queda `suprimido`.
 - _CA2_: La acción registra quién y cuándo (trazabilidad mínima).
@@ -169,51 +173,55 @@ La matriz rol×acción (§1.3) se traduce a reglas least-privilege con helpers d
 claim (`isRole`, `sameColegio`, `isProfesorDe`, `isStudentSelf`,
 `estudianteActivo`). Default deny.
 
-- _CA1_: Existe un escenario de emulador (`test:rules`) por cada celda crítica de la matriz (al menos: estudiante↔otro estudiante denegado; profesor↔curso ajeno denegado; rector↔progreso nominal denegado; coordinador↔operación permitida).
+- _CA1_: Existe un escenario de emulador (`test:rules`) por cada celda crítica de la matriz (al menos: estudiante↔otro estudiante denegado; profesor↔curso ajeno denegado; profesor↔progreso de su curso permitido; escritura de banco por cliente denegada).
 - _CA2_: `/{document=**}` cae en deny.
 
 ### 1.3 Matriz de permisos rol × acción
 
 Alcance: **G** = global · **C** = su colegio · **U** = sus cursos · **S** = sí mismo · ❌ = no.
+`admin` es claim **solo de backend** (Admin SDK, sin UI); en la app solo existen
+`profesor` y `estudiante` (D-PIVOT).
 
-| Acción                                                                 | admin Ceti | rector | coordinador | profesor | estudiante |
-| ---------------------------------------------------------------------- | :--------: | :----: | :---------: | :------: | :--------: |
-| **— Estructura / provisión —**                                         |            |        |             |          |            |
-| Crear/editar/eliminar colegio, plan, cupos                             |    ✅ G    |   ❌   |     ❌      |    ❌    |     ❌     |
-| Crear cuenta de adulto y asignar/cambiar su rol                        |    ✅ G    |   ❌   |     ❌      |    ❌    |     ❌     |
-| Crear/editar/eliminar curso (nombre, grado)                            |    ✅ G    |   ❌   |     ❌      |    ❌    |     ❌     |
-| Vincular/desvincular profesor ↔ curso                                  |    ✅ G    |   ❌   |     ❌      |    ❌    |     ❌     |
-| Generar/regenerar código de unión del curso                            |    ✅ G    |   ❌   |    ✅ C     |   ✅ U   |     ❌     |
-| **— Roster / Ley 1581 —**                                              |            |        |             |          |            |
-| Ver roster nominal (email+nombre) del curso                            |    ✅ G    |   ❌   |    ✅ C     |   ✅ U   |     ❌     |
-| Atestar autorización acudiente → activar estudiante                    |    ✅ G    |  ✅ C  |    ✅ C     |   ✅ U   |     ❌     |
-| Suprimir datos del estudiante                                          |    ✅ G    |  ✅ C  |    ✅ C     |    ❌    |     ❌     |
-| Unirse a un curso con código                                           |     ❌     |   ❌   |     ❌      |    ❌    |    ✅ S    |
-| **— Juego / contenido (runtime) —**                                    |            |        |             |          |            |
-| Jugar mundos, quizzes, "Elige tu camino", simulador, colaborativo      |     ❌     |   ❌   |     ❌      |    ❌    |    ✅ S    |
-| Asignar mundo con deadline                                             |    ✅ G    |   ❌   |    ✅ C     |   ✅ U   |     ❌     |
-| Activar/desactivar modo colaborativo de aula                           |    ✅ G    |   ❌   |    ✅ C     |   ✅ U   |     ❌     |
-| Leer banco de preguntas (servido estático)                             |    ✅ G    |   ❌   |    ✅ C     |   ✅ C   |   ✅ S\*   |
-| Validación docente del banco (`pendiente_validacion_docente`→validado) |    ✅ G    |   ❌   |    ✅ C     |   ✅ U   |     ❌     |
-| **— Reportes / diagnóstico —**                                         |            |        |             |          |            |
-| Ver progreso por estudiante (nominal/operativo)                        |    ✅ G    |   ❌   |    ✅ C     |   ✅ U   |     ❌     |
-| Ver diagnóstico por reglas del curso                                   |    ✅ G    |  ✅ C  |    ✅ C     |   ✅ U   |     ❌     |
-| Exportar CSV/PDF operativo del curso                                   |    ✅ G    |   ❌   |    ✅ C     |   ✅ U   |     ❌     |
-| Ver reportes institucionales AGREGADOS (grado/curso)                   |    ✅ G    |  ✅ C  |    ✅ C     |    ❌    |     ❌     |
-| Descargar mapping curricular CONPES 4005/MEN/PISA                      |    ✅ G    |  ✅ C  |    ✅ C     |   ✅ U   |     ❌     |
-| Ver/exportar pre/post-test agregado (impacto)                          |    ✅ G    |  ✅ C  |    ✅ C     |   ✅ U   |     ❌     |
-| Presentar pre-test / post-test                                         |     ❌     |   ❌   |     ❌      |    ❌    |    ✅ S    |
-| Ver su propio progreso / XP / badges                                   |     ❌     |   ❌   |     ❌      |    ❌    |    ✅ S    |
-| **— Plataforma —**                                                     |            |        |             |          |            |
-| Acceso al dashboard admin Ceti                                         |    ✅ G    |   ❌   |     ❌      |    ❌    |     ❌     |
+| Acción                                                                 | admin Ceti (backend) | profesor | estudiante |
+| ---------------------------------------------------------------------- | :------------------: | :------: | :--------: |
+| **— Estructura / provisión —**                                         |                      |          |            |
+| Crear/editar/eliminar colegio, plan, cupos                             |         ✅ G         |    ❌    |     ❌     |
+| Crear cuenta de profesor y asignar/cambiar su rol                      |         ✅ G         |    ❌    |     ❌     |
+| Crear/editar/eliminar curso (nombre, grado)                            |         ✅ G         |    ❌    |     ❌     |
+| Vincular/desvincular profesor ↔ curso                                  |         ✅ G         |    ❌    |     ❌     |
+| Generar/regenerar código de unión del curso                            |         ✅ G         |   ✅ U   |     ❌     |
+| **— Roster / Ley 1581 —**                                              |                      |          |            |
+| Ver roster nominal (email+nombre) del curso                            |         ✅ G         |   ✅ U   |     ❌     |
+| Atestar autorización acudiente → activar estudiante                    |         ✅ G         |   ✅ U   |     ❌     |
+| Suprimir datos del estudiante                                          |         ✅ G         |   ✅ U   |     ❌     |
+| Unirse a un curso con código                                           |          ❌          |    ❌    |    ✅ S    |
+| **— Juego / contenido (runtime) —**                                    |                      |          |            |
+| Jugar mundos, quizzes, "Elige tu camino", simulador, colaborativo      |          ❌          |    ❌    |    ✅ S    |
+| Asignar mundo con deadline                                             |         ✅ G         |   ✅ U   |     ❌     |
+| Activar/desactivar modo colaborativo de aula                           |         ✅ G         |   ✅ U   |     ❌     |
+| Leer banco de preguntas (servido estático)                             |         ✅ G         |   ✅ C   |   ✅ S\*   |
+| Validación docente del banco (`pendiente_validacion_docente`→validado) |         ✅ G         |   ✅ U   |     ❌     |
+| **— Reportes / diagnóstico —**                                         |                      |          |            |
+| Ver progreso por estudiante (nominal/operativo)                        |         ✅ G         |   ✅ U   |     ❌     |
+| Ver diagnóstico por reglas del curso                                   |         ✅ G         |   ✅ U   |     ❌     |
+| Exportar CSV/PDF operativo del curso                                   |         ✅ G         |   ✅ U   |     ❌     |
+| Ver reportes institucionales AGREGADOS (grado/curso)                   |         ✅ G         |   ✅ U   |     ❌     |
+| Descargar mapping curricular CONPES 4005/MEN/PISA                      |         ✅ G         |   ✅ U   |     ❌     |
+| Ver/exportar pre/post-test agregado (impacto)                          |         ✅ G         |   ✅ U   |     ❌     |
+| Presentar pre-test / post-test                                         |          ❌          |    ❌    |    ✅ S    |
+| Ver su propio progreso / XP / badges                                   |          ❌          |    ❌    |    ✅ S    |
+| **— Plataforma —**                                                     |                      |          |            |
+| Aprovisionamiento admin Ceti (Admin SDK / backend, sin UI)             |         ✅ G         |    ❌    |     ❌     |
 
 \* El estudiante no lee la colección libremente: el contenido se le sirve estático al jugar.
 
-**Invariantes de la matriz:** (1) rector nunca ve datos nominales del menor, solo
-agregados; sus únicas escrituras son las legales de directivo (atestación,
-supresión). (2) profesor no suprime. (3) admin puede todo globalmente como
-respaldo, sin anular a los demás roles (D2d). (4) crear estructura = admin;
-operar lo creado = coordinador/profesor.
+**Invariantes de la matriz:** (1) el profesor solo ve/opera datos de sus cursos
+(`profesorUids`); nunca de otro curso o colegio. (2) el profesor atesta y **suprime**
+a sus propios estudiantes (Ley 1581, RQ-FN10/FN11); el admin (backend) puede hacerlo
+globalmente. (3) `admin` es claim **solo de backend** (aprovisionamiento vía Admin
+SDK, sin UI): crea toda la estructura y asigna el rol de profesor, sin anular la
+operación del profesor sobre su curso (D2d). (4) crear estructura (colegios/cursos) y
+asignar roles = admin (backend); operar lo creado = profesor.
 
 ---
 
@@ -328,7 +336,7 @@ categoría, historial). La voz es el único camino de registro.
 - _CA2_: Única excepción a R7: la callable `procesarRegistroVoz` (server-side) clasifica el texto y devuelve `{tipo, monto, descripcion, categoria, confianza}` sin escribir en Firestore; la categoría sale de un enum fijo de 8 (`comida, transporte, entretenimiento, ropa, educacion, tecnologia, regalos, otros`); la IA sigue prohibida en el cliente y para generación/adaptación/selección de contenido.
 - _CA3_: Nada se persiste sin confirmación explícita del estudiante; la tarjeta de confirmación permite corregir tipo/monto/categoría/descripción antes de guardar. No existe formulario manual independiente.
 - _CA4_: Excepción estrecha a R10: los movimientos son un **diario autodeclarado de dinero de bolsillo real** con fin pedagógico; sigue prohibido todo lo transaccional (cuentas bancarias, pagos, transferencias, gift cards, dinero moviéndose por la app). La moneda virtual (Cetis) no se mezcla con COP reales.
-- _CA5_: `users/{uid}/movimientos` es legible/escribible/borrable **únicamente** por el propio estudiante (`isSelf`); ni profesor, ni rector, ni coordinador, ni admin leen movimientos individuales; no existen agregados de movimientos para staff.
+- _CA5_: `users/{uid}/movimientos` es legible/escribible/borrable **únicamente** por el propio estudiante (`isSelf`); ningún otro rol (profesor ni admin) lee movimientos individuales; no existen agregados de movimientos para staff.
 - _CA6_: Sin perfilamiento: la categoría es atributo de la transacción, no del menor; ningún rasgo derivado se persiste ni adapta contenido; analytics recibe solo `{origen, tipo}` — nunca montos, descripciones ni categorías.
 - _CA7_: El estudiante puede borrar cualquier movimiento propio; `suppressStudentData` elimina también `users/{uid}/movimientos` (Ley 1581).
 - _CA8_: La función aplica cap diario por uid y cap de longitud; la API key vive en `defineSecret('ANTHROPIC_API_KEY')`, nunca en el cliente.
@@ -342,8 +350,8 @@ categoría, historial). La voz es el único camino de registro.
 
 ## SECCIÓN 3 — CAPA PROFESOR
 
-> Accesible a `role:'profesor'` sobre sus cursos (`curso.profesorUids`), y a
-> coordinador/admin sobre todo el colegio/global (matriz §1.3).
+> Accesible a `role:'profesor'` sobre sus cursos (`curso.profesorUids`); el admin
+> (backend) tiene alcance global de respaldo, sin UI (matriz §1.3).
 
 **RQ-PR01 — Dashboard del profesor**
 Pantalla de entrada con la lista de **sus** cursos y, por curso, indicadores de
@@ -361,7 +369,7 @@ código de unión.
 - _CA1_: El roster lista cada estudiante con email, nombre y `estado` (pendiente/activo/suprimido).
 - _CA2_: Un control "confirmar autorización del acudiente" pasa el estudiante a `activo`; queda registrado `atestadoPor`+`atestadoAt` (sin PII del acudiente).
 - _CA3_: El profesor puede ver y regenerar el `codigo` del curso; regenerar invalida el anterior.
-- _CA4_: El profesor **no** puede suprimir estudiantes (acción de directivo/admin).
+- _CA4_: El profesor **puede** suprimir a sus propios estudiantes (Ley 1581, RQ-FN11); el admin (backend) puede hacerlo globalmente.
 
 **RQ-PR03 — Progreso por estudiante y por mundo**
 Vista de progreso nominal del curso: por estudiante y por mundo (mastery, XP,
@@ -424,54 +432,54 @@ El profesor activa/desactiva `curso.colaboracionAula` (alimenta RQ-ES09).
 
 ---
 
-## SECCIÓN 4 — CAPA INSTITUCIONAL (rector / coordinador)
+## SECCIÓN 4 — CAPA INSTITUCIONAL (RETIRADA por D-PIVOT)
 
-> Recordatorio de la matriz: **rector = solo lectura agregada** (+ las dos
-> acciones legales de directivo: atestación y supresión). **coordinador =
-> operación del colegio** (todo lo operativo a nivel `colegio`) + lectura
-> agregada. Ninguno ve sedes (dormantes).
+> **[RETIRADO por D-PIVOT, 2026-07-09]** Los roles `rector` y `coordinador` se
+> eliminan por completo. La capa institucional como tal desaparece: no hay
+> usuario-directivo dentro del producto. Lo que se **conserva** de esta sección se
+> **reasigna** — la reportería agregada y el mapping curricular los **consume el
+> profesor** (sobre sus cursos); las acciones legales (atestación y supresión Ley 1581) las ejercen el **profesor** (de su curso) y el **admin** (backend). El
+> comprador sigue siendo el colegio; la relación comercial la gestiona **admin Ceti**
+> (backend). Ningún rol ve sedes (dormantes).
 
-**RQ-IN01 — Dashboard institucional con scoping por rol**
-Pantalla institucional que consume reportes a nivel colegio. El rol determina
-lectura vs. operación.
+**RQ-IN01 — Dashboard institucional con scoping por rol** · **[RETIRADO por D-PIVOT]**
+Dependía de los roles `rector`/`coordinador`, eliminados. No hay dashboard
+institucional con scoping por rol directivo; el profesor consume la reportería
+agregada desde su propio dashboard (RQ-PR\*), acotada a sus cursos.
 
-- _CA1_: `rector` ve el dashboard en modo **solo lectura** (reportes agregados); no aparecen controles de gestión de roster, asignación ni código.
-- _CA2_: `coordinador` ve el dashboard con controles operativos del colegio (roster, asignaciones, códigos, diagnóstico) además de los reportes agregados.
-- _CA3_: Ningún rol institucional ve datos de un colegio ajeno (gating por `colegioId` en claim).
+**RQ-IN02 — Reportes agregados por grado / curso (no nominal)** · **[RETIRADO como capa institucional; capacidad REASIGNADA al profesor por D-PIVOT]**
+Se retira el consumo por rol directivo, pero **la capacidad se conserva**: los
+reportes de cumplimiento agregados por grado/curso los **consume ahora el profesor**
+(sobre sus cursos). Siguen siendo el argumento de renovación del contrato (que
+gestiona admin Ceti backend con el colegio).
 
-**RQ-IN02 — Reportes agregados por grado / curso (no nominal)**
-Reportes de cumplimiento agregados por grado y por curso, distintos del reporte
-operativo del profesor. Son el argumento de renovación del contrato.
+- _CA1_: El reporte agrega por **grado** y por **curso** de los cursos del profesor: mastery medio por competencia, % de avance, cobertura de los 5 mundos.
+- _CA2_: El reporte agregado no requiere exponer nominal más allá de lo que el profesor ya ve de sus propios estudiantes (matriz §1.3).
+- _CA3_: Exportable (PDF/CSV) por el profesor.
 
-- _CA1_: El reporte agrega por **grado** y por **curso**: mastery medio por competencia, % de avance, cobertura de los 5 mundos.
-- _CA2_: El reporte **no expone datos nominales** del estudiante a rector (solo agregados); coordinador sí puede descender al detalle operativo (matriz).
-- _CA3_: Exportable (PDF/CSV) a nivel institucional.
-
-**RQ-IN03 — Mapping curricular CONPES 4005 / MEN / PISA descargable**
+**RQ-IN03 — Mapping curricular CONPES 4005 / MEN / PISA descargable** · **[REASIGNADO por D-PIVOT: titular = profesor / admin]**
 Documento de evidencia que mapea cada mundo/competencia del producto contra
 CONPES 4005 / MEN / PISA. Es el entregable de cumplimiento de mayor valor de
 venta.
 
-- _CA1_: Descargable (PDF) por rector/coordinador/profesor.
+- _CA1_: Descargable (PDF) por el **profesor**; el admin (backend) puede generarlo globalmente.
 - _CA2_: Lista las 5 competencias (`ingreso/presupuesto/ahorro/credito/deuda`) con su dominio CONPES/MEN/PISA asociado (de `competencias.ts`).
 - _CA3_: El documento refleja la cobertura real del producto (los 5 mundos), no una lista genérica.
 
-**RQ-IN04 — Coordinador: operación del colegio**
-El coordinador ejerce, a nivel `colegio`, las capacidades operativas: gestión de
+**RQ-IN04 — Coordinador: operación del colegio** · **[RETIRADO por D-PIVOT]**
+El rol `coordinador` se elimina. Las capacidades operativas (gestión de
 roster/activación, asignación de mundos, generación de código, diagnóstico por
-reglas y exportes operativos (matriz §1.3). **No** crea estructura
-(colegios/cursos/roles = admin, RQ-FN06).
+reglas y exportes operativos) las ejerce el **profesor** sobre **sus cursos**
+(capa profesor, §3); crear estructura (colegios/cursos/roles) sigue siendo del
+**admin** (backend, RQ-FN06).
 
-- _CA1_: El coordinador puede activar estudiantes, crear asignaciones y regenerar códigos en **cualquier curso** de su colegio.
-- _CA2_: El coordinador **no** puede crear/eliminar cursos ni asignar roles de adultos (esas acciones se deniegan en reglas).
+**RQ-IN05 — Acciones legales (atestación + supresión)** · **[REASIGNADO por D-PIVOT: titular = profesor / admin]**
+El **profesor** (de su curso) y el **admin** (backend) ejercen las acciones
+legales: atestación que activa al estudiante (RQ-FN10) y supresión de datos
+(RQ-FN11). Siguen teniendo titular explícito (no quedan sin responsable).
 
-**RQ-IN05 — Acciones legales de directivo (atestación + supresión)**
-Rector y coordinador (además de profesor para atestación, y admin) ejercen las
-acciones legales: atestación que activa al estudiante (RQ-FN10) y supresión de
-datos (RQ-FN11).
-
-- _CA1_: Rector puede atestar/activar y suprimir aunque su dashboard sea de lectura para el resto.
-- _CA2_: La supresión por directivo cumple los CA de RQ-FN11 (borra progreso/impacto, marca `suprimido`, registra quién/cuándo).
+- _CA1_: El profesor puede atestar/activar y suprimir a los estudiantes de sus cursos; el admin (backend) puede hacerlo globalmente.
+- _CA2_: La supresión cumple los CA de RQ-FN11 (borra progreso/impacto, marca `suprimido`, registra quién/cuándo).
 
 ### Conflictos resueltos en esta sección
 
@@ -482,16 +490,18 @@ introduce conflictos nuevos.
 
 ## SECCIÓN 5 — CAPA ADMIN CETI
 
-> `role:'admin'` (claim, alcance global, sin `colegioId`). Es el **operador de la
-> plataforma**: crea toda la estructura y asigna todos los roles de adultos
-> (D7/B). No anula las capacidades propias de los demás roles (D2d).
+> `role:'admin'` (claim, alcance global, sin `colegioId`), **solo de backend** (Admin
+> SDK / scripts; **sin interfaz, ruta ni dashboard en la app** — D-PIVOT). Es el
+> **operador de la plataforma**: aprovisiona toda la estructura y asigna el rol de
+> profesor. No anula la operación del profesor sobre su curso (D2d).
 
-**RQ-AD01 — Dashboard propio de admin Ceti**
-Panel global donde el admin administra todo: colegios, adultos, roles, cursos y
-códigos. Solo accesible a `role:'admin'`.
+**RQ-AD01 — Superficie de aprovisionamiento admin Ceti (backend, sin UI)**
+Superficie global de backend (Admin SDK / scripts) donde el admin aprovisiona todo:
+colegios, profesores, cursos y códigos. **No** hay panel ni ruta de admin en la app
+(D-PIVOT); el claim `admin` solo se usa desde backend.
 
-- _CA1_: Cualquier rol distinto de `admin` que intente abrir el dashboard admin es denegado (UI + reglas).
-- _CA2_: El dashboard lista todos los colegios con sus métricas de cabecera (n.º cursos, estudiantes, adultos).
+- _CA1_: No existe ninguna pantalla/ruta de admin en la app; ningún usuario `profesor`/`estudiante` puede alcanzar funciones de admin (UI + reglas lo impiden).
+- _CA2_: Desde backend, el admin puede listar todos los colegios con sus métricas de cabecera (n.º cursos, estudiantes, profesores).
 
 **RQ-AD02 — Gestión de colegios**
 Crear/editar/archivar colegios, su `plan` y `planMaxEstudiantes`.
@@ -499,12 +509,12 @@ Crear/editar/archivar colegios, su `plan` y `planMaxEstudiantes`.
 - _CA1_: Crear un colegio nace con `sedesEnabled:false` y sin sedes (RQ-FN01).
 - _CA2_: El admin puede editar plan y tope de estudiantes; el tope se respeta al unir estudiantes (no se exceden cupos del plan).
 
-**RQ-AD03 — Gestión de adultos y asignación de roles**
-Crear cuentas de adulto y asignarles rol (`rector`/`coordinador`/`profesor`) con
-su `colegioId`. Ningún adulto se auto-asigna el rol (D7).
+**RQ-AD03 — Gestión de profesores y asignación de rol**
+Crear cuentas de profesor y asignarles el rol `profesor` con su `colegioId`
+(único rol de adulto asignable — D-PIVOT). Ningún adulto se auto-asigna el rol (D7).
 
-- _CA1_: El admin crea/da de alta a un adulto y le fija `role`+`colegioId` vía Cloud Function (claims).
-- _CA2_: El admin puede cambiar o revocar el rol de un adulto; el cambio se refleja en sus claims.
+- _CA1_: El admin (backend) crea/da de alta a un profesor y le fija `role:'profesor'`+`colegioId` vía Cloud Function (claims).
+- _CA2_: El admin puede revocar el rol de un profesor; el cambio se refleja en sus claims.
 - _CA3_: No existe ningún flujo donde un adulto se asigne su propio rol; el `isSuperAdmin` por allowlist queda retirado (RQ-FN06).
 - _Resuelve:_ **#4**.
 
@@ -517,17 +527,17 @@ El admin crea cursos (nombre, grado) y vincula/desvincula profesores existentes
 - _CA3_: El grado del curso determina el banco servido a sus estudiantes (RQ-FN07); no se pide grado al estudiante.
 
 **RQ-AD05 — Gestión de códigos de unión**
-El admin puede generar/regenerar el código de unión de cualquier curso (también
-lo hacen coordinador/profesor — matriz).
+El admin (backend) puede generar/regenerar el código de unión de cualquier curso
+(el profesor también lo hace sobre sus cursos — matriz).
 
 - _CA1_: Regenerar un código invalida el anterior; estudiantes ya unidos no se ven afectados.
 - _CA2_: Los códigos son únicos por curso y no colisionan entre cursos.
 
-**RQ-AD06 — Admin no anula a los demás roles**
-El admin tiene alcance global de respaldo, pero las capacidades operativas siguen
-disponibles para coordinador/profesor sobre su ámbito.
+**RQ-AD06 — Admin no anula al profesor**
+El admin tiene alcance global de respaldo (backend), pero las capacidades operativas
+siguen disponibles para el **profesor** sobre su ámbito (sus cursos).
 
-- _CA1_: Que el admin pueda activar/asignar/exportar globalmente no elimina esas mismas capacidades en coordinador (colegio) ni profesor (curso).
+- _CA1_: Que el admin pueda activar/asignar/suprimir/exportar globalmente no elimina esas mismas capacidades en el profesor (sobre sus cursos).
 - _CA2_: No hay acción exclusiva de admin que bloquee la operación normal de un colegio ya provisionado (salvo gestión de estructura/roles, que es de admin por diseño).
 
 ### Conflictos resueltos en esta sección
@@ -563,8 +573,8 @@ el pre-test).
 El sistema computa la mejora pre→post como evidencia de impacto, **agregada** para
 el colegio.
 
-- _CA1_: El reporte institucional muestra el delta agregado pre→post por curso/grado y por competencia (no expone el delta nominal del menor a rector).
-- _CA2_: El pre/post agregado es exportable (matriz: rector/coordinador/profesor/admin).
+- _CA1_: El reporte muestra el delta agregado pre→post por curso/grado y por competencia (agregado, sin exponer el delta nominal del menor más allá de lo que el profesor ya ve de sus propios estudiantes).
+- _CA2_: El pre/post agregado es exportable (matriz: profesor / admin backend).
 - _CA3_: El delta se computa solo con estudiantes que tienen ambos (`pre` y `post`); los incompletos se reportan como cobertura parcial, no se imputan.
 - _Resuelve:_ **#11**.
 
@@ -639,7 +649,7 @@ read-only.
 |  1  | Llave del estudiante (seudónimo `studentId`)  | CRÍTICA | **RQ-FN02**                                                          |
 |  2  | Perfil del menor (`aiProfile`, perfilamiento) |  ALTA   | **RQ-FN09** (datos) + **RQ-ES06** (mecánica/UI)                      |
 |  3  | Sedes activas                                 |  ALTA   | **RQ-FN01** (refuerzan RQ-IN01/IN02)                                 |
-|  4  | Rol admin Ceti (5º rol)                       |  ALTA   | **RQ-FN06** + **RQ-AD03**                                            |
+|  4  | Rol admin Ceti (claim backend)                |  ALTA   | **RQ-FN06** + **RQ-AD03**                                            |
 |  5  | Certificados PDF                              |  MEDIA  | **RQ-PR07**                                                          |
 |  6  | Autorización acudiente in-system              |  ALTA   | **RQ-FN10**                                                          |
 |  7  | IA en runtime                                 |  ALTA   | **RQ-CN03** (retiro) + **RQ-PR05** (conserva diagnóstico por reglas) |
@@ -670,24 +680,27 @@ individual, perfil individual del menor.
 ## SECCIÓN 10 — MODO DEMO (RQ-DM)
 
 > Adición formal a la spec (autorizada por el dueño; el guardián D1 la acepta).
-> **Principio rector:** todo debe poder mostrar cada uno de los 5 perfiles **sin
-> datos vacíos**. Ante ambigüedad, elegir lo que haga la demo más completa para un
-> visitante que explora solo. Modo autónomo; vetos D4 bloquean.
+> **Principio rector:** todo debe poder mostrar cada uno de los 2 perfiles
+> (profesor, estudiante) **sin datos vacíos**. Ante ambigüedad, elegir lo que haga
+> la demo más completa para un visitante que explora solo. Modo autónomo; vetos D4
+> bloquean.
 
 **RQ-DM01 — Acceso demo de un toque en el login**
-Bajo el auth normal, una sección "Simulación Ceti" con 5 accesos de un toque:
-Admin Ceti · Rector · Coordinador · Profesor · Estudiante. Cada uno inicia sesión
-como su usuario demo **sin credenciales**, vía **custom token** emitido por una
-Cloud Function (`demoLogin`) — nunca debilitando `firestore.rules`.
+Bajo el auth normal, una sección "Simulación Ceti" con 2 accesos de un toque:
+Profesor · Estudiante. Cada uno inicia sesión como su usuario demo **sin
+credenciales**, vía **custom token** emitido por una Cloud Function (`demoLogin`)
+— nunca debilitando `firestore.rules`. **No hay perfil demo admin** (D-PIVOT:
+`admin` es claim de backend sin UI; `demoLogin`, al ser público, jamás debe
+acuñar un token admin).
 
-- _CA1_: 5 botones; un toque autentica como el usuario demo de ese rol (custom token → `signInWithCustomToken`).
-- _CA2_: La Function `demoLogin` solo puede emitir las **5 identidades demo fijas** con claims demo; no acepta parámetros que produzcan claims arbitrarios.
+- _CA1_: 2 botones; un toque autentica como el usuario demo de ese rol (custom token → `signInWithCustomToken`).
+- _CA2_: La Function `demoLogin` solo puede emitir las **2 identidades demo fijas** (profesor, estudiante) con claims demo; no acepta parámetros que produzcan claims arbitrarios; nunca `role:'admin'`.
 - _CA3_: El mecanismo no relaja ninguna regla: los demo se autorizan por los **mismos** claims (role + colegioId/cursoId) + un flag `demo:true`.
 
 **RQ-DM02 — Colegio simulado (datos sintéticos realistas, español)**
-1 colegio demo (`demo-colegio`) con rector y coordinador demo; **3 cursos** (uno
-por grado 9/10/11), cada uno ~20 estudiantes sintéticos y su profesor (3
-profesores; uno es **EL** profesor demo). Relaciones correctas del modelo real
+1 colegio demo (`demo-colegio`); **3 cursos** (uno por grado 9/10/11), cada uno
+~20 estudiantes sintéticos y su profesor (3 profesores; uno es **EL** profesor
+demo). Relaciones correctas del modelo real
 (códigos de curso, roster keyed por uid, claims). El estudiante demo y el profesor
 demo comparten el **mismo curso**.
 
@@ -700,7 +713,7 @@ Los estudiantes sintéticos (todos menos el demo) tienen progreso variado y
 verosímil: mundos en distintos avances, `quizScores` de los 3 tipos, agregados de
 "Elige tu camino" poblados por curso, pre-test respondido, XP/badges repartidos.
 
-- _CA1_: El dashboard del profesor, los reportes de coordinador/rector y el panel admin muestran tablas/gráficas **llenas** y creíbles.
+- _CA1_: El dashboard del profesor (con su reportería agregada) muestra tablas/gráficas **llenas** y creíbles.
 - _CA2_: Los `agregados/*` por curso reflejan a los sintéticos (Elige-camino, mastery promedio); **no** incluyen al estudiante demo.
 - _CA3_: Cada estudiante sintético tiene `impactTest/pre`; una fracción tiene los 5 mundos completos (con `post`) para que el delta de impacto sea no vacío.
 
@@ -712,14 +725,13 @@ el flujo completo desde el principio.
 - _CA2_: Su `estado` es `activo` (ya atestado) para que pueda jugar de inmediato.
 
 **RQ-DM05 — Jaula de seguridad (innegociable, en rules + claims, no solo UI)**
-Los 5 usuarios demo **solo** pueden ver/operar dentro de `demo-colegio`. El admin
-demo administra **únicamente** el colegio demo. No pueden escalar, crear usuarios
-reales, ni tocar datos fuera de la simulación.
+Los 2 usuarios demo (profesor, estudiante) **solo** pueden ver/operar dentro de
+`demo-colegio` (confinados por su `colegioId`/`cursoId`). No pueden escalar, crear
+usuarios reales, ni tocar datos fuera de la simulación. No existe token demo admin.
 
 - _CA1_: Todo token con `demo:true` que intente leer/escribir fuera de `colegios/demo-colegio/**` (o su propio `users/{uid}`/`membership/{uid}`) es **denegado** por `firestore.rules`.
-- _CA2_: El admin demo (`role:'admin', demo:true`) queda confinado a `demo-colegio` (sus poderes globales se acotan en rules).
-- _CA3_: Las Cloud Functions estructurales/claims (`registerColegio`, `createCurso`, `assignRole`, `generateClassCode`, `atestar`, `suppressStudentData`) **rechazan** a cualquier llamante `demo:true` (no crean usuarios/colegios reales ni claims fuera del demo).
-- _CA4_: `test:rules` incluye escenarios que demuestran la jaula (demo intenta tocar dato real → deny; demo opera dentro del demo → allow donde corresponda por su rol).
+- _CA2_: Las Cloud Functions estructurales/claims (`registerColegio`, `createCurso`, `assignRole`, `generateClassCode`, `atestar`, `suppressStudentData`) **rechazan** a cualquier llamante `demo:true` (no crean usuarios/colegios reales ni claims fuera del demo).
+- _CA3_: `test:rules` incluye escenarios que demuestran la jaula (demo intenta tocar dato real → deny; demo opera dentro del demo → allow donde corresponda por su rol).
 
 **RQ-DM06 — Reseteo del estudiante demo**
 Al iniciar sesión como estudiante demo, su progreso se limpia (vuelve a cero) para
@@ -730,10 +742,10 @@ que cada demo empiece fresca, **sin corromper** los agregados del curso.
 
 **RQ-DM07 — Deploy web del modo demo**
 El deploy web de prueba se actualiza con el modo demo activo; el flujo se verifica
-en la URL real entrando con los 5 accesos.
+en la URL real entrando con los 3 accesos.
 
 - _CA1_: La build web incluye la sección "Simulación Ceti" y `demoLogin` desplegado.
-- _CA2_: Entrar con cada uno de los 5 accesos muestra sus funciones con datos.
+- _CA2_: Entrar con cada uno de los 3 accesos muestra sus funciones con datos.
 
 ### Conflictos resueltos en esta sección
 

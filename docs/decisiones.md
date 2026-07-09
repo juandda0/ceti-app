@@ -99,14 +99,18 @@ confianza}` sin escribir en BD. Sigue prohibido: IA en el cliente, almacenar o
 
 ### D-DEMO-01 — Mecanismo de auth: custom token + claim `demo:true` (no debilita rules)
 
+> **[Enmendado por D-PIVOT 2026-07-09 — autoridad viva: `docs/empresa/decisiones.md`
+> > §D-PIVOT]** El demo mantiene solo 2 identidades (`demo-profesor`,
+> `demo-estudiante`); `demo-admin`/`demo-rector`/`demo-coordinador` se eliminan
+> (rector y coordinador dejan de existir; `admin` es claim **solo de backend**, sin UI).
+
 - **Decisión:** una Cloud Function `demoLogin(role)` emite un **custom token** para
-  una de **5 identidades demo fijas** (uids `demo-admin`, `demo-rector`,
-  `demo-coordinador`, `demo-profesor`, `demo-estudiante`) con sus claims reales
-  (role + colegioId/cursoId) **+ `demo:true`**. El cliente hace
+  una de **2 identidades demo fijas** (uids `demo-profesor`, `demo-estudiante`) con
+  sus claims reales (role + colegioId/cursoId) **+ `demo:true`**. El cliente hace
   `signInWithCustomToken`. No se embeben credenciales; no se relaja ninguna regla.
 - **Por qué:** el custom token deja la autorización intacta (mismos claims que un
   usuario real), y el flag `demo:true` habilita la jaula en rules/functions sin
-  tocar la lógica de los 5 roles.
+  tocar la lógica de los roles.
 
 ### D-DEMO-02 — Jaula (`demo:true`) en rules Y functions (RQ-DM05, innegociable)
 
@@ -114,8 +118,9 @@ confianza}` sin escribir en BD. Sigue prohibido: IA en el cliente, almacenar o
   Regla dura: **cualquier** token con `demo:true` solo puede tocar
   `colegios/demo-colegio/**`, su propio `users/{uid}` y `membership/{uid}`; todo lo
   demás (otros colegios, `questionBank`/`bancos` de escritura, paths globales) se
-  **deniega**. El admin demo (global por rol) queda acotado: sus reglas
-  `isAdmin()` se reescriben a `isAdmin() && (no demo || colegio==demo)`.
+  **deniega**. El claim `admin` (global por rol; ya sin perfil demo tras D-PIVOT)
+  queda acotado en rules por defensa —`isAdmin()` se reescribe a
+  `isAdmin() && (no demo || colegio==demo)`— por si un token demo lo portara.
   Las Functions estructurales rechazan llamantes `demo:true`.
 - **Conservador:** la jaula se aplica en el motor (rules+functions), no solo UI;
   default-deny sigue cubriendo todo lo no listado.
@@ -187,7 +192,8 @@ confianza}` sin escribir en BD. Sigue prohibido: IA en el cliente, almacenar o
 - **Decisión:** la corrección de estos flujos se verifica en Bloque 1 por: (a) el
   suite E7 de emulador (70/70) que prueba las reglas que **gatean el dato
   resultante** del join/atestación (estudiante pendiente no escribe; activo sí;
-  roster Function-only; rector excluido); (b) `functions build` (tsc) que valida
+  roster Function-only; rector excluido del dato nominal —`rector` luego eliminado
+  por D-PIVOT); (b) `functions build` (tsc) que valida
   forma y tipos; (c) revisión AR + CP. Levantar `firebase-functions-test` es infra
   DevOps fuera del alcance de identidad del Bloque 1 y se **difiere a Fase 7
   (auditoría pre-release D4+D3)**, sin debilitar ningún gate existente.

@@ -7,7 +7,8 @@
 
 - **Quién paga:** el colegio privado (contrato institucional). **No** hay funnel
   B2C ni freemium individual — eso dispersaría a un equipo pequeño.
-- **Quién usa:** estudiantes, profesores, directivos (rector/coordinador).
+- **Quién usa:** estudiantes y profesores (D-PIVOT: solo dos roles de usuario en la
+  app; sin usuario-directivo). El profesor consume la reportería de cumplimiento.
 - **Qué se vende:** cumplimiento CONPES 4005 + reporte de evidencia + ahorro de
   tiempo docente. El contenido financiero es commodity; el foso es
   **mapping curricular + reporting + relación con el colegio**.
@@ -54,7 +55,8 @@ testimonio.
 
 ## Umbrales de decisión (cuándo invertir)
 
-- **1 colegio piloto** → si el coordinador renueva pagando, el pricing es viable.
+- **1 colegio piloto** → si el colegio renueva pagando (relación comercial
+  gestionada por admin Ceti backend), el pricing es viable.
 - **3–5 contratos anuales firmados** → invertir en V-futuro (LMS, simulador
   avanzado).
 - **10+ contratos** → considerar IA generativa, app nativa, expansión.

@@ -38,16 +38,18 @@ estudiantes de 13+ (grados 9°, 10° y 11°).
 
 ## Comprador vs. usuarios
 
-- **Comprador económico:** el **colegio privado** (rector / coordinador). Lo que
-  compra es **cumplimiento CONPES 4005 + reporte + ahorro de tiempo docente** —
-  no "una app divertida".
-- **Usuarios finales:**
+- **Comprador económico:** el **colegio privado**. Lo que compra es **cumplimiento
+  CONPES 4005 + reporte + ahorro de tiempo docente** — no "una app divertida". La
+  relación comercial la gestiona **admin Ceti** (backend), no un usuario dentro del
+  producto.
+- **Usuarios finales (D-PIVOT: solo dos roles en la app):**
   - **Estudiante** (13+, grados 9°–11°): vive la experiencia gamificada.
-  - **Profesor:** asigna mundos, ve progreso, recibe el diagnóstico por reglas.
-  - **Rector / coordinador:** consume reportes agregados de cumplimiento (es el
-    argumento de renovación del contrato).
-- **Operador de la plataforma:** **admin Ceti** registra y administra colegios y
-  roles; no anula las capacidades propias de cada rol.
+  - **Profesor:** asigna mundos, ve progreso, recibe el diagnóstico por reglas y
+    **consume la reportería agregada de cumplimiento** (el argumento de renovación
+    del contrato). Ya no hay usuario-directivo (rector/coordinador) en el producto.
+- **Operador de la plataforma:** **admin Ceti**, claim **solo de backend** (Admin
+  SDK, sin UI), aprovisiona colegios/cursos y asigna el rol de profesor; no anula la
+  operación del profesor sobre su curso.
 
 ## Qué NO es Ceti
 

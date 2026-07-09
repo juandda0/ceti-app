@@ -93,8 +93,9 @@ de perfilamiento de menores y anticipa la reforma 2025.
 ## Derechos del titular (supresión)
 
 - Debe existir un mecanismo de **supresión** del estudiante (borra progreso,
-  desvincula la cuenta, marca el cupo como suprimido). Solo rector/coordinador/
-  admin. Irreversible.
+  desvincula la cuenta, marca el cupo como suprimido). La ejercen el **profesor**
+  (de su curso) y el **admin** (backend) — D-PIVOT reasigna el titular, sin dejar la
+  acción sin responsable. Irreversible.
 
 ## Datos en tránsito y reposo
 

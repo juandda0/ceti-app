@@ -25,7 +25,7 @@ metas conservadas vía puente `addMovimiento`→`addDeposit`, D-ES10-04). Riesgo
 aceptado: navegadores sin `SpeechRecognition` (Firefox) no registran.
 
 **Salvaguardas Ley 1581:** `users/{uid}/movimientos` con reglas `isSelf`
-(ni profesor/rector/coordinador/admin leen); analytics solo `{origen, tipo}`;
+(ni profesor ni admin leen); analytics solo `{origen, tipo}`;
 borrado por el estudiante + incluido en `suppressStudentData` (CA7); prompt
 descarta PII; sin permisos nuevos en `app.json`. Gate E4 endurecido con el grupo
 `ia-cliente` (SDK/host de IA prohibido en `src/`+`app/`) para acotar la excepción
@@ -70,6 +70,13 @@ Entregables creados:
 - `docs/empresa/conflictos.md` (auditoría repo vs. decisiones)
 
 ## Fase 2 — completa ✅
+
+> **[Enmendado por D-PIVOT 2026-07-09]** La spec v2 aquí descrita asumía 5 roles y
+> capa institucional rector/coordinador. El pivote los eliminó: en la app solo
+> `profesor` + `estudiante`, `admin` es claim **solo de backend** (sin UI), y el
+> profesor consume la reportería institucional. Los tramos "rector/coordinador" de
+> esta entrada son el estado de entonces. Autoridad viva:
+> `docs/empresa/decisiones.md` §D-PIVOT.
 
 Reescrito `docs/requerimientos.md` como **especificación completa v2** (definición
 de "terminado"): Fundación (modelo de datos, auth OAuth + unión por código, matriz
@@ -188,6 +195,12 @@ read-only, R8/CN05, es paso aparte de Fase 6).
 
 ### Bloque 1 — Fundación ✅ COMPLETO (RQs: FN02, FN03, FN06, FN01, FN05, FN10, FN12, FN08, FN11, FN09)
 
+> **[Enmendado por D-PIVOT 2026-07-09]** Este bloque migró al modelo de 5 roles con
+> capa institucional (rector/coordinador). El pivote posterior los eliminó: solo
+> `profesor` + `estudiante` en la app, `admin` claim **solo de backend**. Los tramos
+> "5 roles", `isSuperAdmin` y "rector excluido del dato nominal" son el estado de
+> entonces, conservados como histórico.
+
 Migración atómica de identidad (#1) + 5º rol admin (#4) + atestación ligera (#6),
 como una sola unidad de cambio (ver `docs/decisiones.md` D-B1-01).
 
@@ -231,18 +244,21 @@ Bloque 1 completo. Siguiente: Bloque 2 (Contenido) según harness-design.md.
 
 ### Modo Demo (RQ-DM) ✅ CONSTRUIDO (prioridad de pitch, intercalado antes de Bloque 2)
 
+> **[Enmendado por D-PIVOT 2026-07-09]** El demo ahora expone solo 2 perfiles
+> (profesor, estudiante); no hay demo-admin. Ver `docs/reporte-demo.md`.
+
 Adición formal a la spec (`requerimientos.md` §10), autorizada por el dueño.
-Acceso de un toque a los 5 perfiles sobre un colegio simulado, con jaula de
+Acceso de un toque a los 2 perfiles sobre un colegio simulado, con jaula de
 seguridad en `firestore.rules` **y** Cloud Functions. Ver `docs/reporte-demo.md`.
 
 - **Auth demo:** Function pública `demoLogin({role})` → custom token → cliente
-  `signInWithCustomToken`. Solo acuña los 5 pares `(uid,claims)` fijos
+  `signInWithCustomToken`. Solo acuña los 2 pares `(uid,claims)` fijos
   (`DEMO_USERS`), todos con `demo:true` (D-DEMO-01). UI: sección "Simulación Ceti"
-  en `LoginScreen.tsx` con 5 botones.
+  en `LoginScreen.tsx` con 2 botones.
 - **Jaula (RQ-DM05, innegociable):** `isDemo()`+`adminHere(cid)` en rules (todo
   `isAdmin()` cid-scoped → `adminHere`); `assertDemoScope`/`assertNotDemo` en
-  functions. El admin demo queda confinado a `demo-colegio`; el resto ya por su
-  claim `colegioId`. Tests "Demo cage" en E7.
+  functions. El claim `admin` (sin perfil demo tras D-PIVOT) queda acotado por
+  defensa; los perfiles demo ya por su claim `colegioId`. Tests "Demo cage" en E7.
 - **Colegio simulado:** `scripts/seedDemo.ts` — `demo-colegio`, 3 cursos
   (9/10/11), ~60 estudiantes sintéticos (`@demo.ceti`, solo email+nombre) con
   progreso variado + impactTest pre/post + agregados por curso; profesor demo y
@@ -260,7 +276,7 @@ rules ✓ · 9 functions nuevas (`demoLogin`, `joinByCode`, `assignRole`, `atest
 `createCurso`, `registerColegio`, `listColegios`, `suppressStudentData`,
 `generateClassCode`) ✓ · seed (`demo-colegio`: 60 estudiantes sintéticos +1 demo a
 cero, 3 cursos DEMO9A/10A/11A, 197 progresos, 21 post-tests, agregados) ✓ ·
-hosting (HTTP 200) ✓ · smoke test `demoLogin(rector)` → custom token ✓.
+hosting (HTTP 200) ✓ · smoke test `demoLogin(profesor)` → custom token ✓.
 
 Tres pasos de setup que hicieron falta (registrados para reproducir el deploy):
 
@@ -276,9 +292,14 @@ Tres pasos de setup que hicieron falta (registrados para reproducir el deploy):
    requisito de `auth.createCustomToken()`; sin él `demoLogin` daba 500
    (`iam.serviceAccounts.signBlob denied`).
 
-Pendiente del dueño: verificación final en navegador entrando con los 5 accesos.
+Pendiente del dueño: verificación final en navegador entrando con los 2 accesos.
 
 ### Auditoría completa + Bloque 2 (Contenido) + maduración ✅ (2026-06-19)
+
+> **[Enmendado por D-PIVOT 2026-07-09]** Los tramos que citan rector/coordinador o
+> "5 accesos" en esta entrada son el estado de 2026-06-19; el pivote redujo el demo
+> a 2 perfiles (profesor, estudiante) y eliminó rector/coordinador. El profesor
+> consume ahora la reportería institucional; `admin` es claim solo de backend.
 
 Revisión integral del proyecto (coherencia, flujo lógico, "hace lo que debe"). La
 auditoría destapó que **los gates verdes ocultaban un proyecto a medio pivote**: la
@@ -343,8 +364,8 @@ vivo (contenido de quiz priorizado); limpieza de `aiProfile` (regla write:false 
   (shape nuevo) para los 3 cursos demo — el trigger excluye `demo-colegio` por
   diseño (RQ-DM06), así que el reporte del rector demo se llena por este backfill.
 
-Pendiente del dueño: verificación final en navegador entrando con los 5 accesos
-(estudiante con quiz 4+3+3 real, profesor/coordinador/rector con reportería, admin).
+Pendiente del dueño: verificación final en navegador entrando con los 2 accesos
+(estudiante con quiz 4+3+3 real, profesor con reportería de curso e institucional).
 
 ### Bloque 2 completo + demolición legacy + EligeCamino/micro-teoría ✅ (2026-06-19)
 

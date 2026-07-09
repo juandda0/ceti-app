@@ -75,8 +75,8 @@ registró. Escribible solo vía Admin/Function (`firestore.rules`:
 
 ## 4. Supresión de datos (derecho del titular)
 
-La Cloud Function `suppressStudentData` (solo rector/coordinador) ejerce el
-derecho de supresión: borra el `progress` del estudiante, marca el cupo como
+La Cloud Function `suppressStudentData` (profesor del curso + admin backend,
+D-PIVOT) ejerce el derecho de supresión: borra el `progress` del estudiante, marca el cupo como
 **`suprimido`**, desvincula `uidVinculado` y deja la autorización en `revocada`.
 Es irreversible.
 

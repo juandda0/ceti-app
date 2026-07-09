@@ -7,23 +7,23 @@
 
 > ### ⚠️ OBSOLETO tras Fase 2 (no heredar estos invariantes)
 >
-> | Esto (abajo en este doc)                                                    | Reemplazo vigente                                                             |
-> | --------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-> | `studentId` seudónimo como llave del estudiante (Principio 3, §3, §4)       | **email = identidad; clave = `uid`** (RQ-FN02)                                |
-> | 4 roles (§2)                                                                | **5 roles**, incluye **admin Ceti** (RQ-FN06)                                 |
-> | `sedeId` en claims / sede activa (§3, §4)                                   | **sedes dormantes** `colegio→curso→estudiante` (RQ-FN01)                      |
-> | `autorizaciones` con `canalEvidencia`/`acudienteRef` (§4, §6)               | **atestación ligera** booleana, sin PII de acudiente (RQ-FN10)                |
-> | `questionBank` global sin grado (§4)                                        | **bancos `grado×mundo×tipo`** + flag `pendiente_validacion_docente` (RQ-FN07) |
-> | `aiProfile` por usuario (§4)                                                | **prohibido**; agregado por curso (RQ-FN09)                                   |
-> | Roadmap MVP: certificado PDF; V2: reporte a padres / dashboard de sede (§8) | **excluidos** (certificados, padres, sede) — ver §9 de requerimientos.md      |
+> | Esto (abajo en este doc)                                                    | Reemplazo vigente                                                                           |
+> | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+> | `studentId` seudónimo como llave del estudiante (Principio 3, §3, §4)       | **email = identidad; clave = `uid`** (RQ-FN02)                                              |
+> | 4 roles (§2)                                                                | **3 roles** `{admin, profesor, estudiante}`; `admin` claim backend-only (D-PIVOT / RQ-FN06) |
+> | `sedeId` en claims / sede activa (§3, §4)                                   | **sedes dormantes** `colegio→curso→estudiante` (RQ-FN01)                                    |
+> | `autorizaciones` con `canalEvidencia`/`acudienteRef` (§4, §6)               | **atestación ligera** booleana, sin PII de acudiente (RQ-FN10)                              |
+> | `questionBank` global sin grado (§4)                                        | **bancos `grado×mundo×tipo`** + flag `pendiente_validacion_docente` (RQ-FN07)               |
+> | `aiProfile` por usuario (§4)                                                | **prohibido**; agregado por curso (RQ-FN09)                                                 |
+> | Roadmap MVP: certificado PDF; V2: reporte a padres / dashboard de sede (§8) | **excluidos** (certificados, padres, sede) — ver §9 de requerimientos.md                    |
 
 > Source of truth for the Firestore schema after the B2B2C pivot. Any change to
 > `firestore.rules` or `src/shared/lib/firebase/paths.ts` must match this file,
 > and this file must be updated **first** (see `CLAUDE.md` update protocol).
 >
 > Status: **implemented (MVP).** The tenancy tree, custom-claims provisioning,
-> Ley 1581 authorization/suppression, learning + per-world progress, teacher /
-> rector dashboards and class self-join are built, and the rules are covered by
+> Ley 1581 authorization/suppression, learning + per-world progress, teacher
+> dashboards and class self-join are built, and the rules are covered by
 > `npm run test:rules` (emulator). Collection identifiers are Spanish to match
 > the product domain (`colegio`, `curso`, `estudiante`).
 
@@ -44,14 +44,13 @@
 
 ## 2. Roles
 
-`[OBSOLETO — ver docs/empresa/ y RQ-FN06: son 5 roles; falta admin Ceti (claim, no allowlist de email)]`
+`[OBSOLETO — ver docs/empresa/ y RQ-FN06 / D-PIVOT: son 3 roles {admin, profesor, estudiante}; rector y coordinador eliminados; admin es claim de backend (Admin SDK, sin UI), no allowlist de email]`
 
-| Role          | Scope                                     | Sees                                          |
-| ------------- | ----------------------------------------- | --------------------------------------------- |
-| `rector`      | whole `colegio`                           | aggregate compliance across all cursos/sedes  |
-| `coordinador` | `colegio` (or a `sede` when present)      | aggregate for their scope                     |
-| `profesor`    | their `cursos` (listed in `profesorUids`) | roster + per-student progress of their cursos |
-| `estudiante`  | self                                      | only their own experience                     |
+| Role         | Scope                                     | Sees                                                              |
+| ------------ | ----------------------------------------- | ----------------------------------------------------------------- |
+| `admin`      | global (backend only, no UI)              | provisioning; global backstop, does not override profesor         |
+| `profesor`   | their `cursos` (listed in `profesorUids`) | roster + per-student progress + aggregate reports of their cursos |
+| `estudiante` | self                                      | only their own experience                                         |
 
 > The **acudiente** (legal guardian) is **not a role**. They only sign the Ley
 > 1581 authorization (§6). No guardian dashboard, no access to student data.
@@ -64,7 +63,7 @@ Set by a Cloud Function (`functions/`) on provisioning / role assignment:
 
 ```jsonc
 {
-  "role": "profesor", // rector | coordinador | profesor | estudiante
+  "role": "profesor", // profesor | estudiante (admin = claim backend, sin colegioId)
   "colegioId": "col_abc",
   "sedeId": "sede_1", // optional in MVP
   "studentId": "stu_2025_0481", // only for estudiante; the school pseudonym
@@ -132,10 +131,10 @@ wallet|aiProfile`) are **simulated/account-scoped** and are migrated/retired in
 - Helpers from claims: `isRole(r)`, `sameColegio(cid)`, `isProfesorDe(cursoId)`
   (uid ∈ course `profesorUids`), `isStudentSelf(sid)`.
 - `colegios/{colegioId}/**`: read if `sameColegio(colegioId)` **and** role allows
-  the scope; writes to roster/asignaciones restricted to `profesor` (own course)
-  / `rector` / `coordinador`.
+  the scope; writes to roster/asignaciones restricted to `profesor` (own course);
+  `admin` provisions from backend.
 - `.../estudiantes/{sid}/progress/**`: student writes own (`isStudentSelf(sid)`);
-  teacher/rector/coordinador of the tenant read.
+  the `profesor` of the tenant (own course) reads.
 - `autorizaciones/**`: written by staff/Function; gates student activation.
 - Everything else denied (`/{document=**}`). Audit with the rules auditor +
   emulator role scenarios before merge.
@@ -161,11 +160,12 @@ If real users exist under `users/{uid}/...`, F2 includes a one-shot script that:
 - **MVP**: tenancy `colegio→curso→estudiante` (sede deferred), Google web SSO,
   Ley 1581 authorization + PII minimization, content + auto-graded quiz,
   world↔competencia, XP/levels/mastery badges, teacher dashboard + CSV/PDF
-  export, simple assignment, certificate PDF, basic rector aggregate report.
+  export, simple assignment, certificate PDF, basic aggregate report (teacher-consumed).
 - **V2**: ✅ rule-based weakness detection reports, ✅ simulated life-project
   goals, ✅ class collaboration + optional class leaderboard (teacher toggle,
-  class-scoped — never global), ✅ sede dashboard (per-sede roll-up + coordinador
-  scoping). Still pending: Google Classroom roster sync; **basic parents report**
+  class-scoped — never global), ✅ sede dashboard (per-sede roll-up — now
+  excluded/dormant; D-PIVOT drops the coordinador scoping). Still pending: Google
+  Classroom roster sync; **basic parents report**
   (must be a generated read-only report shared out-of-band — NOT an acudiente
   login/dashboard, which stays forbidden).
 - **V3+**: generative/adaptive AI question bank, native iOS/Android app, LTI/

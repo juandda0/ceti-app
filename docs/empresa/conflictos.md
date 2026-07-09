@@ -43,6 +43,12 @@
   alineado con la aclaración de D9.
 - **Conflicto 1 y 6 tocan `firestore.rules` + claims + Functions a la vez:**
   deben planearse juntos en F2 para no romper tenancy/seguridad.
+- **[D-PIVOT, 2026-07-09] El "scoping coordinador"** (dashboard de sede en
+  `SchoolReportScreen.tsx` + `loadSchoolReport.ts`, conflicto #3) **se retira** con
+  el pivote a 3 roles: `rector` y `coordinador` se eliminan por completo. La
+  reportería agregada y el mapping se reasignan al **profesor**; la supresión y la
+  atestación Ley 1581 las ejercen el **profesor** (de su curso) y el **admin**
+  (backend). Ver `decisiones.md` → D-PIVOT.
 
 ## Estado de resolución (Fase 6 — ejecución por bloques)
 
