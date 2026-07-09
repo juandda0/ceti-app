@@ -10,6 +10,10 @@ import { logEvent } from '@shared/lib/analytics/logEvent';
 
 export type MovimientoTipo = 'ahorro' | 'gasto';
 
+// Intención de voz detectada por palabra clave (RQ-ES10 D-ES10-06): registrar un
+// gasto/ahorro, abonar a una meta existente, o crear una meta nueva.
+export type MovimientoIntencion = 'movimiento' | 'abonar_meta' | 'crear_meta';
+
 export const MOVIMIENTO_CATEGORIAS = [
   'comida',
   'transporte',

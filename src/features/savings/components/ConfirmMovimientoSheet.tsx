@@ -158,6 +158,14 @@ export default function ConfirmMovimientoSheet({
                   {t(`movimientos.categorias.${categoria}`)}
                 </Text>
               </View>
+              {tipo === 'ahorro' && goalId && (
+                <View style={[styles.sumChip, { backgroundColor: colors.fill.brandSubtle }]}>
+                  <Ionicons name="flag" size={15} color={colors.brand.primary} />
+                  <Text style={[styles.sumChipText, { color: colors.brand.primary }]}>
+                    {goals.find((g) => g.id === goalId)?.title ?? t('movimientos.meta')}
+                  </Text>
+                </View>
+              )}
             </View>
           </View>
         )}
@@ -313,7 +321,13 @@ const styles = StyleSheet.create({
   summary: { alignItems: 'center', gap: 12, paddingVertical: 12, marginBottom: 16 },
   summaryAmount: { ...Typography.title1, fontWeight: '900' },
   summaryDesc: { ...Typography.headline, fontWeight: '700', textAlign: 'center' },
-  summaryChips: { flexDirection: 'row', gap: 8, marginTop: 2 },
+  summaryChips: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 8,
+    marginTop: 2,
+  },
   sumChip: {
     flexDirection: 'row',
     alignItems: 'center',

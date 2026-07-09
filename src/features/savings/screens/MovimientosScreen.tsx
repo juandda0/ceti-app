@@ -18,15 +18,20 @@ import { Typography } from '@shared/constants/typography';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { showCetiNotice } from '@shared/store/useCetiOverlayStore';
 import ConfirmMovimientoSheet from '@features/savings/components/ConfirmMovimientoSheet';
+import ConfirmMetaSheet, {
+  type MetaPropuesta,
+} from '@features/savings/components/ConfirmMetaSheet';
 import MicButton from '@features/savings/components/MicButton';
 import Segmented from '@features/savings/components/Segmented';
 import VoiceCaptureSheet from '@features/savings/components/VoiceCaptureSheet';
 import MovimientoListItem from '@features/savings/components/MovimientoListItem';
 import MovimientosCharts from '@features/savings/components/MovimientosCharts';
+import { matchGoal } from '@features/savings/data/matchGoal';
 import { movimientosOrdenados } from '@features/savings/data/movimientosStats';
 import { vozService, type ClasificacionMovimiento } from '@features/savings/data/vozService';
 import { useVoiceCapture } from '@features/savings/hooks/useVoiceCapture';
 import { useMovimientosStore } from '@features/savings/store/useMovimientosStore';
+import { useSavingsStore } from '@features/savings/store/useSavingsStore';
 
 const HISTORIAL_MAX = 30;
 
@@ -44,18 +49,36 @@ export default function MovimientosScreen() {
 
   const movimientos = useMovimientosStore((s) => s.movimientos);
   const removeMovimiento = useMovimientosStore((s) => s.removeMovimiento);
+  const goals = useSavingsStore((s) => s.goals);
 
   const [processing, setProcessing] = useState(false);
   const [clasificacion, setClasificacion] = useState<ClasificacionMovimiento | null>(null);
   const [sheetVisible, setSheetVisible] = useState(false);
+  const [preGoalId, setPreGoalId] = useState<string | undefined>(undefined);
+  const [metaPropuesta, setMetaPropuesta] = useState<MetaPropuesta | null>(null);
+  const [metaSheetVisible, setMetaSheetVisible] = useState(false);
   const [segment, setSegment] = useState<'historial' | 'resumen'>('historial');
 
   const onTranscript = (texto: string) => {
     setProcessing(true);
     void (async () => {
+      const rutaGoalId = typeof goalId === 'string' ? goalId : undefined;
       try {
-        const resultado = await vozService.procesarRegistroVoz(texto);
-        setClasificacion(resultado);
+        const r = await vozService.procesarRegistroVoz(texto);
+        // Ramifica por intención detectada por palabra clave (D-ES10-06).
+        if (r.intencion === 'crear_meta') {
+          setMetaPropuesta({ nombre: r.descripcion, objetivo: r.monto });
+          setMetaSheetVisible(true);
+          return;
+        }
+        if (r.intencion === 'abonar_meta') {
+          const g = matchGoal(r.descripcion, goals);
+          setClasificacion({ ...r, tipo: 'ahorro' });
+          setPreGoalId(g?.id ?? rutaGoalId);
+        } else {
+          setClasificacion(r);
+          setPreGoalId(rutaGoalId);
+        }
         setSheetVisible(true);
       } catch (e) {
         if (errorCode(e).includes('resource-exhausted')) {
@@ -74,12 +97,14 @@ export default function MovimientosScreen() {
           message: t('movimientos.errorMsg'),
         });
         setClasificacion({
+          intencion: 'movimiento',
           tipo: 'gasto',
           monto: 0,
           descripcion: texto.slice(0, 140),
           categoria: 'otros',
           confianza: 0,
         });
+        setPreGoalId(rutaGoalId);
         setSheetVisible(true);
       } finally {
         setProcessing(false);
@@ -208,8 +233,14 @@ export default function MovimientosScreen() {
       <ConfirmMovimientoSheet
         visible={sheetVisible}
         clasificacion={clasificacion}
-        preSelectedGoalId={typeof goalId === 'string' ? goalId : undefined}
+        preSelectedGoalId={preGoalId}
         onClose={() => setSheetVisible(false)}
+      />
+
+      <ConfirmMetaSheet
+        visible={metaSheetVisible}
+        propuesta={metaPropuesta}
+        onClose={() => setMetaSheetVisible(false)}
       />
     </>
   );

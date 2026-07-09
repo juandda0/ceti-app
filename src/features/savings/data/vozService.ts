@@ -6,10 +6,12 @@
 import { callFunction } from '@shared/lib/firebase/functions';
 import type {
   MovimientoCategoria,
+  MovimientoIntencion,
   MovimientoTipo,
 } from '@features/savings/store/useMovimientosStore';
 
 export interface ClasificacionMovimiento {
+  intencion: MovimientoIntencion;
   tipo: MovimientoTipo;
   monto: number;
   descripcion: string;

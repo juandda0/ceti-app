@@ -65,6 +65,26 @@ confianza}` sin escribir en BD. Sigue prohibido: IA en el cliente, almacenar o
 - **Decisión:** fuera del alcance de RQ-ES10 (tocarlas es unidad propia con su
   revisión CP); se registra aquí como deuda candidata a unidad de compliance.
 
+### [AUTO-DECIDIDO] D-ES10-06 — El registro por voz también crea/abona metas, por palabra clave
+
+- **Contexto:** el dueño pidió que el mismo micrófono sirva para (a) registrar
+  gasto/ahorro, (b) abonar a una meta existente, y (c) crear una meta nueva; la
+  IA distingue la intención por una **palabra clave**.
+- **Decisión:** la clasificación server-side gana un campo `intencion`
+  (`movimiento | abonar_meta | crear_meta`). Palabras clave: **"nueva meta"** /
+  "crear meta" → `crear_meta`; **"abonar"** / "aportar a mi meta" → `abonar_meta`;
+  cualquier otra cosa → `movimiento`. Para las intenciones de meta,
+  `descripcion` = nombre de la meta y `monto` = objetivo (crear) o abono (abonar).
+  El cliente ramifica: `crear_meta` → hoja de confirmación que llama
+  `useSavingsStore.addGoal` (RQ-ES08); `abonar_meta` → empareja el nombre a una
+  meta existente (`matchGoal`) y abre la confirmación de movimiento como ahorro
+  con `goalId` (reusa el puente D-ES10-04); `movimiento` → flujo actual.
+- **Alcance/invariantes:** sigue siendo la misma feature de clasificación de
+  texto server-side (R7 excepción D-ES10-01) sobre datos propios del estudiante
+  (R5/R10 excepción D-ES10-02); no añade PII ni cambia reglas. Se mapea a
+  RQ-ES10 (no requiere RQ nuevo). Intención desconocida degrada a `movimiento`
+  (nunca crea una meta por error de clasificación).
+
 ## RQ-DM (RQ-DEMO) — Modo Demo (simulación en el login)
 
 ### [AUTO-DECIDIDO] D-DEMO-05 — La familia "RQ-DEMO" se registra como `RQ-DM01..RQ-DM07`

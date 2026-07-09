@@ -28,6 +28,7 @@ describe('clasificarTexto', () => {
     );
     const result = await clasificarTexto('gasté cinco mil en un helado', client);
     expect(result).toEqual({
+      intencion: 'movimiento',
       tipo: 'gasto',
       monto: 5000,
       descripcion: 'helado',
@@ -55,6 +56,7 @@ describe('clasificarTexto', () => {
 
 describe('parseClasificacion', () => {
   const base = {
+    intencion: 'movimiento',
     tipo: 'gasto',
     monto: 1000,
     descripcion: 'algo',
@@ -66,6 +68,17 @@ describe('parseClasificacion', () => {
     const result = parseClasificacion({ ...base, categoria: 'apuestas' });
     expect(result.categoria).toBe('otros');
     expect(result.confianza).toBeLessThanOrEqual(0.5);
+  });
+
+  it('conserva la intención crear_meta y abonar_meta', () => {
+    expect(parseClasificacion({ ...base, intencion: 'crear_meta' }).intencion).toBe('crear_meta');
+    expect(parseClasificacion({ ...base, intencion: 'abonar_meta' }).intencion).toBe('abonar_meta');
+  });
+
+  it('degrada intención desconocida (o ausente) a movimiento', () => {
+    expect(parseClasificacion({ ...base, intencion: 'transferir' }).intencion).toBe('movimiento');
+    const { intencion: _omit, ...sinIntencion } = base;
+    expect(parseClasificacion(sinIntencion).intencion).toBe('movimiento');
   });
 
   it('lanza con tipo inválido', () => {
