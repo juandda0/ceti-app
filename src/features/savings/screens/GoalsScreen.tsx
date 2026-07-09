@@ -30,6 +30,7 @@ import {
 import { useUserStore } from '@features/auth/store/useUserStore';
 import CetiButton from '@shared/components/CetiButton';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
+import StatTile from '@features/savings/components/StatTile';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useWalletStore } from '@features/savings/store/useWalletStore';
 import { formatMoneyInputThousands, parseMoneyAmountInt } from '@shared/utils/moneyInputFormat';
@@ -142,7 +143,6 @@ export default function GoalsScreen() {
   const [showNewGoal, setShowNewGoal] = useState(false);
 
   const goals = useSavingsStore((s) => s.goals);
-  const deposits = useSavingsStore((s) => s.deposits);
   const totalSaved = useSavingsStore((s) => s.getTotalSaved)();
 
   // RQ-ES10 (D-ES10-03): el registro es SOLO por voz — "Ahorrar" navega al
@@ -170,86 +170,31 @@ export default function GoalsScreen() {
             {t('goals.pageSubtitle', { name: nickname })}
           </Text>
 
-          <View style={stylesD.economyRow}>
-            <Animated.View
-              entering={motion.enterDown(72)}
-              style={[
-                stylesD.economyCard,
-                { backgroundColor: colors.materials.base, borderColor: colors.materials.border },
-              ]}
-            >
-              <View style={stylesD.economyCardInner}>
-                <View
-                  style={[stylesD.economyIconWrap, { backgroundColor: colors.materials.highlight }]}
-                >
-                  <Ionicons name="wallet-outline" size={22} color={colors.gold.primary} />
-                </View>
-                <View style={stylesD.economyTexts}>
-                  <Text style={[stylesD.economyLabel, { color: colors.text.tertiary }]}>
-                    {t('goals.savings')}
-                  </Text>
-                  <Text
-                    style={[stylesD.economyValue, { color: colors.gold.primary }]}
-                    numberOfLines={1}
-                  >
-                    {formatDisplayCopGoals(totalSaved)}
-                  </Text>
-                </View>
-              </View>
-            </Animated.View>
-
-            <Animated.View
-              entering={motion.enterDown(104)}
-              style={[
-                stylesD.economyCard,
-                { backgroundColor: colors.materials.base, borderColor: colors.materials.border },
-              ]}
-            >
-              <View style={stylesD.economyCardInner}>
-                <View
-                  style={[stylesD.economyIconWrap, { backgroundColor: colors.materials.highlight }]}
-                >
-                  <Ionicons name="sparkles" size={22} color={colors.brand.primary} />
-                </View>
-                <View style={stylesD.economyTexts}>
-                  <Text style={[stylesD.economyLabel, { color: colors.text.tertiary }]}>
-                    {t('goals.cetis')}
-                  </Text>
-                  <Text style={[stylesD.economyValue, { color: colors.text.primary }]}>
-                    {totalCetis}
-                  </Text>
-                </View>
-              </View>
-            </Animated.View>
-          </View>
+          <Animated.View entering={motion.enterDown(72)} style={stylesD.economyRow}>
+            <StatTile
+              icon="wallet-outline"
+              label={t('goals.savingsTotal')}
+              value={formatDisplayCopGoals(totalSaved)}
+              valueColor={colors.gold.primary}
+              iconColor={colors.gold.primary}
+            />
+            <StatTile
+              icon="sparkles"
+              label={t('goals.cetis')}
+              value={String(totalCetis)}
+              iconColor={colors.brand.primary}
+            />
+          </Animated.View>
 
           <View style={stylesD.actionsRow}>
             <TouchableOpacity
               style={[stylesD.actionBtn, { backgroundColor: colors.brand.primary }]}
-              onPress={() => openDeposit()}
-              accessibilityRole="button"
-              accessibilityLabel={t('goals.save')}
-            >
-              <Ionicons name="add-circle" size={20} color={colors.text.onBrand} />
-              <Text style={[stylesD.actionBtnText, { color: colors.text.onBrand }]}>
-                {t('goals.save')}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                stylesD.actionBtn,
-                {
-                  backgroundColor: colors.background.secondary,
-                  borderColor: colors.materials.border,
-                  borderWidth: 1,
-                },
-              ]}
               onPress={() => setShowNewGoal(true)}
               accessibilityRole="button"
               accessibilityLabel={t('goals.newGoal')}
             >
-              <Ionicons name="flag" size={18} color={colors.text.primary} />
-              <Text style={[stylesD.actionBtnText, { color: colors.text.primary }]}>
+              <Ionicons name="flag" size={18} color={colors.text.onBrand} />
+              <Text style={[stylesD.actionBtnText, { color: colors.text.onBrand }]}>
                 {t('goals.newGoal')}
               </Text>
             </TouchableOpacity>
@@ -287,53 +232,6 @@ export default function GoalsScreen() {
                 />
               </View>
             )}
-          </Animated.View>
-
-          <Animated.View
-            entering={motion.enterDown(168)}
-            style={[stylesD.section, { marginTop: 14 }]}
-          >
-            <Text style={[stylesD.sectionTitle, { color: colors.text.primary }]}>
-              {t('goals.history')}
-            </Text>
-            <View
-              style={[
-                stylesD.historyBox,
-                { backgroundColor: colors.materials.base, borderColor: colors.materials.border },
-              ]}
-            >
-              {deposits.length === 0 ? (
-                <View style={stylesD.historyEmpty}>
-                  <Text style={[stylesD.emptyText, { color: colors.text.tertiary }]}>
-                    {t('goals.noDeposits')}
-                  </Text>
-                </View>
-              ) : (
-                deposits.slice(0, 5).map((d, i, arr) => (
-                  <View
-                    key={d.id}
-                    style={[
-                      stylesD.historyItem,
-                      i < arr.length - 1 && {
-                        borderBottomWidth: 1,
-                        borderBottomColor: colors.materials.border,
-                      },
-                    ]}
-                  >
-                    <Ionicons name="checkmark-circle" size={18} color={colors.system.green} />
-                    <Text style={[stylesD.historyDesc, { color: colors.text.primary }]}>
-                      {d.description}
-                    </Text>
-                    <Text
-                      style={[stylesD.historyAmt, { color: colors.text.secondary }]}
-                      numberOfLines={1}
-                    >
-                      {formatDisplayCopGoals(d.amount)}
-                    </Text>
-                  </View>
-                ))
-              )}
-            </View>
           </Animated.View>
         </ScrollView>
       </ScreenWrapper>
@@ -495,31 +393,6 @@ const stylesD = StyleSheet.create({
   pageSubtitle: { ...Typography.subheadline, marginTop: 4 },
 
   economyRow: { flexDirection: 'row', gap: 12 },
-  economyCard: { flex: 1, borderRadius: 20, borderWidth: 1, overflow: 'hidden', minHeight: 80 },
-  economyCardInner: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-    paddingVertical: 16,
-    paddingHorizontal: 14,
-  },
-  economyIconWrap: {
-    width: 46,
-    height: 46,
-    borderRadius: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  economyTexts: { flex: 1, minWidth: 0, gap: 4 },
-  economyLabel: {
-    ...Typography.caption2,
-    fontSize: 10,
-    fontWeight: '800',
-    letterSpacing: 1.2,
-    textTransform: 'uppercase',
-  },
-  economyValue: { ...Typography.headline, fontWeight: '900', fontSize: 17 },
 
   actionsRow: { flexDirection: 'row', gap: 12 },
   actionBtn: {
@@ -545,18 +418,6 @@ const stylesD = StyleSheet.create({
     borderWidth: 2,
   },
   emptyText: { ...Typography.subheadline, textAlign: 'center' },
-
-  historyBox: { borderRadius: 20, paddingHorizontal: 4, paddingVertical: 4, borderWidth: 1 },
-  historyEmpty: { paddingVertical: 20, alignItems: 'center' },
-  historyItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 12,
-  },
-  historyDesc: { flex: 1, ...Typography.caption1 },
-  historyAmt: { ...Typography.headline, fontWeight: '700', flexShrink: 0, marginLeft: 8 },
 });
 
 const styles = StyleSheet.create({

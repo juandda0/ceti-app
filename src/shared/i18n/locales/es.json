@@ -242,6 +242,7 @@
     "pageTitle": "Mis metas",
     "pageSubtitle": "¡Hola {{name}}! Ahorra para lo que sueñas.",
     "savings": "Ahorros",
+    "savingsTotal": "Ahorro total",
     "cetis": "Cetis",
     "save": "Ahorrar",
     "newGoal": "Nueva meta",
@@ -334,9 +335,16 @@
     "balance": "Balance",
     "ahorroVsGasto": "Ahorro vs gasto de este mes",
     "porCategoria": "Gastos por categoría",
+    "esteMes": "Este mes",
+    "enQueGastaste": "En qué gastaste",
+    "resumen": "Resumen",
     "historial": "Historial",
-    "vacio": "Aún no tienes movimientos. ¡Toca el micrófono y registra el primero!",
-    "borrar": "Borrar movimiento"
+    "editar": "Editar",
+    "vacio": "Aún no tienes movimientos",
+    "vacioEjemplo": "Toca el micrófono y di, por ejemplo: \"gasté 5.000 en el almuerzo\"",
+    "borrar": "Borrar movimiento",
+    "borrarCorto": "Borrar",
+    "borrarHint": "Mantén presionado para borrar"
   },
   "profile": {
     "pageTitle": "Mi perfil",

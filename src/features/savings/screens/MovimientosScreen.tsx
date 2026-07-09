@@ -19,6 +19,7 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { showCetiNotice } from '@shared/store/useCetiOverlayStore';
 import ConfirmMovimientoSheet from '@features/savings/components/ConfirmMovimientoSheet';
 import MicButton from '@features/savings/components/MicButton';
+import Segmented from '@features/savings/components/Segmented';
 import VoiceCaptureSheet from '@features/savings/components/VoiceCaptureSheet';
 import MovimientoListItem from '@features/savings/components/MovimientoListItem';
 import MovimientosCharts from '@features/savings/components/MovimientosCharts';
@@ -47,6 +48,7 @@ export default function MovimientosScreen() {
   const [processing, setProcessing] = useState(false);
   const [clasificacion, setClasificacion] = useState<ClasificacionMovimiento | null>(null);
   const [sheetVisible, setSheetVisible] = useState(false);
+  const [segment, setSegment] = useState<'historial' | 'resumen'>('historial');
 
   const onTranscript = (texto: string) => {
     setProcessing(true);
@@ -142,38 +144,56 @@ export default function MovimientosScreen() {
             )}
           </Animated.View>
 
-          <Animated.View entering={motion.enterDown(104)}>
-            <MovimientosCharts movimientos={movimientos} />
-          </Animated.View>
-
-          <Animated.View entering={motion.enterDown(136)} style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>
-              {t('movimientos.historial')}
-            </Text>
-            <View
+          {movimientos.length === 0 ? (
+            <Animated.View
+              entering={motion.enterDown(104)}
               style={[
-                styles.historyBox,
+                styles.emptyCard,
                 { backgroundColor: colors.materials.base, borderColor: colors.materials.border },
               ]}
             >
-              {historial.length === 0 ? (
-                <View style={styles.historyEmpty}>
-                  <Text style={[styles.noticeBody, { color: colors.text.tertiary }]}>
-                    {t('movimientos.vacio')}
-                  </Text>
-                </View>
+              <Ionicons name="chatbubble-ellipses-outline" size={34} color={colors.brand.primary} />
+              <Text style={[styles.emptyTitle, { color: colors.text.primary }]}>
+                {t('movimientos.vacio')}
+              </Text>
+              <Text style={[styles.emptyExample, { color: colors.text.tertiary }]}>
+                {t('movimientos.vacioEjemplo')}
+              </Text>
+            </Animated.View>
+          ) : (
+            <Animated.View entering={motion.enterDown(104)} style={styles.section}>
+              <Segmented
+                options={[
+                  { key: 'historial', label: t('movimientos.historial') },
+                  { key: 'resumen', label: t('movimientos.resumen') },
+                ]}
+                value={segment}
+                onChange={setSegment}
+              />
+              {segment === 'resumen' ? (
+                <MovimientosCharts movimientos={movimientos} />
               ) : (
-                historial.map((m, i, arr) => (
-                  <MovimientoListItem
-                    key={m.id}
-                    movimiento={m}
-                    showDivider={i < arr.length - 1}
-                    onDelete={() => removeMovimiento(m.id)}
-                  />
-                ))
+                <View
+                  style={[
+                    styles.historyBox,
+                    {
+                      backgroundColor: colors.materials.base,
+                      borderColor: colors.materials.border,
+                    },
+                  ]}
+                >
+                  {historial.map((m, i, arr) => (
+                    <MovimientoListItem
+                      key={m.id}
+                      movimiento={m}
+                      showDivider={i < arr.length - 1}
+                      onDelete={() => removeMovimiento(m.id)}
+                    />
+                  ))}
+                </View>
               )}
-            </View>
-          </Animated.View>
+            </Animated.View>
+          )}
         </ScrollView>
       </ScreenWrapper>
 
@@ -200,7 +220,8 @@ const styles = StyleSheet.create({
   scroll: { paddingHorizontal: Spacing.base, paddingBottom: 120, gap: 22 },
   pageTitle: { ...Typography.largeTitle, fontWeight: '900' },
   pageSubtitle: { ...Typography.subheadline, marginTop: 4 },
-  micSection: { alignItems: 'center', gap: 12, paddingVertical: 8 },
+  // El mic es la acción primaria y única: protagoniza con aire (P0.1).
+  micSection: { alignItems: 'center', gap: 14, paddingVertical: 24 },
   noticeCard: {
     alignSelf: 'stretch',
     alignItems: 'center',
@@ -211,8 +232,17 @@ const styles = StyleSheet.create({
   },
   noticeTitle: { ...Typography.headline, fontWeight: '800', textAlign: 'center' },
   noticeBody: { ...Typography.subheadline, textAlign: 'center' },
-  section: { gap: 14 },
-  sectionTitle: { ...Typography.title3, fontWeight: '800' },
+  section: { gap: 12 },
   historyBox: { borderRadius: 20, paddingHorizontal: 4, paddingVertical: 4, borderWidth: 1 },
-  historyEmpty: { paddingVertical: 20, alignItems: 'center' },
+  emptyCard: {
+    alignItems: 'center',
+    gap: 10,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    paddingVertical: 32,
+    paddingHorizontal: 24,
+  },
+  emptyTitle: { ...Typography.headline, fontWeight: '800', textAlign: 'center' },
+  emptyExample: { ...Typography.subheadline, textAlign: 'center', fontStyle: 'italic' },
 });

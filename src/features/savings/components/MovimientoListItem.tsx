@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -28,6 +29,7 @@ export default function MovimientoListItem({
 }) {
   const colors = useThemeColors();
   const { t } = useTranslation();
+  const [confirming, setConfirming] = useState(false);
   const esAhorro = movimiento.tipo === 'ahorro';
   const fecha = new Date(movimiento.createdAt).toLocaleDateString('es-CO', {
     day: 'numeric',
@@ -35,7 +37,12 @@ export default function MovimientoListItem({
   });
 
   return (
-    <View
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onLongPress={() => setConfirming(true)}
+      delayLongPress={350}
+      accessibilityRole="button"
+      accessibilityHint={t('movimientos.borrarHint')}
       style={[
         styles.item,
         showDivider && { borderBottomWidth: 1, borderBottomColor: colors.materials.border },
@@ -50,26 +57,42 @@ export default function MovimientoListItem({
         <Text style={[styles.desc, { color: colors.text.primary }]} numberOfLines={1}>
           {movimiento.descripcion}
         </Text>
-        <Text style={[styles.meta, { color: colors.text.tertiary }]}>
-          {fecha} · {t(`movimientos.categorias.${movimiento.categoria}`)}
-        </Text>
+        <Text style={[styles.meta, { color: colors.text.tertiary }]}>{fecha}</Text>
       </View>
-      <Text
-        style={[styles.amount, { color: esAhorro ? colors.system.green : colors.system.red }]}
-        numberOfLines={1}
-      >
-        {esAhorro ? '+' : '-'}
-        {formatDisplayCopGoals(movimiento.monto)}
-      </Text>
-      <TouchableOpacity
-        onPress={onDelete}
-        accessibilityRole="button"
-        accessibilityLabel={t('movimientos.borrar')}
-        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-      >
-        <Ionicons name="trash-outline" size={18} color={colors.text.tertiary} />
-      </TouchableOpacity>
-    </View>
+
+      {confirming ? (
+        <View style={styles.confirmRow}>
+          <TouchableOpacity
+            onPress={() => setConfirming(false)}
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel={t('movimientos.cancelar')}
+          >
+            <Text style={[styles.confirmCancel, { color: colors.text.secondary }]}>
+              {t('movimientos.cancelar')}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={onDelete}
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel={t('movimientos.borrarCorto')}
+          >
+            <Text style={[styles.confirmDelete, { color: colors.system.red }]}>
+              {t('movimientos.borrarCorto')}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <Text
+          style={[styles.amount, { color: esAhorro ? colors.system.green : colors.system.red }]}
+          numberOfLines={1}
+        >
+          {esAhorro ? '+' : '−'}
+          {formatDisplayCopGoals(movimiento.monto)}
+        </Text>
+      )}
+    </TouchableOpacity>
   );
 }
 
@@ -80,9 +103,13 @@ const styles = StyleSheet.create({
     gap: 12,
     paddingVertical: 14,
     paddingHorizontal: 12,
+    minHeight: 56,
   },
   texts: { flex: 1, minWidth: 0, gap: 2 },
   desc: { ...Typography.caption1, fontWeight: '600' },
   meta: { ...Typography.caption2 },
   amount: { ...Typography.headline, fontWeight: '700', flexShrink: 0 },
+  confirmRow: { flexDirection: 'row', alignItems: 'center', gap: 16, paddingVertical: 4 },
+  confirmCancel: { ...Typography.subheadline, fontWeight: '600' },
+  confirmDelete: { ...Typography.subheadline, fontWeight: '800' },
 });

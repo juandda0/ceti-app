@@ -1,14 +1,14 @@
 /**
- * Dashboard solo-vista-propia (RQ-ES10 CA5): totales del mes, ahorro vs gasto
- * y desglose por categoría de gasto. Barras con Views, el mismo patrón de las
- * barras de progreso de metas — sin librerías de charts.
+ * Resumen del mes, solo-vista-propia (RQ-ES10 CA5). Compactado (P0.2/P1.2):
+ * 2 stat-tiles (Ahorros/Gastos) + línea de balance + top-3 categorías de gasto.
+ * Sin barras normalizadas (engañan con datos escasos) ni cifras redundantes.
  */
 import { StyleSheet, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { Typography } from '@shared/constants/typography';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { formatDisplayCopGoals } from '@shared/utils/formatDisplayCop';
+import StatTile from '@features/savings/components/StatTile';
 import { totalesDelMes, totalesPorCategoria } from '@features/savings/data/movimientosStats';
 import type { Movimiento } from '@features/savings/store/useMovimientosStore';
 
@@ -16,102 +16,56 @@ export default function MovimientosCharts({ movimientos }: { movimientos: Movimi
   const colors = useThemeColors();
   const { t } = useTranslation();
   const { ahorros, gastos, balance } = totalesDelMes(movimientos);
-  const porCategoria = totalesPorCategoria(movimientos, 'gasto');
-  const totalMes = ahorros + gastos;
-  const maxCategoria = porCategoria[0]?.total ?? 0;
-
-  const card = [
-    styles.card,
-    { backgroundColor: colors.materials.base, borderColor: colors.materials.border },
-  ];
+  const topCategorias = totalesPorCategoria(movimientos, 'gasto').slice(0, 3);
 
   return (
     <View style={styles.wrap}>
-      <View style={styles.totalsRow}>
-        <View style={card}>
-          <Ionicons name="trending-up" size={18} color={colors.system.green} />
-          <Text style={[styles.totalLabel, { color: colors.text.tertiary }]}>
-            {t('movimientos.ahorros')}
-          </Text>
-          <Text style={[styles.totalValue, { color: colors.system.green }]} numberOfLines={1}>
-            {formatDisplayCopGoals(ahorros)}
-          </Text>
-        </View>
-        <View style={card}>
-          <Ionicons name="trending-down" size={18} color={colors.system.red} />
-          <Text style={[styles.totalLabel, { color: colors.text.tertiary }]}>
-            {t('movimientos.gastos')}
-          </Text>
-          <Text style={[styles.totalValue, { color: colors.system.red }]} numberOfLines={1}>
-            {formatDisplayCopGoals(gastos)}
-          </Text>
-        </View>
-        <View style={card}>
-          <Ionicons name="scale-outline" size={18} color={colors.brand.primary} />
-          <Text style={[styles.totalLabel, { color: colors.text.tertiary }]}>
-            {t('movimientos.balance')}
-          </Text>
-          <Text
-            style={[
-              styles.totalValue,
-              { color: balance >= 0 ? colors.system.green : colors.system.red },
-            ]}
-            numberOfLines={1}
-          >
-            {formatDisplayCopGoals(balance)}
-          </Text>
-        </View>
+      <Text style={[styles.scope, { color: colors.text.tertiary }]}>
+        {t('movimientos.esteMes')}
+      </Text>
+
+      <View style={styles.tilesRow}>
+        <StatTile
+          icon="trending-up"
+          label={t('movimientos.ahorros')}
+          value={formatDisplayCopGoals(ahorros)}
+          valueColor={colors.system.green}
+          iconColor={colors.system.green}
+        />
+        <StatTile
+          icon="trending-down"
+          label={t('movimientos.gastos')}
+          value={formatDisplayCopGoals(gastos)}
+          valueColor={colors.system.red}
+          iconColor={colors.system.red}
+        />
       </View>
 
-      {totalMes > 0 && (
-        <View style={styles.dualBarWrap}>
-          <View style={[styles.dualBar, { backgroundColor: colors.materials.highlight }]}>
-            <View
-              style={[
-                styles.dualFill,
-                {
-                  backgroundColor: colors.system.green,
-                  flex: ahorros / totalMes,
-                },
-              ]}
-            />
-            <View
-              style={[
-                styles.dualFill,
-                {
-                  backgroundColor: colors.system.red,
-                  flex: gastos / totalMes,
-                },
-              ]}
-            />
-          </View>
-          <Text style={[styles.dualCaption, { color: colors.text.tertiary }]}>
-            {t('movimientos.ahorroVsGasto')}
-          </Text>
-        </View>
-      )}
+      <View style={[styles.balanceRow, { borderColor: colors.materials.border }]}>
+        <Text style={[styles.balanceLabel, { color: colors.text.secondary }]}>
+          {t('movimientos.balance')}
+        </Text>
+        <Text
+          style={[
+            styles.balanceValue,
+            { color: balance >= 0 ? colors.system.green : colors.system.red },
+          ]}
+        >
+          {balance >= 0 ? '+' : '−'}
+          {formatDisplayCopGoals(Math.abs(balance))}
+        </Text>
+      </View>
 
-      {porCategoria.length > 0 && (
-        <View style={styles.categoriasBox}>
-          <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>
-            {t('movimientos.porCategoria')}
+      {topCategorias.length > 0 && (
+        <View style={styles.catBox}>
+          <Text style={[styles.catTitle, { color: colors.text.primary }]}>
+            {t('movimientos.enQueGastaste')}
           </Text>
-          {porCategoria.map(({ categoria, total }) => (
+          {topCategorias.map(({ categoria, total }) => (
             <View key={categoria} style={styles.catRow}>
               <Text style={[styles.catLabel, { color: colors.text.secondary }]} numberOfLines={1}>
                 {t(`movimientos.categorias.${categoria}`)}
               </Text>
-              <View style={[styles.catBarBg, { backgroundColor: colors.materials.highlight }]}>
-                <View
-                  style={[
-                    styles.catBarFill,
-                    {
-                      backgroundColor: colors.brand.primary,
-                      width: `${maxCategoria > 0 ? (total / maxCategoria) * 100 : 0}%`,
-                    },
-                  ]}
-                />
-              </View>
               <Text style={[styles.catAmount, { color: colors.text.primary }]} numberOfLines={1}>
                 {formatDisplayCopGoals(total)}
               </Text>
@@ -124,38 +78,26 @@ export default function MovimientosCharts({ movimientos }: { movimientos: Movimi
 }
 
 const styles = StyleSheet.create({
-  wrap: { gap: 16 },
-  totalsRow: { flexDirection: 'row', gap: 10 },
-  card: {
-    flex: 1,
-    borderRadius: 18,
-    borderWidth: 1,
-    padding: 12,
-    gap: 4,
-    alignItems: 'flex-start',
-  },
-  totalLabel: {
+  wrap: { gap: 14 },
+  scope: {
     ...Typography.caption2,
-    fontSize: 10,
     fontWeight: '800',
     letterSpacing: 1,
     textTransform: 'uppercase',
   },
-  totalValue: { ...Typography.headline, fontWeight: '900', fontSize: 15 },
-  dualBarWrap: { gap: 6 },
-  dualBar: {
-    height: 14,
-    borderRadius: 7,
+  tilesRow: { flexDirection: 'row', gap: 12 },
+  balanceRow: {
     flexDirection: 'row',
-    overflow: 'hidden',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    paddingTop: 12,
   },
-  dualFill: { height: '100%' },
-  dualCaption: { ...Typography.caption2, textAlign: 'center' },
-  categoriasBox: { gap: 10 },
-  sectionTitle: { ...Typography.title3, fontWeight: '800' },
-  catRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  catLabel: { ...Typography.caption1, width: 110 },
-  catBarBg: { flex: 1, height: 10, borderRadius: 5, overflow: 'hidden' },
-  catBarFill: { height: '100%', borderRadius: 5 },
-  catAmount: { ...Typography.caption1, fontWeight: '700', minWidth: 70, textAlign: 'right' },
+  balanceLabel: { ...Typography.subheadline, fontWeight: '700' },
+  balanceValue: { ...Typography.headline, fontWeight: '900' },
+  catBox: { gap: 10, marginTop: 2 },
+  catTitle: { ...Typography.subheadline, fontWeight: '800' },
+  catRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12 },
+  catLabel: { ...Typography.body, flex: 1 },
+  catAmount: { ...Typography.body, fontWeight: '700' },
 });
