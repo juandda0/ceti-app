@@ -73,7 +73,6 @@ Orientación sobre COPPA / GDPR-K y datos de menores: [`docs/COMPLIANCE.md`](doc
 - `app/` — rutas Expo Router (`(auth)` para login/onboarding, `(app)` para saga/savings/profile, `lesson/[id]` para lecciones individuales).
 - `src/features/auth|learning|savings` — dominios de producto.
 - `src/shared/` — tema, analytics (stubs / React Native Firebase opcional), sesión, i18n.
-- `src/services/ai/` — abstracción AI (hoy stubs; preparada para integrar Claude API).
 - `functions/` — estructura para Firebase Cloud Functions (vacío hoy).
 
 ## Smoke test (sincronización single-user)

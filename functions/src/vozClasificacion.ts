@@ -121,7 +121,7 @@ export class ModelApiError extends Error {}
 
 /**
  * Injectable model call: takes the system prompt + user text, returns the raw
- * JSON string the model produced. Tests pass a mock; production passes geminiCaller.
+ * JSON string the model produced. Tests pass a mock; production passes groqCaller.
  */
 export type ModelCaller = (systemPrompt: string, userText: string) => Promise<string>;
 

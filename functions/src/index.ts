@@ -493,7 +493,7 @@ export const joinByCode = onCall(async (request) => {
 // Voice diary classification (RQ-ES10). The ONLY runtime AI in Ceti — the
 // narrow R7 exception (D-ES10-01). Receives the browser-transcribed TEXT of a
 // student's pocket-money entry (audio never reaches our servers), classifies it
-// via Claude with structured output, and RETURNS the classification. It never
+// via an LLM (Groq) with structured output, and RETURNS the classification. It never
 // writes the movimiento — the client persists only after the student confirms
 // (CA3), under the isSelf rules of users/{uid}/movimientos.
 // ---------------------------------------------------------------------------
@@ -512,7 +512,7 @@ function vozUsoRef(uid: string) {
  * Read-only budget check (CA8): throws resource-exhausted at the cap WITHOUT
  * incrementing. The increment happens only after a successful classification
  * (`chargeVozBudget`), so model failures never consume the student's quota —
- * otherwise an Anthropic outage would let a student burn all 30/day on retries
+ * otherwise a provider outage would let a student burn all 30/day on retries
  * without a single successful registration and lock themselves out.
  * ponytail: read-then-charge is not atomic, but the cap is a soft cost guard and
  * the UI serializes requests (single `processing` flag) — per-account races are
