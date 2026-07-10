@@ -1,10 +1,6 @@
 {
-  "app": {
-    "name": "Ceti"
-  },
   "errors": {
-    "genericTitle": "Algo salió mal",
-    "genericBody": "Intenta de nuevo más tarde."
+    "genericTitle": "Algo salió mal"
   },
   "welcome": {
     "overline": "Innovación",
@@ -75,7 +71,6 @@
     "studentItem": "Completar Mundo {{n}} antes del {{date}}",
     "error": "No se pudo crear la asignación."
   },
-  "learning": {},
   "microteoria": {
     "badge": "Micro-teoría",
     "ejemplo": "Ejemplo",
@@ -101,9 +96,6 @@
     "weakest": "Competencia más floja: {{competencia}} ({{pct}})",
     "byCourse": "Por curso",
     "byCompetency": "Por competencia",
-    "bySede": "Por sede",
-    "noSede": "Sin sede",
-    "sedeCourses": "{{count}} cursos",
     "studentsCount": "{{count}} estudiantes con actividad"
   },
   "admin": {
@@ -214,25 +206,11 @@
     "yourGoals": "Tus metas",
     "firstGoal": "¿Cuál será tu primera meta?",
     "createMyGoal": "Crear mi meta",
-    "history": "Historial",
-    "noDeposits": "Sin depósitos todavía",
     "goalReached": "¡Meta alcanzada!",
     "yourGoal": "Tu meta",
     "ofTarget": "de {{amount}}",
     "depositForGoal": "Ahorrar para {{title}}",
-    "registerSaving": "Registrar ahorro",
-    "registerSavingSub": "Se aplica directamente a tu meta",
-    "amountPlaceholder": "¿Cuánto? (ej: 50.000)",
-    "sourcePlaceholder": "¿De dónde salió? (Ej: Domingo)",
-    "whichGoal": "¿Para qué meta es?",
     "cancel": "Cancelar",
-    "saveBtn": "Guardar",
-    "needGoalTitle": "Primero una meta",
-    "needGoalMsg": "Crea una meta antes de registrar ahorros.",
-    "reviewTitle": "Revisa los datos",
-    "reviewMsg": "Indica cuánto ahorraste y una descripción.",
-    "savedTitle": "¡Guardado!",
-    "savedMsg": "Tu ahorro fue registrado.",
     "newGoalTitle": "Nueva meta",
     "newGoalSub": "¿Qué quieres conseguir?",
     "goalNamePlaceholder": "¿Qué quieres comprar o hacer?",
@@ -257,7 +235,6 @@
     "micListening": "Te escucho… toca para parar",
     "micHint": "Toca y di un gasto, un ahorro o una meta.",
     "listeningTitle": "Te escucho…",
-    "listeningHint": "Habla y ve viendo lo que escribo; toca Listo cuando termines.",
     "transcriptPlaceholder": "Lo que digas aparecerá aquí…",
     "listo": "Listo",
     "processing": "Clasificando tu registro…",
@@ -298,8 +275,6 @@
     "ahorros": "Ahorros",
     "gastos": "Gastos",
     "balance": "Balance",
-    "ahorroVsGasto": "Ahorro vs gasto de este mes",
-    "porCategoria": "Gastos por categoría",
     "esteMes": "Este mes",
     "enQueGastaste": "En qué gastaste",
     "resumen": "Resumen",
