@@ -85,14 +85,3 @@ export const Typography: Record<string, TextStyle> = {
     letterSpacing: 0.2,
   },
 };
-
-export const FontSizes = {
-  xs: 12,
-  sm: 14,
-  md: 16,
-  lg: 18,
-  xl: 20,
-  '2xl': 24,
-  '3xl': 34,
-  '4xl': 56,
-};

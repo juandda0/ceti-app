@@ -1,6 +1,6 @@
 import { deleteDoc, setDoc } from 'firebase/firestore';
 import { getFirebaseClients } from '@shared/lib/firebase/app';
-import { userGoalDocRef, userGoalsCollectionRef } from '@shared/lib/firebase/paths';
+import { userGoalDocRef } from '@shared/lib/firebase/paths';
 import { stripUndefinedValues } from '@shared/lib/firebase/sanitizeForFirestore';
 import type { SavingsGoal } from '@features/savings/store/useSavingsStore';
 

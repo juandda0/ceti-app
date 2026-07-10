@@ -1,6 +1,6 @@
 // app/(auth)/welcome.tsx — Welcome screen with smooth transitions
 import { useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import Animated, {
   useSharedValue,

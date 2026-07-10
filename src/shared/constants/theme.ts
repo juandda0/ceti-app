@@ -60,5 +60,3 @@ export const Shadows = {
     elevation: 0,
   },
 };
-
-export const MinTouchTarget = 44;

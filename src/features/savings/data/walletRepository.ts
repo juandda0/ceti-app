@@ -2,11 +2,7 @@ import { setDoc } from 'firebase/firestore';
 import { getFirebaseClients } from '@shared/lib/firebase/app';
 import { userWalletDocRef } from '@shared/lib/firebase/paths';
 import { stripUndefinedValues } from '@shared/lib/firebase/sanitizeForFirestore';
-import type {
-  Transaction,
-  TransactionCategory,
-  TransactionType,
-} from '@features/savings/store/useWalletStore';
+import type { Transaction } from '@features/savings/store/useWalletStore';
 
 export type RemoteWalletState = {
   totalCetis: number;

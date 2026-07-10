@@ -13,7 +13,7 @@ import {
   signInWithRedirect,
 } from 'firebase/auth';
 import * as AppleAuthentication from 'expo-apple-authentication';
-import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/app';
+import { getFirebaseClients } from '@shared/lib/firebase/app';
 
 type Extra = {
   googleWebClientId?: string;
@@ -206,10 +206,6 @@ export async function signInWithApple(): Promise<void> {
   const provider = new OAuthProvider('apple.com');
   const credential = provider.credential({ idToken: apple.identityToken });
   await signInWithCredential(clients.auth, credential);
-}
-
-export function assertFirebaseAuth(): void {
-  if (!isFirebaseConfigured()) throw new Error('Firebase no configurado');
 }
 
 /** Cierra sesión en proveedores nativos y limpia caché de Google para forzar el selector de cuentas en el próximo login. */

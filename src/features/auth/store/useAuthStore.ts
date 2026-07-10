@@ -125,11 +125,5 @@ export function isStaffRole(role: Role | null): boolean {
   return role != null && (STAFF_ROLES as readonly string[]).includes(role);
 }
 
-/** Hook: current role, or null if unprovisioned. */
-export const useRole = (): Role | null => useAuthStore((s) => s.role);
-
-/** Hook: whether the signed-in user is school staff. */
-export const useIsStaff = (): boolean => useAuthStore((s) => isStaffRole(s.role));
-
 /** Hook: whether the signed-in user is the platform admin Ceti (role claim — R3). */
 export const useIsAdmin = (): boolean => useAuthStore((s) => s.role === 'admin');

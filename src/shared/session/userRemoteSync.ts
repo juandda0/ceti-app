@@ -1,6 +1,6 @@
 import { onSnapshot } from 'firebase/firestore';
 import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/app';
-import { useUserStore, type UserState } from '@features/auth/store/useUserStore';
+import { useUserStore } from '@features/auth/store/useUserStore';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
 import type { SavingsGoal, SavingsDeposit } from '@features/savings/store/useSavingsStore';
 import { useWalletStore } from '@features/savings/store/useWalletStore';
@@ -26,29 +26,6 @@ export function endRemoteApply() {
 }
 export function isApplyingSnapshot() {
   return applyingSnapshot;
-}
-
-function applyUserDocPartial(d: Partial<UserState> & Record<string, unknown>): void {
-  const patch: Record<string, unknown> = {};
-  if (typeof d.nickname === 'string') patch.nickname = d.nickname;
-  if (typeof d.fullName === 'string') patch.fullName = d.fullName;
-  if (typeof d.avatarId === 'string') patch.avatarId = d.avatarId;
-  if (typeof d.avatarEmoji === 'string') patch.avatarEmoji = d.avatarEmoji;
-  if (typeof d.level === 'number') patch.level = d.level;
-  if (typeof d.xp === 'number') patch.xp = d.xp;
-  if (typeof d.streak === 'number') patch.streak = d.streak;
-  if (typeof d.lastStreakMissionDate === 'string')
-    patch.lastStreakMissionDate = d.lastStreakMissionDate;
-  if (Array.isArray(d.missionCalendarDays)) patch.missionCalendarDays = d.missionCalendarDays;
-  if (typeof d.totalLessonsCompleted === 'number')
-    patch.totalLessonsCompleted = d.totalLessonsCompleted;
-  if (typeof d.savingsDecisions === 'number') patch.savingsDecisions = d.savingsDecisions;
-  if (Array.isArray(d.unlockedBadges)) patch.unlockedBadges = d.unlockedBadges;
-  if (typeof d.lastCelebratedLevel === 'number') patch.lastCelebratedLevel = d.lastCelebratedLevel;
-
-  if (Object.keys(patch).length > 0) {
-    useUserStore.getState().loadProfile(patch as Partial<UserState>);
-  }
 }
 
 function applyWalletSnapshot(data: RemoteWalletState): void {
