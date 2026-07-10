@@ -59,7 +59,10 @@ export default function ConfirmMovimientoSheet({
     setDescripcion(clasificacion.descripcion);
     setCategoria(clasificacion.categoria);
     setGoalId(preSelectedGoalId);
-    setEditing(clasificacion.confianza < CONFIANZA_MINIMA);
+    // Siempre abrir en el RESUMEN con el mejor intento de la IA; el formulario
+    // completo solo aparece si el estudiante toca "Editar" (aunque la confianza
+    // sea baja, el resumen se muestra con un aviso — nunca el form de entrada).
+    setEditing(false);
   }, [visible, clasificacion, preSelectedGoalId]);
 
   if (!clasificacion) return null;

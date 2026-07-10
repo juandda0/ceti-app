@@ -1,8 +1,10 @@
 /**
  * RQ-ES10 — Voice-diary text classification (the ONLY runtime AI in Ceti,
- * excepción D-ES10-01). Pure module: no firebase imports, the Anthropic client
- * is injected so tests can pass a mock. The model only ever sees the transcript
- * TEXT (audio never reaches our servers) and is instructed to drop PII.
+ * excepción D-ES10-01). Pure module: no firebase imports, the model call is
+ * injected (ModelCaller) so tests can pass a mock. The model only ever sees the
+ * transcript TEXT (audio never reaches our servers) and is instructed to drop PII.
+ * Provider: Groq (Llama, JSON mode). The provider is an implementation detail —
+ * the R7 exception is "server-side classification for RQ-ES10", not a specific vendor.
  */
 
 export const MOVIMIENTO_CATEGORIAS = [
@@ -62,35 +64,6 @@ Ejemplos:
 - "abonar diez mil a la bici" -> {"intencion":"abonar_meta","tipo":"ahorro","monto":10000,"descripcion":"bici","categoria":"otros","confianza":0.9}
 - "eh mmm no sé qué decir hola hola" -> {"intencion":"movimiento","tipo":"gasto","monto":0,"descripcion":"registro no claro","categoria":"otros","confianza":0.1}`;
 
-// Structured-outputs schema. Numeric/length bounds are NOT supported by the
-// API's json_schema format, so parseClasificacion() enforces them server-side.
-export const MOVIMIENTO_OUTPUT_SCHEMA = {
-  type: 'object',
-  additionalProperties: false,
-  required: ['intencion', 'tipo', 'monto', 'descripcion', 'categoria', 'confianza'],
-  properties: {
-    intencion: { type: 'string', enum: [...MOVIMIENTO_INTENCIONES] },
-    tipo: { type: 'string', enum: ['ahorro', 'gasto'] },
-    monto: { type: 'integer' },
-    descripcion: { type: 'string' },
-    categoria: { type: 'string', enum: [...MOVIMIENTO_CATEGORIAS] },
-    confianza: { type: 'number' },
-  },
-} as const;
-
-/** Minimal surface of the Anthropic SDK client — injected so tests mock it. */
-export interface AnthropicLike {
-  messages: {
-    // any: la firma real del SDK tipa params de forma más estricta; por
-    // contravarianza, cualquier tipo concreto aquí impediría inyectar el
-    // cliente real. Solo esta función construye los params.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    create(params: any): Promise<{
-      content: Array<{ type: string; text?: string }>;
-    }>;
-  };
-}
-
 /**
  * Validates/normalizes the raw model output. Throws on unrecoverable shapes;
  * normalizes recoverable ones (unknown category -> 'otros' with penalized
@@ -143,22 +116,67 @@ export function parseClasificacion(raw: unknown): ClasificacionMovimiento {
   };
 }
 
-/** Calls the model with structured output and returns the validated classification. */
+/** Error from the model provider (network / HTTP / empty response) — retryable. */
+export class ModelApiError extends Error {}
+
+/**
+ * Injectable model call: takes the system prompt + user text, returns the raw
+ * JSON string the model produced. Tests pass a mock; production passes geminiCaller.
+ */
+export type ModelCaller = (systemPrompt: string, userText: string) => Promise<string>;
+
+// Groq: OpenAI-compatible chat completions. JSON mode (`response_format`) forces
+// valid JSON; el SYSTEM_PROMPT ya describe el shape y los ejemplos, y
+// parseClasificacion valida/normaliza. Modelo fácil de cambiar si Groq lo retira.
+export const GROQ_MODEL = 'llama-3.3-70b-versatile';
+const GROQ_TIMEOUT_MS = 15_000;
+
+/** Production ModelCaller: Groq (Llama) JSON-mode chat completion. */
+export function groqCaller(apiKey: string): ModelCaller {
+  return async (systemPrompt, userText) => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), GROQ_TIMEOUT_MS);
+    try {
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', authorization: `Bearer ${apiKey}` },
+        body: JSON.stringify({
+          model: GROQ_MODEL,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userText },
+          ],
+          response_format: { type: 'json_object' },
+          temperature: 0,
+          max_tokens: 300,
+        }),
+        signal: controller.signal,
+      });
+      if (!res.ok) {
+        const detail = await res.text().catch(() => '');
+        throw new ModelApiError(`Groq HTTP ${res.status}: ${detail.slice(0, 300)}`);
+      }
+      const data = (await res.json()) as {
+        choices?: { message?: { content?: string } }[];
+      };
+      const text = data.choices?.[0]?.message?.content;
+      if (!text) throw new ModelApiError('Groq no devolvió texto.');
+      return text;
+    } catch (e) {
+      if (e instanceof ModelApiError) throw e;
+      // AbortError / network / DNS → also a provider-availability failure.
+      throw new ModelApiError(e instanceof Error ? e.message : String(e));
+    } finally {
+      clearTimeout(timer);
+    }
+  };
+}
+
+/** Calls the model and returns the validated classification. */
 export async function clasificarTexto(
   texto: string,
-  client: AnthropicLike
+  call: ModelCaller
 ): Promise<ClasificacionMovimiento> {
-  const response = await client.messages.create({
-    model: 'claude-haiku-4-5',
-    max_tokens: 300,
-    system: SYSTEM_PROMPT,
-    output_config: { format: { type: 'json_schema', schema: MOVIMIENTO_OUTPUT_SCHEMA } },
-    messages: [{ role: 'user', content: texto }],
-  });
-
-  const block = response.content.find((b) => b.type === 'text');
-  if (!block?.text) {
-    throw new Error('El modelo no devolvió texto.');
-  }
-  return parseClasificacion(JSON.parse(block.text));
+  const raw = await call(SYSTEM_PROMPT, texto);
+  return parseClasificacion(JSON.parse(raw));
 }

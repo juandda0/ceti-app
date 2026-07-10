@@ -17,8 +17,7 @@ import { defineSecret } from 'firebase-functions/params';
 import { initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
-import Anthropic from '@anthropic-ai/sdk';
-import { clasificarTexto } from './vozClasificacion';
+import { clasificarTexto, groqCaller, ModelApiError } from './vozClasificacion';
 
 initializeApp();
 
@@ -499,7 +498,7 @@ export const joinByCode = onCall(async (request) => {
 // (CA3), under the isSelf rules of users/{uid}/movimientos.
 // ---------------------------------------------------------------------------
 
-const ANTHROPIC_API_KEY = defineSecret('ANTHROPIC_API_KEY');
+const GROQ_API_KEY = defineSecret('GROQ_API_KEY');
 const VOZ_CAP_DIARIO = 30;
 const VOZ_MAX_CHARS = 300;
 
@@ -535,7 +534,7 @@ async function chargeVozBudget(uid: string): Promise<void> {
   );
 }
 
-export const procesarRegistroVoz = onCall({ secrets: [ANTHROPIC_API_KEY] }, async (request) => {
+export const procesarRegistroVoz = onCall({ secrets: [GROQ_API_KEY] }, async (request) => {
   const caller = request.auth;
   requireAuth(caller);
   if (caller.token.role !== 'estudiante') {
@@ -548,19 +547,16 @@ export const procesarRegistroVoz = onCall({ secrets: [ANTHROPIC_API_KEY] }, asyn
 
   await assertVozBudgetAvailable(caller.uid);
 
-  const client = new Anthropic({
-    apiKey: ANTHROPIC_API_KEY.value(),
-    timeout: 15_000,
-    maxRetries: 1,
-  });
-
   let resultado;
   try {
-    resultado = await clasificarTexto(texto, client);
+    resultado = await clasificarTexto(texto, groqCaller(GROQ_API_KEY.value()));
   } catch (e) {
-    if (e instanceof Anthropic.APIError) {
-      // 429/5xx/red tras el retry del SDK: el cliente puede reintentar. No se
-      // cobra cuota — el fallo es del servidor, no del estudiante.
+    // Log the REAL cause (bad key, model access, quota, bad request) — el
+    // HttpsError que devolvemos es genérico, así que sin esto el error se pierde.
+    console.error('procesarRegistroVoz: fallo de clasificación', e);
+    if (e instanceof ModelApiError) {
+      // HTTP/red/timeout del proveedor: reintentar. No se cobra cuota — el fallo
+      // es del servidor/proveedor, no del estudiante.
       throw new HttpsError('unavailable', 'El clasificador no está disponible, intenta de nuevo.');
     }
     // JSON/forma inválida del modelo: bug nuestro o del modelo, no del usuario.

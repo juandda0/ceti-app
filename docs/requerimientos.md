@@ -339,7 +339,7 @@ categoría, historial). La voz es el único camino de registro.
 - _CA5_: `users/{uid}/movimientos` es legible/escribible/borrable **únicamente** por el propio estudiante (`isSelf`); ningún otro rol (profesor ni admin) lee movimientos individuales; no existen agregados de movimientos para staff.
 - _CA6_: Sin perfilamiento: la categoría es atributo de la transacción, no del menor; ningún rasgo derivado se persiste ni adapta contenido; analytics recibe solo `{origen, tipo}` — nunca montos, descripciones ni categorías.
 - _CA7_: El estudiante puede borrar cualquier movimiento propio; `suppressStudentData` elimina también `users/{uid}/movimientos` (Ley 1581).
-- _CA8_: La función aplica cap diario por uid y cap de longitud; la API key vive en `defineSecret('ANTHROPIC_API_KEY')`, nunca en el cliente.
+- _CA8_: La función aplica cap diario por uid y cap de longitud; la API key vive en `defineSecret('GROQ_API_KEY')`, nunca en el cliente.
 - _CA9_: Sin `SpeechRecognition` o micrófono denegado, la app muestra un mensaje claro ("usa Chrome/Edge/Safari"); el dashboard sigue visible (riesgo aceptado por el dueño: sin voz no hay registro).
 
 ### Conflictos resueltos en esta sección

@@ -2,23 +2,18 @@ import {
   clasificarTexto,
   parseClasificacion,
   DESCRIPCION_MAX,
-  type AnthropicLike,
+  type ModelCaller,
 } from './vozClasificacion';
 
-function mockClient(text: string | undefined): AnthropicLike {
-  return {
-    messages: {
-      create: jest.fn().mockResolvedValue({
-        content: text === undefined ? [] : [{ type: 'text', text }],
-      }),
-    },
-  };
+function mockCaller(json: string): ModelCaller {
+  return jest.fn().mockResolvedValue(json) as unknown as ModelCaller;
 }
 
 describe('clasificarTexto', () => {
   it('devuelve la clasificación validada en el caso feliz', async () => {
-    const client = mockClient(
+    const call = mockCaller(
       JSON.stringify({
+        intencion: 'movimiento',
         tipo: 'gasto',
         monto: 5000,
         descripcion: 'helado',
@@ -26,7 +21,7 @@ describe('clasificarTexto', () => {
         confianza: 0.97,
       })
     );
-    const result = await clasificarTexto('gasté cinco mil en un helado', client);
+    const result = await clasificarTexto('gasté cinco mil en un helado', call);
     expect(result).toEqual({
       intencion: 'movimiento',
       tipo: 'gasto',
@@ -35,22 +30,12 @@ describe('clasificarTexto', () => {
       categoria: 'comida',
       confianza: 0.97,
     });
-    expect(client.messages.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        model: 'claude-haiku-4-5',
-        messages: [{ role: 'user', content: 'gasté cinco mil en un helado' }],
-      })
-    );
+    // El caller recibe (systemPrompt, userText) — el texto del usuario intacto.
+    expect(call).toHaveBeenCalledWith(expect.any(String), 'gasté cinco mil en un helado');
   });
 
   it('lanza si el modelo devuelve JSON malformado', async () => {
-    await expect(clasificarTexto('x', mockClient('{no es json'))).rejects.toThrow();
-  });
-
-  it('lanza si el modelo no devuelve texto', async () => {
-    await expect(clasificarTexto('x', mockClient(undefined))).rejects.toThrow(
-      'El modelo no devolvió texto.'
-    );
+    await expect(clasificarTexto('x', mockCaller('{no es json'))).rejects.toThrow();
   });
 });
 
