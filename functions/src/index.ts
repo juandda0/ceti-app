@@ -614,6 +614,15 @@ export const generateClassCode = onCall(async (request) => {
 export const joinByCode = onCall(async (request) => {
   const caller = request.auth;
   requireAuth(caller);
+  // Un profesor/admin no se une como estudiante: joinByCode sobreescribe claims,
+  // así que sin este guard un link de invitación degradaría su rol. La UI ya no
+  // los expone al gate, pero la callable debe defenderse por sí misma.
+  if (caller.token.role === 'profesor' || caller.token.role === 'admin') {
+    throw new HttpsError(
+      'failed-precondition',
+      'Un profesor o administrador no puede unirse a una clase como estudiante.'
+    );
+  }
   const code = requireString(request.data?.code, 'code').toUpperCase();
 
   const db = getFirestore();

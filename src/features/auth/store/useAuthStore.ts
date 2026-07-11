@@ -5,6 +5,7 @@ import { useUserStore } from '@features/auth/store/useUserStore';
 import { useQuestionBankStore } from '@features/learning/store/useQuestionBankStore';
 import { useLearningFlowStore } from '@features/learning/store/useLearningFlowStore';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
+import { useMovimientosStore } from '@features/savings/store/useMovimientosStore';
 import { STAFF_ROLES, type CetiClaims, type Role } from '@shared/types/tenancy';
 
 interface AuthState {
@@ -92,6 +93,10 @@ export const useAuthStore = create<AuthStore>()(
           /* noop */
         }
         useSavingsStore.getState().resetSavings();
+        // El diario de bolsillo es PII financiera del menor (Ley 1581): sin este
+        // reset, la siguiente cuenta en el mismo navegador vería los movimientos
+        // de la anterior (no hay lectura remota que los reemplace por uid).
+        useMovimientosStore.getState().resetMovimientos();
         useQuestionBankStore.getState().resetUserProgress();
         useLearningFlowStore.getState().reset();
         useUserStore.getState().resetUser();

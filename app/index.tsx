@@ -12,6 +12,9 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { useAuthStore, isStaffRole } from '@features/auth/store/useAuthStore';
 import { useUserStore } from '@features/auth/store/useUserStore';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
+import { useMovimientosStore } from '@features/savings/store/useMovimientosStore';
+import { useQuestionBankStore } from '@features/learning/store/useQuestionBankStore';
+import { useLearningFlowStore } from '@features/learning/store/useLearningFlowStore';
 import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/app';
 import { readCetiClaims } from '@shared/lib/firebase/claims';
 import { userRepository } from '@features/auth/data/userRepository';
@@ -124,8 +127,14 @@ export default function Index() {
       const idMismatch = persistedId !== u.uid && (persistedId !== '' || localUser.isOnboarded);
 
       if (idMismatch) {
+        // Otra cuenta en el mismo dispositivo: purga TODO el estado local del
+        // usuario anterior (incluye el diario de bolsillo, PII del menor) — no
+        // basta con user+savings o el diario de A quedaría visible para B.
         useUserStore.getState().resetUser();
         useSavingsStore.getState().resetSavings();
+        useMovimientosStore.getState().resetMovimientos();
+        useQuestionBankStore.getState().resetUserProgress();
+        useLearningFlowStore.getState().reset();
       }
 
       if (!remote) {

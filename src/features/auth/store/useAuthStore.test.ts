@@ -1,4 +1,5 @@
 import { useAuthStore } from '@features/auth/store/useAuthStore';
+import { useMovimientosStore } from '@features/savings/store/useMovimientosStore';
 
 describe('useAuthStore', () => {
   beforeEach(() => {
@@ -27,5 +28,18 @@ describe('useAuthStore', () => {
     expect(s.isAuthenticated).toBe(false);
     expect(s.lastLogin).toBeNull();
     expect(s.authReady).toBe(true);
+  });
+
+  it('logout limpia el diario de bolsillo (F1: sin fuga entre cuentas)', async () => {
+    useMovimientosStore.getState().addMovimiento({
+      tipo: 'gasto',
+      monto: 5000,
+      descripcion: 'helado',
+      categoria: 'comida',
+      origen: 'manual',
+    });
+    expect(useMovimientosStore.getState().movimientos.length).toBeGreaterThan(0);
+    await useAuthStore.getState().logout();
+    expect(useMovimientosStore.getState().movimientos).toHaveLength(0);
   });
 });
