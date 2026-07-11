@@ -84,6 +84,19 @@ colegios/{colegioId}
   ├─ cursos/{cursoId}
   │    └─ (doc) { nombre, grado, sedeId?, profesorUids: string[],
   │               codigo?: string }   # colaboracionAula removido por D-CUT; codigo = self-join
+  │    └─ config/mundos                           # D-ORQ (RQ-PR10): configuración de clase
+  │    │    └─ (doc) { mundos: [{ worldId, activo }],   # array = orden vigente
+  │    │               modoEnfocado: { activo, worldId? },
+  │    │               overrides?: { [worldId]: { mc?, vf?, ordenar?, teoria?, meta?, eligeCamino? } },
+  │    │               version, updatedAt, updatedByUid }
+  │    │        # AUSENCIA del doc = defaults (5 mundos, orden canónico, todo activo).
+  │    │        # Escribe/borra solo el profesor del curso; lee el curso. onSnapshot en cliente.
+  │    └─ contenido/{docId}                       # D-ORQ (RQ-PR11/PR12): contenido custom por curso
+  │    │    └─ docs: banco_{worldId}_{tipo} | microteoria_{worldId}
+  │    │             | mundo_{worldId} | eligeCamino_{worldId}
+  │    │        # Copy-on-write de los bancos default (que NUNCA se mutan) y
+  │    │        # mundos propios (worldId `cw_*`). Escribe solo el profesor del
+  │    │        # curso; lee el curso. "Restaurar default" = borrar el doc.
   │    └─ estudiantes/{studentId}                 # studentId = school pseudonym
   │         ├─ (doc) { displayLabel, estado: 'pendiente_autorizacion'|'activo'|'suprimido',
   │         │          uidVinculado?: string, createdAt }

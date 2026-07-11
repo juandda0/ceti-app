@@ -96,29 +96,42 @@ progreso/impactTest. *(RQ-FN10, D9 · conflicto #6)* — Espejo: E4 grupo
 `acudiente`, E7 `estudianteActivo`. Estado destino:
 `pendiente_atestacion|activo|suprimido`.
 
-**R7 — Runtime estático; IA solo authoring-time.** En runtime la app solo lee del
-banco: ninguna generación/adaptación/selección por modelo en vivo. Prohibido en
-runtime `aiService.adaptQuestion`, `getRecommendedPath`, `analyzeWeaknesses`,
+**R7 — Runtime del estudiante estático; IA solo authoring-time.** En runtime la
+app solo lee del banco (default o copia custom del curso, RQ-PR11): ninguna
+generación/adaptación/selección por modelo en vivo. Prohibido en runtime
+`aiService.adaptQuestion`, `getRecommendedPath`, `analyzeWeaknesses`,
 `adaptiveQuiz`, campos `aiHints`/`isAdaptable`. La selección de las 10 preguntas
-es estática/aleatoria simple. IA solo en authoring-time (D6, offline). El
-diagnóstico por reglas (no ML) se conserva. **Excepción única y estrecha
-(RQ-ES10, D-ES10)**: la Cloud Function `procesarRegistroVoz` clasifica el texto
-transcrito del registro de movimientos de bolsillo; prohibida la IA en el cliente
-(`src/`+`app/`), prohibido almacenar/transmitir audio a servidores propios, y
-prohibido usar el resultado para generar/adaptar/seleccionar contenido o perfilar
-al menor. *(RQ-CN03, RQ-PR05 CA3, D5 · conflicto #7)* — Espejo: E4 grupos
-`runtime-ia` e `ia-cliente` (discriminan por ruta; `content/`+`scripts/` exentos,
-IA solo en `functions/`), agente RC.
+es estática/aleatoria simple. El diagnóstico por reglas (no ML) se conserva. El
+authoring tiene **dos vías** (D-ORQ): el pipeline offline de Ceti (D5/D6) y la
+**IA de authoring docente (RQ-CN06)** — Cloud Function callable solo-profesor
+que genera **borradores** (retorna, nunca escribe contenido), con cap diario y
+prompt sin PII; el profesor revisa y guarda a mano. **Excepción runtime única y
+estrecha (RQ-ES10, D-ES10)**: la Cloud Function `procesarRegistroVoz` clasifica
+el texto transcrito del registro de movimientos de bolsillo; prohibida la IA en
+el cliente (`src/`+`app/`), prohibido almacenar/transmitir audio a servidores
+propios, y prohibido usar cualquier resultado de IA para adaptar/seleccionar
+contenido servido en vivo o perfilar al menor. *(RQ-CN03, RQ-CN06, RQ-PR05 CA3,
+D5, D-ORQ · conflicto #7)* — Espejo: E4 grupos `runtime-ia` e `ia-cliente`
+(discriminan por ruta; `content/`+`scripts/` exentos, IA solo en `functions/`),
+agente RC.
 
-**R8 — Bancos por `grado×mundo×tipo`, read-only, sembrados.** Contenido en
-`bancos/{grado}_{worldId}_{tipo}` (tipos `multiple_choice|true_false|ordenar`) y
-`bancosEligeCamino/{grado}_{worldId}` (separado, ítems con 2 opciones sin
-`correctAnswer`). Cobertura: 45 quiz + 15 Elige-camino. Todo nace
-`pendiente_validacion_docente:true`, `generadoPor:'ia'`, `version`. Read-only
-para todo cliente (incluido admin UI): siembra vía Admin SDK; la validación
-docente cambia el flag vía Cloud Function. No existe `questionBank` global ni
-`fill_blank`/`calculation`. *(RQ-FN07, RQ-CN05, RQ-PR08 · conflicto #8, prepara
-#9)* — Espejo: E4 grupo `bancos`, E7 `write:false`, E2/E3 estructura+flag.
+**R8 — Bancos default read-only; contenido custom por curso (D-ORQ).** Contenido
+default en `bancos/{grado}_{worldId}_{tipo}` (tipos
+`multiple_choice|true_false|ordenar`) y `bancosEligeCamino/{grado}_{worldId}`
+(separado, ítems con 2 opciones sin `correctAnswer`). Cobertura default: 45 quiz
++ 15 Elige-camino. Todo nace `pendiente_validacion_docente:true`,
+`generadoPor:'ia'`, `version`. El default es read-only para todo cliente
+(incluido admin UI): siembra vía Admin SDK; la validación docente cambia el flag
+vía Cloud Function. **D-ORQ**: el contenido **custom por curso** vive en
+`cursos/{cursoId}/contenido/*` (docs `banco_{worldId}_{tipo}`,
+`microteoria_{worldId}`, `mundo_{worldId}`, `eligeCamino_{worldId}`), escribible
+**solo** por el profesor del curso (`isProfesorDe`) vía copy-on-write — el
+default global **nunca se muta**; "restaurar default" = borrar la copia. Ids de
+mundos custom `cw_*` (nunca colisionan con `world_1..5`). No existe
+`questionBank` global ni `fill_blank`/`calculation`. *(RQ-FN07, RQ-CN05,
+RQ-PR08, RQ-PR11/PR12, D-ORQ · conflicto #8, prepara #9)* — Espejo: E4 grupo
+`bancos`, E7 `write:false` (default) + escenarios `contenido/*`, E2/E3
+estructura+flag.
 
 **R9 — Quiz de exactamente 10 ítems, 3 tipos.** Cada quiz = 10 ítems del banco
 `grado×mundo`, mezcla **4 MC + 3 V/F + 3 ordenar**. Tipos `multiple_choice`,

@@ -160,3 +160,63 @@ dominado`); se retiran XP, niveles y badges de colección. Se retira `xp`/`nivel
   colección; `goals`/`deposits` siguen pendientes de esa unidad de compliance.
 - **Autoridad:** enmienda a D2(a); coordinada con `requerimientos.md`,
   `data-model.md`, `producto.md`, `competencia.md` y el código (R15).
+
+## D-ORQ — El profesor orquesta su clase (2026-07-10)
+
+> Decisión del dueño, autorizada explícitamente (sesión 2026-07-10, con las 6
+> respuestas del checkpoint registradas). Enmienda D3 y D5; amplía el alcance de
+> los invariantes R7 y R8 (cambio coordinado R15).
+
+- **Reposicionamiento:** Ceti deja de ser un currículo fijo y pasa a ser una
+  **herramienta real de enseñanza**. En Colombia el MEN define lineamientos y
+  referentes de calidad, no un temario idéntico por grado: cada institución
+  tiene autonomía curricular. El contenido default de Ceti (mundos + teoría +
+  bancos) es el **punto de partida**, no el límite.
+- **El profesor tiene control total sobre SU clase (la clase = el curso):**
+  1. **Setea la clase** antes de que sus estudiantes jueguen — con defaults
+     inteligentes: sin tocar nada la clase queda funcional (5 mundos default,
+     orden canónico, bancos default). Configurar es opcional, nunca obligatorio.
+  2. **Elige qué mundos** ve su clase y **en qué orden**; el desbloqueo
+     secuencial sigue el orden configurado.
+  3. **Modo enfocado:** toggle persistente "la clase trabaja solo el Mundo X"
+     hasta que lo apague. Sin noción de sesión con horario.
+  4. **Edita en vivo:** todo parámetro es editable después del setup y se
+     refleja en los estudiantes **en tiempo real**. Política de salida suave: el
+     estudiante dentro de un mundo retirado/desenfocado termina la actividad en
+     curso (nunca expulsión a mitad de pregunta), no puede re-entrar, y su
+     progreso jamás se borra por cambios de configuración.
+  5. **Edita el contenido** de su clase (preguntas, teoría, metadata del
+     mundo). El default global **nunca se muta**: copy-on-write por curso
+     (`cursos/{cursoId}/contenido/*`); "restaurar default" = borrar la copia.
+  6. **Crea mundos propios** por curso (ids `cw_*`), con borrador
+     (`activo:false`) → activación con gate de contenido mínimo (≥4 MC + ≥3 V/F
+     - ≥3 ordenar + ≥1 card de teoría). Puede **duplicarlos a otro de sus
+       cursos**. Biblioteca de colegio / marketplace: fuera de alcance.
+  7. **IA de authoring para el profesor** (server-side): una Cloud Function
+     genera **borradores** (nombres, títulos, teoría, preguntas, elige-camino)
+     que el profesor revisa y guarda; la función nunca escribe contenido ni ve
+     PII; cap diario por profesor (mismo patrón `procesarRegistroVoz`); mismo
+     proveedor (Groq); el costo lo absorbe Ceti.
+- **El formato del quiz se conserva (R9):** 10 = 4 MC + 3 V/F + 3 ordenar para
+  TODO mundo, custom incluido; el banco puede tener más ítems y el quiz muestrea.
+- **Reportería CONPES:** el profesor puede asignar una de las 5 competencias a
+  su mundo custom (entonces cuenta en diagnóstico/cumplimiento); sin asignar, el
+  mundo registra `competencia:'personalizada'` y se reporta solo como progreso,
+  fuera del cumplimiento.
+- **Para el estudiante todo esto es invisible:** cero pantallas ni decisiones
+  nuevas; solo ve su clase, sus mundos, en su orden. Un curso sin configuración
+  = comportamiento default exacto (retrocompatibilidad total, migración cero).
+- **Enmiendas de invariantes (R15, cambio coordinado en el mismo diff):**
+  - **R7 (IA):** sigue prohibida la IA en el runtime del estudiante y todo
+    perfilamiento; se **amplía el authoring**: además del pipeline offline de
+    Ceti, el profesor puede generar borradores vía Cloud Function server-side
+    (RQ-CN06).
+  - **R8 (bancos):** `bancos/**` global sigue read-only y sembrado por Admin
+    SDK; nace el **contenido custom por curso** escribible únicamente por su
+    profesor (`cursos/{cursoId}/contenido/*`).
+  - **RQ-PR08-CA3** ("el profesor no edita el banco") queda enmendado: no edita
+    el banco **default**; su copia por curso sí (RQ-PR11).
+- **RQs nuevos:** RQ-PR10 (configuración de clase), RQ-PR11 (contenido custom
+  por curso), RQ-PR12 (mundos propios), RQ-CN06 (IA de authoring docente).
+- **Entregas:** A (config + orden + modo enfocado + tiempo real), B (contenido
+  editable), C (mundos propios + IA). Cada entrega deja la app funcional.

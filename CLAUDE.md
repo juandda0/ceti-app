@@ -40,9 +40,18 @@ cada feature debe servir a ese objetivo de cumplimiento/reportería.
 - **Sin dinero real, jamás.** Simulador con moneda virtual. Sin gift cards, sin
   vínculo a cuentas bancarias. Sin leaderboards públicos individuales (solo
   colaboración de aula que el profesor activa).
-- **IA solo en authoring-time** (offline). El runtime se sirve 100% estático
-  (sin generación/adaptación ML en vivo). El diagnóstico del curso es por reglas,
-  no ML.
+- **IA solo en authoring-time.** El runtime del estudiante se sirve 100%
+  estático (sin generación/adaptación ML en vivo). El authoring tiene dos vías
+  (D-ORQ): el pipeline offline de Ceti y la **IA de authoring docente**
+  (Cloud Function server-side que genera borradores que el profesor revisa y
+  guarda; nunca escribe contenido). El diagnóstico del curso es por reglas, no ML.
+- **El profesor orquesta su clase** (D-ORQ): configura mundos activos, orden y
+  modo enfocado de su curso (doc `cursos/{cursoId}/config/mundos`, en tiempo
+  real, con salida suave), edita contenido vía **copy-on-write por curso**
+  (`cursos/{cursoId}/contenido/*` — el default global nunca se muta) y crea
+  mundos propios (`cw_*`) con gate de activación. Defaults inteligentes: un
+  curso sin configuración se comporta exactamente como el default. _(RQ-PR10/
+  PR11/PR12, RQ-CN06)_
 - **PII de menores minimizada** (Ley 1581): solo `email` + `nombre`; identidad por
   `uid` de Auth (sin seudónimo `studentId`).
 - Stack: Expo 54, React Native 0.81, TypeScript strict, Firebase 12 modular,
@@ -63,8 +72,8 @@ archivo **y** la rule en el mismo cambio).
 - **R4** — PII mínima del menor: solo `email`+`nombre`; prohibido edad/fecha/documento/teléfono/dirección/grado; analytics sin PII. _(RQ-FN02)_
 - **R5** — Sin perfil individual del menor; sin `aiProfile`; Elige-camino/diagnóstico solo agregados por curso. _(RQ-FN09)_
 - **R6** — Atestación ligera; cero PII de acudiente; booleano `atestado` activa al estudiante; acudiente sin cuenta/pantalla. _(RQ-FN10)_
-- **R7** — Runtime estático; IA solo authoring-time; prohibida adaptación/selección por modelo en vivo. Excepción única RQ-ES10: `procesarRegistroVoz` (server-side) clasifica el texto del registro de bolsillo; IA prohibida en cliente y para contenido/perfilamiento. _(RQ-CN03, RQ-ES10)_
-- **R8** — Bancos `grado×mundo×tipo`, read-only, sembrados vía Admin SDK; flag `pendiente_validacion_docente`. _(RQ-FN07)_
+- **R7** — Runtime del estudiante estático; IA solo authoring-time; prohibida adaptación/selección por modelo en vivo. Dos excepciones server-side estrechas: RQ-ES10 `procesarRegistroVoz` (clasifica texto del registro de bolsillo) y D-ORQ RQ-CN06 (IA de authoring docente: genera **borradores** que el profesor guarda a mano, nunca escribe contenido ni ve PII). IA prohibida en cliente y para adaptar/servir contenido o perfilar. _(RQ-CN03, RQ-ES10, RQ-CN06)_
+- **R8** — Bancos default `grado×mundo×tipo`, read-only, sembrados vía Admin SDK; flag `pendiente_validacion_docente`. D-ORQ: el contenido **custom por curso** (`cursos/{cursoId}/contenido/*`) es escribible solo por el profesor del curso (copy-on-write; el default nunca se muta). _(RQ-FN07, RQ-PR11/PR12)_
 - **R9** — Quiz de exactamente 10 ítems = 4 MC + 3 V/F + 3 ordenar. _(RQ-ES03/ES04)_
 - **R10** — Sin dinero real; sin ranking público; solo leaderboard de aula. Excepción RQ-ES10: diario autodeclarado de bolsillo real (`users/{uid}/movimientos`), solo-vista-propia; lo transaccional sigue prohibido. _(RQ-ES05/ES08/ES09/ES10)_
 - **R11** — Features excluidas (certificados PDF, app/reporte de padres, facturación, sedes activas, IA runtime, `parent/child/family`). _(D2/§9)_

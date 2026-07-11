@@ -25,8 +25,10 @@
 
 ## (a) Capa estudiante
 
-- **5 mundos secuenciales** con narrativa espacial, desbloqueo progresivo. Mapa
-  propuesto (Mundo 1 = más fácil, dificultad 1<2<3<4<5):
+- **5 mundos secuenciales** con narrativa espacial, desbloqueo progresivo —
+  este mapa es el **default** (D-ORQ): el profesor puede ocultar, reordenar y
+  añadir mundos para su clase; el estudiante solo ve su clase, sus mundos, en
+  su orden. Mapa propuesto (Mundo 1 = más fácil, dificultad 1<2<3<4<5):
   1. **Planeta Origen** — ingreso / fundamentos del dinero
   2. **Luna del Presupuesto** — presupuesto y gasto
   3. **Estrella del Ahorro** — ahorro
@@ -68,6 +70,23 @@
 
 ## (b) Capa profesor
 
+- **El profesor orquesta su clase (D-ORQ, 2026-07-10).** Ceti es una
+  herramienta de enseñanza, no un currículo fijo (autonomía curricular MEN):
+  - **Seteo de clase con defaults inteligentes:** sin tocar nada, la clase es
+    funcional (5 mundos default, orden canónico). Configurar es opcional.
+  - **Mundos activos + orden** por curso; **modo enfocado** ("hoy solo el
+    Mundo X") como toggle persistente. Cambios reflejados al estudiante **en
+    tiempo real**, con salida suave (nadie es expulsado a mitad de actividad;
+    el progreso jamás se borra).
+  - **Edición de contenido por curso** (preguntas, teoría, metadata del mundo)
+    vía copy-on-write: el default de Ceti nunca se muta; "restaurar default"
+    siempre disponible.
+  - **Mundos propios** (borrador → activación con contenido mínimo), con
+    competencia CONPES opcional para entrar al cumplimiento, duplicables entre
+    sus cursos.
+  - **IA de authoring docente:** genera borradores de nombre/teoría/preguntas
+    server-side; el profesor revisa y guarda. El poder avanzado vive detrás de
+    acciones secundarias — quien no personaliza no lo nota.
 - Dashboard con **roster** del curso y **progreso por estudiante**.
 - **Asignación de mundos con deadline** ("completa el Mundo X antes de Y").
 - **Diagnóstico del curso por reglas** (no ML): "dónde está flojo el curso" por
@@ -107,6 +126,10 @@
 - **Generados por IA en authoring-time** (offline), **lenguaje neutro**, nunca
   teoría densa. Todo nace con flag **`pendiente_validacion_docente`** hasta
   validación docente (proceso posterior, **no bloqueante**).
+- **Contenido custom por curso (D-ORQ):** los bancos default son el punto de
+  partida; el profesor edita su copia por curso y crea mundos propios
+  (`cursos/{cursoId}/contenido/*`). El default global sigue read-only. La IA de
+  authoring docente (RQ-CN06) acelera la creación con borradores server-side.
 - **En runtime el contenido se sirve ESTÁTICO** — no hay IA ni adaptación ML en
   vivo (compatible con el invariante "No generative AI in runtime").
 

@@ -120,10 +120,13 @@ en la app** (D-PIVOT).
 - _CA3_: Solo un `admin` existente (backend) puede crear una cuenta de profesor y asignarle rol (ningún adulto auto-asigna su rol — D7).
 - _Resuelve:_ **#4**.
 
-**RQ-FN07 — Bancos por `grado × mundo × tipo` + flag de validación + banco "Elige tu camino" separado**
+**RQ-FN07 — Bancos por `grado × mundo × tipo` + flag de validación + banco "Elige tu camino" separado** · **[ALCANCE aclarado por D-ORQ, 2026-07-10]**
 Bancos `bancos/{grado}_{worldId}_{tipo}` para los 3 tipos, y
 `bancosEligeCamino/{grado}_{worldId}` separado. Todo nace con
-`pendiente_validacion_docente:true` (D5).
+`pendiente_validacion_docente:true` (D5). _D-ORQ: estos bancos **default**
+siguen globales y read-only; el contenido **custom por curso** (copias
+editables y mundos propios) vive aparte bajo `cursos/{cursoId}/contenido/*`
+(RQ-PR11/PR12) y no altera este RQ._
 
 - _CA1_: Existe un banco por cada combinación `grado(9/10/11) × worldId(1..5) × tipo(MC/VF/ordenar)` = 45 bancos de quiz + 15 de "Elige tu camino".
 - _CA2_: Cada banco lleva `pendiente_validacion_docente` (default `true`), `generadoPor:'ia'`, `version`.
@@ -202,6 +205,12 @@ Alcance: **G** = global · **C** = su colegio · **U** = sus cursos · **S** = s
 | ~~Activar/desactivar modo colaborativo de aula~~ _(RETIRADO por D-CUT)_ |         ✅ G         |   ✅ U   |     ❌     |
 | Leer banco de preguntas (servido estático)                              |         ✅ G         |   ✅ C   |   ✅ S\*   |
 | Validación docente del banco (`pendiente_validacion_docente`→validado)  |         ✅ G         |   ✅ U   |     ❌     |
+| Configurar la clase: mundos activos, orden, modo enfocado (RQ-PR10)     |         ✅ G         |   ✅ U   |     ❌     |
+| Leer la configuración de su clase (runtime, tiempo real)                |         ✅ G         |   ✅ U   |   ✅ S\*   |
+| Editar contenido custom del curso (preguntas/teoría/metadata, RQ-PR11)  |         ✅ G         |   ✅ U   |     ❌     |
+| Leer el contenido custom de su curso (servido estático)                 |         ✅ G         |   ✅ U   |   ✅ S\*   |
+| Crear/activar/duplicar/eliminar mundos propios del curso (RQ-PR12)      |         ✅ G         |   ✅ U   |     ❌     |
+| Generar borradores con IA de authoring (Function, RQ-CN06)              |         ✅ G         |   ✅ U   |     ❌     |
 | **— Reportes / diagnóstico —**                                          |                      |          |            |
 | Ver progreso por estudiante (nominal/operativo)                         |         ✅ G         |   ✅ U   |     ❌     |
 | Ver diagnóstico por reglas del curso                                    |         ✅ G         |   ✅ U   |     ❌     |
@@ -232,13 +241,16 @@ asignar roles = admin (backend); operar lo creado = profesor.
 > y un `cursoId` en claim (RQ-FN04/FN10). El grado (y por tanto el banco servido)
 > se deriva del curso.
 
-**RQ-ES01 — 5 mundos secuenciales con narrativa espacial**
+**RQ-ES01 — 5 mundos secuenciales con narrativa espacial** · **[ENMENDADO por D-ORQ, 2026-07-10]**
 Mapa (§2.x): Planeta Origen → Luna del Presupuesto → Estrella del Ahorro →
 Nebulosa del Crédito → Agujero Negro de las Deudas (`world_1..5`). Desbloqueo
-progresivo.
+progresivo. _Enmienda D-ORQ: los 5 mundos y su orden canónico son el **default**;
+el profesor puede ocultar, reordenar y añadir mundos para su curso (RQ-PR10 /
+RQ-PR12), y el desbloqueo sigue el orden configurado. Sin configuración, aplica
+este RQ tal cual._
 
-- _CA1_: Al activarse el estudiante (tras pre-test, RQ-TS01), solo el Mundo 1 está desbloqueado; el resto aparece bloqueado con candado.
-- _CA2_: El Mundo N+1 se desbloquea solo al marcar `completed:true` el Mundo N.
+- _CA1_: Al activarse el estudiante (tras pre-test, RQ-TS01), solo el primer mundo del orden vigente está desbloqueado; el resto aparece bloqueado con candado.
+- _CA2_ **[ENMENDADO por D-ORQ]**: Un mundo activo se desbloquea al completarse todos los mundos activos anteriores en el orden vigente (default: el Mundo N+1 al marcar `completed:true` el Mundo N). Lo completado nunca se re-bloquea.
 - _CA3_: Cada mundo muestra su nombre espacial (i18n) y su competencia CONPES asociada; los `worldId`/`competencia.id` persistidos no cambian al renombrar la narrativa.
 - _Resuelve:_ **#10**.
 
@@ -259,9 +271,11 @@ responder.
 - _CA2_: El texto es breve (formato card), nunca texto académico denso; lenguaje neutro (D5-enmienda).
 - _CA3_: La micro-teoría es navegable y se puede saltar para reintentar el quiz.
 
-**RQ-ES03 — Quiz de 10 preguntas, 3 tipos, auto-calificado**
+**RQ-ES03 — Quiz de 10 preguntas, 3 tipos, auto-calificado** · **[ALCANCE ampliado por D-ORQ, 2026-07-10]**
 Cada mundo tiene un quiz de **exactamente 10 preguntas** servidas del banco
 `grado×mundo`, mezclando los 3 tipos. Calificación automática inmediata.
+_D-ORQ: aplica igual a contenido editado por el profesor y a mundos custom
+(RQ-PR11/PR12); el banco puede tener más ítems y el quiz muestrea._
 
 - _CA1_: El quiz presenta 10 ítems; no 15 ni otro número.
 - _CA2_: Los 3 tipos son: selección múltiple, verdadero/falso, ordenar/secuenciar (RQ-ES04). **No** existe el tipo `calculation` ni `fill_blank` como tipo de quiz.
@@ -422,7 +436,7 @@ no bloqueante** (D5).
 
 - _CA1_: El contenido se sirve a los estudiantes aunque siga `pendiente_validacion_docente:true` (no bloqueante).
 - _CA2_: El profesor ve qué bancos de su grado/mundos están pendientes y puede marcarlos validados (queda `validadoPor`+`validadoAt`).
-- _CA3_: El profesor **no** edita ni reescribe el banco en runtime (es read-only); solo cambia el flag de validación. (Editar/reportar ítems queda fuera del MVP.)
+- _CA3_ **[ENMENDADO por D-ORQ, 2026-07-10]**: El profesor **no** edita el banco **default** (sigue read-only); su **copia por curso** sí es editable vía RQ-PR11 (copy-on-write). El flag de validación de los bancos default se cambia vía Cloud Function.
 
 **RQ-PR09 — ~~Toggle de modo colaborativo de aula~~** · **[RETIRADO por D-CUT, 2026-07-10]**
 El toggle `curso.colaboracionAula` se elimina junto con RQ-ES09 (modo
@@ -431,9 +445,43 @@ colaborativo/leaderboard de aula retirados del producto).
 - ~~_CA1_: Cambiar el toggle se refleja en la experiencia del estudiante (aparece/desaparece modo colaborativo y leaderboard de aula).~~
 - ~~_CA2_: El leaderboard, cuando está activo, es siempre de aula (nunca global).~~
 
-### Conflictos resueltos en esta sección
+**RQ-PR10 — Configuración de clase (mundos, orden, modo enfocado, tiempo real)** · **[NUEVO por D-ORQ, 2026-07-10]**
+El profesor configura SU curso en un doc único
+`colegios/{colegioId}/cursos/{cursoId}/config/mundos`: qué mundos están activos,
+en qué orden, y un modo enfocado ("la clase trabaja solo el Mundo X").
+**Ausencia del doc = defaults** (5 mundos, orden canónico, todo activo, modo
+libre) — retrocompatibilidad total, migración cero.
 
-#5 (RQ-PR07), #7-diagnóstico (RQ-PR05).
+- _CA1_: Sin configurar nada, la clase es funcional con defaults (0 pasos para el profesor).
+- _CA2_: El doc lo escribe/borra solo el profesor del curso (`isProfesorDe`, rules); lo lee el profesor y el estudiante del curso (`token.cursoId`).
+- _CA3_: El estudiante recibe los cambios **en tiempo real** (`onSnapshot` del doc de config; fallback a defaults si no existe u offline).
+- _CA4_: **Salida suave**: un estudiante dentro de un mundo retirado/desenfocado termina su actividad en curso (nunca expulsión a mitad de pregunta), ve un aviso no bloqueante y no puede re-entrar; su progreso nunca se borra por cambios de config.
+- _CA5_: Desbloqueo con orden custom: un mundo activo está desbloqueado si ya fue completado **o** si todos los mundos activos anteriores en el orden están completados. Lo completado nunca se re-bloquea.
+- _CA6_: Todos los mundos desactivados → estado vacío claro para el estudiante ("tu profesor está preparando la clase"); el estudiante nunca ve una clase mal configurada sin fallback.
+- _CA7_: "Restaurar configuración" (= borrar el doc) con confirmación en UI; reversible por naturaleza (el default siempre existe).
+
+**RQ-PR11 — Contenido custom por curso (copy-on-write; el default nunca se muta)** · **[NUEVO por D-ORQ, 2026-07-10]**
+El profesor edita preguntas, teoría y metadata de mundos **para su curso** en
+`cursos/{cursoId}/contenido/*` (docs `banco_{worldId}_{tipo}`,
+`microteoria_{worldId}`, `mundo_{worldId}`, `eligeCamino_{worldId}`). La primera
+edición de contenido default lo **copia con la edición aplicada** en un solo
+write (copy-on-write). `bancos/**` global sigue read-only (R8).
+
+- _CA1_: CRUD completo con validación (Zod en cliente + shape/caps en rules); escribe solo `isProfesorDe`; lee el curso (profesor + sus estudiantes).
+- _CA2_: Resolución en runtime: el curso lee su copia si existe (flags `overrides` en el doc de config); si no, el default global. El estudiante no distingue origen.
+- _CA3_: "Restaurar default" borra la copia (confirmación; reversible re-editando).
+- _CA4_: Editar no expulsa a nadie: un quiz ya cargado se termina con su versión en memoria; el siguiente intento sirve la nueva.
+- _CA5_: El quiz sigue siendo 10 = 4+3+3 (RQ-ES03/R9) también sobre contenido editado.
+
+**RQ-PR12 — Mundos propios del profesor (borrador → activación con gate)** · **[NUEVO por D-ORQ, 2026-07-10]**
+El profesor crea mundos custom por curso (ids `cw_*`, jamás colisionan con
+`world_1..5`): metadata + teoría + bancos propios, con asistencia opcional de IA
+(RQ-CN06). Borrador = `activo:false` en la config (invisible al estudiante).
+
+- _CA1_: Activar exige contenido mínimo: ≥4 MC + ≥3 V/F + ≥3 ordenar + ≥1 card de teoría (gate en UI); el fail-soft del quiz (banco insuficiente → mundo no disponible) es la segunda red: el estudiante nunca ve un mundo vacío.
+- _CA2_: Competencia CONPES **opcional**: asignada (una de las 5) → el mundo cuenta en diagnóstico/cumplimiento; sin asignar → `competencia:'personalizada'`, visible solo como progreso, fuera del reporte de cumplimiento.
+- _CA3_: Elige-camino es opcional en mundos custom; si no existe banco, el flujo lo salta (fail-soft existente).
+- _CA4_: **Duplicar** un mundo custom a otro curso propio (batch). **Eliminar** = batch (metadata + bancos + teoría + entrada de config) con confirmación destructiva que advierte: el contenido se pierde (irreversible), el progreso de los estudiantes se conserva como historial y los reportes toleran mundos retirados.
 
 ---
 
@@ -619,12 +667,15 @@ El contenido generado pasa por validación docente (RQ-PR08) antes de considerar
 - _CA1_: Un banco con `pendiente_validacion_docente:true` se sirve igual a los estudiantes.
 - _CA2_: La validación docente solo cambia el flag a `false` y registra `validadoPor`+`validadoAt`; no reescribe el contenido en runtime.
 
-**RQ-CN03 — Runtime 100% estático (sin IA/ML en vivo)**
+**RQ-CN03 — Runtime 100% estático (sin IA/ML en vivo)** · **[ACLARADO por D-ORQ, 2026-07-10]**
 En runtime, la app **solo lee** del banco; no hay generación, adaptación ni
-selección por modelo en vivo.
+selección por modelo en vivo. _Aclaración D-ORQ: la IA de authoring docente
+(RQ-CN06) es server-side, produce solo borradores que el profesor guarda a mano
+y no toca la selección/adaptación de lo servido al estudiante — no es IA en
+runtime._
 
 - _CA1_: No existe en el código de runtime ninguna llamada a un servicio de IA (`aiService.adaptQuestion`, `getRecommendedPath`, `analyzeWeaknesses`) ni `adaptiveQuiz` que seleccione preguntas por modelo.
-- _CA2_: La selección de las 10 preguntas (RQ-ES03) es estática/aleatoria simple del banco `grado×mundo`, no adaptativa por ML.
+- _CA2_: La selección de las 10 preguntas (RQ-ES03) es estática/aleatoria simple del banco `grado×mundo` (o de la copia custom del curso, RQ-PR11), no adaptativa por ML.
 - _CA3_: No existen campos `aiHints`/`isAdaptable` que impliquen adaptación en runtime (o quedan inertes/retirados).
 - _Resuelve:_ **#7** (retiro completo de IA runtime; el diagnóstico por reglas de RQ-PR05 se conserva, no es ML).
 
@@ -641,6 +692,17 @@ read-only.
 
 - _CA1_: `firestore.rules` deniega escritura de `bancos/**` y `bancosEligeCamino/**` a cualquier cliente (incluido admin desde UI); solo el Admin SDK siembra.
 - _CA2_: Marcar un banco como "validado" (RQ-PR08) se hace **vía Cloud Function**, no por escritura directa del cliente, para mantener los bancos estrictamente read-only desde la app.
+
+**RQ-CN06 — IA de authoring para el profesor (server-side, solo borradores)** · **[NUEVO por D-ORQ, 2026-07-10]**
+Cloud Function callable (solo `role:'profesor'` + `assertStaffOfCurso`) que
+genera **borradores** de mundo — nombre/título, teoría, preguntas de los 3
+tipos, elige-camino — para reducir la fricción del setup del profesor
+(RQ-PR12). Amplía el authoring de D5; no toca el runtime del estudiante.
+
+- _CA1_: La función **retorna** el borrador; nunca escribe contenido — el profesor lo revisa/edita y lo guarda desde la UI (entra al ciclo de RQ-PR11).
+- _CA2_: El prompt no incluye PII ni datos de estudiantes (solo tema, grado y tipo de pieza); prohibida la IA en el cliente (`src/`+`app/`), igual que RQ-ES10.
+- _CA3_: Cap diario por profesor (patrón `vozUso`); salida validada con Zod server-side; todo lo generado nace `generadoPor:'ia'` + `pendiente_validacion_docente:true`.
+- _CA4_: Si la IA falla o se agota el cap, el flujo manual de creación/edición queda completo (la IA es acelerador, no dependencia).
 
 ### Conflictos resueltos en esta sección
 
