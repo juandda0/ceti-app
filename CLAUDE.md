@@ -24,12 +24,17 @@ de educación financiera para estudiantes (13+). **No** es "una app divertida":
 cada feature debe servir a ese objetivo de cumplimiento/reportería.
 
 - **Multi-tenant con jerarquía de roles**: `colegio → curso → estudiante` (sede
-  **dormante**, RQ-FN01). **Tres roles** (D-PIVOT): `profesor` y `estudiante` son
-  los únicos roles **de la app**; `admin` (Ceti, global) es claim **solo de
-  backend** para aprovisionamiento (Admin SDK), **sin ninguna interfaz en la app**.
-  Rector y coordinador **eliminados**. La autorización se aplica en
-  `firestore.rules` desde custom claims (`role`, `colegioId`, `cursoId`) — por
-  diseño desde el inicio, nunca como parche posterior.
+  **dormante**, RQ-FN01). **Tres roles** (D-PIVOT): `profesor` y `estudiante`
+  operan la experiencia; `admin` (Ceti, global) tiene un **panel de
+  aprovisionamiento in-app** (D-ADMIN: crea colegios, autoriza correos de
+  profesor asignándolos a un colegio, revoca) y se otorga por **allowlist de
+  correos Ceti**. El **profesor** se habilita por **pre-autorización de su
+  correo** por un admin; **crea sus propios cursos** (nombre + grado) en su
+  colegio. El **estudiante** (correo no autorizado) entra por **código/​link de
+  clase**; sin curso no hay juego. Rector y coordinador **eliminados**. La
+  autorización se aplica en `firestore.rules` desde custom claims (`role`,
+  `colegioId`, `cursoId`) — por diseño desde el inicio, nunca como parche
+  posterior.
 - **NO es el modelo familiar.** El viejo modelo de tutela padre/hijo fue removido
   y sigue prohibido: sin entidades/rutas/stores `parent`/`child`/`family`, sin
   acudiente como usuario in-app con dashboard. El acudiente aparece **solo** en la
@@ -68,7 +73,7 @@ archivo **y** la rule en el mismo cambio).
 
 - **R1** — Identidad por email; clave `estudiantes/{uid}` con solo `email`+`nombre`. Prohibido `studentId`. _(RQ-FN02)_
 - **R2** — Autorización solo por custom claims `{role, colegioId, cursoId}`; ningún campo cliente es autoritativo; sin `sedeId`/`studentId`. _(RQ-FN03/FN01)_
-- **R3** — Tres roles `{admin, profesor, estudiante}` (D-PIVOT: rector/coordinador eliminados); en la app solo `profesor` + `estudiante`, `admin` es claim global **solo de backend** (aprovisionamiento Admin SDK, sin UI). _(RQ-FN06)_
+- **R3** — Tres roles `{admin, profesor, estudiante}` (D-PIVOT: rector/coordinador eliminados). `admin` (allowlist de correos Ceti) tiene **panel de aprovisionamiento in-app** (D-ADMIN: crea colegios, autoriza correos de profesor, revoca; no juega ni lee progreso nominal). `profesor` se otorga por **pre-autorización de correo** por un admin. _(RQ-FN06, RQ-AD07/AD08, D-ADMIN)_
 - **R4** — PII mínima del menor: solo `email`+`nombre`; prohibido edad/fecha/documento/teléfono/dirección/grado; analytics sin PII. _(RQ-FN02)_
 - **R5** — Sin perfil individual del menor; sin `aiProfile`; Elige-camino/diagnóstico solo agregados por curso. _(RQ-FN09)_
 - **R6** — Atestación ligera; cero PII de acudiente; booleano `atestado` activa al estudiante; acudiente sin cuenta/pantalla. _(RQ-FN10)_
@@ -77,7 +82,7 @@ archivo **y** la rule en el mismo cambio).
 - **R9** — Quiz de exactamente 10 ítems = 4 MC + 3 V/F + 3 ordenar. _(RQ-ES03/ES04)_
 - **R10** — Sin dinero real; sin ranking público; solo leaderboard de aula. Excepción RQ-ES10: diario autodeclarado de bolsillo real (`users/{uid}/movimientos`), solo-vista-propia; lo transaccional sigue prohibido. _(RQ-ES05/ES08/ES09/ES10)_
 - **R11** — Features excluidas (certificados PDF, app/reporte de padres, facturación, sedes activas, IA runtime, `parent/child/family`). _(D2/§9)_
-- **R12** — Reglas least-privilege según matriz §1.3; default deny `/{document=**}`. D-PIVOT: en cliente solo autoriza profesor (su curso) + estudiante (self); estructura/asignación de roles = solo Admin SDK; profesor lee agregados, atesta y suprime. _(RQ-FN12)_
+- **R12** — Reglas least-privilege según matriz §1.3; default deny `/{document=**}`. D-PIVOT/D-ADMIN: en cliente autoriza admin (aprovisiona vía Functions), profesor (su curso, y crea sus cursos) + estudiante (self); escritura directa de `colegios`/`cursos` sigue `if false` (se crea vía Cloud Function que acuña código único); profesor lee agregados, atesta y suprime. _(RQ-FN12, RQ-PR13)_
 - **R13** — Todo trabajo mapea a un `RQ-id` de `requerimientos.md`. _(§9)_
 - **R14** — Cifras caducables nunca quemadas; vía `content/constants/economia-CO.<año>.json`. _(RQ-CN04)_
 - **R15** — Levantar/cambiar un invariante exige cambio coordinado (`CLAUDE.md` + rule). _(D11)_

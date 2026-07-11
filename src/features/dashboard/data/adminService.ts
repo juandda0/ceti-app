@@ -50,6 +50,57 @@ export const adminService = {
   },
 
   /**
+   * Resolves the signed-in user's access on login (D-ADMIN): grants admin
+   * (allowlist) or profesor (pre-authorized email) claims, else returns null
+   * role (prospective student → join by code). Idempotent.
+   */
+  async resolveMyAccess(): Promise<{
+    role: 'admin' | 'profesor' | 'estudiante' | null;
+    colegioId: string | null;
+    cursoId: string | null;
+  }> {
+    return callFunction('resolveMyAccess');
+  },
+
+  /** Admin lists all colegios (for the panel + authorize picker). */
+  async listColegios(): Promise<{
+    colegios: {
+      id: string;
+      nombre: string;
+      plan: string | null;
+      planMaxEstudiantes: number | null;
+    }[];
+  }> {
+    return callFunction('listColegios');
+  },
+
+  /** Admin creates a colegio (D-ADMIN / RQ-AD02). */
+  async registerColegio(input: { colegioId: string; nombre: string }): Promise<{ ok: boolean }> {
+    return callFunction('registerColegio', input);
+  },
+
+  /** Admin pre-authorizes a professor email into a colegio (RQ-AD08). */
+  async authorizeProfesor(input: {
+    email: string;
+    colegioId: string;
+  }): Promise<{ ok: boolean; email: string; colegioId: string }> {
+    return callFunction('authorizeProfesor', input);
+  },
+
+  /** Admin revokes a professor authorization (RQ-AD08). */
+  async revokeProfesorAuthorization(email: string): Promise<{ ok: boolean }> {
+    return callFunction('revokeProfesorAuthorization', { email });
+  },
+
+  /** Professor creates their own course in their colegio (RQ-PR13). */
+  async crearMiCurso(input: {
+    nombre: string;
+    grado: string;
+  }): Promise<{ ok: boolean; colegioId: string; cursoId: string; code: string }> {
+    return callFunction('crearMiCurso', input);
+  },
+
+  /**
    * IA de authoring docente (RQ-CN06): the Function RETURNS a draft world
    * (teoría/preguntas/elige-camino) — it never writes content. The professor
    * reviews it in the wizard and saves it as their course's custom content.

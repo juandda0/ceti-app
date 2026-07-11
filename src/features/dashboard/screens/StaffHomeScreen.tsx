@@ -126,6 +126,20 @@ export default function StaffHomeScreen() {
           </TouchableOpacity>
         ))}
 
+        {/* Professor creates their own classes (D-ADMIN / RQ-PR13). */}
+        {status === 'ready' && (
+          <TouchableOpacity
+            style={[styles.createRow, { borderColor: colors.brand.primary }]}
+            accessibilityRole="button"
+            onPress={() => router.push('/(staff)/crear-clase' as Href)}
+          >
+            <Ionicons name="add-circle-outline" size={20} color={colors.brand.primary} />
+            <Text style={[styles.createText, { color: colors.brand.primary }]}>
+              {t('createClass.create')}
+            </Text>
+          </TouchableOpacity>
+        )}
+
         <TouchableOpacity
           style={[styles.logout, { borderColor: colors.brand.primary }]}
           onPress={() => void performLogoutAndGo(router, '/(auth)/welcome')}
@@ -164,6 +178,17 @@ const styles = StyleSheet.create({
   courseInfo: { flex: 1, gap: 2 },
   courseName: { fontSize: 15, fontWeight: '600' },
   courseGrade: { fontSize: 12 },
+  createRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderWidth: 1.5,
+    borderStyle: 'dashed',
+    borderRadius: 12,
+    padding: 14,
+  },
+  createText: { fontSize: 15, fontWeight: '700' },
   logout: {
     marginTop: 8,
     borderWidth: 1.5,

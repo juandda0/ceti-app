@@ -793,6 +793,26 @@ await check(
   assertFails(getDocs(query(collectionGroup(profA1, 'contenido'))))
 );
 
+console.log('Professor authorizations profesoresAutorizados (D-ADMIN):');
+await check(
+  'admin reads profesoresAutorizados',
+  assertSucceeds(getDoc(doc(adminG, 'profesoresAutorizados/prof_at_x')))
+);
+await check(
+  'profesor cannot read profesoresAutorizados',
+  assertFails(getDoc(doc(profA1, 'profesoresAutorizados/prof_at_x')))
+);
+await check(
+  'student cannot read profesoresAutorizados',
+  assertFails(getDoc(doc(stuA1, 'profesoresAutorizados/prof_at_x')))
+);
+await check(
+  'admin cannot write profesoresAutorizados (Function only)',
+  assertFails(
+    setDoc(doc(adminG, 'profesoresAutorizados/prof_at_x'), { email: 'p@x', colegioId: 'A' })
+  )
+);
+
 console.log('Default deny:');
 await check('any other path denied', assertFails(getDoc(doc(stuA1, 'randomCol/randomDoc'))));
 

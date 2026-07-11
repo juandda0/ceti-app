@@ -289,6 +289,14 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // D-ADMIN: professor authorizations (email → colegio). Written ONLY by the
+    // admin Cloud Functions (authorizeProfesor/revoke); an admin reads them to
+    // populate the panel. Contains adult email + colegioId — no minor PII.
+    match /profesoresAutorizados/{emailKey} {
+      allow read: if isRole('admin');
+      allow write: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

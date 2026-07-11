@@ -220,3 +220,61 @@ dominado`); se retiran XP, niveles y badges de colección. Se retira `xp`/`nivel
   por curso), RQ-PR12 (mundos propios), RQ-CN06 (IA de authoring docente).
 - **Entregas:** A (config + orden + modo enfocado + tiempo real), B (contenido
   editable), C (mundos propios + IA). Cada entrega deja la app funcional.
+
+## D-ADMIN — Admin Ceti in-app, autorización de profesores y gate de acceso (2026-07-11)
+
+> Decisión del dueño, autorizada explícitamente (sesión 2026-07-11, con las 4
+> respuestas de checkpoint registradas). **Revierte parcialmente D-PIVOT**
+> ("admin sin UI") y enmienda D8; cambio coordinado R15 sobre R3, R11 y R12.
+
+- **Reversión consciente de D-PIVOT:** el rol `admin` **recupera interfaz en la
+  app**. Sigue siendo un rol de aprovisionamiento (no juega, no es alumno), pero
+  ahora tiene un **panel** para operar el onboarding de colegios y profesores sin
+  depender de scripts. Rector/coordinador siguen eliminados (D-PIVOT en pie).
+- **Admin raíz por allowlist:** un conjunto de correos Ceti (en configuración del
+  backend, incluye `juandiegodiazave@gmail.com`) obtiene el claim `role:'admin'`
+  al iniciar sesión. Nadie se auto-nombra fuera del allowlist. No es allowlist de
+  profesores — es solo para el staff Ceti.
+- **Autorización de profesores (pre-autorización por correo):** el admin, desde
+  el panel, **autoriza un correo de profesor y lo asigna a un colegio**
+  (`profesoresAutorizados/{emailKey}` = `{email, colegioId, autorizadoPor,
+autorizadoAt}`). Cuando ese correo inicia sesión, se le fija
+  `role:'profesor' + colegioId` (sin `cursoId`). Un correo **no autorizado** no
+  es profesor: es un **estudiante** que debe unirse por código.
+- **El colegio lo asigna el admin:** al autorizar, el admin elige/crea el colegio
+  (escuela) del profesor. Varios profesores pueden compartir colegio; la
+  reportería institucional agregada es a nivel colegio (se conserva el modelo
+  B2B2C: el colegio es el cliente).
+- **El profesor crea sus propias clases:** ya autorizado, el profesor crea y
+  nombra sus cursos **eligiendo el grado**, dentro de su colegio, vía Cloud
+  Function (`crearMiCurso`): crea el `curso`, acuña un **código único** (2
+  profesores nunca comparten código) y se añade a `profesorUids`. Luego opera la
+  clase con D-ORQ (config, contenido, mundos) e invita estudiantes.
+- **Gate del estudiante:** tras el onboarding de identidad (nombre + avatar), un
+  estudiante **sin curso NO tiene acceso al juego**; ve una **pantalla dedicada
+  de "unirse a clase"** (código o link). Solo al unirse (rol `estudiante` +
+  colegio + curso) accede a los mundos. Reemplaza el banner suelto por un gate.
+- **Dos vías de invitación:** (1) el **código único** de la clase (el estudiante
+  lo escribe) — ya existía y ya es único; (2) un **link de invitación**
+  `/join/{codigo}` que, tras iniciar sesión, une automáticamente al estudiante a
+  esa clase (web y, a futuro, móvil). Regenerar el código invalida el anterior;
+  los ya unidos no se ven afectados.
+- **Enmiendas de invariantes (R15, mismo diff):**
+  - **R3** — `admin` deja de ser "claim solo de backend sin UI": tiene panel de
+    aprovisionamiento in-app (crear colegios, autorizar profesores, revocar). Su
+    alcance sigue siendo global de aprovisionamiento; **no juega ni ve PII de
+    menor** más allá de lo necesario para operar (no lee progreso nominal).
+  - **R11** — se retira "sin UI de admin" de la lista de exclusiones; el resto de
+    R11 se conserva.
+  - **R12** — la matriz §1.3 gana: el `admin` (con claim, ya no solo backend)
+    autoriza profesores y crea colegios desde el cliente vía Cloud Functions; el
+    **profesor** gana la capacidad de **crear sus propios cursos** en su colegio
+    (antes solo Admin SDK). La creación sigue pasando por Cloud Function (para
+    acuñar código único atómicamente); las reglas de escritura directa de
+    `cursos`/`colegios` siguen `if false`.
+  - **D8** — se precisa: primer login sin claims → el backend resuelve el acceso
+    (allowlist admin / correo autorizado profesor / estudiante). Estudiante sin
+    curso: única pantalla = unirse a clase.
+- **RQs nuevos:** RQ-AD07 (allowlist admin + panel), RQ-AD08 (autorización de
+  profesores), RQ-PR13 (el profesor crea sus cursos), RQ-FN13 (gate de acceso por
+  rol/curso + link de invitación).

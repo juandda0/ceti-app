@@ -15,6 +15,7 @@ import { useSavingsStore } from '@features/savings/store/useSavingsStore';
 import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/app';
 import { readCetiClaims } from '@shared/lib/firebase/claims';
 import { userRepository } from '@features/auth/data/userRepository';
+import { adminService } from '@features/dashboard/data/adminService';
 
 export default function Index() {
   const authReady = useAuthStore((s) => s.authReady);
@@ -65,16 +66,32 @@ export default function Index() {
 
       useAuthStore.getState().setFirebaseUid(u.uid);
 
-      // Role/tenant from custom claims (set by Cloud Functions). School staff
-      // route to the dashboard and skip the student onboarding/profile flow.
-      const claims = await readCetiClaims(u);
+      // Role/tenant from custom claims (set by Cloud Functions).
+      let claims = await readCetiClaims(u);
       if (cancelled || mySeq !== seq.current) return;
+
+      // D-ADMIN: settle access on first login when there's no role yet — the
+      // backend grants admin (Ceti allowlist) or profesor (pre-authorized email),
+      // or leaves it empty (prospective student → join gate). Refresh the token
+      // to pick up any newly-set claims.
+      if (!claims?.role) {
+        try {
+          const access = await adminService.resolveMyAccess();
+          if (access.role) claims = await readCetiClaims(u, true);
+        } catch {
+          // offline / function error → treat as prospective student below
+        }
+        if (cancelled || mySeq !== seq.current) return;
+      }
       useAuthStore.getState().setClaims(claims);
 
-      // profesor routes to the (staff) panel. admin is a backend-only claim
-      // (D-PIVOT) with no app UI; if one ever signs in, the (staff) layout admits
-      // it but there are no admin screens — an empty staff panel, by design.
-      if (claims && (claims.role === 'admin' || isStaffRole(claims.role))) {
+      // admin → admin panel; profesor → staff panel (skip student onboarding).
+      if (claims?.role === 'admin') {
+        useAuthStore.getState().login();
+        setTarget('/(admin)' as Href);
+        return;
+      }
+      if (claims && isStaffRole(claims.role)) {
         useAuthStore.getState().login();
         // Cast: typed-routes union regenerates from the filesystem on build.
         setTarget('/(staff)' as Href);
@@ -129,8 +146,16 @@ export default function Index() {
         }
       }
 
-      useAuthStore.getState().login();
       if (cancelled || mySeq !== seq.current) return;
+      // D-ADMIN gate: a student without a course has no game access — send them
+      // to the join screen (code or invite link). Only a joined student (claims
+      // carry colegio+curso) reaches the game.
+      const hasCourse = Boolean(claims?.colegioId && claims?.cursoId);
+      if (!hasCourse) {
+        setTarget('/(auth)/unirse' as Href);
+        return;
+      }
+      useAuthStore.getState().login();
       setTarget('/(app)/saga');
     }
 

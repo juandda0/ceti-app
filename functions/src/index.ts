@@ -5,8 +5,10 @@
  * cursoId). These functions are the ONLY trusted writer of those claims, of the
  * `membership/{uid}` mirror, and of the `estudiantes/{uid}` roster (clients never
  * write the roster — D-B1-03). Students are keyed by their Auth `uid` (R1): there
- * is no pseudonym key. There is no email allowlist; the FIRST admin is provisioned
- * out-of-band via the Admin SDK seed script (scripts/setRole.ts). See R1/R2/R3.
+ * is no pseudonym key. Admin is granted by a Ceti-staff email allowlist
+ * (`CETI_ADMIN_EMAILS`, D-ADMIN); professors by admin pre-authorization of their
+ * email (`profesoresAutorizados/*`). `resolveMyAccess` settles claims on login.
+ * See R1/R2/R3.
  *
  * Token note: after claims change, the client must call getIdToken(true) to
  * refresh; this writes a `claimsUpdatedAt` field the client can watch.
@@ -46,6 +48,24 @@ function requireAuth(caller: Caller | undefined): asserts caller is Caller {
 
 function isAdmin(caller: Caller): boolean {
   return caller.token.role === 'admin';
+}
+
+// D-ADMIN: Ceti-staff admin allowlist. These emails receive role:admin on login
+// (resolveMyAccess). The root admin is baked in; extend via the CETI_ADMIN_EMAILS
+// env var (comma-separated) at deploy time. This is the ONLY way to become admin.
+const CETI_ADMIN_EMAILS = new Set(
+  ['juandiegodiazave@gmail.com', ...(process.env.CETI_ADMIN_EMAILS ?? '').split(',')]
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean)
+);
+
+function isAllowlistedAdminEmail(email: string | undefined): boolean {
+  return !!email && CETI_ADMIN_EMAILS.has(email.toLowerCase());
+}
+
+/** Doc-id key for a professor authorization (email, normalized). */
+function emailKey(email: string): string {
+  return email.trim().toLowerCase();
 }
 
 // ---- Demo cage (RQ-DM05) ----
@@ -305,6 +325,178 @@ export const createCurso = onCall(async (request) => {
   });
 
   return { ok: true, colegioId, cursoId, code };
+});
+
+// ---------------------------------------------------------------------------
+// D-ADMIN — access resolution & professor authorization.
+// ---------------------------------------------------------------------------
+
+/**
+ * Resolves a signed-in user's access on login (D-ADMIN). Idempotent, refresh-
+ * safe. Order: (1) already has a role → return it; (2) Ceti admin allowlist →
+ * grant admin; (3) pre-authorized professor email → grant profesor + colegio,
+ * mark the authorization consumed; (4) otherwise → prospective student (no
+ * claims set — they must join a class by code). Demo tokens already carry a role
+ * so they short-circuit at (1).
+ */
+export const resolveMyAccess = onCall(async (request) => {
+  const caller = request.auth;
+  requireAuth(caller);
+
+  if (isRole(caller.token.role)) {
+    return {
+      role: caller.token.role,
+      colegioId: (caller.token.colegioId as string | undefined) ?? null,
+      cursoId: (caller.token.cursoId as string | undefined) ?? null,
+    };
+  }
+
+  const email = (caller.token.email as string | undefined)?.toLowerCase();
+
+  // (2) Ceti staff admin.
+  if (isAllowlistedAdminEmail(email)) {
+    await applyClaims(caller.uid, { role: 'admin' });
+    return { role: 'admin', colegioId: null, cursoId: null };
+  }
+
+  // (3) Pre-authorized professor.
+  if (email) {
+    const db = getFirestore();
+    const ref = db.doc(`profesoresAutorizados/${emailKey(email)}`);
+    const snap = await ref.get();
+    if (snap.exists) {
+      const colegioId = (snap.data()?.colegioId as string | undefined) ?? '';
+      if (colegioId) {
+        await applyClaims(caller.uid, { role: 'profesor', colegioId });
+        await ref.set(
+          { consumidoPorUid: caller.uid, consumidoAt: FieldValue.serverTimestamp() },
+          { merge: true }
+        );
+        return { role: 'profesor', colegioId, cursoId: null };
+      }
+    }
+  }
+
+  // (4) Prospective student — no claims; the client shows the join-by-code gate.
+  return { role: null, colegioId: null, cursoId: null };
+});
+
+/**
+ * Admin pre-authorizes a professor's email into a colegio (RQ-AD08). Stored in
+ * `profesoresAutorizados/{emailKey}`. If the email already has an account, the
+ * claim is granted immediately; otherwise it resolves on their first login.
+ */
+export const authorizeProfesor = onCall(async (request) => {
+  const caller = request.auth;
+  requireAuth(caller);
+  if (!isAdmin(caller)) {
+    throw new HttpsError('permission-denied', 'Solo un admin autoriza profesores.');
+  }
+  assertNotDemo(caller);
+  const email = requireString(request.data?.email, 'email').toLowerCase();
+  const colegioId = requireString(request.data?.colegioId, 'colegioId');
+
+  const db = getFirestore();
+  if (!(await db.doc(`colegios/${colegioId}`).get()).exists) {
+    throw new HttpsError('not-found', `El colegio '${colegioId}' no existe.`);
+  }
+  const ref = db.doc(`profesoresAutorizados/${emailKey(email)}`);
+  await ref.set(
+    {
+      email,
+      colegioId,
+      autorizadoPor: caller.uid,
+      autorizadoAt: FieldValue.serverTimestamp(),
+    },
+    { merge: true }
+  );
+
+  // If the account already exists, grant the claim now (unless already admin).
+  try {
+    const user = await getAuth().getUserByEmail(email);
+    if ((user.customClaims?.role as string | undefined) !== 'admin') {
+      await applyClaims(user.uid, { role: 'profesor', colegioId });
+      await ref.set(
+        { consumidoPorUid: user.uid, consumidoAt: FieldValue.serverTimestamp() },
+        { merge: true }
+      );
+    }
+  } catch {
+    // No account yet — the authorization resolves on their first login.
+  }
+
+  return { ok: true, email, colegioId };
+});
+
+/**
+ * Admin revokes a professor authorization (RQ-AD08). Removes the authorization
+ * and, if the professor had already been granted, revokes their claims (they can
+ * no longer operate). Their cursos and students' data are NOT deleted here —
+ * suppression of student data is a separate, explicit action (RQ-FN11).
+ */
+export const revokeProfesorAuthorization = onCall(async (request) => {
+  const caller = request.auth;
+  requireAuth(caller);
+  if (!isAdmin(caller)) {
+    throw new HttpsError('permission-denied', 'Solo un admin revoca profesores.');
+  }
+  assertNotDemo(caller);
+  const email = requireString(request.data?.email, 'email').toLowerCase();
+
+  const db = getFirestore();
+  const ref = db.doc(`profesoresAutorizados/${emailKey(email)}`);
+  const consumidoPorUid = (await ref.get()).data()?.consumidoPorUid as string | undefined;
+  await ref.delete();
+  if (consumidoPorUid) {
+    await getAuth().setCustomUserClaims(consumidoPorUid, {});
+    await db
+      .doc(`membership/${consumidoPorUid}`)
+      .delete()
+      .catch(() => undefined);
+  }
+  return { ok: true };
+});
+
+/**
+ * A professor creates their OWN course in their colegio (RQ-PR13, D-ADMIN).
+ * Mints a unique join code atomically (2 professors never share a code). The
+ * professor is the sole teacher on it; they then configure it (D-ORQ) and invite
+ * students by code/link.
+ */
+export const crearMiCurso = onCall(async (request) => {
+  const caller = request.auth;
+  requireAuth(caller);
+  if (caller.token.role !== 'profesor') {
+    throw new HttpsError('permission-denied', 'Solo un profesor crea sus clases.');
+  }
+  assertNotDemo(caller);
+  const colegioId = caller.token.colegioId as string | undefined;
+  if (!colegioId) {
+    throw new HttpsError('failed-precondition', 'Tu cuenta no tiene un colegio asignado.');
+  }
+  const nombre = requireString(request.data?.nombre, 'nombre');
+  const grado = requireString(request.data?.grado, 'grado');
+  if (grado !== '9' && grado !== '10' && grado !== '11') {
+    throw new HttpsError('invalid-argument', "'grado' must be '9', '10' or '11'.");
+  }
+
+  const db = getFirestore();
+  const cursoRef = db.collection(`colegios/${colegioId}/cursos`).doc();
+  const code = await mintUniqueCode(db);
+  await db.doc(`classCodes/${code}`).set({
+    colegioId,
+    cursoId: cursoRef.id,
+    createdAt: FieldValue.serverTimestamp(),
+  });
+  await cursoRef.set({
+    nombre,
+    grado,
+    profesorUids: [caller.uid],
+    codigo: code,
+    createdAt: FieldValue.serverTimestamp(),
+    createdByUid: caller.uid,
+  });
+  return { ok: true, colegioId, cursoId: cursoRef.id, code };
 });
 
 // ---------------------------------------------------------------------------

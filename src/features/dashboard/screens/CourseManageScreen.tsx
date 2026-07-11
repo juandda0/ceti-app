@@ -95,14 +95,24 @@ export default function CourseManageScreen() {
       },
     ]);
 
-  const onCopyCode = () => {
-    if (!code || Platform.OS !== 'web') return;
+  // Invite link (RQ-FN13): /join/{code} auto-joins the student after login.
+  const inviteBase =
+    Platform.OS === 'web' && typeof window !== 'undefined'
+      ? window.location.origin
+      : 'https://ceti-d3769.web.app';
+  const inviteUrl = code ? `${inviteBase}/join/${code}` : '';
+
+  const copyToClipboard = (value: string, toast: string) => {
+    if (!value || Platform.OS !== 'web') return;
     const nav = typeof navigator !== 'undefined' ? navigator : undefined;
     if (nav?.clipboard) {
-      void nav.clipboard.writeText(code);
-      Alert.alert(t('admin.codeCopied'));
+      void nav.clipboard.writeText(value);
+      Alert.alert(toast);
     }
   };
+
+  const onCopyCode = () => copyToClipboard(code ?? '', t('admin.codeCopied'));
+  const onCopyLink = () => copyToClipboard(inviteUrl, t('admin.linkCopied'));
 
   const onGenerateCode = async () => {
     if (!colegioId || !cursoId) return;
@@ -134,23 +144,41 @@ export default function CourseManageScreen() {
             <>
               <Text style={[styles.codeValue, { color: colors.brand.primary }]}>{code}</Text>
               <View style={styles.qrWrap}>
-                <QRCode value={code} size={132} backgroundColor="#FFFFFF" color="#000000" />
+                <QRCode
+                  value={inviteUrl || code}
+                  size={132}
+                  backgroundColor="#FFFFFF"
+                  color="#000000"
+                />
               </View>
               <Text style={[styles.codeHint, { color: colors.text.tertiary }]}>
                 {t('admin.classCodeScan')}
               </Text>
               {Platform.OS === 'web' && (
-                <TouchableOpacity
-                  style={[styles.codeBtn, { borderColor: colors.brand.primary }]}
-                  onPress={onCopyCode}
-                  accessibilityRole="button"
-                  accessibilityLabel={t('admin.copyCode')}
-                >
-                  <Ionicons name="copy-outline" size={16} color={colors.brand.primary} />
-                  <Text style={[styles.codeBtnText, { color: colors.brand.primary }]}>
-                    {t('admin.copyCode')}
-                  </Text>
-                </TouchableOpacity>
+                <View style={styles.copyRow}>
+                  <TouchableOpacity
+                    style={[styles.codeBtn, { borderColor: colors.brand.primary }]}
+                    onPress={onCopyCode}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('admin.copyCode')}
+                  >
+                    <Ionicons name="copy-outline" size={16} color={colors.brand.primary} />
+                    <Text style={[styles.codeBtnText, { color: colors.brand.primary }]}>
+                      {t('admin.copyCode')}
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.codeBtn, { borderColor: colors.brand.primary }]}
+                    onPress={onCopyLink}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('admin.copyLink')}
+                  >
+                    <Ionicons name="link-outline" size={16} color={colors.brand.primary} />
+                    <Text style={[styles.codeBtnText, { color: colors.brand.primary }]}>
+                      {t('admin.copyLink')}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               )}
             </>
           ) : (
@@ -271,6 +299,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   codeBtnText: { fontSize: 14, fontWeight: '700' },
+  copyRow: { flexDirection: 'row', gap: 8, flexWrap: 'wrap', justifyContent: 'center' },
   row: {
     flexDirection: 'row',
     alignItems: 'center',

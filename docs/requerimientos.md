@@ -180,11 +180,23 @@ claim (`isRole`, `sameColegio`, `isProfesorDe`, `isStudentSelf`,
 - _CA1_: Existe un escenario de emulador (`test:rules`) por cada celda crítica de la matriz (al menos: estudiante↔otro estudiante denegado; profesor↔curso ajeno denegado; profesor↔progreso de su curso permitido; escritura de banco por cliente denegada).
 - _CA2_: `/{document=**}` cae en deny.
 
+**RQ-FN13 — Gate de acceso por rol/curso + link de invitación (D-ADMIN)** · **[NUEVO por D-ADMIN, 2026-07-11]**
+Al primer login sin claims, `resolveMyAccess` decide el acceso (admin allowlist /
+profesor pre-autorizado / estudiante). Un **estudiante sin curso no tiene acceso
+al juego**: única pantalla = **unirse a clase** (código o link de invitación
+`/join/{codigo}`).
+
+- _CA1_: Un estudiante autenticado y con identidad (nombre+avatar) pero **sin `cursoId`** no alcanza los mundos; se le muestra la pantalla de unirse a clase.
+- _CA2_: El link `/join/{codigo}` funciona logueado (une al instante) y deslogueado (recuerda el código a través de login/onboarding y luego une). Convive con el código manual.
+- _CA3_: El código de clase es único por curso (ningún par de cursos comparte código); regenerarlo invalida el anterior sin afectar a los ya unidos (RQ-AD05).
+
 ### 1.3 Matriz de permisos rol × acción
 
 Alcance: **G** = global · **C** = su colegio · **U** = sus cursos · **S** = sí mismo · ❌ = no.
-`admin` es claim **solo de backend** (Admin SDK, sin UI); en la app solo existen
-`profesor` y `estudiante` (D-PIVOT).
+`admin` (allowlist de correos Ceti) tiene **panel de aprovisionamiento in-app**
+(D-ADMIN): crea colegios y autoriza/revoca profesores vía Cloud Functions; no
+juega ni lee progreso nominal. El `profesor` **crea sus propios cursos**
+(RQ-PR13). La creación de estructura sigue pasando por Cloud Function.
 
 | Acción                                                                  | admin Ceti (backend) | profesor | estudiante |
 | ----------------------------------------------------------------------- | :------------------: | :------: | :--------: |
@@ -483,6 +495,15 @@ El profesor crea mundos custom por curso (ids `cw_*`, jamás colisionan con
 - _CA3_: Elige-camino es opcional en mundos custom; si no existe banco, el flujo lo salta (fail-soft existente).
 - _CA4_: **Duplicar** un mundo custom a otro curso propio (batch). **Eliminar** = batch (metadata + bancos + teoría + entrada de config) con confirmación destructiva que advierte: el contenido se pierde (irreversible), el progreso de los estudiantes se conserva como historial y los reportes toleran mundos retirados.
 
+**RQ-PR13 — El profesor crea sus propias clases (D-ADMIN)** · **[NUEVO por D-ADMIN, 2026-07-11]**
+Un profesor autorizado crea y nombra sus cursos (nombre + grado) dentro de su
+colegio, vía Cloud Function `crearMiCurso` (acuña un código único y lo añade a
+`profesorUids`). Luego los opera con D-ORQ e invita estudiantes.
+
+- _CA1_: Desde "Mis clases" el profesor crea una clase eligiendo `grado∈{9,10,11}`; la Function crea el curso bajo su colegio con `profesorUids:[uid]` y un `codigo` único (RQ-FN13-CA3).
+- _CA2_: La escritura directa de `cursos` sigue `if false`; la creación pasa por la Function (para acuñar el código atómicamente).
+- _CA3_: Un profesor sin colegio asignado no puede crear clases (precondición); solo el admin habilita el colegio (RQ-AD08).
+
 ---
 
 ## SECCIÓN 4 — CAPA INSTITUCIONAL (RETIRADA por D-PIVOT)
@@ -592,6 +613,25 @@ siguen disponibles para el **profesor** sobre su ámbito (sus cursos).
 
 - _CA1_: Que el admin pueda activar/asignar/suprimir/exportar globalmente no elimina esas mismas capacidades en el profesor (sobre sus cursos).
 - _CA2_: No hay acción exclusiva de admin que bloquee la operación normal de un colegio ya provisionado (salvo gestión de estructura/roles, que es de admin por diseño).
+
+**RQ-AD07 — Admin Ceti con panel in-app + allowlist (D-ADMIN)** · **[NUEVO por D-ADMIN, 2026-07-11]**
+El claim `admin` se otorga por **allowlist de correos Ceti** (config backend
+`CETI_ADMIN_EMAILS`) al iniciar sesión (`resolveMyAccess`), y tiene un **panel
+in-app** para aprovisionamiento. Revierte el "admin sin UI" de D-PIVOT.
+
+- _CA1_: Un correo del allowlist recibe `role:'admin'` al entrar y aterriza en el panel de admin; un correo fuera del allowlist nunca es admin.
+- _CA2_: El panel permite crear colegios (RQ-AD02) y autorizar/revocar profesores (RQ-AD08). El admin **no** juega ni lee progreso nominal del menor.
+- _CA3_: Las mutaciones pasan por Cloud Functions (único escritor de claims/estructura); las reglas de escritura directa de `colegios`/`cursos` siguen `if false`.
+
+**RQ-AD08 — Autorización de profesores por pre-autorización de correo (D-ADMIN)** · **[NUEVO por D-ADMIN, 2026-07-11]**
+El admin **pre-autoriza el correo** de un profesor y lo asigna a un colegio
+(`profesoresAutorizados/{emailKey} = {email, colegioId, ...}`). Al iniciar
+sesión ese correo se vuelve `profesor` de ese colegio; un correo no autorizado
+es un estudiante.
+
+- _CA1_: `authorizeProfesor(email, colegioId)` valida que el colegio exista y persiste la autorización; si la cuenta ya existe, fija el claim de inmediato.
+- _CA2_: `revokeProfesorAuthorization(email)` elimina la autorización y, si ya fue consumida, revoca los claims del profesor (sus cursos y datos de estudiantes no se borran — la supresión es RQ-FN11).
+- _CA3_: `profesoresAutorizados/**` lo lee solo el admin (reglas); lo escribe solo la Cloud Function. Contiene correo de adulto + colegioId, sin PII de menor (R4/R6).
 
 ### Conflictos resueltos en esta sección
 
