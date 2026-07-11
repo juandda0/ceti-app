@@ -200,6 +200,193 @@ export const courseContentRepository = {
   },
 
   /**
+   * Creates a custom world (RQ-PR12) in ONE batch: the config entry (as a
+   * DRAFT — activo:false, invisible to students) + any provided content docs
+   * with their override flags. Atomic: a failure leaves nothing behind.
+   */
+  async createCustomWorld(params: {
+    colegioId: string;
+    cursoId: string;
+    uid: string;
+    config: CursoConfigMundos | null;
+    /** Caller-minted `cw_*` id (it is embedded in the piece docs too). */
+    worldId: string;
+    meta: { nombre: string; subtitle?: string; descripcion?: string; competencia?: string };
+    /** Content docs keyed by piece (already validated by the caller). */
+    pieces?: Partial<Record<ContentPiece, Record<string, unknown>>>;
+  }): Promise<string | null> {
+    const { colegioId, cursoId, uid, config, worldId, meta, pieces } = params;
+    const clients = getFirebaseClients();
+    if (!clients?.firestore) return null;
+    const batch = writeBatch(clients.firestore);
+    for (const [piece, doc] of Object.entries(pieces ?? {})) {
+      batch.set(
+        cursoContenidoDocRef(
+          clients.firestore,
+          colegioId,
+          cursoId,
+          docIdForPiece(worldId, piece as ContentPiece)
+        ),
+        stripUndefinedValues(doc)
+      );
+    }
+    const nextConfig = buildNextConfig(config, uid, (draft) => {
+      draft.mundos = [
+        ...draft.mundos,
+        stripUndefinedValues({
+          worldId,
+          activo: false,
+          nombre: meta.nombre.trim(),
+          subtitle: meta.subtitle?.trim() || undefined,
+          descripcion: meta.descripcion?.trim() || undefined,
+          competencia: meta.competencia || undefined,
+        }) as CursoConfigMundos['mundos'][number],
+      ];
+      for (const piece of Object.keys(pieces ?? {})) {
+        setOverrideFlag(draft, worldId, piece as ContentPiece, true);
+      }
+    });
+    batch.set(
+      cursoConfigMundosDocRef(clients.firestore, colegioId, cursoId),
+      stripUndefinedValues({ ...nextConfig } as Record<string, unknown>)
+    );
+    await batch.commit();
+    return worldId;
+  },
+
+  /**
+   * Activation gate for a custom world (RQ-PR12 CA1): its course content must
+   * cover the quiz sampling minimums (4 MC + 3 V/F + 3 ordenar) and ≥1 theory
+   * card, so students never see an empty world.
+   */
+  async checkCustomWorldReady(
+    colegioId: string,
+    cursoId: string,
+    worldId: string
+  ): Promise<{ ready: boolean; faltan: ('mc' | 'vf' | 'ordenar' | 'teoria')[] }> {
+    const clients = getFirebaseClients();
+    if (!clients?.firestore) return { ready: false, faltan: ['mc', 'vf', 'ordenar', 'teoria'] };
+    const minimums = { mc: 4, vf: 3, ordenar: 3, teoria: 1 } as const;
+    const reads = await Promise.all(
+      (['mc', 'vf', 'ordenar', 'teoria'] as const).map(async (piece) => {
+        const snap = await getDoc(
+          cursoContenidoDocRef(clients.firestore, colegioId, cursoId, docIdForPiece(worldId, piece))
+        );
+        const data = snap.exists() ? (snap.data() as Record<string, unknown>) : null;
+        const list = (piece === 'teoria' ? data?.cards : data?.items) as unknown[] | undefined;
+        return { piece, count: list?.length ?? 0 };
+      })
+    );
+    const faltan = reads.filter((r) => r.count < minimums[r.piece]).map((r) => r.piece);
+    return { ready: faltan.length === 0, faltan };
+  },
+
+  /**
+   * Deletes a custom world (RQ-PR12 CA4): its content docs + its config entry
+   * and override flags, in one batch. The content is gone (irreversible); the
+   * students' progress docs are kept as history (reports tolerate them).
+   */
+  async deleteCustomWorld(params: {
+    colegioId: string;
+    cursoId: string;
+    uid: string;
+    config: CursoConfigMundos | null;
+    worldId: string;
+  }): Promise<boolean> {
+    const { colegioId, cursoId, uid, config, worldId } = params;
+    const clients = getFirebaseClients();
+    if (!clients?.firestore) return false;
+    const batch = writeBatch(clients.firestore);
+    for (const piece of ['mc', 'vf', 'ordenar', 'teoria', 'eligeCamino'] as ContentPiece[]) {
+      batch.delete(
+        cursoContenidoDocRef(clients.firestore, colegioId, cursoId, docIdForPiece(worldId, piece))
+      );
+    }
+    const nextConfig = buildNextConfig(config, uid, (draft) => {
+      draft.mundos = draft.mundos.filter((m) => m.worldId !== worldId);
+      const overrides = { ...(draft.overrides ?? {}) };
+      delete overrides[worldId];
+      draft.overrides = overrides;
+      if (draft.modoEnfocado.worldId === worldId) draft.modoEnfocado = { activo: false };
+    });
+    batch.set(
+      cursoConfigMundosDocRef(clients.firestore, colegioId, cursoId),
+      stripUndefinedValues({ ...nextConfig } as Record<string, unknown>)
+    );
+    await batch.commit();
+    return true;
+  },
+
+  /**
+   * Duplicates a custom world into ANOTHER course of the same professor
+   * (RQ-PR12 CA4): copies its content docs and appends a draft entry to the
+   * target's config. The target course serves its own copy from then on.
+   */
+  async duplicateCustomWorld(params: {
+    colegioId: string;
+    fromCursoId: string;
+    toCursoId: string;
+    uid: string;
+    worldId: string;
+  }): Promise<boolean> {
+    const { colegioId, fromCursoId, toCursoId, uid, worldId } = params;
+    const clients = getFirebaseClients();
+    if (!clients?.firestore) return false;
+    const [fromConfigSnap, toConfigSnap] = await Promise.all([
+      getDoc(cursoConfigMundosDocRef(clients.firestore, colegioId, fromCursoId)),
+      getDoc(cursoConfigMundosDocRef(clients.firestore, colegioId, toCursoId)),
+    ]);
+    const fromConfig = fromConfigSnap.exists()
+      ? (fromConfigSnap.data() as CursoConfigMundos)
+      : null;
+    const entry = fromConfig?.mundos.find((m) => m.worldId === worldId);
+    if (!entry) return false;
+    const toConfig = toConfigSnap.exists() ? (toConfigSnap.data() as CursoConfigMundos) : null;
+    if (toConfig?.mundos.some((m) => m.worldId === worldId)) return false; // already there
+
+    const pieces: ContentPiece[] = ['mc', 'vf', 'ordenar', 'teoria', 'eligeCamino'];
+    const docs = await Promise.all(
+      pieces.map(async (piece) => {
+        const snap = await getDoc(
+          cursoContenidoDocRef(
+            clients.firestore,
+            colegioId,
+            fromCursoId,
+            docIdForPiece(worldId, piece)
+          )
+        );
+        return { piece, data: snap.exists() ? snap.data() : null };
+      })
+    );
+
+    const batch = writeBatch(clients.firestore);
+    for (const { piece, data } of docs) {
+      if (!data) continue;
+      batch.set(
+        cursoContenidoDocRef(
+          clients.firestore,
+          colegioId,
+          toCursoId,
+          docIdForPiece(worldId, piece)
+        ),
+        data
+      );
+    }
+    const nextConfig = buildNextConfig(toConfig, uid, (draft) => {
+      draft.mundos = [...draft.mundos, { ...entry, activo: false }];
+      for (const { piece, data } of docs) {
+        if (data) setOverrideFlag(draft, worldId, piece, true);
+      }
+    });
+    batch.set(
+      cursoConfigMundosDocRef(clients.firestore, colegioId, toCursoId),
+      stripUndefinedValues({ ...nextConfig } as Record<string, unknown>)
+    );
+    await batch.commit();
+    return true;
+  },
+
+  /**
    * Display overrides of a world (nombre/subtitle/descripcion) live on the
    * config entry itself — a config-only write. Empty strings clear the field
    * (back to the default world's metadata).

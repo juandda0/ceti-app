@@ -9,7 +9,10 @@
  */
 import type { WorldProgress } from '@shared/types/tenancy';
 import type { WorldId } from '@features/learning/data/quiz.types';
-import { competenciaForWorld } from '@features/learning/data/competencias';
+import {
+  COMPETENCIA_PERSONALIZADA,
+  competenciaForWorld,
+} from '@features/learning/data/competencias';
 import { computeMastery, isMastered } from '@features/learning/data/mastery';
 
 export interface BuildWorldProgressInput {
@@ -21,6 +24,12 @@ export interface BuildWorldProgressInput {
   correct: number;
   total: number;
   quizScores?: Record<string, number>;
+  /**
+   * Explicit competency (custom worlds, RQ-PR12 CA2): the professor-assigned
+   * CONPES id. Absent → the default world↔CONPES mapping, or 'personalizada'
+   * for a custom world without an assignment (progress-only in reports).
+   */
+  competencia?: string;
   /** Caller-supplied timestamp (ms). Keeps this function pure/testable. */
   now: number;
 }
@@ -32,7 +41,8 @@ export function buildWorldProgress(input: BuildWorldProgressInput): WorldProgres
     colegioId: input.colegioId,
     cursoId: input.cursoId,
     uid: input.uid,
-    competencia: competenciaForWorld(input.worldId).id,
+    competencia:
+      input.competencia ?? competenciaForWorld(input.worldId)?.id ?? COMPETENCIA_PERSONALIZADA,
     mastery,
     quizScores: input.quizScores ?? {},
     completed,

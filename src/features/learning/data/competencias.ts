@@ -8,7 +8,7 @@
  * and fill `conpesCodigo` — but keep `id` stable, since it is persisted on every
  * `WorldProgress.competencia` and used in reports.
  */
-import type { WorldId } from '@features/learning/data/quiz.types';
+import type { DefaultWorldId } from '@features/learning/data/quiz.types';
 
 export interface Competencia {
   /** Stable id stored on WorldProgress.competencia and in reports. Do not rename. */
@@ -21,7 +21,10 @@ export interface Competencia {
   conpesCodigo?: string;
 }
 
-export const WORLD_COMPETENCIAS: Record<WorldId, Competencia> = {
+/** Competency id used when a custom world has no assigned CONPES competency. */
+export const COMPETENCIA_PERSONALIZADA = 'personalizada';
+
+export const WORLD_COMPETENCIAS: Record<DefaultWorldId, Competencia> = {
   world_1: {
     id: 'ingreso',
     label: 'Ingreso y dinero',
@@ -49,12 +52,19 @@ export const WORLD_COMPETENCIAS: Record<WorldId, Competencia> = {
   },
 };
 
-export function competenciaForWorld(worldId: WorldId): Competencia {
-  return WORLD_COMPETENCIAS[worldId];
+/** undefined for custom (`cw_*`) worlds — callers decide their fallback. */
+export function competenciaForWorld(worldId: string): Competencia | undefined {
+  return WORLD_COMPETENCIAS[worldId as DefaultWorldId];
 }
 
 /** Canonical (default) world order — the class config default (RQ-PR10). */
-export const WORLD_ORDER: WorldId[] = ['world_1', 'world_2', 'world_3', 'world_4', 'world_5'];
+export const WORLD_ORDER: DefaultWorldId[] = [
+  'world_1',
+  'world_2',
+  'world_3',
+  'world_4',
+  'world_5',
+];
 
 /** Competencies in world order — the stable column set for reports/CSV. */
 export const ALL_COMPETENCIAS: Competencia[] = WORLD_ORDER.map((w) => WORLD_COMPETENCIAS[w]);

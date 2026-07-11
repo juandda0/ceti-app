@@ -12,7 +12,7 @@ const base = {
 describe('buildWorldProgress', () => {
   it('populates competencia from the world mapping and denormalized keys', () => {
     const p = buildWorldProgress({ ...base, correct: 8, total: 10 });
-    expect(p.competencia).toBe(competenciaForWorld('world_3').id);
+    expect(p.competencia).toBe(competenciaForWorld('world_3')?.id);
     expect(p.colegioId).toBe('A');
     expect(p.cursoId).toBe('c1');
     expect(p.uid).toBe('s1');

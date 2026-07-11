@@ -35,6 +35,7 @@ import { useUserStore } from '@features/auth/store/useUserStore';
 import { useStudentGrado } from '@features/learning/hooks/useStudentGrado';
 import { useClassConfig } from '@features/learning/hooks/useClassConfig';
 import { isWorldVisible } from '@features/learning/data/classConfig';
+import { displayWorldDef } from '@features/learning/data/worldMeta';
 import { useWorldFlow } from '@features/learning/hooks/useWorldFlow';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { Typography } from '@shared/constants/typography';
@@ -108,8 +109,9 @@ export default function WorldSagaScreen() {
   );
 
   const configEntry = classConfig?.mundos?.find((m) => m.worldId === worldId);
-  const baseMeta = WORLD_META[worldId ?? ''] ?? { name: 'Mundo', color: '#FF8A1F' };
-  const meta = { name: configEntry?.nombre ?? baseMeta.name, color: baseMeta.color };
+  const disp = displayWorldDef(worldId ?? '', configEntry);
+  const fallback = WORLD_META[worldId ?? ''] ?? { name: 'Mundo', color: '#FF8A1F' };
+  const meta = { name: disp?.name ?? fallback.name, color: disp?.color ?? fallback.color };
 
   let content: React.ReactElement;
   if (phase === 'loading' || !grado) {

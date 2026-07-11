@@ -757,6 +757,38 @@ await check(
   )
 );
 await check(
+  'config rejects non-map overrides',
+  assertFails(setDoc(doc(profA1, configPath), { ...validConfig, overrides: 'todo' }))
+);
+await check(
+  'course teacher writes custom eligeCamino',
+  assertSucceeds(
+    setDoc(doc(profA1, contPath('eligeCamino_world_1')), {
+      bancoId: 'eligeCamino_world_1',
+      grado: '9',
+      worldId: 'world_1',
+      situaciones: [{ id: 's1', enunciado: 'x', opcionA: {}, opcionB: {} }],
+      generadoPor: 'profesor',
+      pendiente_validacion_docente: false,
+    })
+  )
+);
+await check(
+  'contenido banco rejects unexpected fields (hasOnly)',
+  assertFails(
+    setDoc(doc(profA1, contPath('banco_world_1_true_false')), { ...customBanco, extra: 1 })
+  )
+);
+await check(
+  'contenido banco rejects >100 items',
+  assertFails(
+    setDoc(doc(profA1, contPath('banco_world_1_true_false')), {
+      ...customBanco,
+      items: Array.from({ length: 101 }, (_, i) => ({ id: `q${i}` })),
+    })
+  )
+);
+await check(
   'collectionGroup(contenido) denied',
   assertFails(getDocs(query(collectionGroup(profA1, 'contenido'))))
 );

@@ -12,8 +12,15 @@ export interface WorldDef {
   name: string;
   subtitle: string;
   description: string;
-  iconName: 'planet' | 'moon' | 'star' | 'infinite' | 'warning';
+  iconName: 'planet' | 'moon' | 'star' | 'infinite' | 'warning' | 'rocket';
   color: string;
+}
+
+/** Custom worlds (RQ-PR12) render with a fixed accent + rocket icon. */
+export const CUSTOM_WORLD_COLOR = '#4FB6C9';
+
+export function isCustomWorldId(worldId: string): boolean {
+  return worldId.startsWith('cw_');
 }
 
 export const WORLD_DEFS: readonly WorldDef[] = [
@@ -66,4 +73,36 @@ export const WORLD_DEFS: readonly WorldDef[] = [
 
 export function worldDefById(worldId: string): WorldDef | undefined {
   return WORLD_DEFS.find((d) => d.id === worldId);
+}
+
+/**
+ * Display metadata for ANY world of a class: a default world merged with the
+ * professor's display overrides, or a custom (`cw_*`) world built from its
+ * config entry. Returns null for an unknown id (defensive — never crash the
+ * student's screen).
+ */
+export function displayWorldDef(
+  worldId: string,
+  entry?: { nombre?: string; subtitle?: string; descripcion?: string } | null
+): WorldDef | null {
+  const base = worldDefById(worldId);
+  if (base) {
+    if (!entry) return base;
+    return {
+      ...base,
+      name: entry.nombre ?? base.name,
+      subtitle: entry.subtitle ?? base.subtitle,
+      description: entry.descripcion ?? base.description,
+    };
+  }
+  if (!isCustomWorldId(worldId) || !entry?.nombre) return null;
+  return {
+    id: worldId,
+    number: 0, // callers override with the class-order position
+    name: entry.nombre,
+    subtitle: entry.subtitle ?? '',
+    description: entry.descripcion ?? '',
+    iconName: 'rocket',
+    color: CUSTOM_WORLD_COLOR,
+  };
 }

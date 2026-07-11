@@ -30,6 +30,7 @@ import {
 } from '@features/learning/store/useQuestionBankStore';
 import { useStudentGrado } from '@features/learning/hooks/useStudentGrado';
 import { useClassConfig } from '@features/learning/hooks/useClassConfig';
+import { displayWorldDef } from '@features/learning/data/worldMeta';
 import { useUserStore } from '@features/auth/store/useUserStore';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { buildWorldProgress } from '@features/learning/data/worldProgress';
@@ -460,11 +461,12 @@ export default function WorldQuizScreen() {
   );
   const fetchStatus = useQuestionBankStore((s) => s.fetchStatus[worldId as WorldId] ?? 'idle');
 
-  // Class config (RQ-PR10/PR11): custom display name + content overrides.
+  // Class config (RQ-PR10/PR11/PR12): custom display name/color + overrides.
   const { config: classConfig } = useClassConfig();
   const configEntry = classConfig?.mundos?.find((m) => m.worldId === worldId);
-  const baseMeta = WORLD_META[worldId ?? ''] ?? { name: 'Mundo', color: '#FF8A1F' };
-  const meta = { name: configEntry?.nombre ?? baseMeta.name, color: baseMeta.color };
+  const disp = displayWorldDef(worldId ?? '', configEntry);
+  const fallback = WORLD_META[worldId ?? ''] ?? { name: 'Mundo', color: '#FF8A1F' };
+  const meta = { name: disp?.name ?? fallback.name, color: disp?.color ?? fallback.color };
 
   // Linear traversal state (R7: no adaptive selection)
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -513,10 +515,23 @@ export default function WorldQuizScreen() {
       worldId: worldId as WorldId,
       correct: done,
       total,
+      // Custom worlds (RQ-PR12 CA2): the professor-assigned competency (or
+      // 'personalizada' via the builder's fallback). Default worlds ignore it.
+      competencia: configEntry?.competencia,
       now: Date.now(),
     });
     void worldProgressRepository.upsert(colegioId, cursoId, firebaseUid, worldId, progress);
-  }, [isComplete, role, colegioId, cursoId, firebaseUid, worldId, userId, getWorldProgress]);
+  }, [
+    isComplete,
+    role,
+    colegioId,
+    cursoId,
+    firebaseUid,
+    worldId,
+    userId,
+    getWorldProgress,
+    configEntry?.competencia,
+  ]);
 
   const currentQuestion = questions[currentIndex] ?? null;
 

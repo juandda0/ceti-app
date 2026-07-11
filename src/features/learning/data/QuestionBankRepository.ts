@@ -55,6 +55,8 @@ async function fetchBancoDoc(
       );
       if (customSnap.exists()) return customSnap.data() as BancoDoc;
     }
+    // Custom (`cw_*`) worlds have no global default to fall back to.
+    if (worldId.startsWith('cw_')) return null;
     const snap = await getDoc(bancoDocRef(clients.firestore, grado, worldId, tipo));
     if (!snap.exists()) return null;
     return snap.data() as BancoDoc;

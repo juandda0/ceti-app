@@ -104,6 +104,115 @@ export function canonicalElements(item: OrdenarItem): string[] {
   return item.ordenCanonico.map((idx) => item.elementos[idx]);
 }
 
+/**
+ * Draft world returned by the `generarBorradorMundo` Function (RQ-CN06).
+ * `ordenar.elementosCorrectos` come in their CORRECT order; the client builds
+ * the stored (shuffled) form via `buildOrdenarElements`.
+ */
+export type MundoBorrador = {
+  nombre: string;
+  subtitle: string;
+  descripcion: string;
+  teoria: { titulo: string; cuerpo: string; ejemplo?: string }[];
+  mc: { enunciado: string; opciones: string[]; correctIndex: number; explicacion?: string }[];
+  vf: { enunciado: string; respuesta: boolean; explicacion?: string }[];
+  ordenar: { enunciado: string; elementosCorrectos: string[]; explicacion?: string }[];
+  eligeCamino: {
+    enunciado: string;
+    opcionA: { texto: string; consecuencia: string };
+    opcionB: { texto: string; consecuencia: string };
+  }[];
+};
+
+/**
+ * Converts an accepted IA draft into the content docs of a custom world.
+ * Everything generated is stamped `generadoPor:'ia'` +
+ * `pendiente_validacion_docente:true` (RQ-CN06 CA3) — honest provenance; the
+ * professor already reviews before saving.
+ */
+export function buildPiecesFromDraft(
+  draft: MundoBorrador,
+  grado: string,
+  worldId: string,
+  competencia: string
+): Record<'mc' | 'vf' | 'ordenar' | 'teoria' | 'eligeCamino', Record<string, unknown>> {
+  const dificultad = (i: number) => Math.min(3, 1 + Math.floor(i / 2));
+  const bancoShell = (tipo: string, items: unknown[]) => ({
+    bancoId: `banco_${worldId}_${tipo}`,
+    grado,
+    worldId,
+    tipo,
+    version: 1,
+    generadoPor: 'ia',
+    pendiente_validacion_docente: true,
+    items,
+  });
+  return {
+    mc: bancoShell(
+      'multiple_choice',
+      draft.mc.map((q, i) => ({
+        id: `ia_mc_${i}`,
+        tipo: 'multiple_choice',
+        enunciado: q.enunciado,
+        competencia,
+        dificultad: dificultad(i),
+        opciones: q.opciones,
+        correctIndex: q.correctIndex,
+        ...(q.explicacion ? { explicacion: q.explicacion } : {}),
+      }))
+    ),
+    vf: bancoShell(
+      'true_false',
+      draft.vf.map((q, i) => ({
+        id: `ia_vf_${i}`,
+        tipo: 'true_false',
+        enunciado: q.enunciado,
+        competencia,
+        dificultad: dificultad(i),
+        respuesta: q.respuesta,
+        ...(q.explicacion ? { explicacion: q.explicacion } : {}),
+      }))
+    ),
+    ordenar: bancoShell(
+      'ordenar',
+      draft.ordenar.map((q, i) => {
+        const id = `ia_ord_${i}`;
+        const built = buildOrdenarElements(id, q.enunciado, q.elementosCorrectos);
+        return {
+          id,
+          tipo: 'ordenar',
+          enunciado: q.enunciado,
+          competencia,
+          dificultad: dificultad(i),
+          elementos: built.elementos,
+          ordenCanonico: built.ordenCanonico,
+          ...(q.explicacion ? { explicacion: q.explicacion } : {}),
+        };
+      })
+    ),
+    teoria: {
+      grado,
+      worldId,
+      cards: draft.teoria,
+      generadoPor: 'ia',
+      pendiente_validacion_docente: true,
+    },
+    eligeCamino: {
+      bancoId: `eligeCamino_${worldId}`,
+      grado,
+      worldId,
+      situaciones: draft.eligeCamino.map((s, i) => ({
+        id: `ia_ec_${i}`,
+        enunciado: s.enunciado,
+        opcionA: s.opcionA,
+        opcionB: s.opcionB,
+      })),
+      generadoPor: 'ia',
+      pendiente_validacion_docente: true,
+    },
+  };
+}
+
 /** Builders for empty new items (editor "añadir"). */
 export function newMcItem(id: string, competencia: string): MultipleChoiceItem {
   return {

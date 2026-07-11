@@ -410,3 +410,35 @@ Nota de despliegue: un build intermedio se construyó con caché de Metro stale 
 incluía un fix); además los chunks JS se sirven con `max-age=3600`+ETag, así que un
 navegador que vio el build malo se autocorrige en ≤1 h o con un hard-refresh. Para
 builds limpios garantizados: nukear `%TEMP%/metro-*` + `.expo` antes de `expo export`.
+
+---
+
+## Fase D-ORQ — El profesor orquesta su clase (2026-07-10/11)
+
+Decisión D-ORQ registrada (RQ-PR10/PR11/PR12, RQ-CN06; R7/R8 enmendados por R15)
+e implementada en tres entregas sobre `refactor/solo-profesor-estudiante`:
+
+- **A — Configuración de clase (RQ-PR10):** doc único `cursos/{cursoId}/config/mundos`
+  (mundos activos + orden + modo enfocado); el profesor cura desde "Mundos de la
+  clase" en Gestionar curso (auto-guardado por interacción); el estudiante recibe
+  cambios en vivo (onSnapshot) con salida suave (termina su actividad, no re-entra;
+  el progreso nunca se borra) y estado vacío; desbloqueo sigue el orden configurado
+  sin re-bloquear lo completado. Ausencia del doc = defaults (migración cero).
+- **B — Contenido editable por curso (RQ-PR11):** copy-on-write a
+  `cursos/{cursoId}/contenido/*` (el default global sigue read-only, R8); editor
+  con tabs Preguntas (MC/VF/Ordenar, Zod + mínimos R9) / Teoría / Info del mundo;
+  "Restaurar original" con confirmación cross-platform (dialogs.ts — Alert de
+  RN-web no dispara botones); cada guardado es un batch atómico (doc + flag de
+  override + bump de versión → invalida el cache del estudiante); ordenar se
+  baraja determinísticamente al guardar (no filtra la respuesta).
+- **C — Mundos propios + IA (RQ-PR12/CN06):** mundos `cw_*` por curso con borrador
+  (activo:false) → gate de activación (≥4 MC + ≥3 V/F + ≥3 ordenar + ≥1 teoría),
+  duplicado a otro curso propio y eliminación en batch (progreso se conserva como
+  historial; reportes toleran competencia `personalizada` fuera del cumplimiento);
+  wizard "Crear mundo" con Cloud Function `generarBorradorMundo` (Groq server-side,
+  cap diario 20, solo retorna borrador, prompt sin PII, validación a mano estilo
+  vozClasificacion).
+
+**Vetos:** AR `pass` (config, commit 1d84af1) · AR `pass` (contenido, commit
+02504f6; hardening OBS-1/2/3 aplicado). **Gates:** typecheck/lint/i18n/invariants ✓ ·
+jest 200/200 ✓ · test:rules 120/120 ✓.

@@ -18,6 +18,7 @@ import { initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { clasificarTexto, groqCaller, ModelApiError } from './vozClasificacion';
+import { generarBorrador, NOMBRE_MAX, TEMA_MAX } from './mundoBorrador';
 
 initializeApp();
 
@@ -565,6 +566,67 @@ export const procesarRegistroVoz = onCall({ secrets: [GROQ_API_KEY] }, async (re
   // Solo un éxito consume cuota (CA8).
   await chargeVozBudget(caller.uid);
   return resultado;
+});
+
+// ---------------------------------------------------------------------------
+// IA de authoring docente (RQ-CN06, D-ORQ). Server-side ONLY: genera un
+// BORRADOR de mundo (teoría + preguntas + elige-camino) que se RETORNA al
+// profesor — nunca escribe contenido; el profesor revisa y guarda desde la UI
+// bajo las rules de cursos/{cursoId}/contenido/*. El prompt recibe solo
+// nombre/tema/grado — jamás datos de estudiantes (CA2). No toca el runtime
+// del estudiante (R7 intacto para esa capa).
+// ---------------------------------------------------------------------------
+
+const IA_AUTHORING_CAP_DIARIO = 20;
+
+/** Counter doc for the daily authoring cap (CA3), keyed by uid + UTC day. */
+function iaAuthoringUsoRef(uid: string) {
+  const day = new Date().toISOString().slice(0, 10);
+  return getFirestore().doc(`iaAuthoringUso/${uid}_${day}`);
+}
+
+export const generarBorradorMundo = onCall({ secrets: [GROQ_API_KEY] }, async (request) => {
+  const caller = request.auth;
+  requireAuth(caller);
+  if (caller.token.role !== 'profesor') {
+    throw new HttpsError('permission-denied', 'Solo profesores generan borradores.');
+  }
+  const colegioId = requireString(request.data?.colegioId, 'colegioId');
+  const cursoId = requireString(request.data?.cursoId, 'cursoId');
+  const nombre = requireString(request.data?.nombre, 'nombre');
+  const tema = requireString(request.data?.tema, 'tema');
+  const grado = requireString(request.data?.grado, 'grado');
+  if (nombre.length > NOMBRE_MAX || tema.length > TEMA_MAX || !['9', '10', '11'].includes(grado)) {
+    throw new HttpsError('invalid-argument', 'Parámetros fuera de rango.');
+  }
+  await assertStaffOfCurso(caller, colegioId, cursoId);
+
+  // Cap diario (mismo criterio que la voz: solo el éxito consume cuota).
+  const usoSnap = await iaAuthoringUsoRef(caller.uid).get();
+  const count = (usoSnap.data()?.count as number | undefined) ?? 0;
+  if (count >= IA_AUTHORING_CAP_DIARIO) {
+    throw new HttpsError('resource-exhausted', 'Límite diario de generación con IA alcanzado.');
+  }
+
+  let borrador;
+  try {
+    borrador = await generarBorrador(
+      { nombre, tema, grado },
+      groqCaller(GROQ_API_KEY.value(), { maxTokens: 4000, timeoutMs: 45_000 })
+    );
+  } catch (e) {
+    console.error('generarBorradorMundo: fallo de generación', e);
+    if (e instanceof ModelApiError) {
+      throw new HttpsError('unavailable', 'El generador no está disponible, intenta de nuevo.');
+    }
+    throw new HttpsError('internal', 'No se pudo generar el borrador.');
+  }
+
+  await iaAuthoringUsoRef(caller.uid).set(
+    { count: FieldValue.increment(1), updatedAt: FieldValue.serverTimestamp() },
+    { merge: true }
+  );
+  return borrador;
 });
 
 // ---------------------------------------------------------------------------

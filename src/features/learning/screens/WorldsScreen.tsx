@@ -24,7 +24,11 @@ import { worldProgressRepository } from '@features/dashboard/data/worldProgressR
 import { useStudentGrado } from '@features/learning/hooks/useStudentGrado';
 import { useClassConfig } from '@features/learning/hooks/useClassConfig';
 import { resolveClassWorlds } from '@features/learning/data/classConfig';
-import { competenciaForWorld } from '@features/learning/data/competencias';
+import {
+  COMPETENCIA_PERSONALIZADA,
+  competenciaForWorld,
+  competenciaLabel,
+} from '@features/learning/data/competencias';
 import { worldStatus } from '@features/learning/data/worldStatus';
 import StudentAssignmentsBanner from '@features/dashboard/components/StudentAssignmentsBanner';
 import JoinClassBanner from '@features/dashboard/components/JoinClassBanner';
@@ -35,10 +39,11 @@ import { Typography } from '@shared/constants/typography';
 import { Spacing, BorderRadius } from '@shared/constants/theme';
 import { motion } from '@shared/constants/motion';
 import type { ThemeColors } from '@shared/constants/colors';
-import { WORLD_DEFS, type WorldDef } from '@features/learning/data/worldMeta';
+import { displayWorldDef, type WorldDef } from '@features/learning/data/worldMeta';
 
 function WorldCard({
   world,
+  competenciaLabel,
   progress,
   isUnlocked,
   prevWorldName,
@@ -48,6 +53,7 @@ function WorldCard({
   t,
 }: {
   world: WorldDef;
+  competenciaLabel: string;
   progress: number;
   isUnlocked: boolean;
   /** Name of the previous world in the CLASS order (drives the locked note). */
@@ -115,7 +121,7 @@ function WorldCard({
               style={[cardSt.competenciaText, { color: colors.text.tertiary }]}
               numberOfLines={1}
             >
-              {competenciaForWorld(world.id).label}
+              {competenciaLabel}
             </Text>
           </View>
 
@@ -199,26 +205,31 @@ export default function WorldsScreen() {
     [classConfig, uid, answers, remoteProgress, isWorldComplete]
   );
 
-  // Visible worlds joined with their static defs, merged with the professor's
-  // display overrides (nombre/subtitle/descripcion — RQ-PR11). Unknown ids
-  // (e.g. a custom world from a future entrega) are skipped defensively.
+  // Visible worlds joined with their display metadata: default defs merged
+  // with the professor's overrides, or custom (`cw_*`) worlds built from their
+  // config entry (RQ-PR11/PR12). Unknown ids are skipped defensively. The card
+  // number is the CLASS-order position; the competencia tag resolves the
+  // default mapping, the assigned competency, or the "tema del profesor" label.
   const visibleWorlds = useMemo(
     () =>
       classWorlds
-        .map((cw) => {
-          const base = WORLD_DEFS.find((d) => d.id === cw.worldId);
-          if (!base) return null;
+        .map((cw, index) => {
           const entry = classConfig?.mundos?.find((m) => m.worldId === cw.worldId);
-          const def: WorldDef = {
-            ...base,
-            name: entry?.nombre ?? base.name,
-            subtitle: entry?.subtitle ?? base.subtitle,
-            description: entry?.descripcion ?? base.description,
-          };
-          return { cw, def };
+          const disp = displayWorldDef(cw.worldId, entry);
+          if (!disp) return null;
+          const def: WorldDef = { ...disp, number: index + 1 };
+          const competencia =
+            competenciaForWorld(cw.worldId)?.label ??
+            (entry?.competencia && entry.competencia !== COMPETENCIA_PERSONALIZADA
+              ? competenciaLabel(entry.competencia)
+              : t('worlds.competenciaPersonalizada'));
+          return { cw, def, competencia };
         })
-        .filter((x): x is { cw: (typeof classWorlds)[number]; def: WorldDef } => x !== null),
-    [classWorlds, classConfig]
+        .filter(
+          (x): x is { cw: (typeof classWorlds)[number]; def: WorldDef; competencia: string } =>
+            x !== null
+        ),
+    [classWorlds, classConfig, t]
   );
 
   // Per-world pointer to the course's custom content (RQ-PR11); null without a
@@ -340,10 +351,11 @@ export default function WorldsScreen() {
           </View>
         ) : (
           <View style={styles.list}>
-            {visibleWorlds.map(({ cw, def }, index) => (
+            {visibleWorlds.map(({ cw, def, competencia }, index) => (
               <WorldCard
                 key={def.id}
                 world={def}
+                competenciaLabel={competencia}
                 progress={progressMap[def.id] ?? 0}
                 isUnlocked={cw.unlocked}
                 prevWorldName={index > 0 ? visibleWorlds[index - 1].def.name : undefined}

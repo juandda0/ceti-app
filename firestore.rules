@@ -91,6 +91,7 @@ service cloud.firestore {
           allow create, update: if configId == 'mundos'
             && isProfesorDe(cid, cursoId)
             && request.resource.data.keys().hasOnly(['mundos', 'modoEnfocado', 'overrides', 'version', 'updatedAt', 'updatedByUid'])
+            && (!('overrides' in request.resource.data) || request.resource.data.overrides is map)
             && request.resource.data.mundos is list
             && request.resource.data.mundos.size() >= 1
             && request.resource.data.mundos.size() <= 30
@@ -116,14 +117,17 @@ service cloud.firestore {
           allow create, update: if isProfesorDe(cid, cursoId)
             && (
               (docId.matches('banco_.*')
+                && request.resource.data.keys().hasOnly(['bancoId', 'grado', 'worldId', 'tipo', 'version', 'generadoPor', 'pendiente_validacion_docente', 'items'])
                 && request.resource.data.items is list
                 && request.resource.data.items.size() >= 1
                 && request.resource.data.items.size() <= 100)
               || (docId.matches('microteoria_.*')
+                && request.resource.data.keys().hasOnly(['grado', 'worldId', 'cards', 'generadoPor', 'pendiente_validacion_docente'])
                 && request.resource.data.cards is list
                 && request.resource.data.cards.size() >= 1
                 && request.resource.data.cards.size() <= 20)
               || (docId.matches('eligeCamino_.*')
+                && request.resource.data.keys().hasOnly(['bancoId', 'grado', 'worldId', 'situaciones', 'generadoPor', 'pendiente_validacion_docente'])
                 && request.resource.data.situaciones is list
                 && request.resource.data.situaciones.size() >= 1
                 && request.resource.data.situaciones.size() <= 30)

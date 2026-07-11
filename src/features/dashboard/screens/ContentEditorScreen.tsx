@@ -45,14 +45,16 @@ import {
 } from '@features/dashboard/data/courseContentSchemas';
 import { rosterRepository } from '@features/dashboard/data/rosterRepository';
 import { worldDefById } from '@features/learning/data/worldMeta';
-import { WORLD_COMPETENCIAS } from '@features/learning/data/competencias';
+import {
+  COMPETENCIA_PERSONALIZADA,
+  competenciaForWorld,
+} from '@features/learning/data/competencias';
 import type {
   MultipleChoiceItem,
   OrdenarItem,
   QuizItem,
   TrueFalseItem,
   Grado,
-  WorldId,
 } from '@features/learning/data/quiz.types';
 import type { MicroteoriaCard } from '@features/learning/data/content.types';
 import type { CursoConfigMundos } from '@shared/types/tenancy';
@@ -78,7 +80,6 @@ export default function ContentEditorScreen() {
   const firebaseUid = useAuthStore((s) => s.firebaseUid) ?? '';
 
   const def = worldDefById(worldId);
-  const competenciaId = WORLD_COMPETENCIAS[worldId as WorldId]?.id ?? 'personalizada';
 
   const [config, setConfig] = useState<CursoConfigMundos | null>(null);
   const [configLoaded, setConfigLoaded] = useState(false);
@@ -94,6 +95,10 @@ export default function ContentEditorScreen() {
   >({});
 
   const entry = config?.mundos?.find((m) => m.worldId === worldId);
+  // Competency stamped on new items: the default world's mapping, or the
+  // custom world's assigned competency, or 'personalizada' (RQ-PR12 CA2).
+  const competenciaId =
+    competenciaForWorld(worldId)?.id ?? entry?.competencia ?? COMPETENCIA_PERSONALIZADA;
   const [metaDraft, setMetaDraft] = useState({ nombre: '', subtitle: '', descripcion: '' });
 
   useEffect(() => {

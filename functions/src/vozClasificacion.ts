@@ -131,11 +131,20 @@ export type ModelCaller = (systemPrompt: string, userText: string) => Promise<st
 export const GROQ_MODEL = 'llama-3.3-70b-versatile';
 const GROQ_TIMEOUT_MS = 15_000;
 
-/** Production ModelCaller: Groq (Llama) JSON-mode chat completion. */
-export function groqCaller(apiKey: string): ModelCaller {
+/**
+ * Production ModelCaller: Groq (Llama) JSON-mode chat completion. Defaults fit
+ * the short voice classification; the world-draft generator (mundoBorrador)
+ * passes a larger token/timeout budget.
+ */
+export function groqCaller(
+  apiKey: string,
+  opts?: { maxTokens?: number; timeoutMs?: number }
+): ModelCaller {
+  const maxTokens = opts?.maxTokens ?? 300;
+  const timeoutMs = opts?.timeoutMs ?? GROQ_TIMEOUT_MS;
   return async (systemPrompt, userText) => {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), GROQ_TIMEOUT_MS);
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
     try {
       const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
@@ -148,7 +157,7 @@ export function groqCaller(apiKey: string): ModelCaller {
           ],
           response_format: { type: 'json_object' },
           temperature: 0,
-          max_tokens: 300,
+          max_tokens: maxTokens,
         }),
         signal: controller.signal,
       });

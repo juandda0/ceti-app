@@ -48,4 +48,19 @@ export const adminService = {
   async joinByCode(code: string): Promise<{ ok: boolean; colegioId: string; cursoId: string }> {
     return callFunction('joinByCode', { code });
   },
+
+  /**
+   * IA de authoring docente (RQ-CN06): the Function RETURNS a draft world
+   * (teoría/preguntas/elige-camino) — it never writes content. The professor
+   * reviews it in the wizard and saves it as their course's custom content.
+   */
+  async generarBorradorMundo(input: {
+    colegioId: string;
+    cursoId: string;
+    nombre: string;
+    tema: string;
+    grado: string;
+  }): Promise<import('./courseContentSchemas').MundoBorrador> {
+    return callFunction('generarBorradorMundo', input);
+  },
 };

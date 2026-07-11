@@ -5,7 +5,14 @@
  * adaptive/ML selection at runtime; R9: exactly 10 items = 4 MC + 3 VF + 3 ordenar.
  */
 
-export type WorldId = 'world_1' | 'world_2' | 'world_3' | 'world_4' | 'world_5';
+/** The closed set of DEFAULT (Ceti) worlds — use where exhaustiveness matters. */
+export type DefaultWorldId = 'world_1' | 'world_2' | 'world_3' | 'world_4' | 'world_5';
+
+/**
+ * D-ORQ (RQ-PR12): professors create custom worlds (`cw_*` ids), so a WorldId
+ * is any string. Custom ids never collide with the default set.
+ */
+export type WorldId = string;
 
 export type Grado = '9' | '10' | '11';
 
