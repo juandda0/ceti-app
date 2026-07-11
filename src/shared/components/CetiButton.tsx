@@ -17,6 +17,7 @@ import Animated, {
   Easing,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
+import { Ionicons } from '@expo/vector-icons';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { Typography } from '@shared/constants/typography';
 import { BorderRadius, Spacing, Shadows } from '@shared/constants/theme';
@@ -33,6 +34,8 @@ interface CetiButtonProps {
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
   backgroundColor?: string;
+  /** Ícono opcional a la izquierda del label (Ionicons). */
+  icon?: keyof typeof Ionicons.glyphMap;
 }
 
 export default function CetiButton({
@@ -44,6 +47,7 @@ export default function CetiButton({
   disabled = false,
   style,
   backgroundColor,
+  icon,
 }: CetiButtonProps) {
   const scale = useSharedValue(1);
   const colors = useThemeColors();
@@ -195,7 +199,17 @@ export default function CetiButton({
       {isLoading ? (
         <ActivityIndicator color={getTextStyle().color} />
       ) : (
-        <Text style={[styles.label, Typography.buttonLarge, getTextStyle()]}>{label}</Text>
+        <>
+          {icon ? (
+            <Ionicons
+              name={icon}
+              size={size === 'small' ? 16 : 20}
+              color={getTextStyle().color}
+              style={styles.icon}
+            />
+          ) : null}
+          <Text style={[styles.label, Typography.buttonLarge, getTextStyle()]}>{label}</Text>
+        </>
       )}
     </Pressable>
   );
@@ -237,5 +251,6 @@ const styles = StyleSheet.create({
     elevation: 0,
   },
   label: { textAlign: 'center' },
+  icon: { marginRight: 8 },
   disabled: { opacity: 0.4 },
 });

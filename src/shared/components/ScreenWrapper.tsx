@@ -11,16 +11,17 @@ interface ScreenWrapperProps {
   delay?: number;
 }
 
-// Reanimated layout animations (entering/exiting) are unreliable on web: the
-// exiting screen can stay mounted as an invisible overlay that swallows taps,
-// or leave the view offset — breaking buttons/inputs. Disable them on web.
+// El fade de ENTRADA es seguro en web (anima la pantalla nueva al montar). El de
+// SALIDA no: la pantalla saliente puede quedar montada como overlay invisible que
+// traga taps o queda desplazada. Por eso: entrada en ambas plataformas, salida
+// solo en nativo.
 const isWeb = Platform.OS === 'web';
 
 export default function ScreenWrapper({ children, style, delay = 0 }: ScreenWrapperProps) {
   const colors = useThemeColors();
   return (
     <Animated.View
-      entering={isWeb ? undefined : motion.screenEnter(delay)}
+      entering={motion.screenEnter(delay)}
       exiting={isWeb ? undefined : motion.screenExit}
       // Default themed background so screens that don't set one don't fall back to
       // the navigator's default (white on web). Screens can still override.

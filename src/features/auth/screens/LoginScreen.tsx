@@ -119,7 +119,7 @@ export default function LoginScreen() {
         <PageHeader
           overline="Cuenta"
           title="Entra a Ceti"
-          subtitle="Usa tu cuenta Google (o Apple en iOS) para guardar tu progreso en la nube de forma segura."
+          subtitle="Usa tu cuenta de Google o Apple para guardar tu progreso en la nube de forma segura."
           style={{ marginBottom: Spacing['2xl'] }}
         />
 
@@ -149,6 +149,7 @@ export default function LoginScreen() {
 
         <CetiButton
           label="Continuar con Google"
+          icon="logo-google"
           onPress={onGoogle}
           variant="primary"
           size="large"
@@ -159,6 +160,7 @@ export default function LoginScreen() {
         {showApple ? (
           <CetiButton
             label="Continuar con Apple"
+            icon="logo-apple"
             onPress={onApple}
             variant="secondary"
             size="large"

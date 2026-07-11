@@ -185,12 +185,62 @@ export async function signInWithGoogle(): Promise<void> {
 }
 
 export function isAppleSignInAvailable(): boolean {
+  // Web: Firebase soporta Apple vía OAuthProvider (popup), igual que Google.
+  // Mostramos el botón siempre que Firebase esté configurado; si el proveedor
+  // no está habilitado en la consola, el click devuelve un error claro.
+  if (Platform.OS === 'web') return !!getFirebaseClients();
+  // Nativo iOS: Sign in with Apple nativo, detrás del feature flag.
   const extra = readExtra();
   if (extra.featureAppleSignIn !== true && extra.featureAppleSignIn !== '1') return false;
   return Platform.OS === 'ios';
 }
 
+/** Web: flujo OAuth de Apple con el JS SDK (popup; fallback a redirect). */
+async function signInWithAppleWeb(): Promise<void> {
+  const clients = getFirebaseClients();
+  if (!clients) throw new Error('Configura Firebase (EXPO_PUBLIC_FIREBASE_*)');
+
+  const provider = new OAuthProvider('apple.com');
+  provider.addScope('email');
+  provider.addScope('name');
+
+  try {
+    await signInWithPopup(clients.auth, provider);
+  } catch (e) {
+    const code =
+      e && typeof e === 'object' && 'code' in e ? String((e as { code?: string }).code) : '';
+
+    if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+      throw new Error('Inicio de sesión con Apple cancelado');
+    }
+    if (
+      code === 'auth/popup-blocked' ||
+      code === 'auth/operation-not-supported-in-this-environment'
+    ) {
+      await signInWithRedirect(clients.auth, provider);
+      return;
+    }
+    if (code === 'auth/network-request-failed') {
+      throw new Error('No se pudo verificar la sesión con Firebase (red). Inténtalo de nuevo.');
+    }
+    if (code === 'auth/unauthorized-domain') {
+      throw new Error(
+        'Dominio no autorizado. En Firebase → Authentication → Settings → Authorized domains, agrega el dominio donde corre la web.'
+      );
+    }
+    if (code === 'auth/operation-not-allowed') {
+      throw new Error(
+        'Apple no está habilitado. Actívalo en Firebase → Authentication → Sign-in method → Apple.'
+      );
+    }
+    throw e instanceof Error ? e : new Error(String(e));
+  }
+}
+
 export async function signInWithApple(): Promise<void> {
+  if (Platform.OS === 'web') {
+    return signInWithAppleWeb();
+  }
   if (!isAppleSignInAvailable()) {
     throw new Error('Sign in with Apple no está activo');
   }
