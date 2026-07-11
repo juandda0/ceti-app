@@ -25,12 +25,16 @@
  *
  * RQ-ES02, RQ-FN09, RQ-ES06.
  */
-import { ActivityIndicator, Text, StyleSheet } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useEffect, useRef } from 'react';
+import { ActivityIndicator, Text, View, StyleSheet } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { useUserStore } from '@features/auth/store/useUserStore';
 import { useStudentGrado } from '@features/learning/hooks/useStudentGrado';
+import { useClassConfig } from '@features/learning/hooks/useClassConfig';
+import { isWorldVisible } from '@features/learning/data/classConfig';
 import { useWorldFlow } from '@features/learning/hooks/useWorldFlow';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { Typography } from '@shared/constants/typography';
@@ -53,6 +57,7 @@ const WORLD_META: Record<string, { name: string; color: string }> = {
 
 export default function WorldSagaScreen() {
   const { worldId } = useLocalSearchParams<{ worldId: string }>();
+  const router = useRouter();
   const { t } = useTranslation();
   const colors = useThemeColors();
 
@@ -62,6 +67,26 @@ export default function WorldSagaScreen() {
 
   const grado = useStudentGrado();
 
+  // Soft-exit guard (D-ORQ, RQ-PR10 CA4). The class config is live: if the
+  // professor removes/defocuses THIS world while the student is inside, the
+  // student may finish the activity already on screen (never kicked mid-
+  // question) but cannot re-enter; a fresh entry into a hidden world bounces.
+  const { config: classConfig, loaded: classConfigLoaded } = useClassConfig();
+  const visible = !classConfigLoaded || isWorldVisible(classConfig, worldId ?? '');
+  const wasVisibleRef = useRef(false);
+  useEffect(() => {
+    if (classConfigLoaded && isWorldVisible(classConfig, worldId ?? '')) {
+      wasVisibleRef.current = true;
+    }
+  }, [classConfigLoaded, classConfig, worldId]);
+  useEffect(() => {
+    // Entry guard: never was visible during this visit → not a soft exit, bounce.
+    if (classConfigLoaded && !visible && !wasVisibleRef.current) {
+      router.replace('/saga' as never);
+    }
+  }, [classConfigLoaded, visible, router]);
+  const softExited = classConfigLoaded && !visible && wasVisibleRef.current;
+
   const { phase, situacion, microteoriaBank, handleECFinish, handleMTFinish } = useWorldFlow(
     uid,
     grado,
@@ -70,9 +95,10 @@ export default function WorldSagaScreen() {
 
   const meta = WORLD_META[worldId ?? ''] ?? { name: 'Mundo', color: '#FF8A1F' };
 
-  // ── Loading ────────────────────────────────────────────────────────────────
+  let content: React.ReactElement;
   if (phase === 'loading' || !grado) {
-    return (
+    // ── Loading ──────────────────────────────────────────────────────────────
+    content = (
       <ScreenWrapper
         style={{
           flex: 1,
@@ -87,11 +113,9 @@ export default function WorldSagaScreen() {
         </Text>
       </ScreenWrapper>
     );
-  }
-
-  // ── EligeCamino phase ─────────────────────────────────────────────────────
-  if (phase === 'eligecamino' && situacion !== null) {
-    return (
+  } else if (phase === 'eligecamino' && situacion !== null) {
+    // ── EligeCamino phase ────────────────────────────────────────────────────
+    content = (
       <EligeCaminoView
         situacion={situacion}
         worldName={meta.name}
@@ -99,11 +123,9 @@ export default function WorldSagaScreen() {
         onFinish={handleECFinish}
       />
     );
-  }
-
-  // ── Micro-teoría phase ────────────────────────────────────────────────────
-  if (phase === 'microteoria' && microteoriaBank !== null) {
-    return (
+  } else if (phase === 'microteoria' && microteoriaBank !== null) {
+    // ── Micro-teoría phase ───────────────────────────────────────────────────
+    content = (
       <MicroteoriaView
         cards={microteoriaBank.cards}
         worldName={meta.name}
@@ -111,15 +133,48 @@ export default function WorldSagaScreen() {
         onFinish={handleMTFinish}
       />
     );
+  } else {
+    // ── Quiz phase (default / graceful fallback) ─────────────────────────────
+    content = <WorldQuizScreen />;
   }
 
-  // ── Quiz phase (default / graceful fallback) ───────────────────────────────
-  return <WorldQuizScreen />;
+  return (
+    <View style={{ flex: 1 }}>
+      {softExited && (
+        <View
+          style={[
+            styles.classUpdatedBanner,
+            { backgroundColor: colors.background.elevated, borderColor: meta.color },
+          ]}
+          accessibilityRole="alert"
+        >
+          <Ionicons name="megaphone-outline" size={16} color={meta.color} />
+          <Text style={[styles.classUpdatedText, { color: colors.text.primary }]}>
+            {t('worlds.classUpdated')}
+          </Text>
+        </View>
+      )}
+      {content}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
   loadingText: {
     ...Typography.footnote,
     marginTop: 16,
+  },
+  classUpdatedBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    borderBottomWidth: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  classUpdatedText: {
+    ...Typography.footnote,
+    fontWeight: '600',
+    flex: 1,
   },
 });

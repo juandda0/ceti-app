@@ -53,7 +53,8 @@ export function competenciaForWorld(worldId: WorldId): Competencia {
   return WORLD_COMPETENCIAS[worldId];
 }
 
-const WORLD_ORDER: WorldId[] = ['world_1', 'world_2', 'world_3', 'world_4', 'world_5'];
+/** Canonical (default) world order — the class config default (RQ-PR10). */
+export const WORLD_ORDER: WorldId[] = ['world_1', 'world_2', 'world_3', 'world_4', 'world_5'];
 
 /** Competencies in world order — the stable column set for reports/CSV. */
 export const ALL_COMPETENCIAS: Competencia[] = WORLD_ORDER.map((w) => WORLD_COMPETENCIAS[w]);

@@ -107,6 +107,30 @@ export type WorldProgress = {
   updatedAt: number;
 };
 
+/** One entry of the class world list; array position = teaching order. */
+export type CursoConfigMundoEntry = {
+  worldId: string;
+  /** Inactive worlds are invisible to students (a custom-world draft is just an inactive entry). */
+  activo: boolean;
+};
+
+/**
+ * Class configuration doc (D-ORQ, RQ-PR10), single doc at
+ * `cursos/{cursoId}/config/mundos`. ABSENCE of the doc = defaults (the 5
+ * default worlds, canonical order, all active, modo libre) — that is what keeps
+ * pre-existing courses working with zero migration. Written only by the course
+ * profesor; read by the course (students subscribe via onSnapshot).
+ */
+export type CursoConfigMundos = {
+  /** Ordered world list; order here IS the unlock order. */
+  mundos: CursoConfigMundoEntry[];
+  /** "The class works only on world X" toggle (persistent, no schedule). */
+  modoEnfocado: { activo: boolean; worldId?: string };
+  version: number;
+  updatedAt: number;
+  updatedByUid: string;
+};
+
 export type AsignacionTarget =
   | { tipo: 'curso'; cursoId: string }
   | { tipo: 'estudiante'; cursoId: string; uid: string };

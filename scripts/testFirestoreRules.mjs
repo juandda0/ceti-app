@@ -570,6 +570,78 @@ await check(
   )
 );
 
+console.log('Class config cursos/{cursoId}/config/mundos (D-ORQ, RQ-PR10):');
+const configPath = 'colegios/A/cursos/c1/config/mundos';
+const validConfig = {
+  mundos: [
+    { worldId: 'world_3', activo: true },
+    { worldId: 'world_1', activo: true },
+    { worldId: 'world_2', activo: false },
+    { worldId: 'world_4', activo: true },
+    { worldId: 'world_5', activo: true },
+  ],
+  modoEnfocado: { activo: false },
+  version: 1,
+  updatedAt: 1,
+  updatedByUid: 'uProfA1',
+};
+// A second-course student in colegio A must NOT read c1's config.
+const stuAC2 = env
+  .authenticatedContext('uStuAC2', { role: 'estudiante', colegioId: 'A', cursoId: 'c2' })
+  .firestore();
+await check(
+  'course teacher writes class config',
+  assertSucceeds(setDoc(doc(profA1, configPath), validConfig))
+);
+await check(
+  'other teacher of same colegio cannot write class config',
+  assertFails(setDoc(doc(profA2, configPath), { ...validConfig, updatedByUid: 'uProfA2' }))
+);
+await check(
+  'teacher of colegio B cannot read class config',
+  assertFails(getDoc(doc(profB, configPath)))
+);
+await check(
+  'student of the course reads class config (live)',
+  assertSucceeds(getDoc(doc(stuA1, configPath)))
+);
+await check(
+  'student of ANOTHER course cannot read class config',
+  assertFails(getDoc(doc(stuAC2, configPath)))
+);
+await check(
+  'student cannot write class config',
+  assertFails(setDoc(doc(stuA1, configPath), { ...validConfig, updatedByUid: 'uStuA1' }))
+);
+await check(
+  'config rejects unexpected fields (hasOnly)',
+  assertFails(setDoc(doc(profA1, configPath), { ...validConfig, extra: true }))
+);
+await check(
+  'config rejects empty mundos list',
+  assertFails(setDoc(doc(profA1, configPath), { ...validConfig, mundos: [] }))
+);
+await check(
+  'config rejects spoofed updatedByUid',
+  assertFails(setDoc(doc(profA1, configPath), { ...validConfig, updatedByUid: 'uProfA2' }))
+);
+await check(
+  'config doc id other than "mundos" cannot be written',
+  assertFails(setDoc(doc(profA1, 'colegios/A/cursos/c1/config/otra'), validConfig))
+);
+await check(
+  'admin token gets nothing from client rules (config write denied)',
+  assertFails(setDoc(doc(adminG, configPath), { ...validConfig, updatedByUid: 'uAdmin' }))
+);
+await check(
+  'course teacher deletes class config (restaurar defaults)',
+  assertSucceeds(deleteDoc(doc(profA1, configPath)))
+);
+await check(
+  'student cannot delete class config',
+  assertFails(deleteDoc(doc(stuA1, configPath)))
+);
+
 console.log('Default deny:');
 await check('any other path denied', assertFails(getDoc(doc(stuA1, 'randomCol/randomDoc'))));
 

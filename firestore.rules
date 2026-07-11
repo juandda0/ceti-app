@@ -77,6 +77,31 @@ service cloud.firestore {
         // only (backend). No client writes.
         allow create, update, delete: if false;
 
+        // Class configuration (D-ORQ, RQ-PR10): single doc `mundos` — active
+        // worlds + order + modo enfocado. Read by the course only (its teacher
+        // and its students, who subscribe live); written/reset ONLY by the
+        // course's teacher. ABSENCE of the doc = defaults, so `delete` is the
+        // "restaurar configuración" action. List entries are shape-checked in
+        // the client (Zod); here we pin the field set, types and bounds.
+        match /config/{configId} {
+          allow read: if isProfesorDe(cid, cursoId)
+            || (isRole('estudiante')
+              && sameColegio(cid)
+              && request.auth.token.cursoId == cursoId);
+          allow create, update: if configId == 'mundos'
+            && isProfesorDe(cid, cursoId)
+            && request.resource.data.keys().hasOnly(['mundos', 'modoEnfocado', 'version', 'updatedAt', 'updatedByUid'])
+            && request.resource.data.mundos is list
+            && request.resource.data.mundos.size() >= 1
+            && request.resource.data.mundos.size() <= 30
+            && request.resource.data.modoEnfocado is map
+            && request.resource.data.modoEnfocado.activo is bool
+            && request.resource.data.version is number
+            && request.resource.data.updatedAt is number
+            && request.resource.data.updatedByUid == request.auth.uid;
+          allow delete: if isProfesorDe(cid, cursoId);
+        }
+
         match /estudiantes/{uid} {
           // Roster nominal (email+nombre): the course teacher and the student
           // themself only (matriz §1.3).

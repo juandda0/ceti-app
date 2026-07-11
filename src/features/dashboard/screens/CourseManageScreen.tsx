@@ -19,6 +19,7 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { rosterRepository, type EstudianteWithId } from '@features/dashboard/data/rosterRepository';
 import { adminService } from '@features/dashboard/data/adminService';
+import ClassWorldsManager from '@features/dashboard/components/ClassWorldsManager';
 
 const POLICY_VERSION = 'v1';
 
@@ -172,6 +173,9 @@ export default function CourseManageScreen() {
             </Text>
           </TouchableOpacity>
         </View>
+
+        {/* Class worlds curation (D-ORQ, RQ-PR10): show/hide, reorder, focus. */}
+        {colegioId && cursoId && <ClassWorldsManager colegioId={colegioId} cursoId={cursoId} />}
 
         {/* Students self-join by code (no manual roster slot). */}
         <Text style={[styles.hint, { color: colors.text.tertiary }]}>

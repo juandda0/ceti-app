@@ -55,6 +55,21 @@
     "activo": "Activo",
     "suprimido": "Suprimido"
   },
+  "classWorlds": {
+    "title": "Mundos de la clase",
+    "hint": "Elige qué mundos ve tu clase y en qué orden. Los cambios llegan a tus estudiantes al instante.",
+    "moveUp": "Subir en el orden",
+    "moveDown": "Bajar en el orden",
+    "focus": "Enfocar la clase en {{name}}",
+    "focusedBanner": "Clase enfocada en {{name}}",
+    "unfocus": "Quitar enfoque",
+    "toggleWorld": "Mostrar u ocultar {{name}}",
+    "worldHidden": "Oculto para la clase",
+    "reset": "Restaurar configuración por defecto",
+    "resetConfirmTitle": "¿Restaurar configuración?",
+    "resetConfirmBody": "La clase volverá a los 5 mundos de Ceti en el orden original. Podrás personalizarla de nuevo cuando quieras.",
+    "resetConfirm": "Restaurar"
+  },
   "assignments": {
     "title": "Asignaciones",
     "create": "Asignar",
@@ -139,8 +154,12 @@
     "lessonsCompleted": "{{done}} de {{total}} lecciones completadas",
     "worldNumber": "Mundo {{n}}",
     "lockedNote": "Completa el Mundo {{n}} para desbloquear",
+    "lockedNoteNamed": "Completa {{name}} para desbloquear",
     "openWorld": "Abrir Mundo {{n}}",
-    "mastered": "Dominado"
+    "mastered": "Dominado",
+    "focusedNotice": "Clase en curso: hoy trabajan {{name}}",
+    "emptyClass": "Tu profesor está preparando la clase. Vuelve pronto.",
+    "classUpdated": "Tu profesor actualizó la clase. Este mundo ya no está disponible; puedes terminar lo que empezaste."
   },
   "quiz": {
     "correct": "¡Correcto!",

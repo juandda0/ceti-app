@@ -1,5 +1,13 @@
 import { useEffect, useMemo } from 'react';
-import { ScrollView, TouchableOpacity, View, Text, StyleSheet, Platform } from 'react-native';
+import {
+  ActivityIndicator,
+  ScrollView,
+  TouchableOpacity,
+  View,
+  Text,
+  StyleSheet,
+  Platform,
+} from 'react-native';
 import Animated from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +22,8 @@ import {
 import type { WorldId } from '@features/learning/data/quiz.types';
 import { worldProgressRepository } from '@features/dashboard/data/worldProgressRepository';
 import { useStudentGrado } from '@features/learning/hooks/useStudentGrado';
+import { useClassConfig } from '@features/learning/hooks/useClassConfig';
+import { resolveClassWorlds } from '@features/learning/data/classConfig';
 import { competenciaForWorld } from '@features/learning/data/competencias';
 import { worldStatus } from '@features/learning/data/worldStatus';
 import StudentAssignmentsBanner from '@features/dashboard/components/StudentAssignmentsBanner';
@@ -25,61 +35,13 @@ import { Typography } from '@shared/constants/typography';
 import { Spacing, BorderRadius } from '@shared/constants/theme';
 import { motion } from '@shared/constants/motion';
 import type { ThemeColors } from '@shared/constants/colors';
-
-const WORLD_DEFS = [
-  {
-    id: 'world_1',
-    number: 1,
-    name: 'Planeta Origen',
-    subtitle: 'El dinero y yo',
-    description: 'Qué es el dinero, cómo funciona y tus primeras decisiones financieras.',
-    iconName: 'planet' as const,
-    color: '#FF8A1F',
-  },
-  {
-    id: 'world_2',
-    number: 2,
-    name: 'Luna del Presupuesto',
-    subtitle: 'Controlar lo que entra y sale',
-    description: 'Presupuesto personal, regla 50/30/20 y fondo de emergencia.',
-    iconName: 'moon' as const,
-    color: '#F7C95F',
-  },
-  {
-    id: 'world_3',
-    number: 3,
-    name: 'Estrella del Ahorro',
-    subtitle: 'Guardar con propósito',
-    description: 'Metas SMART, interés compuesto y hábitos de ahorro efectivos.',
-    iconName: 'star' as const,
-    color: '#58C88C',
-  },
-  {
-    id: 'world_4',
-    number: 4,
-    name: 'Nebulosa del Crédito',
-    subtitle: 'Usar el crédito sin que te use',
-    description: 'Tarjetas, historial crediticio y cuándo endeudarse tiene sentido.',
-    iconName: 'infinite' as const,
-    color: '#A884FF',
-  },
-  {
-    id: 'world_5',
-    number: 5,
-    name: 'Agujero Negro de las Deudas',
-    subtitle: 'Salir de las deudas',
-    description: 'Métodos avalancha y bola de nieve para liberarte de deudas.',
-    iconName: 'warning' as const,
-    color: '#5B9EF5',
-  },
-] as const;
-
-type WorldDef = (typeof WORLD_DEFS)[number];
+import { WORLD_DEFS, type WorldDef } from '@features/learning/data/worldMeta';
 
 function WorldCard({
   world,
   progress,
   isUnlocked,
+  prevWorldName,
   index,
   colors,
   onPress,
@@ -88,6 +50,8 @@ function WorldCard({
   world: WorldDef;
   progress: number;
   isUnlocked: boolean;
+  /** Name of the previous world in the CLASS order (drives the locked note). */
+  prevWorldName?: string;
   index: number;
   colors: ThemeColors;
   onPress: () => void;
@@ -180,7 +144,9 @@ function WorldCard({
             </View>
           ) : (
             <Text style={[cardSt.lockedNote, { color: colors.text.quaternary }]}>
-              {t('worlds.lockedNote', { n: world.number - 1 })}
+              {prevWorldName
+                ? t('worlds.lockedNoteNamed', { name: prevWorldName })
+                : t('worlds.lockedNote', { n: world.number - 1 })}
             </Text>
           )}
         </View>
@@ -222,18 +188,37 @@ export default function WorldsScreen() {
 
   // seedKey = Firebase uid (stable per-account); fallback to local id in demo/offline.
   const seedKey = userId ?? 'demo';
+  const uid = userId ?? '';
 
-  // Prefetch all worlds once the real grado is known. The store guard keys on
-  // (grado, seedKey), so this correctly re-fetches if the grade resolves later.
-  useEffect(() => {
-    if (!grado) return;
-    void fetchWorldQuestions(grado, 'world_1', seedKey);
-    void fetchWorldQuestions(grado, 'world_2', seedKey);
-    void fetchWorldQuestions(grado, 'world_3', seedKey);
-    void fetchWorldQuestions(grado, 'world_4', seedKey);
-    void fetchWorldQuestions(grado, 'world_5', seedKey);
+  // Class config (D-ORQ, RQ-PR10): which worlds this class sees, in which
+  // order, and focus mode. Live via onSnapshot; null → defaults.
+  const { config: classConfig, loaded: classConfigLoaded } = useClassConfig();
+  const { worlds: classWorlds, enfocadoWorldId } = useMemo(
+    () => resolveClassWorlds(classConfig, (w) => isWorldComplete(uid, w as WorldId)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [grado, seedKey]);
+    [classConfig, uid, answers, remoteProgress, isWorldComplete]
+  );
+
+  // Visible worlds joined with their static defs (unknown ids — e.g. a custom
+  // world from a future entrega — are skipped defensively, never crash).
+  const visibleWorlds = useMemo(
+    () =>
+      classWorlds
+        .map((cw) => ({ cw, def: WORLD_DEFS.find((d) => d.id === cw.worldId) }))
+        .filter((x): x is { cw: (typeof classWorlds)[number]; def: WorldDef } => Boolean(x.def)),
+    [classWorlds]
+  );
+
+  // Prefetch the class's worlds once the real grado AND the class config are
+  // known (avoids fetching worlds the class doesn't serve). The store guard
+  // keys on (grado, seedKey), so this correctly re-fetches if grade resolves later.
+  useEffect(() => {
+    if (!grado || !classConfigLoaded) return;
+    for (const { def } of visibleWorlds) {
+      void fetchWorldQuestions(grado, def.id, seedKey);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [grado, seedKey, classConfigLoaded, visibleWorlds]);
 
   // Rehydrate per-world mastery from the tenant tree so unlock/progress survive
   // logout and new devices (the local answers cache is empty there).
@@ -256,8 +241,6 @@ export default function WorldsScreen() {
     };
   }, [colegioId, cursoId, firebaseUid, setRemoteProgress]);
 
-  const uid = userId ?? '';
-
   // Recompute when local answers OR the hydrated remote snapshot change.
   // (getWorldProgress/isWorldComplete read both internally.)
   const progressMap = useMemo<Record<string, number>>(() => {
@@ -275,19 +258,14 @@ export default function WorldsScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uid, answers, remoteProgress, getWorldProgress]);
 
-  const unlockedMap = useMemo<Record<string, boolean>>(() => {
-    return {
-      world_1: true,
-      world_2: isWorldComplete(uid, 'world_1'),
-      world_3: isWorldComplete(uid, 'world_2'),
-      world_4: isWorldComplete(uid, 'world_3'),
-      world_5: isWorldComplete(uid, 'world_4'),
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [uid, answers, remoteProgress, isWorldComplete]);
-
-  const totalDone = answers.filter((a) => a.uid === uid && a.isCorrect).length;
-  const totalAll = QUESTIONS_PER_WORLD * WORLD_DEFS.length;
+  const visibleIds = visibleWorlds.map((v) => v.def.id as string);
+  const totalDone = answers.filter(
+    (a) => a.uid === uid && a.isCorrect && visibleIds.includes(a.worldId)
+  ).length;
+  const totalAll = QUESTIONS_PER_WORLD * visibleWorlds.length;
+  const enfocadoDef = enfocadoWorldId
+    ? WORLD_DEFS.find((d) => d.id === enfocadoWorldId)
+    : undefined;
 
   return (
     <ScreenWrapper style={{ flex: 1, backgroundColor: colors.background.base }}>
@@ -311,20 +289,48 @@ export default function WorldsScreen() {
         <AuthorizationPendingBanner />
         <StudentAssignmentsBanner />
 
-        <View style={styles.list}>
-          {WORLD_DEFS.map((world, index) => (
-            <WorldCard
-              key={world.id}
-              world={world}
-              progress={progressMap[world.id] ?? 0}
-              isUnlocked={unlockedMap[world.id] ?? false}
-              index={index}
-              colors={colors}
-              onPress={() => router.push(`/saga/${world.id}` as never)}
-              t={t}
-            />
-          ))}
-        </View>
+        {enfocadoDef && (
+          <View
+            style={[
+              styles.focusNotice,
+              { backgroundColor: enfocadoDef.color + '18', borderColor: enfocadoDef.color },
+            ]}
+          >
+            <Ionicons name="megaphone-outline" size={16} color={enfocadoDef.color} />
+            <Text style={[styles.focusNoticeText, { color: colors.text.primary }]}>
+              {t('worlds.focusedNotice', { name: enfocadoDef.name })}
+            </Text>
+          </View>
+        )}
+
+        {!classConfigLoaded ? (
+          <View style={styles.emptyState}>
+            <ActivityIndicator size="large" color={colors.text.tertiary} />
+          </View>
+        ) : visibleWorlds.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Ionicons name="school-outline" size={40} color={colors.text.quaternary} />
+            <Text style={[styles.emptyStateText, { color: colors.text.secondary }]}>
+              {t('worlds.emptyClass')}
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.list}>
+            {visibleWorlds.map(({ cw, def }, index) => (
+              <WorldCard
+                key={def.id}
+                world={def}
+                progress={progressMap[def.id] ?? 0}
+                isUnlocked={cw.unlocked}
+                prevWorldName={index > 0 ? visibleWorlds[index - 1].def.name : undefined}
+                index={index}
+                colors={colors}
+                onPress={() => router.push(`/saga/${def.id}` as never)}
+                t={t}
+              />
+            ))}
+          </View>
+        )}
       </ScrollView>
     </ScreenWrapper>
   );
@@ -347,6 +353,31 @@ const styles = StyleSheet.create({
   },
   list: {
     gap: 12,
+  },
+  focusNotice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    borderWidth: 1,
+    borderRadius: BorderRadius.md,
+    paddingHorizontal: Spacing.base,
+    paddingVertical: 10,
+    marginBottom: Spacing.sm,
+  },
+  focusNoticeText: {
+    ...Typography.footnote,
+    fontWeight: '600',
+    flex: 1,
+  },
+  emptyState: {
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 48,
+  },
+  emptyStateText: {
+    ...Typography.subheadline,
+    textAlign: 'center',
+    paddingHorizontal: Spacing.lg,
   },
 });
 

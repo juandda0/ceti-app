@@ -25,7 +25,12 @@ export const FIRESTORE_COLLECTIONS = {
   agregados: 'agregados',
   asignaciones: 'asignaciones',
   membership: 'membership',
+  // D-ORQ (RQ-PR10): per-course class configuration (single doc `mundos`).
+  config: 'config',
 } as const;
+
+/** Fixed doc id of the class-config doc under `cursos/{cursoId}/config/`. */
+export const CURSO_CONFIG_MUNDOS_DOC_ID = 'mundos';
 
 export function userDocPath(uid: string): string {
   return `${FIRESTORE_COLLECTIONS.users}/${uid}`;
@@ -107,6 +112,16 @@ export function cursoDocRef(db: Firestore, colegioId: string, cursoId: string) {
 /** Courses a teacher manages (uid ∈ profesorUids). */
 export function cursosByProfesorQuery(db: Firestore, colegioId: string, uid: string) {
   return query(cursosCollectionRef(db, colegioId), where('profesorUids', 'array-contains', uid));
+}
+
+/**
+ * Class configuration doc (D-ORQ, RQ-PR10):
+ * `colegios/{colegioId}/cursos/{cursoId}/config/mundos`.
+ * Absence of the doc = defaults. Written only by the course profesor (rules);
+ * students of the course read it (live, via onSnapshot).
+ */
+export function cursoConfigMundosDocRef(db: Firestore, colegioId: string, cursoId: string) {
+  return doc(db, C.colegios, colegioId, C.cursos, cursoId, C.config, CURSO_CONFIG_MUNDOS_DOC_ID);
 }
 
 export function estudiantesCollectionRef(db: Firestore, colegioId: string, cursoId: string) {
