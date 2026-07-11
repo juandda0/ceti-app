@@ -76,7 +76,7 @@ export default function CreateWorldScreen() {
       setDraft(result);
     } catch (e) {
       if (__DEV__) console.warn('[createWorld] generate error:', e);
-      showMessage(t('createWorld.generateError'));
+      showMessage(t('createWorld.generateError'), undefined, 'error');
     } finally {
       setGenerating(false);
     }
@@ -127,11 +127,11 @@ export default function CreateWorldScreen() {
         pieces,
       });
       if (created) {
-        showMessage(t('createWorld.saved'));
+        showMessage(t('createWorld.saved'), undefined, 'success');
         router.back();
       }
     } catch (e) {
-      showMessage(t('admin.error'), e instanceof Error ? e.message : String(e));
+      showMessage(t('admin.error'), e instanceof Error ? e.message : String(e), 'error');
     } finally {
       setSaving(false);
     }

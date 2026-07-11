@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
   Platform,
 } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
@@ -21,6 +20,7 @@ import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { rosterRepository, type EstudianteWithId } from '@features/dashboard/data/rosterRepository';
 import { adminService } from '@features/dashboard/data/adminService';
 import ClassWorldsManager from '@features/dashboard/components/ClassWorldsManager';
+import { confirmAction, showMessage } from '@shared/lib/dialogs';
 
 const POLICY_VERSION = 'v1';
 
@@ -63,7 +63,7 @@ export default function CourseManageScreen() {
       await fn();
       await reload();
     } catch (e) {
-      Alert.alert(t('admin.error'), e instanceof Error ? e.message : String(e));
+      showMessage(t('admin.error'), e instanceof Error ? e.message : String(e), 'error');
     } finally {
       setBusy(false);
     }
@@ -82,19 +82,19 @@ export default function CourseManageScreen() {
     });
 
   const onSuppress = (uid: string) =>
-    Alert.alert(t('admin.suppressConfirmTitle'), t('admin.suppressConfirmBody'), [
-      { text: t('admin.cancel'), style: 'cancel' },
-      {
-        text: t('admin.suppressConfirm'),
-        style: 'destructive',
-        onPress: () =>
-          guard(async () => {
-            if (!colegioId || !cursoId) return;
-            await adminService.suppressStudent({ colegioId, cursoId, uid });
-            Alert.alert(t('admin.suppressOkTitle'), t('admin.suppressOk'));
-          }),
-      },
-    ]);
+    confirmAction({
+      title: t('admin.suppressConfirmTitle'),
+      body: t('admin.suppressConfirmBody'),
+      cancelLabel: t('admin.cancel'),
+      confirmLabel: t('admin.suppressConfirm'),
+      destructive: true,
+      onConfirm: () =>
+        guard(async () => {
+          if (!colegioId || !cursoId) return;
+          await adminService.suppressStudent({ colegioId, cursoId, uid });
+          showMessage(t('admin.suppressOkTitle'), t('admin.suppressOk'), 'success');
+        }),
+    });
 
   // Invite link (RQ-FN13): /join/{code} auto-joins the student after login.
   const inviteBase =
@@ -108,7 +108,7 @@ export default function CourseManageScreen() {
     const nav = typeof navigator !== 'undefined' ? navigator : undefined;
     if (nav?.clipboard) {
       void nav.clipboard.writeText(value);
-      Alert.alert(toast);
+      showMessage(toast, undefined, 'success');
     }
   };
 
@@ -122,7 +122,7 @@ export default function CourseManageScreen() {
       const res = await adminService.generateClassCode(colegioId, cursoId);
       setCode(res.code);
     } catch (e) {
-      Alert.alert(t('admin.error'), e instanceof Error ? e.message : String(e));
+      showMessage(t('admin.error'), e instanceof Error ? e.message : String(e), 'error');
     } finally {
       setCodeBusy(false);
     }
@@ -204,7 +204,7 @@ export default function CourseManageScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Class worlds curation (D-ORQ, RQ-PR10): show/hide, reorder, focus. */}
+        {/* Class worlds curation (D-ORQ, RQ-PR10): show/hide, reorder. */}
         {colegioId && cursoId && <ClassWorldsManager colegioId={colegioId} cursoId={cursoId} />}
 
         {/* Students self-join by code (no manual roster slot). */}

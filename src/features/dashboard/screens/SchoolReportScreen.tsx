@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -18,6 +17,7 @@ import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { loadSchoolReport } from '@features/dashboard/data/loadSchoolReport';
 import { schoolReportToCsv, type SchoolReport } from '@features/dashboard/data/schoolReport';
 import { downloadTextFile, printPage } from '@shared/lib/export/downloadFile';
+import { showMessage } from '@shared/lib/dialogs';
 
 function pct(m: number): string {
   return `${Math.round(m * 100)}%`;
@@ -63,11 +63,12 @@ export default function SchoolReportScreen() {
       `reporte-colegio-${report.colegioId}.csv`,
       schoolReportToCsv(report)
     );
-    if (!ok) Alert.alert(t('dashboard.exportTitle'), t('dashboard.exportWebOnly'));
+    if (!ok) showMessage(t('dashboard.exportTitle'), t('dashboard.exportWebOnly'), 'error');
   }, [report, t]);
 
   const onPrint = useCallback(() => {
-    if (!printPage()) Alert.alert(t('dashboard.exportTitle'), t('dashboard.exportWebOnly'));
+    if (!printPage())
+      showMessage(t('dashboard.exportTitle'), t('dashboard.exportWebOnly'), 'error');
   }, [t]);
 
   return (

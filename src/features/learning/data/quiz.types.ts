@@ -14,7 +14,14 @@ export type DefaultWorldId = 'world_1' | 'world_2' | 'world_3' | 'world_4' | 'wo
  */
 export type WorldId = string;
 
-export type Grado = '9' | '10' | '11';
+/** Grados de un curso: 1° a 11° (el profesor elige al crear la clase). */
+export type Grado = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11';
+
+/**
+ * Grados con banco default sembrado (E12: grado×mundo×tipo). Un curso de grado
+ * menor reutiliza el banco de 9° hasta que el profesor autore contenido propio.
+ */
+export const SEEDED_GRADOS: readonly Grado[] = ['9', '10', '11'];
 
 export type QuizTipo = 'multiple_choice' | 'true_false' | 'ordenar';
 

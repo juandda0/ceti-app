@@ -98,7 +98,10 @@ export default function UserSetupScreen() {
     void logEvent('user_setup_complete', {});
     useAuthStore.getState().login();
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    router.replace('/(app)/saga');
+    // Rutar por el gate central (index) — NO directo a la saga: un estudiante
+    // recién registrado sin curso debe ver la pantalla de código, igual que al
+    // re-loguear. Saltarse el gate aquí era el bug de "primera vez entra directo".
+    router.replace('/');
   };
 
   return (

@@ -178,13 +178,14 @@ dominado`); se retiran XP, niveles y badges de colección. Se retira `xp`/`nivel
      orden canónico, bancos default). Configurar es opcional, nunca obligatorio.
   2. **Elige qué mundos** ve su clase y **en qué orden**; el desbloqueo
      secuencial sigue el orden configurado.
-  3. **Modo enfocado:** toggle persistente "la clase trabaja solo el Mundo X"
-     hasta que lo apague. Sin noción de sesión con horario.
+  3. **Modo enfocado:** ~~toggle persistente "la clase trabaja solo el Mundo X"~~
+     — **ELIMINADO 2026-07-11 (decisión del dueño)**: la feature se retiró del
+     producto y la UI; el campo `modoEnfocado` ya no existe en el doc de config.
   4. **Edita en vivo:** todo parámetro es editable después del setup y se
      refleja en los estudiantes **en tiempo real**. Política de salida suave: el
-     estudiante dentro de un mundo retirado/desenfocado termina la actividad en
-     curso (nunca expulsión a mitad de pregunta), no puede re-entrar, y su
-     progreso jamás se borra por cambios de configuración.
+     estudiante dentro de un mundo retirado termina la actividad en curso (nunca
+     expulsión a mitad de pregunta), no puede re-entrar, y su progreso jamás se
+     borra por cambios de configuración.
   5. **Edita el contenido** de su clase (preguntas, teoría, metadata del
      mundo). El default global **nunca se muta**: copy-on-write por curso
      (`cursos/{cursoId}/contenido/*`); "restaurar default" = borrar la copia.
@@ -218,8 +219,11 @@ dominado`); se retiran XP, niveles y badges de colección. Se retira `xp`/`nivel
     el banco **default**; su copia por curso sí (RQ-PR11).
 - **RQs nuevos:** RQ-PR10 (configuración de clase), RQ-PR11 (contenido custom
   por curso), RQ-PR12 (mundos propios), RQ-CN06 (IA de authoring docente).
-- **Entregas:** A (config + orden + modo enfocado + tiempo real), B (contenido
-  editable), C (mundos propios + IA). Cada entrega deja la app funcional.
+- **Entregas:** A (config + orden + tiempo real), B (contenido editable), C
+  (mundos propios + IA). Cada entrega deja la app funcional.
+- **Actualización 2026-07-11 (dueño):** se elimina **modo enfocado** de A. La
+  clase se orquesta con mundos activos + orden + tiempo real; sin toggle de
+  enfoque. Además, los cursos ahora admiten **grados 1° a 11°** (antes 9–11).
 
 ## D-ADMIN — Admin Ceti in-app, autorización de profesores y gate de acceso (2026-07-11)
 

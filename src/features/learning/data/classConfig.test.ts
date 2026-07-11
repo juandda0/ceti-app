@@ -9,7 +9,6 @@ import type { CursoConfigMundos } from '@shared/types/tenancy';
 function config(partial: Partial<CursoConfigMundos>): CursoConfigMundos {
   return {
     mundos: [],
-    modoEnfocado: { activo: false },
     version: 1,
     updatedAt: 1,
     updatedByUid: 'prof1',
@@ -22,7 +21,7 @@ const completedSet = (ids: string[]) => (worldId: string) => ids.includes(worldI
 
 describe('resolveClassWorlds', () => {
   it('sin config → 5 mundos default en orden canónico, solo el primero desbloqueado', () => {
-    const { worlds, enfocadoWorldId } = resolveClassWorlds(null, none);
+    const { worlds } = resolveClassWorlds(null, none);
     expect(worlds.map((w) => w.worldId)).toEqual([
       'world_1',
       'world_2',
@@ -31,7 +30,6 @@ describe('resolveClassWorlds', () => {
       'world_5',
     ]);
     expect(worlds.map((w) => w.unlocked)).toEqual([true, false, false, false, false]);
-    expect(enfocadoWorldId).toBeNull();
   });
 
   it('config malformada (mundos vacío, cache viejo) → defaults', () => {
@@ -91,33 +89,6 @@ describe('resolveClassWorlds', () => {
     });
     expect(resolveClassWorlds(cfg, none).worlds).toEqual([]);
   });
-
-  it('modo enfocado sirve solo ese mundo, desbloqueado aunque haya anteriores sin completar', () => {
-    const cfg = config({
-      mundos: [
-        { worldId: 'world_1', activo: true },
-        { worldId: 'world_2', activo: true },
-        { worldId: 'world_3', activo: true },
-      ],
-      modoEnfocado: { activo: true, worldId: 'world_3' },
-    });
-    const { worlds, enfocadoWorldId } = resolveClassWorlds(cfg, none);
-    expect(worlds).toEqual([{ worldId: 'world_3', unlocked: true }]);
-    expect(enfocadoWorldId).toBe('world_3');
-  });
-
-  it('modo enfocado sobre un mundo inactivo/inexistente se ignora (defensivo)', () => {
-    const cfg = config({
-      mundos: [
-        { worldId: 'world_1', activo: true },
-        { worldId: 'world_2', activo: false },
-      ],
-      modoEnfocado: { activo: true, worldId: 'world_2' },
-    });
-    const { worlds, enfocadoWorldId } = resolveClassWorlds(cfg, none);
-    expect(worlds.map((w) => w.worldId)).toEqual(['world_1']);
-    expect(enfocadoWorldId).toBeNull();
-  });
 });
 
 describe('isWorldVisible (guard real de la saga — RQ-PR10 CA4)', () => {
@@ -138,18 +109,6 @@ describe('isWorldVisible (guard real de la saga — RQ-PR10 CA4)', () => {
     expect(isWorldVisible(cfg, 'world_3')).toBe(false);
   });
 
-  it('en modo enfocado solo el mundo enfocado es visible', () => {
-    const cfg = config({
-      mundos: [
-        { worldId: 'world_1', activo: true },
-        { worldId: 'cw_x', activo: true },
-      ],
-      modoEnfocado: { activo: true, worldId: 'cw_x' },
-    });
-    expect(isWorldVisible(cfg, 'cw_x')).toBe(true);
-    expect(isWorldVisible(cfg, 'world_1')).toBe(false);
-  });
-
   it('mundo custom activo en la config es visible', () => {
     const cfg = config({ mundos: [{ worldId: 'cw_x', activo: true }] });
     expect(isWorldVisible(cfg, 'cw_x')).toBe(true);
@@ -157,19 +116,13 @@ describe('isWorldVisible (guard real de la saga — RQ-PR10 CA4)', () => {
 });
 
 describe('buildCuratedConfig (regresión B1: curar la lista no borra overrides)', () => {
-  it('preserva overrides al reordenar/toggle/enfocar', () => {
+  it('preserva overrides al reordenar/toggle', () => {
     const cfg = config({
       mundos: [{ worldId: 'world_1', activo: true }],
       overrides: { world_1: { mc: true, teoria: true }, cw_x: { mc: true } },
       version: 7,
     });
-    const next = buildCuratedConfig(
-      cfg,
-      [{ worldId: 'world_1', activo: false }],
-      { activo: false },
-      'prof1',
-      999
-    );
+    const next = buildCuratedConfig(cfg, [{ worldId: 'world_1', activo: false }], 'prof1', 999);
     expect(next.overrides).toEqual({ world_1: { mc: true, teoria: true }, cw_x: { mc: true } });
     expect(next.version).toBe(8);
     expect(next.updatedAt).toBe(999);
@@ -177,13 +130,7 @@ describe('buildCuratedConfig (regresión B1: curar la lista no borra overrides)'
   });
 
   it('sin config previa arranca en version 1 y sin overrides', () => {
-    const next = buildCuratedConfig(
-      null,
-      [{ worldId: 'world_1', activo: true }],
-      { activo: false },
-      'prof1',
-      5
-    );
+    const next = buildCuratedConfig(null, [{ worldId: 'world_1', activo: true }], 'prof1', 5);
     expect(next.version).toBe(1);
     expect(next.overrides).toBeUndefined();
   });
@@ -199,17 +146,5 @@ describe('isWorldAccessible (guard de saga / salida suave)', () => {
   it('mundo bloqueado por orden no es accesible; completado sí', () => {
     expect(isWorldAccessible(null, 'world_3', none)).toBe(false);
     expect(isWorldAccessible(null, 'world_3', completedSet(['world_3']))).toBe(true);
-  });
-
-  it('en modo enfocado solo el mundo enfocado es accesible', () => {
-    const cfg = config({
-      mundos: [
-        { worldId: 'world_1', activo: true },
-        { worldId: 'world_2', activo: true },
-      ],
-      modoEnfocado: { activo: true, worldId: 'world_2' },
-    });
-    expect(isWorldAccessible(cfg, 'world_1', completedSet(['world_1']))).toBe(false);
-    expect(isWorldAccessible(cfg, 'world_2', none)).toBe(true);
   });
 });

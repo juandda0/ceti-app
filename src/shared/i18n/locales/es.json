@@ -113,10 +113,7 @@
     "title": "Mundos de la clase",
     "hint": "Elige qué mundos ve tu clase y en qué orden. Los cambios llegan a tus estudiantes al instante.",
     "dragHint": "Mantén presionado un mundo y arrástralo para cambiar el orden.",
-    "focus": "Enfocar la clase en {{name}}",
     "customize": "Personalizar {{name}}",
-    "focusedBanner": "Clase enfocada en {{name}}",
-    "unfocus": "Quitar enfoque",
     "toggleWorld": "Mostrar u ocultar {{name}}",
     "worldHidden": "Oculto para la clase",
     "reset": "Restaurar configuración por defecto",
@@ -289,7 +286,6 @@
     "lockedNoteNamed": "Completa {{name}} para desbloquear",
     "openWorld": "Abrir Mundo {{n}}",
     "mastered": "Dominado",
-    "focusedNotice": "Clase en curso: hoy trabajan {{name}}",
     "competenciaPersonalizada": "Tema de tu profesor",
     "emptyClass": "Tu profesor está preparando la clase. Vuelve pronto.",
     "classUpdated": "Tu profesor actualizó la clase. Este mundo ya no está disponible; puedes terminar lo que empezaste."

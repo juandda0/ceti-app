@@ -72,7 +72,7 @@ export default function AdminPanelScreen() {
         );
       }
     } catch (e) {
-      showMessage(t('adminPanel.title'), e instanceof Error ? e.message : String(e));
+      showMessage(t('adminPanel.title'), e instanceof Error ? e.message : String(e), 'error');
     } finally {
       setLoading(false);
     }
@@ -88,7 +88,7 @@ export default function AdminPanelScreen() {
       await fn();
       await reload();
     } catch (e) {
-      showMessage(t('adminPanel.title'), e instanceof Error ? e.message : String(e));
+      showMessage(t('adminPanel.title'), e instanceof Error ? e.message : String(e), 'error');
     } finally {
       setBusy(false);
     }
@@ -103,7 +103,7 @@ export default function AdminPanelScreen() {
       }
       await adminService.registerColegio({ colegioId: slugColegioId(nombre), nombre });
       setNuevoColegio('');
-      showMessage(t('adminPanel.colegioCreated'));
+      showMessage(t('adminPanel.colegioCreated'), undefined, 'success');
     });
 
   const onAuthorize = () =>
@@ -119,7 +119,7 @@ export default function AdminPanelScreen() {
       }
       await adminService.authorizeProfesor({ email: mail, colegioId: colegioSel });
       setEmail('');
-      showMessage(t('adminPanel.authorized'));
+      showMessage(t('adminPanel.authorized'), undefined, 'success');
     });
 
   const onRevoke = (mail: string) =>
@@ -132,7 +132,7 @@ export default function AdminPanelScreen() {
       onConfirm: () =>
         void guard(async () => {
           await adminService.revokeProfesorAuthorization(mail);
-          showMessage(t('adminPanel.revoked'));
+          showMessage(t('adminPanel.revoked'), undefined, 'success');
         }),
     });
 

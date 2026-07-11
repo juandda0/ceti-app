@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
+import { showMessage } from '@shared/lib/dialogs';
 import type { WorldId } from '@features/learning/data/quiz.types';
 import {
   asignacionRepository,
@@ -75,7 +76,11 @@ export default function AssignmentsManager({
       });
       await reload();
     } catch (e) {
-      Alert.alert(t('admin.error'), e instanceof Error ? e.message : t('assignments.error'));
+      showMessage(
+        t('admin.error'),
+        e instanceof Error ? e.message : t('assignments.error'),
+        'error'
+      );
     } finally {
       setCreating(false);
     }

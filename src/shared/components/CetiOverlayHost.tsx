@@ -3,6 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CetiButton from '@shared/components/CetiButton';
+import CetiToastHost from '@shared/components/CetiToastHost';
 import { Typography } from '@shared/constants/typography';
 import { BorderRadius } from '@shared/constants/theme';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
@@ -177,6 +178,8 @@ export default function CetiOverlayHost() {
           </Pressable>
         </Pressable>
       </Modal>
+
+      <CetiToastHost />
     </>
   );
 }

@@ -49,6 +49,15 @@ function requireString(value: unknown, field: string): string {
   return value.trim();
 }
 
+// Grados válidos para un curso: 1° a 11°. (El contenido default sembrado solo
+// cubre 9–11; los grados menores reutilizan el banco de 9° hasta que el profesor
+// autore contenido propio — ver QuestionBankRepository.)
+const GRADOS_VALIDOS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'] as const;
+
+function isGradoValido(grado: string): boolean {
+  return (GRADOS_VALIDOS as readonly string[]).includes(grado);
+}
+
 type Caller = NonNullable<Parameters<Parameters<typeof onCall>[0]>[0]['auth']>;
 
 function requireAuth(caller: Caller | undefined): asserts caller is Caller {
@@ -257,7 +266,7 @@ export const listColegios = onCall(async (request) => {
   return { colegios };
 });
 
-/** Admin creates a course (RQ-AD04). grado ∈ {9,10,11}; born with a join code. */
+/** Admin creates a course (RQ-AD04). grado ∈ 1..11; born with a join code. */
 export const createCurso = onCall(async (request) => {
   const caller = request.auth;
   requireAuth(caller);
@@ -269,8 +278,8 @@ export const createCurso = onCall(async (request) => {
   const cursoId = requireString(request.data?.cursoId, 'cursoId');
   const nombre = requireString(request.data?.nombre, 'nombre');
   const grado = requireString(request.data?.grado, 'grado');
-  if (grado !== '9' && grado !== '10' && grado !== '11') {
-    throw new HttpsError('invalid-argument', "'grado' must be '9', '10' or '11'.");
+  if (!isGradoValido(grado)) {
+    throw new HttpsError('invalid-argument', "'grado' must be '1'..'11'.");
   }
 
   const db = getFirestore();
@@ -442,8 +451,8 @@ export const crearMiCurso = onCall(async (request) => {
   }
   const nombre = requireString(request.data?.nombre, 'nombre');
   const grado = requireString(request.data?.grado, 'grado');
-  if (grado !== '9' && grado !== '10' && grado !== '11') {
-    throw new HttpsError('invalid-argument', "'grado' must be '9', '10' or '11'.");
+  if (!isGradoValido(grado)) {
+    throw new HttpsError('invalid-argument', "'grado' must be '1'..'11'.");
   }
 
   const db = getFirestore();
@@ -762,7 +771,7 @@ export const generarBorradorMundo = onCall({ secrets: [GROQ_API_KEY] }, async (r
   const nombre = requireString(request.data?.nombre, 'nombre');
   const tema = requireString(request.data?.tema, 'tema');
   const grado = requireString(request.data?.grado, 'grado');
-  if (nombre.length > NOMBRE_MAX || tema.length > TEMA_MAX || !['9', '10', '11'].includes(grado)) {
+  if (nombre.length > NOMBRE_MAX || tema.length > TEMA_MAX || !isGradoValido(grado)) {
     throw new HttpsError('invalid-argument', 'Parámetros fuera de rango.');
   }
   await assertStaffOfCurso(caller, colegioId, cursoId);
@@ -830,7 +839,7 @@ export const generarItemContenido = onCall({ secrets: [GROQ_API_KEY] }, async (r
     !(ITEM_TIPOS as readonly string[]).includes(tipo) ||
     nombre.length > NOMBRE_MAX ||
     descripcion.length > TEMA_MAX ||
-    !['9', '10', '11'].includes(grado)
+    !isGradoValido(grado)
   ) {
     throw new HttpsError('invalid-argument', 'Parámetros fuera de rango.');
   }

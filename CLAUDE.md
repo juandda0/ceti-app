@@ -50,9 +50,9 @@ cada feature debe servir a ese objetivo de cumplimiento/reportería.
   (D-ORQ): el pipeline offline de Ceti y la **IA de authoring docente**
   (Cloud Function server-side que genera borradores que el profesor revisa y
   guarda; nunca escribe contenido). El diagnóstico del curso es por reglas, no ML.
-- **El profesor orquesta su clase** (D-ORQ): configura mundos activos, orden y
-  modo enfocado de su curso (doc `cursos/{cursoId}/config/mundos`, en tiempo
-  real, con salida suave), edita contenido vía **copy-on-write por curso**
+- **El profesor orquesta su clase** (D-ORQ): configura mundos activos y orden de
+  su curso (doc `cursos/{cursoId}/config/mundos`, en tiempo real, con salida
+  suave; modo enfocado eliminado 2026-07-11), edita contenido vía **copy-on-write por curso**
   (`cursos/{cursoId}/contenido/*` — el default global nunca se muta) y crea
   mundos propios (`cw_*`) con gate de activación. Defaults inteligentes: un
   curso sin configuración se comporta exactamente como el default. _(RQ-PR10/

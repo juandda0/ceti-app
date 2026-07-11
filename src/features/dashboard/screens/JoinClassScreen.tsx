@@ -53,7 +53,7 @@ export default function JoinClassScreen({ code: codeParam }: { code?: string }) 
       await adminService.joinByCode(value);
       await applyClaimsAndGo(router);
     } catch (e) {
-      showMessage(t('join.errorTitle'), e instanceof Error ? e.message : String(e));
+      showMessage(t('join.errorTitle'), e instanceof Error ? e.message : String(e), 'error');
     } finally {
       setBusy(false);
     }

@@ -196,10 +196,10 @@ export default function WorldsScreen() {
   const seedKey = userId ?? 'demo';
   const uid = userId ?? '';
 
-  // Class config (D-ORQ, RQ-PR10): which worlds this class sees, in which
-  // order, and focus mode. Live via onSnapshot; null → defaults.
+  // Class config (D-ORQ, RQ-PR10): which worlds this class sees and in which
+  // order. Live via onSnapshot; null → defaults.
   const { config: classConfig, loaded: classConfigLoaded } = useClassConfig();
-  const { worlds: classWorlds, enfocadoWorldId } = useMemo(
+  const { worlds: classWorlds } = useMemo(
     () => resolveClassWorlds(classConfig, (w) => isWorldComplete(uid, w as WorldId)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [classConfig, uid, answers, remoteProgress, isWorldComplete]
@@ -298,9 +298,6 @@ export default function WorldsScreen() {
     (a) => a.uid === uid && a.isCorrect && visibleIds.includes(a.worldId)
   ).length;
   const totalAll = QUESTIONS_PER_WORLD * visibleWorlds.length;
-  const enfocadoDef = enfocadoWorldId
-    ? visibleWorlds.find((v) => v.def.id === enfocadoWorldId)?.def
-    : undefined;
 
   return (
     <ScreenWrapper style={{ flex: 1, backgroundColor: colors.background.base }}>
@@ -323,20 +320,6 @@ export default function WorldsScreen() {
         <JoinClassBanner />
         <AuthorizationPendingBanner />
         <StudentAssignmentsBanner />
-
-        {enfocadoDef && (
-          <View
-            style={[
-              styles.focusNotice,
-              { backgroundColor: enfocadoDef.color + '18', borderColor: enfocadoDef.color },
-            ]}
-          >
-            <Ionicons name="megaphone-outline" size={16} color={enfocadoDef.color} />
-            <Text style={[styles.focusNoticeText, { color: colors.text.primary }]}>
-              {t('worlds.focusedNotice', { name: enfocadoDef.name })}
-            </Text>
-          </View>
-        )}
 
         {!classConfigLoaded ? (
           <View style={styles.emptyState}>
@@ -389,21 +372,6 @@ const styles = StyleSheet.create({
   },
   list: {
     gap: 12,
-  },
-  focusNotice: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    borderWidth: 1,
-    borderRadius: BorderRadius.md,
-    paddingHorizontal: Spacing.base,
-    paddingVertical: 10,
-    marginBottom: Spacing.sm,
-  },
-  focusNoticeText: {
-    ...Typography.footnote,
-    fontWeight: '600',
-    flex: 1,
   },
   emptyState: {
     alignItems: 'center',

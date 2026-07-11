@@ -45,7 +45,7 @@ const MIN = { teoria: 1, mc: 4, vf: 3, ordenar: 3, eligeCamino: 0 } as const;
 export const NOMBRE_MAX = 120;
 export const TEMA_MAX = 300;
 
-export const SYSTEM_PROMPT_MUNDO = `Eres un diseñador de contenido de educación financiera para estudiantes colombianos de colegio (13+). Un profesor te da el NOMBRE y el TEMA de un "mundo" (unidad de clase) y el GRADO (9, 10 u 11). Produces exactamente un JSON con el borrador completo del mundo.
+export const SYSTEM_PROMPT_MUNDO = `Eres un diseñador de contenido de educación financiera para estudiantes colombianos de colegio. Un profesor te da el NOMBRE y el TEMA de un "mundo" (unidad de clase) y el GRADO (1 a 11). Produces exactamente un JSON con el borrador completo del mundo.
 
 Formato de salida (JSON estricto, sin texto adicional):
 {
@@ -61,7 +61,7 @@ Formato de salida (JSON estricto, sin texto adicional):
 
 Reglas obligatorias:
 1. Lenguaje NEUTRO y claro (no jerga juvenil ni regional), ejemplos cotidianos válidos en Colombia. Nunca teoría densa: tarjetas breves.
-2. La dificultad crece con el grado (9 < 10 < 11).
+2. La dificultad crece con el grado (1 = más simple, 11 = más avanzado); ajústala a la edad del grado.
 3. PROHIBIDO usar cifras que caducan: salario mínimo, UVT, tasas de interés vigentes, precios exactos. Usa cantidades genéricas ("una parte de tu mesada", "un porcentaje").
 4. PROHIBIDO incluir nombres de personas reales, marcas comerciales o datos personales.
 5. En "mc", el correctIndex apunta a la opción correcta (0..3) y las opciones incorrectas deben ser plausibles.
@@ -250,7 +250,7 @@ Formas por TIPO:
 
 Reglas obligatorias:
 1. Lenguaje NEUTRO y claro (no jerga juvenil ni regional), ejemplos cotidianos válidos en Colombia. Breve.
-2. La dificultad crece con el grado (9 < 10 < 11).
+2. La dificultad crece con el grado (1 = más simple, 11 = más avanzado); ajústala a la edad del grado.
 3. PROHIBIDO cifras que caducan: salario mínimo, UVT, tasas de interés vigentes, precios exactos. Usa cantidades genéricas.
 4. PROHIBIDO nombres de personas reales, marcas comerciales o datos personales.
 5. En "mc", correctIndex (0..3) apunta a la opción correcta; las incorrectas deben ser plausibles.

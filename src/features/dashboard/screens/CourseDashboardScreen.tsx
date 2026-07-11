@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
 import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -21,6 +20,7 @@ import { courseReportToCsv, type CourseReport } from '@features/dashboard/data/c
 import { buildWeaknessReport } from '@features/dashboard/data/weaknessReport';
 import { buildEarlyWarning, type RiskFlag } from '@features/dashboard/data/earlyWarning';
 import AssignmentsManager from '@features/dashboard/components/AssignmentsManager';
+import { showMessage } from '@shared/lib/dialogs';
 
 const FLAG_KEY: Record<RiskFlag, string> = {
   no_activity: 'dashboard.flagNoActivity',
@@ -74,11 +74,12 @@ export default function CourseDashboardScreen() {
   const onExportCsv = useCallback(() => {
     if (!report) return;
     const ok = downloadTextFile(`reporte-${report.cursoId}.csv`, courseReportToCsv(report));
-    if (!ok) Alert.alert(t('dashboard.exportTitle'), t('dashboard.exportWebOnly'));
+    if (!ok) showMessage(t('dashboard.exportTitle'), t('dashboard.exportWebOnly'), 'error');
   }, [report, t]);
 
   const onPrint = useCallback(() => {
-    if (!printPage()) Alert.alert(t('dashboard.exportTitle'), t('dashboard.exportWebOnly'));
+    if (!printPage())
+      showMessage(t('dashboard.exportTitle'), t('dashboard.exportWebOnly'), 'error');
   }, [t]);
 
   return (

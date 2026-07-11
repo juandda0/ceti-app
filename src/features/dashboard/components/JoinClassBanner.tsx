@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
+import { showMessage } from '@shared/lib/dialogs';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { getFirebaseClients } from '@shared/lib/firebase/app';
 import { readCetiClaims } from '@shared/lib/firebase/claims';
@@ -37,10 +38,10 @@ export default function JoinClassBanner() {
     try {
       await adminService.joinByCode(code.trim());
       await refreshClaims();
-      Alert.alert(t('join.okTitle'), t('join.ok'));
+      showMessage(t('join.okTitle'), t('join.ok'), 'success');
       setCode('');
     } catch (e) {
-      Alert.alert(t('join.errorTitle'), e instanceof Error ? e.message : String(e));
+      showMessage(t('join.errorTitle'), e instanceof Error ? e.message : String(e), 'error');
     } finally {
       setBusy(false);
     }

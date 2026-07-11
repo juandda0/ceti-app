@@ -49,7 +49,7 @@ export type Sede = {
   nombre: string;
 };
 
-export type Grado = '9' | '10' | '11';
+export type Grado = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11';
 
 export type Curso = {
   nombre: string;
@@ -152,15 +152,13 @@ export type CursoConfigMundoEntry = {
 /**
  * Class configuration doc (D-ORQ, RQ-PR10), single doc at
  * `cursos/{cursoId}/config/mundos`. ABSENCE of the doc = defaults (the 5
- * default worlds, canonical order, all active, modo libre) — that is what keeps
- * pre-existing courses working with zero migration. Written only by the course
- * profesor; read by the course (students subscribe via onSnapshot).
+ * default worlds, canonical order, all active) — that is what keeps pre-existing
+ * courses working with zero migration. Written only by the course profesor; read
+ * by the course (students subscribe via onSnapshot).
  */
 export type CursoConfigMundos = {
   /** Ordered world list; order here IS the unlock order. */
   mundos: CursoConfigMundoEntry[];
-  /** "The class works only on world X" toggle (persistent, no schedule). */
-  modoEnfocado: { activo: boolean; worldId?: string };
   /** Per-world content override flags (RQ-PR11), keyed by worldId. */
   overrides?: Record<string, WorldContentOverrides>;
   version: number;

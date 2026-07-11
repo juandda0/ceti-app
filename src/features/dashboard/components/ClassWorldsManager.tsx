@@ -1,11 +1,11 @@
 /**
  * ClassWorldsManager — "Mundos de la clase" (D-ORQ, RQ-PR10).
  *
- * The professor curates their class here: show/hide worlds, reorder them (drag:
- * long-press and move up/down), and focus the class on a single world. Every
- * interaction saves immediately (no "save" button — least friction) and reaches
- * students in real time via their onSnapshot on the same doc. "Restaurar
- * configuración" deletes the doc, which IS the defaults, so it is always safe.
+ * The professor curates their class here: show/hide worlds and reorder them
+ * (drag: long-press and move up/down). Every interaction saves immediately (no
+ * "save" button — least friction) and reaches students in real time via their
+ * onSnapshot on the same doc. "Restaurar configuración" deletes the doc, which
+ * IS the defaults, so it is always safe.
  */
 import { useEffect, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, Switch, TouchableOpacity, ActivityIndicator } from 'react-native';
@@ -56,23 +56,16 @@ export default function ClassWorldsManager({
         : WORLD_DEFS.map((d) => ({ worldId: d.id as string, activo: true })),
     [config]
   );
-  const enfocadoId = config?.modoEnfocado?.activo ? (config.modoEnfocado.worldId ?? null) : null;
-
-  const save = (
-    mundos: CursoConfigMundoEntry[],
-    modoEnfocado: { activo: boolean; worldId?: string }
-  ) => {
+  const save = (mundos: CursoConfigMundoEntry[]) => {
     if (!firebaseUid) return;
     // buildCuratedConfig preserva `overrides` (fuente de verdad del contenido
     // copy-on-write): perderlos revertía las ediciones del profesor.
     void classConfigRepository.upsert(
       colegioId,
       cursoId,
-      buildCuratedConfig(config, mundos, modoEnfocado, firebaseUid, Date.now())
+      buildCuratedConfig(config, mundos, firebaseUid, Date.now())
     );
   };
-
-  const currentFoco = () => config?.modoEnfocado ?? { activo: false };
 
   const onToggle = async (worldId: string) => {
     const entry = entries.find((e) => e.worldId === worldId);
@@ -95,13 +88,7 @@ export default function ClassWorldsManager({
       }
     }
     const next = entries.map((e) => (e.worldId === worldId ? { ...e, activo: !e.activo } : e));
-    // Hiding the focused world also clears the focus (a class can't focus on
-    // a world it can't see).
-    const foco =
-      enfocadoId === worldId && entries.find((e) => e.worldId === worldId)?.activo
-        ? { activo: false }
-        : currentFoco();
-    save(next, foco);
+    save(next);
   };
 
   const onDeleteCustom = (worldId: string, name: string) =>
@@ -144,7 +131,11 @@ export default function ClassWorldsManager({
       uid: firebaseUid ?? '',
       worldId,
     });
-    showMessage(ok ? t('classWorlds.duplicated') : t('classWorlds.duplicateFailed'));
+    showMessage(
+      ok ? t('classWorlds.duplicated') : t('classWorlds.duplicateFailed'),
+      undefined,
+      ok ? 'success' : 'error'
+    );
   };
 
   const onReorder = (orderedIds: string[]) => {
@@ -152,15 +143,7 @@ export default function ClassWorldsManager({
     const next = orderedIds
       .map((id) => byId.get(id))
       .filter((e): e is CursoConfigMundoEntry => !!e);
-    save(next, currentFoco());
-  };
-
-  const onFocus = (worldId: string) => {
-    if (enfocadoId === worldId) {
-      save(entries, { activo: false });
-    } else {
-      save(entries, { activo: true, worldId });
-    }
+    save(next);
   };
 
   const confirmReset = () =>
@@ -177,7 +160,6 @@ export default function ClassWorldsManager({
   const renderRow = (entry: CursoConfigMundoEntry) => {
     const def = displayWorldDef(entry.worldId, entry);
     if (!def) return null;
-    const isFoco = enfocadoId === entry.worldId;
     const esCustom = isCustomWorldId(entry.worldId);
     return (
       <View style={styles.rowSlot}>
@@ -224,20 +206,6 @@ export default function ClassWorldsManager({
           >
             <Ionicons name="pencil-outline" size={16} color={colors.text.secondary} />
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => onFocus(entry.worldId)}
-            disabled={!entry.activo}
-            style={[styles.iconBtn, { opacity: entry.activo ? 1 : 0.3 }]}
-            accessibilityRole="button"
-            accessibilityLabel={t('classWorlds.focus', { name: def.name })}
-            accessibilityState={{ selected: isFoco }}
-          >
-            <Ionicons
-              name={isFoco ? 'megaphone' : 'megaphone-outline'}
-              size={17}
-              color={isFoco ? colors.brand.primary : colors.text.secondary}
-            />
-          </TouchableOpacity>
           {esCustom && (
             <>
               <TouchableOpacity
@@ -275,26 +243,6 @@ export default function ClassWorldsManager({
       <Text style={[styles.dragHint, { color: colors.text.quaternary }]}>
         {t('classWorlds.dragHint')}
       </Text>
-
-      {enfocadoId && (
-        <View style={[styles.focusBanner, { borderColor: colors.brand.primary }]}>
-          <Ionicons name="megaphone-outline" size={15} color={colors.brand.primary} />
-          <Text style={[styles.focusBannerText, { color: colors.text.primary }]}>
-            {t('classWorlds.focusedBanner', {
-              name:
-                displayWorldDef(
-                  enfocadoId,
-                  entries.find((e) => e.worldId === enfocadoId)
-                )?.name ?? enfocadoId,
-            })}
-          </Text>
-          <TouchableOpacity onPress={() => onFocus(enfocadoId)} accessibilityRole="button">
-            <Text style={[styles.unfocusText, { color: colors.brand.primary }]}>
-              {t('classWorlds.unfocus')}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      )}
 
       <ReorderableList
         data={entries}
@@ -363,17 +311,6 @@ const styles = StyleSheet.create({
   title: { fontSize: 16, fontWeight: '800' },
   hint: { fontSize: 12, lineHeight: 16 },
   dragHint: { fontSize: 11, lineHeight: 15, fontStyle: 'italic' },
-  focusBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  focusBannerText: { flex: 1, fontSize: 12, fontWeight: '600' },
-  unfocusText: { fontSize: 12, fontWeight: '700' },
   rowSlot: { height: '100%', justifyContent: 'center' },
   row: {
     flexDirection: 'row',

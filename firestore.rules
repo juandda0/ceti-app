@@ -78,11 +78,11 @@ service cloud.firestore {
         allow create, update, delete: if false;
 
         // Class configuration (D-ORQ, RQ-PR10): single doc `mundos` — active
-        // worlds + order + modo enfocado. Read by the course only (its teacher
-        // and its students, who subscribe live); written/reset ONLY by the
-        // course's teacher. ABSENCE of the doc = defaults, so `delete` is the
-        // "restaurar configuración" action. List entries are shape-checked in
-        // the client (Zod); here we pin the field set, types and bounds.
+        // worlds + order. Read by the course only (its teacher and its students,
+        // who subscribe live); written/reset ONLY by the course's teacher.
+        // ABSENCE of the doc = defaults, so `delete` is the "restaurar
+        // configuración" action. List entries are shape-checked in the client
+        // (Zod); here we pin the field set, types and bounds.
         match /config/{configId} {
           allow read: if isProfesorDe(cid, cursoId)
             || (isRole('estudiante')
@@ -90,13 +90,11 @@ service cloud.firestore {
               && request.auth.token.cursoId == cursoId);
           allow create, update: if configId == 'mundos'
             && isProfesorDe(cid, cursoId)
-            && request.resource.data.keys().hasOnly(['mundos', 'modoEnfocado', 'overrides', 'version', 'updatedAt', 'updatedByUid'])
+            && request.resource.data.keys().hasOnly(['mundos', 'overrides', 'version', 'updatedAt', 'updatedByUid'])
             && (!('overrides' in request.resource.data) || request.resource.data.overrides is map)
             && request.resource.data.mundos is list
             && request.resource.data.mundos.size() >= 1
             && request.resource.data.mundos.size() <= 30
-            && request.resource.data.modoEnfocado is map
-            && request.resource.data.modoEnfocado.activo is bool
             && request.resource.data.version is number
             && request.resource.data.updatedAt is number
             && request.resource.data.updatedByUid == request.auth.uid;

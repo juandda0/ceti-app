@@ -457,17 +457,17 @@ colaborativo/leaderboard de aula retirados del producto).
 - ~~_CA1_: Cambiar el toggle se refleja en la experiencia del estudiante (aparece/desaparece modo colaborativo y leaderboard de aula).~~
 - ~~_CA2_: El leaderboard, cuando está activo, es siempre de aula (nunca global).~~
 
-**RQ-PR10 — Configuración de clase (mundos, orden, modo enfocado, tiempo real)** · **[NUEVO por D-ORQ, 2026-07-10]**
+**RQ-PR10 — Configuración de clase (mundos, orden, tiempo real)** · **[NUEVO por D-ORQ, 2026-07-10; modo enfocado eliminado 2026-07-11]**
 El profesor configura SU curso en un doc único
-`colegios/{colegioId}/cursos/{cursoId}/config/mundos`: qué mundos están activos,
-en qué orden, y un modo enfocado ("la clase trabaja solo el Mundo X").
-**Ausencia del doc = defaults** (5 mundos, orden canónico, todo activo, modo
-libre) — retrocompatibilidad total, migración cero.
+`colegios/{colegioId}/cursos/{cursoId}/config/mundos`: qué mundos están activos
+y en qué orden. (El **modo enfocado** fue eliminado el 2026-07-11 por decisión
+del dueño.) **Ausencia del doc = defaults** (5 mundos, orden canónico, todo
+activo) — retrocompatibilidad total, migración cero.
 
 - _CA1_: Sin configurar nada, la clase es funcional con defaults (0 pasos para el profesor).
 - _CA2_: El doc lo escribe/borra solo el profesor del curso (`isProfesorDe`, rules); lo lee el profesor y el estudiante del curso (`token.cursoId`).
 - _CA3_: El estudiante recibe los cambios **en tiempo real** (`onSnapshot` del doc de config; fallback a defaults si no existe u offline).
-- _CA4_: **Salida suave**: un estudiante dentro de un mundo retirado/desenfocado termina su actividad en curso (nunca expulsión a mitad de pregunta), ve un aviso no bloqueante y no puede re-entrar; su progreso nunca se borra por cambios de config.
+- _CA4_: **Salida suave**: un estudiante dentro de un mundo retirado termina su actividad en curso (nunca expulsión a mitad de pregunta), ve un aviso no bloqueante y no puede re-entrar; su progreso nunca se borra por cambios de config.
 - _CA5_: Desbloqueo con orden custom: un mundo activo está desbloqueado si ya fue completado **o** si todos los mundos activos anteriores en el orden están completados. Lo completado nunca se re-bloquea.
 - _CA6_: Todos los mundos desactivados → estado vacío claro para el estudiante ("tu profesor está preparando la clase"); el estudiante nunca ve una clase mal configurada sin fallback.
 - _CA7_: "Restaurar configuración" (= borrar el doc) con confirmación en UI; reversible por naturaleza (el default siempre existe).

@@ -50,12 +50,10 @@ function buildNextConfig(
     ? {
         ...config,
         mundos: config.mundos.map((m) => ({ ...m })),
-        modoEnfocado: { ...config.modoEnfocado },
         overrides: { ...(config.overrides ?? {}) },
       }
     : {
         mundos: WORLD_ORDER.map((worldId) => ({ worldId: worldId as string, activo: true })),
-        modoEnfocado: { activo: false },
         overrides: {},
         version: 0,
         updatedAt: 0,
@@ -307,7 +305,6 @@ export const courseContentRepository = {
       const overrides = { ...(draft.overrides ?? {}) };
       delete overrides[worldId];
       draft.overrides = overrides;
-      if (draft.modoEnfocado.worldId === worldId) draft.modoEnfocado = { activo: false };
     });
     batch.set(
       cursoConfigMundosDocRef(clients.firestore, colegioId, cursoId),

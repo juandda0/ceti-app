@@ -566,7 +566,6 @@ const validConfig = {
     { worldId: 'world_4', activo: true },
     { worldId: 'world_5', activo: true },
   ],
-  modoEnfocado: { activo: false },
   version: 1,
   updatedAt: 1,
   updatedByUid: 'uProfA1',
@@ -651,8 +650,8 @@ await check(
   )
 );
 await check(
-  'config rejects malformed modoEnfocado',
-  assertFails(setDoc(doc(profA1, configPath), { ...validConfig, modoEnfocado: { activo: 'sí' } }))
+  'config rejects unknown field (modoEnfocado removido)',
+  assertFails(setDoc(doc(profA1, configPath), { ...validConfig, modoEnfocado: { activo: false } }))
 );
 await check(
   'collectionGroup(config) denied',

@@ -14,7 +14,7 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { showMessage } from '@shared/lib/dialogs';
 import { adminService } from '@features/dashboard/data/adminService';
 
-const GRADOS = ['9', '10', '11'] as const;
+const GRADOS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'] as const;
 
 export default function CreateClassScreen() {
   const { t } = useTranslation();
@@ -38,12 +38,12 @@ export default function CreateClassScreen() {
     setBusy(true);
     try {
       const res = await adminService.crearMiCurso({ nombre: nombre.trim(), grado });
-      showMessage(t('createClass.created'));
+      showMessage(t('createClass.created'), undefined, 'success');
       router.replace(
         `/(staff)/gestionar/${res.cursoId}?nombre=${encodeURIComponent(nombre.trim())}` as Href
       );
     } catch (e) {
-      showMessage(t('admin.error'), e instanceof Error ? e.message : String(e));
+      showMessage(t('admin.error'), e instanceof Error ? e.message : String(e), 'error');
     } finally {
       setBusy(false);
     }
@@ -136,8 +136,14 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     fontSize: 15,
   },
-  chipRow: { flexDirection: 'row', gap: 10 },
-  chip: { borderRadius: 12, paddingVertical: 10, paddingHorizontal: 20 },
+  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  chip: {
+    borderRadius: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    minWidth: 52,
+    alignItems: 'center',
+  },
   chipText: { fontSize: 15, fontWeight: '800' },
   btn: { borderRadius: 10, paddingVertical: 14, alignItems: 'center', marginTop: 16 },
   btnText: { color: '#fff', fontSize: 15, fontWeight: '800' },

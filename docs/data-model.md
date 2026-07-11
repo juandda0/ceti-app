@@ -86,7 +86,7 @@ colegios/{colegioId}
   │               codigo?: string }   # colaboracionAula removido por D-CUT; codigo = self-join
   │    └─ config/mundos                           # D-ORQ (RQ-PR10): configuración de clase
   │    │    └─ (doc) { mundos: [{ worldId, activo }],   # array = orden vigente
-  │    │               modoEnfocado: { activo, worldId? },
+  │    │               # modoEnfocado eliminado 2026-07-11 (decisión del dueño)
   │    │               overrides?: { [worldId]: { mc?, vf?, ordenar?, teoria?, meta?, eligeCamino? } },
   │    │               version, updatedAt, updatedByUid }
   │    │        # AUSENCIA del doc = defaults (5 mundos, orden canónico, todo activo).

@@ -186,7 +186,7 @@ export default function ContentEditorScreen() {
     try {
       await fn();
     } catch (e) {
-      showMessage(t('admin.error'), e instanceof Error ? e.message : String(e));
+      showMessage(t('admin.error'), e instanceof Error ? e.message : String(e), 'error');
     } finally {
       setBusy(false);
     }
@@ -213,7 +213,7 @@ export default function ContentEditorScreen() {
         delete item.elementosCanonicos;
         const error = validateQuizItem(item as QuizItem);
         if (error) {
-          showMessage(t('contentEditor.invalidItem', { n: i + 1 }), error);
+          showMessage(t('contentEditor.invalidItem', { n: i + 1 }), error, 'error');
           return;
         }
         finalItems.push(item as QuizItem);
@@ -239,7 +239,7 @@ export default function ContentEditorScreen() {
       });
       if (ok) {
         setPieceSource((prev) => ({ ...prev, [piece]: 'custom' }));
-        showMessage(t('contentEditor.saved'));
+        showMessage(t('contentEditor.saved'), undefined, 'success');
       }
     });
 
@@ -256,7 +256,8 @@ export default function ContentEditorScreen() {
           const issue = result.error.issues[0];
           showMessage(
             t('contentEditor.invalidCard', { n: i + 1 }),
-            `${issue.path.join('.')}: ${issue.message}`
+            `${issue.path.join('.')}: ${issue.message}`,
+            'error'
           );
           return;
         }
@@ -278,7 +279,7 @@ export default function ContentEditorScreen() {
       });
       if (ok) {
         setPieceSource((prev) => ({ ...prev, teoria: 'custom' }));
-        showMessage(t('contentEditor.saved'));
+        showMessage(t('contentEditor.saved'), undefined, 'success');
       }
     });
 
@@ -447,7 +448,7 @@ export default function ContentEditorScreen() {
       setSheetOpen(false);
     } catch (e) {
       if (__DEV__) console.warn('[contentEditor] generate error', e);
-      showMessage(t('contentEditor.generateError'));
+      showMessage(t('contentEditor.generateError'), undefined, 'error');
     } finally {
       setGenBusy(false);
     }
