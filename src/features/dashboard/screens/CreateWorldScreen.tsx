@@ -1,11 +1,14 @@
 /**
  * CreateWorldScreen — one-screen custom-world wizard (D-ORQ, RQ-PR12/CN06).
  *
- * The professor gives a name + topic; "Generar con IA" asks the Function for a
- * DRAFT (never persisted server-side), and "Guardar como borrador" writes the
- * world in ONE batch as an inactive entry (invisible to students). The manual
+ * The professor gives a name + description; "Generar preguntas" asks the Function
+ * for a DRAFT (never persisted server-side), and "Guardar como borrador" writes
+ * the world in ONE batch as an inactive entry (invisible to students). The manual
  * path ("crear vacío") creates just the entry — content is authored later in
  * the editor. Activation is gated by content minimums in ClassWorldsManager.
+ *
+ * UI copy rule: never surface "IA" to the user — the generation is presented as
+ * "Generar preguntas" (the model is an implementation detail).
  */
 import { useState } from 'react';
 import {
@@ -23,7 +26,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
-import { showMessage } from '@shared/lib/dialogs';
+import { confirmAction, showMessage } from '@shared/lib/dialogs';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { adminService } from '@features/dashboard/data/adminService';
 import { classConfigRepository } from '@features/dashboard/data/classConfigRepository';
@@ -72,11 +75,26 @@ export default function CreateWorldScreen() {
       });
       setDraft(result);
     } catch (e) {
-      if (__DEV__) console.warn('[createWorld] IA error:', e);
+      if (__DEV__) console.warn('[createWorld] generate error:', e);
       showMessage(t('createWorld.generateError'));
     } finally {
       setGenerating(false);
     }
+  };
+
+  // Avisa que el borrador se crea a partir de la descripción del mundo (el tema).
+  const onGeneratePress = () => {
+    if (!nombre.trim()) {
+      showMessage(t('createWorld.nombreRequired'));
+      return;
+    }
+    confirmAction({
+      title: t('createWorld.generateConfirmTitle'),
+      body: t('createWorld.generateConfirmBody'),
+      confirmLabel: t('createWorld.generateConfirmCta'),
+      cancelLabel: t('admin.cancel'),
+      onConfirm: () => void onGenerate(),
+    });
   };
 
   const onSave = async (withDraft: boolean) => {
@@ -219,9 +237,9 @@ export default function CreateWorldScreen() {
           {t('createWorld.competenciaHint')}
         </Text>
 
-        {/* IA draft */}
+        {/* Generar preguntas (borrador a partir de la descripción del mundo) */}
         <TouchableOpacity
-          onPress={() => void onGenerate()}
+          onPress={onGeneratePress}
           disabled={generating || saving}
           accessibilityRole="button"
           style={[styles.iaBtn, { borderColor: accent, opacity: generating ? 0.6 : 1 }]}
@@ -232,7 +250,7 @@ export default function CreateWorldScreen() {
             <Ionicons name="sparkles-outline" size={16} color={accent} />
           )}
           <Text style={[styles.iaBtnText, { color: accent }]}>
-            {generating ? t('createWorld.generating') : t('createWorld.generateIA')}
+            {generating ? t('createWorld.generating') : t('createWorld.generate')}
           </Text>
         </TouchableOpacity>
 

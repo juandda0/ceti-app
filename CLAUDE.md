@@ -157,6 +157,7 @@ el _check_ del enforcement).
 - PII del menor: solo `email`+`nombre`; nunca edad/grado/documento (R4). `bancos/**` read-only (R8).
 - Persistencia de stores: siempre `createJSONStorage(() => createZustandMmkvStorage())` — nunca PII/tokens a MMKV (R4).
 - Strings visibles: siempre `t('...')` con claves en `src/shared/i18n/locales/es.json`.
+- **Nunca mostrar "IA" en copy visible al usuario.** La generación de contenido se presenta como "Generar preguntas" (el modelo es detalle de implementación). Aplica a botones, avisos, subtítulos y mensajes de error.
 - Analytics: vía `src/shared/lib/analytics/logEvent.ts`. **Nunca** nombres, emails, edades ni PII de menor en params.
 
 ## Tooling commands
