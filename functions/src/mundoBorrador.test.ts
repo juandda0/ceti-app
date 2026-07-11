@@ -1,4 +1,11 @@
-import { generarBorrador, parseBorradorMundo } from './mundoBorrador';
+import {
+  buildItemUserText,
+  generarBorrador,
+  generarItem,
+  parseBorradorMundo,
+  parseItemBorrador,
+  type BorradorMc,
+} from './mundoBorrador';
 import { ModelApiError, type ModelCaller } from './vozClasificacion';
 
 const validRaw = {
@@ -87,5 +94,88 @@ describe('generarBorrador', () => {
     await generarBorrador({ nombre: 'Feria', tema: 'trueque', grado: '10' }, call);
     const [, userText] = (call as unknown as jest.Mock).mock.calls[0];
     expect(userText).toBe('NOMBRE: Feria\nTEMA: trueque\nGRADO: 10');
+  });
+});
+
+describe('parseItemBorrador', () => {
+  const mcRaw = {
+    enunciado: 'Una pregunta válida de prueba',
+    opciones: ['a', 'b', 'c'],
+    correctIndex: 1,
+  };
+
+  it('acepta un ítem envuelto en { item: {...} }', () => {
+    const item = parseItemBorrador('mc', { item: mcRaw }) as BorradorMc;
+    expect(item.correctIndex).toBe(1);
+    expect(item.opciones).toHaveLength(3);
+  });
+
+  it('acepta el ítem sin envolver', () => {
+    const item = parseItemBorrador('mc', mcRaw) as BorradorMc;
+    expect(item.enunciado).toContain('pregunta');
+  });
+
+  it('lanza si el ítem es inválido para el tipo (correctIndex fuera de rango)', () => {
+    expect(() => parseItemBorrador('mc', { ...mcRaw, correctIndex: 9 })).toThrow(/Ítem inválido/);
+  });
+
+  it('lanza si la raíz no es un objeto', () => {
+    expect(() => parseItemBorrador('vf', 'nope')).toThrow();
+  });
+});
+
+describe('buildItemUserText', () => {
+  it('incluye teoría y previas como contexto para preguntas', () => {
+    const text = buildItemUserText({
+      tipo: 'mc',
+      nombre: 'Feria',
+      descripcion: 'sobre trueque',
+      grado: '9',
+      esPrimera: false,
+      teoria: ['Comparar: mira dos opciones'],
+      previas: ['¿Qué es comparar precios?'],
+      detalle: 'enfoque en descuentos',
+    });
+    expect(text).toContain('PRIMERA PIEZA: no');
+    expect(text).toContain('ENFOQUE PEDIDO: enfoque en descuentos');
+    expect(text).toContain('TEORÍA DEL MUNDO');
+    expect(text).toContain('PREGUNTAS YA EXISTENTES');
+  });
+
+  it('ignora la teoría al generar teoría (evita redundancia) y marca la primera', () => {
+    const text = buildItemUserText({
+      tipo: 'teoria',
+      nombre: 'Feria',
+      descripcion: 'sobre trueque',
+      grado: '9',
+      esPrimera: true,
+      teoria: ['no debería aparecer'],
+      previas: ['Comparar'],
+    });
+    expect(text).toContain('PRIMERA PIEZA: sí');
+    expect(text).not.toContain('TEORÍA DEL MUNDO');
+    expect(text).toContain('TÍTULOS DE TEORÍA YA EXISTENTES');
+  });
+});
+
+describe('generarItem', () => {
+  it('propaga ModelApiError cuando el modelo no devuelve JSON', async () => {
+    const call: ModelCaller = jest.fn().mockResolvedValue('no json');
+    await expect(
+      generarItem({ tipo: 'vf', nombre: 'x', descripcion: 'y', grado: '9', esPrimera: true }, call)
+    ).rejects.toThrow(ModelApiError);
+  });
+
+  it('devuelve el ítem validado del tipo pedido', async () => {
+    const call = jest
+      .fn()
+      .mockResolvedValue(
+        JSON.stringify({ item: { enunciado: 'Ahorrar siempre conviene', respuesta: true } })
+      ) as unknown as ModelCaller;
+    const item = await generarItem(
+      { tipo: 'vf', nombre: 'Feria', descripcion: 'trueque', grado: '10', esPrimera: false },
+      call
+    );
+    expect(item).toEqual({ enunciado: 'Ahorrar siempre conviene', respuesta: true });
   });
 });

@@ -2,6 +2,9 @@
   "errors": {
     "genericTitle": "Algo salió mal"
   },
+  "common": {
+    "back": "Volver"
+  },
   "welcome": {
     "overline": "Innovación",
     "title": "Ceti",
@@ -95,13 +98,21 @@
     "metaSubtitle": "Subtítulo",
     "metaDescripcion": "Descripción",
     "metaHint": "Deja un campo vacío para volver al texto original de Ceti.",
-    "customize": "Personalizar contenido"
+    "customize": "Personalizar contenido",
+    "generate": "Generar",
+    "generateItem": "Generar pregunta",
+    "generateCard": "Generar tarjeta",
+    "generateItemTitle": "Generar pregunta",
+    "generateCardTitle": "Generar tarjeta de teoría",
+    "generateSheetSubtitle": "Se crea a partir del nombre y la descripción de este mundo, y de lo que ya escribiste. Puedes darle un enfoque si quieres.",
+    "generateDetallePlaceholder": "Enfoque o detalle (opcional). P. ej. sobre el ahorro para emergencias",
+    "generating": "Generando…",
+    "generateError": "No se pudo generar ahora. Intenta de nuevo en un momento."
   },
   "classWorlds": {
     "title": "Mundos de la clase",
     "hint": "Elige qué mundos ve tu clase y en qué orden. Los cambios llegan a tus estudiantes al instante.",
-    "moveUp": "Subir en el orden",
-    "moveDown": "Bajar en el orden",
+    "dragHint": "Mantén presionado un mundo y arrástralo para cambiar el orden.",
     "focus": "Enfocar la clase en {{name}}",
     "customize": "Personalizar {{name}}",
     "focusedBanner": "Clase enfocada en {{name}}",
@@ -120,7 +131,8 @@
     "deleteConfirmBody": "El contenido de este mundo se elimina de forma permanente (no se puede deshacer). El progreso de tus estudiantes se conserva como historial.",
     "deleteConfirm": "Eliminar mundo",
     "duplicate": "Duplicar {{name}} a otro curso",
-    "duplicateTo": "→ {{name}}",
+    "duplicateSheetTitle": "Duplicar {{name}}",
+    "duplicateSheetSubtitle": "Elige el curso al que quieres copiar este mundo. Llega oculto para que lo revises antes de mostrarlo.",
     "duplicated": "Mundo duplicado. Aparece oculto en el otro curso.",
     "duplicateFailed": "No se pudo duplicar (¿ya existe en ese curso?).",
     "noOtherCourses": "No tienes otro curso al cual duplicarlo."
@@ -141,9 +153,10 @@
     "generateConfirmCta": "Generar",
     "generating": "Generando borrador…",
     "generated": "Borrador listo: {{teoria}} tarjetas de teoría, {{mc}} de opción múltiple, {{vf}} de V/F, {{ordenar}} de ordenar y {{ec}} situaciones. Revísalo y ajústalo después de guardar.",
-    "generateError": "El generador no está disponible ahora. Puedes crear el mundo vacío y escribir el contenido tú mismo.",
+    "generateError": "El generador no está disponible ahora. Puedes crear el mundo y escribir el contenido después.",
     "saveDraft": "Guardar como borrador",
-    "createEmpty": "Crear vacío (escribo el contenido yo)",
+    "createEmpty": "Crear mundo",
+    "createEmptyDiscard": "Crear sin el borrador",
     "saved": "Mundo creado como borrador. Actívalo cuando el contenido esté listo.",
     "nombreRequired": "El nombre del mundo es obligatorio."
   },

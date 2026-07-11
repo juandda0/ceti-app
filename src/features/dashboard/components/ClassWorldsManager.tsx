@@ -1,19 +1,21 @@
 /**
  * ClassWorldsManager — "Mundos de la clase" (D-ORQ, RQ-PR10).
  *
- * The professor curates their class here: show/hide worlds, reorder them, and
- * focus the class on a single world. Every interaction saves immediately (no
- * "save" button — least friction) and reaches students in real time via their
- * onSnapshot on the same doc. "Restaurar configuración" deletes the doc, which
- * IS the defaults, so it is always safe.
+ * The professor curates their class here: show/hide worlds, reorder them (drag:
+ * long-press and move up/down), and focus the class on a single world. Every
+ * interaction saves immediately (no "save" button — least friction) and reaches
+ * students in real time via their onSnapshot on the same doc. "Restaurar
+ * configuración" deletes the doc, which IS the defaults, so it is always safe.
  */
 import { useEffect, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, Switch, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Switch, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { confirmAction, showMessage } from '@shared/lib/dialogs';
+import ReorderableList from '@shared/components/ReorderableList';
+import CetiBottomSheet from '@shared/components/CetiBottomSheet';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { classConfigRepository } from '@features/dashboard/data/classConfigRepository';
 import { courseContentRepository } from '@features/dashboard/data/courseContentRepository';
@@ -21,6 +23,8 @@ import { rosterRepository } from '@features/dashboard/data/rosterRepository';
 import { buildCuratedConfig } from '@features/learning/data/classConfig';
 import { WORLD_DEFS, displayWorldDef, isCustomWorldId } from '@features/learning/data/worldMeta';
 import type { CursoConfigMundoEntry, CursoConfigMundos } from '@shared/types/tenancy';
+
+const ROW_HEIGHT = 58;
 
 export default function ClassWorldsManager({
   colegioId,
@@ -117,16 +121,11 @@ export default function ClassWorldsManager({
         }),
     });
 
-  // Duplicate-to-course: pressing "duplicar" loads the professor's OTHER
-  // courses and shows them as inline target chips under the row.
-  const [duplicating, setDuplicating] = useState<string | null>(null);
+  // Duplicate-to-course: opens a sheet listing the professor's OTHER courses.
+  const [duplicateFor, setDuplicateFor] = useState<{ worldId: string; name: string } | null>(null);
   const [targetCursos, setTargetCursos] = useState<{ id: string; nombre: string }[] | null>(null);
-  const onDuplicate = async (worldId: string) => {
-    if (duplicating === worldId) {
-      setDuplicating(null);
-      return;
-    }
-    setDuplicating(worldId);
+  const onDuplicate = async (worldId: string, name: string) => {
+    setDuplicateFor({ worldId, name });
     if (targetCursos === null && firebaseUid) {
       const cursos = await rosterRepository.getCursosByProfesor(colegioId, firebaseUid);
       setTargetCursos(
@@ -134,8 +133,10 @@ export default function ClassWorldsManager({
       );
     }
   };
-  const onDuplicateTo = async (worldId: string, toCursoId: string) => {
-    setDuplicating(null);
+  const onDuplicateTo = async (toCursoId: string) => {
+    const worldId = duplicateFor?.worldId;
+    setDuplicateFor(null);
+    if (!worldId) return;
     const ok = await courseContentRepository.duplicateCustomWorld({
       colegioId,
       fromCursoId: cursoId,
@@ -146,12 +147,11 @@ export default function ClassWorldsManager({
     showMessage(ok ? t('classWorlds.duplicated') : t('classWorlds.duplicateFailed'));
   };
 
-  const onMove = (worldId: string, dir: -1 | 1) => {
-    const i = entries.findIndex((e) => e.worldId === worldId);
-    const j = i + dir;
-    if (i < 0 || j < 0 || j >= entries.length) return;
-    const next = [...entries];
-    [next[i], next[j]] = [next[j], next[i]];
+  const onReorder = (orderedIds: string[]) => {
+    const byId = new Map(entries.map((e) => [e.worldId, e]));
+    const next = orderedIds
+      .map((id) => byId.get(id))
+      .filter((e): e is CursoConfigMundoEntry => !!e);
     save(next, currentFoco());
   };
 
@@ -174,10 +174,107 @@ export default function ClassWorldsManager({
 
   if (!loaded) return null;
 
+  const renderRow = (entry: CursoConfigMundoEntry) => {
+    const def = displayWorldDef(entry.worldId, entry);
+    if (!def) return null;
+    const isFoco = enfocadoId === entry.worldId;
+    const esCustom = isCustomWorldId(entry.worldId);
+    return (
+      <View style={styles.rowSlot}>
+        <View
+          style={[
+            styles.row,
+            {
+              borderColor: colors.materials.border,
+              backgroundColor: colors.background.elevated,
+            },
+          ]}
+        >
+          <Ionicons name="reorder-three" size={20} color={colors.text.quaternary} />
+          <View
+            style={[
+              styles.dot,
+              { backgroundColor: entry.activo ? def.color : colors.text.quaternary },
+            ]}
+          />
+          <View style={styles.nameRow}>
+            <Text
+              style={[
+                styles.rowName,
+                { color: entry.activo ? colors.text.primary : colors.text.quaternary },
+              ]}
+              numberOfLines={1}
+            >
+              {def.name}
+            </Text>
+            {!entry.activo && (
+              <Text
+                style={[styles.hiddenBadge, { color: colors.text.quaternary }]}
+                numberOfLines={1}
+              >
+                {t('classWorlds.worldHidden')}
+              </Text>
+            )}
+          </View>
+          <TouchableOpacity
+            onPress={() => router.push(`/(staff)/contenido/${cursoId}/${entry.worldId}` as never)}
+            style={styles.iconBtn}
+            accessibilityRole="button"
+            accessibilityLabel={t('classWorlds.customize', { name: def.name })}
+          >
+            <Ionicons name="pencil-outline" size={16} color={colors.text.secondary} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => onFocus(entry.worldId)}
+            disabled={!entry.activo}
+            style={[styles.iconBtn, { opacity: entry.activo ? 1 : 0.3 }]}
+            accessibilityRole="button"
+            accessibilityLabel={t('classWorlds.focus', { name: def.name })}
+            accessibilityState={{ selected: isFoco }}
+          >
+            <Ionicons
+              name={isFoco ? 'megaphone' : 'megaphone-outline'}
+              size={17}
+              color={isFoco ? colors.brand.primary : colors.text.secondary}
+            />
+          </TouchableOpacity>
+          {esCustom && (
+            <>
+              <TouchableOpacity
+                onPress={() => void onDuplicate(entry.worldId, def.name)}
+                style={styles.iconBtn}
+                accessibilityRole="button"
+                accessibilityLabel={t('classWorlds.duplicate', { name: def.name })}
+              >
+                <Ionicons name="copy-outline" size={16} color={colors.text.secondary} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => onDeleteCustom(entry.worldId, def.name)}
+                style={styles.iconBtn}
+                accessibilityRole="button"
+                accessibilityLabel={t('classWorlds.delete', { name: def.name })}
+              >
+                <Ionicons name="trash-outline" size={16} color={colors.system.red} />
+              </TouchableOpacity>
+            </>
+          )}
+          <Switch
+            value={entry.activo}
+            onValueChange={() => void onToggle(entry.worldId)}
+            accessibilityLabel={t('classWorlds.toggleWorld', { name: def.name })}
+          />
+        </View>
+      </View>
+    );
+  };
+
   return (
     <View style={[styles.wrap, { backgroundColor: colors.background.secondary }]}>
       <Text style={[styles.title, { color: colors.text.primary }]}>{t('classWorlds.title')}</Text>
       <Text style={[styles.hint, { color: colors.text.tertiary }]}>{t('classWorlds.hint')}</Text>
+      <Text style={[styles.dragHint, { color: colors.text.quaternary }]}>
+        {t('classWorlds.dragHint')}
+      </Text>
 
       {enfocadoId && (
         <View style={[styles.focusBanner, { borderColor: colors.brand.primary }]}>
@@ -199,131 +296,13 @@ export default function ClassWorldsManager({
         </View>
       )}
 
-      {entries.map((entry, i) => {
-        const def = displayWorldDef(entry.worldId, entry);
-        if (!def) return null;
-        const isFoco = enfocadoId === entry.worldId;
-        const esCustom = isCustomWorldId(entry.worldId);
-        return (
-          <View key={entry.worldId}>
-            <View style={[styles.row, { borderColor: colors.background.elevated }]}>
-              <View
-                style={[
-                  styles.dot,
-                  { backgroundColor: entry.activo ? def.color : colors.text.quaternary },
-                ]}
-              />
-              <View style={{ flex: 1 }}>
-                <Text
-                  style={[
-                    styles.rowName,
-                    { color: entry.activo ? colors.text.primary : colors.text.quaternary },
-                  ]}
-                  numberOfLines={1}
-                >
-                  {def.name}
-                </Text>
-                {!entry.activo && (
-                  <Text style={[styles.rowSub, { color: colors.text.quaternary }]}>
-                    {t('classWorlds.worldHidden')}
-                  </Text>
-                )}
-              </View>
-              <TouchableOpacity
-                onPress={() => onMove(entry.worldId, -1)}
-                disabled={i === 0}
-                style={[styles.iconBtn, { opacity: i === 0 ? 0.3 : 1 }]}
-                accessibilityRole="button"
-                accessibilityLabel={t('classWorlds.moveUp')}
-              >
-                <Ionicons name="chevron-up" size={18} color={colors.text.secondary} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => onMove(entry.worldId, 1)}
-                disabled={i === entries.length - 1}
-                style={[styles.iconBtn, { opacity: i === entries.length - 1 ? 0.3 : 1 }]}
-                accessibilityRole="button"
-                accessibilityLabel={t('classWorlds.moveDown')}
-              >
-                <Ionicons name="chevron-down" size={18} color={colors.text.secondary} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() =>
-                  router.push(`/(staff)/contenido/${cursoId}/${entry.worldId}` as never)
-                }
-                style={styles.iconBtn}
-                accessibilityRole="button"
-                accessibilityLabel={t('classWorlds.customize', { name: def.name })}
-              >
-                <Ionicons name="pencil-outline" size={16} color={colors.text.secondary} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => onFocus(entry.worldId)}
-                disabled={!entry.activo}
-                style={[styles.iconBtn, { opacity: entry.activo ? 1 : 0.3 }]}
-                accessibilityRole="button"
-                accessibilityLabel={t('classWorlds.focus', { name: def.name })}
-                accessibilityState={{ selected: isFoco }}
-              >
-                <Ionicons
-                  name={isFoco ? 'megaphone' : 'megaphone-outline'}
-                  size={17}
-                  color={isFoco ? colors.brand.primary : colors.text.secondary}
-                />
-              </TouchableOpacity>
-              {esCustom && (
-                <>
-                  <TouchableOpacity
-                    onPress={() => void onDuplicate(entry.worldId)}
-                    style={styles.iconBtn}
-                    accessibilityRole="button"
-                    accessibilityLabel={t('classWorlds.duplicate', { name: def.name })}
-                  >
-                    <Ionicons name="copy-outline" size={16} color={colors.text.secondary} />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => onDeleteCustom(entry.worldId, def.name)}
-                    style={styles.iconBtn}
-                    accessibilityRole="button"
-                    accessibilityLabel={t('classWorlds.delete', { name: def.name })}
-                  >
-                    <Ionicons name="trash-outline" size={16} color={colors.system.red} />
-                  </TouchableOpacity>
-                </>
-              )}
-              <Switch
-                value={entry.activo}
-                onValueChange={() => void onToggle(entry.worldId)}
-                accessibilityLabel={t('classWorlds.toggleWorld', { name: def.name })}
-              />
-            </View>
-            {duplicating === entry.worldId && (
-              <View style={styles.targetsRow}>
-                {targetCursos === null ? (
-                  <Text style={[styles.rowSub, { color: colors.text.tertiary }]}>…</Text>
-                ) : targetCursos.length === 0 ? (
-                  <Text style={[styles.rowSub, { color: colors.text.tertiary }]}>
-                    {t('classWorlds.noOtherCourses')}
-                  </Text>
-                ) : (
-                  targetCursos.map((c) => (
-                    <TouchableOpacity
-                      key={c.id}
-                      onPress={() => void onDuplicateTo(entry.worldId, c.id)}
-                      accessibilityRole="button"
-                      style={[styles.targetChip, { borderColor: colors.brand.primary }]}
-                    >
-                      <Text style={[styles.targetChipText, { color: colors.brand.primary }]}>
-                        {t('classWorlds.duplicateTo', { name: c.nombre })}
-                      </Text>
-                    </TouchableOpacity>
-                  ))
-                )}
-              </View>
-            )}
-          </View>
-        );
-      })}
+      <ReorderableList
+        data={entries}
+        keyExtractor={(e) => e.worldId}
+        rowHeight={ROW_HEIGHT}
+        onReorder={onReorder}
+        renderItem={renderRow}
+      />
 
       <TouchableOpacity
         onPress={() => router.push(`/(staff)/crear-mundo/${cursoId}` as never)}
@@ -344,6 +323,37 @@ export default function ClassWorldsManager({
           </Text>
         </TouchableOpacity>
       )}
+
+      <CetiBottomSheet
+        visible={!!duplicateFor}
+        onClose={() => setDuplicateFor(null)}
+        closeOnBackdropPress
+        title={t('classWorlds.duplicateSheetTitle', { name: duplicateFor?.name ?? '' })}
+        subtitle={t('classWorlds.duplicateSheetSubtitle')}
+      >
+        {targetCursos === null ? (
+          <ActivityIndicator color={colors.brand.primary} />
+        ) : targetCursos.length === 0 ? (
+          <Text style={[styles.rowSub, { color: colors.text.tertiary }]}>
+            {t('classWorlds.noOtherCourses')}
+          </Text>
+        ) : (
+          <View style={styles.targetsRow}>
+            {targetCursos.map((c) => (
+              <TouchableOpacity
+                key={c.id}
+                onPress={() => void onDuplicateTo(c.id)}
+                accessibilityRole="button"
+                style={[styles.targetChip, { borderColor: colors.brand.primary }]}
+              >
+                <Text style={[styles.targetChipText, { color: colors.brand.primary }]}>
+                  {c.nombre}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+      </CetiBottomSheet>
     </View>
   );
 }
@@ -352,6 +362,7 @@ const styles = StyleSheet.create({
   wrap: { borderRadius: 14, padding: 16, gap: 10, marginTop: 4 },
   title: { fontSize: 16, fontWeight: '800' },
   hint: { fontSize: 12, lineHeight: 16 },
+  dragHint: { fontSize: 11, lineHeight: 15, fontStyle: 'italic' },
   focusBanner: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -363,17 +374,20 @@ const styles = StyleSheet.create({
   },
   focusBannerText: { flex: 1, fontSize: 12, fontWeight: '600' },
   unfocusText: { fontSize: 12, fontWeight: '700' },
+  rowSlot: { height: '100%', justifyContent: 'center' },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
     borderWidth: 1,
     borderRadius: 12,
-    paddingVertical: 10,
+    paddingVertical: 8,
     paddingHorizontal: 12,
   },
   dot: { width: 10, height: 10, borderRadius: 5 },
-  rowName: { fontSize: 14, fontWeight: '600' },
+  nameRow: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8 },
+  rowName: { fontSize: 14, fontWeight: '600', flexShrink: 1 },
+  hiddenBadge: { fontSize: 11, fontWeight: '600' },
   rowSub: { fontSize: 11, fontWeight: '600' },
   iconBtn: { padding: 4 },
   resetBtn: {
@@ -398,15 +412,13 @@ const styles = StyleSheet.create({
   targetsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 6,
-    paddingVertical: 6,
-    paddingLeft: 18,
+    gap: 8,
   },
   targetChip: {
     borderWidth: 1,
     borderRadius: 14,
-    paddingVertical: 4,
-    paddingHorizontal: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
   },
-  targetChipText: { fontSize: 12, fontWeight: '700' },
+  targetChipText: { fontSize: 13, fontWeight: '700' },
 });

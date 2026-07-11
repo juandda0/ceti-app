@@ -32,7 +32,19 @@ export default function StaffHomeScreen() {
   const uid = useAuthStore((s) => s.firebaseUid);
 
   const [cursos, setCursos] = useState<CursoWithId[]>([]);
+  const [colegioNombre, setColegioNombre] = useState<string | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
+
+  useEffect(() => {
+    if (!colegioId) return;
+    let cancelled = false;
+    void rosterRepository.getColegioNombre(colegioId).then((n) => {
+      if (!cancelled) setColegioNombre(n);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [colegioId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -71,7 +83,9 @@ export default function StaffHomeScreen() {
           <Text style={[styles.cardLabel, { color: colors.text.secondary }]}>
             {t('staff.colegioLabel')}
           </Text>
-          <Text style={[styles.cardValue, { color: colors.text.primary }]}>{colegioId ?? '—'}</Text>
+          <Text style={[styles.cardValue, { color: colors.text.primary }]}>
+            {colegioNombre ?? '…'}
+          </Text>
         </View>
 
         {/* profesor: aggregated school compliance report (non-nominal, D-PIVOT). */}

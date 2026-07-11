@@ -287,7 +287,7 @@ export default function CreateWorldScreen() {
             style={styles.secondaryBtn}
           >
             <Text style={[styles.secondaryBtnText, { color: colors.text.tertiary }]}>
-              {t('createWorld.createEmpty')}
+              {t('createWorld.createEmptyDiscard')}
             </Text>
           </TouchableOpacity>
         )}

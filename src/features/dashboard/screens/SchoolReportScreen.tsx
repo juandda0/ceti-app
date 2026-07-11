@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
+import BackButton from '@shared/components/BackButton';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { loadSchoolReport } from '@features/dashboard/data/loadSchoolReport';
@@ -72,6 +73,7 @@ export default function SchoolReportScreen() {
   return (
     <ScreenWrapper style={styles.root}>
       <ScrollView contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16 }]}>
+        <BackButton fallback="/(staff)" />
         <Text style={[styles.title, { color: colors.text.primary }]}>{t('school.title')}</Text>
 
         {status === 'loading' && (

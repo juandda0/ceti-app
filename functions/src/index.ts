@@ -20,7 +20,16 @@ import { initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { clasificarTexto, groqCaller, ModelApiError } from './vozClasificacion';
-import { generarBorrador, NOMBRE_MAX, TEMA_MAX } from './mundoBorrador';
+import {
+  generarBorrador,
+  generarItem,
+  ITEM_TIPOS,
+  DETALLE_MAX,
+  CONTEXTO_ITEMS_MAX,
+  NOMBRE_MAX,
+  TEMA_MAX,
+  type ItemTipo,
+} from './mundoBorrador';
 
 initializeApp();
 
@@ -775,6 +784,88 @@ export const generarBorradorMundo = onCall({ secrets: [GROQ_API_KEY] }, async (r
     { merge: true }
   );
   return borrador;
+});
+
+// Single-item generation from the editor (RQ-CN06). Its own daily budget, more
+// generous than the full-world one: authoring granularly is many small calls,
+// so 20/day would run out fast; each call is small and cheap.
+const IA_ITEM_CAP_DIARIO = 120;
+
+function iaItemUsoRef(uid: string) {
+  const day = new Date().toISOString().slice(0, 10);
+  return getFirestore().doc(`iaItemUso/${uid}_${day}`);
+}
+
+/** Sanitizes an optional string array of context lines (no PII — CA2). */
+function stringArray(value: unknown, maxLen: number): string[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((v) => (typeof v === 'string' ? v.trim().slice(0, maxLen) : ''))
+    .filter((v) => v.length > 0)
+    .slice(0, CONTEXTO_ITEMS_MAX);
+}
+
+export const generarItemContenido = onCall({ secrets: [GROQ_API_KEY] }, async (request) => {
+  const caller = request.auth;
+  requireAuth(caller);
+  if (caller.token.role !== 'profesor') {
+    throw new HttpsError('permission-denied', 'Solo profesores generan contenido.');
+  }
+  const colegioId = requireString(request.data?.colegioId, 'colegioId');
+  const cursoId = requireString(request.data?.cursoId, 'cursoId');
+  const tipo = requireString(request.data?.tipo, 'tipo');
+  const nombre = requireString(request.data?.nombre, 'nombre');
+  const descripcion = requireString(request.data?.descripcion, 'descripcion');
+  const grado = requireString(request.data?.grado, 'grado');
+  if (
+    !(ITEM_TIPOS as readonly string[]).includes(tipo) ||
+    nombre.length > NOMBRE_MAX ||
+    descripcion.length > TEMA_MAX ||
+    !['9', '10', '11'].includes(grado)
+  ) {
+    throw new HttpsError('invalid-argument', 'Parámetros fuera de rango.');
+  }
+  const detalleRaw = request.data?.detalle;
+  const detalle =
+    typeof detalleRaw === 'string' && detalleRaw.trim().length > 0
+      ? detalleRaw.trim().slice(0, DETALLE_MAX)
+      : undefined;
+  await assertStaffOfCurso(caller, colegioId, cursoId);
+
+  const usoSnap = await iaItemUsoRef(caller.uid).get();
+  const count = (usoSnap.data()?.count as number | undefined) ?? 0;
+  if (count >= IA_ITEM_CAP_DIARIO) {
+    throw new HttpsError('resource-exhausted', 'Límite diario de generación alcanzado.');
+  }
+
+  let item;
+  try {
+    item = await generarItem(
+      {
+        tipo: tipo as ItemTipo,
+        nombre,
+        descripcion,
+        grado,
+        esPrimera: request.data?.esPrimera === true,
+        detalle,
+        teoria: stringArray(request.data?.teoria, 800),
+        previas: stringArray(request.data?.previas, 400),
+      },
+      groqCaller(GROQ_API_KEY.value(), { maxTokens: 900, timeoutMs: 30_000 })
+    );
+  } catch (e) {
+    console.error('generarItemContenido: fallo de generación', e);
+    if (e instanceof ModelApiError) {
+      throw new HttpsError('unavailable', 'El generador no está disponible, intenta de nuevo.');
+    }
+    throw new HttpsError('internal', 'No se pudo generar el contenido.');
+  }
+
+  await iaItemUsoRef(caller.uid).set(
+    { count: FieldValue.increment(1), updatedAt: FieldValue.serverTimestamp() },
+    { merge: true }
+  );
+  return item;
 });
 
 // ---------------------------------------------------------------------------

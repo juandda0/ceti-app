@@ -114,4 +114,25 @@ export const adminService = {
   }): Promise<import('./courseContentSchemas').MundoBorrador> {
     return callFunction('generarBorradorMundo', input);
   },
+
+  /**
+   * IA de authoring docente, por ítem (RQ-CN06): the Function RETURNS a single
+   * draft item of `tipo`, grounded in the world + its teoría + the pieces already
+   * written (so it doesn't repeat) + an optional focus. The professor reviews it
+   * in the editor before saving — nothing is persisted server-side.
+   */
+  async generarItemContenido(input: {
+    colegioId: string;
+    cursoId: string;
+    tipo: import('./courseContentSchemas').BorradorItemTipo;
+    nombre: string;
+    descripcion: string;
+    grado: string;
+    esPrimera: boolean;
+    detalle?: string;
+    teoria?: string[];
+    previas?: string[];
+  }): Promise<import('./courseContentSchemas').BorradorItem> {
+    return callFunction('generarItemContenido', input);
+  },
 };

@@ -27,6 +27,7 @@ import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { confirmAction, showMessage } from '@shared/lib/dialogs';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
+import { adminService } from '@features/dashboard/data/adminService';
 import { classConfigRepository } from '@features/dashboard/data/classConfigRepository';
 import {
   courseContentRepository,
@@ -42,7 +43,12 @@ import {
   newOrdenarItem,
   newVfItem,
   validateQuizItem,
+  type BorradorMcItem,
+  type BorradorOrdenarItem,
+  type BorradorTeoriaCard,
+  type BorradorVfItem,
 } from '@features/dashboard/data/courseContentSchemas';
+import GenerateContentSheet from '@features/dashboard/components/GenerateContentSheet';
 import { rosterRepository } from '@features/dashboard/data/rosterRepository';
 import { worldDefById } from '@features/learning/data/worldMeta';
 import {
@@ -338,6 +344,115 @@ export default function ContentEditorScreen() {
     setItems((prev) => ({ ...prev, [piece]: [...(prev[piece] ?? []), item] }));
   };
 
+  // ── Generar una pieza (RQ-CN06) ──────────────────────────────────────────────
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [genBusy, setGenBusy] = useState(false);
+
+  const runGenerate = async (detalle: string) => {
+    if (!grado || tab === 'info') return;
+    setGenBusy(true);
+    try {
+      const nombre = (metaDraft.nombre || entry?.nombre || def?.name || worldId).trim();
+      const descripcion = (
+        metaDraft.descripcion ||
+        entry?.descripcion ||
+        def?.description ||
+        nombre
+      ).trim();
+
+      // Teoría como contexto para las preguntas (no para generar teoría misma).
+      let teoriaCtx: string[] | undefined;
+      if (tab !== 'teoria') {
+        let ctxCards = cards;
+        if (!ctxCards) {
+          const { doc } = await courseContentRepository.loadResolvedMicroteoria(
+            colegioId,
+            cursoId,
+            grado,
+            worldId,
+            Boolean(overrides?.teoria)
+          );
+          ctxCards = doc?.cards ?? [];
+        }
+        teoriaCtx = ctxCards.map((c) => `${c.titulo}: ${c.cuerpo}`).filter(Boolean);
+      }
+
+      // Piezas ya escritas de esta sección → el modelo no las repite.
+      const previas =
+        tab === 'teoria'
+          ? (cards ?? []).map((c) => c.titulo).filter(Boolean)
+          : (items[tab] ?? []).map((i) => i.enunciado).filter(Boolean);
+      const esPrimera = previas.length === 0;
+
+      const generated = await adminService.generarItemContenido({
+        colegioId,
+        cursoId,
+        tipo: tab,
+        nombre,
+        descripcion,
+        grado,
+        esPrimera,
+        detalle: detalle.trim() || undefined,
+        teoria: teoriaCtx,
+        previas,
+      });
+
+      // Curva de dificultad suave: la primera arranca fácil (R7-friendly, sin ML).
+      const dificultad = esPrimera ? 1 : Math.min(3, 1 + Math.floor(previas.length / 2));
+
+      if (tab === 'teoria') {
+        const card = generated as BorradorTeoriaCard;
+        setCards((prev) => [
+          ...(prev ?? []),
+          {
+            titulo: card.titulo,
+            cuerpo: card.cuerpo,
+            ...(card.ejemplo ? { ejemplo: card.ejemplo } : {}),
+          },
+        ]);
+      } else {
+        const id = `g_${Date.now().toString(36)}`;
+        let item: EditingItem;
+        if (tab === 'mc') {
+          const g = generated as BorradorMcItem;
+          item = {
+            ...newMcItem(id, competenciaId),
+            enunciado: g.enunciado,
+            opciones: g.opciones,
+            correctIndex: g.correctIndex,
+            dificultad,
+            explicacion: g.explicacion,
+          };
+        } else if (tab === 'vf') {
+          const g = generated as BorradorVfItem;
+          item = {
+            ...newVfItem(id, competenciaId),
+            enunciado: g.enunciado,
+            respuesta: g.respuesta,
+            dificultad,
+            explicacion: g.explicacion,
+          };
+        } else {
+          const g = generated as BorradorOrdenarItem;
+          item = {
+            ...newOrdenarItem(id, competenciaId),
+            enunciado: g.enunciado,
+            dificultad,
+            explicacion: g.explicacion,
+            elementosCanonicos: g.elementosCorrectos,
+          };
+        }
+        setItems((prev) => ({ ...prev, [tab]: [...(prev[tab] ?? []), item] }));
+      }
+      setSheetOpen(false);
+    } catch (e) {
+      if (__DEV__) console.warn('[contentEditor] generate error', e);
+      showMessage(t('contentEditor.generateError'));
+    } finally {
+      setGenBusy(false);
+    }
+  };
+
   // ── Render ──────────────────────────────────────────────────────────────────
 
   if (!colegioId || !cursoId || !worldId) {
@@ -535,6 +650,11 @@ export default function ContentEditorScreen() {
                 colors={colors}
                 onPress={() => setCards((prev) => [...(prev ?? []), { titulo: '', cuerpo: '' }])}
               />
+              <GenerateButton
+                label={t('contentEditor.generateCard')}
+                accent={accent}
+                onPress={() => setSheetOpen(true)}
+              />
               <PrimaryButton
                 label={t('contentEditor.save')}
                 color={accent}
@@ -615,6 +735,11 @@ export default function ContentEditorScreen() {
               colors={colors}
               onPress={() => addItem(tab)}
             />
+            <GenerateButton
+              label={t('contentEditor.generateItem')}
+              accent={accent}
+              onPress={() => setSheetOpen(true)}
+            />
             <PrimaryButton
               label={t('contentEditor.save')}
               color={accent}
@@ -624,11 +749,42 @@ export default function ContentEditorScreen() {
           </View>
         )}
       </ScrollView>
+      {tab !== 'info' && (
+        <GenerateContentSheet
+          visible={sheetOpen}
+          kind={tab === 'teoria' ? 'teoria' : 'quiz'}
+          accent={accent}
+          generating={genBusy}
+          onClose={() => !genBusy && setSheetOpen(false)}
+          onGenerate={(detalle) => void runGenerate(detalle)}
+        />
+      )}
     </ScreenWrapper>
   );
 }
 
 // ── Small building blocks ─────────────────────────────────────────────────────
+
+function GenerateButton({
+  label,
+  accent,
+  onPress,
+}: {
+  label: string;
+  accent: string;
+  onPress: () => void;
+}) {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      accessibilityRole="button"
+      style={[styles.generateBtn, { borderColor: accent }]}
+    >
+      <Ionicons name="sparkles-outline" size={16} color={accent} />
+      <Text style={[styles.generateBtnText, { color: accent }]}>{label}</Text>
+    </TouchableOpacity>
+  );
+}
 
 function ItemHeader({
   label,
@@ -841,6 +997,16 @@ const styles = StyleSheet.create({
   },
   addElementBtn: { alignSelf: 'flex-start', paddingVertical: 4 },
   addBtnText: { fontSize: 13, fontWeight: '700' },
+  generateBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderWidth: 1.5,
+    borderRadius: 10,
+    paddingVertical: 12,
+  },
+  generateBtnText: { fontSize: 14, fontWeight: '800' },
   saveBtn: { borderRadius: 10, paddingVertical: 12, alignItems: 'center' },
   saveBtnText: { color: '#fff', fontSize: 15, fontWeight: '800' },
 });

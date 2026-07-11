@@ -1,13 +1,14 @@
 import { getDoc, getDocs } from 'firebase/firestore';
 import { getFirebaseClients } from '@shared/lib/firebase/app';
 import {
+  colegioDocRef,
   cursoDocRef,
   cursosByProfesorQuery,
   cursosCollectionRef,
   estudianteDocRef,
   estudiantesCollectionRef,
 } from '@shared/lib/firebase/paths';
-import type { Curso, Estudiante } from '@shared/types/tenancy';
+import type { Colegio, Curso, Estudiante } from '@shared/types/tenancy';
 
 export type CursoWithId = Curso & { id: string };
 export type EstudianteWithId = { uid: string } & Estudiante;
@@ -27,6 +28,19 @@ export const rosterRepository = {
     if (!clients?.firestore) return [];
     const snap = await getDocs(cursosCollectionRef(clients.firestore, colegioId));
     return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Curso) }));
+  },
+
+  /**
+   * Reads the colegio's display name (rules: any colegio member may read its
+   * identity — nombre/logo for headers). Falls back to null offline / not found,
+   * so callers can show the id or a placeholder.
+   */
+  async getColegioNombre(colegioId: string): Promise<string | null> {
+    const clients = getFirebaseClients();
+    if (!clients?.firestore) return null;
+    const snap = await getDoc(colegioDocRef(clients.firestore, colegioId));
+    if (!snap.exists()) return null;
+    return (snap.data() as Colegio).nombre ?? null;
   },
 
   async getRoster(colegioId: string, cursoId: string): Promise<EstudianteWithId[]> {

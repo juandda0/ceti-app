@@ -15,6 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import QRCode from 'react-native-qrcode-svg';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
+import BackButton from '@shared/components/BackButton';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { rosterRepository, type EstudianteWithId } from '@features/dashboard/data/rosterRepository';
@@ -130,6 +131,7 @@ export default function CourseManageScreen() {
   return (
     <ScreenWrapper style={styles.root}>
       <ScrollView contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16 }]}>
+        <BackButton fallback="/(staff)" />
         <Text style={[styles.title, { color: colors.text.primary }]}>{cursoNombre}</Text>
         <Text style={[styles.subtitle, { color: colors.text.secondary }]}>
           {t('admin.rosterTitle')}

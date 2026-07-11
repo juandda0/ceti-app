@@ -124,6 +124,19 @@ export type MundoBorrador = {
   }[];
 };
 
+/** Content tipos the editor can generate one item at a time (RQ-CN06). */
+export type BorradorItemTipo = 'mc' | 'vf' | 'ordenar' | 'teoria';
+export type BorradorTeoriaCard = MundoBorrador['teoria'][number];
+export type BorradorMcItem = MundoBorrador['mc'][number];
+export type BorradorVfItem = MundoBorrador['vf'][number];
+export type BorradorOrdenarItem = MundoBorrador['ordenar'][number];
+/** One item returned by `generarItemContenido`, shape depends on the tipo asked. */
+export type BorradorItem =
+  | BorradorMcItem
+  | BorradorVfItem
+  | BorradorOrdenarItem
+  | BorradorTeoriaCard;
+
 /**
  * Converts an accepted IA draft into the content docs of a custom world.
  * Everything generated is stamped `generadoPor:'ia'` +
