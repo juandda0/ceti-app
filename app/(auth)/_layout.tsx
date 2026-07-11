@@ -15,6 +15,7 @@ export default function AuthLayout() {
       <Stack.Screen name="login" />
       <Stack.Screen name="onboarding/user-setup" />
       <Stack.Screen name="unirse" />
+      <Stack.Screen name="pendiente-profesor" />
     </Stack>
   );
 }

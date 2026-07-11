@@ -74,6 +74,12 @@ export const useAuthStore = create<AuthStore>()(
 
       logout: async () => {
         try {
+          const { loginIntent } = await import('@features/auth/data/loginIntent');
+          loginIntent.clear();
+        } catch {
+          /* noop */
+        }
+        try {
           const sync = await import('@shared/session/userRemoteSync');
           sync.stopUserRemoteSync();
         } catch {

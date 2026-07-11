@@ -16,6 +16,7 @@ import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/a
 import { readCetiClaims } from '@shared/lib/firebase/claims';
 import { userRepository } from '@features/auth/data/userRepository';
 import { adminService } from '@features/dashboard/data/adminService';
+import { loginIntent } from '@features/auth/data/loginIntent';
 
 export default function Index() {
   const authReady = useAuthStore((s) => s.authReady);
@@ -95,6 +96,14 @@ export default function Index() {
         useAuthStore.getState().login();
         // Cast: typed-routes union regenerates from the filesystem on build.
         setTarget('/(staff)' as Href);
+        return;
+      }
+
+      // No role resolved. A user who declared "profesor" in the login sheet but
+      // isn't pre-authorized waits at the pending screen (D-ADMIN) — never the
+      // student game. Anyone else falls through to the student path.
+      if (!claims?.role && loginIntent.get() === 'profesor') {
+        setTarget('/(auth)/pendiente-profesor' as Href);
         return;
       }
 
