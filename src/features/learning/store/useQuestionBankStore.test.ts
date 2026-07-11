@@ -273,7 +273,7 @@ describe('useQuestionBankStore', () => {
       expect(mockFetch).toHaveBeenCalledTimes(1);
       await fetchWorldQuestions('11', WORLD, 'uid-1'); // grade changed → refetch
       expect(mockFetch).toHaveBeenCalledTimes(2);
-      expect(mockFetch).toHaveBeenLastCalledWith('11', WORLD, 'uid-1');
+      expect(mockFetch).toHaveBeenLastCalledWith('11', WORLD, 'uid-1', null);
     });
 
     it('refetches when seedKey (student) changes so one student is not served another sample', async () => {
@@ -281,6 +281,17 @@ describe('useQuestionBankStore', () => {
       const { fetchWorldQuestions } = useQuestionBankStore.getState();
       await fetchWorldQuestions('9', WORLD, 'uid-1');
       await fetchWorldQuestions('9', WORLD, 'uid-2'); // different student → refetch
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+    });
+
+    it('refetches when the config version bumps (professor saved content — RQ-PR11 CA4)', async () => {
+      mockFetch.mockResolvedValue(tenItems);
+      const { fetchWorldQuestions } = useQuestionBankStore.getState();
+      const cc = (version: number) => ({ colegioId: 'A', cursoId: 'c1', version });
+      await fetchWorldQuestions('9', WORLD, 'uid-1', cc(1));
+      await fetchWorldQuestions('9', WORLD, 'uid-1', cc(1)); // same version → deduped
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      await fetchWorldQuestions('9', WORLD, 'uid-1', cc(2)); // content saved → refetch
       expect(mockFetch).toHaveBeenCalledTimes(2);
     });
   });

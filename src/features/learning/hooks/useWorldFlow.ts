@@ -29,6 +29,7 @@ import { microteoriaRepository } from '@features/learning/data/microteoriaReposi
 import { shouldShowEligeCamino, pickSituacion } from '@features/learning/data/eligeCaminoUtils';
 import type { MicroteoriaBank, Situacion } from '@features/learning/data/content.types';
 import type { Grado, WorldId } from '@features/learning/data/quiz.types';
+import type { CourseContentRef } from '@shared/types/tenancy';
 
 export type WorldFlowPhase = 'loading' | 'eligecamino' | 'microteoria' | 'quiz';
 
@@ -50,7 +51,8 @@ export interface WorldFlowResult {
 export function useWorldFlow(
   uid: string,
   grado: Grado | null,
-  worldId: string | undefined
+  worldId: string | undefined,
+  courseContent?: CourseContentRef | null
 ): WorldFlowResult {
   const hasMicroteoriaSeen = useLearningFlowStore((s) => s.hasMicroteoriaSeen);
   const markMicroteoriaSeen = useLearningFlowStore((s) => s.markMicroteoriaSeen);
@@ -62,10 +64,18 @@ export function useWorldFlow(
   // Guard against re-running the effect for the same (uid, grado, worldId) triple.
   const initialisedRef = useRef<string | null>(null);
 
+  // Course content overrides (RQ-PR11): read the course copy when flagged.
+  const ecCustom = courseContent?.overrides?.eligeCamino
+    ? { colegioId: courseContent.colegioId, cursoId: courseContent.cursoId }
+    : null;
+  const mtCustom = courseContent?.overrides?.teoria
+    ? { colegioId: courseContent.colegioId, cursoId: courseContent.cursoId }
+    : null;
+
   useEffect(() => {
     if (!grado || !worldId) return;
 
-    const flowKey = `${uid}:${grado}:${worldId}`;
+    const flowKey = `${uid}:${grado}:${worldId}:${ecCustom ? 1 : 0}${mtCustom ? 1 : 0}`;
     if (initialisedRef.current === flowKey) return;
     initialisedRef.current = flowKey;
 
@@ -80,8 +90,8 @@ export function useWorldFlow(
       let mtBank = null;
       try {
         [ecBank, mtBank] = await Promise.all([
-          eligeCaminoRepository.fetch(grado as Grado, worldId as WorldId),
-          microteoriaRepository.fetch(grado as Grado, worldId as WorldId),
+          eligeCaminoRepository.fetch(grado as Grado, worldId as WorldId, ecCustom),
+          microteoriaRepository.fetch(grado as Grado, worldId as WorldId, mtCustom),
         ]);
       } catch {
         // Both failed catastrophically — degrade to quiz.
@@ -113,7 +123,10 @@ export function useWorldFlow(
         setPhase('quiz');
       }
     })();
-  }, [grado, worldId, uid, hasMicroteoriaSeen]);
+    // ecCustom/mtCustom are fresh objects each render; the flowKey guard above
+    // makes the re-runs no-ops, so listing them is safe.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [grado, worldId, uid, hasMicroteoriaSeen, ecCustom?.cursoId, mtCustom?.cursoId]);
 
   const handleECFinish = useCallback(() => {
     // After EligeCamino, go to micro-teoría if available, else quiz.

@@ -27,10 +27,20 @@ export const FIRESTORE_COLLECTIONS = {
   membership: 'membership',
   // D-ORQ (RQ-PR10): per-course class configuration (single doc `mundos`).
   config: 'config',
+  // D-ORQ (RQ-PR11/PR12): per-course custom content (copy-on-write; the global
+  // defaults in bancos/microteoria/bancosEligeCamino are NEVER mutated).
+  contenido: 'contenido',
 } as const;
 
 /** Fixed doc id of the class-config doc under `cursos/{cursoId}/config/`. */
 export const CURSO_CONFIG_MUNDOS_DOC_ID = 'mundos';
+
+/** Doc-id builders for `cursos/{cursoId}/contenido/*` (RQ-PR11). */
+export const contenidoDocId = {
+  banco: (worldId: string, tipo: string) => `banco_${worldId}_${tipo}`,
+  microteoria: (worldId: string) => `microteoria_${worldId}`,
+  eligeCamino: (worldId: string) => `eligeCamino_${worldId}`,
+};
 
 export function userDocPath(uid: string): string {
   return `${FIRESTORE_COLLECTIONS.users}/${uid}`;
@@ -122,6 +132,21 @@ export function cursosByProfesorQuery(db: Firestore, colegioId: string, uid: str
  */
 export function cursoConfigMundosDocRef(db: Firestore, colegioId: string, cursoId: string) {
   return doc(db, C.colegios, colegioId, C.cursos, cursoId, C.config, CURSO_CONFIG_MUNDOS_DOC_ID);
+}
+
+/**
+ * Course-custom content doc (D-ORQ, RQ-PR11/PR12):
+ * `colegios/{colegioId}/cursos/{cursoId}/contenido/{docId}` with docId built by
+ * `contenidoDocId.*`. Written only by the course profesor (rules); read by the
+ * course. The global default banks stay read-only and untouched (R8).
+ */
+export function cursoContenidoDocRef(
+  db: Firestore,
+  colegioId: string,
+  cursoId: string,
+  docId: string
+) {
+  return doc(db, C.colegios, colegioId, C.cursos, cursoId, C.contenido, docId);
 }
 
 export function estudiantesCollectionRef(db: Firestore, colegioId: string, cursoId: string) {

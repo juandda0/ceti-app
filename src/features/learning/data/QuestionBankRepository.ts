@@ -10,8 +10,9 @@
  */
 import { getDoc } from 'firebase/firestore';
 import { getFirebaseClients } from '@shared/lib/firebase/app';
-import { bancoDocRef } from '@shared/lib/firebase/paths';
+import { bancoDocRef, contenidoDocId, cursoContenidoDocRef } from '@shared/lib/firebase/paths';
 import { hashStr, stableShuffle } from '@shared/lib/quizUtils';
+import type { CourseContentRef } from '@shared/types/tenancy';
 import type {
   QuizItem,
   MultipleChoiceItem,
@@ -28,17 +29,32 @@ const REQUIRED_VF = 3;
 const REQUIRED_ORDENAR = 3;
 
 /**
- * Reads a single banco doc. Returns null when the doc doesn't exist or
- * Firebase is not available (offline / demo mode).
+ * Reads a single banco doc. When `custom` is set (the course overrides this
+ * piece, RQ-PR11) it reads the course copy under `cursos/{cursoId}/contenido/*`
+ * and falls back to the global default if the copy is missing (stale flag —
+ * fail-soft, the student must never hit a broken world). Returns null when the
+ * doc doesn't exist or Firebase is not available (offline / demo mode).
  */
 async function fetchBancoDoc(
   grado: Grado,
   worldId: WorldId,
-  tipo: string
+  tipo: string,
+  custom?: { colegioId: string; cursoId: string } | null
 ): Promise<BancoDoc | null> {
   const clients = getFirebaseClients();
   if (!clients) return null;
   try {
+    if (custom) {
+      const customSnap = await getDoc(
+        cursoContenidoDocRef(
+          clients.firestore,
+          custom.colegioId,
+          custom.cursoId,
+          contenidoDocId.banco(worldId, tipo)
+        )
+      );
+      if (customSnap.exists()) return customSnap.data() as BancoDoc;
+    }
     const snap = await getDoc(bancoDocRef(clients.firestore, grado, worldId, tipo));
     if (!snap.exists()) return null;
     return snap.data() as BancoDoc;
@@ -58,11 +74,21 @@ async function fetchBancoDoc(
  *   - Returns [] if any banco is missing or has fewer items than required.
  */
 export const questionBankRepository = {
-  async fetchAssembledQuiz(grado: Grado, worldId: WorldId, seedKey: string): Promise<QuizItem[]> {
+  async fetchAssembledQuiz(
+    grado: Grado,
+    worldId: WorldId,
+    seedKey: string,
+    courseContent?: CourseContentRef | null
+  ): Promise<QuizItem[]> {
+    // Per-piece override flags (RQ-PR11): a course may override only some types.
+    const pin = courseContent
+      ? { colegioId: courseContent.colegioId, cursoId: courseContent.cursoId }
+      : null;
+    const ov = courseContent?.overrides;
     const [mcDoc, vfDoc, ordDoc] = await Promise.all([
-      fetchBancoDoc(grado, worldId, 'multiple_choice'),
-      fetchBancoDoc(grado, worldId, 'true_false'),
-      fetchBancoDoc(grado, worldId, 'ordenar'),
+      fetchBancoDoc(grado, worldId, 'multiple_choice', ov?.mc ? pin : null),
+      fetchBancoDoc(grado, worldId, 'true_false', ov?.vf ? pin : null),
+      fetchBancoDoc(grado, worldId, 'ordenar', ov?.ordenar ? pin : null),
     ]);
 
     // Stamp the discriminator `tipo` onto each item — it lives on the banco doc,

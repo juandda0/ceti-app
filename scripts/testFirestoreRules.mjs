@@ -642,6 +642,125 @@ await check(
   assertFails(deleteDoc(doc(stuA1, configPath)))
 );
 
+// Hardening (auditoría A): write-deny cross-colegio, estudiante cross-colegio,
+// collection-group y bounds negativos.
+const stuB = env
+  .authenticatedContext('uStuB', { role: 'estudiante', colegioId: 'B', cursoId: 'cB1' })
+  .firestore();
+await check(
+  'teacher of colegio B cannot write class config',
+  assertFails(setDoc(doc(profB, configPath), { ...validConfig, updatedByUid: 'uProfB' }))
+);
+await check(
+  'student of colegio B cannot read class config',
+  assertFails(getDoc(doc(stuB, configPath)))
+);
+await check(
+  'config rejects >30 mundos',
+  assertFails(
+    setDoc(doc(profA1, configPath), {
+      ...validConfig,
+      mundos: Array.from({ length: 31 }, (_, i) => ({ worldId: `w${i}`, activo: true })),
+    })
+  )
+);
+await check(
+  'config rejects malformed modoEnfocado',
+  assertFails(setDoc(doc(profA1, configPath), { ...validConfig, modoEnfocado: { activo: 'sí' } }))
+);
+await check(
+  'collectionGroup(config) denied',
+  assertFails(getDocs(query(collectionGroup(profA1, 'config'))))
+);
+
+console.log('Course custom content cursos/{cursoId}/contenido (D-ORQ, RQ-PR11):');
+const contPath = (docId) => `colegios/A/cursos/c1/contenido/${docId}`;
+const customBanco = {
+  bancoId: 'banco_world_1_multiple_choice',
+  grado: '9',
+  worldId: 'world_1',
+  tipo: 'multiple_choice',
+  version: 2,
+  generadoPor: 'profesor',
+  pendiente_validacion_docente: false,
+  items: [
+    { id: 'q1', enunciado: '¿Qué es el ingreso?', competencia: 'ingreso', dificultad: 1, opciones: ['a', 'b', 'c', 'd'], correctIndex: 0 },
+  ],
+};
+await check(
+  'course teacher writes custom banco copy',
+  assertSucceeds(setDoc(doc(profA1, contPath('banco_world_1_multiple_choice')), customBanco))
+);
+await check(
+  'course teacher writes custom microteoria',
+  assertSucceeds(
+    setDoc(doc(profA1, contPath('microteoria_world_1')), {
+      grado: '9',
+      worldId: 'world_1',
+      cards: [{ titulo: 'Ingreso', cuerpo: 'Qué es.' }],
+      generadoPor: 'profesor',
+      pendiente_validacion_docente: false,
+    })
+  )
+);
+await check(
+  'other teacher of same colegio cannot write custom content',
+  assertFails(setDoc(doc(profA2, contPath('banco_world_1_true_false')), customBanco))
+);
+await check(
+  'teacher of colegio B cannot write custom content',
+  assertFails(setDoc(doc(profB, contPath('banco_world_1_true_false')), customBanco))
+);
+await check(
+  'student of the course reads custom content',
+  assertSucceeds(getDoc(doc(stuA1, contPath('banco_world_1_multiple_choice'))))
+);
+await check(
+  'student of ANOTHER course cannot read custom content',
+  assertFails(getDoc(doc(stuAC2, contPath('banco_world_1_multiple_choice'))))
+);
+await check(
+  'student cannot write custom content',
+  assertFails(setDoc(doc(stuA1, contPath('banco_world_1_multiple_choice')), customBanco))
+);
+await check(
+  'contenido rejects unknown doc-id shape',
+  assertFails(setDoc(doc(profA1, contPath('otraCosa_world_1')), customBanco))
+);
+await check(
+  'contenido banco rejects empty items',
+  assertFails(
+    setDoc(doc(profA1, contPath('banco_world_1_ordenar')), { ...customBanco, items: [] })
+  )
+);
+await check(
+  'contenido banco rejects missing items list',
+  assertFails(
+    setDoc(doc(profA1, contPath('banco_world_1_ordenar')), { bancoId: 'x', tipo: 'ordenar' })
+  )
+);
+await check(
+  'course teacher deletes custom content (restaurar default)',
+  assertSucceeds(deleteDoc(doc(profA1, contPath('banco_world_1_multiple_choice'))))
+);
+await check(
+  'student cannot delete custom content',
+  assertFails(deleteDoc(doc(stuA1, contPath('microteoria_world_1'))))
+);
+await check(
+  'config accepts overrides field (RQ-PR11 flags)',
+  assertSucceeds(
+    setDoc(doc(profA1, configPath), {
+      ...validConfig,
+      overrides: { world_1: { mc: true, teoria: true } },
+    })
+  )
+);
+await check(
+  'collectionGroup(contenido) denied',
+  assertFails(getDocs(query(collectionGroup(profA1, 'contenido'))))
+);
+
 console.log('Default deny:');
 await check('any other path denied', assertFails(getDoc(doc(stuA1, 'randomCol/randomDoc'))));
 

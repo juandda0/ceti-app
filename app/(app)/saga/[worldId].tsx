@@ -87,13 +87,29 @@ export default function WorldSagaScreen() {
   }, [classConfigLoaded, visible, router]);
   const softExited = classConfigLoaded && !visible && wasVisibleRef.current;
 
+  // Course content overrides (RQ-PR11) for THIS world, from the live config.
+  const colegioId = useAuthStore((s) => s.colegioId);
+  const cursoId = useAuthStore((s) => s.cursoId);
+  const courseContent =
+    colegioId && cursoId && worldId
+      ? {
+          colegioId,
+          cursoId,
+          overrides: classConfig?.overrides?.[worldId],
+          version: classConfig?.version ?? 0,
+        }
+      : null;
+
   const { phase, situacion, microteoriaBank, handleECFinish, handleMTFinish } = useWorldFlow(
     uid,
     grado,
-    worldId
+    worldId,
+    courseContent
   );
 
-  const meta = WORLD_META[worldId ?? ''] ?? { name: 'Mundo', color: '#FF8A1F' };
+  const configEntry = classConfig?.mundos?.find((m) => m.worldId === worldId);
+  const baseMeta = WORLD_META[worldId ?? ''] ?? { name: 'Mundo', color: '#FF8A1F' };
+  const meta = { name: configEntry?.nombre ?? baseMeta.name, color: baseMeta.color };
 
   let content: React.ReactElement;
   if (phase === 'loading' || !grado) {

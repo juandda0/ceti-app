@@ -199,15 +199,39 @@ export default function WorldsScreen() {
     [classConfig, uid, answers, remoteProgress, isWorldComplete]
   );
 
-  // Visible worlds joined with their static defs (unknown ids — e.g. a custom
-  // world from a future entrega — are skipped defensively, never crash).
+  // Visible worlds joined with their static defs, merged with the professor's
+  // display overrides (nombre/subtitle/descripcion — RQ-PR11). Unknown ids
+  // (e.g. a custom world from a future entrega) are skipped defensively.
   const visibleWorlds = useMemo(
     () =>
       classWorlds
-        .map((cw) => ({ cw, def: WORLD_DEFS.find((d) => d.id === cw.worldId) }))
-        .filter((x): x is { cw: (typeof classWorlds)[number]; def: WorldDef } => Boolean(x.def)),
-    [classWorlds]
+        .map((cw) => {
+          const base = WORLD_DEFS.find((d) => d.id === cw.worldId);
+          if (!base) return null;
+          const entry = classConfig?.mundos?.find((m) => m.worldId === cw.worldId);
+          const def: WorldDef = {
+            ...base,
+            name: entry?.nombre ?? base.name,
+            subtitle: entry?.subtitle ?? base.subtitle,
+            description: entry?.descripcion ?? base.description,
+          };
+          return { cw, def };
+        })
+        .filter((x): x is { cw: (typeof classWorlds)[number]; def: WorldDef } => x !== null),
+    [classWorlds, classConfig]
   );
+
+  // Per-world pointer to the course's custom content (RQ-PR11); null without a
+  // tenant (demo/offline) → default banks, as always.
+  const courseContentFor = (worldId: string) =>
+    colegioId && cursoId
+      ? {
+          colegioId,
+          cursoId,
+          overrides: classConfig?.overrides?.[worldId],
+          version: classConfig?.version ?? 0,
+        }
+      : null;
 
   // Prefetch the class's worlds once the real grado AND the class config are
   // known (avoids fetching worlds the class doesn't serve). The store guard
@@ -215,7 +239,7 @@ export default function WorldsScreen() {
   useEffect(() => {
     if (!grado || !classConfigLoaded) return;
     for (const { def } of visibleWorlds) {
-      void fetchWorldQuestions(grado, def.id, seedKey);
+      void fetchWorldQuestions(grado, def.id, seedKey, courseContentFor(def.id));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [grado, seedKey, classConfigLoaded, visibleWorlds]);
@@ -264,7 +288,7 @@ export default function WorldsScreen() {
   ).length;
   const totalAll = QUESTIONS_PER_WORLD * visibleWorlds.length;
   const enfocadoDef = enfocadoWorldId
-    ? WORLD_DEFS.find((d) => d.id === enfocadoWorldId)
+    ? visibleWorlds.find((v) => v.def.id === enfocadoWorldId)?.def
     : undefined;
 
   return (

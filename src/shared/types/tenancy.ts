@@ -107,11 +107,40 @@ export type WorldProgress = {
   updatedAt: number;
 };
 
+/**
+ * Which pieces of a world's content this course overrides (RQ-PR11). A true
+ * flag means "read `cursos/{cursoId}/contenido/*` instead of the global
+ * default" — it is what lets the runtime read exactly one doc per piece.
+ */
+export type WorldContentOverrides = {
+  mc?: boolean;
+  vf?: boolean;
+  ordenar?: boolean;
+  teoria?: boolean;
+  eligeCamino?: boolean;
+};
+
+/**
+ * Runtime pointer to a course's custom content for ONE world (RQ-PR11): the
+ * tenant to read `contenido/*` from, the per-piece override flags, and the
+ * config version (cache-invalidation key: every content save bumps it).
+ */
+export type CourseContentRef = {
+  colegioId: string;
+  cursoId: string;
+  overrides?: WorldContentOverrides;
+  version: number;
+};
+
 /** One entry of the class world list; array position = teaching order. */
 export type CursoConfigMundoEntry = {
   worldId: string;
   /** Inactive worlds are invisible to students (a custom-world draft is just an inactive entry). */
   activo: boolean;
+  /** Display overrides (RQ-PR11): absent → the default world metadata. */
+  nombre?: string;
+  subtitle?: string;
+  descripcion?: string;
 };
 
 /**
@@ -126,6 +155,8 @@ export type CursoConfigMundos = {
   mundos: CursoConfigMundoEntry[];
   /** "The class works only on world X" toggle (persistent, no schedule). */
   modoEnfocado: { activo: boolean; worldId?: string };
+  /** Per-world content override flags (RQ-PR11), keyed by worldId. */
+  overrides?: Record<string, WorldContentOverrides>;
   version: number;
   updatedAt: number;
   updatedByUid: string;

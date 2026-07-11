@@ -8,10 +8,12 @@
  * IS the defaults, so it is always safe.
  */
 import { useEffect, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, Switch, TouchableOpacity, Alert, Platform } from 'react-native';
+import { View, Text, StyleSheet, Switch, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
+import { confirmAction } from '@shared/lib/dialogs';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { classConfigRepository } from '@features/dashboard/data/classConfigRepository';
 import { WORLD_DEFS, worldDefById } from '@features/learning/data/worldMeta';
@@ -26,6 +28,7 @@ export default function ClassWorldsManager({
 }) {
   const { t } = useTranslation();
   const colors = useThemeColors();
+  const router = useRouter();
   const firebaseUid = useAuthStore((s) => s.firebaseUid);
   const [config, setConfig] = useState<CursoConfigMundos | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -92,25 +95,14 @@ export default function ClassWorldsManager({
     }
   };
 
-  const confirmReset = () => {
-    const doReset = () => void classConfigRepository.reset(colegioId, cursoId);
-    if (Platform.OS === 'web') {
-      // RN-web's Alert has no button support; the browser confirm is the gate.
-      if (
-        typeof globalThis.confirm === 'function' &&
-        globalThis.confirm(
-          `${t('classWorlds.resetConfirmTitle')}\n\n${t('classWorlds.resetConfirmBody')}`
-        )
-      ) {
-        doReset();
-      }
-      return;
-    }
-    Alert.alert(t('classWorlds.resetConfirmTitle'), t('classWorlds.resetConfirmBody'), [
-      { text: t('admin.cancel'), style: 'cancel' },
-      { text: t('classWorlds.resetConfirm'), onPress: doReset },
-    ]);
-  };
+  const confirmReset = () =>
+    confirmAction({
+      title: t('classWorlds.resetConfirmTitle'),
+      body: t('classWorlds.resetConfirmBody'),
+      confirmLabel: t('classWorlds.resetConfirm'),
+      cancelLabel: t('admin.cancel'),
+      onConfirm: () => void classConfigRepository.reset(colegioId, cursoId),
+    });
 
   if (!loaded) return null;
 
@@ -181,6 +173,14 @@ export default function ClassWorldsManager({
               accessibilityLabel={t('classWorlds.moveDown')}
             >
               <Ionicons name="chevron-down" size={18} color={colors.text.secondary} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => router.push(`/(staff)/contenido/${cursoId}/${entry.worldId}` as never)}
+              style={styles.iconBtn}
+              accessibilityRole="button"
+              accessibilityLabel={t('classWorlds.customize', { name: def.name })}
+            >
+              <Ionicons name="pencil-outline" size={16} color={colors.text.secondary} />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => onFocus(entry.worldId)}

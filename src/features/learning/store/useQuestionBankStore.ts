@@ -11,6 +11,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createZustandMmkvStorage } from '@shared/lib/storage/mmkv';
 import type { QuizItem, WorldId, Grado } from '@features/learning/data/quiz.types';
+import type { CourseContentRef } from '@shared/types/tenancy';
 import { isMastered } from '@features/learning/data/mastery';
 
 interface QuestionAnswer {
@@ -45,8 +46,15 @@ interface QuestionBankActions {
    * Fetches and assembles 10 items for (grado, worldId) deterministically.
    * seedKey should be the student's uid (or localProfileId in demo/offline mode)
    * so the same 10 items are returned for the same student each time (R7).
+   * `courseContent` (RQ-PR11) points at the course's custom copies; its
+   * `version` invalidates the cache when the professor saves content.
    */
-  fetchWorldQuestions: (grado: Grado, worldId: WorldId, seedKey?: string) => Promise<void>;
+  fetchWorldQuestions: (
+    grado: Grado,
+    worldId: WorldId,
+    seedKey?: string,
+    courseContent?: CourseContentRef | null
+  ) => Promise<void>;
   recordAnswer: (uid: string, questionId: string, worldId: WorldId, isCorrect: boolean) => void;
   getWorldProgress: (uid: string, worldId: WorldId) => { done: number; total: number };
   getAnsweredIds: (uid: string, worldId: WorldId) => Set<string>;
@@ -74,10 +82,11 @@ export const useQuestionBankStore = create<QuestionBankStore>()(
     (set, get) => ({
       ...initialState,
 
-      fetchWorldQuestions: async (grado, worldId, seedKey = 'default') => {
-        const key = `${grado}:${seedKey}`;
-        // Skip only if THIS exact (grado, seedKey) was already assembled for the
-        // world. A change of grade or student re-fetches and overwrites.
+      fetchWorldQuestions: async (grado, worldId, seedKey = 'default', courseContent = null) => {
+        // Cache key = grade + student + config version: a change of grade or
+        // student re-fetches, and a professor content save (which bumps the
+        // config version, RQ-PR11 CA4) invalidates for the next attempt.
+        const key = `${grado}:${seedKey}:v${courseContent?.version ?? 0}`;
         if (get().fetchedKeyByWorld[worldId] === key) return;
 
         set((s) => ({ fetchStatus: { ...s.fetchStatus, [worldId]: 'loading' } }));
@@ -88,7 +97,8 @@ export const useQuestionBankStore = create<QuestionBankStore>()(
           const questions = await questionBankRepository.fetchAssembledQuiz(
             grado,
             worldId,
-            seedKey
+            seedKey,
+            courseContent
           );
 
           if (questions.length === 0) {

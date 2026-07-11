@@ -90,7 +90,7 @@ service cloud.firestore {
               && request.auth.token.cursoId == cursoId);
           allow create, update: if configId == 'mundos'
             && isProfesorDe(cid, cursoId)
-            && request.resource.data.keys().hasOnly(['mundos', 'modoEnfocado', 'version', 'updatedAt', 'updatedByUid'])
+            && request.resource.data.keys().hasOnly(['mundos', 'modoEnfocado', 'overrides', 'version', 'updatedAt', 'updatedByUid'])
             && request.resource.data.mundos is list
             && request.resource.data.mundos.size() >= 1
             && request.resource.data.mundos.size() <= 30
@@ -99,6 +99,35 @@ service cloud.firestore {
             && request.resource.data.version is number
             && request.resource.data.updatedAt is number
             && request.resource.data.updatedByUid == request.auth.uid;
+          allow delete: if isProfesorDe(cid, cursoId);
+        }
+
+        // Course-custom content (D-ORQ, RQ-PR11/PR12): copy-on-write copies of
+        // the default banks + custom-world content. The GLOBAL defaults stay
+        // read-only (R8); these copies are written ONLY by the course's teacher
+        // and read by the course. Deep item validation lives in the client
+        // (Zod); here we gate ownership, doc-id shape and list-size caps.
+        // `delete` is "restaurar default" for the piece.
+        match /contenido/{docId} {
+          allow read: if isProfesorDe(cid, cursoId)
+            || (isRole('estudiante')
+              && sameColegio(cid)
+              && request.auth.token.cursoId == cursoId);
+          allow create, update: if isProfesorDe(cid, cursoId)
+            && (
+              (docId.matches('banco_.*')
+                && request.resource.data.items is list
+                && request.resource.data.items.size() >= 1
+                && request.resource.data.items.size() <= 100)
+              || (docId.matches('microteoria_.*')
+                && request.resource.data.cards is list
+                && request.resource.data.cards.size() >= 1
+                && request.resource.data.cards.size() <= 20)
+              || (docId.matches('eligeCamino_.*')
+                && request.resource.data.situaciones is list
+                && request.resource.data.situaciones.size() >= 1
+                && request.resource.data.situaciones.size() <= 30)
+            );
           allow delete: if isProfesorDe(cid, cursoId);
         }
 

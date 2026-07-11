@@ -29,6 +29,7 @@ import {
   QUESTIONS_PER_WORLD,
 } from '@features/learning/store/useQuestionBankStore';
 import { useStudentGrado } from '@features/learning/hooks/useStudentGrado';
+import { useClassConfig } from '@features/learning/hooks/useClassConfig';
 import { useUserStore } from '@features/auth/store/useUserStore';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { buildWorldProgress } from '@features/learning/data/worldProgress';
@@ -459,7 +460,11 @@ export default function WorldQuizScreen() {
   );
   const fetchStatus = useQuestionBankStore((s) => s.fetchStatus[worldId as WorldId] ?? 'idle');
 
-  const meta = WORLD_META[worldId ?? ''] ?? { name: 'Mundo', color: '#FF8A1F' };
+  // Class config (RQ-PR10/PR11): custom display name + content overrides.
+  const { config: classConfig } = useClassConfig();
+  const configEntry = classConfig?.mundos?.find((m) => m.worldId === worldId);
+  const baseMeta = WORLD_META[worldId ?? ''] ?? { name: 'Mundo', color: '#FF8A1F' };
+  const meta = { name: configEntry?.nombre ?? baseMeta.name, color: baseMeta.color };
 
   // Linear traversal state (R7: no adaptive selection)
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -477,12 +482,23 @@ export default function WorldQuizScreen() {
   // direct deep-link navigation too, not just via WorldsScreen).
   const grado = useStudentGrado();
 
-  // Fetch once the grade is known. The store guard keys on (grado, seedKey), so
-  // this assembles the correct grade's 10 items for this student.
+  // Fetch once the grade is known. The store guard keys on (grado, seedKey,
+  // config version), so this assembles the correct grade's 10 items for this
+  // student and picks up the course's custom copies when flagged (RQ-PR11).
   useEffect(() => {
-    if (worldId && grado) void fetchWorldQuestions(grado, worldId as WorldId, userId ?? 'demo');
+    if (!worldId || !grado) return;
+    const courseContent =
+      colegioId && cursoId
+        ? {
+            colegioId,
+            cursoId,
+            overrides: classConfig?.overrides?.[worldId],
+            version: classConfig?.version ?? 0,
+          }
+        : null;
+    void fetchWorldQuestions(grado, worldId as WorldId, userId ?? 'demo', courseContent);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [worldId, grado, userId]);
+  }, [worldId, grado, userId, colegioId, cursoId, classConfig?.version]);
 
   // On completion, mirror progress to the tenant tree for the teacher dashboard.
   useEffect(() => {
