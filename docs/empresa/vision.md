@@ -56,6 +56,7 @@ estudiantes de 13+ (grados 9°, 10° y 11°).
 - No es dinero real transaccional ni gift cards; el simulador y las metas usan
   moneda virtual. Única excepción: el **diario autodeclarado** de bolsillo por voz
   (RQ-ES10), registro solo-vista-propia sin cuentas ni pagos.
-- No es un ranking público individual (solo colaboración de aula opcional).
+- No es un ranking público individual. ~~(solo colaboración de aula opcional)~~
+  **[ENMENDADO por D-CUT: colaboración/leaderboard de aula retirados del producto.]**
 - No es una app para padres ni un modelo de tutela familiar.
 - No perfila individualmente al menor a partir de sus decisiones.

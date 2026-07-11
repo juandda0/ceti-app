@@ -46,8 +46,11 @@
   **PROHIBIDO construir un perfil individual persistente del menor** a partir de
   sus decisiones (riesgo legal de perfilamiento). El **output analítico es
   AGREGADO por curso**, para el profesor. Banco **separado** del de quizzes.
-- **Gamificación:** XP, niveles y **badges atados a mastery real** (no a tiempo
-  gastado). Progreso personal visible. **Sin leaderboard público individual.**
+- **~~Gamificación:~~ Dominio por mastery:** ~~XP, niveles y **badges atados a
+  mastery real**~~ estado de **dominio por mundo** atado a `mastery` real (no a
+  tiempo gastado), umbral 0.8, etiqueta "Dominado". Progreso personal visible.
+  **Sin leaderboard público individual.** **[ENMENDADO por D-CUT: fuera
+  XP/niveles/badges de colección; se conserva el dominio por mastery.]**
 - **Feedback de alto refuerzo:** animaciones y sonidos **siempre**; **vibración
   háptica solo en móvil**. Acierto → refuerzo positivo (confetti/streak); fallo →
   feedback negativo claro que invite a reintentar.
@@ -59,8 +62,9 @@
   clasifica, el estudiante confirma, y los explora en su propio dashboard.
   **Solo registro autodeclarado, solo-vista-propia** — nunca cuentas, pagos ni
   transacciones (D-ES10-02).
-- **Modo colaborativo de aula** activable/desactivable por el profesor (equipos),
-  con leaderboard **de aula opcional** — **nunca** ranking global público.
+- ~~**Modo colaborativo de aula** activable/desactivable por el profesor (equipos),
+  con leaderboard **de aula opcional** — **nunca** ranking global público.~~
+  **[ENMENDADO por D-CUT: modo colaborativo y leaderboard de aula retirados del producto.]**
 
 ## (b) Capa profesor
 

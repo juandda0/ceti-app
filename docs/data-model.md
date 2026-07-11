@@ -40,7 +40,7 @@
 4. **Teacher-readable progress**: student progress lives under the tenant tree so
    role-based rules can grant a teacher read access to their course — never
    buried under a private `users/{uid}` subtree.
-5. **No real money**: wallet/goals are simulated (virtual currency).
+5. **No real money**: goals are simulated (virtual currency). _(wallet removido por D-CUT)_
 
 ## 2. Roles
 
@@ -82,15 +82,15 @@ colegios/{colegioId}
   ├─ sedes/{sedeId}                 # OPTIONAL in MVP (sedesEnabled=false → single implicit sede)
   │    └─ (doc) { nombre }
   ├─ cursos/{cursoId}
-  │    └─ (doc) { nombre, grado, sedeId?, profesorUids: string[], colaboracionAula: bool,
-  │               codigo?: string }            # class self-join code (generateClassCode Fn)
+  │    └─ (doc) { nombre, grado, sedeId?, profesorUids: string[],
+  │               codigo?: string }   # colaboracionAula removido por D-CUT; codigo = self-join
   │    └─ estudiantes/{studentId}                 # studentId = school pseudonym
   │         ├─ (doc) { displayLabel, estado: 'pendiente_autorizacion'|'activo'|'suprimido',
   │         │          uidVinculado?: string, createdAt }
   │         └─ progress/{worldId}
   │              └─ (doc) { colegioId, cursoId, studentId,   # denormalized for collection-group reports
-  │                         competencia, xp, nivel, mastery: 0..1,
-  │                         quizScores: {...}, badges: string[],
+  │                         competencia, mastery: 0..1,       # xp/nivel/badges removidos por D-CUT
+  │                         quizScores: {...},
   │                         completed: bool, completedAt?, updatedAt }
   ├─ asignaciones/{asignacionId}
   │    └─ (doc) { worldId, target: {tipo:'curso'|'estudiante', cursoId, studentId?},
@@ -122,9 +122,9 @@ questionBank/{questionId}            # GLOBAL, human-curated, read-only to clien
 - **`competencia`** on each progress/world doc is the CONPES 4005 mapping that
   powers "world = competency" in the dashboard (F5).
 - The legacy single-user paths (`users/{uid}/goals|deposits|lessonProgress|
-wallet|aiProfile`) are **simulated/account-scoped** and are migrated/retired in
+aiProfile`) are **simulated/account-scoped** and are migrated/retired in
   F2/F5 (see §7). `aiProfile` is deferred (no client writes) per the no-AI-in-MVP
-  invariant.
+  invariant. `users/{uid}/wallet` **[RETIRADO por D-CUT: eliminado del producto]**.
 
 ## 5. Security rules strategy (F2)
 
@@ -159,11 +159,12 @@ If real users exist under `users/{uid}/...`, F2 includes a one-shot script that:
 
 - **MVP**: tenancy `colegio→curso→estudiante` (sede deferred), Google web SSO,
   Ley 1581 authorization + PII minimization, content + auto-graded quiz,
-  world↔competencia, XP/levels/mastery badges, teacher dashboard + CSV/PDF
-  export, simple assignment, certificate PDF, basic aggregate report (teacher-consumed).
+  world↔competencia, ~~XP/levels/mastery badges~~ world `mastery` (label
+  "Dominado") **[ENMENDADO por D-CUT: sin XP/levels/badges]**, teacher dashboard +
+  CSV/PDF export, simple assignment, certificate PDF, basic aggregate report (teacher-consumed).
 - **V2**: ✅ rule-based weakness detection reports, ✅ simulated life-project
-  goals, ✅ class collaboration + optional class leaderboard (teacher toggle,
-  class-scoped — never global), ✅ sede dashboard (per-sede roll-up — now
+  goals, ~~✅ class collaboration + optional class leaderboard (teacher toggle,
+  class-scoped — never global)~~ **[RETIRADO por D-CUT]**, ✅ sede dashboard (per-sede roll-up — now
   excluded/dormant; D-PIVOT drops the coordinador scoping). Still pending: Google
   Classroom roster sync; **basic parents report**
   (must be a generated read-only report shared out-of-band — NOT an acudiente

@@ -64,6 +64,8 @@ confianza}` sin escribir en BD. Sigue prohibido: IA en el cliente, almacenar o
   previas (`goals`, `deposits`, `wallet`).
 - **Decisión:** fuera del alcance de RQ-ES10 (tocarlas es unidad propia con su
   revisión CP); se registra aquí como deuda candidata a unidad de compliance.
+- **[ACTUALIZADO por D-CUT: `wallet` eliminado del producto; esa parte de la deuda
+  queda resuelta. `goals`/`deposits` siguen pendientes.]**
 
 ### [AUTO-DECIDIDO] D-ES10-06 — El registro por voz también crea/abona metas, por palabra clave
 
@@ -99,10 +101,11 @@ confianza}` sin escribir en BD. Sigue prohibido: IA en el cliente, almacenar o
 
 ### D-DEMO-01 — Mecanismo de auth: custom token + claim `demo:true` (no debilita rules)
 
-> **[Enmendado por D-PIVOT 2026-07-09 — autoridad viva: `docs/empresa/decisiones.md`
+> \*\*[Enmendado por D-PIVOT 2026-07-09 — autoridad viva: `docs/empresa/decisiones.md`
+>
 > > §D-PIVOT]** El demo mantiene solo 2 identidades (`demo-profesor`,
-> `demo-estudiante`); `demo-admin`/`demo-rector`/`demo-coordinador` se eliminan
-> (rector y coordinador dejan de existir; `admin` es claim **solo de backend**, sin UI).
+> > `demo-estudiante`); `demo-admin`/`demo-rector`/`demo-coordinador` se eliminan
+> > (rector y coordinador dejan de existir; `admin` es claim **solo de backend\*\*, sin UI).
 
 - **Decisión:** una Cloud Function `demoLogin(role)` emite un **custom token** para
   una de **2 identidades demo fijas** (uids `demo-profesor`, `demo-estudiante`) con

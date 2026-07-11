@@ -28,13 +28,14 @@ colegios/{colegioId}
   sedes/{sedeId}                  # DORMANTE — no se crean docs en MVP (sedesEnabled=false)
   cursos/{cursoId}
      (doc) { nombre, grado:'9'|'10'|'11', profesorUids:string[], codigo,
-             colaboracionAula:bool, createdAt, createdByUid }
+             createdAt, createdByUid }   # colaboracionAula retirado por D-CUT
      estudiantes/{uid}            # CLAVE = uid de Auth. email = identidad. SIN seudónimo studentId.
         (doc) { email, nombre, estado:'pendiente_atestacion'|'activo'|'suprimido',
                 atestado:bool, atestadoPor?, atestadoAt?, politicaVersion?, joinedAt }
         progress/{worldId}
-           (doc) { colegioId, cursoId, uid, competencia, xp, nivel, mastery:0..1,
-                   quizScores, badges:string[], completed:bool, completedAt?, updatedAt }
+           (doc) { colegioId, cursoId, uid, competencia, mastery:0..1,
+                   quizScores, completed:bool, completedAt?, updatedAt }
+                   # xp/nivel/badges retirados por D-CUT (gamificación de colección)
         impactTest/{fase}         # fase: 'pre' | 'post'
            (doc) { score, total, takenAt, breakdown:{competencia:score} }
      agregados/{agregadoId}       # roll-up POR CURSO — SIN datos individuales
@@ -182,36 +183,36 @@ Alcance: **G** = global · **C** = su colegio · **U** = sus cursos · **S** = s
 `admin` es claim **solo de backend** (Admin SDK, sin UI); en la app solo existen
 `profesor` y `estudiante` (D-PIVOT).
 
-| Acción                                                                 | admin Ceti (backend) | profesor | estudiante |
-| ---------------------------------------------------------------------- | :------------------: | :------: | :--------: |
-| **— Estructura / provisión —**                                         |                      |          |            |
-| Crear/editar/eliminar colegio, plan, cupos                             |         ✅ G         |    ❌    |     ❌     |
-| Crear cuenta de profesor y asignar/cambiar su rol                      |         ✅ G         |    ❌    |     ❌     |
-| Crear/editar/eliminar curso (nombre, grado)                            |         ✅ G         |    ❌    |     ❌     |
-| Vincular/desvincular profesor ↔ curso                                  |         ✅ G         |    ❌    |     ❌     |
-| Generar/regenerar código de unión del curso                            |         ✅ G         |   ✅ U   |     ❌     |
-| **— Roster / Ley 1581 —**                                              |                      |          |            |
-| Ver roster nominal (email+nombre) del curso                            |         ✅ G         |   ✅ U   |     ❌     |
-| Atestar autorización acudiente → activar estudiante                    |         ✅ G         |   ✅ U   |     ❌     |
-| Suprimir datos del estudiante                                          |         ✅ G         |   ✅ U   |     ❌     |
-| Unirse a un curso con código                                           |          ❌          |    ❌    |    ✅ S    |
-| **— Juego / contenido (runtime) —**                                    |                      |          |            |
-| Jugar mundos, quizzes, "Elige tu camino", simulador, colaborativo      |          ❌          |    ❌    |    ✅ S    |
-| Asignar mundo con deadline                                             |         ✅ G         |   ✅ U   |     ❌     |
-| Activar/desactivar modo colaborativo de aula                           |         ✅ G         |   ✅ U   |     ❌     |
-| Leer banco de preguntas (servido estático)                             |         ✅ G         |   ✅ C   |   ✅ S\*   |
-| Validación docente del banco (`pendiente_validacion_docente`→validado) |         ✅ G         |   ✅ U   |     ❌     |
-| **— Reportes / diagnóstico —**                                         |                      |          |            |
-| Ver progreso por estudiante (nominal/operativo)                        |         ✅ G         |   ✅ U   |     ❌     |
-| Ver diagnóstico por reglas del curso                                   |         ✅ G         |   ✅ U   |     ❌     |
-| Exportar CSV/PDF operativo del curso                                   |         ✅ G         |   ✅ U   |     ❌     |
-| Ver reportes institucionales AGREGADOS (grado/curso)                   |         ✅ G         |   ✅ U   |     ❌     |
-| Descargar mapping curricular CONPES 4005/MEN/PISA                      |         ✅ G         |   ✅ U   |     ❌     |
-| Ver/exportar pre/post-test agregado (impacto)                          |         ✅ G         |   ✅ U   |     ❌     |
-| Presentar pre-test / post-test                                         |          ❌          |    ❌    |    ✅ S    |
-| Ver su propio progreso / XP / badges                                   |          ❌          |    ❌    |    ✅ S    |
-| **— Plataforma —**                                                     |                      |          |            |
-| Aprovisionamiento admin Ceti (Admin SDK / backend, sin UI)             |         ✅ G         |    ❌    |     ❌     |
+| Acción                                                                  | admin Ceti (backend) | profesor | estudiante |
+| ----------------------------------------------------------------------- | :------------------: | :------: | :--------: |
+| **— Estructura / provisión —**                                          |                      |          |            |
+| Crear/editar/eliminar colegio, plan, cupos                              |         ✅ G         |    ❌    |     ❌     |
+| Crear cuenta de profesor y asignar/cambiar su rol                       |         ✅ G         |    ❌    |     ❌     |
+| Crear/editar/eliminar curso (nombre, grado)                             |         ✅ G         |    ❌    |     ❌     |
+| Vincular/desvincular profesor ↔ curso                                   |         ✅ G         |    ❌    |     ❌     |
+| Generar/regenerar código de unión del curso                             |         ✅ G         |   ✅ U   |     ❌     |
+| **— Roster / Ley 1581 —**                                               |                      |          |            |
+| Ver roster nominal (email+nombre) del curso                             |         ✅ G         |   ✅ U   |     ❌     |
+| Atestar autorización acudiente → activar estudiante                     |         ✅ G         |   ✅ U   |     ❌     |
+| Suprimir datos del estudiante                                           |         ✅ G         |   ✅ U   |     ❌     |
+| Unirse a un curso con código                                            |          ❌          |    ❌    |    ✅ S    |
+| **— Juego / contenido (runtime) —**                                     |                      |          |            |
+| Jugar mundos, quizzes, "Elige tu camino", simulador                     |          ❌          |    ❌    |    ✅ S    |
+| Asignar mundo con deadline                                              |         ✅ G         |   ✅ U   |     ❌     |
+| ~~Activar/desactivar modo colaborativo de aula~~ _(RETIRADO por D-CUT)_ |         ✅ G         |   ✅ U   |     ❌     |
+| Leer banco de preguntas (servido estático)                              |         ✅ G         |   ✅ C   |   ✅ S\*   |
+| Validación docente del banco (`pendiente_validacion_docente`→validado)  |         ✅ G         |   ✅ U   |     ❌     |
+| **— Reportes / diagnóstico —**                                          |                      |          |            |
+| Ver progreso por estudiante (nominal/operativo)                         |         ✅ G         |   ✅ U   |     ❌     |
+| Ver diagnóstico por reglas del curso                                    |         ✅ G         |   ✅ U   |     ❌     |
+| Exportar CSV/PDF operativo del curso                                    |         ✅ G         |   ✅ U   |     ❌     |
+| Ver reportes institucionales AGREGADOS (grado/curso)                    |         ✅ G         |   ✅ U   |     ❌     |
+| Descargar mapping curricular CONPES 4005/MEN/PISA                       |         ✅ G         |   ✅ U   |     ❌     |
+| Ver/exportar pre/post-test agregado (impacto)                           |         ✅ G         |   ✅ U   |     ❌     |
+| Presentar pre-test / post-test                                          |          ❌          |    ❌    |    ✅ S    |
+| Ver su propio progreso / dominio (`mastery`)                            |          ❌          |    ❌    |    ✅ S    |
+| **— Plataforma —**                                                      |                      |          |            |
+| Aprovisionamiento admin Ceti (Admin SDK / backend, sin UI)              |         ✅ G         |    ❌    |     ❌     |
 
 \* El estudiante no lee la colección libremente: el contenido se le sirve estático al jugar.
 
@@ -265,7 +266,7 @@ Cada mundo tiene un quiz de **exactamente 10 preguntas** servidas del banco
 - _CA1_: El quiz presenta 10 ítems; no 15 ni otro número.
 - _CA2_: Los 3 tipos son: selección múltiple, verdadero/falso, ordenar/secuenciar (RQ-ES04). **No** existe el tipo `calculation` ni `fill_blank` como tipo de quiz.
 - _CA3_: Mezcla por quiz: **4 selección múltiple + 3 verdadero/falso + 3 ordenar**.
-- _CA4_: Cada respuesta se califica al instante; al final se computa score y se actualiza `mastery`/`xp` del mundo.
+- _CA4_: Cada respuesta se califica al instante; al final se computa score y se actualiza `mastery` del mundo. _(xp retirado por D-CUT)_
 - _Resuelve:_ **#9**.
 
 **RQ-ES04 — Tercer tipo de quiz: ordenar / secuenciar (drag-to-rank)**
@@ -276,13 +277,16 @@ gastos, pasos para salir de deuda).
 - _CA2_: Calificación determinista: correcto si la secuencia == orden canónico (con score parcial por posiciones correctas).
 - _CA3_: Funciona con drag en web y móvil (mismo codebase).
 
-**RQ-ES05 — XP, niveles y badges atados a mastery**
-Gamificación por dominio real, no por tiempo. XP por aciertos, niveles por XP
-acumulado, badges al alcanzar umbrales de `mastery` por competencia.
+**RQ-ES05 — ~~XP, niveles y badges atados a mastery~~ Dominio por `mastery`** · **[ENMENDADO por D-CUT, 2026-07-10]**
+~~Gamificación por dominio real, no por tiempo. XP por aciertos, niveles por XP
+acumulado, badges al alcanzar umbrales de `mastery` por competencia.~~ Dominio por
+mundo derivado de `mastery` real (no del tiempo): estado
+`bloqueado`/`disponible`/`en_progreso`/`dominado`, umbral **0.8**, etiqueta
+"Dominado". **Retirados por D-CUT: XP, niveles y el badge/insignia de colección.**
 
 - _CA1_: La `mastery` (0..1) por mundo se computa de los `quizScores`, no del tiempo gastado.
-- _CA2_: Un badge de dominio se otorga cuando `mastery ≥ 0.8` en ese mundo (umbral ajustable).
-- _CA3_: El estudiante ve su XP, nivel y badges propios; **nunca** un ranking público individual.
+- _CA2_: El mundo se marca **"Dominado"** cuando `mastery ≥ 0.8` (umbral ajustable).
+- _CA3_: ~~El estudiante ve su XP, nivel y badges propios;~~ **[RETIRADO por D-CUT]** el estudiante ve su estado de dominio por mundo; **nunca** un ranking público individual.
 
 **RQ-ES06 — Evento "Elige tu camino" (decisión-consecuencia, agregado, sin perfil)**
 Evento aleatorio temático del mundo: una situación, **2 opciones sin
@@ -312,13 +316,13 @@ bancarias.**
 - _CA2_: El simulador presenta decisiones de presupuesto/ahorro con consecuencias virtuales; es experiencia del estudiante, no alimenta perfil individual persistente del menor.
 - _CA3_: Accesible desde la capa estudiante; su estado vive como progreso simulado del propio estudiante.
 
-**RQ-ES09 — Modo colaborativo de aula (+ leaderboard de aula opcional)**
-Activable/desactivable por el profesor (`curso.colaboracionAula`). Equipos dentro
-del aula; leaderboard **de aula opcional**. **Nunca** ranking global público.
+**RQ-ES09 — ~~Modo colaborativo de aula (+ leaderboard de aula opcional)~~** · **[RETIRADO por D-CUT, 2026-07-10]**
+El modo colaborativo y el leaderboard de aula (`curso.colaboracionAula`,
+`.../leaderboard/{uid}`) se eliminan del producto (dependían del XP retirado).
 
-- _CA1_: Si `colaboracionAula=false`, el estudiante no ve modo colaborativo ni leaderboard.
-- _CA2_: Si `colaboracionAula=true`, el leaderboard es **de aula** (acotado al curso), nunca global ni inter-colegio.
-- _CA3_: El leaderboard de aula no expone PII más allá del nombre dentro del propio curso.
+- ~~_CA1_: Si `colaboracionAula=false`, el estudiante no ve modo colaborativo ni leaderboard.~~
+- ~~_CA2_: Si `colaboracionAula=true`, el leaderboard es **de aula** (acotado al curso), nunca global ni inter-colegio.~~
+- ~~_CA3_: El leaderboard de aula no expone PII más allá del nombre dentro del propio curso.~~
 
 **RQ-ES10 — Registro de movimientos por voz + dashboard propio (diario de bolsillo)**
 
@@ -372,8 +376,8 @@ código de unión.
 - _CA4_: El profesor **puede** suprimir a sus propios estudiantes (Ley 1581, RQ-FN11); el admin (backend) puede hacerlo globalmente.
 
 **RQ-PR03 — Progreso por estudiante y por mundo**
-Vista de progreso nominal del curso: por estudiante y por mundo (mastery, XP,
-badges, completado, scores de quiz).
+Vista de progreso nominal del curso: por estudiante y por mundo (`mastery`,
+completado, scores de quiz). _(XP/badges retirados por D-CUT.)_
 
 - _CA1_: Tabla estudiante × mundo con `mastery` (0..1), estado de completado y último score.
 - _CA2_: Permite ver el detalle de un estudiante (sus 5 mundos) sin exponer datos de otro curso.
@@ -420,11 +424,12 @@ no bloqueante** (D5).
 - _CA2_: El profesor ve qué bancos de su grado/mundos están pendientes y puede marcarlos validados (queda `validadoPor`+`validadoAt`).
 - _CA3_: El profesor **no** edita ni reescribe el banco en runtime (es read-only); solo cambia el flag de validación. (Editar/reportar ítems queda fuera del MVP.)
 
-**RQ-PR09 — Toggle de modo colaborativo de aula**
-El profesor activa/desactiva `curso.colaboracionAula` (alimenta RQ-ES09).
+**RQ-PR09 — ~~Toggle de modo colaborativo de aula~~** · **[RETIRADO por D-CUT, 2026-07-10]**
+El toggle `curso.colaboracionAula` se elimina junto con RQ-ES09 (modo
+colaborativo/leaderboard de aula retirados del producto).
 
-- _CA1_: Cambiar el toggle se refleja en la experiencia del estudiante (aparece/desaparece modo colaborativo y leaderboard de aula).
-- _CA2_: El leaderboard, cuando está activo, es siempre de aula (nunca global).
+- ~~_CA1_: Cambiar el toggle se refleja en la experiencia del estudiante (aparece/desaparece modo colaborativo y leaderboard de aula).~~
+- ~~_CA2_: El leaderboard, cuando está activo, es siempre de aula (nunca global).~~
 
 ### Conflictos resueltos en esta sección
 
@@ -522,7 +527,7 @@ Crear cuentas de profesor y asignarles el rol `profesor` con su `colegioId`
 El admin crea cursos (nombre, grado) y vincula/desvincula profesores existentes
 (`profesorUids`).
 
-- _CA1_: Crear un curso fija `grado∈{9,10,11}`, `colegioId`, genera `codigo` inicial y `colaboracionAula:false`.
+- _CA1_: Crear un curso fija `grado∈{9,10,11}`, `colegioId` y genera `codigo` inicial. _(`colaboracionAula` retirado por D-CUT.)_
 - _CA2_: El admin agrega/quita `uid` de profesor en `profesorUids`; el profesor solo entonces ve ese curso.
 - _CA3_: El grado del curso determina el banco servido a sus estudiantes (RQ-FN07); no se pide grado al estudiante.
 
@@ -550,7 +555,8 @@ siguen disponibles para el **profesor** sobre su ámbito (sus cursos).
 
 > Decisión D: **un instrumento a nivel programa** (no por mundo). Pre-test antes
 > del Mundo 1; post-test al completar los 5 mundos; **mismo set de ítems**;
-> resultados **agregados** para evidencia institucional; **no cuenta para XP**.
+> resultados **agregados** para evidencia institucional; **no cuenta para XP**
+> (gamificación de colección retirada por D-CUT).
 > Datos en `.../estudiantes/{uid}/impactTest/{pre|post}`.
 
 **RQ-TS01 — Pre-test al inicio del programa**
@@ -581,7 +587,7 @@ el colegio.
 **RQ-TS04 — El pre/post-test no afecta la gamificación**
 El pre/post-test es instrumento de medición, no de juego.
 
-- _CA1_: Presentar pre o post-test **no** otorga XP, niveles ni badges.
+- _CA1_: Presentar pre o post-test **no** otorga XP, niveles ni badges _(gamificación de colección retirada por D-CUT)_.
 - _CA2_: El score del pre/post-test **no** altera `mastery` ni el desbloqueo de mundos (salvo el gating de presentación de RQ-TS01/TS02).
 
 ### Conflictos resueltos en esta sección
@@ -711,7 +717,7 @@ demo comparten el **mismo curso**.
 **RQ-DM03 — Datos vivos (cero dashboards vacíos)**
 Los estudiantes sintéticos (todos menos el demo) tienen progreso variado y
 verosímil: mundos en distintos avances, `quizScores` de los 3 tipos, agregados de
-"Elige tu camino" poblados por curso, pre-test respondido, XP/badges repartidos.
+"Elige tu camino" poblados por curso, pre-test respondido. _(XP/badges retirados por D-CUT.)_
 
 - _CA1_: El dashboard del profesor (con su reportería agregada) muestra tablas/gráficas **llenas** y creíbles.
 - _CA2_: Los `agregados/*` por curso reflejan a los sintéticos (Elige-camino, mastery promedio); **no** incluyen al estudiante demo.

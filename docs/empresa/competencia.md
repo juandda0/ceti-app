@@ -72,9 +72,11 @@
    con deadline, progreso por estudiante.
 4. **Diseño de datos a prueba de regulación:** minimización (email+nombre), **sin
    perfilamiento del menor** — diferenciador frente a la reforma 2025.
-5. **Pedagogía con evidencia:** mastery (Khan), narrativa + colaboración
-   (Springer), pre/post-test (Banzai) — sin los anti-patrones (gift cards,
-   leaderboard público) que la investigación asocia a daño.
+5. **Pedagogía con evidencia:** mastery (Khan), narrativa ~~+ colaboración
+   (Springer)~~, pre/post-test (Banzai) — sin los anti-patrones (gift cards,
+   leaderboard público) que la investigación asocia a daño. **[ENMENDADO por
+   D-CUT: la colaboración de aula (Springer) se retira; se conserva SOLO el
+   dominio por mastery (Khan) y el pre/post (Banzai).]**
 
 ## Riesgo competitivo
 

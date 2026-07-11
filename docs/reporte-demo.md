@@ -43,9 +43,10 @@ Sembrado por `scripts/seedDemo.ts` (Admin SDK, idempotente):
   | `demo-11A` | 11 | `DEMO11A`| `demo-profesor-3` | ~20 |
 - **~60 estudiantes sintéticos** (nombres españoles, emails `@demo.ceti`, solo
   `email`+`nombre`, `estado:'activo'`, `atestado:true`). Progreso **variado**:
-  unos terminaron los 5 mundos, otros a mitad, otros recién empiezan → XP/niveles/
-  badges/`quizScores` repartidos, `impactTest/pre` para todos y `post` para los que
-  completaron (delta de impacto no vacío).
+  unos terminaron los 5 mundos, otros a mitad, otros recién empiezan → ~~XP/niveles/
+  badges~~ `mastery`/`quizScores` repartidos, `impactTest/pre` para todos y `post`
+  para los que completaron (delta de impacto no vacío). _[ENMENDADO por D-CUT:
+  XP/niveles/badges retirados; la demo se apoya en `mastery`.]_
 - **Agregados por curso** (`agregados/{competencia}`): `masteryPromedio` +
   contadores `eligeCamino` A/B — computados **solo** desde los sintéticos.
 - **El estudiante demo** (`demo-estudiante`, en `demo-9A`): **progreso CERO**,

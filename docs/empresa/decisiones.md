@@ -20,11 +20,14 @@
 ## D2 — Alcance: aplicación COMPLETA (no MVP recortado)
 
 - **(a) Capa estudiante:** 5 mundos secuenciales (narrativa espacial),
-  micro-teoría ligera por mundo, quizzes de 10 preguntas, XP/niveles/badges por
-  mastery, evento aleatorio "Elige tu camino", feedback de alto refuerzo
+  micro-teoría ligera por mundo, quizzes de 10 preguntas, ~~XP/niveles/badges por
+  mastery~~, evento aleatorio "Elige tu camino", feedback de alto refuerzo
   (animaciones y sonidos **siempre**; **háptica solo en móvil**), simulador de
-  proyecto de vida con dinero virtual, modo colaborativo de aula activable por el
-  profesor (sin leaderboards públicos individuales).
+  proyecto de vida con dinero virtual, ~~modo colaborativo de aula activable por el
+  profesor (sin leaderboards públicos individuales)~~. **[ENMENDADO por D-CUT:
+  fuera XP/niveles/badges de colección, wallet de Cetis y modo colaborativo/
+  leaderboard de aula. Se conserva el estado de dominio por mundo (`mastery`,
+  etiqueta "Dominado") y el perfil de identidad.]**
 - **(b) Capa profesor:** dashboard, roster, progreso, asignación de mundos con
   deadline, diagnóstico del curso por reglas, calificación automática,
   exportación CSV/PDF.
@@ -130,3 +133,30 @@ estudiante}`. Rector y coordinador quedan eliminados.
 
 - **Solo documentación.** Prohibido tocar código. Entregable: `docs/empresa/`
   como fuente de verdad permanente.
+
+## D-CUT — Recorte de alcance: fuera gamificación, wallet y leaderboard (2026-07-10)
+
+- **Decisión (dueño):** se eliminan del producto tres superficies que no aportaban
+  al valor vendido (cumplimiento CONPES + reportería + tiempo docente) y cuya
+  cadena de enganche estaba muerta o marcada como legacy:
+  1. **Gamificación de colección:** XP, niveles, racha y motor de insignias
+     (`badges`). El enganche por puntos/racha no estaba cableado (setters solo en
+     tests) y no alimentaba la reportería.
+  2. **Wallet de Cetis** (moneda virtual `users/{uid}/wallet`). Sin RQ, inactivo,
+     y marcado como legacy a retirar en `data-model.md`.
+  3. **Modo colaborativo / leaderboard de aula** (`curso.colaboracionAula`,
+     `.../leaderboard/{uid}`, componente de aula). Dependía del XP muerto.
+- **Se CONSERVA:** el **estado de dominio por mundo** (`WorldProgress.mastery`,
+  umbral 0.8, etiqueta "Dominado" — sigue siendo la verdad de la reportería), el
+  **perfil de identidad** (nombre + avatar), mundos, quizzes, micro-teoría,
+  Elige-camino, metas de ahorro y diario de bolsillo (RQ-ES10).
+- **Impacto en RQ:** **RQ-ES09 (colaborativo/leaderboard) → RETIRADO.**
+  **RQ-PR04 (toggle `colaboracionAula`) → RETIRADO.** **RQ-ES05 → ENMENDADO:** se
+  reduce a "dominio por `mastery`" (estado `bloqueado/disponible/en_progreso/
+dominado`); se retiran XP, niveles y badges de colección. Se retira `xp`/`nivel`
+  de `WorldProgress` y del contrato de `firestore.rules`.
+- **Nota de compliance:** al eliminar `users/{uid}/wallet`, la deuda D-ES10-05
+  (la supresión Ley 1581 no borraba `wallet`) queda parcialmente resuelta para esa
+  colección; `goals`/`deposits` siguen pendientes de esa unidad de compliance.
+- **Autoridad:** enmienda a D2(a); coordinada con `requerimientos.md`,
+  `data-model.md`, `producto.md`, `competencia.md` y el código (R15).
