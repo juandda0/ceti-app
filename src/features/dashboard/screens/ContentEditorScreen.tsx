@@ -8,7 +8,7 @@
  * global default is never mutated; "Restaurar" deletes the course copy.
  * Quiz minimums (4/3/3, R9) are enforced on save so the class never breaks.
  */
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   ScrollView,
@@ -114,15 +114,18 @@ export default function ContentEditorScreen() {
     void rosterRepository.getCursoGrado(colegioId, cursoId).then((g) => setGrado(g ?? '9'));
   }, [colegioId, cursoId]);
 
-  // Seed the Info draft once the config entry resolves.
+  // Seed the Info draft ONCE per world (not on every snapshot): a concurrent
+  // config write must not wipe what the professor is typing (draft wins).
+  const metaSeededRef = useRef<string | null>(null);
   useEffect(() => {
-    if (!configLoaded) return;
+    if (!configLoaded || metaSeededRef.current === worldId) return;
+    metaSeededRef.current = worldId;
     setMetaDraft({
       nombre: entry?.nombre ?? '',
       subtitle: entry?.subtitle ?? '',
       descripcion: entry?.descripcion ?? '',
     });
-  }, [configLoaded, entry?.nombre, entry?.subtitle, entry?.descripcion]);
+  }, [configLoaded, worldId, entry?.nombre, entry?.subtitle, entry?.descripcion]);
 
   const overrides = config?.overrides?.[worldId];
 

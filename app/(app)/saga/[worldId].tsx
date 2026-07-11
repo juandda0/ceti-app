@@ -76,6 +76,10 @@ export default function WorldSagaScreen() {
   const visible = !classConfigLoaded || isWorldVisible(classConfig, worldId ?? '');
   const wasVisibleRef = useRef(false);
   useEffect(() => {
+    // Reset the latch if the runtime ever reuses this instance for another world.
+    wasVisibleRef.current = false;
+  }, [worldId]);
+  useEffect(() => {
     if (classConfigLoaded && isWorldVisible(classConfig, worldId ?? '')) {
       wasVisibleRef.current = true;
     }
@@ -85,7 +89,7 @@ export default function WorldSagaScreen() {
     if (classConfigLoaded && !visible && !wasVisibleRef.current) {
       router.replace('/saga' as never);
     }
-  }, [classConfigLoaded, visible, router]);
+  }, [classConfigLoaded, visible, worldId, router]);
   const softExited = classConfigLoaded && !visible && wasVisibleRef.current;
 
   // Course content overrides (RQ-PR11) for THIS world, from the live config.

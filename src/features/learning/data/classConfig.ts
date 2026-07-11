@@ -75,6 +75,30 @@ export function resolveClassWorlds(
 }
 
 /**
+ * Next config doc for a curation action of the manager (toggle/reorder/focus).
+ * CRITICAL: it must carry over `overrides` — they are the source of truth of
+ * the copy-on-write content (RQ-PR11); dropping them silently reverts the
+ * professor's edits and breaks custom worlds. Version bumps to invalidate the
+ * students' quiz cache.
+ */
+export function buildCuratedConfig(
+  config: CursoConfigMundos | null,
+  mundos: CursoConfigMundos['mundos'],
+  modoEnfocado: CursoConfigMundos['modoEnfocado'],
+  uid: string,
+  now: number
+): CursoConfigMundos {
+  return {
+    mundos,
+    modoEnfocado,
+    ...(config?.overrides ? { overrides: config.overrides } : {}),
+    version: (config?.version ?? 0) + 1,
+    updatedAt: now,
+    updatedByUid: uid,
+  };
+}
+
+/**
  * Whether a world is part of what the class currently serves (activo + focus),
  * IGNORING the unlock chain. This is the saga entry guard (RQ-PR10 CA4): it
  * only depends on the config — never on progress hydration — so a deep link

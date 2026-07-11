@@ -18,6 +18,7 @@ import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { classConfigRepository } from '@features/dashboard/data/classConfigRepository';
 import { courseContentRepository } from '@features/dashboard/data/courseContentRepository';
 import { rosterRepository } from '@features/dashboard/data/rosterRepository';
+import { buildCuratedConfig } from '@features/learning/data/classConfig';
 import { WORLD_DEFS, displayWorldDef, isCustomWorldId } from '@features/learning/data/worldMeta';
 import type { CursoConfigMundoEntry, CursoConfigMundos } from '@shared/types/tenancy';
 
@@ -58,13 +59,13 @@ export default function ClassWorldsManager({
     modoEnfocado: { activo: boolean; worldId?: string }
   ) => {
     if (!firebaseUid) return;
-    void classConfigRepository.upsert(colegioId, cursoId, {
-      mundos,
-      modoEnfocado,
-      version: (config?.version ?? 0) + 1,
-      updatedAt: Date.now(),
-      updatedByUid: firebaseUid,
-    });
+    // buildCuratedConfig preserva `overrides` (fuente de verdad del contenido
+    // copy-on-write): perderlos revertía las ediciones del profesor.
+    void classConfigRepository.upsert(
+      colegioId,
+      cursoId,
+      buildCuratedConfig(config, mundos, modoEnfocado, firebaseUid, Date.now())
+    );
   };
 
   const currentFoco = () => config?.modoEnfocado ?? { activo: false };

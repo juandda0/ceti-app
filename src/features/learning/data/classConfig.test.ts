@@ -1,4 +1,9 @@
-import { isWorldAccessible, resolveClassWorlds } from './classConfig';
+import {
+  buildCuratedConfig,
+  isWorldAccessible,
+  isWorldVisible,
+  resolveClassWorlds,
+} from './classConfig';
 import type { CursoConfigMundos } from '@shared/types/tenancy';
 
 function config(partial: Partial<CursoConfigMundos>): CursoConfigMundos {
@@ -112,6 +117,75 @@ describe('resolveClassWorlds', () => {
     const { worlds, enfocadoWorldId } = resolveClassWorlds(cfg, none);
     expect(worlds.map((w) => w.worldId)).toEqual(['world_1']);
     expect(enfocadoWorldId).toBeNull();
+  });
+});
+
+describe('isWorldVisible (guard real de la saga — RQ-PR10 CA4)', () => {
+  it('sin config → los 5 default son visibles, un cw_ no', () => {
+    expect(isWorldVisible(null, 'world_4')).toBe(true);
+    expect(isWorldVisible(null, 'cw_abc')).toBe(false);
+  });
+
+  it('mundo removido/desactivado deja de ser visible (no depende del progreso)', () => {
+    const cfg = config({
+      mundos: [
+        { worldId: 'world_1', activo: true },
+        { worldId: 'world_2', activo: false },
+      ],
+    });
+    expect(isWorldVisible(cfg, 'world_1')).toBe(true);
+    expect(isWorldVisible(cfg, 'world_2')).toBe(false);
+    expect(isWorldVisible(cfg, 'world_3')).toBe(false);
+  });
+
+  it('en modo enfocado solo el mundo enfocado es visible', () => {
+    const cfg = config({
+      mundos: [
+        { worldId: 'world_1', activo: true },
+        { worldId: 'cw_x', activo: true },
+      ],
+      modoEnfocado: { activo: true, worldId: 'cw_x' },
+    });
+    expect(isWorldVisible(cfg, 'cw_x')).toBe(true);
+    expect(isWorldVisible(cfg, 'world_1')).toBe(false);
+  });
+
+  it('mundo custom activo en la config es visible', () => {
+    const cfg = config({ mundos: [{ worldId: 'cw_x', activo: true }] });
+    expect(isWorldVisible(cfg, 'cw_x')).toBe(true);
+  });
+});
+
+describe('buildCuratedConfig (regresión B1: curar la lista no borra overrides)', () => {
+  it('preserva overrides al reordenar/toggle/enfocar', () => {
+    const cfg = config({
+      mundos: [{ worldId: 'world_1', activo: true }],
+      overrides: { world_1: { mc: true, teoria: true }, cw_x: { mc: true } },
+      version: 7,
+    });
+    const next = buildCuratedConfig(
+      cfg,
+      [{ worldId: 'world_1', activo: false }],
+      { activo: false },
+      'prof1',
+      999
+    );
+    expect(next.overrides).toEqual({ world_1: { mc: true, teoria: true }, cw_x: { mc: true } });
+    expect(next.version).toBe(8);
+    expect(next.updatedAt).toBe(999);
+    expect(next.updatedByUid).toBe('prof1');
+  });
+
+  it('sin config previa arranca en version 1 y sin overrides', () => {
+    const next = buildCuratedConfig(
+      null,
+      [{ worldId: 'world_1', activo: true }],
+      { activo: false },
+      'prof1',
+      5
+    );
+    expect(next.version).toBe(1);
+    expect(next.overrides).toBeUndefined();
   });
 });
 
