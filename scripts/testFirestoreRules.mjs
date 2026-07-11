@@ -495,20 +495,6 @@ await check(
   'client cannot write vozUso',
   assertFails(setDoc(doc(stuA1, 'vozUso/uStuA1_2026-07-08'), { count: 0 }))
 );
-// Demo student (RQ-DM05): su propio users/{uid} sigue siendo self-scoped.
-const demoStuMov = env
-  .authenticatedContext('demo-estudiante', {
-    role: 'estudiante',
-    demo: true,
-    colegioId: 'demo-colegio',
-    cursoId: 'dc1',
-  })
-  .firestore();
-await check(
-  'demo student creates own movimiento',
-  assertSucceeds(setDoc(doc(demoStuMov, 'users/demo-estudiante/movimientos/m1'), validMovimiento))
-);
-
 console.log('Content banks (bancos — shared global, read-only to clients):');
 await check(
   'signed-in student reads bancos',

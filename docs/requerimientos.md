@@ -785,13 +785,15 @@ individual, perfil individual del menor.
 
 ---
 
-## SECCIÓN 10 — MODO DEMO (RQ-DM)
+## SECCIÓN 10 — MODO DEMO (RQ-DM) · **[RETIRADO por D-NODEMO, 2026-07-11]**
 
-> Adición formal a la spec (autorizada por el dueño; el guardián D1 la acepta).
-> **Principio rector:** todo debe poder mostrar cada uno de los 2 perfiles
-> (profesor, estudiante) **sin datos vacíos**. Ante ambigüedad, elegir lo que haga
-> la demo más completa para un visitante que explora solo. Modo autónomo; vetos D4
-> bloquean.
+> **RETIRADO.** El Modo Demo / Simulación (login sin credenciales, `demo-colegio`
+> con estudiantes sintéticos, `demoLogin`, la jaula `demo:true`) se **elimina del
+> producto** por decisión del dueño (D-NODEMO): eran datos mock, y el
+> onboarding real (admin autoriza profesores por correo → el profesor crea sus
+> clases → el estudiante se une por código/link, D-ADMIN) los hace innecesarios.
+> **RQ-DM01..RQ-DM07 quedan RETIRADOS.** Los CA de abajo se conservan solo como
+> registro histórico.
 
 **RQ-DM01 — Acceso demo de un toque en el login**
 Bajo el auth normal, una sección "Simulación Ceti" con 2 accesos de un toque:

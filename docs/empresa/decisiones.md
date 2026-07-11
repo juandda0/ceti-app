@@ -278,3 +278,35 @@ autorizadoAt}`). Cuando ese correo inicia sesión, se le fija
 - **RQs nuevos:** RQ-AD07 (allowlist admin + panel), RQ-AD08 (autorización de
   profesores), RQ-PR13 (el profesor crea sus cursos), RQ-FN13 (gate de acceso por
   rol/curso + link de invitación).
+
+## D-NODEMO — Se elimina el Modo Demo / Simulación (datos mock) (2026-07-11)
+
+> Decisión del dueño, autorizada explícitamente ("elimina todos los datos mock,
+> todos"). Retira RQ-DM01..RQ-DM07 (SECCIÓN 10) y todo el andamiaje de simulación.
+
+- **Se elimina por completo el Modo Demo / Simulación:**
+  - UI: la sección "Simulación Ceti" (botones Profesor/Estudiante) del login.
+  - Backend: la Cloud Function `demoLogin`, `DEMO_USERS`, `DEMO_COLEGIO` y la
+    "jaula demo" (`callerIsDemo`/`assertDemoScope`/`assertNotDemo` y el claim
+    `demo:true`) en functions; la exclusión de `demo-colegio` en el trigger de
+    agregados.
+  - Datos sembrados: `colegio-demo` con estudiantes sintéticos + agregados; se
+    borran los scripts `seedDemo.ts`, `seedDemoColegio.ts`,
+    `backfillDemoAgregados.ts` y el escenario `seedScenario.ts` (siembra de
+    cuentas). **Se conserva `seedBancos.ts`** (siembra el **contenido real**,
+    no es mock).
+- **Motivo:** con D-ADMIN el onboarding real es completo (admin autoriza
+  profesores; el profesor crea sus clases; el estudiante entra por código/link),
+  así que la simulación con datos falsos sobra y solo confunde.
+- **Limpieza de producción:** la data ya sembrada en Firestore (`colegios/demo-colegio`,
+  sus `classCodes`, membership/users demo) se borra con un script Admin SDK que
+  ejecuta el dueño (`scripts/purgeDemo.ts`).
+- **Se conserva** el **modo offline** (`isFirebaseConfigured()===false` →
+  "Continuar sin cuenta"): no es mock, es uso sin backend; el `seedKey='demo'`
+  de fallback offline es solo una etiqueta, no datos.
+- **Impacto en RQ:** **RQ-DM01..RQ-DM07 → RETIRADOS.** El invariante RQ-DM05
+  (jaula demo) desaparece con su feature: sin tokens `demo:true` no hay superficie
+  que enjaular.
+- **Autoridad:** coordinada con `requerimientos.md` (SECCIÓN 10 retirada),
+  `estado.md` y el código (R13/R15 no aplican a invariantes duros aquí; es
+  retiro de feature).

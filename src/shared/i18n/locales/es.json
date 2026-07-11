@@ -405,15 +405,6 @@
     "pageTitle": "Mi perfil",
     "logout": "Cerrar sesión"
   },
-  "demo": {
-    "title": "Simulación Ceti",
-    "subtitle": "Explora cada perfil sin credenciales",
-    "role": {
-      "profesor": "Profesor",
-      "estudiante": "Estudiante"
-    },
-    "error": "No se pudo iniciar la simulación. Intenta de nuevo."
-  },
   "onboarding": {
     "stepNameOverline": "Empecemos",
     "stepNameTitle": "¿Cómo te llamas?",

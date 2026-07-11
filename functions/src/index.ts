@@ -68,39 +68,6 @@ function emailKey(email: string): string {
   return email.trim().toLowerCase();
 }
 
-// ---- Demo cage (RQ-DM05) ----
-const DEMO_COLEGIO = 'demo-colegio';
-// D-PIVOT: solo profesor + estudiante en el demo. Se retira demo-admin porque
-// demoLogin es un callable PÚBLICO y no debe acuñar un token admin (riesgo).
-const DEMO_USERS: Record<string, { uid: string; claims: Record<string, unknown> }> = {
-  profesor: {
-    uid: 'demo-profesor',
-    claims: { role: 'profesor', demo: true, colegioId: DEMO_COLEGIO },
-  },
-  estudiante: {
-    uid: 'demo-estudiante',
-    claims: { role: 'estudiante', demo: true, colegioId: DEMO_COLEGIO, cursoId: 'demo-9A' },
-  },
-};
-
-function callerIsDemo(caller: Caller): boolean {
-  return caller.token.demo === true;
-}
-
-/** A demo caller may never touch anything outside the demo colegio (RQ-DM05). */
-function assertDemoScope(caller: Caller, colegioId: string | undefined): void {
-  if (callerIsDemo(caller) && colegioId !== DEMO_COLEGIO) {
-    throw new HttpsError('permission-denied', 'El modo demo solo opera dentro del colegio demo.');
-  }
-}
-
-/** Structural/claim mutations are forbidden to demo callers (no real entities). */
-function assertNotDemo(caller: Caller): void {
-  if (callerIsDemo(caller)) {
-    throw new HttpsError('permission-denied', 'El modo demo no puede ejecutar esta acción.');
-  }
-}
-
 type ClaimsPayload = {
   role: Role;
   colegioId?: string;
@@ -152,7 +119,6 @@ async function assertStaffOfCurso(
   colegioId: string,
   cursoId: string
 ): Promise<void> {
-  assertDemoScope(caller, colegioId);
   if (isAdmin(caller)) return;
   if (caller.token.colegioId !== colegioId) {
     throw new HttpsError('permission-denied', 'Outside your colegio.');
@@ -180,7 +146,6 @@ export const assignRole = onCall(async (request) => {
   if (!isAdmin(caller)) {
     throw new HttpsError('permission-denied', 'Solo un admin puede asignar roles.');
   }
-  assertNotDemo(caller); // a demo token can never assign real adult roles (RQ-DM05)
 
   const role = request.data?.role;
   if (!isRole(role)) {
@@ -235,7 +200,6 @@ export const registerColegio = onCall(async (request) => {
   if (!isAdmin(caller)) {
     throw new HttpsError('permission-denied', 'Solo un admin puede registrar colegios.');
   }
-  assertNotDemo(caller); // demo admin cannot create real colegios (RQ-DM05)
 
   const colegioId = requireString(request.data?.colegioId, 'colegioId');
   const nombre = requireString(request.data?.nombre, 'nombre');
@@ -270,11 +234,8 @@ export const listColegios = onCall(async (request) => {
     throw new HttpsError('permission-denied', 'Solo un admin puede listar colegios.');
   }
 
-  // Demo admin sees only the demo colegio (RQ-DM05).
   const db = getFirestore();
-  const snap = callerIsDemo(caller)
-    ? { docs: [await db.doc(`colegios/${DEMO_COLEGIO}`).get()].filter((d) => d.exists) }
-    : await db.collection('colegios').get();
+  const snap = await db.collection('colegios').get();
   const colegios = snap.docs.map((d) => {
     const data = d.data() ?? {};
     return {
@@ -296,7 +257,6 @@ export const createCurso = onCall(async (request) => {
   }
 
   const colegioId = requireString(request.data?.colegioId, 'colegioId');
-  assertDemoScope(caller, colegioId); // demo admin may only create within demo-colegio
   const cursoId = requireString(request.data?.cursoId, 'cursoId');
   const nombre = requireString(request.data?.nombre, 'nombre');
   const grado = requireString(request.data?.grado, 'grado');
@@ -392,7 +352,6 @@ export const authorizeProfesor = onCall(async (request) => {
   if (!isAdmin(caller)) {
     throw new HttpsError('permission-denied', 'Solo un admin autoriza profesores.');
   }
-  assertNotDemo(caller);
   const email = requireString(request.data?.email, 'email').toLowerCase();
   const colegioId = requireString(request.data?.colegioId, 'colegioId');
 
@@ -440,7 +399,6 @@ export const revokeProfesorAuthorization = onCall(async (request) => {
   if (!isAdmin(caller)) {
     throw new HttpsError('permission-denied', 'Solo un admin revoca profesores.');
   }
-  assertNotDemo(caller);
   const email = requireString(request.data?.email, 'email').toLowerCase();
 
   const db = getFirestore();
@@ -469,7 +427,6 @@ export const crearMiCurso = onCall(async (request) => {
   if (caller.token.role !== 'profesor') {
     throw new HttpsError('permission-denied', 'Solo un profesor crea sus clases.');
   }
-  assertNotDemo(caller);
   const colegioId = caller.token.colegioId as string | undefined;
   if (!colegioId) {
     throw new HttpsError('failed-precondition', 'Tu cuenta no tiene un colegio asignado.');
@@ -654,7 +611,6 @@ export const joinByCode = onCall(async (request) => {
   const codeSnap = await db.doc(`classCodes/${code}`).get();
   if (!codeSnap.exists) throw new HttpsError('not-found', 'Código de clase inválido.');
   const { colegioId, cursoId } = codeSnap.data() as { colegioId: string; cursoId: string };
-  assertDemoScope(caller, colegioId); // a demo student cannot join a real course (RQ-DM05)
 
   // Already linked to this exact course → no-op (idempotent).
   if (caller.token.colegioId === colegioId && caller.token.cursoId === cursoId) {
@@ -822,49 +778,6 @@ export const generarBorradorMundo = onCall({ secrets: [GROQ_API_KEY] }, async (r
 });
 
 // ---------------------------------------------------------------------------
-// Demo mode (RQ-DM). A PUBLIC (unauthenticated) callable that mints a custom
-// token for ONE of the 2 fixed demo identities (profesor | estudiante — never
-// admin, D-PIVOT). It cannot be parameterized into arbitrary claims — only the
-// role selects a fixed (uid, claims) pair. All demo
-// tokens carry demo:true, which firestore.rules + the Functions cage confine to
-// `demo-colegio`. Signing in as the demo student first resets their progress so
-// every demo starts fresh (RQ-DM06).
-// ---------------------------------------------------------------------------
-export const demoLogin = onCall(async (request) => {
-  const role = typeof request.data?.role === 'string' ? request.data.role : '';
-  const demo = DEMO_USERS[role];
-  if (!demo) {
-    throw new HttpsError(
-      'invalid-argument',
-      `role must be one of: ${Object.keys(DEMO_USERS).join(', ')}.`
-    );
-  }
-
-  const auth = getAuth();
-  const db = getFirestore();
-
-  // Ensure the demo Auth user exists with its fixed demo claims (idempotent).
-  try {
-    await auth.getUser(demo.uid);
-  } catch {
-    await auth.createUser({ uid: demo.uid, displayName: `Demo ${role}` });
-  }
-  await auth.setCustomUserClaims(demo.uid, demo.claims);
-
-  // Reset the demo student so every demo starts at zero (RQ-DM06). Aggregates
-  // exclude the demo student by design, so this never corrupts them.
-  if (role === 'estudiante') {
-    const cursoId = demo.claims.cursoId as string;
-    const estRef = db.doc(`colegios/${DEMO_COLEGIO}/cursos/${cursoId}/estudiantes/${demo.uid}`);
-    await db.recursiveDelete(estRef.collection('progress'));
-    await db.recursiveDelete(estRef.collection('impactTest'));
-  }
-
-  const token = await auth.createCustomToken(demo.uid, demo.claims);
-  return { token, role };
-});
-
-// ---------------------------------------------------------------------------
 // Per-course aggregates (RQ-FN09). The profesor reads these non-nominal
 // aggregates for reporting (matriz §1.3, D-PIVOT). Nothing in the client or
 // firestore.rules can write them: rules say `write: if false` for agregados/*,
@@ -1016,15 +929,12 @@ async function recomputeCursoAgregado(colegioId: string, cursoId: string): Promi
 
 /**
  * Trigger: any change to a student's per-world progress recomputes the affected
- * course's aggregate. Writes via Admin SDK (bypasses rules). Demo colegio is
- * excluded by design — the demo student is reset on each demoLogin and must not
- * churn or pollute real aggregates (RQ-DM05/RQ-DM06).
+ * course's aggregate. Writes via Admin SDK (bypasses rules).
  */
 export const onProgressWriteAggregate = onDocumentWritten(
   'colegios/{cid}/cursos/{cursoId}/estudiantes/{uid}/progress/{worldId}',
   async (event) => {
     const { cid, cursoId } = event.params;
-    if (cid === DEMO_COLEGIO) return;
     await recomputeCursoAgregado(cid, cursoId);
   }
 );
