@@ -58,8 +58,6 @@ export type Curso = {
   sedeId?: string;
   /** Auth uids of teachers who manage this course. */
   profesorUids: string[];
-  /** Teacher-toggled class collaboration (no public leaderboard). */
-  colaboracionAula: boolean;
   /** Class self-join code (set by the generateClassCode Function). */
   codigo?: string;
   createdAt?: number;
@@ -101,12 +99,9 @@ export type WorldProgress = {
   uid: string;
   /** CONPES 4005 competency this world maps to. */
   competencia: string;
-  xp: number;
-  nivel: number;
-  /** 0..1 mastery, drives mastery-based badges and weakness detection. */
+  /** 0..1 mastery, drives weakness detection and the teacher report. */
   mastery: number;
   quizScores: Record<string, number>;
-  badges: string[];
   completed: boolean;
   completedAt?: number;
   updatedAt: number;
@@ -134,18 +129,6 @@ export type Agregado = {
   masteryPromedio?: number;
   distribucion?: Record<string, number>;
   eligeCamino?: Record<string, { opcionA: number; opcionB: number }>;
-  updatedAt: number;
-};
-
-/**
- * Class leaderboard entry (V2 collaboration). Minimal by design — a label
- * (populated from `nombre`) + XP, written by the student, read by course-mates
- * only when the teacher enables colaboracionAula. Never exposes per-competency data.
- */
-export type LeaderboardEntry = {
-  uid: string;
-  displayLabel: string;
-  xp: number;
   updatedAt: number;
 };
 

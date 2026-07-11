@@ -13,11 +13,8 @@ function wp(cursoId: string, uid: string, competencia: string, mastery: number):
     cursoId,
     uid,
     competencia,
-    xp: 0,
-    nivel: 1,
     mastery,
     quizScores: {},
-    badges: [],
     completed: mastery >= 0.8,
     updatedAt: 1,
   };

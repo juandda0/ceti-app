@@ -12,7 +12,6 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { useAuthStore, isStaffRole } from '@features/auth/store/useAuthStore';
 import { useUserStore } from '@features/auth/store/useUserStore';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
-import { useWalletStore } from '@features/savings/store/useWalletStore';
 import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/app';
 import { readCetiClaims } from '@shared/lib/firebase/claims';
 import { userRepository } from '@features/auth/data/userRepository';
@@ -101,7 +100,6 @@ export default function Index() {
       if (idMismatch) {
         useUserStore.getState().resetUser();
         useSavingsStore.getState().resetSavings();
-        useWalletStore.getState().resetWallet();
       }
 
       if (!remote) {

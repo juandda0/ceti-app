@@ -70,10 +70,7 @@ async function main(): Promise<void> {
 
   await db
     .doc(`colegios/${COLEGIO}/cursos/${CURSO}`)
-    .set(
-      { nombre: CURSO, grado: '10', profesorUids: [profesorUid], colaboracionAula: false },
-      { merge: true }
-    );
+    .set({ nombre: CURSO, grado: '10', profesorUids: [profesorUid] }, { merge: true });
 
   // Student in 10A — keyed by uid, only email + nombre, active (demo attestation
   // by the profesor).

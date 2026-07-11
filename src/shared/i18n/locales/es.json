@@ -118,9 +118,7 @@
     "suppressConfirm": "Suprimir",
     "cancel": "Cancelar",
     "suppressOkTitle": "Datos suprimidos",
-    "suppressOk": "Se eliminaron los datos del estudiante.",
-    "colaboracion": "Colaboración de aula",
-    "colaboracionHint": "Muestra a los estudiantes un ranking de la clase. Sin ranking global ni público."
+    "suppressOk": "Se eliminaron los datos del estudiante."
   },
   "join": {
     "title": "Únete a tu curso",
@@ -133,36 +131,6 @@
     "pendingTitle": "Pendiente de autorización",
     "pendingBody": "Tu acudiente debe autorizar el tratamiento de tus datos para que tu progreso quede registrado. Mientras tanto puedes explorar, pero tu avance no se guardará en el colegio."
   },
-  "savings": {
-    "walletTitle": "Mi alcancía",
-    "walletSubtitle": "Cetis para jugar y tu cohete hacia la meta",
-    "spendable": "Cetis para gastar",
-    "piggyTitle": "Tu alcancía",
-    "savedForGoals": "Guardados para metas",
-    "savedAmount": "{{n}} Cetis",
-    "goalShort": "Meta",
-    "save": "Ahorrar",
-    "withdraw": "Retirar",
-    "movements": "Movimientos",
-    "noMovements": "Aún no tienes movimientos. Gana Cetis completando lecciones.",
-    "recent": "Reciente",
-    "saveTitle": "¿Cuánto quieres ahorrar?",
-    "withdrawTitle": "¿Cuánto quieres retirar?",
-    "amountPlaceholder": "Cantidad de Cetis",
-    "available": "Disponibles: {{n}}",
-    "availableSaved": "En la alcancía: {{n}}",
-    "confirm": "Confirmar",
-    "cancel": "Cancelar",
-    "insufficient": "No tienes suficientes Cetis.",
-    "insufficientSaved": "No tienes tantos Cetis en la alcancía.",
-    "invalidAmount": "Ingresa una cantidad válida."
-  },
-  "leaderboard": {
-    "title": "Ranking de la clase",
-    "you": "Tú",
-    "xp": "{{xp}} XP",
-    "empty": "Aún nadie tiene puntos. ¡Sé el primero!"
-  },
   "legal": {
     "privacyPolicy": "Política de tratamiento de datos"
   },
@@ -171,7 +139,8 @@
     "lessonsCompleted": "{{done}} de {{total}} lecciones completadas",
     "worldNumber": "Mundo {{n}}",
     "lockedNote": "Completa el Mundo {{n}} para desbloquear",
-    "openWorld": "Abrir Mundo {{n}}"
+    "openWorld": "Abrir Mundo {{n}}",
+    "mastered": "Dominado"
   },
   "quiz": {
     "correct": "¡Correcto!",
@@ -200,7 +169,6 @@
     "pageSubtitle": "¡Hola {{name}}! Ahorra para lo que sueñas.",
     "savings": "Ahorros",
     "savingsTotal": "Ahorro total",
-    "cetis": "Cetis",
     "save": "Ahorrar",
     "newGoal": "Nueva meta",
     "yourGoals": "Tus metas",
@@ -299,17 +267,6 @@
   },
   "profile": {
     "pageTitle": "Mi perfil",
-    "levelName": "Nivel {{level}}: {{name}}",
-    "nextLevel": "Próximo nivel",
-    "xpProgress": "{{current}} / {{total}} XP",
-    "streak": "RACHA",
-    "lessons": "LECCIONES",
-    "totalXp": "XP TOTAL",
-    "achievements": "Logros",
-    "badgeHello": "¡Hola Ceti!",
-    "badgeSaver": "Ahorrador",
-    "badgeStudent": "Alumno",
-    "badgeStar": "Estrella",
     "logout": "Cerrar sesión"
   },
   "demo": {

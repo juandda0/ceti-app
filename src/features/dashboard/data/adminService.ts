@@ -1,29 +1,12 @@
 /**
  * Course operations for the profesor (D-PIVOT). Claim/auth/PII-sensitive actions
  * go through Cloud Functions (the only trusted writer of claims, roster and
- * structure — R2/R3/D-B1-03). The only direct client write is toggling
- * colaboracionAula, which firestore.rules allows for the course's profesor.
- * Structural provisioning (create colegio/curso, assign teachers) is Admin SDK
- * only (backend) and has NO client entry point here.
+ * structure — R2/R3/D-B1-03). Structural provisioning (create colegio/curso,
+ * assign teachers) is Admin SDK only (backend) and has NO client entry point here.
  */
-import { setDoc } from 'firebase/firestore';
-import { getFirebaseClients } from '@shared/lib/firebase/app';
-import { cursoDocRef } from '@shared/lib/firebase/paths';
 import { callFunction } from '@shared/lib/firebase/functions';
 
 export const adminService = {
-  /** Teacher toggles class collaboration (class leaderboard visibility). */
-  async setColaboracion(colegioId: string, cursoId: string, enabled: boolean): Promise<boolean> {
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return false;
-    await setDoc(
-      cursoDocRef(clients.firestore, colegioId, cursoId),
-      { colaboracionAula: enabled },
-      { merge: true }
-    );
-    return true;
-  },
-
   /**
    * Lightweight Ley 1581 attestation (Cloud Function): the school confirms it
    * holds the acudiente authorization. NO acudiente PII is stored — only the

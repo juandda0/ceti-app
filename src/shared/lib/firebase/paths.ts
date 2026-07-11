@@ -6,7 +6,6 @@ export const FIRESTORE_COLLECTIONS = {
   users: 'users',
   goals: 'goals',
   deposits: 'deposits',
-  wallet: 'wallet',
   // Pocket-money diary (RQ-ES10): REAL self-declared movements, self-only
   // (isSelf; no staff/admin read — CA5). Deleted by suppressStudentData (CA7).
   movimientos: 'movimientos',
@@ -26,12 +25,7 @@ export const FIRESTORE_COLLECTIONS = {
   agregados: 'agregados',
   asignaciones: 'asignaciones',
   membership: 'membership',
-  // Class-level leaderboard (V2) — minimal {displayLabel, xp} per student,
-  // readable by course-mates only when colaboracionAula is on. No global board.
-  leaderboard: 'leaderboard',
 } as const;
-
-export const WALLET_STATE_DOC_ID = 'state';
 
 export function userDocPath(uid: string): string {
   return `${FIRESTORE_COLLECTIONS.users}/${uid}`;
@@ -71,16 +65,6 @@ export function userMovimientosCollectionRef(db: Firestore, uid: string) {
 
 export function userMovimientoDocRef(db: Firestore, uid: string, movimientoId: string) {
   return doc(db, FIRESTORE_COLLECTIONS.users, uid, FIRESTORE_COLLECTIONS.movimientos, movimientoId);
-}
-
-export function userWalletDocRef(db: Firestore, uid: string) {
-  return doc(
-    db,
-    FIRESTORE_COLLECTIONS.users,
-    uid,
-    FIRESTORE_COLLECTIONS.wallet,
-    WALLET_STATE_DOC_ID
-  );
 }
 
 /**
@@ -193,15 +177,6 @@ export function asignacionesByCursoQuery(db: Firestore, colegioId: string, curso
 /** uid → tenant mapping, used at bootstrap to resolve where a user belongs. */
 export function membershipDocRef(db: Firestore, uid: string) {
   return doc(db, C.membership, uid);
-}
-
-/** Class leaderboard entries for a course (V2 class collaboration). */
-export function leaderboardCollectionRef(db: Firestore, colegioId: string, cursoId: string) {
-  return collection(db, C.colegios, colegioId, C.cursos, cursoId, C.leaderboard);
-}
-
-export function leaderboardDocRef(db: Firestore, colegioId: string, cursoId: string, uid: string) {
-  return doc(db, C.colegios, colegioId, C.cursos, cursoId, C.leaderboard, uid);
 }
 
 /**

@@ -1,16 +1,9 @@
 import { onSnapshot } from 'firebase/firestore';
 import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/app';
-import { useUserStore } from '@features/auth/store/useUserStore';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
 import type { SavingsGoal, SavingsDeposit } from '@features/savings/store/useSavingsStore';
-import { useWalletStore } from '@features/savings/store/useWalletStore';
-import type { RemoteWalletState } from '@features/savings/data/walletRepository';
 import { recordError } from '@shared/lib/analytics/crashlytics';
-import {
-  userGoalsCollectionRef,
-  userDepositsCollectionRef,
-  userWalletDocRef,
-} from '@shared/lib/firebase/paths';
+import { userGoalsCollectionRef, userDepositsCollectionRef } from '@shared/lib/firebase/paths';
 import {
   resetUserProgressPushSubscriptions,
   startUserProgressPush,
@@ -26,17 +19,6 @@ export function endRemoteApply() {
 }
 export function isApplyingSnapshot() {
   return applyingSnapshot;
-}
-
-function applyWalletSnapshot(data: RemoteWalletState): void {
-  useWalletStore.setState({
-    totalCetis: typeof data.totalCetis === 'number' ? data.totalCetis : 0,
-    savedCetis: typeof data.savedCetis === 'number' ? data.savedCetis : 0,
-    spentCetis: typeof data.spentCetis === 'number' ? data.spentCetis : 0,
-    transactions: Array.isArray(data.transactions) ? data.transactions.slice(0, 50) : [],
-    savingsGoal:
-      data.savingsGoal === null || typeof data.savingsGoal === 'object' ? data.savingsGoal : null,
-  });
 }
 
 let unsubs: (() => void)[] = [];
@@ -89,7 +71,6 @@ export function startUserRemoteSync(uid: string): void {
               .map((x) => x.data() as SavingsGoal)
               .filter((g) => g && typeof g.id === 'string');
             useSavingsStore.setState({ goals });
-            useUserStore.getState().syncGoalsCompleted();
           } finally {
             endRemoteApply();
           }
@@ -120,26 +101,6 @@ export function startUserRemoteSync(uid: string): void {
     );
   }
 
-  function listenWallet(listenUid: string) {
-    unsubs.push(
-      onSnapshot(
-        userWalletDocRef(db, listenUid),
-        (snap) => {
-          if (snap.metadata.hasPendingWrites) return;
-          beginRemoteApply();
-          try {
-            if (!snap.exists()) return;
-            applyWalletSnapshot(snap.data() as RemoteWalletState);
-          } finally {
-            endRemoteApply();
-          }
-        },
-        (err) => retryOnPermissionDenied(listenUid, listenWallet, 'user_remote_wallet', err)
-      )
-    );
-  }
-
   listenGoals(uid);
   listenDeposits(uid);
-  listenWallet(uid);
 }

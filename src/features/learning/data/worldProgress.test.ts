@@ -6,8 +6,6 @@ const base = {
   cursoId: 'c1',
   uid: 's1',
   worldId: 'world_3' as const,
-  xp: 120,
-  nivel: 2,
   now: 1000,
 };
 
@@ -35,10 +33,9 @@ describe('buildWorldProgress', () => {
     expect(p.completedAt).toBeUndefined();
   });
 
-  it('defaults quizScores and badges', () => {
+  it('defaults quizScores', () => {
     const p = buildWorldProgress({ ...base, correct: 0, total: 0 });
     expect(p.quizScores).toEqual({});
-    expect(p.badges).toEqual([]);
     expect(p.mastery).toBe(0);
   });
 });

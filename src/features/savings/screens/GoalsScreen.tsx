@@ -27,12 +27,12 @@ import {
   monthsToReach,
   suggestMonthly,
 } from '@features/savings/data/lifeProjects';
+import { goalStatus } from '@features/savings/data/goalStatus';
 import { useUserStore } from '@features/auth/store/useUserStore';
 import CetiButton from '@shared/components/CetiButton';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import StatTile from '@features/savings/components/StatTile';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
-import { useWalletStore } from '@features/savings/store/useWalletStore';
 import { formatMoneyInputThousands, parseMoneyAmountInt } from '@shared/utils/moneyInputFormat';
 import { formatDisplayCopGoals } from '@shared/utils/formatDisplayCop';
 import CetiBottomSheet from '@shared/components/CetiBottomSheet';
@@ -52,6 +52,8 @@ function VisualGoalCard({
   const { t } = useTranslation();
   const progress =
     goal.targetAmount > 0 ? Math.min((goal.currentAmount / goal.targetAmount) * 100, 100) : 0;
+  const status = goalStatus(goal);
+  const statusLabel = status === 'cumplida' ? t('goals.goalReached') : t('goals.yourGoal');
 
   return (
     <Animated.View
@@ -64,11 +66,9 @@ function VisualGoalCard({
       <View style={styles.cardHeader}>
         <View style={{ flex: 1 }}>
           <Text style={[styles.goalName, { color: colors.text.primary }]}>{goal.title}</Text>
-          <Text style={[styles.goalStatus, { color: colors.text.tertiary }]}>
-            {progress === 100 ? t('goals.goalReached') : t('goals.yourGoal')}
-          </Text>
+          <Text style={[styles.goalStatus, { color: colors.text.tertiary }]}>{statusLabel}</Text>
         </View>
-        {progress === 100 ? (
+        {status === 'cumplida' ? (
           <Ionicons name="trophy" size={24} color={colors.gold.primary} />
         ) : (
           <TouchableOpacity
@@ -116,7 +116,7 @@ function VisualGoalCard({
             {t('goals.ofTarget', { amount: formatDisplayCopGoals(goal.targetAmount) })}
           </Text>
         </View>
-        {progress < 100 &&
+        {status === 'activa' &&
           (() => {
             const monthly = suggestMonthly(goal.targetAmount, goal.currentAmount);
             const months = monthsToReach(goal.targetAmount, goal.currentAmount, monthly);
@@ -138,7 +138,6 @@ export default function GoalsScreen() {
   const colors = useThemeColors();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
-  const { totalCetis } = useWalletStore();
   const { nickname } = useUserStore();
   const [showNewGoal, setShowNewGoal] = useState(false);
 
@@ -177,12 +176,6 @@ export default function GoalsScreen() {
               value={formatDisplayCopGoals(totalSaved)}
               valueColor={colors.gold.primary}
               iconColor={colors.gold.primary}
-            />
-            <StatTile
-              icon="sparkles"
-              label={t('goals.cetis')}
-              value={String(totalCetis)}
-              iconColor={colors.brand.primary}
             />
           </Animated.View>
 

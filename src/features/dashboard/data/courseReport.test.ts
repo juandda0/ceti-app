@@ -11,11 +11,8 @@ function wp(uid: string, competencia: string, mastery: number): WorldProgress {
     cursoId: 'c1',
     uid,
     competencia,
-    xp: 0,
-    nivel: 1,
     mastery,
     quizScores: {},
-    badges: [],
     completed: mastery >= 0.8,
     updatedAt: 1,
   };

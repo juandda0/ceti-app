@@ -20,10 +20,7 @@ export interface BuildWorldProgressInput {
   /** Correct answers / total questions for this world. */
   correct: number;
   total: number;
-  xp: number;
-  nivel: number;
   quizScores?: Record<string, number>;
-  badges?: string[];
   /** Caller-supplied timestamp (ms). Keeps this function pure/testable. */
   now: number;
 }
@@ -36,11 +33,8 @@ export function buildWorldProgress(input: BuildWorldProgressInput): WorldProgres
     cursoId: input.cursoId,
     uid: input.uid,
     competencia: competenciaForWorld(input.worldId).id,
-    xp: input.xp,
-    nivel: input.nivel,
     mastery,
     quizScores: input.quizScores ?? {},
-    badges: input.badges ?? [],
     completed,
     ...(completed ? { completedAt: input.now } : {}),
     updatedAt: input.now,

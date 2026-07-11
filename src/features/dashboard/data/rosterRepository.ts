@@ -36,15 +36,6 @@ export const rosterRepository = {
     return snap.docs.map((d) => ({ uid: d.id, ...(d.data() as Estudiante) }));
   },
 
-  /** A single course doc — any colegio member may read it (rules allow sameColegio). */
-  async getCurso(colegioId: string, cursoId: string): Promise<CursoWithId | null> {
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return null;
-    const snap = await getDoc(cursoDocRef(clients.firestore, colegioId, cursoId));
-    if (!snap.exists()) return null;
-    return { id: snap.id, ...(snap.data() as Curso) };
-  },
-
   /** A single roster slot — used by a student to read their own status (rules allow self). */
   async getEstudiante(
     colegioId: string,

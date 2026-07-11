@@ -89,10 +89,7 @@ async function main(): Promise<void> {
   await db
     .doc(`colegios/${COLEGIO}`)
     .set({ nombre: 'Colegio Demo Ceti', sedesEnabled: false, createdAt: NOW }, { merge: true });
-  await cursoBase.set(
-    { nombre: '9A', grado: '9', profesorUids: [], colaboracionAula: false },
-    { merge: true }
-  );
+  await cursoBase.set({ nombre: '9A', grado: '9', profesorUids: [] }, { merge: true });
 
   let progressDocs = 0;
   for (const [uid, plan] of Object.entries(STUDENTS)) {
@@ -124,11 +121,8 @@ async function main(): Promise<void> {
             cursoId: CURSO,
             uid,
             competencia: WORLD_COMPETENCIA[worldId],
-            xp: Math.round(mastery * 150),
-            nivel: 1 + Math.floor(mastery * 4),
             mastery,
             quizScores: { [worldId]: Math.round(mastery * 100) },
-            badges: mastery >= 0.8 ? [`mastery_${WORLD_COMPETENCIA[worldId]}`] : [],
             completed: mastery >= 0.8,
             ...(mastery >= 0.8 ? { completedAt: NOW } : {}),
             updatedAt: NOW,

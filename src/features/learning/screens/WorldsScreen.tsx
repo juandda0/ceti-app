@@ -15,10 +15,10 @@ import type { WorldId } from '@features/learning/data/quiz.types';
 import { worldProgressRepository } from '@features/dashboard/data/worldProgressRepository';
 import { useStudentGrado } from '@features/learning/hooks/useStudentGrado';
 import { competenciaForWorld } from '@features/learning/data/competencias';
+import { worldStatus } from '@features/learning/data/worldStatus';
 import StudentAssignmentsBanner from '@features/dashboard/components/StudentAssignmentsBanner';
 import JoinClassBanner from '@features/dashboard/components/JoinClassBanner';
 import AuthorizationPendingBanner from '@features/dashboard/components/AuthorizationPendingBanner';
-import ClassLeaderboard from '@features/dashboard/components/ClassLeaderboard';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { Typography } from '@shared/constants/typography';
@@ -95,6 +95,7 @@ function WorldCard({
 }) {
   const done = Math.round(progress * QUESTIONS_PER_WORLD);
   const pct = Math.min(Math.round(progress * 100), 100);
+  const status = worldStatus(isUnlocked, progress);
 
   return (
     <Animated.View entering={motion.enterDown(index * 65)}>
@@ -164,9 +165,18 @@ function WorldCard({
                   ]}
                 />
               </View>
-              <Text style={[cardSt.progressLabel, { color: colors.text.tertiary }]}>
-                {done}/{QUESTIONS_PER_WORLD}
-              </Text>
+              {status === 'dominado' ? (
+                <View style={cardSt.masteredTag}>
+                  <Ionicons name="checkmark-circle" size={14} color={world.color} />
+                  <Text style={[cardSt.masteredText, { color: world.color }]}>
+                    {t('worlds.mastered')}
+                  </Text>
+                </View>
+              ) : (
+                <Text style={[cardSt.progressLabel, { color: colors.text.tertiary }]}>
+                  {done}/{QUESTIONS_PER_WORLD}
+                </Text>
+              )}
             </View>
           ) : (
             <Text style={[cardSt.lockedNote, { color: colors.text.quaternary }]}>
@@ -300,7 +310,6 @@ export default function WorldsScreen() {
         <JoinClassBanner />
         <AuthorizationPendingBanner />
         <StudentAssignmentsBanner />
-        <ClassLeaderboard />
 
         <View style={styles.list}>
           {WORLD_DEFS.map((world, index) => (
@@ -405,6 +414,15 @@ const cardSt = StyleSheet.create({
     fontWeight: '700',
     minWidth: 30,
     textAlign: 'right',
+  },
+  masteredTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+  },
+  masteredText: {
+    fontSize: 11,
+    fontWeight: '800',
   },
   lockedNote: {
     ...Typography.caption2,

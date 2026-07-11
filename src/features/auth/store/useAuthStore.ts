@@ -5,7 +5,6 @@ import { useUserStore } from '@features/auth/store/useUserStore';
 import { useQuestionBankStore } from '@features/learning/store/useQuestionBankStore';
 import { useLearningFlowStore } from '@features/learning/store/useLearningFlowStore';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
-import { useWalletStore } from '@features/savings/store/useWalletStore';
 import { STAFF_ROLES, type CetiClaims, type Role } from '@shared/types/tenancy';
 
 interface AuthState {
@@ -87,7 +86,6 @@ export const useAuthStore = create<AuthStore>()(
           /* noop */
         }
         useSavingsStore.getState().resetSavings();
-        useWalletStore.getState().resetWallet();
         useQuestionBankStore.getState().resetUserProgress();
         useLearningFlowStore.getState().reset();
         useUserStore.getState().resetUser();

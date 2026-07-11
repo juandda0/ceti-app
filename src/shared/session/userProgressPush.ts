@@ -1,9 +1,6 @@
 import { goalsRepository } from '@features/savings/data/goalsRepository';
 import { depositsRepository } from '@features/savings/data/depositsRepository';
-import { walletRepository } from '@features/savings/data/walletRepository';
-import { useUserStore } from '@features/auth/store/useUserStore';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
-import { useWalletStore } from '@features/savings/store/useWalletStore';
 import { isApplyingSnapshot } from '@shared/session/userRemoteSync';
 
 const DEBOUNCE_MS = 400;
@@ -12,7 +9,6 @@ let activeUid = '';
 let unsubscribers: (() => void)[] = [];
 
 let savingsTimer: ReturnType<typeof setTimeout> | null = null;
-let walletTimer: ReturnType<typeof setTimeout> | null = null;
 
 let lastGoalIds = new Set<string>();
 let lastDepositIds = new Set<string>();
@@ -52,30 +48,9 @@ function scheduleSavingsPush(): void {
   }, DEBOUNCE_MS);
 }
 
-function scheduleWalletPush(): void {
-  if (!activeUid || isApplyingSnapshot()) return;
-  if (walletTimer) clearTimeout(walletTimer);
-  walletTimer = setTimeout(() => {
-    walletTimer = null;
-    if (!activeUid || isApplyingSnapshot()) return;
-    const w = useWalletStore.getState();
-    const p = walletRepository.setWalletState(activeUid, {
-      totalCetis: w.totalCetis,
-      savedCetis: w.savedCetis,
-      spentCetis: w.spentCetis,
-      transactions: w.transactions.slice(0, 50),
-      savingsGoal: w.savingsGoal,
-      updatedAt: Date.now(),
-    });
-    track(p);
-  }, DEBOUNCE_MS);
-}
-
 export function resetUserProgressPushSubscriptions(): void {
   if (savingsTimer) clearTimeout(savingsTimer);
-  if (walletTimer) clearTimeout(walletTimer);
   savingsTimer = null;
-  walletTimer = null;
   unsubscribers.forEach((u) => u());
   unsubscribers = [];
   activeUid = '';
@@ -97,23 +72,10 @@ export function startUserProgressPush(uid: string): void {
   lastDepositIds = new Set(useSavingsStore.getState().deposits.map((d) => d.id));
 
   unsubscribers.push(
-    useUserStore.subscribe(() => {
-      if (isApplyingSnapshot()) return;
-    })
-  );
-
-  unsubscribers.push(
     useSavingsStore.subscribe((st, prev) => {
       if (st.goals === prev.goals && st.deposits === prev.deposits) return;
       if (isApplyingSnapshot()) return;
       scheduleSavingsPush();
-    })
-  );
-
-  unsubscribers.push(
-    useWalletStore.subscribe(() => {
-      if (isApplyingSnapshot()) return;
-      scheduleWalletPush();
     })
   );
 }

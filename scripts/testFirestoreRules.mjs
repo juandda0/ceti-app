@@ -71,17 +71,6 @@ const stuA3 = env
 const stuA4 = env
   .authenticatedContext('uStuA4', { role: 'estudiante', colegioId: 'A', cursoId: 'c1' })
   .firestore();
-// Leaderboard (V2) contexts: students carry a cursoId claim.
-const stuLb1 = env
-  .authenticatedContext('uLb1', { role: 'estudiante', colegioId: 'A', cursoId: 'cLbOn' })
-  .firestore();
-const stuLb2 = env
-  .authenticatedContext('uLb2', { role: 'estudiante', colegioId: 'A', cursoId: 'cLbOn' })
-  .firestore();
-const stuLb4 = env
-  .authenticatedContext('uLb4', { role: 'estudiante', colegioId: 'A', cursoId: 'cLbOff' })
-  .firestore();
-
 const progPath = (cid, curso, uid, w) =>
   `colegios/${cid}/cursos/${curso}/estudiantes/${uid}/progress/${w}`;
 const validProgress = {
@@ -89,11 +78,8 @@ const validProgress = {
   cursoId: 'c1',
   uid: 'uStuA1',
   competencia: 'ahorro',
-  xp: 100,
-  nivel: 2,
   mastery: 0.5,
   quizScores: { w1: 80 },
-  badges: ['first'],
   completed: false,
   updatedAt: 1,
 };
@@ -107,7 +93,6 @@ await env.withSecurityRulesDisabled(async (ctx) => {
     nombre: '9A',
     grado: '9',
     profesorUids: ['uProfA1'],
-    colaboracionAula: false,
   });
   await setDoc(doc(db, 'colegios/A/cursos/c1/estudiantes/uStuA1'), {
     email: 'a1@demo.ceti',
@@ -168,46 +153,6 @@ await env.withSecurityRulesDisabled(async (ctx) => {
     generadoPor: 'ia',
     pendiente_validacion_docente: true,
   });
-  // Leaderboard (V2): two courses, collaboration on vs off, with active students.
-  // uProfA1 also teaches cLbOn so we can assert the teacher-read cell.
-  await setDoc(doc(db, 'colegios/A/cursos/cLbOn'), {
-    nombre: 'Lb On',
-    grado: '9',
-    profesorUids: ['uProfA1'],
-    colaboracionAula: true,
-  });
-  await setDoc(doc(db, 'colegios/A/cursos/cLbOff'), {
-    nombre: 'Lb Off',
-    grado: '9',
-    profesorUids: [],
-    colaboracionAula: false,
-  });
-  for (const [curso, uid] of [
-    ['cLbOn', 'uLb1'],
-    ['cLbOn', 'uLb2'],
-    ['cLbOff', 'uLb3'],
-    ['cLbOff', 'uLb4'],
-  ]) {
-    await setDoc(doc(db, `colegios/A/cursos/${curso}/estudiantes/${uid}`), {
-      email: `${uid}@demo.ceti`,
-      nombre: uid,
-      estado: 'activo',
-      atestado: true,
-      joinedAt: 1,
-    });
-  }
-  await setDoc(doc(db, 'colegios/A/cursos/cLbOn/leaderboard/uLb1'), {
-    uid: 'uLb1',
-    displayLabel: 'lb1',
-    xp: 100,
-    updatedAt: 1,
-  });
-  await setDoc(doc(db, 'colegios/A/cursos/cLbOff/leaderboard/uLb3'), {
-    uid: 'uLb3',
-    displayLabel: 'lb3',
-    xp: 100,
-    updatedAt: 1,
-  });
 });
 
 console.log('Tenant isolation:');
@@ -231,7 +176,6 @@ await check(
       nombre: 'cNew',
       grado: '9',
       profesorUids: [],
-      colaboracionAula: false,
     })
   )
 );
@@ -370,20 +314,12 @@ await check(
   assertFails(setDoc(doc(profA1, 'colegios/A/cursos/c1/agregados/ag2'), { updatedAt: 1 }))
 );
 
-console.log('Course update field guard:');
+console.log('Course update denied (structure/settings = backend):');
 await check(
-  'teacher toggles colaboracionAula',
-  assertSucceeds(setDoc(doc(profA1, 'colegios/A/cursos/c1'), { colaboracionAula: true }, { merge: true }))
-);
-await check(
-  'teacher cannot change profesorUids',
+  'teacher cannot update course doc (structure = backend)',
   assertFails(
     setDoc(doc(profA1, 'colegios/A/cursos/c1'), { profesorUids: ['uProfA1', 'uProfA2'] }, { merge: true })
   )
-);
-await check(
-  'teacher NOT of course cannot toggle colaboracionAula',
-  assertFails(setDoc(doc(profA2, 'colegios/A/cursos/c1'), { colaboracionAula: false }, { merge: true }))
 );
 
 console.log('Assignments:');
@@ -436,14 +372,6 @@ await check('user cannot read another user doc', assertFails(getDoc(doc(stuA2, '
 await check(
   'user creates own user doc (validated)',
   assertSucceeds(setDoc(doc(stuA1, 'users/uStuA1'), { displayName: 'A', provider: 'google' }))
-);
-await check(
-  'wallet rejects negative total',
-  assertFails(setDoc(doc(stuA1, 'users/uStuA1/wallet/state'), { totalCetis: -5 }))
-);
-await check(
-  'wallet accepts valid total',
-  assertSucceeds(setDoc(doc(stuA1, 'users/uStuA1/wallet/state'), { totalCetis: 10 }))
 );
 
 console.log('Pocket-money diary users/{uid}/movimientos (RQ-ES10):');
@@ -640,31 +568,6 @@ await check(
       cards: [],
     })
   )
-);
-
-console.log('Class leaderboard (V2 collaboration):');
-const lbEntry = { uid: 'uLb1', displayLabel: 'lb1', xp: 50, updatedAt: 2 };
-const lbPath = 'colegios/A/cursos/cLbOn/leaderboard/uLb1';
-await check(
-  'classmate reads leaderboard when colaboracionAula on',
-  assertSucceeds(getDoc(doc(stuLb2, lbPath)))
-);
-await check(
-  'classmate cannot read leaderboard when colaboracionAula off',
-  assertFails(getDoc(doc(stuLb4, 'colegios/A/cursos/cLbOff/leaderboard/uLb3')))
-);
-await check('teacher of course reads its leaderboard', assertSucceeds(getDoc(doc(profA1, lbPath))));
-await check(
-  'student writes own leaderboard entry',
-  assertSucceeds(setDoc(doc(stuLb1, lbPath), lbEntry))
-);
-await check(
-  'student cannot write another student leaderboard entry',
-  assertFails(setDoc(doc(stuLb2, lbPath), { ...lbEntry }))
-);
-await check(
-  'leaderboard rejects negative xp',
-  assertFails(setDoc(doc(stuLb1, lbPath), { ...lbEntry, xp: -1 }))
 );
 
 console.log('Default deny:');

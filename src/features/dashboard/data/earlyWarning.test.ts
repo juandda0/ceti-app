@@ -11,11 +11,8 @@ function prog(uid: string, mastery: number, updatedAt: number): WorldProgress {
     cursoId: 'c1',
     uid,
     competencia: 'ahorro',
-    xp: 0,
-    nivel: 0,
     mastery,
     quizScores: {},
-    badges: [],
     completed: mastery >= 0.8,
     updatedAt,
   };

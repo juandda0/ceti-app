@@ -298,7 +298,6 @@ export const createCurso = onCall(async (request) => {
     nombre,
     grado,
     profesorUids: [],
-    colaboracionAula: false,
     codigo: code,
     createdAt: FieldValue.serverTimestamp(),
     createdByUid: caller.uid,

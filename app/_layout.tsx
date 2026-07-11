@@ -16,7 +16,6 @@ import 'react-native-reanimated';
 import { LightColors, DarkColors } from '@shared/constants/colors';
 
 import { useThemeStore } from '@shared/store/useThemeStore';
-import StreakCelebrationModal from '@shared/components/StreakCelebrationModal';
 import CetiOverlayHost from '@shared/components/CetiOverlayHost';
 import { AppErrorBoundary } from '@shared/components/AppErrorBoundary';
 import { rehydrateAllPersistedStores } from '@shared/session/hydrateStores';
@@ -183,7 +182,6 @@ export default function RootLayout() {
             <Stack.Screen name="(staff)" options={{ animation: 'fade' }} />
           </Stack>
           <StatusBar style={mode === 'light' ? 'dark' : 'light'} />
-          <StreakCelebrationModal />
           <CetiOverlayHost />
         </AppErrorBoundary>
       </SafeAreaProvider>

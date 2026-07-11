@@ -33,7 +33,6 @@ import { useUserStore } from '@features/auth/store/useUserStore';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { buildWorldProgress } from '@features/learning/data/worldProgress';
 import { worldProgressRepository } from '@features/dashboard/data/worldProgressRepository';
-import { useRewards } from '@shared/hooks/useRewards';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { Typography } from '@shared/constants/typography';
@@ -443,8 +442,6 @@ export default function WorldQuizScreen() {
   const firebaseUid = useAuthStore((s) => s.firebaseUid);
   const localProfileId = useUserStore((s) => s.id);
   const userId = firebaseUid ?? localProfileId;
-  const xp = useUserStore((s) => s.xp);
-  const level = useUserStore((s) => s.level);
 
   // Tenant identity (set only for provisioned students). Used to mirror progress
   // to the school tree for the teacher dashboard; no-op when not provisioned.
@@ -455,7 +452,6 @@ export default function WorldQuizScreen() {
   const fetchWorldQuestions = useQuestionBankStore((s) => s.fetchWorldQuestions);
   const getWorldProgress = useQuestionBankStore((s) => s.getWorldProgress);
   const recordAnswer = useQuestionBankStore((s) => s.recordAnswer);
-  const { checkBadges } = useRewards();
   const { t } = useTranslation();
 
   const questions = useQuestionBankStore(
@@ -501,29 +497,10 @@ export default function WorldQuizScreen() {
       worldId: worldId as WorldId,
       correct: done,
       total,
-      xp,
-      nivel: level,
       now: Date.now(),
     });
     void worldProgressRepository.upsert(colegioId, cursoId, firebaseUid, worldId, progress);
-  }, [
-    isComplete,
-    role,
-    colegioId,
-    cursoId,
-    firebaseUid,
-    worldId,
-    userId,
-    xp,
-    level,
-    getWorldProgress,
-  ]);
-
-  // Award mastery/achievement badges on completion (idempotent).
-  useEffect(() => {
-    if (!isComplete) return;
-    checkBadges();
-  }, [isComplete, checkBadges]);
+  }, [isComplete, role, colegioId, cursoId, firebaseUid, worldId, userId, getWorldProgress]);
 
   const currentQuestion = questions[currentIndex] ?? null;
 
