@@ -388,6 +388,8 @@
     "capMsg": "Ya usaste todos tus registros por voz de hoy. Vuelve mañana.",
     "errorTitle": "No pude clasificarlo",
     "errorMsg": "Anótalo a mano abajo o inténtalo de nuevo.",
+    "noEntendiTitle": "No te entendí",
+    "noEntendiMsg": "Cuéntame un gasto, un ahorro o una meta. Por ejemplo: \"gasté cinco mil en el bus\" o \"ahorré diez mil\".",
     "ahorros": "Ahorros",
     "gastos": "Gastos",
     "balance": "Balance",

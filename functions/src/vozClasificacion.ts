@@ -24,7 +24,14 @@ export type MovimientoCategoria = (typeof MOVIMIENTO_CATEGORIAS)[number];
 // defecto), abonar a una meta existente ("abonar"), o crear una meta nueva
 // ("nueva meta"). Para las intenciones de meta, `descripcion` = nombre de la
 // meta y `monto` = abono (abonar) u objetivo (crear).
-export const MOVIMIENTO_INTENCIONES = ['movimiento', 'abonar_meta', 'crear_meta'] as const;
+// `no_entendido`: la frase no es un registro de dinero (off-topic) o es
+// inapropiada (groserías/contenido sensible) → el cliente muestra "no te entendí".
+export const MOVIMIENTO_INTENCIONES = [
+  'movimiento',
+  'abonar_meta',
+  'crear_meta',
+  'no_entendido',
+] as const;
 
 export type MovimientoIntencion = (typeof MOVIMIENTO_INTENCIONES)[number];
 
@@ -42,7 +49,14 @@ export const DESCRIPCION_MAX = 140;
 
 export const SYSTEM_PROMPT = `Eres un clasificador de registros de dinero de bolsillo de estudiantes colombianos (13+). Recibes la transcripción de una frase dicha por voz y produces exactamente un JSON con la clasificación.
 
-Primero detecta la INTENCIÓN por palabra clave:
+FILTRO (hazlo PRIMERO): decide si la frase es de verdad un registro de dinero del estudiante — un gasto, un ahorro, o algo sobre una meta de ahorro (crearla o abonarle). Si NO lo es, devuelve exactamente {"intencion":"no_entendido","tipo":"gasto","monto":0,"descripcion":"","categoria":"otros","confianza":0} y nada más.
+Usa "no_entendido" cuando la frase:
+- No trata del dinero del estudiante: saludos, preguntas al azar ("qué hora es", "cuánto es 2+2"), chistes, chismes, tareas del colegio, cantar, o hablarle a alguien.
+- Trae groserías, insultos, odio, acoso, contenido sexual, violento, drogas o autolesión.
+- Es claramente una broma, provocación, prueba o ruido sin sentido.
+Sé TOLERANTE con intentos legítimos aunque estén mal dichos o incompletos: "gasté algo", "guardé plata", "ahorré para la bici" SÍ son válidos (clasifícalos; baja la confianza si falta el monto). No exijas palabras exactas; rechaza solo lo que claramente NO es dinero propio o es inapropiado.
+
+Si la frase SÍ es un registro válido, detecta la INTENCIÓN por palabra clave:
 - Si la frase contiene "nueva meta" o "crear meta" -> "intencion":"crear_meta". El estudiante quiere crear una meta de ahorro: "descripcion" = nombre de la meta (máx 4 palabras), "monto" = objetivo (cuánto quiere juntar), "tipo":"ahorro", "categoria":"otros".
 - Si la frase contiene "abonar", "aportar a mi meta" o "sumar a mi meta" -> "intencion":"abonar_meta". El estudiante quiere sumar dinero a una meta que YA tiene: "descripcion" = nombre de la meta a la que abona (máx 4 palabras), "monto" = cuánto abona, "tipo":"ahorro", "categoria":"otros".
 - En cualquier otro caso -> "intencion":"movimiento" (un gasto o ahorro normal).
@@ -52,7 +66,7 @@ Reglas de los demás campos:
 2. "monto": entero en pesos colombianos, >= 0. Convierte palabras a números: "cinco mil" -> 5000, "veinte mil" -> 20000, "trescientos mil" -> 300000. Jerga colombiana: "una luca" -> 1000, "cinco lucas" -> 5000. Si no hay monto identificable, usa 0 y baja la confianza.
 3. "descripcion": máximo 10 palabras (o el nombre de la meta para las intenciones de meta), reformulada de forma neutra. OMITE SIEMPRE nombres propios de personas, apodos y cualquier dato personal ("le compré un regalo a Valentina Gómez" -> "regalo para una amiga").
 4. "categoria": exactamente una de: comida, transporte, entretenimiento, ropa, educacion, tecnologia, regalos, otros. Ante duda, "otros".
-5. "confianza": 0 a 1. Usa < 0.5 si la frase es ruido, no menciona dinero, es incoherente o falta el monto.
+5. "confianza": 0 a 1. Para un registro válido, usa < 0.5 si el monto es dudoso o falta. (El ruido y lo off-topic ya se filtran con "no_entendido", no con confianza baja.)
 6. Nunca inventes datos que no estén en la frase.
 
 Ejemplos:
@@ -62,7 +76,9 @@ Ejemplos:
 - "nueva meta bicicleta trescientos mil" -> {"intencion":"crear_meta","tipo":"ahorro","monto":300000,"descripcion":"bicicleta","categoria":"otros","confianza":0.92}
 - "crear meta computador quinientos mil pesos" -> {"intencion":"crear_meta","tipo":"ahorro","monto":500000,"descripcion":"computador","categoria":"otros","confianza":0.9}
 - "abonar diez mil a la bici" -> {"intencion":"abonar_meta","tipo":"ahorro","monto":10000,"descripcion":"bici","categoria":"otros","confianza":0.9}
-- "eh mmm no sé qué decir hola hola" -> {"intencion":"movimiento","tipo":"gasto","monto":0,"descripcion":"registro no claro","categoria":"otros","confianza":0.1}`;
+- "eh mmm no sé qué decir hola hola" -> {"intencion":"no_entendido","tipo":"gasto","monto":0,"descripcion":"","categoria":"otros","confianza":0}
+- "cuánto es dos más dos" -> {"intencion":"no_entendido","tipo":"gasto","monto":0,"descripcion":"","categoria":"otros","confianza":0}
+- "profe usted es un bobo" -> {"intencion":"no_entendido","tipo":"gasto","monto":0,"descripcion":"","categoria":"otros","confianza":0}`;
 
 /**
  * Validates/normalizes the raw model output. Throws on unrecoverable shapes;
@@ -74,6 +90,20 @@ export function parseClasificacion(raw: unknown): ClasificacionMovimiento {
     throw new Error('Clasificación inválida: no es un objeto.');
   }
   const r = raw as Record<string, unknown>;
+
+  // Rechazo del modelo (off-topic o inapropiado): no es un registro de dinero.
+  // Cortocircuita ANTES de validar tipo/monto — son irrelevantes aquí y el
+  // modelo podría no llenarlos bien. El cliente muestra "no te entendí".
+  if (r.intencion === 'no_entendido') {
+    return {
+      intencion: 'no_entendido',
+      tipo: 'gasto',
+      monto: 0,
+      descripcion: '',
+      categoria: 'otros',
+      confianza: 0,
+    };
+  }
 
   if (r.tipo !== 'ahorro' && r.tipo !== 'gasto') {
     throw new Error(`Clasificación inválida: tipo '${String(r.tipo)}'.`);

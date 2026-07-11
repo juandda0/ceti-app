@@ -65,6 +65,16 @@ export default function MovimientosScreen() {
       const rutaGoalId = typeof goalId === 'string' ? goalId : undefined;
       try {
         const r = await vozService.procesarRegistroVoz(texto);
+        // La IA filtró la frase (no es sobre dinero, o trae groserías/contenido
+        // sensible): "no te entendí" y no abrimos ninguna tarjeta.
+        if (r.intencion === 'no_entendido') {
+          showCetiNotice({
+            variant: 'info',
+            title: t('movimientos.noEntendiTitle'),
+            message: t('movimientos.noEntendiMsg'),
+          });
+          return;
+        }
         // Ramifica por intención detectada por palabra clave (D-ES10-06).
         if (r.intencion === 'crear_meta') {
           setMetaPropuesta({ nombre: r.descripcion, objetivo: r.monto });

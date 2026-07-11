@@ -66,6 +66,26 @@ describe('parseClasificacion', () => {
     expect(parseClasificacion(sinIntencion).intencion).toBe('movimiento');
   });
 
+  it('no_entendido cortocircuita a un rechazo neutro, aunque tipo/monto sean basura', () => {
+    // El modelo marca off-topic/inapropiado: no debe lanzar por tipo/monto inválidos.
+    const result = parseClasificacion({
+      intencion: 'no_entendido',
+      tipo: 'lo_que_sea',
+      monto: -999,
+      descripcion: 'esto no importa',
+      categoria: 'apuestas',
+      confianza: 0.9,
+    });
+    expect(result).toEqual({
+      intencion: 'no_entendido',
+      tipo: 'gasto',
+      monto: 0,
+      descripcion: '',
+      categoria: 'otros',
+      confianza: 0,
+    });
+  });
+
   it('lanza con tipo inválido', () => {
     expect(() => parseClasificacion({ ...base, tipo: 'prestamo' })).toThrow();
   });

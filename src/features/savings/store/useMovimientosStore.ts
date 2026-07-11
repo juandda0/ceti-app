@@ -12,7 +12,8 @@ export type MovimientoTipo = 'ahorro' | 'gasto';
 
 // Intención de voz detectada por palabra clave (RQ-ES10 D-ES10-06): registrar un
 // gasto/ahorro, abonar a una meta existente, o crear una meta nueva.
-export type MovimientoIntencion = 'movimiento' | 'abonar_meta' | 'crear_meta';
+// `no_entendido`: la IA filtró la frase (off-topic o inapropiada) → "no te entendí".
+export type MovimientoIntencion = 'movimiento' | 'abonar_meta' | 'crear_meta' | 'no_entendido';
 
 export const MOVIMIENTO_CATEGORIAS = [
   'comida',
