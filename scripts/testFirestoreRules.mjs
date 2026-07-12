@@ -798,6 +798,227 @@ await check(
   )
 );
 
+// ---- RQ-ES11 presupuestos (self-only) + RQ-PR14 retos (self-write signal) ----
+// updatedAt de la señal se ancla a request.time (anti-backdating), así que los
+// casos allow usan la hora real; los deny usan una hora fabricada.
+const nowMs = Date.now();
+await env.withSecurityRulesDisabled(async (ctx) => {
+  const db = ctx.firestore();
+  await setDoc(doc(db, 'colegios/A/asignaciones/reto1'), {
+    kind: 'reto',
+    reto: { tipo: 'registrar_movimientos', cantidad: 5 },
+    target: { tipo: 'curso', cursoId: 'c1' },
+    fechaInicio: 1,
+    deadline: 9999999999999,
+    createdByUid: 'uProfA1',
+    createdAt: 1,
+  });
+  await setDoc(doc(db, 'colegios/A/asignaciones/retoOtro'), {
+    kind: 'reto',
+    reto: { tipo: 'crear_meta', cantidad: 1 },
+    target: { tipo: 'curso', cursoId: 'c2' },
+    fechaInicio: 1,
+    deadline: 9999999999999,
+    createdByUid: 'uProfA1',
+    createdAt: 1,
+  });
+  await setDoc(doc(db, 'colegios/A/asignaciones/mundo1'), {
+    worldId: 'world_1',
+    target: { tipo: 'curso', cursoId: 'c1' },
+    fechaInicio: 1,
+    deadline: 9999999999999,
+    createdByUid: 'uProfA1',
+    createdAt: 1,
+  });
+});
+
+console.log('Presupuestos config (RQ-ES11, self-only):');
+const presu = (uid) => `users/${uid}/config/presupuestos`;
+await check(
+  'student writes own budgets',
+  assertSucceeds(setDoc(doc(stuA1, presu('uStuA1')), { topes: { comida: 20000 }, updatedAt: nowMs }))
+);
+await check('student reads own budgets', assertSucceeds(getDoc(doc(stuA1, presu('uStuA1')))));
+await check(
+  'other student cannot write budgets',
+  assertFails(setDoc(doc(stuA2, presu('uStuA1')), { topes: { comida: 1 }, updatedAt: nowMs }))
+);
+await check(
+  'profesor cannot read student budgets',
+  assertFails(getDoc(doc(profA1, presu('uStuA1'))))
+);
+await check(
+  'budgets rejects wrong docId',
+  assertFails(setDoc(doc(stuA1, 'users/uStuA1/config/otro'), { topes: {}, updatedAt: nowMs }))
+);
+await check(
+  'budgets rejects extra key',
+  assertFails(setDoc(doc(stuA1, presu('uStuA1')), { topes: {}, updatedAt: nowMs, racha: 1 }))
+);
+await check(
+  'budgets rejects unknown category',
+  assertFails(setDoc(doc(stuA1, presu('uStuA1')), { topes: { apuestas: 100 }, updatedAt: nowMs }))
+);
+await check(
+  'budgets rejects non-numeric updatedAt',
+  assertFails(setDoc(doc(stuA1, presu('uStuA1')), { topes: { comida: 1 }, updatedAt: 'x' }))
+);
+
+console.log('Asignaciones shape (mundo | reto):');
+const mkAsig = (id) => `colegios/A/asignaciones/${id}`;
+const baseAsig = {
+  target: { tipo: 'curso', cursoId: 'c1' },
+  fechaInicio: 1,
+  deadline: 2,
+  createdByUid: 'uProfA1',
+  createdAt: 1,
+};
+await check(
+  'profesor creates valid mundo',
+  assertSucceeds(setDoc(doc(profA1, mkAsig('newMundo')), { worldId: 'world_2', ...baseAsig }))
+);
+await check(
+  'profesor creates valid reto',
+  assertSucceeds(
+    setDoc(doc(profA1, mkAsig('newReto')), {
+      kind: 'reto',
+      reto: { tipo: 'registrar_movimientos', cantidad: 5 },
+      ...baseAsig,
+    })
+  )
+);
+await check(
+  'reto rejects tipo not in v1 enum',
+  assertFails(
+    setDoc(doc(profA1, mkAsig('badTipo')), {
+      kind: 'reto',
+      reto: { tipo: 'racha_dias', cantidad: 5 },
+      ...baseAsig,
+    })
+  )
+);
+await check(
+  'reto rejects cantidad 0',
+  assertFails(
+    setDoc(doc(profA1, mkAsig('badCant')), {
+      kind: 'reto',
+      reto: { tipo: 'crear_meta', cantidad: 0 },
+      ...baseAsig,
+    })
+  )
+);
+await check(
+  'asignacion rejects extra key',
+  assertFails(setDoc(doc(profA1, mkAsig('extra')), { worldId: 'world_2', nota: 'x', ...baseAsig }))
+);
+await check(
+  'asignacion rejects foreign createdByUid',
+  assertFails(
+    setDoc(doc(profA1, mkAsig('spoof')), { worldId: 'world_2', ...baseAsig, createdByUid: 'other' })
+  )
+);
+await check(
+  'reto rejects worldId present',
+  assertFails(
+    setDoc(doc(profA1, mkAsig('mixed')), {
+      kind: 'reto',
+      worldId: 'world_2',
+      reto: { tipo: 'crear_meta', cantidad: 1 },
+      ...baseAsig,
+    })
+  )
+);
+await check(
+  'legacy mundo (no kind) update still allowed',
+  assertSucceeds(setDoc(doc(profA1, mkAsig('mundo1')), { worldId: 'world_1', ...baseAsig }))
+);
+await check(
+  'other-colegio profesor cannot create asignacion',
+  assertFails(setDoc(doc(profB, mkAsig('cross')), { worldId: 'world_2', ...baseAsig }))
+);
+
+console.log('Reto signal (RQ-PR14, self-write only; state + timestamps):');
+const sig = (uid, retoId) => `colegios/A/cursos/c1/estudiantes/${uid}/retos/${retoId}`;
+const validSig = {
+  colegioId: 'A',
+  cursoId: 'c1',
+  uid: 'uStuA1',
+  retoId: 'reto1',
+  estado: 'en_progreso',
+  updatedAt: nowMs,
+};
+await check(
+  'student writes own reto signal (en_progreso)',
+  assertSucceeds(setDoc(doc(stuA1, sig('uStuA1', 'reto1')), validSig))
+);
+await check(
+  'profesor cannot write reto signal',
+  assertFails(setDoc(doc(profA1, sig('uStuA1', 'reto1')), validSig))
+);
+await check(
+  'other student cannot write reto signal',
+  assertFails(setDoc(doc(stuA2, sig('uStuA1', 'reto1')), { ...validSig }))
+);
+await check(
+  'reto signal rejects extra field monto (anti-leak pin)',
+  assertFails(setDoc(doc(stuA1, sig('uStuA1', 'reto1')), { ...validSig, monto: 5000 }))
+);
+await check(
+  'reto signal rejects estado sin_empezar',
+  assertFails(setDoc(doc(stuA1, sig('uStuA1', 'reto1')), { ...validSig, estado: 'sin_empezar' }))
+);
+await check(
+  'reto signal rejects backdated updatedAt',
+  assertFails(setDoc(doc(stuA1, sig('uStuA1', 'reto1')), { ...validSig, updatedAt: 1 }))
+);
+await check(
+  'reto signal rejects nonexistent reto',
+  assertFails(setDoc(doc(stuA1, sig('uStuA1', 'nope')), { ...validSig, retoId: 'nope' }))
+);
+await check(
+  'reto signal rejects reto of another course',
+  assertFails(setDoc(doc(stuA1, sig('uStuA1', 'retoOtro')), { ...validSig, retoId: 'retoOtro' }))
+);
+await check(
+  'pending-attestation student cannot write reto signal',
+  assertFails(setDoc(doc(stuA3, sig('uStuA3', 'reto1')), { ...validSig, uid: 'uStuA3' }))
+);
+await check(
+  'student transitions to cumplido',
+  assertSucceeds(
+    setDoc(doc(stuA1, sig('uStuA1', 'reto1')), {
+      ...validSig,
+      estado: 'cumplido',
+      updatedAt: nowMs,
+      cumplidoAt: nowMs,
+    })
+  )
+);
+await check(
+  'reto signal cannot degrade cumplido -> en_progreso',
+  assertFails(setDoc(doc(stuA1, sig('uStuA1', 'reto1')), validSig))
+);
+await check(
+  'student cannot delete reto signal',
+  assertFails(deleteDoc(doc(stuA1, sig('uStuA1', 'reto1'))))
+);
+await check(
+  'profesor reads student reto signal',
+  assertSucceeds(getDoc(doc(profA1, sig('uStuA1', 'reto1'))))
+);
+await check(
+  'student reads own reto signal',
+  assertSucceeds(getDoc(doc(stuA1, sig('uStuA1', 'reto1'))))
+);
+await check(
+  'other-colegio profesor cannot read reto signal',
+  assertFails(getDoc(doc(profB, sig('uStuA1', 'reto1'))))
+);
+await check(
+  're-pin: profesor still cannot read student movimientos (CA5)',
+  assertFails(getDoc(doc(profA1, 'users/uStuA1/movimientos/m1')))
+);
+
 console.log('Default deny:');
 await check('any other path denied', assertFails(getDoc(doc(stuA1, 'randomCol/randomDoc'))));
 
