@@ -39,6 +39,10 @@ export interface Movimiento {
   origen: MovimientoOrigen;
   goalId?: string;
   createdAt: number;
+  // Fecha declarada del movimiento (epoch ms), p. ej. "ayer gasté…". Opcional y
+  // aditivo (RQ-ES11-CA7): los docs viejos no se migran, toda lectura usa
+  // `fecha ?? createdAt`. El transporte offsetDias/diaSemana nunca se persiste.
+  fecha?: number;
 }
 
 interface MovimientosState {

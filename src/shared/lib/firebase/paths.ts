@@ -22,6 +22,9 @@ export const FIRESTORE_COLLECTIONS = {
   estudiantes: 'estudiantes',
   progress: 'progress',
   impactTest: 'impactTest',
+  // Reto signal (RQ-PR14): self-write, profesor-read; ONLY estado+timestamps
+  // (never diary content). Deleted by suppressStudentData (CA9).
+  retos: 'retos',
   agregados: 'agregados',
   asignaciones: 'asignaciones',
   membership: 'membership',
@@ -34,6 +37,9 @@ export const FIRESTORE_COLLECTIONS = {
 
 /** Fixed doc id of the class-config doc under `cursos/{cursoId}/config/`. */
 export const CURSO_CONFIG_MUNDOS_DOC_ID = 'mundos';
+
+/** Fixed doc id of the budgets doc under `users/{uid}/config/` (RQ-ES11-CA1). */
+export const USER_CONFIG_PRESUPUESTOS_DOC_ID = 'presupuestos';
 
 /** Doc-id builders for `cursos/{cursoId}/contenido/*` (RQ-PR11). */
 export const contenidoDocId = {
@@ -80,6 +86,21 @@ export function userMovimientosCollectionRef(db: Firestore, uid: string) {
 
 export function userMovimientoDocRef(db: Firestore, uid: string, movimientoId: string) {
   return doc(db, FIRESTORE_COLLECTIONS.users, uid, FIRESTORE_COLLECTIONS.movimientos, movimientoId);
+}
+
+/**
+ * Budgets config doc (RQ-ES11-CA1): `users/{uid}/config/presupuestos`. Self-only
+ * (isSelf); topes por categoría. No staff/admin read. Deleted by
+ * suppressStudentData (CA10).
+ */
+export function userConfigPresupuestosDocRef(db: Firestore, uid: string) {
+  return doc(
+    db,
+    FIRESTORE_COLLECTIONS.users,
+    uid,
+    FIRESTORE_COLLECTIONS.config,
+    USER_CONFIG_PRESUPUESTOS_DOC_ID
+  );
 }
 
 /**
@@ -185,6 +206,29 @@ export function estudianteImpactTestDocRef(
   fase: 'pre' | 'post'
 ) {
   return doc(db, C.colegios, colegioId, C.cursos, cursoId, C.estudiantes, uid, C.impactTest, fase);
+}
+
+/**
+ * Reto signal (RQ-PR14): `.../estudiantes/{uid}/retos/{retoId}` with doc id =
+ * assignment id. Self-write, profesor-read; carries ONLY estado + timestamps.
+ */
+export function estudianteRetosCollectionRef(
+  db: Firestore,
+  colegioId: string,
+  cursoId: string,
+  uid: string
+) {
+  return collection(db, C.colegios, colegioId, C.cursos, cursoId, C.estudiantes, uid, C.retos);
+}
+
+export function estudianteRetoEstadoDocRef(
+  db: Firestore,
+  colegioId: string,
+  cursoId: string,
+  uid: string,
+  retoId: string
+) {
+  return doc(db, C.colegios, colegioId, C.cursos, cursoId, C.estudiantes, uid, C.retos, retoId);
 }
 
 /** Per-course aggregates roll-up (RQ-FN09). No individual minor data. */

@@ -56,6 +56,33 @@ service cloud.firestore {
         /databases/$(database)/documents/colegios/$(cid)/cursos/$(cursoId)/estudiantes/$(uid)
       ).data.estado == 'activo';
     }
+    // Shape of an assignment doc (RQ-PR04 mundo, or RQ-PR14 reto). A reto brief
+    // can ONLY carry {tipo, cantidad} — a teacher cannot attach free text or
+    // montos. `kind` absent = legacy mundo (zero migration). v1 reto enum is only
+    // the two least-revealing types; the rest ship after S7/CP sign-off.
+    function asignacionShapeValida(d) {
+      return d.keys().hasOnly(['kind', 'worldId', 'reto', 'target', 'fechaInicio', 'deadline', 'createdByUid', 'createdAt'])
+        && d.target.keys().hasOnly(['tipo', 'cursoId', 'uid'])
+        && d.target.tipo in ['curso', 'estudiante']
+        && d.target.cursoId is string
+        && (d.target.tipo == 'curso' ? !('uid' in d.target.keys()) : d.target.uid is string)
+        && d.fechaInicio is number
+        && d.deadline is number
+        && d.deadline > d.fechaInicio
+        && d.createdByUid is string
+        && d.createdAt is number
+        && (
+          ((!('kind' in d.keys()) || d.kind == 'mundo') && d.worldId is string && !('reto' in d.keys()))
+          ||
+          (d.kind == 'reto'
+            && !('worldId' in d.keys())
+            && d.reto.keys().hasOnly(['tipo', 'cantidad'])
+            && d.reto.tipo in ['registrar_movimientos', 'crear_meta']
+            && d.reto.cantidad is int
+            && d.reto.cantidad >= 1
+            && d.reto.cantidad <= 100)
+        );
+    }
 
     // ---- tenancy tree ----
     match /colegios/{cid} {
@@ -180,6 +207,40 @@ service cloud.firestore {
               && request.resource.data.takenAt is number;
             allow delete: if false;
           }
+
+          // Reto financiero signal (RQ-PR14). The ONLY diary-derived datum that
+          // crosses into the course tree: {estado, timestamps}. hasOnly makes it
+          // IMPOSSIBLE to carry montos/categorías/descripciones. sin_empezar =
+          // ABSENCE of the doc. The student computes the transition from their
+          // LOCAL stores and writes it; no Function or rule reads movimientos.
+          match /retos/{retoId} {
+            allow read: if isProfesorDe(cid, cursoId) || isEstudianteSelf(uid);
+            allow create, update: if isEstudianteSelf(uid)
+              && sameColegio(cid)
+              && request.auth.token.cursoId == cursoId
+              && estudianteActivo(cid, cursoId, uid)
+              && request.resource.data.keys().hasOnly(['colegioId', 'cursoId', 'uid', 'retoId', 'estado', 'updatedAt', 'cumplidoAt'])
+              && request.resource.data.colegioId == cid
+              && request.resource.data.cursoId == cursoId
+              && request.resource.data.uid == uid
+              && request.resource.data.retoId == retoId
+              && request.resource.data.estado in ['en_progreso', 'cumplido']
+              && request.resource.data.updatedAt is number
+              // Anti-backdating: anclado a request.time con tolerancia de skew
+              // (10 min atrás, 1 min adelante). Habilita la marca "cumplido tardío".
+              && request.resource.data.updatedAt >= request.time.toMillis() - 600000
+              && request.resource.data.updatedAt <= request.time.toMillis() + 60000
+              && (!('cumplidoAt' in request.resource.data.keys())
+                  || (request.resource.data.cumplidoAt is number && request.resource.data.estado == 'cumplido'))
+              // El reto referenciado existe, es kind 'reto' y apunta a ESTE curso
+              // (mismo doc que get() → dedupe; impide señalar retos inexistentes o
+              // de otro curso). Firestore de-dupes los dos get() al mismo path.
+              && get(/databases/$(database)/documents/colegios/$(cid)/asignaciones/$(retoId)).data.kind == 'reto'
+              && get(/databases/$(database)/documents/colegios/$(cid)/asignaciones/$(retoId)).data.target.cursoId == cursoId
+              // Monotónico: nunca degradar cumplido → en_progreso.
+              && !(resource != null && resource.data.estado == 'cumplido' && request.resource.data.estado != 'cumplido');
+            allow delete: if false;
+          }
         }
 
         // Per-course aggregates (RQ-FN09): NO individual minor data. Readable by
@@ -193,12 +254,17 @@ service cloud.firestore {
       }
 
       match /asignaciones/{aid} {
-        // Staff and students of the colegio can see assignments.
+        // Staff and students of the colegio can see assignments. Safe because a
+        // brief carries no personal data — a reto is only {tipo, cantidad}.
         allow read: if sameColegio(cid);
-        // Create/operate: the target course's teacher (matriz §1.3: "Asignar
-        // mundo con deadline").
-        allow create: if isProfesorDe(cid, request.resource.data.target.cursoId);
-        allow update, delete: if isProfesorDe(cid, resource.data.target.cursoId);
+        // Create/operate: the target course's teacher (matriz §1.3). Shape is now
+        // validated so a reto brief cannot smuggle free text or montos (RQ-PR14).
+        allow create: if isProfesorDe(cid, request.resource.data.target.cursoId)
+          && request.resource.data.createdByUid == request.auth.uid
+          && asignacionShapeValida(request.resource.data);
+        allow update: if isProfesorDe(cid, resource.data.target.cursoId)
+          && asignacionShapeValida(request.resource.data);
+        allow delete: if isProfesorDe(cid, resource.data.target.cursoId);
       }
     }
 
@@ -253,6 +319,20 @@ service cloud.firestore {
           && request.resource.data.descripcion.size() <= 140
           && request.resource.data.categoria in ['comida', 'transporte', 'entretenimiento', 'ropa', 'educacion', 'tecnologia', 'regalos', 'otros']
           && request.resource.data.origen in ['voz', 'manual'];
+      }
+
+      // Budgets config (RQ-ES11-CA1). Self-only, self-view: NO staff/admin read,
+      // like movimientos (CA5). Written whole (no merge) so removing a tope drops
+      // the key. hasOnly pins the shape and the category keys; the client writes
+      // this doc directly (setDoc) — the rules are the only server-side gate.
+      match /config/{docId} {
+        allow read, delete: if isSelf(userId);
+        allow create, update: if isSelf(userId)
+          && docId == 'presupuestos'
+          && request.resource.data.keys().hasOnly(['topes', 'updatedAt'])
+          && request.resource.data.updatedAt is number
+          && request.resource.data.topes is map
+          && request.resource.data.topes.keys().hasOnly(['comida', 'transporte', 'entretenimiento', 'ropa', 'educacion', 'tecnologia', 'regalos', 'otros']);
       }
     }
 

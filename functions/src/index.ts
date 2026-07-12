@@ -536,8 +536,17 @@ export const suppressStudentData = onCall(async (request) => {
   // Delete all per-world progress + impact tests (the minor's generated data).
   await db.recursiveDelete(estRef.collection('progress'));
   await db.recursiveDelete(estRef.collection('impactTest'));
-  // Pocket-money diary (RQ-ES10 CA7) — account-scoped, so it lives under users/.
-  await db.recursiveDelete(db.doc(`users/${uid}`).collection('movimientos'));
+  // Reto signals (RQ-PR14 CA9) — derived from the diary, live under the student.
+  await db.recursiveDelete(estRef.collection('retos'));
+  // Account-scoped data under users/{uid}: the pocket-money diary (RQ-ES10 CA7),
+  // the budgets config (RQ-ES11 CA10), and the simulated savings goals/deposits
+  // that the prior suppression left behind (goals/deposits also derive the diary
+  // bridge D-ES10-04, so a complete Ley 1581 erasure must include them).
+  const userRef = db.doc(`users/${uid}`);
+  await db.recursiveDelete(userRef.collection('movimientos'));
+  await db.recursiveDelete(userRef.collection('config'));
+  await db.recursiveDelete(userRef.collection('goals'));
+  await db.recursiveDelete(userRef.collection('deposits'));
 
   await estRef.set(
     {
@@ -722,25 +731,36 @@ export const procesarRegistroVoz = onCall({ secrets: [GROQ_API_KEY] }, async (re
 
   await assertVozBudgetAvailable(caller.uid);
 
-  let resultado;
+  let movimientos;
   try {
-    resultado = await clasificarTexto(texto, groqCaller(GROQ_API_KEY.value()));
+    // maxTokens 600 (RQ-ES11-CA5): las frases de 4-5 ítems no caben en 300 y se
+    // truncarían — perder ítems o romper el JSON.
+    movimientos = await clasificarTexto(
+      texto,
+      groqCaller(GROQ_API_KEY.value(), { maxTokens: 600 })
+    );
   } catch (e) {
     // Log the REAL cause (bad key, model access, quota, bad request) — el
     // HttpsError que devolvemos es genérico, así que sin esto el error se pierde.
     console.error('procesarRegistroVoz: fallo de clasificación', e);
     if (e instanceof ModelApiError) {
-      // HTTP/red/timeout del proveedor: reintentar. No se cobra cuota — el fallo
-      // es del servidor/proveedor, no del estudiante.
+      // Fallo PRE-invocación (red/HTTP/timeout): el proveedor no entregó cuerpo →
+      // NO se cobra cuota; el estudiante puede reintentar.
       throw new HttpsError('unavailable', 'El clasificador no está disponible, intenta de nuevo.');
     }
-    // JSON/forma inválida del modelo: bug nuestro o del modelo, no del usuario.
+    // El proveedor respondió pero la salida no parsea (JSON truncado/roto): Groq
+    // YA se facturó, así que SÍ se cobra cuota para acotar el gasto. Sin esto un
+    // cliente con claim válido podría hacer llamadas Groq ilimitadas en bucle con
+    // entradas que no parsean, sin tocar el cap.
+    await chargeVozBudget(caller.uid);
     throw new HttpsError('internal', 'No se pudo clasificar el registro.');
   }
 
-  // Solo un éxito consume cuota (CA8).
+  // Un éxito consume 1 unidad sin importar cuántos ítems traiga (CA8/RQ-ES11-CA5).
   await chargeVozBudget(caller.uid);
-  return resultado;
+  // Compat bidireccional: proyecta el primer ítem a nivel raíz (cliente viejo) y
+  // adjunta la lista completa (cliente nuevo). La lista trae siempre ≥1 ítem.
+  return { ...movimientos[0], movimientos };
 });
 
 // ---------------------------------------------------------------------------

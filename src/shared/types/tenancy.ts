@@ -170,13 +170,61 @@ export type AsignacionTarget =
   | { tipo: 'curso'; cursoId: string }
   | { tipo: 'estudiante'; cursoId: string; uid: string };
 
+/**
+ * Asignación de mundo (RQ-PR04). `kind` ausente = 'mundo' legacy: los docs
+ * existentes siguen válidos sin migración.
+ */
 export type Asignacion = {
+  kind?: 'mundo';
   worldId: string;
   target: AsignacionTarget;
   fechaInicio: number;
   deadline: number;
   createdByUid: string;
   createdAt: number;
+};
+
+/**
+ * Catálogo de tipos de reto. v1 (rules) solo permite `registrar_movimientos` y
+ * `crear_meta`; los demás quedan diferidos hasta que compliance-ley1581 (S7) y
+ * CP aprueben su fuga documentada (RQ-PR14-CA2).
+ */
+export type RetoFinancieroTipo =
+  | 'registrar_movimientos'
+  | 'crear_meta'
+  | 'racha_dias'
+  | 'registrar_ahorros'
+  | 'abonar_meta'
+  | 'cumplir_tope';
+
+/** Reto financiero (RQ-PR14): consigna medible, sin texto libre ni montos. */
+export type AsignacionReto = {
+  kind: 'reto';
+  reto: { tipo: RetoFinancieroTipo; cantidad: number };
+  target: AsignacionTarget;
+  fechaInicio: number;
+  deadline: number;
+  createdByUid: string;
+  createdAt: number;
+};
+
+export type AsignacionAny = Asignacion | AsignacionReto;
+
+export type RetoEstado = 'en_progreso' | 'cumplido';
+
+/**
+ * Señal de estado de reto (RQ-PR14). ÚNICO dato derivado del diario que cruza al
+ * árbol del curso: estado + timestamps, nunca montos/categorías/descripciones.
+ * `sin_empezar` = AUSENCIA del doc.
+ */
+export type RetoEstadoDoc = {
+  colegioId: string;
+  cursoId: string;
+  uid: string;
+  retoId: string;
+  estado: RetoEstado;
+  updatedAt: number;
+  cumplidoAt?: number;
 };
 
 /**
