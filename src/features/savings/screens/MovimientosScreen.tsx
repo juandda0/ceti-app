@@ -26,9 +26,14 @@ import Segmented from '@features/savings/components/Segmented';
 import VoiceCaptureSheet from '@features/savings/components/VoiceCaptureSheet';
 import MovimientoListItem from '@features/savings/components/MovimientoListItem';
 import MovimientosCharts from '@features/savings/components/MovimientosCharts';
+import ConfirmMovimientosListSheet from '@features/savings/components/ConfirmMovimientosListSheet';
 import { matchGoal } from '@features/savings/data/matchGoal';
 import { movimientosOrdenados } from '@features/savings/data/movimientosStats';
-import { vozService, type ClasificacionMovimiento } from '@features/savings/data/vozService';
+import {
+  vozService,
+  normalizarRespuestaVoz,
+  type ClasificacionMovimiento,
+} from '@features/savings/data/vozService';
 import { useVoiceCapture } from '@features/savings/hooks/useVoiceCapture';
 import { useMovimientosStore } from '@features/savings/store/useMovimientosStore';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
@@ -58,6 +63,8 @@ export default function MovimientosScreen() {
   const [metaPropuesta, setMetaPropuesta] = useState<MetaPropuesta | null>(null);
   const [metaSheetVisible, setMetaSheetVisible] = useState(false);
   const [segment, setSegment] = useState<'historial' | 'resumen'>('historial');
+  const [listaItems, setListaItems] = useState<ClasificacionMovimiento[] | null>(null);
+  const [listaVisible, setListaVisible] = useState(false);
 
   const onTranscript = (texto: string) => {
     setProcessing(true);
@@ -65,9 +72,18 @@ export default function MovimientosScreen() {
       const rutaGoalId = typeof goalId === 'string' ? goalId : undefined;
       try {
         const r = await vozService.procesarRegistroVoz(texto);
+        const items = normalizarRespuestaVoz(r);
+        // Varios movimientos en una sola frase → confirmación en lote
+        // (RQ-ES11-CA8). En lote el servidor ya descartó no_entendido/crear_meta.
+        if (items.length > 1) {
+          setListaItems(items);
+          setListaVisible(true);
+          return;
+        }
+        const single = items[0];
         // La IA filtró la frase (no es sobre dinero, o trae groserías/contenido
         // sensible): "no te entendí" y no abrimos ninguna tarjeta.
-        if (r.intencion === 'no_entendido') {
+        if (single.intencion === 'no_entendido') {
           showCetiNotice({
             variant: 'info',
             title: t('movimientos.noEntendiTitle'),
@@ -76,17 +92,17 @@ export default function MovimientosScreen() {
           return;
         }
         // Ramifica por intención detectada por palabra clave (D-ES10-06).
-        if (r.intencion === 'crear_meta') {
-          setMetaPropuesta({ nombre: r.descripcion, objetivo: r.monto });
+        if (single.intencion === 'crear_meta') {
+          setMetaPropuesta({ nombre: single.descripcion, objetivo: single.monto });
           setMetaSheetVisible(true);
           return;
         }
-        if (r.intencion === 'abonar_meta') {
-          const g = matchGoal(r.descripcion, goals);
-          setClasificacion({ ...r, tipo: 'ahorro' });
+        if (single.intencion === 'abonar_meta') {
+          const g = matchGoal(single.descripcion, goals);
+          setClasificacion({ ...single, tipo: 'ahorro' });
           setPreGoalId(g?.id ?? rutaGoalId);
         } else {
-          setClasificacion(r);
+          setClasificacion(single);
           setPreGoalId(rutaGoalId);
         }
         setSheetVisible(true);
@@ -251,6 +267,12 @@ export default function MovimientosScreen() {
         visible={metaSheetVisible}
         propuesta={metaPropuesta}
         onClose={() => setMetaSheetVisible(false)}
+      />
+
+      <ConfirmMovimientosListSheet
+        visible={listaVisible}
+        items={listaItems}
+        onClose={() => setListaVisible(false)}
       />
     </>
   );

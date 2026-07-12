@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { showMessage } from '@shared/lib/dialogs';
 import type { WorldId } from '@features/learning/data/quiz.types';
+import type { RetoFinancieroTipo } from '@shared/types/tenancy';
 import {
   asignacionRepository,
   type AsignacionWithId,
@@ -13,6 +14,10 @@ import { assignmentStatus, daysUntil } from '@features/dashboard/data/assignment
 
 const DAY = 24 * 60 * 60 * 1000;
 const WORLD_IDS: WorldId[] = ['world_1', 'world_2', 'world_3', 'world_4', 'world_5'];
+// v1: solo los dos tipos menos reveladores del comportamiento (RQ-PR14-CA2). Los
+// demás se habilitan tras el visto de compliance-ley1581 (S7) y CP.
+const RETO_TIPOS: RetoFinancieroTipo[] = ['registrar_movimientos', 'crear_meta'];
+const CANTIDAD_PRESETS = [3, 5, 10];
 const DEADLINE_PRESETS = [
   { key: '1w', days: 7 },
   { key: '2w', days: 14 },
@@ -23,7 +28,7 @@ function worldNumber(worldId: WorldId): number {
   return Number(worldId.replace('world_', ''));
 }
 
-/** Teacher panel to create simple "complete World X before date Y" assignments and list them. */
+/** Teacher panel to create mundo assignments or retos financieros, and list them. */
 export default function AssignmentsManager({
   colegioId,
   cursoId,
@@ -38,7 +43,10 @@ export default function AssignmentsManager({
 
   const [items, setItems] = useState<AsignacionWithId[]>([]);
   const [loading, setLoading] = useState(true);
+  const [mode, setMode] = useState<'mundo' | 'reto'>('mundo');
   const [world, setWorld] = useState<WorldId>('world_1');
+  const [retoTipo, setRetoTipo] = useState<RetoFinancieroTipo>('registrar_movimientos');
+  const [cantidad, setCantidad] = useState<number>(5);
   const [days, setDays] = useState<number>(7);
   const [creating, setCreating] = useState(false);
 
@@ -66,14 +74,22 @@ export default function AssignmentsManager({
     setCreating(true);
     try {
       const now = Date.now();
-      await asignacionRepository.create(colegioId, {
-        worldId: world,
-        target: { tipo: 'curso', cursoId },
+      const base = {
+        target: { tipo: 'curso' as const, cursoId },
         fechaInicio: now,
         deadline: now + days * DAY,
         createdByUid,
         createdAt: now,
-      });
+      };
+      if (mode === 'reto') {
+        await asignacionRepository.create(colegioId, {
+          kind: 'reto',
+          reto: { tipo: retoTipo, cantidad },
+          ...base,
+        });
+      } else {
+        await asignacionRepository.create(colegioId, { worldId: world, ...base });
+      }
       await reload();
     } catch (e) {
       showMessage(
@@ -84,61 +100,93 @@ export default function AssignmentsManager({
     } finally {
       setCreating(false);
     }
-  }, [colegioId, cursoId, world, days, createdByUid, reload, t]);
+  }, [colegioId, cursoId, mode, world, retoTipo, cantidad, days, createdByUid, reload, t]);
 
   const now = Date.now();
   const sorted = useMemo(() => [...items].sort((a, b) => a.deadline - b.deadline), [items]);
+
+  const chipStyle = (selected: boolean) => [
+    styles.chip,
+    {
+      backgroundColor: selected ? colors.brand.primary : colors.background.secondary,
+      borderColor: selected ? colors.brand.primary : colors.background.secondary,
+    },
+  ];
+  const chipTextStyle = (selected: boolean) => [
+    styles.chipText,
+    { color: selected ? '#fff' : colors.text.secondary },
+  ];
 
   return (
     <View style={styles.wrap}>
       <Text style={[styles.title, { color: colors.text.primary }]}>{t('assignments.title')}</Text>
 
-      {/* World picker */}
+      {/* Mundo | Reto */}
       <View style={styles.chipRow}>
-        {WORLD_IDS.map((w) => {
-          const selected = w === world;
-          return (
-            <TouchableOpacity
-              key={w}
-              onPress={() => setWorld(w)}
-              style={[
-                styles.chip,
-                {
-                  backgroundColor: selected ? colors.brand.primary : colors.background.secondary,
-                  borderColor: selected ? colors.brand.primary : colors.background.secondary,
-                },
-              ]}
-            >
-              <Text style={[styles.chipText, { color: selected ? '#fff' : colors.text.secondary }]}>
+        {(['mundo', 'reto'] as const).map((m) => (
+          <TouchableOpacity
+            key={m}
+            onPress={() => setMode(m)}
+            style={chipStyle(mode === m)}
+            accessibilityRole="button"
+          >
+            <Text style={chipTextStyle(mode === m)}>{t(`assignments.mode_${m}`)}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {mode === 'mundo' ? (
+        <View style={styles.chipRow}>
+          {WORLD_IDS.map((w) => (
+            <TouchableOpacity key={w} onPress={() => setWorld(w)} style={chipStyle(w === world)}>
+              <Text style={chipTextStyle(w === world)}>
                 {t('assignments.world', { n: worldNumber(w) })}
               </Text>
             </TouchableOpacity>
-          );
-        })}
-      </View>
+          ))}
+        </View>
+      ) : (
+        <>
+          <View style={styles.chipRow}>
+            {RETO_TIPOS.map((tp) => (
+              <TouchableOpacity
+                key={tp}
+                onPress={() => setRetoTipo(tp)}
+                style={chipStyle(tp === retoTipo)}
+              >
+                <Text style={chipTextStyle(tp === retoTipo)}>
+                  {t(`assignments.retoTipo_${tp}`)}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          <View style={styles.chipRow}>
+            {CANTIDAD_PRESETS.map((c) => (
+              <TouchableOpacity
+                key={c}
+                onPress={() => setCantidad(c)}
+                style={chipStyle(c === cantidad)}
+              >
+                <Text style={chipTextStyle(c === cantidad)}>
+                  {t('assignments.cantidadN', { n: c })}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </>
+      )}
 
-      {/* Deadline preset */}
+      {/* Deadline preset (compartido) */}
       <View style={styles.chipRow}>
-        {DEADLINE_PRESETS.map((p) => {
-          const selected = p.days === days;
-          return (
-            <TouchableOpacity
-              key={p.key}
-              onPress={() => setDays(p.days)}
-              style={[
-                styles.chip,
-                {
-                  backgroundColor: selected ? colors.brand.primary : colors.background.secondary,
-                  borderColor: selected ? colors.brand.primary : colors.background.secondary,
-                },
-              ]}
-            >
-              <Text style={[styles.chipText, { color: selected ? '#fff' : colors.text.secondary }]}>
-                {t(`assignments.deadline_${p.key}`)}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
+        {DEADLINE_PRESETS.map((p) => (
+          <TouchableOpacity
+            key={p.key}
+            onPress={() => setDays(p.days)}
+            style={chipStyle(p.days === days)}
+          >
+            <Text style={chipTextStyle(p.days === days)}>{t(`assignments.deadline_${p.key}`)}</Text>
+          </TouchableOpacity>
+        ))}
       </View>
 
       <TouchableOpacity
@@ -154,7 +202,6 @@ export default function AssignmentsManager({
         <Text style={styles.createText}>{t('assignments.create')}</Text>
       </TouchableOpacity>
 
-      {/* List */}
       {loading ? (
         <ActivityIndicator style={{ marginTop: 8 }} color={colors.brand.primary} />
       ) : sorted.length === 0 ? (
@@ -169,12 +216,19 @@ export default function AssignmentsManager({
               : status === 'active'
                 ? colors.system.green
                 : colors.text.tertiary;
+          const titulo =
+            a.kind === 'reto'
+              ? t(`assignments.retoItem_${a.reto.tipo}`, { n: a.reto.cantidad })
+              : t('assignments.itemTitle', { n: worldNumber(a.worldId as WorldId) });
           return (
             <View key={a.id} style={[styles.itemRow, { borderColor: colors.background.secondary }]}>
+              <Ionicons
+                name={a.kind === 'reto' ? 'flag-outline' : 'planet-outline'}
+                size={16}
+                color={colors.text.secondary}
+              />
               <View style={{ flex: 1 }}>
-                <Text style={[styles.itemTitle, { color: colors.text.primary }]}>
-                  {t('assignments.itemTitle', { n: worldNumber(a.worldId as WorldId) })}
-                </Text>
+                <Text style={[styles.itemTitle, { color: colors.text.primary }]}>{titulo}</Text>
                 <Text style={[styles.itemDue, { color: colors.text.tertiary }]}>
                   {t('assignments.due', { date: new Date(a.deadline).toLocaleDateString('es-CO') })}
                 </Text>

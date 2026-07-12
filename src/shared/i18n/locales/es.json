@@ -33,6 +33,12 @@
     "error": "No se pudo cargar el reporte.",
     "noData": "Aún no hay progreso registrado en este curso.",
     "weakest": "Competencia más floja del curso: {{competencia}} ({{pct}} promedio)",
+    "retosTitle": "Cumplimiento de retos",
+    "retosPrivacidad": "Ves si cumplieron, nunca sus montos ni en qué gastan. Progreso autodeclarado por el estudiante.",
+    "retoResumen": "{{cumplido}} cumplido · {{progreso}} en progreso · {{sin}} sin empezar",
+    "retoEstado_cumplido": "Cumplido",
+    "retoEstado_en_progreso": "En progreso",
+    "retoEstado_sin_empezar": "Sin empezar",
     "students": "Estudiantes ({{count}})",
     "exportCsv": "Exportar CSV",
     "exportPdf": "Imprimir / PDF",
@@ -171,7 +177,15 @@
     "daysLeft": "{{n}} días",
     "studentTitle": "Tus tareas",
     "studentItem": "Completar Mundo {{n}} antes del {{date}}",
-    "error": "No se pudo crear la asignación."
+    "error": "No se pudo crear la asignación.",
+    "mode_mundo": "Mundo",
+    "mode_reto": "Reto",
+    "cantidadN": "{{n}}",
+    "retoTipo_registrar_movimientos": "Registrar movimientos",
+    "retoTipo_crear_meta": "Crear una meta",
+    "retoItem_registrar_movimientos": "Registrar {{n}} movimientos",
+    "retoItem_crear_meta": "Crear {{n}} meta(s) de ahorro",
+    "retoPrivacidad": "Tu profe solo ve si lo cumpliste, nunca tus movimientos."
   },
   "microteoria": {
     "badge": "Micro-teoría",
@@ -413,7 +427,40 @@
     "metaReviewTitle": "Faltan datos",
     "metaReviewMsg": "Ponle nombre a tu meta y cuánto quieres juntar.",
     "metaCreadaTitle": "¡Meta creada!",
-    "metaCreadaMsg": "Ya puedes abonarle por voz."
+    "metaCreadaMsg": "Ya puedes abonarle por voz.",
+    "multiTitle": "Anoté varios movimientos",
+    "multiSubtitle": "Revisa, corrige el monto o quita antes de guardar.",
+    "confirmarTodos": "Guardar todo ({{count}})",
+    "quitar": "Quitar"
+  },
+  "presupuestos": {
+    "titulo": "Mis topes",
+    "subtitulo": "Ponte un límite de gasto por semana en cada categoría.",
+    "topesTitulo": "Topes de la semana",
+    "definir": "Definir topes",
+    "vacio": "Aún no tienes topes. Ponte uno para cuidar tu gasto.",
+    "sinTope": "Sin tope",
+    "listo": "Listo",
+    "topeDe": "Tope de {{categoria}}",
+    "estado": {
+      "ok": "Vas bien",
+      "cerca": "Cerca del tope",
+      "excedido": "Te pasaste"
+    }
+  },
+  "insights": {
+    "topeExcedido": "Te pasaste del tope de {{categoria}} esta semana.",
+    "topeCerca": "Vas cerca del tope de {{categoria}}.",
+    "gastoSubio": "Gastaste {{pct}}% más que la semana pasada.",
+    "ritmoMeta": "A este ritmo llegas a tu meta en {{meses}} meses.",
+    "racha": "Llevas {{dias}} días registrando. ¡Sigue así!",
+    "semanasCumpliendo": "Llevas {{semanas}} semanas cumpliendo tus topes.",
+    "mayorCategoria": "Este mes gastas más en {{categoria}}.",
+    "balancePositivo": "Vas en positivo este mes. ¡Bien hecho!"
+  },
+  "racha": {
+    "dias": "{{dias}} días registrando",
+    "hoyPendiente": "registra hoy para no perderla"
   },
   "profile": {
     "pageTitle": "Mi perfil",

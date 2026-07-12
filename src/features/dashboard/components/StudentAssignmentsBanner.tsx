@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,14 +10,18 @@ import {
   type AsignacionWithId,
 } from '@features/dashboard/data/asignacionRepository';
 import { assignmentStatus } from '@features/dashboard/data/assignmentStatus';
+import { useRetoCompletionSync } from '@features/dashboard/hooks/useRetoCompletionSync';
+import type { RetoAsignado, RetoCoords } from '@features/dashboard/data/retoSync';
 
 function worldNumber(worldId: string): number {
   return Number(worldId.replace('world_', ''));
 }
 
 /**
- * Shows the provisioned student their pending assignments ("complete World X
- * before date Y"). Renders nothing if not provisioned or no active assignments.
+ * Muestra al estudiante sus tareas activas: mundos ("completa el mundo X") y
+ * retos financieros (RQ-PR14). Para los retos, monta el sync de cumplimiento
+ * (evalúa el diario LOCAL y publica solo la señal de estado). No renderiza nada
+ * si no está aprovisionado o no hay tareas activas.
  */
 export default function StudentAssignmentsBanner() {
   const { t } = useTranslation();
@@ -25,6 +29,7 @@ export default function StudentAssignmentsBanner() {
   const role = useAuthStore((s) => s.role);
   const colegioId = useAuthStore((s) => s.colegioId);
   const cursoId = useAuthStore((s) => s.cursoId);
+  const uid = useAuthStore((s) => s.firebaseUid);
 
   const [items, setItems] = useState<AsignacionWithId[]>([]);
 
@@ -44,7 +49,34 @@ export default function StudentAssignmentsBanner() {
     .filter((a) => assignmentStatus(a, now, false) !== 'upcoming')
     .sort((a, b) => a.deadline - b.deadline);
 
+  // Retos vigentes → sync de cumplimiento (evaluación 100% local; solo cruza el
+  // estado). Debe llamarse SIEMPRE (hooks), antes de cualquier return condicional.
+  const retosAsignados = useMemo<RetoAsignado[]>(() => {
+    const out: RetoAsignado[] = [];
+    for (const a of items) {
+      if (a.kind === 'reto') {
+        out.push({
+          id: a.id,
+          tipo: a.reto.tipo,
+          cantidad: a.reto.cantidad,
+          fechaInicio: a.fechaInicio,
+          deadline: a.deadline,
+        });
+      }
+    }
+    return out;
+  }, [items]);
+
+  const coords = useMemo<RetoCoords | null>(
+    () => (colegioId && cursoId && uid ? { colegioId, cursoId, uid } : null),
+    [colegioId, cursoId, uid]
+  );
+
+  useRetoCompletionSync(retosAsignados, coords);
+
   if (active.length === 0) return null;
+
+  const hayReto = active.some((a) => a.kind === 'reto');
 
   return (
     <View style={[styles.wrap, { backgroundColor: colors.background.elevated }]}>
@@ -56,18 +88,25 @@ export default function StudentAssignmentsBanner() {
       </View>
       {active.map((a) => {
         const overdue = assignmentStatus(a, now, false) === 'overdue';
+        const fecha = new Date(a.deadline).toLocaleDateString('es-CO');
+        const label =
+          a.kind === 'reto'
+            ? `${t(`assignments.retoItem_${a.reto.tipo}`, { n: a.reto.cantidad })} · ${fecha}`
+            : t('assignments.studentItem', { n: worldNumber(a.worldId as WorldId), date: fecha });
         return (
           <Text
             key={a.id}
             style={[styles.item, { color: overdue ? colors.system.red : colors.text.secondary }]}
           >
-            {t('assignments.studentItem', {
-              n: worldNumber(a.worldId as WorldId),
-              date: new Date(a.deadline).toLocaleDateString('es-CO'),
-            })}
+            {label}
           </Text>
         );
       })}
+      {hayReto && (
+        <Text style={[styles.privacy, { color: colors.text.tertiary }]}>
+          {t('assignments.retoPrivacidad')}
+        </Text>
+      )}
     </View>
   );
 }
@@ -77,4 +116,5 @@ const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   title: { fontSize: 14, fontWeight: '700' },
   item: { fontSize: 13, lineHeight: 18 },
+  privacy: { fontSize: 12, fontStyle: 'italic', marginTop: 2 },
 });

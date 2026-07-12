@@ -1,25 +1,51 @@
 /**
- * Resumen del mes, solo-vista-propia (RQ-ES10 CA5). Compactado (P0.2/P1.2):
- * 2 stat-tiles (Ahorros/Gastos) + línea de balance + top-3 categorías de gasto.
- * Sin barras normalizadas (engañan con datos escasos) ni cifras redundantes.
+ * Resumen "Mi dinero", solo-vista-propia (RQ-ES10 CA5 / RQ-ES11): racha +
+ * insights por reglas + ahorros/gastos del mes + top categorías + topes de la
+ * semana. Todo se deriva en cliente; lo único persistido son los topes (config
+ * del usuario). Cero ML, cero datos para staff.
  */
-import { StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Typography } from '@shared/constants/typography';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { formatDisplayCopGoals } from '@shared/utils/formatDisplayCop';
 import StatTile from '@features/savings/components/StatTile';
+import RachaChip from '@features/savings/components/RachaChip';
+import InsightCards from '@features/savings/components/InsightCards';
+import BudgetBar from '@features/savings/components/BudgetBar';
+import PresupuestosSheet from '@features/savings/components/PresupuestosSheet';
 import { totalesDelMes, totalesPorCategoria } from '@features/savings/data/movimientosStats';
-import type { Movimiento } from '@features/savings/store/useMovimientosStore';
+import { gastoSemanalPorCategoria } from '@features/savings/data/presupuestos';
+import { usePresupuestosStore } from '@features/savings/store/usePresupuestosStore';
+import { useSavingsStore } from '@features/savings/store/useSavingsStore';
+import type { Movimiento, MovimientoCategoria } from '@features/savings/store/useMovimientosStore';
 
 export default function MovimientosCharts({ movimientos }: { movimientos: Movimiento[] }) {
   const colors = useThemeColors();
   const { t } = useTranslation();
+  const [topesOpen, setTopesOpen] = useState(false);
+  const topes = usePresupuestosStore((s) => s.topes);
+  const goals = useSavingsStore((s) => s.goals);
+  const deposits = useSavingsStore((s) => s.deposits);
+
   const { ahorros, gastos, balance } = totalesDelMes(movimientos);
   const topCategorias = totalesPorCategoria(movimientos, 'gasto').slice(0, 3);
+  const gastoSem = gastoSemanalPorCategoria(movimientos);
+  const topesConValor = (Object.entries(topes) as [MovimientoCategoria, number][]).filter(
+    ([, v]) => v > 0
+  );
 
   return (
     <View style={styles.wrap}>
+      <RachaChip movimientos={movimientos} />
+      <InsightCards
+        movimientos={movimientos}
+        goals={goals}
+        deposits={deposits}
+        presupuestos={topes}
+      />
+
       <Text style={[styles.scope, { color: colors.text.tertiary }]}>
         {t('movimientos.esteMes')}
       </Text>
@@ -73,6 +99,34 @@ export default function MovimientosCharts({ movimientos }: { movimientos: Movimi
           ))}
         </View>
       )}
+
+      <View style={styles.topesBox}>
+        <View style={styles.topesHead}>
+          <Text style={[styles.catTitle, { color: colors.text.primary }]}>
+            {t('presupuestos.topesTitulo')}
+          </Text>
+          <TouchableOpacity
+            onPress={() => setTopesOpen(true)}
+            hitSlop={8}
+            accessibilityRole="button"
+          >
+            <Text style={[styles.definir, { color: colors.brand.primary }]}>
+              {t('presupuestos.definir')}
+            </Text>
+          </TouchableOpacity>
+        </View>
+        {topesConValor.length === 0 ? (
+          <Text style={[styles.vacio, { color: colors.text.tertiary }]}>
+            {t('presupuestos.vacio')}
+          </Text>
+        ) : (
+          topesConValor.map(([cat, tope]) => (
+            <BudgetBar key={cat} categoria={cat} gastado={gastoSem[cat] ?? 0} tope={tope} />
+          ))
+        )}
+      </View>
+
+      <PresupuestosSheet visible={topesOpen} onClose={() => setTopesOpen(false)} />
     </View>
   );
 }
@@ -100,4 +154,8 @@ const styles = StyleSheet.create({
   catRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12 },
   catLabel: { ...Typography.body, flex: 1 },
   catAmount: { ...Typography.body, fontWeight: '700' },
+  topesBox: { gap: 12, marginTop: 2 },
+  topesHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  definir: { ...Typography.subheadline, fontWeight: '700' },
+  vacio: { ...Typography.subheadline },
 });

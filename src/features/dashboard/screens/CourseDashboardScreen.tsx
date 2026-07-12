@@ -15,19 +15,22 @@ import ScreenWrapper from '@shared/components/ScreenWrapper';
 import BackButton from '@shared/components/BackButton';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
-import { loadCourseReport } from '@features/dashboard/data/loadCourseReport';
-import { courseReportToCsv, type CourseReport } from '@features/dashboard/data/courseReport';
+import {
+  loadCourseReport,
+  type CourseReportWithRetos,
+} from '@features/dashboard/data/loadCourseReport';
+import { courseReportToCsv } from '@features/dashboard/data/courseReport';
 import { buildWeaknessReport } from '@features/dashboard/data/weaknessReport';
 import { buildEarlyWarning, type RiskFlag } from '@features/dashboard/data/earlyWarning';
 import AssignmentsManager from '@features/dashboard/components/AssignmentsManager';
 import { showMessage } from '@shared/lib/dialogs';
+import { downloadTextFile, printPage } from '@shared/lib/export/downloadFile';
 
 const FLAG_KEY: Record<RiskFlag, string> = {
   no_activity: 'dashboard.flagNoActivity',
   stalled: 'dashboard.flagStalled',
   low_mastery: 'dashboard.flagLowMastery',
 };
-import { downloadTextFile, printPage } from '@shared/lib/export/downloadFile';
 
 function pct(m: number): string {
   return `${Math.round(m * 100)}%`;
@@ -44,7 +47,7 @@ export default function CourseDashboardScreen() {
   const cursoId = params.cursoId;
   const cursoNombre = params.nombre ?? cursoId;
 
-  const [report, setReport] = useState<CourseReport | null>(null);
+  const [report, setReport] = useState<CourseReportWithRetos | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
   const weakness = useMemo(() => (report ? buildWeaknessReport(report) : null), [report]);
   const warning = useMemo(() => (report ? buildEarlyWarning(report, Date.now()) : null), [report]);
@@ -273,6 +276,72 @@ export default function CourseDashboardScreen() {
               </View>
             ))}
 
+            {report.retoColumns.length > 0 && (
+              <View style={styles.diag}>
+                <Text style={[styles.sectionLabel, { color: colors.text.secondary }]}>
+                  {t('dashboard.retosTitle')}
+                </Text>
+                <Text style={[styles.retoPrivacy, { color: colors.text.tertiary }]}>
+                  {t('dashboard.retosPrivacidad')}
+                </Text>
+                {report.retoColumns.map((col) => {
+                  let cumplido = 0;
+                  let progreso = 0;
+                  let sinEmp = 0;
+                  for (const s of report.students) {
+                    const e = report.retoEstados[s.uid]?.[col.id] ?? 'sin_empezar';
+                    if (e === 'cumplido') cumplido++;
+                    else if (e === 'en_progreso') progreso++;
+                    else sinEmp++;
+                  }
+                  return (
+                    <View
+                      key={col.id}
+                      style={[styles.retoCard, { backgroundColor: colors.background.secondary }]}
+                    >
+                      <Text style={[styles.diagHead, { color: colors.text.primary }]}>
+                        {t(`assignments.retoItem_${col.tipo}`, { n: col.cantidad })}
+                      </Text>
+                      <Text style={[styles.diagItemSub, { color: colors.text.tertiary }]}>
+                        {t('dashboard.retoResumen', { cumplido, progreso, sin: sinEmp })}
+                      </Text>
+                      {report.students.map((s) => {
+                        const e = report.retoEstados[s.uid]?.[col.id] ?? 'sin_empezar';
+                        const icon: keyof typeof Ionicons.glyphMap =
+                          e === 'cumplido'
+                            ? 'checkmark-circle'
+                            : e === 'en_progreso'
+                              ? 'time-outline'
+                              : 'ellipse-outline';
+                        const color =
+                          e === 'cumplido'
+                            ? colors.system.green
+                            : e === 'en_progreso'
+                              ? colors.system.orange
+                              : colors.text.tertiary;
+                        return (
+                          <View key={s.uid} style={styles.retoStudentRow}>
+                            <Text
+                              style={[styles.retoStudentName, { color: colors.text.primary }]}
+                              numberOfLines={1}
+                            >
+                              {s.nombre}
+                            </Text>
+                            <View style={styles.retoEstadoWrap}>
+                              <Ionicons name={icon} size={16} color={color} />
+                              <Text style={[styles.retoEstadoText, { color }]}>
+                                {t(`dashboard.retoEstado_${e}`)}
+                              </Text>
+                            </View>
+                          </View>
+                        );
+                      })}
+                    </View>
+                  );
+                })}
+              </View>
+            )}
+
             {colegioId && cursoId && uid && (
               <AssignmentsManager colegioId={colegioId} cursoId={cursoId} createdByUid={uid} />
             )}
@@ -349,4 +418,17 @@ const styles = StyleSheet.create({
   studentName: { fontSize: 15, fontWeight: '600' },
   studentEstado: { fontSize: 12 },
   studentMastery: { fontSize: 18, fontWeight: '800' },
+  retoPrivacy: { fontSize: 12, fontStyle: 'italic' },
+  retoCard: { borderRadius: 12, padding: 14, gap: 6 },
+  retoStudentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
+    paddingVertical: 4,
+    width: '100%',
+  },
+  retoStudentName: { fontSize: 14, flex: 1 },
+  retoEstadoWrap: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  retoEstadoText: { fontSize: 12, fontWeight: '700' },
 });

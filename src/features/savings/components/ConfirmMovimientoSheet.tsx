@@ -16,6 +16,7 @@ import { showCetiNotice } from '@shared/store/useCetiOverlayStore';
 import { formatMoneyInputThousands, parseMoneyAmountInt } from '@shared/utils/moneyInputFormat';
 import { formatDisplayCopGoals } from '@shared/utils/formatDisplayCop';
 import { CATEGORIA_ICONS } from '@features/savings/components/MovimientoListItem';
+import { resolverFechaLocal } from '@features/savings/data/fechaRelativa';
 import type { ClasificacionMovimiento } from '@features/savings/data/vozService';
 import {
   MOVIMIENTO_CATEGORIAS,
@@ -78,6 +79,12 @@ export default function ConfirmMovimientoSheet({
       });
       return;
     }
+    // Fecha declarada solo si no es hoy; hoy usa createdAt (fecha ?? createdAt).
+    const offset = clasificacion.offsetDias ?? 0;
+    const fecha =
+      offset !== 0 || clasificacion.diaSemana
+        ? resolverFechaLocal(offset, clasificacion.diaSemana)
+        : undefined;
     addMovimiento({
       tipo,
       monto: num,
@@ -85,6 +92,7 @@ export default function ConfirmMovimientoSheet({
       categoria,
       origen: 'voz',
       goalId: tipo === 'ahorro' ? goalId : undefined,
+      fecha,
     });
     showCetiNotice({
       variant: 'success',
