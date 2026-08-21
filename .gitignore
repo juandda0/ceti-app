@@ -70,3 +70,4 @@ functions/.secret.local
 
 # Artefactos locales del acompañamiento visual
 .superpowers/
+.playwright-cli/
