@@ -67,3 +67,6 @@ content/approved/*.json
 
 # Secrets locales del emulador de functions (RQ-ES10)
 functions/.secret.local
+
+# Artefactos locales del acompañamiento visual
+.superpowers/
