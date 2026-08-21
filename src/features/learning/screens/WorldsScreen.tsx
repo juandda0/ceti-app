@@ -48,6 +48,7 @@ function WorldCard({
   isUnlocked,
   prevWorldName,
   index,
+  isLast,
   colors,
   onPress,
   t,
@@ -59,6 +60,7 @@ function WorldCard({
   /** Name of the previous world in the CLASS order (drives the locked note). */
   prevWorldName?: string;
   index: number;
+  isLast: boolean;
   colors: ThemeColors;
   onPress: () => void;
   t: (key: string, options?: Record<string, unknown>) => string;
@@ -68,9 +70,38 @@ function WorldCard({
   const status = worldStatus(isUnlocked, progress);
 
   return (
-    <Animated.View entering={motion.enterDown(index * 65)}>
+    <Animated.View entering={motion.enterDown(index * 45)} style={cardSt.row}>
+      <View style={cardSt.rail} pointerEvents="none">
+        <View
+          style={[
+            cardSt.railLine,
+            {
+              top: index === 0 ? Spacing.lg + 12 : 0,
+              bottom: isLast ? undefined : 0,
+              height: isLast ? Spacing.lg + 12 : undefined,
+              backgroundColor: colors.materials.border,
+            },
+          ]}
+        />
+        <View
+          style={[
+            cardSt.node,
+            {
+              backgroundColor: isUnlocked ? colors.background.primary : colors.background.secondary,
+              borderColor: isUnlocked ? world.color : colors.materials.border,
+            },
+          ]}
+        >
+          <Ionicons
+            name={status === 'dominado' ? 'checkmark' : isUnlocked ? 'ellipse' : 'lock-closed'}
+            size={status === 'dominado' ? 14 : isUnlocked ? 8 : 12}
+            color={isUnlocked ? world.color : colors.text.quaternary}
+          />
+        </View>
+      </View>
+
       <TouchableOpacity
-        activeOpacity={isUnlocked ? 0.8 : 1}
+        activeOpacity={isUnlocked ? 0.82 : 1}
         onPress={isUnlocked ? onPress : undefined}
         accessibilityRole="button"
         accessibilityLabel={t('worlds.openWorld', { n: world.number })}
@@ -78,22 +109,23 @@ function WorldCard({
         style={[
           cardSt.card,
           {
-            backgroundColor: colors.background.elevated,
-            borderColor: isUnlocked ? world.color : colors.materials.border,
-            borderWidth: isUnlocked ? 1.5 : 1,
-            opacity: isUnlocked ? 1 : 0.46,
+            backgroundColor: colors.background.primary,
+            borderColor: colors.materials.border,
+            opacity: isUnlocked ? 1 : 0.62,
           },
         ]}
       >
         <View
           style={[
             cardSt.iconWrap,
-            { backgroundColor: isUnlocked ? world.color + '20' : colors.materials.highlight },
+            {
+              backgroundColor: isUnlocked ? `${world.color}14` : colors.background.secondary,
+            },
           ]}
         >
           <Ionicons
             name={isUnlocked ? world.iconName : 'lock-closed'}
-            size={26}
+            size={24}
             color={isUnlocked ? world.color : colors.text.quaternary}
           />
         </View>
@@ -343,6 +375,7 @@ export default function WorldsScreen() {
                 isUnlocked={cw.unlocked}
                 prevWorldName={index > 0 ? visibleWorlds[index - 1].def.name : undefined}
                 index={index}
+                isLast={index === visibleWorlds.length - 1}
                 colors={colors}
                 onPress={() => router.push(`/saga/${def.id}` as never)}
                 t={t}
@@ -357,21 +390,23 @@ export default function WorldsScreen() {
 
 const styles = StyleSheet.create({
   scroll: {
+    width: '100%',
+    maxWidth: 680,
+    alignSelf: 'center',
     paddingHorizontal: Spacing.base,
     paddingBottom: 120,
-    gap: Spacing.sm,
   },
   pageTitle: {
     ...Typography.largeTitle,
-    fontWeight: '900',
+    fontWeight: '700',
   },
   pageSubtitle: {
     ...Typography.subheadline,
-    marginTop: 4,
-    marginBottom: Spacing.lg,
+    marginTop: Spacing.xs,
+    marginBottom: Spacing.xl,
   },
   list: {
-    gap: 12,
+    gap: 0,
   },
   emptyState: {
     alignItems: 'center',
@@ -386,17 +421,44 @@ const styles = StyleSheet.create({
 });
 
 const cardSt = StyleSheet.create({
+  row: {
+    minHeight: 132,
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  rail: {
+    width: 34,
+    alignItems: 'center',
+  },
+  railLine: {
+    position: 'absolute',
+    width: StyleSheet.hairlineWidth,
+  },
+  node: {
+    width: 24,
+    height: 24,
+    marginTop: Spacing.lg,
+    borderRadius: BorderRadius.full,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
+  },
   card: {
+    flex: 1,
+    minHeight: 112,
+    marginBottom: Spacing.md,
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: BorderRadius.lg,
+    borderRadius: BorderRadius.md,
+    borderWidth: StyleSheet.hairlineWidth,
     padding: Spacing.base,
-    gap: 14,
+    gap: Spacing.md,
   },
   iconWrap: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
+    width: 48,
+    height: 48,
+    borderRadius: BorderRadius.full,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -406,13 +468,13 @@ const cardSt = StyleSheet.create({
   },
   worldNum: {
     fontSize: 10,
-    fontWeight: '900',
-    letterSpacing: 1,
+    fontWeight: '700',
+    letterSpacing: 0.8,
     textTransform: 'uppercase',
   },
   worldName: {
     ...Typography.headline,
-    fontWeight: '800',
+    fontWeight: '700',
   },
   worldDesc: {
     ...Typography.caption1,
