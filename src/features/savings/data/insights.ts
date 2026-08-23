@@ -8,7 +8,8 @@
  * ni a ningún *Repository.
  */
 import type { Movimiento, MovimientoCategoria } from '@features/savings/store/useMovimientosStore';
-import type { SavingsDeposit, SavingsGoal } from '@features/savings/store/useSavingsStore';
+import type { SavingsGoal, SavingsOperation } from '@features/savings/domain/savings';
+import { projectSavings } from '@features/savings/domain/savings';
 import {
   periodoAnterior,
   rangoPeriodo,
@@ -46,7 +47,7 @@ export interface Insight {
 export interface InsightCtx {
   movimientos: Movimiento[];
   goals: SavingsGoal[];
-  deposits: SavingsDeposit[];
+  operations: SavingsOperation[];
   presupuestos: Presupuestos;
   now?: number;
 }
@@ -104,9 +105,12 @@ export function computeInsights(ctx: InsightCtx, max = 2): Insight[] {
   }
 
   // Ritmo de la primera meta activa con proyección.
-  const metaActiva = ctx.goals.find((g) => !g.completedAt && g.targetAmount > g.currentAmount);
+  const projection = projectSavings(ctx.goals, ctx.operations);
+  const metaActiva = ctx.goals.find(
+    (goal) => !goal.deletedAt && (projection.byGoal[goal.id] ?? 0) < goal.targetAmount
+  );
   if (metaActiva) {
-    const { mesesAlRitmo } = ritmoMeta(metaActiva, ctx.deposits, now);
+    const { mesesAlRitmo } = ritmoMeta(metaActiva, ctx.operations, now);
     if (mesesAlRitmo && mesesAlRitmo > 0) {
       out.push({
         id: 'ritmo_meta',
@@ -140,11 +144,6 @@ export function computeInsights(ctx: InsightCtx, max = 2): Insight[] {
       i18nKey: 'insights.mayorCategoria',
       params: { categoria: porCat[0].categoria },
     });
-  }
-
-  const balance = totalesEnRango(ctx.movimientos, rangoPeriodo('mes', now)).balance;
-  if (balance > 0) {
-    out.push({ id: 'balance_positivo', prioridad: 8, i18nKey: 'insights.balancePositivo' });
   }
 
   return out.sort((a, b) => a.prioridad - b.prioridad).slice(0, max);

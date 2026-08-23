@@ -22,10 +22,8 @@ import ConfirmMetaSheet, {
   type MetaPropuesta,
 } from '@features/savings/components/ConfirmMetaSheet';
 import MicButton from '@features/savings/components/MicButton';
-import Segmented from '@features/savings/components/Segmented';
 import VoiceCaptureSheet from '@features/savings/components/VoiceCaptureSheet';
 import MovimientoListItem from '@features/savings/components/MovimientoListItem';
-import MovimientosCharts from '@features/savings/components/MovimientosCharts';
 import ConfirmMovimientosListSheet from '@features/savings/components/ConfirmMovimientosListSheet';
 import { matchGoal } from '@features/savings/data/matchGoal';
 import { movimientosOrdenados } from '@features/savings/data/movimientosStats';
@@ -43,7 +41,7 @@ export default function MovimientosScreen() {
   const { goalId } = useLocalSearchParams<{ goalId?: string }>();
 
   const movimientos = useMovimientosStore((s) => s.movimientos);
-  const removeMovimiento = useMovimientosStore((s) => s.removeMovimiento);
+  const deleteExpense = useMovimientosStore((s) => s.deleteExpense);
   const goals = useSavingsStore((s) => s.goals);
 
   const [processing, setProcessing] = useState(false);
@@ -52,7 +50,6 @@ export default function MovimientosScreen() {
   const [preGoalId, setPreGoalId] = useState<string | undefined>(undefined);
   const [metaPropuesta, setMetaPropuesta] = useState<MetaPropuesta | null>(null);
   const [metaSheetVisible, setMetaSheetVisible] = useState(false);
-  const [segment, setSegment] = useState<'historial' | 'resumen'>('historial');
   const [listaItems, setListaItems] = useState<ClasificacionMovimiento[] | null>(null);
   const [listaVisible, setListaVisible] = useState(false);
 
@@ -192,36 +189,24 @@ export default function MovimientosScreen() {
             </Animated.View>
           ) : (
             <Animated.View entering={motion.enterDown(104)} style={styles.section}>
-              <Segmented
-                options={[
-                  { key: 'historial', label: t('movimientos.historial') },
-                  { key: 'resumen', label: t('movimientos.resumen') },
+              <View
+                style={[
+                  styles.historyBox,
+                  {
+                    backgroundColor: colors.materials.base,
+                    borderColor: colors.materials.border,
+                  },
                 ]}
-                value={segment}
-                onChange={setSegment}
-              />
-              {segment === 'resumen' ? (
-                <MovimientosCharts movimientos={movimientos} />
-              ) : (
-                <View
-                  style={[
-                    styles.historyBox,
-                    {
-                      backgroundColor: colors.materials.base,
-                      borderColor: colors.materials.border,
-                    },
-                  ]}
-                >
-                  {historial.map((m, i, arr) => (
-                    <MovimientoListItem
-                      key={m.id}
-                      movimiento={m}
-                      showDivider={i < arr.length - 1}
-                      onDelete={() => removeMovimiento(m.id)}
-                    />
-                  ))}
-                </View>
-              )}
+              >
+                {historial.map((m, i, arr) => (
+                  <MovimientoListItem
+                    key={m.id}
+                    movimiento={m}
+                    showDivider={i < arr.length - 1}
+                    onDelete={() => void deleteExpense(m.id)}
+                  />
+                ))}
+              </View>
             </Animated.View>
           )}
         </ScrollView>

@@ -1,5 +1,5 @@
 import { ritmoMeta } from '@features/savings/data/ritmoMeta';
-import type { SavingsDeposit, SavingsGoal } from '@features/savings/store/useSavingsStore';
+import type { SavingsGoal, SavingsOperation } from '@features/savings/domain/savings';
 
 const NOW = Date.UTC(2026, 6, 15, 17, 0, 0);
 const DIA = 24 * 60 * 60 * 1000;
@@ -8,42 +8,43 @@ function goal(p: Partial<SavingsGoal>): SavingsGoal {
   return {
     id: 'g1',
     title: 'Tenis',
-    description: '',
-    emoji: '👟',
+    iconId: 'target',
     targetAmount: 120000,
-    currentAmount: 85000,
-    frequency: 'total',
     createdAt: NOW - 60 * DIA,
+    updatedAt: NOW - 60 * DIA,
     category: 'custom',
     ...p,
   };
 }
 
-function dep(p: Partial<SavingsDeposit>): SavingsDeposit {
+function operation(p: Partial<SavingsOperation>): SavingsOperation {
   return {
-    id: `dep_${Math.random()}`,
+    id: `op_${Math.random()}`,
+    type: 'aporte',
     goalId: 'g1',
     amount: 45000,
     description: '',
+    fecha: NOW - 10 * DIA,
     createdAt: NOW - 10 * DIA,
+    updatedAt: NOW - 10 * DIA,
     ...p,
   };
 }
 
 describe('ritmoMeta', () => {
   it('promedia depósitos de la ventana de 90 días y proyecta meses', () => {
-    const deposits = [dep({ createdAt: NOW - 10 * DIA }), dep({ createdAt: NOW - 20 * DIA })];
-    expect(ritmoMeta(goal({}), deposits, NOW)).toEqual({ ritmoMensual: 30000, mesesAlRitmo: 2 });
+    const operations = [operation({ fecha: NOW - 10 * DIA }), operation({ fecha: NOW - 20 * DIA })];
+    expect(ritmoMeta(goal({}), operations, NOW)).toEqual({ ritmoMensual: 30000, mesesAlRitmo: 1 });
   });
 
   it('excluye depósitos fuera de la ventana', () => {
-    const deposits = [dep({ amount: 100000, createdAt: NOW - 100 * DIA })];
-    expect(ritmoMeta(goal({}), deposits, NOW)).toEqual({ ritmoMensual: 0, mesesAlRitmo: null });
+    const operations = [operation({ amount: 100000, fecha: NOW - 100 * DIA })];
+    expect(ritmoMeta(goal({}), operations, NOW)).toEqual({ ritmoMensual: 0, mesesAlRitmo: null });
   });
 
   it('excluye depósitos de otra meta', () => {
-    const deposits = [dep({ goalId: 'g2', amount: 50000 })];
-    expect(ritmoMeta(goal({}), deposits, NOW)).toEqual({ ritmoMensual: 0, mesesAlRitmo: null });
+    const operations = [operation({ goalId: 'g2', amount: 50000 })];
+    expect(ritmoMeta(goal({}), operations, NOW)).toEqual({ ritmoMensual: 0, mesesAlRitmo: null });
   });
 
   it('sin depósitos → ritmo 0 y sin proyección', () => {
@@ -51,7 +52,6 @@ describe('ritmoMeta', () => {
   });
 
   it('meta ya cumplida → 0 meses', () => {
-    const g = goal({ currentAmount: 130000 });
-    expect(ritmoMeta(g, [dep({})], NOW).mesesAlRitmo).toBe(0);
+    expect(ritmoMeta(goal({}), [operation({ amount: 130000 })], NOW).mesesAlRitmo).toBe(0);
   });
 });

@@ -1,13 +1,14 @@
 /**
  * Evaluador de retos financieros (RQ-PR14-CA5): computa el estado de un reto
- * desde los stores LOCALES del estudiante (movimientos/goals/deposits) sobre la
+ * desde los stores LOCALES del estudiante (gastos/metas/operaciones) sobre la
  * ventana [fechaInicio, deadline]. 100% cliente: ninguna Cloud Function ni regla
  * lee el diario. Devuelve avance + estado; al profesor solo cruza el estado.
  *
  * El tipo canónico `RetoFinancieroTipo` vive en src/shared/types/tenancy.ts.
  */
 import type { Movimiento } from '@features/savings/store/useMovimientosStore';
-import type { SavingsDeposit, SavingsGoal } from '@features/savings/store/useSavingsStore';
+import type { SavingsGoal } from '@features/savings/store/useSavingsStore';
+import type { SavingsOperation } from '@features/savings/domain/savings';
 import type { RetoFinancieroTipo } from '@shared/types/tenancy';
 import { dayKey, fechaDe } from '@features/savings/data/periodos';
 
@@ -23,7 +24,7 @@ export interface RetoConsigna {
 export interface DiarioLocal {
   movimientos: Movimiento[];
   goals: SavingsGoal[];
-  deposits: SavingsDeposit[];
+  operations: SavingsOperation[];
 }
 
 export type RetoEstado = 'sin_empezar' | 'en_progreso' | 'cumplido';
@@ -37,15 +38,20 @@ function contarAvance(reto: RetoConsigna, diario: DiarioLocal): number {
 
   switch (reto.tipo) {
     case 'registrar_movimientos':
-      return movs.length;
+      return movs.filter((m) => m.tipo === 'gasto').length;
     case 'registrar_ahorros':
-      return movs.filter((m) => m.tipo === 'ahorro').length;
+      return diario.operations.filter(
+        (operation) => operation.type === 'aporte' && enVentana(operation.fecha, reto)
+      ).length;
     case 'racha_dias':
       return new Set(movs.map((m) => dayKey(fechaDe(m)))).size;
     case 'crear_meta':
       return diario.goals.filter((g) => enVentana(g.createdAt, reto)).length;
     case 'abonar_meta':
-      return diario.deposits.filter((d) => d.goalId && enVentana(d.createdAt, reto)).length;
+      return diario.operations.filter(
+        (operation) =>
+          operation.type === 'aporte' && operation.goalId && enVentana(operation.fecha, reto)
+      ).length;
     case 'cumplir_tope':
       // Diferido a v1 (sin UI de topes); el enum de rules aún no lo permite.
       return 0;

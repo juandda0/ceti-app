@@ -4,7 +4,8 @@ import {
   type RetoConsigna,
 } from '@features/dashboard/data/retoEvaluator';
 import type { Movimiento } from '@features/savings/store/useMovimientosStore';
-import type { SavingsDeposit, SavingsGoal } from '@features/savings/store/useSavingsStore';
+import type { SavingsGoal } from '@features/savings/store/useSavingsStore';
+import type { SavingsOperation } from '@features/savings/domain/savings';
 
 const noonJul = (d: number) => Date.UTC(2026, 6, d, 17, 0, 0);
 const INICIO = noonJul(13);
@@ -48,18 +49,21 @@ function goal(createdAt: number): SavingsGoal {
   };
 }
 
-function dep(p: Partial<SavingsDeposit>): SavingsDeposit {
+function operation(p: Partial<SavingsOperation>): SavingsOperation {
   return {
-    id: `d_${Math.random()}`,
+    id: `op_${Math.random()}`,
+    type: 'aporte',
     goalId: 'g1',
     amount: 100,
     description: '',
+    fecha: noonJul(15),
     createdAt: noonJul(15),
+    updatedAt: noonJul(15),
     ...p,
   };
 }
 
-const vacio: DiarioLocal = { movimientos: [], goals: [], deposits: [] };
+const vacio: DiarioLocal = { movimientos: [], goals: [], operations: [] };
 
 describe('evaluarReto — registrar_movimientos', () => {
   it('devuelve solo estado y avance locales, sin identidad ni coordenadas tenant', () => {
@@ -101,9 +105,9 @@ describe('evaluarReto — registrar_movimientos', () => {
 
 describe('evaluarReto — otros tipos', () => {
   it('registrar_ahorros solo cuenta ahorros', () => {
-    const movimientos = [mov({ tipo: 'ahorro' }), mov({ tipo: 'gasto' }), mov({ tipo: 'gasto' })];
+    const operations = [operation({}), operation({ type: 'retiro' })];
     expect(
-      evaluarReto(reto({ tipo: 'registrar_ahorros', cantidad: 2 }), { ...vacio, movimientos })
+      evaluarReto(reto({ tipo: 'registrar_ahorros', cantidad: 2 }), { ...vacio, operations })
     ).toEqual({
       estado: 'en_progreso',
       avance: 1,
@@ -119,16 +123,16 @@ describe('evaluarReto — otros tipos', () => {
   });
 
   it('abonar_meta exige goalId', () => {
-    const deposits = [
-      dep({ createdAt: noonJul(14) }),
-      dep({ goalId: undefined, createdAt: noonJul(14) }),
+    const operations = [
+      operation({ fecha: noonJul(14) }),
+      operation({ goalId: undefined, fecha: noonJul(14) }),
     ];
-    expect(evaluarReto(reto({ tipo: 'abonar_meta', cantidad: 2 }), { ...vacio, deposits })).toEqual(
-      {
-        estado: 'en_progreso',
-        avance: 1,
-      }
-    );
+    expect(
+      evaluarReto(reto({ tipo: 'abonar_meta', cantidad: 2 }), { ...vacio, operations })
+    ).toEqual({
+      estado: 'en_progreso',
+      avance: 1,
+    });
   });
 
   it('racha_dias cuenta días distintos, no movimientos', () => {

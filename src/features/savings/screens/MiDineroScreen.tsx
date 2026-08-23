@@ -9,6 +9,7 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { formatDisplayCopGoals } from '@shared/utils/formatDisplayCop';
 import Segmented from '@features/savings/components/Segmented';
 import ActivityList from '@features/savings/components/ActivityList';
+import InsightCards from '@features/savings/components/InsightCards';
 import GoalFormSheet from '@features/savings/components/GoalFormSheet';
 import ExpenseFormSheet from '@features/savings/components/ExpenseFormSheet';
 import SavingsOperationSheet from '@features/savings/components/SavingsOperationSheet';
@@ -16,6 +17,7 @@ import PresupuestosSheet from '@features/savings/components/PresupuestosSheet';
 import { GoalIcon } from '@features/savings/icons/GoalIcon';
 import { useMovimientosStore, type Movimiento } from '@features/savings/store/useMovimientosStore';
 import { useSavingsStore, type SavingsGoal } from '@features/savings/store/useSavingsStore';
+import { usePresupuestosStore } from '@features/savings/store/usePresupuestosStore';
 import type { SavingsOperation, SavingsOperationType } from '@features/savings/domain/savings';
 
 type Form = 'none' | 'goal' | 'expense' | 'aporte' | 'retiro' | 'budgets';
@@ -24,6 +26,7 @@ export default function MiDineroScreen() {
   const colors = useThemeColors();
   const goals = useSavingsStore((state) => state.goals.filter((goal) => !goal.deletedAt));
   const operations = useSavingsStore((state) => state.operations);
+  const budgets = usePresupuestosStore((state) => state.topes);
   const projection = useSavingsStore((state) => state.projection)();
   const deleteGoal = useSavingsStore((state) => state.deleteGoal);
   const deleteOperation = useSavingsStore((state) => state.deleteOperation);
@@ -37,6 +40,16 @@ export default function MiDineroScreen() {
   const [editingGoal, setEditingGoal] = useState<SavingsGoal>();
   const [editingExpense, setEditingExpense] = useState<Movimiento>();
   const [editingOperation, setEditingOperation] = useState<SavingsOperation>();
+  const domainGoals = goals.map((goal) => ({
+    id: goal.id,
+    title: goal.title,
+    iconId: goal.iconId ?? ('target' as const),
+    category: goal.category,
+    targetAmount: goal.targetAmount,
+    ...(goal.deadline === undefined ? {} : { deadline: goal.deadline }),
+    createdAt: goal.createdAt,
+    updatedAt: goal.updatedAt ?? goal.createdAt,
+  }));
 
   const closeForms = () => {
     setForm('none');
@@ -108,6 +121,12 @@ export default function MiDineroScreen() {
               label="Configurar topes"
               variant="glass"
               onPress={() => setForm('budgets')}
+            />
+            <InsightCards
+              movimientos={expenses}
+              goals={domainGoals}
+              operations={operations}
+              presupuestos={budgets}
             />
           </>
         )}

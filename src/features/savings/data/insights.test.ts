@@ -1,6 +1,6 @@
 import { computeInsights, type InsightCtx } from '@features/savings/data/insights';
 import type { Movimiento } from '@features/savings/store/useMovimientosStore';
-import type { SavingsDeposit, SavingsGoal } from '@features/savings/store/useSavingsStore';
+import type { SavingsGoal, SavingsOperation } from '@features/savings/domain/savings';
 
 const NOON_JUL15 = Date.UTC(2026, 6, 15, 17, 0, 0);
 const noonJul = (d: number) => Date.UTC(2026, 6, d, 17, 0, 0);
@@ -21,7 +21,7 @@ function mov(p: Partial<Movimiento>): Movimiento {
 }
 
 function ctx(p: Partial<InsightCtx>): InsightCtx {
-  return { movimientos: [], goals: [], deposits: [], presupuestos: {}, now: NOON_JUL15, ...p };
+  return { movimientos: [], goals: [], operations: [], presupuestos: {}, now: NOON_JUL15, ...p };
 }
 
 const ids = (c: InsightCtx) => computeInsights(c, 8).map((i) => i.id);
@@ -78,32 +78,47 @@ describe('computeInsights — otras reglas', () => {
     const goal: SavingsGoal = {
       id: 'g1',
       title: 't',
-      description: '',
-      emoji: '🎯',
+      iconId: 'target',
       targetAmount: 120000,
-      currentAmount: 85000,
-      frequency: 'total',
       createdAt: NOON_JUL15 - 60 * DIA,
+      updatedAt: NOON_JUL15 - 60 * DIA,
       category: 'custom',
     };
-    const deposits: SavingsDeposit[] = [
-      { id: 'd1', goalId: 'g1', amount: 45000, description: '', createdAt: NOON_JUL15 - 10 * DIA },
-      { id: 'd2', goalId: 'g1', amount: 45000, description: '', createdAt: NOON_JUL15 - 20 * DIA },
+    const operations: SavingsOperation[] = [
+      {
+        id: 'd1',
+        type: 'aporte',
+        goalId: 'g1',
+        amount: 45000,
+        description: '',
+        fecha: NOON_JUL15 - 10 * DIA,
+        createdAt: NOON_JUL15 - 10 * DIA,
+        updatedAt: NOON_JUL15 - 10 * DIA,
+      },
+      {
+        id: 'd2',
+        type: 'aporte',
+        goalId: 'g1',
+        amount: 45000,
+        description: '',
+        fecha: NOON_JUL15 - 20 * DIA,
+        createdAt: NOON_JUL15 - 20 * DIA,
+        updatedAt: NOON_JUL15 - 20 * DIA,
+      },
     ];
-    const result = computeInsights(ctx({ goals: [goal], deposits }), 8);
+    const result = computeInsights(ctx({ goals: [goal], operations }), 8);
     const ritmo = result.find((i) => i.id === 'ritmo_meta');
-    expect(ritmo?.params?.meses).toBe(2);
+    expect(ritmo?.params?.meses).toBe(1);
   });
 
-  it('mayor_categoria y balance_positivo con ahorro dominante', () => {
+  it('mayor_categoria no mezcla gastos con el ahorro', () => {
     const c = ctx({
       movimientos: [
-        mov({ tipo: 'ahorro', categoria: 'otros', monto: 50000, fecha: noonJul(10) }),
         mov({ tipo: 'gasto', categoria: 'transporte', monto: 8000, fecha: noonJul(10) }),
       ],
     });
     expect(ids(c)).toContain('mayor_categoria');
-    expect(ids(c)).toContain('balance_positivo');
+    expect(ids(c)).not.toContain('balance_positivo');
   });
 });
 
@@ -112,7 +127,7 @@ describe('computeInsights — orden y límites', () => {
     const c = ctx({
       movimientos: [
         mov({ categoria: 'comida', monto: 6000, fecha: noonJul(14) }), // tope excedido (prio 1)
-        mov({ tipo: 'ahorro', categoria: 'otros', monto: 9000, fecha: noonJul(15) }), // racha + balance
+        mov({ categoria: 'otros', monto: 9000, fecha: noonJul(15) }),
       ],
       presupuestos: { comida: 5000 },
     });
