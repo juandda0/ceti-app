@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useEffect, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { Typography } from '@shared/constants/typography';
@@ -22,6 +23,8 @@ import {
 } from '@features/savings/store/useMovimientosStore';
 import { usePresupuestosStore } from '@features/savings/store/usePresupuestosStore';
 import { CATEGORIA_ICONS } from '@features/savings/components/MovimientoListItem';
+import { showCetiNotice } from '@shared/store/useCetiOverlayStore';
+import type { Presupuestos } from '@features/savings/data/presupuestos';
 
 function soloDigitos(s: string): number | null {
   const n = parseInt(s.replace(/[^0-9]/g, ''), 10);
@@ -38,7 +41,37 @@ export default function PresupuestosSheet({
   const colors = useThemeColors();
   const { t } = useTranslation();
   const topes = usePresupuestosStore((s) => s.topes);
-  const setTope = usePresupuestosStore((s) => s.setTope);
+  const saveBudgets = usePresupuestosStore((s) => s.saveBudgets);
+  const [draft, setDraft] = useState<Presupuestos>(topes);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (visible) setDraft(topes);
+  }, [topes, visible]);
+
+  const setDraftTope = (categoria: MovimientoCategoria, value: number | null) => {
+    setDraft((current) => {
+      const next = { ...current };
+      if (value == null) delete next[categoria];
+      else next[categoria] = value;
+      return next;
+    });
+  };
+
+  const handleSave = async () => {
+    if (saving) return;
+    setSaving(true);
+    const result = await saveBudgets(draft);
+    setSaving(false);
+    if (result.ok) onClose();
+    else {
+      showCetiNotice({
+        variant: 'error',
+        title: t('movimientos.errorTitle'),
+        message: t('movimientos.errorMsg'),
+      });
+    }
+  };
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
@@ -79,8 +112,8 @@ export default function PresupuestosSheet({
                   inputMode="numeric"
                   placeholder={t('presupuestos.sinTope')}
                   placeholderTextColor={colors.text.tertiary}
-                  defaultValue={topes[cat] ? String(topes[cat]) : ''}
-                  onChangeText={(txt) => setTope(cat, soloDigitos(txt))}
+                  value={draft[cat] ? String(draft[cat]) : ''}
+                  onChangeText={(txt) => setDraftTope(cat, soloDigitos(txt))}
                   accessibilityLabel={t('presupuestos.topeDe', {
                     categoria: t(`movimientos.categorias.${cat}`),
                   })}
@@ -91,7 +124,8 @@ export default function PresupuestosSheet({
 
           <TouchableOpacity
             style={[styles.doneBtn, { backgroundColor: colors.brand.primary }]}
-            onPress={onClose}
+            onPress={() => void handleSave()}
+            disabled={saving}
             accessibilityRole="button"
           >
             <Text style={styles.doneText}>{t('presupuestos.listo')}</Text>

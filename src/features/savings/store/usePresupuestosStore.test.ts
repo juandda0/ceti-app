@@ -53,4 +53,14 @@ describe('usePresupuestosStore', () => {
     usePresupuestosStore.getState().setTope('comida', null);
     expect(logEvent).not.toHaveBeenCalled();
   });
+
+  it('saveBudgets revierte el estado cuando Firestore falla', async () => {
+    usePresupuestosStore.setState({ topes: { comida: 5000 } });
+    guardar.mockRejectedValueOnce(new Error('offline'));
+
+    const result = await usePresupuestosStore.getState().saveBudgets({ transporte: 7000 });
+
+    expect(result).toEqual({ ok: false, reason: 'persistence_failed' });
+    expect(usePresupuestosStore.getState().topes).toEqual({ comida: 5000 });
+  });
 });

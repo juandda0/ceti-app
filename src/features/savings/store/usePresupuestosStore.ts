@@ -19,6 +19,9 @@ interface PresupuestosActions {
   /** Fija un tope semanal; `null`/≤0 elimina la categoría del mapa. */
   setTope: (categoria: MovimientoCategoria, tope: number | null) => void;
   resetPresupuestos: () => void;
+  saveBudgets: (
+    topes: Presupuestos
+  ) => Promise<{ ok: true } | { ok: false; reason: 'persistence_failed' }>;
 }
 
 type PresupuestosStore = PresupuestosState & PresupuestosActions;
@@ -60,6 +63,36 @@ export const usePresupuestosStore = create<PresupuestosStore>()(
       resetPresupuestos: () => {
         set({ topes: {} });
         sync({});
+      },
+
+      saveBudgets: async (topes) => {
+        const previous = get().topes;
+        const valid = Object.fromEntries(
+          Object.entries(topes).filter(
+            ([, amount]) => Number.isInteger(amount) && Number(amount) > 0
+          )
+        ) as Presupuestos;
+        set({ topes: valid });
+        try {
+          const { useAuthStore } = await import('@features/auth/store/useAuthStore');
+          const uid = useAuthStore.getState().firebaseUid;
+          if (uid) {
+            const { presupuestosRepository } =
+              await import('@features/savings/data/presupuestosRepository');
+            await presupuestosRepository.guardar(uid, valid);
+          }
+          if (Object.keys(valid).length > 0) void logEvent('presupuesto_definido');
+          return { ok: true };
+        } catch (error) {
+          set({ topes: previous });
+          void import('@shared/lib/analytics/crashlytics').then((module) =>
+            module.recordError(
+              error instanceof Error ? error : new Error(String(error)),
+              'presupuestos_save'
+            )
+          );
+          return { ok: false, reason: 'persistence_failed' };
+        }
       },
     }),
     {

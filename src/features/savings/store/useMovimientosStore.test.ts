@@ -6,6 +6,9 @@ import { logEvent } from '@shared/lib/analytics/logEvent';
 
 jest.mock('@shared/lib/analytics/logEvent', () => ({ logEvent: jest.fn() }));
 jest.mock('@shared/lib/analytics/crashlytics', () => ({ recordError: jest.fn() }));
+jest.mock('@features/auth/store/useAuthStore', () => ({
+  useAuthStore: { getState: () => ({ firebaseUid: 'uid-test' }) },
+}));
 jest.mock('@features/savings/data/movimientosRepository', () => ({
   movimientosRepository: {
     upsertMovimiento: jest.fn().mockResolvedValue(true),
@@ -38,6 +41,42 @@ describe('useMovimientosStore', () => {
     jest.clearAllMocks();
     useMovimientosStore.setState({ movimientos: [] });
     useSavingsStore.setState({ goals: [], deposits: [] });
+  });
+
+  it('edita un gasto sin cambiar origen ni createdAt', async () => {
+    const created = await useMovimientosStore.getState().createExpense({
+      ...baseMovimiento,
+      fecha: 1,
+    });
+    expect(created.ok).toBe(true);
+    if (!created.ok) return;
+
+    const result = await useMovimientosStore.getState().updateExpense(created.value.id, {
+      monto: 7000,
+      categoria: 'transporte',
+    });
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value).toMatchObject({ monto: 7000, categoria: 'transporte', origen: 'voz' });
+    expect(result.value.createdAt).toBe(created.value.createdAt);
+  });
+
+  it('un fallo al borrar restaura el gasto', async () => {
+    useMovimientosStore.setState({
+      movimientos: [{ ...baseMovimiento, id: 'm1', fecha: 1, createdAt: 1, updatedAt: 1 }],
+    });
+    const repository = jest.requireMock(
+      '@features/savings/data/movimientosRepository'
+    ).movimientosRepository;
+    repository.removeMovimiento.mockRejectedValueOnce(new Error('offline'));
+
+    const result = await useMovimientosStore.getState().deleteExpense('m1');
+
+    expect(result).toEqual({ ok: false, reason: 'persistence_failed' });
+    expect(useMovimientosStore.getState().movimientos).toContainEqual(
+      expect.objectContaining({ id: 'm1' })
+    );
   });
 
   it('agrega un movimiento con id y createdAt', () => {

@@ -43,6 +43,7 @@ export interface Movimiento {
   // aditivo (RQ-ES11-CA7): los docs viejos no se migran, toda lectura usa
   // `fecha ?? createdAt`. El transporte offsetDias/diaSemana nunca se persiste.
   fecha?: number;
+  updatedAt?: number;
 }
 
 interface MovimientosState {
@@ -53,6 +54,23 @@ interface MovimientosActions {
   addMovimiento: (data: Omit<Movimiento, 'id' | 'createdAt'>) => Movimiento;
   removeMovimiento: (movimientoId: string) => void;
   resetMovimientos: () => void;
+  createExpense: (
+    data: Omit<Movimiento, 'id' | 'createdAt' | 'updatedAt'>
+  ) => Promise<
+    { ok: true; value: Movimiento } | { ok: false; reason: 'invalid_data' | 'persistence_failed' }
+  >;
+  updateExpense: (
+    movimientoId: string,
+    changes: Partial<Pick<Movimiento, 'monto' | 'descripcion' | 'categoria' | 'fecha'>>
+  ) => Promise<
+    | { ok: true; value: Movimiento }
+    | { ok: false; reason: 'not_found' | 'invalid_data' | 'persistence_failed' }
+  >;
+  deleteExpense: (
+    movimientoId: string
+  ) => Promise<
+    { ok: true; value: Movimiento } | { ok: false; reason: 'not_found' | 'persistence_failed' }
+  >;
 }
 
 type MovimientosStore = MovimientosState & MovimientosActions;
@@ -142,6 +160,122 @@ export const useMovimientosStore = create<MovimientosStore>()(
       },
 
       resetMovimientos: () => set({ movimientos: [] }),
+
+      createExpense: async (data) => {
+        const now = Date.now();
+        if (
+          data.tipo !== 'gasto' ||
+          !Number.isInteger(data.monto) ||
+          data.monto <= 0 ||
+          !data.descripcion.trim() ||
+          (data.fecha ?? now) > now
+        ) {
+          return { ok: false, reason: 'invalid_data' };
+        }
+        const movimiento: Movimiento = {
+          ...data,
+          descripcion: data.descripcion.trim(),
+          fecha: data.fecha ?? now,
+          id: `mov_${uid()}`,
+          createdAt: now,
+          updatedAt: now,
+        };
+        const previous = get().movimientos;
+        set({ movimientos: [...previous, movimiento] });
+        try {
+          const { useAuthStore } = await import('@features/auth/store/useAuthStore');
+          const authUid = useAuthStore.getState().firebaseUid;
+          if (authUid) {
+            const { movimientosRepository } =
+              await import('@features/savings/data/movimientosRepository');
+            await movimientosRepository.upsertMovimiento(authUid, movimiento);
+          }
+          void logEvent('movimiento_registrado', { origen: movimiento.origen, tipo: 'gasto' });
+          return { ok: true, value: movimiento };
+        } catch (error) {
+          set({ movimientos: previous });
+          void import('@shared/lib/analytics/crashlytics').then((module) =>
+            module.recordError(
+              error instanceof Error ? error : new Error(String(error)),
+              'movimientos_create_expense'
+            )
+          );
+          return { ok: false, reason: 'persistence_failed' };
+        }
+      },
+
+      updateExpense: async (movimientoId, changes) => {
+        const previous = get().movimientos;
+        const current = previous.find((movimiento) => movimiento.id === movimientoId);
+        if (!current) return { ok: false, reason: 'not_found' };
+        const updated: Movimiento = {
+          ...current,
+          ...changes,
+          descripcion: changes.descripcion?.trim() ?? current.descripcion,
+          updatedAt: Date.now(),
+        };
+        if (
+          updated.tipo !== 'gasto' ||
+          !Number.isInteger(updated.monto) ||
+          updated.monto <= 0 ||
+          !updated.descripcion ||
+          (updated.fecha ?? updated.createdAt) > Date.now()
+        ) {
+          return { ok: false, reason: 'invalid_data' };
+        }
+        set({
+          movimientos: previous.map((movimiento) =>
+            movimiento.id === movimientoId ? updated : movimiento
+          ),
+        });
+        try {
+          const { useAuthStore } = await import('@features/auth/store/useAuthStore');
+          const authUid = useAuthStore.getState().firebaseUid;
+          if (authUid) {
+            const { movimientosRepository } =
+              await import('@features/savings/data/movimientosRepository');
+            await movimientosRepository.upsertMovimiento(authUid, updated);
+          }
+          void logEvent('movimiento_actualizado', { origen: updated.origen, tipo: 'gasto' });
+          return { ok: true, value: updated };
+        } catch (error) {
+          set({ movimientos: previous });
+          void import('@shared/lib/analytics/crashlytics').then((module) =>
+            module.recordError(
+              error instanceof Error ? error : new Error(String(error)),
+              'movimientos_update_expense'
+            )
+          );
+          return { ok: false, reason: 'persistence_failed' };
+        }
+      },
+
+      deleteExpense: async (movimientoId) => {
+        const previous = get().movimientos;
+        const current = previous.find((movimiento) => movimiento.id === movimientoId);
+        if (!current) return { ok: false, reason: 'not_found' };
+        set({ movimientos: previous.filter((movimiento) => movimiento.id !== movimientoId) });
+        try {
+          const { useAuthStore } = await import('@features/auth/store/useAuthStore');
+          const authUid = useAuthStore.getState().firebaseUid;
+          if (authUid) {
+            const { movimientosRepository } =
+              await import('@features/savings/data/movimientosRepository');
+            await movimientosRepository.removeMovimiento(authUid, movimientoId);
+          }
+          void logEvent('movimiento_eliminado', { origen: current.origen, tipo: 'gasto' });
+          return { ok: true, value: current };
+        } catch (error) {
+          set({ movimientos: previous });
+          void import('@shared/lib/analytics/crashlytics').then((module) =>
+            module.recordError(
+              error instanceof Error ? error : new Error(String(error)),
+              'movimientos_delete_expense'
+            )
+          );
+          return { ok: false, reason: 'persistence_failed' };
+        }
+      },
     }),
     {
       name: 'movimientos-store',
