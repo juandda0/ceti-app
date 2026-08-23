@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,8 +10,6 @@ import {
   type AsignacionWithId,
 } from '@features/dashboard/data/asignacionRepository';
 import { assignmentStatus } from '@features/dashboard/data/assignmentStatus';
-import { useRetoCompletionSync } from '@features/dashboard/hooks/useRetoCompletionSync';
-import type { RetoAsignado, RetoCoords } from '@features/dashboard/data/retoSync';
 
 function worldNumber(worldId: string): number {
   return Number(worldId.replace('world_', ''));
@@ -19,9 +17,8 @@ function worldNumber(worldId: string): number {
 
 /**
  * Muestra al estudiante sus tareas activas: mundos ("completa el mundo X") y
- * retos financieros (RQ-PR14). Para los retos, monta el sync de cumplimiento
- * (evalúa el diario LOCAL y publica solo la señal de estado). No renderiza nada
- * si no está aprovisionado o no hay tareas activas.
+ * retos financieros (RQ-PR14). No renderiza nada si no está aprovisionado o no
+ * hay tareas activas.
  */
 export default function StudentAssignmentsBanner() {
   const { t } = useTranslation();
@@ -29,7 +26,6 @@ export default function StudentAssignmentsBanner() {
   const role = useAuthStore((s) => s.role);
   const colegioId = useAuthStore((s) => s.colegioId);
   const cursoId = useAuthStore((s) => s.cursoId);
-  const uid = useAuthStore((s) => s.firebaseUid);
 
   const [items, setItems] = useState<AsignacionWithId[]>([]);
 
@@ -48,31 +44,6 @@ export default function StudentAssignmentsBanner() {
   const active = items
     .filter((a) => assignmentStatus(a, now, false) !== 'upcoming')
     .sort((a, b) => a.deadline - b.deadline);
-
-  // Retos vigentes → sync de cumplimiento (evaluación 100% local; solo cruza el
-  // estado). Debe llamarse SIEMPRE (hooks), antes de cualquier return condicional.
-  const retosAsignados = useMemo<RetoAsignado[]>(() => {
-    const out: RetoAsignado[] = [];
-    for (const a of items) {
-      if (a.kind === 'reto') {
-        out.push({
-          id: a.id,
-          tipo: a.reto.tipo,
-          cantidad: a.reto.cantidad,
-          fechaInicio: a.fechaInicio,
-          deadline: a.deadline,
-        });
-      }
-    }
-    return out;
-  }, [items]);
-
-  const coords = useMemo<RetoCoords | null>(
-    () => (colegioId && cursoId && uid ? { colegioId, cursoId, uid } : null),
-    [colegioId, cursoId, uid]
-  );
-
-  useRetoCompletionSync(retosAsignados, coords);
 
   if (active.length === 0) return null;
 

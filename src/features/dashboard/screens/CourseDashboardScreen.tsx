@@ -281,64 +281,19 @@ export default function CourseDashboardScreen() {
                 <Text style={[styles.sectionLabel, { color: colors.text.secondary }]}>
                   {t('dashboard.retosTitle')}
                 </Text>
-                <Text style={[styles.retoPrivacy, { color: colors.text.tertiary }]}>
-                  {t('dashboard.retosPrivacidad')}
-                </Text>
-                {report.retoColumns.map((col) => {
-                  let cumplido = 0;
-                  let progreso = 0;
-                  let sinEmp = 0;
-                  for (const s of report.students) {
-                    const e = report.retoEstados[s.uid]?.[col.id] ?? 'sin_empezar';
-                    if (e === 'cumplido') cumplido++;
-                    else if (e === 'en_progreso') progreso++;
-                    else sinEmp++;
-                  }
-                  return (
-                    <View
-                      key={col.id}
-                      style={[styles.retoCard, { backgroundColor: colors.background.secondary }]}
-                    >
-                      <Text style={[styles.diagHead, { color: colors.text.primary }]}>
-                        {t(`assignments.retoItem_${col.tipo}`, { n: col.cantidad })}
-                      </Text>
-                      <Text style={[styles.diagItemSub, { color: colors.text.tertiary }]}>
-                        {t('dashboard.retoResumen', { cumplido, progreso, sin: sinEmp })}
-                      </Text>
-                      {report.students.map((s) => {
-                        const e = report.retoEstados[s.uid]?.[col.id] ?? 'sin_empezar';
-                        const icon: keyof typeof Ionicons.glyphMap =
-                          e === 'cumplido'
-                            ? 'checkmark-circle'
-                            : e === 'en_progreso'
-                              ? 'time-outline'
-                              : 'ellipse-outline';
-                        const color =
-                          e === 'cumplido'
-                            ? colors.system.green
-                            : e === 'en_progreso'
-                              ? colors.system.orange
-                              : colors.text.tertiary;
-                        return (
-                          <View key={s.uid} style={styles.retoStudentRow}>
-                            <Text
-                              style={[styles.retoStudentName, { color: colors.text.primary }]}
-                              numberOfLines={1}
-                            >
-                              {s.nombre}
-                            </Text>
-                            <View style={styles.retoEstadoWrap}>
-                              <Ionicons name={icon} size={16} color={color} />
-                              <Text style={[styles.retoEstadoText, { color }]}>
-                                {t(`dashboard.retoEstado_${e}`)}
-                              </Text>
-                            </View>
-                          </View>
-                        );
-                      })}
-                    </View>
-                  );
-                })}
+                {report.retoColumns.map((col) => (
+                  <View
+                    key={col.id}
+                    style={[styles.retoCard, { backgroundColor: colors.background.secondary }]}
+                  >
+                    <Text style={[styles.diagHead, { color: colors.text.primary }]}>
+                      {t(`assignments.retoItem_${col.tipo}`, { n: col.cantidad })}
+                    </Text>
+                    <Text style={[styles.diagItemSub, { color: colors.text.tertiary }]}>
+                      {t('dashboard.retoSeguimientoPrivado')}
+                    </Text>
+                  </View>
+                ))}
               </View>
             )}
 
@@ -418,17 +373,5 @@ const styles = StyleSheet.create({
   studentName: { fontSize: 15, fontWeight: '600' },
   studentEstado: { fontSize: 12 },
   studentMastery: { fontSize: 18, fontWeight: '800' },
-  retoPrivacy: { fontSize: 12, fontStyle: 'italic' },
   retoCard: { borderRadius: 12, padding: 14, gap: 6 },
-  retoStudentRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 8,
-    paddingVertical: 4,
-    width: '100%',
-  },
-  retoStudentName: { fontSize: 14, flex: 1 },
-  retoEstadoWrap: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  retoEstadoText: { fontSize: 12, fontWeight: '700' },
 });

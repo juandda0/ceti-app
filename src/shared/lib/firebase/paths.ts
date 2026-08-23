@@ -208,29 +208,6 @@ export function estudianteImpactTestDocRef(
   return doc(db, C.colegios, colegioId, C.cursos, cursoId, C.estudiantes, uid, C.impactTest, fase);
 }
 
-/**
- * Reto signal (RQ-PR14): `.../estudiantes/{uid}/retos/{retoId}` with doc id =
- * assignment id. Self-write, profesor-read; carries ONLY estado + timestamps.
- */
-export function estudianteRetosCollectionRef(
-  db: Firestore,
-  colegioId: string,
-  cursoId: string,
-  uid: string
-) {
-  return collection(db, C.colegios, colegioId, C.cursos, cursoId, C.estudiantes, uid, C.retos);
-}
-
-export function estudianteRetoEstadoDocRef(
-  db: Firestore,
-  colegioId: string,
-  cursoId: string,
-  uid: string,
-  retoId: string
-) {
-  return doc(db, C.colegios, colegioId, C.cursos, cursoId, C.estudiantes, uid, C.retos, retoId);
-}
-
 /** Per-course aggregates roll-up (RQ-FN09). No individual minor data. */
 export function agregadosCollectionRef(db: Firestore, colegioId: string, cursoId: string) {
   return collection(db, C.colegios, colegioId, C.cursos, cursoId, C.agregados);

@@ -83,8 +83,6 @@ export type Estudiante = {
   atestadoAt?: number;
   politicaVersion?: string;
   joinedAt: number;
-  suprimidoAt?: number;
-  suprimidoPor?: string;
 };
 
 /**
@@ -209,23 +207,6 @@ export type AsignacionReto = {
 };
 
 export type AsignacionAny = Asignacion | AsignacionReto;
-
-export type RetoEstado = 'en_progreso' | 'cumplido';
-
-/**
- * Señal de estado de reto (RQ-PR14). ÚNICO dato derivado del diario que cruza al
- * árbol del curso: estado + timestamps, nunca montos/categorías/descripciones.
- * `sin_empezar` = AUSENCIA del doc.
- */
-export type RetoEstadoDoc = {
-  colegioId: string;
-  cursoId: string;
-  uid: string;
-  retoId: string;
-  estado: RetoEstado;
-  updatedAt: number;
-  cumplidoAt?: number;
-};
 
 /**
  * Per-course aggregate roll-up (RQ-FN09). NO individual minor data: the

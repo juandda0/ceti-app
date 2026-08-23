@@ -552,8 +552,6 @@ export const suppressStudentData = onCall(async (request) => {
     {
       estado: 'suprimido',
       atestado: false,
-      suprimidoAt: FieldValue.serverTimestamp(),
-      suprimidoPor: caller.uid,
     },
     { merge: true }
   );

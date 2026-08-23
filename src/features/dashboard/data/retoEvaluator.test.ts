@@ -62,6 +62,13 @@ function dep(p: Partial<SavingsDeposit>): SavingsDeposit {
 const vacio: DiarioLocal = { movimientos: [], goals: [], deposits: [] };
 
 describe('evaluarReto — registrar_movimientos', () => {
+  it('devuelve solo estado y avance locales, sin identidad ni coordenadas tenant', () => {
+    const movimientos = [mov({}), mov({})];
+    const result = evaluarReto(reto({ cantidad: 2 }), { ...vacio, movimientos });
+    expect(result).toEqual({ estado: 'cumplido', avance: 2 });
+    expect(Object.keys(result).sort()).toEqual(['avance', 'estado']);
+  });
+
   it('sin registros → sin_empezar', () => {
     expect(evaluarReto(reto({}), vacio)).toEqual({ estado: 'sin_empezar', avance: 0 });
   });

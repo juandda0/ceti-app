@@ -1,20 +1,17 @@
 /**
  * Loads a course's report from Firestore: roster + each student's tenant-tree
- * progress (aggregated by buildCourseReport), plus reto completion signals
- * (RQ-PR14). The profesor reads per-student progress and reto state for their
- * own course (authorized by the nested isProfesorDe rule). The reto fan-out is
- * GATED: skipped entirely when the course has no reto assignments.
+ * progress (aggregated by buildCourseReport), plus the course's reto prompts.
+ * Individual reto progress stays private on each student's device.
  */
 import { rosterRepository } from '@features/dashboard/data/rosterRepository';
 import { worldProgressRepository } from '@features/dashboard/data/worldProgressRepository';
 import { asignacionRepository } from '@features/dashboard/data/asignacionRepository';
-import { retoEstadoRepository } from '@features/dashboard/data/retoEstadoRepository';
 import {
   buildCourseReport,
   type CourseReport,
   type RosterEntry,
 } from '@features/dashboard/data/courseReport';
-import type { RetoEstado, RetoFinancieroTipo } from '@shared/types/tenancy';
+import type { RetoFinancieroTipo } from '@shared/types/tenancy';
 
 export interface RetoColumn {
   id: string;
@@ -25,8 +22,6 @@ export interface RetoColumn {
 
 export interface CourseReportWithRetos extends CourseReport {
   retoColumns: RetoColumn[];
-  /** uid → (retoId → estado). Ausencia = sin_empezar (nunca se escribe). */
-  retoEstados: Record<string, Record<string, RetoEstado>>;
 }
 
 export async function loadCourseReport(
@@ -53,8 +48,6 @@ export async function loadCourseReport(
     progress: progressArrays.flat(),
   });
 
-  // 1 query para las asignaciones; el fan-out de señales por estudiante SOLO se
-  // dispara si hay ≥1 reto (en cursos sin retos, cero reads extra).
   const asignaciones = await asignacionRepository.listByCurso(colegioId, cursoId);
   const retoColumns: RetoColumn[] = [];
   for (const a of asignaciones) {
@@ -69,17 +62,5 @@ export async function loadCourseReport(
   }
   retoColumns.sort((x, y) => x.deadline - y.deadline);
 
-  const retoEstados: Record<string, Record<string, RetoEstado>> = {};
-  if (retoColumns.length > 0) {
-    const signalArrays = await Promise.all(
-      roster.map((s) => retoEstadoRepository.listByEstudiante(colegioId, cursoId, s.uid))
-    );
-    roster.forEach((s, i) => {
-      const map: Record<string, RetoEstado> = {};
-      for (const sig of signalArrays[i]) map[sig.retoId] = sig.estado;
-      retoEstados[s.uid] = map;
-    });
-  }
-
-  return { ...base, retoColumns, retoEstados };
+  return { ...base, retoColumns };
 }
