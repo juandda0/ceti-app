@@ -1,11 +1,11 @@
-import type { Href, Router } from 'expo-router';
+import type { Href, ImperativeRouter } from 'expo-router';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 
 /**
  * Cierra sesión (stores + Firebase OAuth) y redirige. Un solo punto de salida.
  */
 export async function performLogoutAndGo(
-  router: Router,
+  router: ImperativeRouter,
   target: Href = '/(auth)/welcome'
 ): Promise<void> {
   // Navigate FIRST, then tear down. Resetting the auth store flips role

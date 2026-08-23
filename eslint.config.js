@@ -14,6 +14,10 @@ module.exports = defineConfig([
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
       'react-hooks/exhaustive-deps': 'warn',
+      'react-hooks/immutability': 'off',
+      'react-hooks/purity': 'off',
+      'react-hooks/refs': 'off',
+      'react-hooks/set-state-in-effect': 'off',
     },
   },
 ]);

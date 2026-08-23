@@ -438,7 +438,7 @@ const styles = StyleSheet.create({
   cardDepositText: { ...Typography.caption1, fontWeight: '800' },
   progressArea: { gap: 14, marginTop: 2 },
   barContainer: { height: 12, borderRadius: 6, justifyContent: 'center' },
-  barBg: { ...StyleSheet.absoluteFillObject, borderRadius: 6, overflow: 'hidden' },
+  barBg: { ...StyleSheet.absoluteFill, borderRadius: 6, overflow: 'hidden' },
   barFill: { height: '100%', borderRadius: 6 },
   progressIndicator: {
     position: 'absolute',

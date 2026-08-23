@@ -1,5 +1,4 @@
 import { StyleSheet } from 'react-native';
-import type { BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
 import type { ThemeColors } from '@shared/constants/colors';
 
 export type MainTabBarNavOptionsArgs = {
@@ -15,7 +14,7 @@ export function buildMainTabScreenOptions({
   colors,
   isLight,
   tabBarHeight,
-}: MainTabBarNavOptionsArgs): BottomTabNavigationOptions {
+}: MainTabBarNavOptionsArgs) {
   return {
     headerShown: false,
     tabBarShowLabel: false,

@@ -1,7 +1,6 @@
 import { useCallback, useRef } from 'react';
 import { BackHandler, Platform } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
-import { Tabs, useRouter } from 'expo-router';
+import { Tabs, useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '@shared/store/useThemeStore';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
