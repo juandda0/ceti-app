@@ -9,9 +9,20 @@ export const movimientosRepository = {
     const clients = getFirebaseClients();
     if (!clients?.firestore) return false;
     const ref = userMovimientoDocRef(clients.firestore, uid, movimiento.id);
-    await setDoc(ref, stripUndefinedValues({ ...movimiento } as Record<string, unknown>), {
-      merge: true,
-    });
+    await setDoc(
+      ref,
+      stripUndefinedValues({
+        id: movimiento.id,
+        tipo: 'gasto',
+        monto: movimiento.monto,
+        descripcion: movimiento.descripcion,
+        categoria: movimiento.categoria,
+        origen: movimiento.origen,
+        fecha: movimiento.fecha ?? movimiento.createdAt,
+        createdAt: movimiento.createdAt,
+        updatedAt: movimiento.updatedAt ?? movimiento.createdAt,
+      })
+    );
     return true;
   },
 

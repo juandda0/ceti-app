@@ -46,6 +46,43 @@ export interface Movimiento {
   updatedAt?: number;
 }
 
+export function isExpenseSnapshot(value: unknown): value is Movimiento {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) return false;
+  const item = value as Record<string, unknown>;
+  return (
+    Object.keys(item).every((key) =>
+      [
+        'id',
+        'tipo',
+        'monto',
+        'descripcion',
+        'categoria',
+        'origen',
+        'fecha',
+        'createdAt',
+        'updatedAt',
+      ].includes(key)
+    ) &&
+    typeof item.id === 'string' &&
+    item.id.length > 0 &&
+    item.tipo === 'gasto' &&
+    Number.isInteger(item.monto) &&
+    Number(item.monto) > 0 &&
+    Number(item.monto) <= 100_000_000 &&
+    typeof item.descripcion === 'string' &&
+    item.descripcion.length <= 140 &&
+    typeof item.categoria === 'string' &&
+    MOVIMIENTO_CATEGORIAS.includes(item.categoria as MovimientoCategoria) &&
+    (item.origen === 'voz' || item.origen === 'manual') &&
+    typeof item.fecha === 'number' &&
+    Number.isFinite(item.fecha) &&
+    typeof item.createdAt === 'number' &&
+    Number.isFinite(item.createdAt) &&
+    typeof item.updatedAt === 'number' &&
+    Number.isFinite(item.updatedAt)
+  );
+}
+
 interface MovimientosState {
   movimientos: Movimiento[];
 }

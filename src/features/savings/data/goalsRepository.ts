@@ -9,9 +9,20 @@ export const goalsRepository = {
     const clients = getFirebaseClients();
     if (!clients?.firestore) return false;
     const ref = userGoalDocRef(clients.firestore, uid, goal.id);
-    await setDoc(ref, stripUndefinedValues({ ...goal } as Record<string, unknown>), {
-      merge: true,
-    });
+    await setDoc(
+      ref,
+      stripUndefinedValues({
+        id: goal.id,
+        title: goal.title,
+        iconId: goal.iconId ?? 'target',
+        category: goal.category,
+        targetAmount: goal.targetAmount,
+        deadline: goal.deadline,
+        createdAt: goal.createdAt,
+        updatedAt: goal.updatedAt ?? goal.createdAt,
+        deletedAt: goal.deletedAt,
+      })
+    );
     return true;
   },
 

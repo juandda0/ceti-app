@@ -13,6 +13,7 @@ import { useAuthStore, isStaffRole } from '@features/auth/store/useAuthStore';
 import { useUserStore } from '@features/auth/store/useUserStore';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
 import { useMovimientosStore } from '@features/savings/store/useMovimientosStore';
+import { usePresupuestosStore } from '@features/savings/store/usePresupuestosStore';
 import { useQuestionBankStore } from '@features/learning/store/useQuestionBankStore';
 import { useLearningFlowStore } from '@features/learning/store/useLearningFlowStore';
 import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/app';
@@ -133,6 +134,7 @@ export default function Index() {
         useUserStore.getState().resetUser();
         useSavingsStore.getState().resetSavings();
         useMovimientosStore.getState().resetMovimientos();
+        usePresupuestosStore.getState().resetPresupuestos();
         useQuestionBankStore.getState().resetUserProgress();
         useLearningFlowStore.getState().reset();
       }

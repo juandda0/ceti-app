@@ -260,6 +260,37 @@ service cloud.firestore {
     function isSelf(uid) {
       return signedIn() && request.auth.uid == uid;
     }
+    function validMoney(value) {
+      return value is int && value > 0 && value <= 100000000;
+    }
+    function validTimestamp(value) {
+      return value is number && value >= 0;
+    }
+    function validGoal(d, goalId) {
+      return d.keys().hasOnly(['id', 'title', 'iconId', 'category', 'targetAmount', 'deadline', 'createdAt', 'updatedAt', 'deletedAt'])
+        && d.keys().hasAll(['id', 'title', 'iconId', 'category', 'targetAmount', 'createdAt', 'updatedAt'])
+        && d.id == goalId
+        && d.title is string && d.title.size() > 0 && d.title.size() <= 80
+        && d.iconId in ['bike', 'book', 'laptop', 'plane', 'shield', 'target']
+        && d.category in ['electronics', 'toy', 'trip', 'education', 'emergency', 'custom']
+        && validMoney(d.targetAmount)
+        && validTimestamp(d.createdAt) && validTimestamp(d.updatedAt)
+        && (!('deadline' in d) || validTimestamp(d.deadline))
+        && (!('deletedAt' in d) || validTimestamp(d.deletedAt));
+    }
+    function validSavingsOperation(d, operationId) {
+      return d.keys().hasOnly(['id', 'type', 'amount', 'description', 'goalId', 'fecha', 'createdAt', 'updatedAt'])
+        && d.keys().hasAll(['id', 'type', 'amount', 'description', 'fecha', 'createdAt', 'updatedAt'])
+        && d.id == operationId
+        && d.type in ['aporte', 'retiro']
+        && validMoney(d.amount)
+        && d.description is string && d.description.size() <= 140
+        && (!('goalId' in d) || (d.goalId is string && d.goalId.size() > 0))
+        && validTimestamp(d.fecha) && validTimestamp(d.createdAt) && validTimestamp(d.updatedAt);
+    }
+    function validBudgetAmount(topes, key) {
+      return !(key in topes) || validMoney(topes[key]);
+    }
 
     match /users/{userId} {
       allow read: if isSelf(userId);
@@ -271,10 +302,23 @@ service cloud.firestore {
 
       // Simulated savings (virtual money).
       match /goals/{goalId} {
-        allow read, write: if isSelf(userId);
+        allow read: if isSelf(userId);
+        allow create: if isSelf(userId) && validGoal(request.resource.data, goalId);
+        allow update: if isSelf(userId)
+          && validGoal(request.resource.data, goalId)
+          && request.resource.data.id == resource.data.id
+          && request.resource.data.createdAt == resource.data.createdAt;
+        allow delete: if false;
       }
       match /deposits/{depositId} {
-        allow read, write: if isSelf(userId);
+        allow read: if isSelf(userId);
+        allow create: if isSelf(userId) && validSavingsOperation(request.resource.data, depositId);
+        allow update: if isSelf(userId)
+          && validSavingsOperation(request.resource.data, depositId)
+          && request.resource.data.id == resource.data.id
+          && request.resource.data.type == resource.data.type
+          && request.resource.data.createdAt == resource.data.createdAt;
+        allow delete: if isSelf(userId);
       }
 
       // Pocket-money diary (RQ-ES10). Self-only by design: NO staff role — not
@@ -285,15 +329,23 @@ service cloud.firestore {
       match /movimientos/{movimientoId} {
         allow read, delete: if isSelf(userId);
         allow create, update: if isSelf(userId)
-          && request.resource.data.keys().hasOnly(['id', 'tipo', 'monto', 'descripcion', 'categoria', 'origen', 'goalId', 'createdAt'])
-          && request.resource.data.tipo in ['ahorro', 'gasto']
-          && request.resource.data.monto is number
-          && request.resource.data.monto >= 0
-          && request.resource.data.monto <= 100000000
+          && request.resource.data.keys().hasOnly(['id', 'tipo', 'monto', 'descripcion', 'categoria', 'origen', 'fecha', 'createdAt', 'updatedAt'])
+          && request.resource.data.keys().hasAll(['id', 'tipo', 'monto', 'descripcion', 'categoria', 'origen', 'fecha', 'createdAt', 'updatedAt'])
+          && request.resource.data.id == movimientoId
+          && request.resource.data.tipo == 'gasto'
+          && validMoney(request.resource.data.monto)
           && request.resource.data.descripcion is string
           && request.resource.data.descripcion.size() <= 140
           && request.resource.data.categoria in ['comida', 'transporte', 'entretenimiento', 'ropa', 'educacion', 'tecnologia', 'regalos', 'otros']
-          && request.resource.data.origen in ['voz', 'manual'];
+          && request.resource.data.origen in ['voz', 'manual']
+          && validTimestamp(request.resource.data.fecha)
+          && validTimestamp(request.resource.data.createdAt)
+          && validTimestamp(request.resource.data.updatedAt)
+          && (request.method == 'create' || (
+            request.resource.data.id == resource.data.id
+            && request.resource.data.tipo == resource.data.tipo
+            && request.resource.data.createdAt == resource.data.createdAt
+          ));
       }
 
       // Budgets config (RQ-ES11-CA1). Self-only, self-view: NO staff/admin read,
@@ -307,7 +359,15 @@ service cloud.firestore {
           && request.resource.data.keys().hasOnly(['topes', 'updatedAt'])
           && request.resource.data.updatedAt is number
           && request.resource.data.topes is map
-          && request.resource.data.topes.keys().hasOnly(['comida', 'transporte', 'entretenimiento', 'ropa', 'educacion', 'tecnologia', 'regalos', 'otros']);
+          && request.resource.data.topes.keys().hasOnly(['comida', 'transporte', 'entretenimiento', 'ropa', 'educacion', 'tecnologia', 'regalos', 'otros'])
+          && validBudgetAmount(request.resource.data.topes, 'comida')
+          && validBudgetAmount(request.resource.data.topes, 'transporte')
+          && validBudgetAmount(request.resource.data.topes, 'entretenimiento')
+          && validBudgetAmount(request.resource.data.topes, 'ropa')
+          && validBudgetAmount(request.resource.data.topes, 'educacion')
+          && validBudgetAmount(request.resource.data.topes, 'tecnologia')
+          && validBudgetAmount(request.resource.data.topes, 'regalos')
+          && validBudgetAmount(request.resource.data.topes, 'otros');
       }
     }
 

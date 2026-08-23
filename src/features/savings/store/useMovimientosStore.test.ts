@@ -1,6 +1,9 @@
 // El store dispara sync fire-and-forget vía dynamic import(); mockeamos esos
 // módulos para que el side-effect resuelva limpio. La lógica pura queda intacta.
-import { useMovimientosStore } from '@features/savings/store/useMovimientosStore';
+import {
+  isExpenseSnapshot,
+  useMovimientosStore,
+} from '@features/savings/store/useMovimientosStore';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
 import { logEvent } from '@shared/lib/analytics/logEvent';
 
@@ -177,5 +180,24 @@ describe('useMovimientosStore', () => {
     useMovimientosStore.getState().addMovimiento(baseMovimiento);
     useMovimientosStore.getState().resetMovimientos();
     expect(useMovimientosStore.getState().movimientos).toHaveLength(0);
+  });
+});
+
+describe('isExpenseSnapshot', () => {
+  const valid = {
+    id: 'm1',
+    tipo: 'gasto',
+    monto: 1000,
+    descripcion: 'Almuerzo',
+    categoria: 'comida',
+    origen: 'manual',
+    fecha: 1,
+    createdAt: 1,
+    updatedAt: 1,
+  };
+
+  it('acepta el formato persistido y rechaza campos extra', () => {
+    expect(isExpenseSnapshot(valid)).toBe(true);
+    expect(isExpenseSnapshot({ ...valid, saldo: 1000 })).toBe(false);
   });
 });

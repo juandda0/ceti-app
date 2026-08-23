@@ -1,34 +1,34 @@
 import { onSnapshot } from 'firebase/firestore';
 import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/app';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
-import type { SavingsGoal, SavingsDeposit } from '@features/savings/store/useSavingsStore';
-import { recordError } from '@shared/lib/analytics/crashlytics';
-import { userGoalsCollectionRef, userDepositsCollectionRef } from '@shared/lib/firebase/paths';
 import {
-  resetUserProgressPushSubscriptions,
-  startUserProgressPush,
-} from '@shared/session/userProgressPush';
-
-let applyingSnapshot = false;
-
-export function beginRemoteApply() {
-  applyingSnapshot = true;
-}
-export function endRemoteApply() {
-  applyingSnapshot = false;
-}
-export function isApplyingSnapshot() {
-  return applyingSnapshot;
-}
+  useMovimientosStore,
+  isExpenseSnapshot,
+} from '@features/savings/store/useMovimientosStore';
+import { usePresupuestosStore } from '@features/savings/store/usePresupuestosStore';
+import { isSavingsGoal, isSavingsOperation } from '@features/savings/domain/savings';
+import { MOVIMIENTO_CATEGORIAS } from '@features/savings/store/useMovimientosStore';
+import { recordError } from '@shared/lib/analytics/crashlytics';
+import {
+  userGoalsCollectionRef,
+  userDepositsCollectionRef,
+  userMovimientosCollectionRef,
+  userConfigPresupuestosDocRef,
+} from '@shared/lib/firebase/paths';
 
 let unsubs: (() => void)[] = [];
 let activeSyncUid = '';
 
 export function stopUserRemoteSync(): void {
+  const hadActiveUser = activeSyncUid !== '';
   activeSyncUid = '';
-  resetUserProgressPushSubscriptions();
   unsubs.forEach((u) => u());
   unsubs = [];
+  if (hadActiveUser) {
+    useSavingsStore.getState().resetSavings();
+    useMovimientosStore.getState().resetMovimientos();
+    usePresupuestosStore.getState().resetPresupuestos();
+  }
 }
 
 function retryOnPermissionDenied(
@@ -57,23 +57,23 @@ export function startUserRemoteSync(uid: string): void {
   if (!uid.trim()) return;
   activeSyncUid = uid;
 
-  startUserProgressPush(uid);
-
   function listenGoals(listenUid: string) {
     unsubs.push(
       onSnapshot(
         userGoalsCollectionRef(db, listenUid),
         (snap) => {
           if (snap.metadata.hasPendingWrites) return;
-          beginRemoteApply();
-          try {
-            const goals = snap.docs
-              .map((x) => x.data() as SavingsGoal)
-              .filter((g) => g && typeof g.id === 'string');
-            useSavingsStore.setState({ goals });
-          } finally {
-            endRemoteApply();
-          }
+          const goals = snap.docs
+            .map((x) => x.data())
+            .filter(isSavingsGoal)
+            .map((goal) => ({
+              ...goal,
+              description: '',
+              emoji: '',
+              currentAmount: 0,
+              frequency: 'total' as const,
+            }));
+          useSavingsStore.setState({ goals });
         },
         (err) => retryOnPermissionDenied(listenUid, listenGoals, 'user_remote_goals', err)
       )
@@ -86,21 +86,59 @@ export function startUserRemoteSync(uid: string): void {
         userDepositsCollectionRef(db, listenUid),
         (snap) => {
           if (snap.metadata.hasPendingWrites) return;
-          beginRemoteApply();
-          try {
-            const deposits = snap.docs
-              .map((x) => x.data() as SavingsDeposit)
-              .filter((d) => d && typeof d.id === 'string');
-            useSavingsStore.setState({ deposits });
-          } finally {
-            endRemoteApply();
-          }
+          const operations = snap.docs.map((x) => x.data()).filter(isSavingsOperation);
+          useSavingsStore.setState({ operations });
         },
         (err) => retryOnPermissionDenied(listenUid, listenDeposits, 'user_remote_deposits', err)
       )
     );
   }
 
+  function listenMovimientos(listenUid: string) {
+    unsubs.push(
+      onSnapshot(
+        userMovimientosCollectionRef(db, listenUid),
+        (snap) => {
+          if (snap.metadata.hasPendingWrites) return;
+          useMovimientosStore.setState({
+            movimientos: snap.docs.map((item) => item.data()).filter(isExpenseSnapshot),
+          });
+        },
+        (err) => retryOnPermissionDenied(listenUid, listenMovimientos, 'user_remote_expenses', err)
+      )
+    );
+  }
+
+  function listenPresupuestos(listenUid: string) {
+    unsubs.push(
+      onSnapshot(
+        userConfigPresupuestosDocRef(db, listenUid),
+        (snap) => {
+          if (snap.metadata.hasPendingWrites) return;
+          const topes = snap.data()?.topes;
+          if (typeof topes !== 'object' || topes === null || Array.isArray(topes)) {
+            usePresupuestosStore.setState({ topes: {} });
+            return;
+          }
+          usePresupuestosStore.setState({
+            topes: Object.fromEntries(
+              Object.entries(topes).filter(
+                ([key, amount]) =>
+                  MOVIMIENTO_CATEGORIAS.includes(key as (typeof MOVIMIENTO_CATEGORIAS)[number]) &&
+                  Number.isInteger(amount) &&
+                  Number(amount) > 0 &&
+                  Number(amount) <= 100_000_000
+              )
+            ),
+          });
+        },
+        (err) => retryOnPermissionDenied(listenUid, listenPresupuestos, 'user_remote_budgets', err)
+      )
+    );
+  }
+
   listenGoals(uid);
   listenDeposits(uid);
+  listenMovimientos(uid);
+  listenPresupuestos(uid);
 }

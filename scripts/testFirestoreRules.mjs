@@ -442,14 +442,70 @@ await check(
   assertSucceeds(setDoc(doc(stuA1, 'users/uStuA1'), { displayName: 'A', provider: 'google' }))
 );
 
+console.log('Savings goals and operations (RQ-ES11):');
+const validGoal = {
+  id: 'g1',
+  title: 'Computador',
+  iconId: 'laptop',
+  category: 'electronics',
+  targetAmount: 1000000,
+  createdAt: 1,
+  updatedAt: 1,
+};
+await check(
+  'student creates a validated goal',
+  assertSucceeds(setDoc(doc(stuA1, 'users/uStuA1/goals/g1'), validGoal))
+);
+await check(
+  'goal rejects legacy emoji and stored balance',
+  assertFails(setDoc(doc(stuA1, 'users/uStuA1/goals/g2'), { ...validGoal, id: 'g2', emoji: 'x', currentAmount: 1 }))
+);
+await check(
+  'goal rejects changing immutable creation time',
+  assertFails(setDoc(doc(stuA1, 'users/uStuA1/goals/g1'), { ...validGoal, createdAt: 2 }))
+);
+await check(
+  'goal is soft-deleted, not hard-deleted',
+  assertFails(deleteDoc(doc(stuA1, 'users/uStuA1/goals/g1')))
+);
+const validOperation = {
+  id: 'op1',
+  type: 'aporte',
+  amount: 50000,
+  description: 'Ahorro semanal',
+  goalId: 'g1',
+  fecha: 1,
+  createdAt: 1,
+  updatedAt: 1,
+};
+await check(
+  'student creates a validated savings operation',
+  assertSucceeds(setDoc(doc(stuA1, 'users/uStuA1/deposits/op1'), validOperation))
+);
+await check(
+  'operation rejects negative money',
+  assertFails(setDoc(doc(stuA1, 'users/uStuA1/deposits/op2'), { ...validOperation, id: 'op2', amount: -1 }))
+);
+await check(
+  'operation type is immutable',
+  assertFails(setDoc(doc(stuA1, 'users/uStuA1/deposits/op1'), { ...validOperation, type: 'retiro' }))
+);
+await check(
+  'another student cannot read savings operations',
+  assertFails(getDoc(doc(stuA2, 'users/uStuA1/deposits/op1')))
+);
+
 console.log('Pocket-money diary users/{uid}/movimientos (RQ-ES10):');
 const validMovimiento = {
+  id: 'm1',
   tipo: 'gasto',
   monto: 5000,
   descripcion: 'helado',
   categoria: 'comida',
   origen: 'voz',
+  fecha: 1,
   createdAt: 1,
+  updatedAt: 1,
 };
 await check(
   'student creates own valid movimiento',
@@ -503,20 +559,13 @@ await check(
   )
 );
 await check(
-  'movimiento accepts optional goalId',
-  assertSucceeds(
-    setDoc(doc(stuA1, 'users/uStuA1/movimientos/m3'), {
-      ...validMovimiento,
-      id: 'm3',
-      tipo: 'ahorro',
-      goalId: 'goal_x',
-    })
-  )
+  'movimiento rejects savings entries (separate ledger)',
+  assertFails(setDoc(doc(stuA1, 'users/uStuA1/movimientos/m3'), { ...validMovimiento, id: 'm3', tipo: 'ahorro' }))
 );
 // Solo-vista-propia (CA5): ni otro estudiante, ni profesor, ni admin leen
 // movimientos individuales.
 await env.withSecurityRulesDisabled(async (ctx) => {
-  await setDoc(doc(ctx.firestore(), 'users/uStuA1/movimientos/mSeed'), validMovimiento);
+  await setDoc(doc(ctx.firestore(), 'users/uStuA1/movimientos/mSeed'), { ...validMovimiento, id: 'mSeed' });
 });
 await check(
   'another student cannot read movimientos',
@@ -926,6 +975,14 @@ await check(
 await check(
   'budgets rejects unknown category',
   assertFails(setDoc(doc(stuA1, presu('uStuA1')), { topes: { apuestas: 100 }, updatedAt: nowMs }))
+);
+await check(
+  'budgets rejects zero or negative amounts',
+  assertFails(setDoc(doc(stuA1, presu('uStuA1')), { topes: { comida: 0 }, updatedAt: nowMs }))
+);
+await check(
+  'budgets rejects string amounts',
+  assertFails(setDoc(doc(stuA1, presu('uStuA1')), { topes: { comida: '20000' }, updatedAt: nowMs }))
 );
 await check(
   'budgets rejects non-numeric updatedAt',

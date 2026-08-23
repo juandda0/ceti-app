@@ -62,7 +62,6 @@ export const usePresupuestosStore = create<PresupuestosStore>()(
 
       resetPresupuestos: () => {
         set({ topes: {} });
-        sync({});
       },
 
       saveBudgets: async (topes) => {
