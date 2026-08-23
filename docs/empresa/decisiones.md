@@ -314,3 +314,17 @@ autorizadoAt}`). Cuando ese correo inicia sesión, se le fija
 - **Autoridad:** coordinada con `requerimientos.md` (SECCIÓN 10 retirada),
   `estado.md` y el código (R13/R15 no aplican a invariantes duros aquí; es
   retiro de feature).
+
+## D-AHORROS — Administración autodeclarada de Mi dinero (2026-08-23)
+
+> Decisión del dueño, aprobada durante el diseño del CRUD del perfil estudiante.
+> Enmienda RQ-ES10 y crea RQ-ES11.
+
+- Ceti no integra bancos, no custodia dinero y no presenta saldos bancarios.
+- Los gastos no modifican el ahorro.
+- `deposits` registra aportes y retiros; los saldos se derivan del historial.
+- Eliminar una meta conserva sus operaciones como ahorro sin asignar.
+- El estudiante dispone de CRUD para metas, ahorro, gastos y topes.
+- El registro admite entrada manual y por voz; la voz siempre requiere confirmación.
+- Las metas usan un catálogo SVG cerrado, sin emojis.
+- Solo el estudiante accede a datos financieros individuales.

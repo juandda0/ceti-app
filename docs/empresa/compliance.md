@@ -31,7 +31,10 @@
   bolsillo (`users/{uid}/movimientos`) sí se guarda, con salvaguardas: solo-vista-
   propia (ni staff ni admin leen movimientos individuales), borrable por el
   estudiante, incluido en la supresión, sin perfilamiento derivado y sin
-  montos/descripciones/categorías en analytics.
+  montos/descripciones/categorías/fechas/saldos/ids en analytics. RQ-ES11 amplía
+  la excepción a metas, aportes, retiros y topes autodeclarados con el mismo
+  aislamiento. Los saldos, progresos e insights se calculan en memoria para la
+  vista propia y nunca se persisten como perfil individual.
 - ❌ **Perfil individual persistente** construido a partir de decisiones del menor
   (ver "No perfilamiento").
 - ❌ PII de menores en analytics (`logEvent.ts`): nunca nombre, email ni

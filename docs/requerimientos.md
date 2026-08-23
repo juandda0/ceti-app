@@ -355,22 +355,35 @@ El modo colaborativo y el leaderboard de aula (`curso.colaboracionAula`,
 > Adición formal a la spec (autorizada por el dueño, 2026-07-08; excepciones
 > estrechas a R7 y R10 registradas en `docs/decisiones.md` D-ES10-\*).
 
-El estudiante registra sus movimientos de dinero de bolsillo **por voz**: presiona
-un botón de micrófono, dice qué ahorró o gastó ("gasté cinco mil en un helado"),
-una IA server-side clasifica `{tipo, monto, descripcion, categoria}`, el
-estudiante **confirma o corrige**, y el movimiento queda en su diario personal con
-un dashboard **solo-vista-propia** (totales del mes, ahorro vs gasto, desglose por
-categoría, historial). La voz es el único camino de registro.
+El estudiante registra gastos de bolsillo de forma manual o por voz. La entrada
+por voz clasifica `{tipo, monto, descripcion, categoria}` y siempre abre el mismo
+formulario editable que la entrada manual. Nada se escribe antes de la
+confirmación. El diario y su dashboard son **solo-vista-propia**.
 
 - _CA1_: El reconocimiento de voz ocurre 100% en el navegador (Web Speech API, es-CO); el audio **jamás** se graba, almacena ni transmite a servidores propios; solo el texto transcrito (≤300 caracteres) viaja a la Cloud Function.
 - _CA2_: Única excepción a R7: la callable `procesarRegistroVoz` (server-side) clasifica el texto y devuelve `{tipo, monto, descripcion, categoria, confianza}` sin escribir en Firestore; la categoría sale de un enum fijo de 8 (`comida, transporte, entretenimiento, ropa, educacion, tecnologia, regalos, otros`); la IA sigue prohibida en el cliente y para generación/adaptación/selección de contenido.
-- _CA3_: Nada se persiste sin confirmación explícita del estudiante; la tarjeta de confirmación permite corregir tipo/monto/categoría/descripción antes de guardar. No existe formulario manual independiente.
+- _CA3_: Nada se persiste sin confirmación explícita del estudiante; el formulario compartido permite corregir monto/categoría/descripción/fecha antes de guardar.
 - _CA4_: Excepción estrecha a R10: los movimientos son un **diario autodeclarado de dinero de bolsillo real** con fin pedagógico; sigue prohibido todo lo transaccional (cuentas bancarias, pagos, transferencias, gift cards, dinero moviéndose por la app). La moneda virtual (Cetis) no se mezcla con COP reales.
 - _CA5_: `users/{uid}/movimientos` es legible/escribible/borrable **únicamente** por el propio estudiante (`isSelf`); ningún otro rol (profesor ni admin) lee movimientos individuales; no existen agregados de movimientos para staff.
-- _CA6_: Sin perfilamiento: la categoría es atributo de la transacción, no del menor; ningún rasgo derivado se persiste ni adapta contenido; analytics recibe solo `{origen, tipo}` — nunca montos, descripciones ni categorías.
-- _CA7_: El estudiante puede borrar cualquier movimiento propio; `suppressStudentData` elimina también `users/{uid}/movimientos` (Ley 1581).
+- _CA6_: Sin perfilamiento: la categoría es atributo de la transacción, no del menor; ningún rasgo derivado se persiste ni adapta contenido; analytics recibe solo `{origen, tipo}` — nunca montos, descripciones, categorías, fechas, saldos ni ids.
+- _CA7_: El estudiante puede crear, consultar, corregir y borrar cualquier gasto propio; `origen` y `createdAt` son inmutables. `suppressStudentData` elimina también `users/{uid}/movimientos` (Ley 1581).
 - _CA8_: La función aplica cap diario por uid y cap de longitud; la API key vive en `defineSecret('GROQ_API_KEY')`, nunca en el cliente.
-- _CA9_: Sin `SpeechRecognition` o micrófono denegado, la app muestra un mensaje claro ("usa Chrome/Edge/Safari"); el dashboard sigue visible (riesgo aceptado por el dueño: sin voz no hay registro).
+- _CA9_: Sin `SpeechRecognition` o con micrófono denegado, el registro manual y el dashboard permanecen disponibles.
+
+**RQ-ES11 — Administración autodeclarada de ahorros, metas y topes**
+
+El estudiante administra un historial separado de aportes y retiros. Ceti deriva
+el ahorro total, el ahorro sin asignar y el progreso de cada meta desde ese
+historial. Los gastos de RQ-ES10 no modifican el ahorro.
+
+- _CA1_: El estudiante dispone de CRUD de metas, aportes, retiros y topes semanales; profesor y admin no pueden leerlos.
+- _CA2_: Un aporte aumenta el ahorro y un retiro lo reduce; ninguna mutación puede dejar negativos el ahorro total, el ahorro sin asignar ni el ahorro de una meta.
+- _CA3_: Eliminar una meta conserva sus operaciones y las trata como ahorro sin asignar; la meta usa borrado lógico con `deletedAt`.
+- _CA4_: El progreso y el estado de cumplimiento se derivan del historial; no existe un saldo o `currentAmount` editable.
+- _CA5_: Las metas usan un `iconId` de catálogo SVG cerrado; no almacenan emojis, markup SVG, URLs ni archivos del estudiante.
+- _CA6_: Aportes y retiros admiten entrada manual o por voz con confirmación; el estudiante puede corregir monto, descripción, fecha y meta asignada.
+- _CA7_: Los saldos, progresos e insights se calculan en memoria para la vista propia y nunca se persisten como perfil individual.
+- _CA8_: `suppressStudentData` elimina `goals`, `deposits`, `movimientos` y `config/presupuestos`.
 
 ### Conflictos resueltos en esta sección
 
