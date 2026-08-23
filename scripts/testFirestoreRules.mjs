@@ -94,6 +94,28 @@ await env.withSecurityRulesDisabled(async (ctx) => {
     grado: '9',
     profesorUids: ['uProfA1'],
   });
+  await setDoc(doc(db, 'colegios/A/cursos/c2'), {
+    nombre: '9B',
+    grado: '9',
+    profesorUids: ['uProfA2'],
+    codigo: 'SECRE2',
+  });
+  await setDoc(doc(db, 'colegios/A/asignaciones/aCurso2'), {
+    worldId: 'world_1',
+    target: { tipo: 'curso', cursoId: 'c2' },
+    fechaInicio: 1,
+    deadline: 2,
+    createdByUid: 'uProfA2',
+    createdAt: 1,
+  });
+  await setDoc(doc(db, 'colegios/A/asignaciones/aStu1'), {
+    worldId: 'world_1',
+    target: { tipo: 'estudiante', cursoId: 'c1', uid: 'uStuA1' },
+    fechaInicio: 1,
+    deadline: 2,
+    createdByUid: 'uProfA1',
+    createdAt: 1,
+  });
   await setDoc(doc(db, 'colegios/A/cursos/c1/estudiantes/uStuA1'), {
     email: 'a1@demo.ceti',
     nombre: 'Est 1',
@@ -316,6 +338,22 @@ await check(
 
 console.log('Course update denied (structure/settings = backend):');
 await check(
+  'student reads own course doc',
+  assertSucceeds(getDoc(doc(stuA1, 'colegios/A/cursos/c1')))
+);
+await check(
+  'student cannot read another course doc or its code',
+  assertFails(getDoc(doc(stuA1, 'colegios/A/cursos/c2')))
+);
+await check(
+  'course teacher reads own course doc',
+  assertSucceeds(getDoc(doc(profA1, 'colegios/A/cursos/c1')))
+);
+await check(
+  'teacher cannot read a course they do not teach',
+  assertFails(getDoc(doc(profA1, 'colegios/A/cursos/c2')))
+);
+await check(
   'teacher cannot update course doc (structure = backend)',
   assertFails(
     setDoc(doc(profA1, 'colegios/A/cursos/c1'), { profesorUids: ['uProfA1', 'uProfA2'] }, { merge: true })
@@ -336,6 +374,36 @@ await check(
   assertFails(setDoc(doc(stuA2, 'colegios/A/asignaciones/a2'), asig))
 );
 await check('profesor B cannot read A assignment', assertFails(getDoc(doc(profB, asigPath))));
+await check(
+  'student cannot read another course assignment',
+  assertFails(getDoc(doc(stuA1, 'colegios/A/asignaciones/aCurso2')))
+);
+await check(
+  'target student reads individual assignment',
+  assertSucceeds(getDoc(doc(stuA1, 'colegios/A/asignaciones/aStu1')))
+);
+await check(
+  'other student cannot read individual assignment',
+  assertFails(getDoc(doc(stuA2, 'colegios/A/asignaciones/aStu1')))
+);
+await check(
+  'teacher cannot read another course assignment',
+  assertFails(getDoc(doc(profA1, 'colegios/A/asignaciones/aCurso2')))
+);
+await check(
+  'teacher cannot retarget assignment',
+  assertFails(
+    setDoc(
+      doc(profA1, asigPath),
+      { target: { tipo: 'curso', cursoId: 'c2' } },
+      { merge: true }
+    )
+  )
+);
+await check(
+  'teacher cannot replace creator',
+  assertFails(setDoc(doc(profA1, asigPath), { createdByUid: 'uProfA2' }, { merge: true }))
+);
 
 console.log('Membership:');
 await check('user reads own membership', assertSucceeds(getDoc(doc(stuA1, 'membership/uStuA1'))));
@@ -937,82 +1005,13 @@ await check(
   assertFails(setDoc(doc(profB, mkAsig('cross')), { worldId: 'world_2', ...baseAsig }))
 );
 
-console.log('Reto signal (RQ-PR14, self-write only; state + timestamps):');
-const sig = (uid, retoId) => `colegios/A/cursos/c1/estudiantes/${uid}/retos/${retoId}`;
-const validSig = {
-  colegioId: 'A',
-  cursoId: 'c1',
-  uid: 'uStuA1',
-  retoId: 'reto1',
-  estado: 'en_progreso',
-  updatedAt: nowMs,
-};
 await check(
-  'student writes own reto signal (en_progreso)',
-  assertSucceeds(setDoc(doc(stuA1, sig('uStuA1', 'reto1')), validSig))
-);
-await check(
-  'profesor cannot write reto signal',
-  assertFails(setDoc(doc(profA1, sig('uStuA1', 'reto1')), validSig))
-);
-await check(
-  'other student cannot write reto signal',
-  assertFails(setDoc(doc(stuA2, sig('uStuA1', 'reto1')), { ...validSig }))
-);
-await check(
-  'reto signal rejects extra field monto (anti-leak pin)',
-  assertFails(setDoc(doc(stuA1, sig('uStuA1', 'reto1')), { ...validSig, monto: 5000 }))
-);
-await check(
-  'reto signal rejects estado sin_empezar',
-  assertFails(setDoc(doc(stuA1, sig('uStuA1', 'reto1')), { ...validSig, estado: 'sin_empezar' }))
-);
-await check(
-  'reto signal rejects backdated updatedAt',
-  assertFails(setDoc(doc(stuA1, sig('uStuA1', 'reto1')), { ...validSig, updatedAt: 1 }))
-);
-await check(
-  'reto signal rejects nonexistent reto',
-  assertFails(setDoc(doc(stuA1, sig('uStuA1', 'nope')), { ...validSig, retoId: 'nope' }))
-);
-await check(
-  'reto signal rejects reto of another course',
-  assertFails(setDoc(doc(stuA1, sig('uStuA1', 'retoOtro')), { ...validSig, retoId: 'retoOtro' }))
-);
-await check(
-  'pending-attestation student cannot write reto signal',
-  assertFails(setDoc(doc(stuA3, sig('uStuA3', 'reto1')), { ...validSig, uid: 'uStuA3' }))
-);
-await check(
-  'student transitions to cumplido',
-  assertSucceeds(
-    setDoc(doc(stuA1, sig('uStuA1', 'reto1')), {
-      ...validSig,
+  'student cannot persist diary-derived reto state',
+  assertFails(
+    setDoc(doc(stuA1, 'colegios/A/cursos/c1/estudiantes/uStuA1/retos/reto1'), {
       estado: 'cumplido',
-      updatedAt: nowMs,
-      cumplidoAt: nowMs,
     })
   )
-);
-await check(
-  'reto signal cannot degrade cumplido -> en_progreso',
-  assertFails(setDoc(doc(stuA1, sig('uStuA1', 'reto1')), validSig))
-);
-await check(
-  'student cannot delete reto signal',
-  assertFails(deleteDoc(doc(stuA1, sig('uStuA1', 'reto1'))))
-);
-await check(
-  'profesor reads student reto signal',
-  assertSucceeds(getDoc(doc(profA1, sig('uStuA1', 'reto1'))))
-);
-await check(
-  'student reads own reto signal',
-  assertSucceeds(getDoc(doc(stuA1, sig('uStuA1', 'reto1'))))
-);
-await check(
-  'other-colegio profesor cannot read reto signal',
-  assertFails(getDoc(doc(profB, sig('uStuA1', 'reto1'))))
 );
 await check(
   're-pin: profesor still cannot read student movimientos (CA5)',

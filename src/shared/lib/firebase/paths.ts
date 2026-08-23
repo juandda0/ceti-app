@@ -235,6 +235,29 @@ export function asignacionesByCursoQuery(db: Firestore, colegioId: string, curso
   return query(asignacionesCollectionRef(db, colegioId), where('target.cursoId', '==', cursoId));
 }
 
+export function asignacionesDeCursoParaEstudianteQuery(
+  db: Firestore,
+  colegioId: string,
+  cursoId: string
+) {
+  return query(
+    asignacionesCollectionRef(db, colegioId),
+    where('target', '==', { tipo: 'curso', cursoId })
+  );
+}
+
+export function asignacionesIndividualesQuery(
+  db: Firestore,
+  colegioId: string,
+  cursoId: string,
+  uid: string
+) {
+  return query(
+    asignacionesCollectionRef(db, colegioId),
+    where('target', '==', { tipo: 'estudiante', cursoId, uid })
+  );
+}
+
 /** uid → tenant mapping, used at bootstrap to resolve where a user belongs. */
 export function membershipDocRef(db: Firestore, uid: string) {
   return doc(db, C.membership, uid);

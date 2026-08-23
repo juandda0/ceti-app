@@ -26,19 +26,20 @@ export default function StudentAssignmentsBanner() {
   const role = useAuthStore((s) => s.role);
   const colegioId = useAuthStore((s) => s.colegioId);
   const cursoId = useAuthStore((s) => s.cursoId);
+  const uid = useAuthStore((s) => s.firebaseUid);
 
   const [items, setItems] = useState<AsignacionWithId[]>([]);
 
   useEffect(() => {
     let cancelled = false;
-    if (role !== 'estudiante' || !colegioId || !cursoId) return;
-    void asignacionRepository.listByCurso(colegioId, cursoId).then((list) => {
+    if (role !== 'estudiante' || !colegioId || !cursoId || !uid) return;
+    void asignacionRepository.listForStudent(colegioId, cursoId, uid).then((list) => {
       if (!cancelled) setItems(list);
     });
     return () => {
       cancelled = true;
     };
-  }, [role, colegioId, cursoId]);
+  }, [role, colegioId, cursoId, uid]);
 
   const now = Date.now();
   const active = items

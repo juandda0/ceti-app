@@ -98,8 +98,10 @@ service cloud.firestore {
       }
 
       match /cursos/{cursoId} {
-        // Any member of the colegio may read course docs (students need their course).
-        allow read: if sameColegio(cid);
+        allow read: if isProfesorDe(cid, cursoId)
+          || (isRole('estudiante')
+            && sameColegio(cid)
+            && request.auth.token.cursoId == cursoId);
         // Course structure/settings and the join code are Admin SDK / Function
         // only (backend). No client writes.
         allow create, update, delete: if false;
@@ -208,39 +210,6 @@ service cloud.firestore {
             allow delete: if false;
           }
 
-          // Reto financiero signal (RQ-PR14). The ONLY diary-derived datum that
-          // crosses into the course tree: {estado, timestamps}. hasOnly makes it
-          // IMPOSSIBLE to carry montos/categorías/descripciones. sin_empezar =
-          // ABSENCE of the doc. The student computes the transition from their
-          // LOCAL stores and writes it; no Function or rule reads movimientos.
-          match /retos/{retoId} {
-            allow read: if isProfesorDe(cid, cursoId) || isEstudianteSelf(uid);
-            allow create, update: if isEstudianteSelf(uid)
-              && sameColegio(cid)
-              && request.auth.token.cursoId == cursoId
-              && estudianteActivo(cid, cursoId, uid)
-              && request.resource.data.keys().hasOnly(['colegioId', 'cursoId', 'uid', 'retoId', 'estado', 'updatedAt', 'cumplidoAt'])
-              && request.resource.data.colegioId == cid
-              && request.resource.data.cursoId == cursoId
-              && request.resource.data.uid == uid
-              && request.resource.data.retoId == retoId
-              && request.resource.data.estado in ['en_progreso', 'cumplido']
-              && request.resource.data.updatedAt is number
-              // Anti-backdating: anclado a request.time con tolerancia de skew
-              // (10 min atrás, 1 min adelante). Habilita la marca "cumplido tardío".
-              && request.resource.data.updatedAt >= request.time.toMillis() - 600000
-              && request.resource.data.updatedAt <= request.time.toMillis() + 60000
-              && (!('cumplidoAt' in request.resource.data.keys())
-                  || (request.resource.data.cumplidoAt is number && request.resource.data.estado == 'cumplido'))
-              // El reto referenciado existe, es kind 'reto' y apunta a ESTE curso
-              // (mismo doc que get() → dedupe; impide señalar retos inexistentes o
-              // de otro curso). Firestore de-dupes los dos get() al mismo path.
-              && get(/databases/$(database)/documents/colegios/$(cid)/asignaciones/$(retoId)).data.kind == 'reto'
-              && get(/databases/$(database)/documents/colegios/$(cid)/asignaciones/$(retoId)).data.target.cursoId == cursoId
-              // Monotónico: nunca degradar cumplido → en_progreso.
-              && !(resource != null && resource.data.estado == 'cumplido' && request.resource.data.estado != 'cumplido');
-            allow delete: if false;
-          }
         }
 
         // Per-course aggregates (RQ-FN09): NO individual minor data. Readable by
@@ -254,15 +223,21 @@ service cloud.firestore {
       }
 
       match /asignaciones/{aid} {
-        // Staff and students of the colegio can see assignments. Safe because a
-        // brief carries no personal data — a reto is only {tipo, cantidad}.
-        allow read: if sameColegio(cid);
+        allow read: if isProfesorDe(cid, resource.data.target.cursoId)
+          || (isRole('estudiante')
+            && sameColegio(cid)
+            && request.auth.token.cursoId == resource.data.target.cursoId
+            && (resource.data.target.tipo == 'curso'
+              || (resource.data.target.tipo == 'estudiante'
+                && resource.data.target.uid == request.auth.uid)));
         // Create/operate: the target course's teacher (matriz §1.3). Shape is now
         // validated so a reto brief cannot smuggle free text or montos (RQ-PR14).
         allow create: if isProfesorDe(cid, request.resource.data.target.cursoId)
           && request.resource.data.createdByUid == request.auth.uid
           && asignacionShapeValida(request.resource.data);
         allow update: if isProfesorDe(cid, resource.data.target.cursoId)
+          && request.resource.data.target == resource.data.target
+          && request.resource.data.createdByUid == resource.data.createdByUid
           && asignacionShapeValida(request.resource.data);
         allow delete: if isProfesorDe(cid, resource.data.target.cursoId);
       }
