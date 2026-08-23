@@ -394,8 +394,6 @@
     "reviewMsg": "Indica cuánto fue y una descripción.",
     "savedTitle": "¡Anotado!",
     "savedMsg": "Tu movimiento quedó en el diario.",
-    "capTitle": "Límite diario alcanzado",
-    "capMsg": "Ya usaste todos tus registros por voz de hoy. Vuelve mañana.",
     "errorTitle": "No pude clasificarlo",
     "errorMsg": "Anótalo a mano abajo o inténtalo de nuevo.",
     "noEntendiTitle": "No te entendí",

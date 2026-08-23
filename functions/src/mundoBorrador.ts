@@ -4,9 +4,9 @@
  * a DRAFT world (teoría + preguntas de los 3 tipos + elige-camino) that the
  * Function RETURNS — nothing is persisted server-side; the professor reviews
  * and saves from the client. The prompt receives only tema/nombre/grado —
- * never student data (CA2). Same provider plumbing as vozClasificacion.
+ * never student data (CA2).
  */
-import { ModelApiError, type ModelCaller } from './vozClasificacion';
+import { ModelApiError, type ModelCaller } from './modelProvider';
 
 export type BorradorTeoriaCard = { titulo: string; cuerpo: string; ejemplo?: string };
 export type BorradorMc = {

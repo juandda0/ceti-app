@@ -19,7 +19,7 @@ import { defineSecret } from 'firebase-functions/params';
 import { initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
-import { clasificarTexto, groqCaller, ModelApiError } from './vozClasificacion';
+import { groqCaller, ModelApiError } from './modelProvider';
 import {
   generarBorrador,
   generarItem,
@@ -671,96 +671,7 @@ export const joinByCode = onCall(async (request) => {
   return { ok: true, colegioId, cursoId };
 });
 
-// ---------------------------------------------------------------------------
-// Voice diary classification (RQ-ES10). The ONLY runtime AI in Ceti — the
-// narrow R7 exception (D-ES10-01). Receives the browser-transcribed TEXT of a
-// student's pocket-money entry (audio never reaches our servers), classifies it
-// via an LLM (Groq) with structured output, and RETURNS the classification. It never
-// writes the movimiento — the client persists only after the student confirms
-// (CA3), under the isSelf rules of users/{uid}/movimientos.
-// ---------------------------------------------------------------------------
-
 const GROQ_API_KEY = defineSecret('GROQ_API_KEY');
-const VOZ_CAP_DIARIO = 30;
-const VOZ_MAX_CHARS = 300;
-
-/** Counter doc for the daily voice cap (CA8), keyed by uid + UTC day. */
-function vozUsoRef(uid: string) {
-  const day = new Date().toISOString().slice(0, 10);
-  return getFirestore().doc(`vozUso/${uid}_${day}`);
-}
-
-/**
- * Read-only budget check (CA8): throws resource-exhausted at the cap WITHOUT
- * incrementing. The increment happens only after a successful classification
- * (`chargeVozBudget`), so model failures never consume the student's quota —
- * otherwise a provider outage would let a student burn all 30/day on retries
- * without a single successful registration and lock themselves out.
- * ponytail: read-then-charge is not atomic, but the cap is a soft cost guard and
- * the UI serializes requests (single `processing` flag) — per-account races are
- * benign. Tighten to a transaction only if concurrent abuse shows up.
- */
-async function assertVozBudgetAvailable(uid: string): Promise<void> {
-  const snap = await vozUsoRef(uid).get();
-  const count = (snap.data()?.count as number | undefined) ?? 0;
-  if (count >= VOZ_CAP_DIARIO) {
-    throw new HttpsError('resource-exhausted', 'Límite diario de registros por voz alcanzado.');
-  }
-}
-
-/** Charge one unit — called ONLY after a successful classification. */
-async function chargeVozBudget(uid: string): Promise<void> {
-  await vozUsoRef(uid).set(
-    { count: FieldValue.increment(1), updatedAt: FieldValue.serverTimestamp() },
-    { merge: true }
-  );
-}
-
-export const procesarRegistroVoz = onCall({ secrets: [GROQ_API_KEY] }, async (request) => {
-  const caller = request.auth;
-  requireAuth(caller);
-  if (caller.token.role !== 'estudiante') {
-    throw new HttpsError('permission-denied', 'Solo estudiantes registran movimientos.');
-  }
-  const texto = requireString(request.data?.texto, 'texto');
-  if (texto.length > VOZ_MAX_CHARS) {
-    throw new HttpsError('invalid-argument', `'texto' supera ${VOZ_MAX_CHARS} caracteres.`);
-  }
-
-  await assertVozBudgetAvailable(caller.uid);
-
-  let movimientos;
-  try {
-    // maxTokens 600 (RQ-ES11-CA5): las frases de 4-5 ítems no caben en 300 y se
-    // truncarían — perder ítems o romper el JSON.
-    movimientos = await clasificarTexto(
-      texto,
-      groqCaller(GROQ_API_KEY.value(), { maxTokens: 600 })
-    );
-  } catch (e) {
-    // Log the REAL cause (bad key, model access, quota, bad request) — el
-    // HttpsError que devolvemos es genérico, así que sin esto el error se pierde.
-    console.error('procesarRegistroVoz: fallo de clasificación', e);
-    if (e instanceof ModelApiError) {
-      // Fallo PRE-invocación (red/HTTP/timeout): el proveedor no entregó cuerpo →
-      // NO se cobra cuota; el estudiante puede reintentar.
-      throw new HttpsError('unavailable', 'El clasificador no está disponible, intenta de nuevo.');
-    }
-    // El proveedor respondió pero la salida no parsea (JSON truncado/roto): Groq
-    // YA se facturó, así que SÍ se cobra cuota para acotar el gasto. Sin esto un
-    // cliente con claim válido podría hacer llamadas Groq ilimitadas en bucle con
-    // entradas que no parsean, sin tocar el cap.
-    await chargeVozBudget(caller.uid);
-    throw new HttpsError('internal', 'No se pudo clasificar el registro.');
-  }
-
-  // Un éxito consume 1 unidad sin importar cuántos ítems traiga (CA8/RQ-ES11-CA5).
-  await chargeVozBudget(caller.uid);
-  // Compat bidireccional: proyecta el primer ítem a nivel raíz (cliente viejo) y
-  // adjunta la lista completa (cliente nuevo). La lista trae siempre ≥1 ítem.
-  return { ...movimientos[0], movimientos };
-});
-
 // ---------------------------------------------------------------------------
 // IA de authoring docente (RQ-CN06, D-ORQ). Server-side ONLY: genera un
 // BORRADOR de mundo (teoría + preguntas + elige-camino) que se RETORNA al

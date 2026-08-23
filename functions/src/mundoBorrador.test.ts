@@ -6,7 +6,7 @@ import {
   parseItemBorrador,
   type BorradorMc,
 } from './mundoBorrador';
-import { ModelApiError, type ModelCaller } from './vozClasificacion';
+import { ModelApiError, type ModelCaller } from './modelProvider';
 
 const validRaw = {
   nombre: 'La Feria del Trueque',

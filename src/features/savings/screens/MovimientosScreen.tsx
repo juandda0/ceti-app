@@ -1,6 +1,6 @@
 /**
  * Diario de bolsillo por voz (RQ-ES10): mic → transcript (navegador) →
- * clasificación server-side → confirmación editable → diario solo-vista-propia.
+ * clasificación local → confirmación editable → diario solo-vista-propia.
  * La voz es el ÚNICO camino de registro (D-ES10-03); si la clasificación falla,
  * la tarjeta de confirmación se abre pre-llenada con el transcript.
  */
@@ -29,22 +29,12 @@ import MovimientosCharts from '@features/savings/components/MovimientosCharts';
 import ConfirmMovimientosListSheet from '@features/savings/components/ConfirmMovimientosListSheet';
 import { matchGoal } from '@features/savings/data/matchGoal';
 import { movimientosOrdenados } from '@features/savings/data/movimientosStats';
-import {
-  vozService,
-  normalizarRespuestaVoz,
-  type ClasificacionMovimiento,
-} from '@features/savings/data/vozService';
+import { vozService, type ClasificacionMovimiento } from '@features/savings/data/vozService';
 import { useVoiceCapture } from '@features/savings/hooks/useVoiceCapture';
 import { useMovimientosStore } from '@features/savings/store/useMovimientosStore';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
 
 const HISTORIAL_MAX = 30;
-
-function errorCode(e: unknown): string {
-  return typeof e === 'object' && e !== null && 'code' in e
-    ? String((e as { code: unknown }).code)
-    : '';
-}
 
 export default function MovimientosScreen() {
   const colors = useThemeColors();
@@ -71,18 +61,15 @@ export default function MovimientosScreen() {
     void (async () => {
       const rutaGoalId = typeof goalId === 'string' ? goalId : undefined;
       try {
-        const r = await vozService.procesarRegistroVoz(texto);
-        const items = normalizarRespuestaVoz(r);
-        // Varios movimientos en una sola frase → confirmación en lote
-        // (RQ-ES11-CA8). En lote el servidor ya descartó no_entendido/crear_meta.
+        const items = await vozService.clasificarRegistroLocal(texto);
+        // Varios movimientos en una sola frase → confirmación en lote.
         if (items.length > 1) {
           setListaItems(items);
           setListaVisible(true);
           return;
         }
         const single = items[0];
-        // La IA filtró la frase (no es sobre dinero, o trae groserías/contenido
-        // sensible): "no te entendí" y no abrimos ninguna tarjeta.
+        // Si falta un monto verificable no abrimos ninguna tarjeta.
         if (single.intencion === 'no_entendido') {
           showCetiNotice({
             variant: 'info',
@@ -106,17 +93,8 @@ export default function MovimientosScreen() {
           setPreGoalId(rutaGoalId);
         }
         setSheetVisible(true);
-      } catch (e) {
-        if (errorCode(e).includes('resource-exhausted')) {
-          showCetiNotice({
-            variant: 'info',
-            title: t('movimientos.capTitle'),
-            message: t('movimientos.capMsg'),
-          });
-          return;
-        }
-        // Clasificador caído/red: la tarjeta editable ES el fallback — se abre
-        // pre-llenada con el transcript para corregir a mano (D-ES10-03).
+      } catch {
+        // Fallback defensivo: la tarjeta editable conserva el registro manual.
         showCetiNotice({
           variant: 'error',
           title: t('movimientos.errorTitle'),
@@ -129,6 +107,7 @@ export default function MovimientosScreen() {
           descripcion: texto.slice(0, 140),
           categoria: 'otros',
           confianza: 0,
+          offsetDias: 0,
         });
         setPreGoalId(rutaGoalId);
         setSheetVisible(true);
