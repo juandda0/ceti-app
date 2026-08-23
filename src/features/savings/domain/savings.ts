@@ -151,11 +151,11 @@ export function projectSavings(
 
 export function validateSavingsChange(goals: SavingsGoal[], operations: SavingsOperation[]) {
   const projection = projectSavings(goals, operations);
-  if (projection.total < 0 || projection.unassigned < 0) {
-    return { ok: false as const, reason: 'insufficient_unassigned' as const };
-  }
   if (Object.values(projection.byGoal).some((amount) => amount < 0)) {
     return { ok: false as const, reason: 'insufficient_goal' as const };
+  }
+  if (projection.total < 0 || projection.unassigned < 0) {
+    return { ok: false as const, reason: 'insufficient_unassigned' as const };
   }
   return { ok: true as const, projection };
 }

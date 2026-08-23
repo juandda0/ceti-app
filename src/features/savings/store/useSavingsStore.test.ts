@@ -2,11 +2,19 @@
 // addDeposit/removeGoal. We mock those modules so the side-effect resolves
 // cleanly in the Jest VM. The pure client logic under test is untouched.
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
+import { goalsRepository } from '@features/savings/data/goalsRepository';
 
 jest.mock('@shared/lib/analytics/logEvent', () => ({ logEvent: jest.fn() }));
 jest.mock('@shared/lib/analytics/crashlytics', () => ({ recordError: jest.fn() }));
+jest.mock('@features/auth/store/useAuthStore', () => ({
+  useAuthStore: { getState: () => ({ firebaseUid: 'uid-test' }) },
+}));
 jest.mock('@features/savings/data/depositsRepository', () => ({
-  depositsRepository: { upsertDeposit: jest.fn().mockResolvedValue(true) },
+  depositsRepository: {
+    upsertDeposit: jest.fn().mockResolvedValue(true),
+    upsertOperation: jest.fn().mockResolvedValue(true),
+    removeDeposit: jest.fn().mockResolvedValue(true),
+  },
 }));
 jest.mock('@features/savings/data/goalsRepository', () => ({
   goalsRepository: {
@@ -26,7 +34,78 @@ const baseGoal = {
 
 describe('useSavingsStore', () => {
   beforeEach(() => {
-    useSavingsStore.setState({ goals: [], deposits: [] });
+    jest.clearAllMocks();
+    useSavingsStore.setState({ goals: [], deposits: [], operations: [] });
+  });
+
+  describe('CRUD de producción', () => {
+    it('elimina lógicamente una meta y libera su ahorro', async () => {
+      const created = await useSavingsStore.getState().createGoal({
+        title: 'Bici',
+        iconId: 'bike',
+        category: 'custom',
+        targetAmount: 100,
+      });
+      expect(created.ok).toBe(true);
+      if (!created.ok) return;
+      await useSavingsStore.getState().createOperation({
+        type: 'aporte',
+        amount: 80,
+        description: '',
+        goalId: created.value.id,
+        fecha: 1,
+      });
+
+      const result = await useSavingsStore.getState().deleteGoal(created.value.id);
+
+      expect(result.ok).toBe(true);
+      expect(useSavingsStore.getState().projection()).toMatchObject({ total: 80, unassigned: 80 });
+    });
+
+    it('revierte una edición remota fallida', async () => {
+      useSavingsStore.setState({
+        goals: [
+          {
+            ...baseGoal,
+            id: 'g1',
+            iconId: 'target',
+            currentAmount: 0,
+            createdAt: 1,
+            updatedAt: 1,
+          },
+        ],
+        deposits: [],
+        operations: [],
+      });
+      (goalsRepository.upsertGoal as jest.Mock).mockRejectedValueOnce(new Error('offline'));
+      const before = useSavingsStore.getState().goals;
+
+      const result = await useSavingsStore.getState().updateGoal('g1', { title: 'Nueva' });
+
+      expect(result).toEqual({ ok: false, reason: 'persistence_failed' });
+      expect(useSavingsStore.getState().goals).toEqual(before);
+    });
+
+    it('rechaza un retiro que deja una meta negativa', async () => {
+      const created = await useSavingsStore.getState().createGoal({
+        title: 'Bici',
+        iconId: 'bike',
+        category: 'custom',
+        targetAmount: 100,
+      });
+      expect(created.ok).toBe(true);
+      if (!created.ok) return;
+
+      const result = await useSavingsStore.getState().createOperation({
+        type: 'retiro',
+        amount: 1,
+        description: '',
+        goalId: created.value.id,
+        fecha: 1,
+      });
+
+      expect(result).toEqual({ ok: false, reason: 'insufficient_goal' });
+    });
   });
 
   describe('addGoal', () => {
