@@ -58,23 +58,20 @@ export default function AppTabLayout() {
         }}
       />
       <Tabs.Screen
-        name="savings"
+        name="dinero"
         options={{
-          title: 'Metas',
+          title: 'Mi dinero',
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'flag' : 'flag-outline'} size={TAB_ICON_SIZE} color={color} />
+            <Ionicons
+              name={focused ? 'wallet' : 'wallet-outline'}
+              size={TAB_ICON_SIZE}
+              color={color}
+            />
           ),
         }}
       />
-      <Tabs.Screen
-        name="movimientos"
-        options={{
-          title: 'Movimientos',
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'mic' : 'mic-outline'} size={TAB_ICON_SIZE} color={color} />
-          ),
-        }}
-      />
+      <Tabs.Screen name="savings" options={{ href: null }} />
+      <Tabs.Screen name="movimientos" options={{ href: null }} />
       <Tabs.Screen
         name="profile"
         options={{

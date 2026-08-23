@@ -42,7 +42,8 @@ export default function ConfirmMovimientoSheet({
   const colors = useThemeColors();
   const { t } = useTranslation();
   const goals = useSavingsStore((s) => s.goals);
-  const addMovimiento = useMovimientosStore((s) => s.addMovimiento);
+  const createExpense = useMovimientosStore((s) => s.createExpense);
+  const createOperation = useSavingsStore((s) => s.createOperation);
 
   const [tipo, setTipo] = useState<MovimientoTipo>('gasto');
   const [monto, setMonto] = useState('');
@@ -69,7 +70,7 @@ export default function ConfirmMovimientoSheet({
   if (!clasificacion) return null;
   const lowConfidence = clasificacion.confianza < CONFIANZA_MINIMA;
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     const num = parseMoneyAmountInt(monto);
     if (!num || !descripcion.trim()) {
       showCetiNotice({
@@ -85,15 +86,32 @@ export default function ConfirmMovimientoSheet({
       offset !== 0 || clasificacion.diaSemana
         ? resolverFechaLocal(offset, clasificacion.diaSemana)
         : undefined;
-    addMovimiento({
-      tipo,
-      monto: num,
-      descripcion: descripcion.trim().slice(0, 140),
-      categoria,
-      origen: 'voz',
-      goalId: tipo === 'ahorro' ? goalId : undefined,
-      fecha,
-    });
+    const declaredAt = fecha ?? Date.now();
+    const result =
+      tipo === 'ahorro'
+        ? await createOperation({
+            type: 'aporte',
+            amount: num,
+            description: descripcion.trim().slice(0, 140),
+            goalId,
+            fecha: declaredAt,
+          })
+        : await createExpense({
+            tipo: 'gasto',
+            monto: num,
+            descripcion: descripcion.trim().slice(0, 140),
+            categoria,
+            origen: 'voz',
+            fecha: declaredAt,
+          });
+    if (!result.ok) {
+      showCetiNotice({
+        variant: 'error',
+        title: t('movimientos.errorTitle'),
+        message: t('movimientos.errorMsg'),
+      });
+      return;
+    }
     showCetiNotice({
       variant: 'success',
       title: t('movimientos.savedTitle'),
@@ -293,7 +311,7 @@ export default function ConfirmMovimientoSheet({
             />
             <CetiButton
               label={t('movimientos.confirmar')}
-              onPress={handleConfirm}
+              onPress={() => void handleConfirm()}
               variant="primary"
               size="medium"
               style={{ flex: 1 }}
@@ -303,7 +321,7 @@ export default function ConfirmMovimientoSheet({
           <View style={styles.summaryActions}>
             <CetiButton
               label={t('movimientos.confirmar')}
-              onPress={handleConfirm}
+              onPress={() => void handleConfirm()}
               variant="primary"
               size="medium"
               style={{ alignSelf: 'stretch' }}

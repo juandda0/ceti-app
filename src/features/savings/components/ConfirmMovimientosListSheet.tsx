@@ -24,6 +24,7 @@ import {
   type MovimientoCategoria,
   type MovimientoTipo,
 } from '@features/savings/store/useMovimientosStore';
+import { useSavingsStore } from '@features/savings/store/useSavingsStore';
 
 interface Fila {
   tipo: MovimientoTipo;
@@ -65,7 +66,8 @@ export default function ConfirmMovimientosListSheet({
 }) {
   const colors = useThemeColors();
   const { t } = useTranslation();
-  const addMovimiento = useMovimientosStore((s) => s.addMovimiento);
+  const createExpense = useMovimientosStore((s) => s.createExpense);
+  const createOperation = useSavingsStore((s) => s.createOperation);
   const [filas, setFilas] = useState<Fila[]>([]);
 
   useEffect(() => {
@@ -77,7 +79,7 @@ export default function ConfirmMovimientosListSheet({
 
   const vivas = filas.filter((f) => !f.removed);
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     const validas = vivas.filter(
       (f) => (parseMoneyAmountInt(f.montoStr) || 0) > 0 && f.descripcion.trim()
     );
@@ -90,14 +92,32 @@ export default function ConfirmMovimientosListSheet({
       return;
     }
     for (const f of validas) {
-      addMovimiento({
-        tipo: f.tipo,
-        monto: parseMoneyAmountInt(f.montoStr) || 0,
-        descripcion: f.descripcion.trim().slice(0, 140),
-        categoria: f.categoria,
-        origen: 'voz',
-        fecha: fechaDeclarada(f),
-      });
+      const amount = parseMoneyAmountInt(f.montoStr) || 0;
+      const fecha = fechaDeclarada(f) ?? Date.now();
+      const result =
+        f.tipo === 'ahorro'
+          ? await createOperation({
+              type: 'aporte',
+              amount,
+              description: f.descripcion.trim().slice(0, 140),
+              fecha,
+            })
+          : await createExpense({
+              tipo: 'gasto',
+              monto: amount,
+              descripcion: f.descripcion.trim().slice(0, 140),
+              categoria: f.categoria,
+              origen: 'voz',
+              fecha,
+            });
+      if (!result.ok) {
+        showCetiNotice({
+          variant: 'error',
+          title: t('movimientos.errorTitle'),
+          message: t('movimientos.errorMsg'),
+        });
+        return;
+      }
     }
     // Analytics sin contenido financiero: solo cuántos (CA9/R4).
     void logEvent('movimientos_multi_confirmado', { cantidad: validas.length });
@@ -185,7 +205,7 @@ export default function ConfirmMovimientosListSheet({
 
       <CetiButton
         label={t('movimientos.confirmarTodos', { count: vivas.length })}
-        onPress={handleConfirm}
+        onPress={() => void handleConfirm()}
         variant="primary"
         size="medium"
         style={{ alignSelf: 'stretch', marginTop: 12 }}

@@ -7,7 +7,7 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import CetiBottomSheet from '@shared/components/CetiBottomSheet';
 import CetiButton from '@shared/components/CetiButton';
@@ -34,7 +34,7 @@ export default function ConfirmMetaSheet({
 }) {
   const colors = useThemeColors();
   const { t } = useTranslation();
-  const addGoal = useSavingsStore((s) => s.addGoal);
+  const createGoal = useSavingsStore((s) => s.createGoal);
 
   const [nombre, setNombre] = useState('');
   const [objetivo, setObjetivo] = useState('');
@@ -52,7 +52,7 @@ export default function ConfirmMetaSheet({
 
   if (!propuesta) return null;
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     const num = parseMoneyAmountInt(objetivo);
     if (!nombre.trim() || !num) {
       showCetiNotice({
@@ -62,21 +62,27 @@ export default function ConfirmMetaSheet({
       });
       return;
     }
-    addGoal({
+    const result = await createGoal({
       title: nombre.trim().slice(0, 60),
-      description: '',
-      emoji: '🎯',
       targetAmount: num,
-      frequency: 'total',
       category: 'custom',
+      iconId: 'target',
     });
+    if (!result.ok) {
+      showCetiNotice({
+        variant: 'error',
+        title: t('movimientos.errorTitle'),
+        message: t('movimientos.errorMsg'),
+      });
+      return;
+    }
     showCetiNotice({
       variant: 'success',
       title: t('movimientos.metaCreadaTitle'),
       message: t('movimientos.metaCreadaMsg'),
     });
     onClose();
-    router.push('/(app)/savings');
+    router.push('/(app)/dinero' as Href);
   };
 
   const input = [
