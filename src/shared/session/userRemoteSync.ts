@@ -4,10 +4,10 @@ import { useSavingsStore } from '@features/savings/store/useSavingsStore';
 import {
   useMovimientosStore,
   isExpenseSnapshot,
+  MOVIMIENTO_CATEGORIAS,
 } from '@features/savings/store/useMovimientosStore';
 import { usePresupuestosStore } from '@features/savings/store/usePresupuestosStore';
 import { isSavingsGoal, isSavingsOperation } from '@features/savings/domain/savings';
-import { MOVIMIENTO_CATEGORIAS } from '@features/savings/store/useMovimientosStore';
 import { recordError } from '@shared/lib/analytics/crashlytics';
 import {
   userGoalsCollectionRef,
