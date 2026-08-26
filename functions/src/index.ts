@@ -20,6 +20,7 @@ import { initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { groqCaller, ModelApiError } from './modelProvider';
+import { parseProfessorAssignment } from './assignRolePolicy';
 import {
   generarBorrador,
   generarItem,
@@ -154,9 +155,9 @@ async function assertStaffOfCurso(
 // ---------------------------------------------------------------------------
 
 /**
- * Admin creates/updates an adult's role within a colegio. Identifies the target
- * by email (must have signed in once) or uid. Cannot assign 'estudiante'
- * (students self-join by code).
+ * Admin assigns a professor to a colegio. Identifies the target by email
+ * (must have signed in once) or uid. Admin remains allowlist-only; students
+ * self-join by code.
  */
 export const assignRole = onCall(async (request) => {
   const caller = request.auth;
@@ -165,12 +166,14 @@ export const assignRole = onCall(async (request) => {
     throw new HttpsError('permission-denied', 'Solo un admin puede asignar roles.');
   }
 
-  const role = request.data?.role;
-  if (!isRole(role)) {
-    throw new HttpsError('invalid-argument', `'role' must be one of: ${ROLES.join(', ')}.`);
-  }
-  if (role === 'estudiante') {
-    throw new HttpsError('invalid-argument', 'Los estudiantes se unen por código, no por rol.');
+  let assignment;
+  try {
+    assignment = parseProfessorAssignment(request.data);
+  } catch {
+    throw new HttpsError(
+      'invalid-argument',
+      "Solo se puede asignar el rol 'profesor' con colegioId y sin cursoId."
+    );
   }
 
   const emailArg = typeof request.data?.email === 'string' ? request.data.email.trim() : '';
@@ -178,11 +181,6 @@ export const assignRole = onCall(async (request) => {
   if (!emailArg && !uidArg) {
     throw new HttpsError('invalid-argument', "Provide 'email' or 'uid'.");
   }
-  const colegioId =
-    role === 'admin' ? undefined : requireString(request.data?.colegioId, 'colegioId');
-  const cursoId =
-    typeof request.data?.cursoId === 'string' ? request.data.cursoId.trim() : undefined;
-
   let targetUid = uidArg;
   if (!targetUid) {
     try {
@@ -195,14 +193,7 @@ export const assignRole = onCall(async (request) => {
     }
   }
 
-  await applyClaims(targetUid, { role, colegioId, cursoId });
-
-  // Wire a teacher into the course roster of teachers.
-  if (role === 'profesor' && colegioId && cursoId) {
-    await getFirestore()
-      .doc(`colegios/${colegioId}/cursos/${cursoId}`)
-      .set({ profesorUids: FieldValue.arrayUnion(targetUid) }, { merge: true });
-  }
+  await applyClaims(targetUid, assignment);
 
   return { ok: true, uid: targetUid };
 });
