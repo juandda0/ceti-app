@@ -12,7 +12,7 @@ let firestoreUserUnsubscribe: (() => void) | null = null;
 
 function applyUser(user: User | null) {
   useAuthStore.getState().setFirebaseUid(user?.uid ?? null);
-  setCrashlyticsUserId(user?.uid ?? null);
+  setCrashlyticsUserId(null);
 }
 
 function subscribeAuthUserFirestoreDoc(

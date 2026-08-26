@@ -119,8 +119,7 @@ export default function ConfirmMovimientosListSheet({
         return;
       }
     }
-    // Analytics sin contenido financiero: solo cuántos (CA9/R4).
-    void logEvent('movimientos_multi_confirmado', { cantidad: validas.length });
+    void logEvent('movimientos_multi_confirmado');
     showCetiNotice({
       variant: 'success',
       title: t('movimientos.savedTitle'),

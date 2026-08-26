@@ -3,6 +3,7 @@
 // cleanly in the Jest VM. The pure client logic under test is untouched.
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
 import { goalsRepository } from '@features/savings/data/goalsRepository';
+import { logEvent } from '@shared/lib/analytics/logEvent';
 
 jest.mock('@shared/lib/analytics/logEvent', () => ({ logEvent: jest.fn() }));
 jest.mock('@shared/lib/analytics/crashlytics', () => ({ recordError: jest.fn() }));
@@ -39,6 +40,17 @@ describe('useSavingsStore', () => {
   });
 
   describe('CRUD de producción', () => {
+    it('goal_created no envía categoría financiera', async () => {
+      await useSavingsStore.getState().createGoal({
+        title: 'Bicicleta',
+        iconId: 'bike',
+        category: 'custom',
+        targetAmount: 500000,
+      });
+
+      expect(logEvent).toHaveBeenCalledWith('goal_created');
+    });
+
     it('elimina lógicamente una meta y libera su ahorro', async () => {
       const created = await useSavingsStore.getState().createGoal({
         title: 'Bici',

@@ -128,7 +128,7 @@ export const useSavingsStore = create<SavingsStore>()(
           iconId: 'target',
         };
         set((s) => ({ goals: [...s.goals, goal] }));
-        void logEvent('goal_created', { category: data.category });
+        void logEvent('goal_created');
         return goal;
       },
 
@@ -291,7 +291,7 @@ export const useSavingsStore = create<SavingsStore>()(
             const { goalsRepository } = await import('@features/savings/data/goalsRepository');
             await goalsRepository.upsertGoal(authUid, goal);
           }
-          void logEvent('goal_created', { category: data.category });
+          void logEvent('goal_created');
           return { ok: true, value: goal };
         } catch (error) {
           set({ goals: previous });
