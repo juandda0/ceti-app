@@ -71,6 +71,12 @@ const stuA3 = env
 const stuA4 = env
   .authenticatedContext('uStuA4', { role: 'estudiante', colegioId: 'A', cursoId: 'c1' })
   .firestore();
+const stuMoved = env
+  .authenticatedContext('uStuA1', { role: 'estudiante', colegioId: 'B', cursoId: 'cB1' })
+  .firestore();
+const stuMovedCourse = env
+  .authenticatedContext('uStuA1', { role: 'estudiante', colegioId: 'A', cursoId: 'c2' })
+  .firestore();
 const progPath = (cid, curso, uid, w) =>
   `colegios/${cid}/cursos/${curso}/estudiantes/${uid}/progress/${w}`;
 const validProgress = {
@@ -220,6 +226,14 @@ await check(
   assertFails(getDoc(doc(stuA2, 'colegios/A/cursos/c1/estudiantes/uStuA1')))
 );
 await check(
+  'moved student cannot read old roster slot',
+  assertFails(getDoc(doc(stuMoved, 'colegios/A/cursos/c1/estudiantes/uStuA1')))
+);
+await check(
+  'student moved within colegio cannot read old roster slot',
+  assertFails(getDoc(doc(stuMovedCourse, 'colegios/A/cursos/c1/estudiantes/uStuA1')))
+);
+await check(
   'roster is Function-only: profesor cannot client-write it',
   assertFails(
     setDoc(
@@ -235,6 +249,14 @@ await check('student reads own progress', assertSucceeds(getDoc(doc(stuA1, progP
 await check(
   'student cannot read another student progress',
   assertFails(getDoc(doc(stuA2, progPath('A', 'c1', 'uStuA1', 'w1'))))
+);
+await check(
+  'moved student cannot read old progress',
+  assertFails(getDoc(doc(stuMoved, progPath('A', 'c1', 'uStuA1', 'w1'))))
+);
+await check(
+  'student moved within colegio cannot read old progress',
+  assertFails(getDoc(doc(stuMovedCourse, progPath('A', 'c1', 'uStuA1', 'w1'))))
 );
 await check(
   'teacher of course reads student progress',
@@ -311,6 +333,14 @@ await check(
 await check(
   'teacher reads student impact test',
   assertSucceeds(getDoc(doc(profA1, impactPath('uStuA1', 'pre'))))
+);
+await check(
+  'moved student cannot read old impact test',
+  assertFails(getDoc(doc(stuMoved, impactPath('uStuA1', 'pre'))))
+);
+await check(
+  'student moved within colegio cannot read old impact test',
+  assertFails(getDoc(doc(stuMovedCourse, impactPath('uStuA1', 'pre'))))
 );
 
 console.log('Aggregates (profesor ALLOWED colegio-wide, students denied):');

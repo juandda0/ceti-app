@@ -32,10 +32,6 @@ service cloud.firestore {
     function isStaff() {
       return isRole('profesor');
     }
-    // Student identity is the Auth uid (R1) — replaces the old token pseudonym.
-    function isEstudianteSelf(uid) {
-      return isRole('estudiante') && request.auth.uid == uid;
-    }
     // uid is listed as a teacher of this course (one get()).
     function isProfesorDe(cid, cursoId) {
       return isRole('profesor')
@@ -55,6 +51,13 @@ service cloud.firestore {
       return get(
         /databases/$(database)/documents/colegios/$(cid)/cursos/$(cursoId)/estudiantes/$(uid)
       ).data.estado == 'activo';
+    }
+    function isEstudianteActivoEnCurso(cid, cursoId, uid) {
+      return isRole('estudiante')
+        && request.auth.uid == uid
+        && sameColegio(cid)
+        && request.auth.token.cursoId == cursoId
+        && estudianteActivo(cid, cursoId, uid);
     }
     // Shape of an assignment doc (RQ-PR04 mundo, or RQ-PR14 reto). A reto brief
     // can ONLY carry {tipo, cantidad} — a teacher cannot attach free text or
@@ -166,22 +169,19 @@ service cloud.firestore {
           // Roster nominal (email+nombre): the course teacher and the student
           // themself only (matriz §1.3).
           allow read: if isProfesorDe(cid, cursoId)
-            || isEstudianteSelf(uid);
+            || isEstudianteActivoEnCurso(cid, cursoId, uid);
           // Roster is mutated ONLY by Cloud Functions (joinByCode / atestar /
           // suppressStudentData) via the Admin SDK — never by a client (D-B1-03).
           allow write: if false;
 
           match /progress/{worldId} {
             allow read: if isProfesorDe(cid, cursoId)
-              || isEstudianteSelf(uid);
+              || isEstudianteActivoEnCurso(cid, cursoId, uid);
             // Only the student writes their OWN progress, only into a roster slot
             // a Function already created, only while active, and only under their
             // own course claim. Denormalized keys must match the path; values are
             // type/range/size-checked (progress feeds the teacher report).
-            allow create, update: if isEstudianteSelf(uid)
-              && sameColegio(cid)
-              && request.auth.token.cursoId == cursoId
-              && estudianteActivo(cid, cursoId, uid)
+            allow create, update: if isEstudianteActivoEnCurso(cid, cursoId, uid)
               && request.resource.data.colegioId == cid
               && request.resource.data.cursoId == cursoId
               && request.resource.data.uid == uid
@@ -198,11 +198,8 @@ service cloud.firestore {
           // result while active; the course teacher reads it.
           match /impactTest/{fase} {
             allow read: if isProfesorDe(cid, cursoId)
-              || isEstudianteSelf(uid);
-            allow create, update: if isEstudianteSelf(uid)
-              && sameColegio(cid)
-              && request.auth.token.cursoId == cursoId
-              && estudianteActivo(cid, cursoId, uid)
+              || isEstudianteActivoEnCurso(cid, cursoId, uid);
+            allow create, update: if isEstudianteActivoEnCurso(cid, cursoId, uid)
               && (fase == 'pre' || fase == 'post')
               && request.resource.data.score is number
               && request.resource.data.total is number
