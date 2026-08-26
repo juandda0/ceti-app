@@ -19,15 +19,19 @@ jest.mock('react-i18next', () => ({
 jest.mock('@shared/store/useCetiOverlayStore', () => ({ showCetiNotice: jest.fn() }));
 jest.mock('@shared/components/CetiBottomSheet', () => {
   const { View } = require('react-native');
-  return ({ children }: { children: React.ReactNode }) => <View>{children}</View>;
+  return function MockCetiBottomSheet({ children }: { children: React.ReactNode }) {
+    return <View>{children}</View>;
+  };
 });
 jest.mock('@shared/components/CetiButton', () => {
   const { Pressable, Text } = require('react-native');
-  return ({ label, onPress }: { label: string; onPress: () => void }) => (
-    <Pressable accessibilityRole="button" onPress={onPress}>
-      <Text>{label}</Text>
-    </Pressable>
-  );
+  return function MockCetiButton({ label, onPress }: { label: string; onPress: () => void }) {
+    return (
+      <Pressable accessibilityRole="button" onPress={onPress}>
+        <Text>{label}</Text>
+      </Pressable>
+    );
+  };
 });
 jest.mock('@expo/vector-icons', () => ({ Ionicons: () => null }));
 jest.mock('@features/savings/store/useMovimientosStore', () => ({
