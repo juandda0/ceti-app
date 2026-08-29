@@ -20,6 +20,13 @@ import { initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { groqCaller, ModelApiError } from './modelProvider';
+import {
+  classifyFinancialAssistantError,
+  dailyFinancialAssistantUsagePath,
+  FinancialAssistantQuotaError,
+  isFinancialAssistantQuotaExceeded,
+  planFinancialActionsWithQuota,
+} from './financialAssistant';
 import { parseProfessorAssignment } from './assignRolePolicy';
 import {
   generarBorrador,
@@ -663,6 +670,47 @@ export const joinByCode = onCall(async (request) => {
 });
 
 const GROQ_API_KEY = defineSecret('GROQ_API_KEY');
+function financialAssistantUsageRef(uid: string) {
+  return getFirestore().doc(dailyFinancialAssistantUsagePath(uid));
+}
+
+export const planificarAccionesFinancieras = onCall(
+  { secrets: [GROQ_API_KEY] },
+  async (request) => {
+    requireAuth(request.auth);
+    if (request.auth.token.role !== 'estudiante') {
+      throw new HttpsError('permission-denied', 'Solo estudiantes usan el asistente financiero.');
+    }
+    const usageRef = financialAssistantUsageRef(request.auth.uid);
+    try {
+      return await planFinancialActionsWithQuota(
+        request.data,
+        groqCaller(GROQ_API_KEY.value(), { maxTokens: 1200, timeoutMs: 20_000 }),
+        async () => {
+          await getFirestore().runTransaction(async (transaction) => {
+            const usage =
+              ((await transaction.get(usageRef)).data()?.count as number | undefined) ?? 0;
+            if (isFinancialAssistantQuotaExceeded(usage)) {
+              throw new FinancialAssistantQuotaError();
+            }
+            transaction.set(
+              usageRef,
+              { count: FieldValue.increment(1), updatedAt: FieldValue.serverTimestamp() },
+              { merge: true }
+            );
+          });
+          // El intento consume cupo aunque Groq falle: limita coste y abuso concurrente.
+        }
+      );
+    } catch (error) {
+      const mapped = classifyFinancialAssistantError(error);
+      if ('logCode' in mapped) {
+        console.error('planificarAccionesFinancieras: fallo', { code: mapped.logCode });
+      }
+      throw new HttpsError(mapped.code, mapped.message);
+    }
+  }
+);
 // ---------------------------------------------------------------------------
 // IA de authoring docente (RQ-CN06, D-ORQ). Server-side ONLY: genera un
 // BORRADOR de mundo (teoría + preguntas + elige-camino) que se RETORNA al
