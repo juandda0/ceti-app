@@ -18,7 +18,7 @@ import { onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { defineSecret } from 'firebase-functions/params';
 import { initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
-import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+import { getFirestore, FieldPath, FieldValue } from 'firebase-admin/firestore';
 import { groqCaller, ModelApiError } from './modelProvider';
 import {
   classifyFinancialAssistantError,
@@ -545,6 +545,31 @@ export const suppressStudentData = onCall(async (request) => {
   await db.recursiveDelete(userRef.collection('config'));
   await db.recursiveDelete(userRef.collection('goals'));
   await db.recursiveDelete(userRef.collection('deposits'));
+
+  // Los contadores viven en una colección raíz con id `${uid}_AAAA-MM-DD`.
+  // Se pagina y se filtra el formato exacto para no borrar el UID `ana_2` al
+  // suprimir `ana`, y cada commit queda bajo el límite de 500 escrituras.
+  const usagePrefix = `${uid}_`;
+  const escapedUid = uid.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const exactUsageId = new RegExp(`^${escapedUid}_\\d{4}-\\d{2}-\\d{2}$`);
+  const usageCollection = db.collection('financialAssistantUsage');
+  let lastUsageDoc;
+  do {
+    let usageQuery = usageCollection
+      .orderBy(FieldPath.documentId())
+      .startAt(usagePrefix)
+      .endAt(`${usagePrefix}\uf8ff`);
+    if (lastUsageDoc) usageQuery = usageQuery.startAfter(lastUsageDoc);
+    const usageSnapshot = await usageQuery.limit(400).get();
+    if (usageSnapshot.size === 0) break;
+
+    const usageBatch = db.batch();
+    const ownedUsageDocs = usageSnapshot.docs.filter((doc) => exactUsageId.test(doc.id));
+    ownedUsageDocs.forEach((doc) => usageBatch.delete(doc.ref));
+    if (ownedUsageDocs.length > 0) await usageBatch.commit();
+    lastUsageDoc = usageSnapshot.docs.at(-1);
+    if (usageSnapshot.size < 400) break;
+  } while (lastUsageDoc);
 
   await estRef.set(
     {

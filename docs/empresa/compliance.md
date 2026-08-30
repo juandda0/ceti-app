@@ -55,14 +55,22 @@ de perfilamiento de menores y anticipa la reforma 2025.
   transcrito (≤300 caracteres) viaja a la Cloud Function de clasificación.
 - **Revelar en la política de tratamiento:** (a) el vendor del navegador (p. ej.
   Google en Chrome) puede procesar el audio en sus servidores como parte del
-  servicio de dictado del propio navegador; (b) **Groq Inc. (EE. UU.)** actúa
-  como encargado que recibe el **texto transcrito** (≤300 caracteres,
-  transmisión internacional a EE. UU.) únicamente para clasificarlo — no lo
-  persiste en nuestro sistema y la política debe cubrirla con cláusula de
-  transmisión (Decreto 1377).
-- La clasificación server-side instruye al modelo **omitir nombres propios y
-  cualquier PII** del texto; solo se persisten campos estructurados
-  (tipo/monto/categoría) y una descripción corta neutra.
+  servicio de dictado del propio navegador; (b) **Groq Inc. (EE. UU.)** recibe,
+  para organizar las acciones financieras solicitadas, texto y contexto
+  financiero minimizados. Es una transmisión internacional a EE. UU. a un
+  proveedor que debe formalizarse como encargado y cubrirse en la política y el
+  contrato aplicables antes de operar con datos reales; este documento no afirma
+  que esa formalización ya exista.
+- Antes de llamar a Groq, la Cloud Function reduce el texto (≤300 caracteres) a
+  vocabulario financiero, números e IDs permitidos. El contexto enviado contiene
+  solo IDs opacos y campos estructurados necesarios: metas (`id`, monto objetivo),
+  movimientos (`id`, tipo, monto, categoría, fecha e ID opcional de meta) y
+  operaciones de ahorro (`id`, tipo, monto, fecha e ID opcional de meta). **No se
+  envían a Groq** audio, UID, nombres, email, títulos de metas ni descripciones de
+  movimientos/operaciones.
+- El modelo propone un plan estructurado que el usuario confirma o edita. La app
+  persiste las acciones confirmadas mediante los repositorios existentes; no
+  persiste el audio ni el texto transcrito como historial del asistente.
 - **Sin permisos nuevos en `app.json`:** el micrófono lo gestiona el navegador
   con su propio prompt de permiso (permisos de la app se mantienen mínimos).
 

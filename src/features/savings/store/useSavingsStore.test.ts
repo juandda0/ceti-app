@@ -118,6 +118,24 @@ describe('useSavingsStore', () => {
 
       expect(result).toEqual({ ok: false, reason: 'insufficient_goal' });
     });
+
+    it('deposit_created no revela si el menor tiene una meta', () => {
+      useSavingsStore.getState().addDeposit(50, 'Mesada', 'goal_1');
+
+      expect(logEvent).toHaveBeenCalledWith('deposit_created');
+    });
+
+    it('savings_operation_created no revela si el menor tiene una meta', async () => {
+      await useSavingsStore.getState().createOperation({
+        type: 'aporte',
+        amount: 50,
+        description: '',
+        goalId: 'goal_1',
+        fecha: 1,
+      });
+
+      expect(logEvent).toHaveBeenCalledWith('savings_operation_created', { type: 'aporte' });
+    });
   });
 
   describe('addGoal', () => {

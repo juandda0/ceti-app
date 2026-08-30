@@ -167,7 +167,7 @@ export const useSavingsStore = create<SavingsStore>()(
 
         // CA6 (RQ-ES10): los deposits pueden originarse en movimientos reales
         // vía el puente D-ES10-04 — analytics jamás recibe montos.
-        void logEvent('deposit_created', { has_goal: Boolean(goalId) });
+        void logEvent('deposit_created');
 
         void (async () => {
           try {
@@ -398,7 +398,6 @@ export const useSavingsStore = create<SavingsStore>()(
           }
           void logEvent('savings_operation_created', {
             type: data.type,
-            has_goal: Boolean(data.goalId),
           });
           return { ok: true, value: operation };
         } catch (error) {
