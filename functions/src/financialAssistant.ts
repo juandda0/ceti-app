@@ -398,7 +398,11 @@ function validatePlanIds(plan: FinancialPlan, context: FinancialContext): void {
   };
   const goalIds = new Set(context.goals.map(({ id: value }) => value));
   for (const action of plan.actions) {
-    if ('resourceId' in action && !resourceIds[action.domain].has(action.resourceId)) {
+    if (
+      'resourceId' in action &&
+      typeof action.resourceId === 'string' &&
+      !resourceIds[action.domain].has(action.resourceId)
+    ) {
       throw new FinancialPlanError('ID fuera del contexto permitido.');
     }
     if ('goalId' in action.payload) {
