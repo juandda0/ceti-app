@@ -214,9 +214,11 @@ function parseAction(value: unknown): FinancialAction {
   if (!OPERATIONS.includes(String(action.operation))) fail('Operación inválida.');
   const operation = action.operation as FinancialAction['operation'];
   const needsResource = operation === 'editar' || operation === 'eliminar';
+  const allowsResource = needsResource || (action.domain === 'meta' && operation === 'consultar');
   if (
     (needsResource && !id(action.resourceId)) ||
-    (!needsResource && action.resourceId !== undefined)
+    (!allowsResource && action.resourceId !== undefined) ||
+    (action.resourceId !== undefined && !id(action.resourceId))
   )
     fail('resourceId inválido.');
   const payload = object(action.payload, 'Payload');

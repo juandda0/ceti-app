@@ -5,7 +5,15 @@
  * hacer silencio (continuous:false) y clasifica; tocar el mic la adelanta, la X
  * cancela.
  */
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import CetiBottomSheet from '@shared/components/CetiBottomSheet';
@@ -18,15 +26,28 @@ export default function VoiceCaptureSheet({
   transcript,
   onStop,
   onCancel,
+  onSubmitText,
+  onSwitchToText,
 }: {
   visible: boolean;
   processing: boolean;
   transcript: string;
   onStop: () => void;
   onCancel: () => void;
+  onSubmitText: (text: string) => void;
+  onSwitchToText: () => void;
 }) {
   const colors = useThemeColors();
   const { t } = useTranslation();
+  const [writing, setWriting] = useState(false);
+  const [text, setText] = useState('');
+
+  useEffect(() => {
+    if (!visible) {
+      setWriting(false);
+      setText('');
+    }
+  }, [visible]);
 
   return (
     <CetiBottomSheet visible={visible} onClose={onCancel} closeOnBackdropPress={false} contentOnly>
@@ -46,14 +67,50 @@ export default function VoiceCaptureSheet({
           <Text style={[styles.status, { color: colors.text.tertiary }]}>
             {processing ? t('movimientos.processing') : t('movimientos.listeningTitle')}
           </Text>
-          <Text
-            style={[
-              styles.transcript,
-              { color: transcript ? colors.text.primary : colors.text.tertiary },
-            ]}
-          >
-            {transcript || t('movimientos.transcriptPlaceholder')}
-          </Text>
+          {writing ? (
+            <>
+              <TextInput
+                autoFocus
+                multiline
+                maxLength={300}
+                value={text}
+                onChangeText={setText}
+                editable={!processing}
+                accessibilityLabel={t('financialAssistant.requestLabel')}
+                placeholder={t('financialAssistant.requestPlaceholder')}
+                placeholderTextColor={colors.text.tertiary}
+                style={[
+                  styles.textInput,
+                  { color: colors.text.primary, borderColor: colors.materials.border },
+                ]}
+              />
+              <TouchableOpacity
+                disabled={!text.trim() || processing}
+                onPress={() => onSubmitText(text.trim())}
+                accessibilityRole="button"
+                accessibilityLabel={t('financialAssistant.organize')}
+                accessibilityState={{ disabled: !text.trim() || processing }}
+                style={[
+                  styles.organize,
+                  { backgroundColor: colors.brand.primary },
+                  (!text.trim() || processing) && styles.disabled,
+                ]}
+              >
+                <Text style={[styles.organizeText, { color: colors.text.onBrand }]}>
+                  {t('financialAssistant.organize')}
+                </Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <Text
+              style={[
+                styles.transcript,
+                { color: transcript ? colors.text.primary : colors.text.tertiary },
+              ]}
+            >
+              {transcript || t('movimientos.transcriptPlaceholder')}
+            </Text>
+          )}
         </View>
 
         <View style={styles.micWrap}>
@@ -61,7 +118,7 @@ export default function VoiceCaptureSheet({
             <View style={[styles.mic, { backgroundColor: colors.materials.highlight }]}>
               <ActivityIndicator color={colors.brand.primary} />
             </View>
-          ) : (
+          ) : !writing ? (
             <TouchableOpacity
               onPress={onStop}
               activeOpacity={0.85}
@@ -71,7 +128,21 @@ export default function VoiceCaptureSheet({
             >
               <Ionicons name="mic" size={30} color={colors.text.onBrand} />
             </TouchableOpacity>
-          )}
+          ) : null}
+          {!processing && !writing ? (
+            <TouchableOpacity
+              onPress={() => {
+                onSwitchToText();
+                setWriting(true);
+              }}
+              accessibilityRole="button"
+              accessibilityLabel={t('financialAssistant.writeInstead')}
+            >
+              <Text style={[styles.writeInstead, { color: colors.brand.primary }]}>
+                {t('financialAssistant.writeInstead')}
+              </Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
       </View>
     </CetiBottomSheet>
@@ -92,4 +163,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  textInput: {
+    ...Typography.body,
+    minHeight: 112,
+    borderWidth: 1,
+    borderRadius: 16,
+    padding: 14,
+    textAlignVertical: 'top',
+  },
+  organize: { alignItems: 'center', borderRadius: 999, paddingVertical: 12, paddingHorizontal: 18 },
+  organizeText: { ...Typography.buttonLarge, fontWeight: '800' },
+  writeInstead: { ...Typography.subheadline, fontWeight: '700', paddingVertical: 12 },
+  disabled: { opacity: 0.4 },
 });

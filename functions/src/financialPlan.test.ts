@@ -69,6 +69,17 @@ test.each(['consultar', 'crear'])('rechaza resourceId en movimiento/%s', (operat
   ).toThrow(FinancialPlanError);
 });
 
+test('acepta filtrar una consulta de meta por resourceId', () => {
+  expect(
+    parseFinancialPlan(
+      JSON.stringify({
+        actions: [{ domain: 'meta', operation: 'consultar', resourceId: 'goal_1', payload: {} }],
+      }),
+      'r'
+    ).actions[0]
+  ).toMatchObject({ domain: 'meta', operation: 'consultar', resourceId: 'goal_1' });
+});
+
 test('valida límites, enums y payloads cerrados', () => {
   const parseAction = (action: object) =>
     parseFinancialPlan(JSON.stringify({ actions: [action] }), 'r');

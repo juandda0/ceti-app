@@ -465,10 +465,16 @@ function parseAction(value: unknown, actionId: string): FinancialAction {
     return { actionId, domain: 'ahorro', operation: 'eliminar', resourceId, payload, needsInput };
   }
   if (action.operation === 'consultar') {
-    if (resourceId !== undefined) invalid('La consulta no admite resourceId.');
     validateEmptyPayload(payload);
     const needsInput = validateNeedsInput(action.needsInput, ['resourceId']);
-    return { actionId, domain: 'meta', operation: 'consultar', payload, needsInput };
+    return {
+      actionId,
+      domain: 'meta',
+      operation: 'consultar',
+      ...(resourceId === undefined ? {} : { resourceId }),
+      payload,
+      needsInput,
+    };
   }
   if (action.operation === 'crear') {
     if (resourceId !== undefined) invalid('La creación no admite resourceId.');

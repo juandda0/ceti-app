@@ -5,11 +5,10 @@
  * la tarjeta de confirmación se abre pre-llenada con el transcript.
  */
 import { useState } from 'react';
-import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { motion } from '@shared/constants/motion';
@@ -17,17 +16,16 @@ import { Spacing } from '@shared/constants/theme';
 import { Typography } from '@shared/constants/typography';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { showCetiNotice } from '@shared/store/useCetiOverlayStore';
-import ConfirmMovimientoSheet from '@features/savings/components/ConfirmMovimientoSheet';
-import ConfirmMetaSheet, {
-  type MetaPropuesta,
-} from '@features/savings/components/ConfirmMetaSheet';
+import FinancialAssistantSheet from '@features/savings/components/FinancialAssistantSheet';
 import MicButton from '@features/savings/components/MicButton';
 import VoiceCaptureSheet from '@features/savings/components/VoiceCaptureSheet';
 import MovimientoListItem from '@features/savings/components/MovimientoListItem';
-import ConfirmMovimientosListSheet from '@features/savings/components/ConfirmMovimientosListSheet';
-import { matchGoal } from '@features/savings/data/matchGoal';
 import { movimientosOrdenados } from '@features/savings/data/movimientosStats';
-import { vozService, type ClasificacionMovimiento } from '@features/savings/data/vozService';
+import { vozService } from '@features/savings/data/vozService';
+import {
+  buildFinancialContext,
+  type FinancialPlan,
+} from '@features/savings/assistant/financialPlan';
 import { useVoiceCapture } from '@features/savings/hooks/useVoiceCapture';
 import { useMovimientosStore } from '@features/savings/store/useMovimientosStore';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
@@ -38,76 +36,45 @@ export default function MovimientosScreen() {
   const colors = useThemeColors();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
-  const { goalId } = useLocalSearchParams<{ goalId?: string }>();
-
   const movimientos = useMovimientosStore((s) => s.movimientos);
   const deleteExpense = useMovimientosStore((s) => s.deleteExpense);
   const goals = useSavingsStore((s) => s.goals);
+  const operations = useSavingsStore((s) => s.operations);
 
   const [processing, setProcessing] = useState(false);
-  const [clasificacion, setClasificacion] = useState<ClasificacionMovimiento | null>(null);
-  const [sheetVisible, setSheetVisible] = useState(false);
-  const [preGoalId, setPreGoalId] = useState<string | undefined>(undefined);
-  const [metaPropuesta, setMetaPropuesta] = useState<MetaPropuesta | null>(null);
-  const [metaSheetVisible, setMetaSheetVisible] = useState(false);
-  const [listaItems, setListaItems] = useState<ClasificacionMovimiento[] | null>(null);
-  const [listaVisible, setListaVisible] = useState(false);
+  const [financialPlan, setFinancialPlan] = useState<FinancialPlan | null>(null);
+  const [assistantVisible, setAssistantVisible] = useState(false);
+  const [manualCaptureVisible, setManualCaptureVisible] = useState(false);
 
   const onTranscript = (texto: string) => {
     setProcessing(true);
     void (async () => {
-      const rutaGoalId = typeof goalId === 'string' ? goalId : undefined;
       try {
-        const items = await vozService.clasificarRegistroLocal(texto);
-        // Varios movimientos en una sola frase → confirmación en lote.
-        if (items.length > 1) {
-          setListaItems(items);
-          setListaVisible(true);
-          return;
-        }
-        const single = items[0];
-        // Si falta un monto verificable no abrimos ninguna tarjeta.
-        if (single.intencion === 'no_entendido') {
-          showCetiNotice({
-            variant: 'info',
-            title: t('movimientos.noEntendiTitle'),
-            message: t('movimientos.noEntendiMsg'),
-          });
-          return;
-        }
-        // Ramifica por intención detectada por palabra clave (D-ES10-06).
-        if (single.intencion === 'crear_meta') {
-          setMetaPropuesta({ nombre: single.descripcion, objetivo: single.monto });
-          setMetaSheetVisible(true);
-          return;
-        }
-        if (single.intencion === 'abonar_meta') {
-          const g = matchGoal(single.descripcion, goals);
-          setClasificacion({ ...single, tipo: 'ahorro' });
-          setPreGoalId(g?.id ?? rutaGoalId);
-        } else {
-          setClasificacion(single);
-          setPreGoalId(rutaGoalId);
-        }
-        setSheetVisible(true);
+        const context = buildFinancialContext(
+          movimientos,
+          goals.map((goal) => ({
+            id: goal.id,
+            title: goal.title,
+            iconId: goal.iconId ?? 'target',
+            category: goal.category,
+            targetAmount: goal.targetAmount,
+            createdAt: goal.createdAt,
+            updatedAt: goal.updatedAt ?? goal.createdAt,
+            ...(goal.deadline === undefined ? {} : { deadline: goal.deadline }),
+            ...(goal.deletedAt === undefined ? {} : { deletedAt: goal.deletedAt }),
+          })),
+          operations
+        );
+        const plan = await vozService.planificar(texto, context, `voice_${Date.now()}`);
+        setFinancialPlan(plan);
+        setManualCaptureVisible(false);
+        setAssistantVisible(true);
       } catch {
-        // Fallback defensivo: la tarjeta editable conserva el registro manual.
         showCetiNotice({
           variant: 'error',
           title: t('movimientos.errorTitle'),
           message: t('movimientos.errorMsg'),
         });
-        setClasificacion({
-          intencion: 'movimiento',
-          tipo: 'gasto',
-          monto: 0,
-          descripcion: texto.slice(0, 140),
-          categoria: 'otros',
-          confianza: 0,
-          offsetDias: 0,
-        });
-        setPreGoalId(rutaGoalId);
-        setSheetVisible(true);
       } finally {
         setProcessing(false);
       }
@@ -150,6 +117,15 @@ export default function MovimientosScreen() {
                 <Text style={[styles.noticeBody, { color: colors.text.tertiary }]}>
                   {t('movimientos.unavailableBody')}
                 </Text>
+                <TouchableOpacity
+                  onPress={() => setManualCaptureVisible(true)}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('financialAssistant.writeInstead')}
+                >
+                  <Text style={[styles.writeFallback, { color: colors.brand.primary }]}>
+                    {t('financialAssistant.writeInstead')}
+                  </Text>
+                </TouchableOpacity>
               </View>
             ) : state === 'denied' ? (
               <View
@@ -165,6 +141,15 @@ export default function MovimientosScreen() {
                 <Text style={[styles.noticeBody, { color: colors.text.tertiary }]}>
                   {t('movimientos.deniedBody')}
                 </Text>
+                <TouchableOpacity
+                  onPress={() => setManualCaptureVisible(true)}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('financialAssistant.writeInstead')}
+                >
+                  <Text style={[styles.writeFallback, { color: colors.brand.primary }]}>
+                    {t('financialAssistant.writeInstead')}
+                  </Text>
+                </TouchableOpacity>
               </View>
             ) : (
               <MicButton state={state} processing={capturando} onStart={start} onStop={stop} />
@@ -213,30 +198,30 @@ export default function MovimientosScreen() {
       </ScreenWrapper>
 
       <VoiceCaptureSheet
-        visible={capturando}
+        visible={capturando || manualCaptureVisible}
         processing={processing}
         transcript={transcript}
         onStop={stop}
-        onCancel={cancel}
+        onCancel={() => {
+          setManualCaptureVisible(false);
+          cancel();
+        }}
+        onSubmitText={(text) => {
+          cancel();
+          setManualCaptureVisible(false);
+          onTranscript(text);
+        }}
+        onSwitchToText={() => {
+          cancel();
+          setManualCaptureVisible(true);
+        }}
       />
 
-      <ConfirmMovimientoSheet
-        visible={sheetVisible}
-        clasificacion={clasificacion}
-        preSelectedGoalId={preGoalId}
-        onClose={() => setSheetVisible(false)}
-      />
-
-      <ConfirmMetaSheet
-        visible={metaSheetVisible}
-        propuesta={metaPropuesta}
-        onClose={() => setMetaSheetVisible(false)}
-      />
-
-      <ConfirmMovimientosListSheet
-        visible={listaVisible}
-        items={listaItems}
-        onClose={() => setListaVisible(false)}
+      <FinancialAssistantSheet
+        visible={assistantVisible}
+        plan={financialPlan}
+        onChange={setFinancialPlan}
+        onClose={() => setAssistantVisible(false)}
       />
     </>
   );
@@ -259,6 +244,7 @@ const styles = StyleSheet.create({
   },
   noticeTitle: { ...Typography.headline, fontWeight: '800', textAlign: 'center' },
   noticeBody: { ...Typography.subheadline, textAlign: 'center' },
+  writeFallback: { ...Typography.subheadline, fontWeight: '800', paddingVertical: 8 },
   section: { gap: 12 },
   historyBox: { borderRadius: 20, paddingHorizontal: 4, paddingVertical: 4, borderWidth: 1 },
   emptyCard: {

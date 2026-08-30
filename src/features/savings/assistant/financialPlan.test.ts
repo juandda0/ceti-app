@@ -69,6 +69,23 @@ describe('parseClientFinancialPlan', () => {
       }).actions[0]
     ).toBeDefined();
   });
+
+  it('acepta una consulta de meta resuelta con resourceId', () => {
+    expect(
+      parseClientFinancialPlan({
+        actions: [
+          {
+            actionId: 'r:0',
+            domain: 'meta',
+            operation: 'consultar',
+            resourceId: 'goal_1',
+            payload: {},
+            needsInput: [],
+          },
+        ],
+      }).actions[0]
+    ).toMatchObject({ resourceId: 'goal_1' });
+  });
 });
 
 describe('buildFinancialContext', () => {
