@@ -1,0 +1,20 @@
+appId: com.juanndda.ceti
+name: Asistente financiero multiacción
+---
+# Requiere sesión de estudiante y la callable de IA desplegada.
+- launchApp
+- tapOn: 'Mi dinero'
+- tapOn: 'Movimientos'
+- tapOn: 'Toca y dime qué ahorraste o gastaste'
+- tapOn: 'Escribir en lugar de hablar'
+- tapOn: 'Solicitud financiera'
+- inputText: 'gaste 12000 en almuerzo y crea una meta bicicleta de 500000'
+- tapOn: 'Organizar'
+- assertVisible: 'Resumen de acciones'
+- assertVisible: '2 acciones'
+- tapOn: 'Monto de Almuerzo'
+- eraseText
+- inputText: '15000'
+- tapOn: 'Confirmar acciones'
+- assertVisible: 'Acción completada'
+- assertVisible: 'Bicicleta'
