@@ -372,6 +372,10 @@ await check(
   assertSucceeds(getDoc(doc(stuA1, 'colegios/A/cursos/c1')))
 );
 await check(
+  'unattested student cannot read course doc',
+  assertFails(getDoc(doc(stuA3, 'colegios/A/cursos/c1')))
+);
+await check(
   'student cannot read another course doc or its code',
   assertFails(getDoc(doc(stuA1, 'colegios/A/cursos/c2')))
 );
@@ -407,6 +411,10 @@ await check('profesor B cannot read A assignment', assertFails(getDoc(doc(profB,
 await check(
   'student cannot read another course assignment',
   assertFails(getDoc(doc(stuA1, 'colegios/A/asignaciones/aCurso2')))
+);
+await check(
+  'unattested student cannot read course assignment',
+  assertFails(getDoc(doc(stuA3, asigPath)))
 );
 await check(
   'target student reads individual assignment',
@@ -738,6 +746,10 @@ await check(
   assertSucceeds(getDoc(doc(stuA1, configPath)))
 );
 await check(
+  'unattested student cannot read class config',
+  assertFails(getDoc(doc(stuA3, configPath)))
+);
+await check(
   'student of ANOTHER course cannot read class config',
   assertFails(getDoc(doc(stuAC2, configPath)))
 );
@@ -846,6 +858,10 @@ await check(
 await check(
   'student of the course reads custom content',
   assertSucceeds(getDoc(doc(stuA1, contPath('banco_world_1_multiple_choice'))))
+);
+await check(
+  'unattested student cannot read custom content',
+  assertFails(getDoc(doc(stuA3, contPath('banco_world_1_multiple_choice'))))
 );
 await check(
   'student of ANOTHER course cannot read custom content',

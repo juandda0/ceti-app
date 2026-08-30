@@ -102,9 +102,7 @@ service cloud.firestore {
 
       match /cursos/{cursoId} {
         allow read: if isProfesorDe(cid, cursoId)
-          || (isRole('estudiante')
-            && sameColegio(cid)
-            && request.auth.token.cursoId == cursoId);
+          || isEstudianteActivoEnCurso(cid, cursoId, request.auth.uid);
         // Course structure/settings and the join code are Admin SDK / Function
         // only (backend). No client writes.
         allow create, update, delete: if false;
@@ -117,9 +115,7 @@ service cloud.firestore {
         // (Zod); here we pin the field set, types and bounds.
         match /config/{configId} {
           allow read: if isProfesorDe(cid, cursoId)
-            || (isRole('estudiante')
-              && sameColegio(cid)
-              && request.auth.token.cursoId == cursoId);
+            || isEstudianteActivoEnCurso(cid, cursoId, request.auth.uid);
           allow create, update: if configId == 'mundos'
             && isProfesorDe(cid, cursoId)
             && request.resource.data.keys().hasOnly(['mundos', 'overrides', 'version', 'updatedAt', 'updatedByUid'])
@@ -141,9 +137,7 @@ service cloud.firestore {
         // `delete` is "restaurar default" for the piece.
         match /contenido/{docId} {
           allow read: if isProfesorDe(cid, cursoId)
-            || (isRole('estudiante')
-              && sameColegio(cid)
-              && request.auth.token.cursoId == cursoId);
+            || isEstudianteActivoEnCurso(cid, cursoId, request.auth.uid);
           allow create, update: if isProfesorDe(cid, cursoId)
             && (
               (docId.matches('banco_.*')
@@ -221,9 +215,7 @@ service cloud.firestore {
 
       match /asignaciones/{aid} {
         allow read: if isProfesorDe(cid, resource.data.target.cursoId)
-          || (isRole('estudiante')
-            && sameColegio(cid)
-            && request.auth.token.cursoId == resource.data.target.cursoId
+          || (isEstudianteActivoEnCurso(cid, resource.data.target.cursoId, request.auth.uid)
             && (resource.data.target.tipo == 'curso'
               || (resource.data.target.tipo == 'estudiante'
                 && resource.data.target.uid == request.auth.uid)));
