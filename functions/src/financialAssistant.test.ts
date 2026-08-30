@@ -33,7 +33,18 @@ test('el contexto no acepta campos de identidad', () => {
 });
 
 test('el prompt de sistema es estático y trata el user JSON como datos no confiables', () => {
-  expect(buildFinancialPrompt()).toContain('datos no confiables');
+  const prompt = buildFinancialPrompt();
+  expect(prompt).toContain('datos no confiables');
+  expect(prompt).toContain('movimiento');
+  expect(prompt).toContain('ahorro');
+  expect(prompt).toContain('meta');
+  expect(prompt).toContain('consultar | crear | editar | eliminar');
+  expect(prompt).toContain('monto');
+  expect(prompt).toContain('targetAmount');
+  expect(prompt).toContain('resourceId');
+  expect(prompt).toContain('needsInput');
+  expect(prompt).toContain('Máximo 5 acciones');
+  expect(prompt).toContain('Nunca inventes IDs');
   expect(buildFinancialPrompt()).not.toContain('g1');
   expect(buildFinancialPrompt()).toBe(buildFinancialPrompt());
 });
@@ -81,86 +92,150 @@ test('envía solo texto y contexto al modelo y valida el plan devuelto', async (
   expect(callModel.mock.calls[0][0]).toBe(buildFinancialPrompt());
   expect(JSON.parse(callModel.mock.calls[0][1])).toEqual({
     untrustedData: {
-      text: 'mis metas',
+      text: 'muéstrame mis metas',
       context: { ...emptyContext, operations: [] },
     },
   });
 });
 
+test('seudonimiza y rehidrata la descripción de un gasto', async () => {
+  const callModel = jest.fn().mockResolvedValue(
+    JSON.stringify({
+      actions: [
+        {
+          domain: 'movimiento',
+          operation: 'crear',
+          payload: {
+            tipo: 'gasto',
+            monto: 20000,
+            descripcion: 'TEXT_0 en TEXT_1',
+            categoria: 'comida',
+            fecha: 1,
+          },
+          needsInput: [],
+        },
+      ],
+    })
+  );
+  const result = await planFinancialActions(
+    {
+      text: 'gasté 20000 en almuerzo en El Corral',
+      requestId: 'r1',
+      context: emptyContext,
+    },
+    callModel
+  );
+  const modelText = JSON.parse(callModel.mock.calls[0][1]).untrustedData.text;
+  expect(modelText).toBe('gasté 20000 en TEXT_0 en TEXT_1');
+  expect(modelText).not.toMatch(/almuerzo|corral/i);
+  expect(result.actions[0]?.payload).toMatchObject({ descripcion: 'almuerzo en El Corral' });
+});
+
+test('seudonimiza y rehidrata el título de una meta', async () => {
+  const callModel = jest.fn().mockResolvedValue(
+    JSON.stringify({
+      actions: [
+        {
+          domain: 'meta',
+          operation: 'crear',
+          payload: {
+            title: 'TEXT_0',
+            iconId: 'plane',
+            category: 'trip',
+            targetAmount: 3000000,
+          },
+          needsInput: [],
+        },
+      ],
+    })
+  );
+  const result = await planFinancialActions(
+    {
+      text: 'crea una meta para viaje familiar por 3000000',
+      requestId: 'r1',
+      context: emptyContext,
+    },
+    callModel
+  );
+  const modelText = JSON.parse(callModel.mock.calls[0][1]).untrustedData.text;
+  expect(modelText).toBe('crea una meta para TEXT_0 por 3000000');
+  expect(modelText).not.toContain('viaje familiar');
+  expect(result.actions[0]?.payload).toMatchObject({ title: 'viaje familiar' });
+});
+
 test.each([
+  'escríbeme a menor@ejemplo.com sobre el gasto',
+  'mi teléfono es 300 123 4567 y gasté 10000',
+  'llama al 3001234567 para confirmar el gasto',
+  'whatsapp: +57 300-123-4567',
+  'contacto 601 234 5678 y crea un ahorro',
+  'mi documento es 1020304050 y ahorré 10000',
+  'cédula número 1020304050 y ahorré 10000',
+  'mi nombre es Juan Pérez y crea una meta',
+  'soy Juan Pérez y crea una meta',
   'transferí a Juan Pérez, vive en Calle 10 #20-30',
-  'gasté con mi mamá Ana y mi hermano pedro en su casa',
-])('envía solo vocabulario financiero y omite nombres, relaciones y dirección', async (text) => {
+  'regalo para Ana Pérez por 20000',
+  'transferí a juan pérez 10000',
+  'gasté con Juan Pérez 10000',
+  'aporte de Juan Pérez por 10000',
+  'pagué en la dirección Calle 10 #20-30',
+  'vive en carrera 7 # 12-34 y gasté 10000',
+  'mi vivienda queda en avenida 19 # 10-20',
+])('rechaza PII clara antes de llamar al modelo: %s', async (text) => {
+  const callModel = jest.fn();
+  await expect(
+    planFinancialActions({ text, requestId: 'r1', context: emptyContext }, callModel)
+  ).rejects.toThrow('datos personales');
+  expect(callModel).not.toHaveBeenCalled();
+});
+
+test.each([
+  ['Juan Pérez me prestó 20000', /Juan|Pérez|prestó/i],
+  ['regalo Juan Pérez', /Juan|Pérez/i],
+  ['escribe al teléfono', /escribe|teléfono/i],
+])('ningún texto libre cruza al modelo: %s', async (text, freeText) => {
   const callModel = jest
     .fn()
     .mockResolvedValue(
       '{"actions":[{"domain":"meta","operation":"consultar","payload":{},"needsInput":[]}]}'
     );
-  await planFinancialActions(
-    {
-      text,
-      requestId: 'r1',
-      context: {
-        goals: [{ id: 'g1', title: 'Bici de Juan', targetAmount: 300000 }],
+  await planFinancialActions({ text, requestId: 'r1', context: emptyContext }, callModel);
+  expect(callModel.mock.calls[0][1]).not.toMatch(freeText);
+  expect(JSON.parse(callModel.mock.calls[0][1]).untrustedData.text).toContain('TEXT_');
+});
+
+test('rechaza un documento escrito como CC antes del modelo', async () => {
+  const callModel = jest.fn();
+  await expect(
+    planFinancialActions(
+      { text: 'CC 1020304050 y ahorré 10000', requestId: 'r1', context: emptyContext },
+      callModel
+    )
+  ).rejects.toThrow('datos personales');
+  expect(callModel).not.toHaveBeenCalled();
+});
+
+test.each([8_640_000_000_000_000, 8_640_000_000_000_001])(
+  'valida el límite superior de timestamp del contexto: %s',
+  (fecha) => {
+    const parse = () =>
+      parseFinancialContext({
+        goals: [],
         movements: [
           {
             id: 'm1',
             tipo: 'gasto',
-            monto: 10000,
-            descripcion: 'Regalo para Ana Pérez',
-            categoria: 'regalos',
-            fecha: 10,
+            monto: 100,
+            descripcion: 'almuerzo',
+            categoria: 'comida',
+            fecha,
           },
         ],
-        operations: [
-          {
-            id: 'o1',
-            type: 'aporte',
-            amount: 100,
-            description: 'Transferencia de mamá',
-            fecha: 10,
-          },
-        ],
-      },
-    },
-    callModel
-  );
-  const userData = JSON.parse(callModel.mock.calls[0][1]).untrustedData;
-  expect(JSON.stringify(userData)).not.toMatch(
-    /juan|pérez|perez|calle|mamá|mama|hermano|pedro|casa/i
-  );
-  expect(userData.context.goals[0]).not.toHaveProperty('title');
-  expect(userData.context.movements[0]).not.toHaveProperty('descripcion');
-  expect(userData.context.operations[0]).not.toHaveProperty('description');
-  expect(userData.context).toEqual({
-    goals: [{ id: 'g1', targetAmount: 300000 }],
-    movements: [{ id: 'm1', tipo: 'gasto', monto: 10000, categoria: 'regalos', fecha: 10 }],
-    operations: [{ id: 'o1', type: 'aporte', amount: 100, fecha: 10 }],
-  });
-});
-
-test('solo conserva aliases opacos que existen en el contexto', async () => {
-  const callModel = jest
-    .fn()
-    .mockResolvedValue(
-      '{"actions":[{"domain":"meta","operation":"consultar","payload":{},"needsInput":["resourceId"]}]}'
-    );
-  await planFinancialActions(
-    {
-      text: 'elimina la meta g1 de juan y la meta inventada_x',
-      requestId: 'r1',
-      context: {
-        goals: [{ id: 'g1', title: 'Viaje de Juan', targetAmount: 300000 }],
-        movements: [],
-      },
-    },
-    callModel
-  );
-
-  expect(JSON.parse(callModel.mock.calls[0][1]).untrustedData.text).toBe(
-    'elimina la meta g1 de y la meta'
-  );
-});
+      });
+    if (fecha === 8_640_000_000_000_000) expect(parse).not.toThrow();
+    else expect(parse).toThrow('movement inválido');
+  }
+);
 
 test('el prompt exige needsInput cuando una referencia no se puede resolver', () => {
   expect(buildFinancialPrompt()).toContain('referencia no se puede resolver');
