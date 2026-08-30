@@ -86,6 +86,123 @@ describe('parseClientFinancialPlan', () => {
       }).actions[0]
     ).toMatchObject({ resourceId: 'goal_1' });
   });
+
+  it('lleva a la UI una creación parcial cuando needsInput declara el campo faltante', () => {
+    expect(
+      parseClientFinancialPlan({
+        actions: [
+          {
+            actionId: 'r:0',
+            domain: 'meta',
+            operation: 'crear',
+            payload: { title: 'Bici', iconId: 'bike', category: 'custom' },
+            needsInput: ['targetAmount'],
+          },
+        ],
+      }).actions[0]
+    ).toMatchObject({ needsInput: ['targetAmount'], payload: { title: 'Bici' } });
+  });
+
+  it.each([
+    { ...validAction, payload: { tipo: 'gasto', monto: 1 }, needsInput: [] },
+    {
+      actionId: 'r:0',
+      domain: 'meta',
+      operation: 'editar',
+      payload: { title: 'Bici' },
+      needsInput: [],
+    },
+    {
+      actionId: 'r:0',
+      domain: 'meta',
+      operation: 'eliminar',
+      payload: {},
+      needsInput: [],
+    },
+  ])('rechaza faltantes remotos que no estén en needsInput', (action) => {
+    expect(() => parseClientFinancialPlan({ actions: [action] })).toThrow();
+  });
+
+  it.each(['editar', 'eliminar'] as const)(
+    'acepta %s sin resourceId cuando needsInput lo declara',
+    (operation) => {
+      expect(
+        parseClientFinancialPlan({
+          actions: [
+            {
+              actionId: 'r:0',
+              domain: 'meta',
+              operation,
+              payload: operation === 'editar' ? { title: 'Bici' } : {},
+              needsInput: ['resourceId'],
+            },
+          ],
+        }).actions[0]
+      ).toMatchObject({ operation, needsInput: ['resourceId'] });
+    }
+  );
+
+  it('acepta el plan completo después de completar el campo solicitado', () => {
+    const partial = {
+      actionId: 'r:0',
+      domain: 'meta',
+      operation: 'crear',
+      payload: { title: 'Bici', iconId: 'bike', category: 'custom' },
+      needsInput: ['targetAmount'],
+    };
+    const completed = {
+      ...partial,
+      payload: { ...partial.payload, targetAmount: 500_000 },
+      needsInput: [],
+    };
+
+    expect(parseClientFinancialPlan({ actions: [completed] }).actions[0]).toMatchObject(completed);
+  });
+
+  it.each([
+    {
+      actionId: 'r:0',
+      domain: 'meta',
+      operation: 'editar',
+      payload: {},
+      needsInput: ['resourceId'],
+    },
+    {
+      actionId: 'r:0',
+      domain: 'meta',
+      operation: 'crear',
+      payload: { title: 'Bici', iconId: 'bike', category: 'custom', targetAmount: 1 },
+      needsInput: ['targetAmount'],
+    },
+    {
+      actionId: 'r:0',
+      domain: 'meta',
+      operation: 'editar',
+      resourceId: 'goal_1',
+      payload: { title: 'Bici' },
+      needsInput: ['resourceId'],
+    },
+  ])('rechaza needsInput remoto que no corresponde a un dato ausente', (action) => {
+    expect(() => parseClientFinancialPlan({ actions: [action] })).toThrow();
+  });
+
+  it('queda ejecutable al completar el recurso y el campo pendiente de una edición', () => {
+    const partial = {
+      actionId: 'r:0',
+      domain: 'meta',
+      operation: 'editar',
+      payload: {},
+      needsInput: ['resourceId', 'title'],
+    };
+    const completed = {
+      ...partial,
+      resourceId: 'goal_1',
+      payload: { title: 'Bici' },
+      needsInput: [],
+    };
+
+    expect(parseClientFinancialPlan({ actions: [completed] }).actions[0]).toMatchObject(completed);
+  });
 });
 
 describe('buildFinancialContext', () => {

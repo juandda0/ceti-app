@@ -113,7 +113,25 @@ function optional(value: unknown, check: (item: unknown) => boolean): boolean {
   return value === undefined || check(value);
 }
 
-function validatePayload(domain: string, operation: string, payload: JsonObject): string[] {
+function validateNeedsAreMissing(
+  needsInput: readonly string[],
+  payload: JsonObject,
+  resourceId: unknown
+): void {
+  if (
+    needsInput.some((field) =>
+      field === 'resourceId' ? resourceId !== undefined : payload[field] !== undefined
+    )
+  )
+    fail('needsInput inválido.');
+}
+
+function validatePayload(
+  domain: string,
+  operation: string,
+  payload: JsonObject,
+  needsInput: readonly string[] = []
+): string[] {
   if (operation === 'eliminar' || (domain === 'meta' && operation === 'consultar')) {
     only(payload, []);
     return [];
@@ -177,8 +195,11 @@ function validatePayload(domain: string, operation: string, payload: JsonObject)
   only(payload, rules.allowed);
   if (
     !rules.valid ||
-    (operation === 'crear' && rules.required.some((key) => payload[key] === undefined)) ||
-    (operation === 'editar' && Object.keys(payload).length === 0)
+    (operation === 'crear' &&
+      rules.required.some((key) => payload[key] === undefined && !needsInput.includes(key))) ||
+    (operation === 'editar' &&
+      Object.keys(payload).length === 0 &&
+      !needsInput.some((field) => field !== 'resourceId'))
   )
     fail('Payload inválido.');
   return rules.allowed;
@@ -213,16 +234,6 @@ function parseAction(value: unknown): FinancialAction {
     fail('Dominio inválido.');
   if (!OPERATIONS.includes(String(action.operation))) fail('Operación inválida.');
   const operation = action.operation as FinancialAction['operation'];
-  const needsResource = operation === 'editar' || operation === 'eliminar';
-  const allowsResource = needsResource || (action.domain === 'meta' && operation === 'consultar');
-  if (
-    (needsResource && !id(action.resourceId)) ||
-    (!allowsResource && action.resourceId !== undefined) ||
-    (action.resourceId !== undefined && !id(action.resourceId))
-  )
-    fail('resourceId inválido.');
-  const payload = object(action.payload, 'Payload');
-  validatePayload(action.domain, operation, payload);
   const needsInput = action.needsInput;
   if (
     !Array.isArray(needsInput) ||
@@ -235,6 +246,17 @@ function parseAction(value: unknown): FinancialAction {
     )
   )
     fail('needsInput inválido.');
+  const needsResource = operation === 'editar' || operation === 'eliminar';
+  const allowsResource = needsResource || (action.domain === 'meta' && operation === 'consultar');
+  if (
+    (needsResource && !id(action.resourceId) && !needsInput.includes('resourceId')) ||
+    (!allowsResource && action.resourceId !== undefined) ||
+    (action.resourceId !== undefined && !id(action.resourceId))
+  )
+    fail('resourceId inválido.');
+  const payload = object(action.payload, 'Payload');
+  validateNeedsAreMissing(needsInput, payload, action.resourceId);
+  validatePayload(action.domain, operation, payload, needsInput);
   return {
     actionId: action.actionId,
     domain: action.domain,

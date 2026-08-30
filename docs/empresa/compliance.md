@@ -61,12 +61,12 @@ de perfilamiento de menores y anticipa la reforma 2025.
   proveedor que debe formalizarse como encargado y cubrirse en la política y el
   contrato aplicables antes de operar con datos reales; este documento no afirma
   que esa formalización ya exista.
-- Antes de llamar a Groq, la Cloud Function limita el texto financiero libre a 300
-  caracteres y rechaza la solicitud si detecta PII explícita o contextual (correo,
-  teléfono, documento, nombre de persona o dirección). El texto restante conserva
-  comercios, destinos y descripciones necesarios para interpretar la instrucción;
-  por ello no debe incluir datos personales. El contexto enviado contiene solo IDs
-  opacos y campos estructurados necesarios: metas (`id`, monto objetivo), movimientos
+- Antes de llamar a Groq, la Cloud Function limita la solicitud a 300 caracteres,
+  rechaza PII explícita o contextual y sustituye todo texto libre restante por
+  marcadores opacos (`TEXT_n`). Después de validar el plan, repone esos marcadores
+  localmente; por tanto Groq no recibe comercios, destinos ni descripciones. El
+  contexto enviado contiene solo IDs opacos y campos estructurados necesarios: metas
+  (`id`, monto objetivo), movimientos
   (`id`, tipo, monto, categoría, fecha e ID opcional de meta) y operaciones de ahorro
   (`id`, tipo, monto, fecha e ID opcional de meta). **No se envían a Groq** audio,
   UID, email, títulos de metas ni descripciones almacenadas de movimientos/operaciones.

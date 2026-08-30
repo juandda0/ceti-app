@@ -48,21 +48,14 @@ export type FinancialAction =
       actionId: string;
       domain: 'movimiento';
       operation: 'crear';
-      payload: {
-        tipo: 'gasto' | 'ahorro';
-        monto: number;
-        descripcion: string;
-        categoria: MovimientoCategoria;
-        fecha: number;
-        goalId?: string;
-      };
+      payload: MovementChanges;
       needsInput: string[];
     }
   | {
       actionId: string;
       domain: 'movimiento';
       operation: 'editar' | 'eliminar';
-      resourceId: string;
+      resourceId?: string;
       payload: MovementChanges;
       needsInput: string[];
     }
@@ -77,14 +70,14 @@ export type FinancialAction =
       actionId: string;
       domain: 'ahorro';
       operation: 'crear';
-      payload: SavingsPayload;
+      payload: SavingsChanges;
       needsInput: string[];
     }
   | {
       actionId: string;
       domain: 'ahorro';
       operation: 'editar';
-      resourceId: string;
+      resourceId?: string;
       payload: SavingsChanges;
       needsInput: string[];
     }
@@ -92,7 +85,7 @@ export type FinancialAction =
       actionId: string;
       domain: 'ahorro';
       operation: 'eliminar';
-      resourceId: string;
+      resourceId?: string;
       payload: Record<string, never>;
       needsInput: string[];
     }
@@ -107,14 +100,14 @@ export type FinancialAction =
       actionId: string;
       domain: 'meta';
       operation: 'crear';
-      payload: GoalPayload;
+      payload: GoalChanges;
       needsInput: string[];
     }
   | {
       actionId: string;
       domain: 'meta';
       operation: 'editar';
-      resourceId: string;
+      resourceId?: string;
       payload: GoalChanges;
       needsInput: string[];
     }
@@ -122,7 +115,7 @@ export type FinancialAction =
       actionId: string;
       domain: 'meta';
       operation: 'eliminar';
-      resourceId: string;
+      resourceId?: string;
       payload: Record<string, never>;
       needsInput: string[];
     };
@@ -195,6 +188,19 @@ function validateNeedsInput(value: unknown, allowed: readonly string[]): string[
   return value;
 }
 
+function validateNeedsAreMissing(
+  needsInput: readonly string[],
+  payload: JsonObject,
+  resourceId: unknown
+): void {
+  if (
+    needsInput.some((field) =>
+      field === 'resourceId' ? resourceId !== undefined : payload[field] !== undefined
+    )
+  )
+    invalid('needsInput debe contener únicamente campos ausentes.');
+}
+
 function validateRange(payload: JsonObject): void {
   if (
     payload.desde !== undefined &&
@@ -204,7 +210,11 @@ function validateRange(payload: JsonObject): void {
     invalid('El rango de fechas es inválido.');
 }
 
-function validateMovementPayload(operation: string, payload: JsonObject): void {
+function validateMovementPayload(
+  operation: string,
+  payload: JsonObject,
+  needsInput: readonly string[] = []
+): void {
   if (operation === 'consultar') {
     requireOnly(payload, ['desde', 'hasta', 'tipo'], 'payload');
     if (
@@ -232,15 +242,15 @@ function validateMovementPayload(operation: string, payload: JsonObject): void {
     optional(payload.goalId, isId);
   const requiredForCreate =
     operation !== 'crear' ||
-    (payload.tipo !== undefined &&
-      payload.monto !== undefined &&
-      payload.descripcion !== undefined &&
-      payload.categoria !== undefined &&
-      payload.fecha !== undefined);
+    ['tipo', 'monto', 'descripcion', 'categoria', 'fecha'].every(
+      (field) => payload[field] !== undefined || needsInput.includes(field)
+    );
   if (
     !fieldsAreValid ||
     !requiredForCreate ||
-    (operation === 'editar' && Object.keys(payload).length === 0)
+    (operation === 'editar' &&
+      Object.keys(payload).length === 0 &&
+      !needsInput.some((field) => field !== 'resourceId'))
   ) {
     invalid('Payload de movimiento inválido.');
   }
@@ -252,22 +262,25 @@ function validateMovementQueryPayload(
   validateMovementPayload('consultar', payload);
 }
 
-function validateMovementCreatePayload(payload: JsonObject): asserts payload is {
-  tipo: 'gasto' | 'ahorro';
-  monto: number;
-  descripcion: string;
-  categoria: MovimientoCategoria;
-  fecha: number;
-  goalId?: string;
-} {
-  validateMovementPayload('crear', payload);
+function validateMovementCreatePayload(
+  payload: JsonObject,
+  needsInput: readonly string[]
+): asserts payload is MovementChanges {
+  validateMovementPayload('crear', payload, needsInput);
 }
 
-function validateMovementChanges(payload: JsonObject): asserts payload is MovementChanges {
-  validateMovementPayload('editar', payload);
+function validateMovementChanges(
+  payload: JsonObject,
+  needsInput: readonly string[]
+): asserts payload is MovementChanges {
+  validateMovementPayload('editar', payload, needsInput);
 }
 
-function validateSavingsPayload(operation: string, payload: JsonObject): void {
+function validateSavingsPayload(
+  operation: string,
+  payload: JsonObject,
+  needsInput: readonly string[] = []
+): void {
   if (operation === 'consultar') {
     requireOnly(payload, ['desde', 'hasta', 'goalId', 'type'], 'payload');
     if (
@@ -293,14 +306,15 @@ function validateSavingsPayload(operation: string, payload: JsonObject): void {
     optional(payload.fecha, isTimestamp);
   const requiredForCreate =
     operation !== 'crear' ||
-    (payload.type !== undefined &&
-      payload.amount !== undefined &&
-      payload.description !== undefined &&
-      payload.fecha !== undefined);
+    ['type', 'amount', 'description', 'fecha'].every(
+      (field) => payload[field] !== undefined || needsInput.includes(field)
+    );
   if (
     !fieldsAreValid ||
     !requiredForCreate ||
-    (operation === 'editar' && Object.keys(payload).length === 0)
+    (operation === 'editar' &&
+      Object.keys(payload).length === 0 &&
+      !needsInput.some((field) => field !== 'resourceId'))
   ) {
     invalid('Payload de ahorro inválido.');
   }
@@ -315,15 +329,25 @@ function validateSavingsQueryPayload(payload: JsonObject): asserts payload is {
   validateSavingsPayload('consultar', payload);
 }
 
-function validateSavingsCreatePayload(payload: JsonObject): asserts payload is SavingsPayload {
-  validateSavingsPayload('crear', payload);
+function validateSavingsCreatePayload(
+  payload: JsonObject,
+  needsInput: readonly string[]
+): asserts payload is SavingsChanges {
+  validateSavingsPayload('crear', payload, needsInput);
 }
 
-function validateSavingsChanges(payload: JsonObject): asserts payload is SavingsChanges {
-  validateSavingsPayload('editar', payload);
+function validateSavingsChanges(
+  payload: JsonObject,
+  needsInput: readonly string[]
+): asserts payload is SavingsChanges {
+  validateSavingsPayload('editar', payload, needsInput);
 }
 
-function validateGoalPayload(operation: string, payload: JsonObject): void {
+function validateGoalPayload(
+  operation: string,
+  payload: JsonObject,
+  needsInput: readonly string[] = []
+): void {
   if (operation === 'consultar' || operation === 'eliminar') {
     requireOnly(payload, [], 'payload');
     return;
@@ -341,25 +365,32 @@ function validateGoalPayload(operation: string, payload: JsonObject): void {
     optional(payload.deadline, isTimestamp);
   const requiredForCreate =
     operation !== 'crear' ||
-    (payload.title !== undefined &&
-      payload.iconId !== undefined &&
-      payload.category !== undefined &&
-      payload.targetAmount !== undefined);
+    ['title', 'iconId', 'category', 'targetAmount'].every(
+      (field) => payload[field] !== undefined || needsInput.includes(field)
+    );
   if (
     !fieldsAreValid ||
     !requiredForCreate ||
-    (operation === 'editar' && Object.keys(payload).length === 0)
+    (operation === 'editar' &&
+      Object.keys(payload).length === 0 &&
+      !needsInput.some((field) => field !== 'resourceId'))
   ) {
     invalid('Payload de meta inválido.');
   }
 }
 
-function validateGoalCreatePayload(payload: JsonObject): asserts payload is GoalPayload {
-  validateGoalPayload('crear', payload);
+function validateGoalCreatePayload(
+  payload: JsonObject,
+  needsInput: readonly string[]
+): asserts payload is GoalChanges {
+  validateGoalPayload('crear', payload, needsInput);
 }
 
-function validateGoalChanges(payload: JsonObject): asserts payload is GoalChanges {
-  validateGoalPayload('editar', payload);
+function validateGoalChanges(
+  payload: JsonObject,
+  needsInput: readonly string[]
+): asserts payload is GoalChanges {
+  validateGoalPayload('editar', payload, needsInput);
 }
 
 function validateEmptyPayload(payload: JsonObject): asserts payload is Record<string, never> {
@@ -380,11 +411,6 @@ function parseAction(value: unknown, actionId: string): FinancialAction {
     invalid('Operación inválida.');
   const resourceId = action.resourceId;
   if (resourceId !== undefined && !isId(resourceId)) invalid('resourceId inválido.');
-  if (
-    (action.operation === 'editar' || action.operation === 'eliminar') &&
-    resourceId === undefined
-  )
-    invalid('La operación requiere resourceId.');
 
   const payload = requireObject(action.payload, 'payload');
 
@@ -393,11 +419,11 @@ function parseAction(value: unknown, actionId: string): FinancialAction {
       if (resourceId !== undefined) invalid('La consulta no admite resourceId.');
       validateMovementQueryPayload(payload);
       const needsInput = validateNeedsInput(action.needsInput, ['desde', 'hasta', 'tipo']);
+      validateNeedsAreMissing(needsInput, payload, resourceId);
       return { actionId, domain: 'movimiento', operation: 'consultar', payload, needsInput };
     }
     if (action.operation === 'crear') {
       if (resourceId !== undefined) invalid('La creación no admite resourceId.');
-      validateMovementCreatePayload(payload);
       const needsInput = validateNeedsInput(action.needsInput, [
         'tipo',
         'monto',
@@ -406,22 +432,26 @@ function parseAction(value: unknown, actionId: string): FinancialAction {
         'fecha',
         'goalId',
       ]);
+      validateNeedsAreMissing(needsInput, payload, resourceId);
+      validateMovementCreatePayload(payload, needsInput);
       return { actionId, domain: 'movimiento', operation: 'crear', payload, needsInput };
     }
-    if (!isId(resourceId)) invalid('La operación requiere resourceId.');
     const needsInput = validateNeedsInput(
       action.needsInput,
       action.operation === 'editar'
         ? ['resourceId', 'tipo', 'monto', 'descripcion', 'categoria', 'fecha', 'goalId']
         : ['resourceId']
     );
-    if (action.operation === 'editar') validateMovementChanges(payload);
+    validateNeedsAreMissing(needsInput, payload, resourceId);
+    if (!isId(resourceId) && !needsInput.includes('resourceId'))
+      invalid('La operación requiere resourceId.');
+    if (action.operation === 'editar') validateMovementChanges(payload, needsInput);
     else validateEmptyPayload(payload);
     return {
       actionId,
       domain: 'movimiento',
       operation: action.operation,
-      resourceId,
+      ...(resourceId === undefined ? {} : { resourceId }),
       payload,
       needsInput,
     };
@@ -436,11 +466,11 @@ function parseAction(value: unknown, actionId: string): FinancialAction {
         'goalId',
         'type',
       ]);
+      validateNeedsAreMissing(needsInput, payload, resourceId);
       return { actionId, domain: 'ahorro', operation: 'consultar', payload, needsInput };
     }
     if (action.operation === 'crear') {
       if (resourceId !== undefined) invalid('La creación no admite resourceId.');
-      validateSavingsCreatePayload(payload);
       const needsInput = validateNeedsInput(action.needsInput, [
         'type',
         'amount',
@@ -448,25 +478,44 @@ function parseAction(value: unknown, actionId: string): FinancialAction {
         'goalId',
         'fecha',
       ]);
+      validateNeedsAreMissing(needsInput, payload, resourceId);
+      validateSavingsCreatePayload(payload, needsInput);
       return { actionId, domain: 'ahorro', operation: 'crear', payload, needsInput };
     }
-    if (!isId(resourceId)) invalid('La operación requiere resourceId.');
     const needsInput = validateNeedsInput(
       action.needsInput,
       action.operation === 'editar'
         ? ['resourceId', 'type', 'amount', 'description', 'goalId', 'fecha']
         : ['resourceId']
     );
+    validateNeedsAreMissing(needsInput, payload, resourceId);
+    if (!isId(resourceId) && !needsInput.includes('resourceId'))
+      invalid('La operación requiere resourceId.');
     if (action.operation === 'editar') {
-      validateSavingsChanges(payload);
-      return { actionId, domain: 'ahorro', operation: 'editar', resourceId, payload, needsInput };
+      validateSavingsChanges(payload, needsInput);
+      return {
+        actionId,
+        domain: 'ahorro',
+        operation: 'editar',
+        ...(resourceId === undefined ? {} : { resourceId }),
+        payload,
+        needsInput,
+      };
     }
     validateEmptyPayload(payload);
-    return { actionId, domain: 'ahorro', operation: 'eliminar', resourceId, payload, needsInput };
+    return {
+      actionId,
+      domain: 'ahorro',
+      operation: 'eliminar',
+      ...(resourceId === undefined ? {} : { resourceId }),
+      payload,
+      needsInput,
+    };
   }
   if (action.operation === 'consultar') {
     validateEmptyPayload(payload);
     const needsInput = validateNeedsInput(action.needsInput, ['resourceId']);
+    validateNeedsAreMissing(needsInput, payload, resourceId);
     return {
       actionId,
       domain: 'meta',
@@ -478,7 +527,6 @@ function parseAction(value: unknown, actionId: string): FinancialAction {
   }
   if (action.operation === 'crear') {
     if (resourceId !== undefined) invalid('La creación no admite resourceId.');
-    validateGoalCreatePayload(payload);
     const needsInput = validateNeedsInput(action.needsInput, [
       'title',
       'iconId',
@@ -486,21 +534,39 @@ function parseAction(value: unknown, actionId: string): FinancialAction {
       'targetAmount',
       'deadline',
     ]);
+    validateNeedsAreMissing(needsInput, payload, resourceId);
+    validateGoalCreatePayload(payload, needsInput);
     return { actionId, domain: 'meta', operation: 'crear', payload, needsInput };
   }
-  if (!isId(resourceId)) invalid('La operación requiere resourceId.');
   const needsInput = validateNeedsInput(
     action.needsInput,
     action.operation === 'editar'
       ? ['resourceId', 'title', 'iconId', 'category', 'targetAmount', 'deadline']
       : ['resourceId']
   );
+  validateNeedsAreMissing(needsInput, payload, resourceId);
+  if (!isId(resourceId) && !needsInput.includes('resourceId'))
+    invalid('La operación requiere resourceId.');
   if (action.operation === 'editar') {
-    validateGoalChanges(payload);
-    return { actionId, domain: 'meta', operation: 'editar', resourceId, payload, needsInput };
+    validateGoalChanges(payload, needsInput);
+    return {
+      actionId,
+      domain: 'meta',
+      operation: 'editar',
+      ...(resourceId === undefined ? {} : { resourceId }),
+      payload,
+      needsInput,
+    };
   }
   validateEmptyPayload(payload);
-  return { actionId, domain: 'meta', operation: 'eliminar', resourceId, payload, needsInput };
+  return {
+    actionId,
+    domain: 'meta',
+    operation: 'eliminar',
+    ...(resourceId === undefined ? {} : { resourceId }),
+    payload,
+    needsInput,
+  };
 }
 
 export function parseFinancialPlan(raw: string, requestId: string): FinancialPlan {

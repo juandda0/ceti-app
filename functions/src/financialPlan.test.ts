@@ -233,3 +233,89 @@ test.each([
     FinancialPlanError
   );
 });
+
+test('acepta una meta incompleta cuando declara el dato faltante en needsInput', () => {
+  const plan = parseFinancialPlan(
+    JSON.stringify({
+      actions: [
+        {
+          domain: 'meta',
+          operation: 'crear',
+          payload: { title: 'Bici', iconId: 'bike', category: 'custom' },
+          needsInput: ['targetAmount'],
+        },
+      ],
+    }),
+    'r'
+  );
+
+  expect(plan.actions[0]).toMatchObject({
+    domain: 'meta',
+    operation: 'crear',
+    payload: { title: 'Bici' },
+    needsInput: ['targetAmount'],
+  });
+});
+
+test.each([
+  {
+    domain: 'meta',
+    operation: 'crear',
+    payload: { title: 'Bici', iconId: 'bike', category: 'custom' },
+    needsInput: [],
+  },
+  { domain: 'meta', operation: 'editar', payload: { title: 'Bici' }, needsInput: [] },
+  { domain: 'meta', operation: 'eliminar', payload: {}, needsInput: [] },
+])('rechaza faltantes que no estén declarados en needsInput', (action) => {
+  expect(() => parseFinancialPlan(JSON.stringify({ actions: [action] }), 'r')).toThrow(
+    FinancialPlanError
+  );
+});
+
+test.each(['editar', 'eliminar'] as const)(
+  'acepta meta/%s sin resourceId si needsInput lo solicita',
+  (operation) => {
+    const plan = parseFinancialPlan(
+      JSON.stringify({
+        actions: [
+          {
+            domain: 'meta',
+            operation,
+            payload: operation === 'editar' ? { title: 'Bici' } : {},
+            needsInput: ['resourceId'],
+          },
+        ],
+      }),
+      'r'
+    );
+
+    expect(plan.actions[0]).toMatchObject({ operation, needsInput: ['resourceId'] });
+    expect(plan.actions[0]).not.toHaveProperty('resourceId');
+  }
+);
+
+test.each([
+  {
+    domain: 'meta',
+    operation: 'editar',
+    payload: {},
+    needsInput: ['resourceId'],
+  },
+  {
+    domain: 'meta',
+    operation: 'crear',
+    payload: { title: 'Bici', iconId: 'bike', category: 'custom', targetAmount: 1 },
+    needsInput: ['targetAmount'],
+  },
+  {
+    domain: 'meta',
+    operation: 'editar',
+    resourceId: 'goal_1',
+    payload: { title: 'Bici' },
+    needsInput: ['resourceId'],
+  },
+])('rechaza needsInput que no corresponde a un dato ausente', (action) => {
+  expect(() => parseFinancialPlan(JSON.stringify({ actions: [action] }), 'r')).toThrow(
+    FinancialPlanError
+  );
+});
