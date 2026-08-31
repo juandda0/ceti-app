@@ -17,6 +17,9 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { logEvent } from '@shared/lib/analytics/logEvent';
 import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/app';
 import { userRepository } from '@features/auth/data/userRepository';
+import ClassCodeForm from '@features/dashboard/components/ClassCodeForm';
+import { joinClass } from '@features/dashboard/data/joinClass';
+import { pendingInvite } from '@features/dashboard/data/pendingInvite';
 
 const AVATARS = [
   { id: 'avatar_1', emoji: '🦁' },
@@ -38,10 +41,11 @@ export default function UserSetupScreen() {
   const [step, setStep] = useState(0);
   const [name, setName] = useState('');
   const [avatarId, setAvatarId] = useState('');
+  const [classCode] = useState(() => pendingInvite.consume() ?? '');
   const [error, setError] = useState('');
   const [finishing, setFinishing] = useState(false);
 
-  // Steps: 0 = name, 1 = avatar, 2 = welcome
+  // Steps: 0 = name, 1 = avatar, 2 = welcome, 3 = optional class code
   const canAdvance = useCallback(() => {
     if (step === 0) return name.trim().length >= 2;
     if (step === 1) return avatarId !== '';
@@ -49,17 +53,13 @@ export default function UserSetupScreen() {
   }, [step, name, avatarId]);
 
   const handleNext = () => {
-    if (!canAdvance()) return;
+    if (!canAdvance() || step >= 3) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    if (step < 2) {
-      setError('');
-      setStep(step + 1);
-    } else {
-      void finishSetup();
-    }
+    setError('');
+    setStep(step + 1);
   };
 
-  const finishSetup = async () => {
+  const finishSetup = async (code?: string) => {
     const emoji = AVATARS.find((a) => a.id === avatarId)?.emoji ?? '🦁';
     const nickname = name.trim();
 
@@ -86,6 +86,7 @@ export default function UserSetupScreen() {
               : 'unknown',
           profile: { nickname, fullName: nickname, avatarId, avatarEmoji: emoji },
         });
+        if (code) await joinClass(code);
       } catch (e) {
         setError(e instanceof Error ? e.message : t('onboarding.saveError'));
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
@@ -107,7 +108,7 @@ export default function UserSetupScreen() {
   return (
     <ScreenWrapper style={styles.container}>
       <View style={styles.progressContainer}>
-        {[0, 1, 2].map((i) => (
+        {[0, 1, 2, 3].map((i) => (
           <View
             key={i}
             style={[
@@ -228,21 +229,39 @@ export default function UserSetupScreen() {
             </View>
           </Animated.View>
         )}
+
+        {step === 3 && (
+          <Animated.View
+            key="class-code"
+            entering={motion.stepEnter}
+            exiting={motion.stepExit}
+            style={styles.stepContainer}
+          >
+            <ClassCodeForm
+              initialCode={classCode}
+              autoSubmit={classCode !== ''}
+              onJoin={(code) => finishSetup(code)}
+              onSkip={() => finishSetup()}
+            />
+          </Animated.View>
+        )}
       </ScrollView>
 
       <View style={styles.footer}>
         {error !== '' && (
           <Text style={[styles.errorText, { color: colors.system.red }]}>{error}</Text>
         )}
-        <CetiButton
-          label={step === 2 ? t('onboarding.start') : t('onboarding.next')}
-          onPress={handleNext}
-          disabled={!canAdvance() || finishing}
-          variant="primary"
-          size="large"
-          style={{ width: '100%' }}
-          isLoading={finishing}
-        />
+        {step < 3 && (
+          <CetiButton
+            label={t('onboarding.next')}
+            onPress={handleNext}
+            disabled={!canAdvance() || finishing}
+            variant="primary"
+            size="large"
+            style={{ width: '100%' }}
+            isLoading={finishing}
+          />
+        )}
       </View>
     </ScreenWrapper>
   );

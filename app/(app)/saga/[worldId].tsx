@@ -43,6 +43,7 @@ import ScreenWrapper from '@shared/components/ScreenWrapper';
 import MicroteoriaView from '@features/learning/components/MicroteoriaView';
 import EligeCaminoView from '@features/learning/components/EligeCaminoView';
 import WorldQuizScreen from '@features/learning/screens/WorldQuizScreen';
+import { hasClassAccess } from '@features/learning/data/classAccess';
 
 // ─── World metadata (mirrors WorldQuizScreen) ─────────────────────────────────
 
@@ -65,6 +66,9 @@ export default function WorldSagaScreen() {
   const firebaseUid = useAuthStore((s) => s.firebaseUid);
   const localProfileId = useUserStore((s) => s.id);
   const uid = firebaseUid ?? localProfileId ?? 'demo';
+  const colegioId = useAuthStore((s) => s.colegioId);
+  const cursoId = useAuthStore((s) => s.cursoId);
+  const hasAccess = hasClassAccess(colegioId, cursoId);
 
   const grado = useStudentGrado();
 
@@ -85,6 +89,9 @@ export default function WorldSagaScreen() {
     }
   }, [classConfigLoaded, classConfig, worldId]);
   useEffect(() => {
+    if (!hasAccess) router.replace('/saga' as never);
+  }, [hasAccess, router]);
+  useEffect(() => {
     // Entry guard: never was visible during this visit → not a soft exit, bounce.
     if (classConfigLoaded && !visible && !wasVisibleRef.current) {
       router.replace('/saga' as never);
@@ -93,8 +100,6 @@ export default function WorldSagaScreen() {
   const softExited = classConfigLoaded && !visible && wasVisibleRef.current;
 
   // Course content overrides (RQ-PR11) for THIS world, from the live config.
-  const colegioId = useAuthStore((s) => s.colegioId);
-  const cursoId = useAuthStore((s) => s.cursoId);
   const courseContent =
     colegioId && cursoId && worldId
       ? {
@@ -116,6 +121,8 @@ export default function WorldSagaScreen() {
   const disp = displayWorldDef(worldId ?? '', configEntry);
   const fallback = WORLD_META[worldId ?? ''] ?? { name: 'Mundo', color: '#FF8A1F' };
   const meta = { name: disp?.name ?? fallback.name, color: disp?.color ?? fallback.color };
+
+  if (!hasAccess) return null;
 
   let content: React.ReactElement;
   if (phase === 'loading' || !grado) {
