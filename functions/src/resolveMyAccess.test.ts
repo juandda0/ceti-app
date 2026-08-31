@@ -2,6 +2,7 @@ const mockSetCustomUserClaims = jest.fn().mockResolvedValue(undefined);
 const mockSet = jest.fn().mockResolvedValue(undefined);
 const mockGet = jest.fn().mockResolvedValue({ exists: false, data: () => undefined });
 const mockColegioRef = { id: 'colegio-propio', set: mockSet, get: mockGet };
+const mockDoc = jest.fn(() => ({ get: mockGet, set: mockSet }));
 
 jest.mock('firebase-functions/v2/https', () => ({
   onCall: (_options: unknown, handler?: unknown) => handler ?? _options,
@@ -17,7 +18,7 @@ jest.mock('firebase-admin/auth', () => ({
 }));
 jest.mock('firebase-admin/firestore', () => ({
   getFirestore: () => ({
-    doc: jest.fn(() => ({ get: mockGet, set: mockSet })),
+    doc: mockDoc,
     collection: jest.fn(() => ({ doc: jest.fn(() => mockColegioRef) })),
   }),
   FieldValue: { serverTimestamp: jest.fn(), increment: jest.fn() },
@@ -39,4 +40,6 @@ test('crea un colegio propio y activa a quien se registra como profesor', async 
     role: 'profesor',
     colegioId: 'colegio-propio',
   });
+  expect(mockDoc).toHaveBeenCalledTimes(1);
+  expect(mockDoc).toHaveBeenCalledWith('membership/profesor-nuevo');
 });

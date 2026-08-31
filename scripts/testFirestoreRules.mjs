@@ -941,26 +941,6 @@ await check(
   assertFails(getDocs(query(collectionGroup(profA1, 'contenido'))))
 );
 
-console.log('Professor authorizations profesoresAutorizados (D-ADMIN):');
-await check(
-  'admin reads profesoresAutorizados',
-  assertSucceeds(getDoc(doc(adminG, 'profesoresAutorizados/prof_at_x')))
-);
-await check(
-  'profesor cannot read profesoresAutorizados',
-  assertFails(getDoc(doc(profA1, 'profesoresAutorizados/prof_at_x')))
-);
-await check(
-  'student cannot read profesoresAutorizados',
-  assertFails(getDoc(doc(stuA1, 'profesoresAutorizados/prof_at_x')))
-);
-await check(
-  'admin cannot write profesoresAutorizados (Function only)',
-  assertFails(
-    setDoc(doc(adminG, 'profesoresAutorizados/prof_at_x'), { email: 'p@x', colegioId: 'A' })
-  )
-);
-
 // ---- RQ-ES11 presupuestos (self-only) + RQ-PR14 retos (self-write signal) ----
 // updatedAt de la señal se ancla a request.time (anti-backdating), así que los
 // casos allow usan la hora real; los deny usan una hora fabricada.

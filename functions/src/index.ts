@@ -6,9 +6,8 @@
  * `membership/{uid}` mirror, and of the `estudiantes/{uid}` roster (clients never
  * write the roster — D-B1-03). Students are keyed by their Auth `uid` (R1): there
  * is no pseudonym key. Admin is granted by a Ceti-staff email allowlist
- * (`CETI_ADMIN_EMAILS`, D-ADMIN); professors by admin pre-authorization of their
- * email (`profesoresAutorizados/*`) o auto-registro docente. `resolveMyAccess`
- * settles claims on login.
+ * (`CETI_ADMIN_EMAILS`, D-ADMIN); professors by auto-registro docente.
+ * `resolveMyAccess` settles claims on login.
  * See R1/R2/R3.
  *
  * Token note: after claims change, the client must call getIdToken(true) to
@@ -88,11 +87,6 @@ const CETI_ADMIN_EMAILS = new Set(
 
 function isAllowlistedAdminEmail(email: string | undefined): boolean {
   return !!email && CETI_ADMIN_EMAILS.has(email.toLowerCase());
-}
-
-/** Doc-id key for a professor authorization (email, normalized). */
-function emailKey(email: string): string {
-  return email.trim().toLowerCase();
 }
 
 type ClaimsPayload = {
@@ -311,9 +305,8 @@ export const createCurso = onCall(async (request) => {
 /**
  * Resolves a signed-in user's access on login (D-ADMIN). Idempotent, refresh-
  * safe. Order: (1) already has a role → return it; (2) Ceti admin allowlist →
- * grant admin; (3) pre-authorized professor email → grant profesor + colegio,
- * mark the authorization consumed; (4) a professor self-registers into a new,
- * isolated colegio; (5) otherwise → prospective student (no claims set — they
+ * grant admin; (3) a professor self-registers into a new, isolated colegio;
+ * (4) otherwise → prospective student (no claims set — they
  * must join a class by code). Demo tokens already carry a role so they
  * short-circuit at (1).
  */
@@ -337,25 +330,7 @@ export const resolveMyAccess = onCall(async (request) => {
     return { role: 'admin', colegioId: null, cursoId: null };
   }
 
-  // (3) Pre-authorized professor.
-  if (email) {
-    const db = getFirestore();
-    const ref = db.doc(`profesoresAutorizados/${emailKey(email)}`);
-    const snap = await ref.get();
-    if (snap.exists) {
-      const colegioId = (snap.data()?.colegioId as string | undefined) ?? '';
-      if (colegioId) {
-        await applyClaims(caller.uid, { role: 'profesor', colegioId });
-        await ref.set(
-          { consumidoPorUid: caller.uid, consumidoAt: FieldValue.serverTimestamp() },
-          { merge: true }
-        );
-        return { role: 'profesor', colegioId, cursoId: null };
-      }
-    }
-  }
-
-  // (4) Any authenticated adult can choose the teacher path. Creating a fresh
+  // (3) Any authenticated adult can choose the teacher path. Creating a fresh
   // tenant prevents a self-registered teacher from entering another colegio.
   if (request.data?.requestedRole === 'profesor') {
     const db = getFirestore();
@@ -370,82 +345,8 @@ export const resolveMyAccess = onCall(async (request) => {
     return { role: 'profesor', colegioId: colegioRef.id, cursoId: null };
   }
 
-  // (5) Prospective student — no claims; the client shows the join-by-code gate.
+  // (4) Prospective student — no claims; the client shows the join-by-code gate.
   return { role: null, colegioId: null, cursoId: null };
-});
-
-/**
- * Admin pre-authorizes a professor's email into a colegio (RQ-AD08). Stored in
- * `profesoresAutorizados/{emailKey}`. If the email already has an account, the
- * claim is granted immediately; otherwise it resolves on their first login.
- */
-export const authorizeProfesor = onCall(async (request) => {
-  const caller = request.auth;
-  requireAuth(caller);
-  if (!isAdmin(caller)) {
-    throw new HttpsError('permission-denied', 'Solo un admin autoriza profesores.');
-  }
-  const email = requireString(request.data?.email, 'email').toLowerCase();
-  const colegioId = requireString(request.data?.colegioId, 'colegioId');
-
-  const db = getFirestore();
-  if (!(await db.doc(`colegios/${colegioId}`).get()).exists) {
-    throw new HttpsError('not-found', `El colegio '${colegioId}' no existe.`);
-  }
-  const ref = db.doc(`profesoresAutorizados/${emailKey(email)}`);
-  await ref.set(
-    {
-      email,
-      colegioId,
-      autorizadoPor: caller.uid,
-      autorizadoAt: FieldValue.serverTimestamp(),
-    },
-    { merge: true }
-  );
-
-  // If the account already exists, grant the claim now (unless already admin).
-  try {
-    const user = await getAuth().getUserByEmail(email);
-    if ((user.customClaims?.role as string | undefined) !== 'admin') {
-      await applyClaims(user.uid, { role: 'profesor', colegioId });
-      await ref.set(
-        { consumidoPorUid: user.uid, consumidoAt: FieldValue.serverTimestamp() },
-        { merge: true }
-      );
-    }
-  } catch {
-    // No account yet — the authorization resolves on their first login.
-  }
-
-  return { ok: true, email, colegioId };
-});
-
-/**
- * Admin revokes a professor authorization (RQ-AD08). Removes the authorization
- * and, if the professor had already been granted, revokes their claims (they can
- * no longer operate). Their cursos and students' data are NOT deleted here —
- * suppression of student data is a separate, explicit action (RQ-FN11).
- */
-export const revokeProfesorAuthorization = onCall(async (request) => {
-  const caller = request.auth;
-  requireAuth(caller);
-  if (!isAdmin(caller)) {
-    throw new HttpsError('permission-denied', 'Solo un admin revoca profesores.');
-  }
-  const email = requireString(request.data?.email, 'email').toLowerCase();
-
-  const db = getFirestore();
-  const ref = db.doc(`profesoresAutorizados/${emailKey(email)}`);
-  const consumidoPorUid = (await ref.get()).data()?.consumidoPorUid as string | undefined;
-  await ref.delete();
-  if (consumidoPorUid) {
-    await getAuth().setCustomUserClaims(consumidoPorUid, {});
-    await db
-      .doc(`membership/${consumidoPorUid}`)
-      .delete()
-      .catch(() => undefined);
-  }
-  return { ok: true };
 });
 
 /**

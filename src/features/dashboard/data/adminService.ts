@@ -52,7 +52,7 @@ export const adminService = {
 
   /**
    * Resolves the signed-in user's access on login (D-ADMIN): grants admin
-   * (allowlist), a pre-authorized professor, or a self-registered professor.
+   * (allowlist) or a self-registered professor.
    * Otherwise returns null role (prospective student → join by code). Idempotent.
    */
   async resolveMyAccess(requestedRole: LoginIntent | null): Promise<{
@@ -63,7 +63,7 @@ export const adminService = {
     return callFunction('resolveMyAccess', requestedRole === 'profesor' ? { requestedRole } : {});
   },
 
-  /** Admin lists all colegios (for the panel + authorize picker). */
+  /** Admin lists all colegios for the provisioning panel. */
   async listColegios(): Promise<{
     colegios: {
       id: string;
@@ -78,19 +78,6 @@ export const adminService = {
   /** Admin creates a colegio (D-ADMIN / RQ-AD02). */
   async registerColegio(input: { colegioId: string; nombre: string }): Promise<{ ok: boolean }> {
     return callFunction('registerColegio', input);
-  },
-
-  /** Admin pre-authorizes a professor email into a colegio (RQ-AD08). */
-  async authorizeProfesor(input: {
-    email: string;
-    colegioId: string;
-  }): Promise<{ ok: boolean; email: string; colegioId: string }> {
-    return callFunction('authorizeProfesor', input);
-  },
-
-  /** Admin revokes a professor authorization (RQ-AD08). */
-  async revokeProfesorAuthorization(email: string): Promise<{ ok: boolean }> {
-    return callFunction('revokeProfesorAuthorization', { email });
   },
 
   /** Professor creates their own course in their colegio (RQ-PR13). */

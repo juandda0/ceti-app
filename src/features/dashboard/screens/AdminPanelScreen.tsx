@@ -1,8 +1,6 @@
 /**
- * AdminPanelScreen — Ceti admin provisioning panel (D-ADMIN / RQ-AD07/AD08).
- * The admin registers colegios and pre-authorizes professor emails into them.
- * All mutations go through Cloud Functions (the only trusted writers); the list
- * of authorizations is read directly (rules allow admin read).
+ * AdminPanelScreen — Ceti admin provisioning panel (D-ADMIN / RQ-AD07).
+ * The admin registers colegios; professors self-register into isolated colegios.
  */
 import { useCallback, useEffect, useState } from 'react';
 import {
@@ -18,17 +16,13 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { collection, getDocs } from 'firebase/firestore';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
-import { confirmAction, showMessage } from '@shared/lib/dialogs';
-import { getFirebaseClients } from '@shared/lib/firebase/app';
+import { showMessage } from '@shared/lib/dialogs';
 import { adminService } from '@features/dashboard/data/adminService';
 import { performLogoutAndGo } from '@features/auth/performLogout';
 
 type Colegio = { id: string; nombre: string };
-type ProfeAutorizado = { email: string; colegioId: string };
-
 /** Slug + short random suffix → a stable, collision-resistant colegio id. */
 function slugColegioId(nombre: string): string {
   const slug = nombre
@@ -48,29 +42,16 @@ export default function AdminPanelScreen() {
   const router = useRouter();
 
   const [colegios, setColegios] = useState<Colegio[]>([]);
-  const [autorizados, setAutorizados] = useState<ProfeAutorizado[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
 
   const [nuevoColegio, setNuevoColegio] = useState('');
-  const [email, setEmail] = useState('');
-  const [colegioSel, setColegioSel] = useState<string | null>(null);
 
   const reload = useCallback(async () => {
     setLoading(true);
     try {
       const { colegios: cols } = await adminService.listColegios();
       setColegios(cols.map((c) => ({ id: c.id, nombre: c.nombre })));
-      const db = getFirebaseClients()?.firestore;
-      if (db) {
-        const snap = await getDocs(collection(db, 'profesoresAutorizados'));
-        setAutorizados(
-          snap.docs.map((d) => {
-            const data = d.data() as { email?: string; colegioId?: string };
-            return { email: data.email ?? d.id, colegioId: data.colegioId ?? '' };
-          })
-        );
-      }
     } catch (e) {
       showMessage(t('adminPanel.title'), e instanceof Error ? e.message : String(e), 'error');
     } finally {
@@ -105,38 +86,6 @@ export default function AdminPanelScreen() {
       setNuevoColegio('');
       showMessage(t('adminPanel.colegioCreated'), undefined, 'success');
     });
-
-  const onAuthorize = () =>
-    guard(async () => {
-      const mail = email.trim().toLowerCase();
-      if (!mail) {
-        showMessage(t('adminPanel.emailRequired'));
-        return;
-      }
-      if (!colegioSel) {
-        showMessage(t('adminPanel.colegioRequired'));
-        return;
-      }
-      await adminService.authorizeProfesor({ email: mail, colegioId: colegioSel });
-      setEmail('');
-      showMessage(t('adminPanel.authorized'), undefined, 'success');
-    });
-
-  const onRevoke = (mail: string) =>
-    confirmAction({
-      title: t('adminPanel.revokeConfirmTitle', { email: mail }),
-      body: t('adminPanel.revokeConfirmBody'),
-      confirmLabel: t('adminPanel.revokeConfirm'),
-      cancelLabel: t('admin.cancel'),
-      destructive: true,
-      onConfirm: () =>
-        void guard(async () => {
-          await adminService.revokeProfesorAuthorization(mail);
-          showMessage(t('adminPanel.revoked'), undefined, 'success');
-        }),
-    });
-
-  const colegioNombre = (id: string) => colegios.find((c) => c.id === id)?.nombre ?? id;
 
   const inputStyle = [
     styles.input,
@@ -209,107 +158,6 @@ export default function AdminPanelScreen() {
                 <Text style={styles.smallBtnText}>{t('adminPanel.createColegio')}</Text>
               </TouchableOpacity>
             </View>
-
-            {/* Authorize professor */}
-            <Text style={[styles.sectionTitle, { color: colors.text.primary, marginTop: 20 }]}>
-              {t('adminPanel.authorizeTitle')}
-            </Text>
-            <Text style={[styles.muted, { color: colors.text.tertiary }]}>
-              {t('adminPanel.authorizeHint')}
-            </Text>
-            <TextInput
-              style={inputStyle}
-              value={email}
-              onChangeText={setEmail}
-              placeholder={t('adminPanel.emailPlaceholder')}
-              placeholderTextColor={colors.text.quaternary}
-              autoCapitalize="none"
-              keyboardType="email-address"
-              autoCorrect={false}
-            />
-            <Text style={[styles.fieldLabel, { color: colors.text.secondary }]}>
-              {t('adminPanel.pickColegio')}
-            </Text>
-            <View style={styles.chipRow}>
-              {colegios.map((c) => (
-                <TouchableOpacity
-                  key={c.id}
-                  onPress={() => setColegioSel(c.id)}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: colegioSel === c.id }}
-                  style={[
-                    styles.chip,
-                    {
-                      backgroundColor:
-                        colegioSel === c.id ? colors.brand.primary : colors.background.secondary,
-                    },
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.chipText,
-                      { color: colegioSel === c.id ? '#fff' : colors.text.secondary },
-                    ]}
-                  >
-                    {c.nombre}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-            <TouchableOpacity
-              style={[
-                styles.btn,
-                { backgroundColor: colors.brand.primary, opacity: busy ? 0.6 : 1 },
-              ]}
-              onPress={() => void onAuthorize()}
-              disabled={busy}
-              accessibilityRole="button"
-            >
-              <Text style={styles.btnText}>{t('adminPanel.authorize')}</Text>
-            </TouchableOpacity>
-
-            {/* Authorized list */}
-            <Text style={[styles.sectionTitle, { color: colors.text.primary, marginTop: 20 }]}>
-              {t('adminPanel.authorizedListTitle')}
-            </Text>
-            {autorizados.length === 0 ? (
-              <Text style={[styles.muted, { color: colors.text.tertiary }]}>
-                {t('adminPanel.noAuthorized')}
-              </Text>
-            ) : (
-              autorizados.map((a) => (
-                <View
-                  key={a.email}
-                  style={[styles.row, { borderColor: colors.background.secondary }]}
-                >
-                  <View style={{ flex: 1 }}>
-                    <Text
-                      style={[styles.rowText, { color: colors.text.primary }]}
-                      numberOfLines={1}
-                    >
-                      {a.email}
-                    </Text>
-                    <Text
-                      style={[styles.rowSub, { color: colors.text.tertiary }]}
-                      numberOfLines={1}
-                    >
-                      {colegioNombre(a.colegioId)}
-                    </Text>
-                  </View>
-                  <TouchableOpacity
-                    onPress={() => onRevoke(a.email)}
-                    disabled={busy}
-                    accessibilityRole="button"
-                    accessibilityLabel={t('adminPanel.revoke')}
-                    style={[styles.revokeBtn, { borderColor: colors.system.red }]}
-                  >
-                    <Text style={{ color: colors.system.red, fontWeight: '700', fontSize: 12 }}>
-                      {t('adminPanel.revoke')}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              ))
-            )}
           </>
         )}
       </ScrollView>
@@ -334,7 +182,6 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   rowText: { fontSize: 14, fontWeight: '600', flex: 1 },
-  rowSub: { fontSize: 12 },
   inlineForm: { flexDirection: 'row', gap: 8, marginTop: 6 },
   input: {
     borderWidth: 1,
@@ -343,12 +190,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     fontSize: 15,
   },
-  fieldLabel: { fontSize: 12, fontWeight: '700', marginTop: 8 },
-  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 4 },
-  chip: { borderRadius: 16, paddingVertical: 6, paddingHorizontal: 12 },
-  chipText: { fontSize: 12, fontWeight: '700' },
-  btn: { borderRadius: 10, paddingVertical: 12, alignItems: 'center', marginTop: 10 },
-  btnText: { color: '#fff', fontSize: 15, fontWeight: '800' },
   smallBtn: {
     borderRadius: 10,
     paddingHorizontal: 14,
@@ -356,5 +197,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   smallBtnText: { color: '#fff', fontSize: 13, fontWeight: '700' },
-  revokeBtn: { borderWidth: 1.5, borderRadius: 8, paddingVertical: 6, paddingHorizontal: 12 },
 });
