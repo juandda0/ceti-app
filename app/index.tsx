@@ -21,6 +21,7 @@ import { readCetiClaims } from '@shared/lib/firebase/claims';
 import { userRepository } from '@features/auth/data/userRepository';
 import { adminService } from '@features/dashboard/data/adminService';
 import { loginIntent } from '@features/auth/data/loginIntent';
+import { hasClassAccess } from '@features/learning/data/classAccess';
 
 export default function Index() {
   const authReady = useAuthStore((s) => s.authReady);
@@ -158,12 +159,9 @@ export default function Index() {
       }
 
       if (cancelled || mySeq !== seq.current) return;
-      // D-ADMIN gate: a student without a course has no game access — send them
-      // to the join screen (code or invite link). Only a joined student (claims
-      // carry colegio+curso) reaches the game.
-      const hasCourse = Boolean(claims?.colegioId && claims?.cursoId);
-      if (!hasCourse) {
-        setTarget('/(auth)/unirse' as Href);
+      if (!hasClassAccess(claims?.colegioId, claims?.cursoId)) {
+        useAuthStore.getState().login();
+        setTarget('/(app)/dinero');
         return;
       }
       useAuthStore.getState().login();

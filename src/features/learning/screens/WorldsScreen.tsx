@@ -31,8 +31,10 @@ import {
 } from '@features/learning/data/competencias';
 import { worldStatus } from '@features/learning/data/worldStatus';
 import StudentAssignmentsBanner from '@features/dashboard/components/StudentAssignmentsBanner';
-import JoinClassBanner from '@features/dashboard/components/JoinClassBanner';
 import AuthorizationPendingBanner from '@features/dashboard/components/AuthorizationPendingBanner';
+import ClassCodeForm from '@features/dashboard/components/ClassCodeForm';
+import { joinClass } from '@features/dashboard/data/joinClass';
+import { hasClassAccess } from '@features/learning/data/classAccess';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { Typography } from '@shared/constants/typography';
@@ -210,6 +212,7 @@ export default function WorldsScreen() {
   // Tenant identity (provisioned students only) — used to rehydrate progress.
   const colegioId = useAuthStore((s) => s.colegioId);
   const cursoId = useAuthStore((s) => s.cursoId);
+  const hasAccess = hasClassAccess(colegioId, cursoId);
   const fetchWorldQuestions = useQuestionBankStore((s) => s.fetchWorldQuestions);
   const getWorldProgress = useQuestionBankStore((s) => s.getWorldProgress);
   const isWorldComplete = useQuestionBankStore((s) => s.isWorldComplete);
@@ -280,17 +283,17 @@ export default function WorldsScreen() {
   // known (avoids fetching worlds the class doesn't serve). The store guard
   // keys on (grado, seedKey), so this correctly re-fetches if grade resolves later.
   useEffect(() => {
-    if (!grado || !classConfigLoaded) return;
+    if (!hasAccess || !grado || !classConfigLoaded) return;
     for (const { def } of visibleWorlds) {
       void fetchWorldQuestions(grado, def.id, seedKey, courseContentFor(def.id));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [grado, seedKey, classConfigLoaded, visibleWorlds]);
+  }, [hasAccess, grado, seedKey, classConfigLoaded, visibleWorlds]);
 
   // Rehydrate per-world mastery from the tenant tree so unlock/progress survive
   // logout and new devices (the local answers cache is empty there).
   useEffect(() => {
-    if (!colegioId || !cursoId || !firebaseUid) return;
+    if (!hasAccess || !colegioId || !cursoId || !firebaseUid) return;
     let cancelled = false;
     void (async () => {
       const docs = await worldProgressRepository.getStudentProgress(
@@ -306,7 +309,7 @@ export default function WorldsScreen() {
     return () => {
       cancelled = true;
     };
-  }, [colegioId, cursoId, firebaseUid, setRemoteProgress]);
+  }, [hasAccess, colegioId, cursoId, firebaseUid, setRemoteProgress]);
 
   // Recompute when local answers OR the hydrated remote snapshot change.
   // (getWorldProgress/isWorldComplete read both internally.)
@@ -331,6 +334,16 @@ export default function WorldsScreen() {
   ).length;
   const totalAll = QUESTIONS_PER_WORLD * visibleWorlds.length;
 
+  if (!hasAccess) {
+    return (
+      <ScreenWrapper style={{ flex: 1, backgroundColor: colors.background.base }}>
+        <View style={styles.joinWrap}>
+          <ClassCodeForm onJoin={joinClass} />
+        </View>
+      </ScreenWrapper>
+    );
+  }
+
   return (
     <ScreenWrapper style={{ flex: 1, backgroundColor: colors.background.base }}>
       <ScrollView
@@ -349,7 +362,6 @@ export default function WorldsScreen() {
           {t('worlds.lessonsCompleted', { done: totalDone, total: totalAll })}
         </Text>
 
-        <JoinClassBanner />
         <AuthorizationPendingBanner />
         <StudentAssignmentsBanner />
 
@@ -389,6 +401,7 @@ export default function WorldsScreen() {
 }
 
 const styles = StyleSheet.create({
+  joinWrap: { flex: 1, justifyContent: 'center', paddingHorizontal: Spacing.base },
   scroll: {
     width: '100%',
     maxWidth: 680,

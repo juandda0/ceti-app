@@ -15,7 +15,6 @@ export default function AuthLayout() {
       <Stack.Screen name="welcome" />
       <Stack.Screen name="login" />
       <Stack.Screen name="onboarding/user-setup" />
-      <Stack.Screen name="unirse" />
     </Stack>
   );
 }
