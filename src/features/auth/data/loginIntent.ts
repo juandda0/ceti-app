@@ -1,8 +1,7 @@
 /**
  * Login intent (D-ADMIN): whether the user declared themselves 'estudiante' or
- * 'profesor' in the role bottom sheet before signing in. The server still
- * decides the real role (resolveMyAccess); this intent only routes a user with
- * NO role: 'profesor' → "pending authorization" screen, 'estudiante' → join gate.
+ * 'profesor' in the role bottom sheet before signing in. The server provisions
+ * that professor into a new isolated colegio; 'estudiante' goes to the join gate.
  *
  * Persisted (sync) so it survives a full page reload — otherwise a pending
  * professor who refreshes, or the web redirect-OAuth fallback (which reloads the

@@ -75,13 +75,12 @@ export default function Index() {
       let claims = await readCetiClaims(u);
       if (cancelled || mySeq !== seq.current) return;
 
-      // D-ADMIN: settle access on first login when there's no role yet — the
-      // backend grants admin (Ceti allowlist) or profesor (pre-authorized email),
-      // or leaves it empty (prospective student → join gate). Refresh the token
-      // to pick up any newly-set claims.
+      // Settle access on first login. A declared professor is provisioned into
+      // their own isolated colegio; a student remains on the join-by-code path.
+      // Refresh the token to pick up any newly-set claims.
       if (!claims?.role) {
         try {
-          const access = await adminService.resolveMyAccess();
+          const access = await adminService.resolveMyAccess(loginIntent.get());
           if (access.role) claims = await readCetiClaims(u, true);
         } catch {
           // offline / function error → treat as prospective student below
@@ -100,14 +99,6 @@ export default function Index() {
         useAuthStore.getState().login();
         // Cast: typed-routes union regenerates from the filesystem on build.
         setTarget('/(staff)' as Href);
-        return;
-      }
-
-      // No role resolved. A user who declared "profesor" in the login sheet but
-      // isn't pre-authorized waits at the pending screen (D-ADMIN) — never the
-      // student game. Anyone else falls through to the student path.
-      if (!claims?.role && loginIntent.get() === 'profesor') {
-        setTarget('/(auth)/pendiente-profesor' as Href);
         return;
       }
 

@@ -514,12 +514,6 @@
     "profesor": "Soy profesor",
     "profesorHint": "Crea y configura las clases de tus estudiantes."
   },
-  "pendingProfesor": {
-    "title": "Tu acceso de profesor está pendiente",
-    "body": "Tu correo {{email}} aún no está autorizado como profesor. Pídele a un administrador de Ceti que autorice este correo; luego vuelve y toca Reintentar.",
-    "retry": "Reintentar",
-    "wrongAccount": "Usar otra cuenta"
-  },
   "onboarding": {
     "stepNameOverline": "Empecemos",
     "stepNameTitle": "¿Cómo te llamas?",

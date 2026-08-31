@@ -7,7 +7,8 @@
  * write the roster — D-B1-03). Students are keyed by their Auth `uid` (R1): there
  * is no pseudonym key. Admin is granted by a Ceti-staff email allowlist
  * (`CETI_ADMIN_EMAILS`, D-ADMIN); professors by admin pre-authorization of their
- * email (`profesoresAutorizados/*`). `resolveMyAccess` settles claims on login.
+ * email (`profesoresAutorizados/*`) o auto-registro docente. `resolveMyAccess`
+ * settles claims on login.
  * See R1/R2/R3.
  *
  * Token note: after claims change, the client must call getIdToken(true) to
@@ -311,9 +312,10 @@ export const createCurso = onCall(async (request) => {
  * Resolves a signed-in user's access on login (D-ADMIN). Idempotent, refresh-
  * safe. Order: (1) already has a role → return it; (2) Ceti admin allowlist →
  * grant admin; (3) pre-authorized professor email → grant profesor + colegio,
- * mark the authorization consumed; (4) otherwise → prospective student (no
- * claims set — they must join a class by code). Demo tokens already carry a role
- * so they short-circuit at (1).
+ * mark the authorization consumed; (4) a professor self-registers into a new,
+ * isolated colegio; (5) otherwise → prospective student (no claims set — they
+ * must join a class by code). Demo tokens already carry a role so they
+ * short-circuit at (1).
  */
 export const resolveMyAccess = onCall(async (request) => {
   const caller = request.auth;
@@ -353,7 +355,22 @@ export const resolveMyAccess = onCall(async (request) => {
     }
   }
 
-  // (4) Prospective student — no claims; the client shows the join-by-code gate.
+  // (4) Any authenticated adult can choose the teacher path. Creating a fresh
+  // tenant prevents a self-registered teacher from entering another colegio.
+  if (request.data?.requestedRole === 'profesor') {
+    const db = getFirestore();
+    const colegioRef = db.collection('colegios').doc();
+    await colegioRef.set({
+      nombre: 'Mi colegio',
+      sedesEnabled: false,
+      createdAt: FieldValue.serverTimestamp(),
+      createdByUid: caller.uid,
+    });
+    await applyClaims(caller.uid, { role: 'profesor', colegioId: colegioRef.id });
+    return { role: 'profesor', colegioId: colegioRef.id, cursoId: null };
+  }
+
+  // (5) Prospective student — no claims; the client shows the join-by-code gate.
   return { role: null, colegioId: null, cursoId: null };
 });
 

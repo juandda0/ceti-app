@@ -5,6 +5,7 @@
  * assign teachers) is Admin SDK only (backend) and has NO client entry point here.
  */
 import { callFunction } from '@shared/lib/firebase/functions';
+import type { LoginIntent } from '@features/auth/data/loginIntent';
 
 export const adminService = {
   /**
@@ -51,15 +52,15 @@ export const adminService = {
 
   /**
    * Resolves the signed-in user's access on login (D-ADMIN): grants admin
-   * (allowlist) or profesor (pre-authorized email) claims, else returns null
-   * role (prospective student → join by code). Idempotent.
+   * (allowlist), a pre-authorized professor, or a self-registered professor.
+   * Otherwise returns null role (prospective student → join by code). Idempotent.
    */
-  async resolveMyAccess(): Promise<{
+  async resolveMyAccess(requestedRole: LoginIntent | null): Promise<{
     role: 'admin' | 'profesor' | 'estudiante' | null;
     colegioId: string | null;
     cursoId: string | null;
   }> {
-    return callFunction('resolveMyAccess');
+    return callFunction('resolveMyAccess', requestedRole === 'profesor' ? { requestedRole } : {});
   },
 
   /** Admin lists all colegios (for the panel + authorize picker). */
