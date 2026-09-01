@@ -705,7 +705,7 @@ export default function WorldQuizScreen() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        {/* Type badge + competencia */}
+        {/* Question type */}
         <Animated.View entering={FadeIn.duration(200)} style={styles.badgeRow}>
           <View style={[styles.badge, { backgroundColor: colors.materials.highlight }]}>
             <Text style={[styles.badgeText, { color: colors.text.tertiary }]}>
@@ -716,9 +716,6 @@ export default function WorldQuizScreen() {
                   : t('quiz.tipoOrdenar')}
             </Text>
           </View>
-          <Text style={[styles.concept, { color: colors.text.quaternary }]} numberOfLines={1}>
-            {currentQuestion.competencia}
-          </Text>
         </Animated.View>
 
         {/* Question text */}
@@ -876,10 +873,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
-  },
-  concept: {
-    ...Typography.caption1,
-    flex: 1,
   },
   questionText: {
     ...Typography.title3,

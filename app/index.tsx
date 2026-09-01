@@ -161,7 +161,7 @@ export default function Index() {
       if (cancelled || mySeq !== seq.current) return;
       if (!hasClassAccess(claims?.colegioId, claims?.cursoId)) {
         useAuthStore.getState().login();
-        setTarget('/(app)/dinero' as Href);
+        setTarget('/(app)/saga' as Href);
         return;
       }
       useAuthStore.getState().login();

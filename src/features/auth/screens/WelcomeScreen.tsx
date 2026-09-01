@@ -21,7 +21,6 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useThemeStore } from '@shared/store/useThemeStore';
 import { lottieSpeed, motionMs } from '@shared/constants/motion';
 import { useTranslation } from 'react-i18next';
-import { isFirebaseConfigured } from '@shared/lib/firebase/app';
 
 const piggyCoinsAnimation = require('../../../../assets/lottie/piggy-coins-out.json');
 
@@ -78,10 +77,6 @@ export default function WelcomeScreen() {
     router.push('/(auth)/login');
   };
 
-  const handleOffline = () => {
-    router.push('/(auth)/onboarding/user-setup');
-  };
-
   return (
     <ScreenWrapper style={styles.container}>
       <View style={styles.centerColumn}>
@@ -108,27 +103,11 @@ export default function WelcomeScreen() {
 
           <Animated.View style={[styles.buttonContainer, buttonAnimatedStyle]}>
             <CetiButton
-              label={t('welcome.ctaStart')}
+              label="Entrar como invitado"
               onPress={handleLogin}
               variant="primary"
               size="large"
             />
-            <CetiButton
-              label={t('welcome.ctaHasAccount')}
-              onPress={handleLogin}
-              variant="ghost"
-              size="medium"
-              style={{ marginTop: Spacing.sm }}
-            />
-            {!isFirebaseConfigured() ? (
-              <CetiButton
-                label={t('welcome.ctaOffline')}
-                onPress={handleOffline}
-                variant="secondary"
-                size="medium"
-                style={{ marginTop: Spacing.md }}
-              />
-            ) : null}
           </Animated.View>
         </View>
       </View>

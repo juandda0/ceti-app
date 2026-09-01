@@ -43,7 +43,6 @@ import ScreenWrapper from '@shared/components/ScreenWrapper';
 import MicroteoriaView from '@features/learning/components/MicroteoriaView';
 import EligeCaminoView from '@features/learning/components/EligeCaminoView';
 import WorldQuizScreen from '@features/learning/screens/WorldQuizScreen';
-import { hasClassAccess } from '@features/learning/data/classAccess';
 
 // ─── World metadata (mirrors WorldQuizScreen) ─────────────────────────────────
 
@@ -68,8 +67,6 @@ export default function WorldSagaScreen() {
   const uid = firebaseUid ?? localProfileId ?? 'demo';
   const colegioId = useAuthStore((s) => s.colegioId);
   const cursoId = useAuthStore((s) => s.cursoId);
-  const hasAccess = hasClassAccess(colegioId, cursoId);
-
   const grado = useStudentGrado();
 
   // Soft-exit guard (D-ORQ, RQ-PR10 CA4). The class config is live: if the
@@ -88,9 +85,6 @@ export default function WorldSagaScreen() {
       wasVisibleRef.current = true;
     }
   }, [classConfigLoaded, classConfig, worldId]);
-  useEffect(() => {
-    if (!hasAccess) router.replace('/saga' as never);
-  }, [hasAccess, router]);
   useEffect(() => {
     // Entry guard: never was visible during this visit → not a soft exit, bounce.
     if (classConfigLoaded && !visible && !wasVisibleRef.current) {
@@ -121,8 +115,6 @@ export default function WorldSagaScreen() {
   const disp = displayWorldDef(worldId ?? '', configEntry);
   const fallback = WORLD_META[worldId ?? ''] ?? { name: 'Mundo', color: '#FF8A1F' };
   const meta = { name: disp?.name ?? fallback.name, color: disp?.color ?? fallback.color };
-
-  if (!hasAccess) return null;
 
   let content: React.ReactElement;
   if (phase === 'loading' || !grado) {

@@ -24,16 +24,7 @@ import { worldProgressRepository } from '@features/dashboard/data/worldProgressR
 import { useStudentGrado } from '@features/learning/hooks/useStudentGrado';
 import { useClassConfig } from '@features/learning/hooks/useClassConfig';
 import { resolveClassWorlds } from '@features/learning/data/classConfig';
-import {
-  COMPETENCIA_PERSONALIZADA,
-  competenciaForWorld,
-  competenciaLabel,
-} from '@features/learning/data/competencias';
 import { worldStatus } from '@features/learning/data/worldStatus';
-import StudentAssignmentsBanner from '@features/dashboard/components/StudentAssignmentsBanner';
-import AuthorizationPendingBanner from '@features/dashboard/components/AuthorizationPendingBanner';
-import ClassCodeForm from '@features/dashboard/components/ClassCodeForm';
-import { joinClass } from '@features/dashboard/data/joinClass';
 import { hasClassAccess } from '@features/learning/data/classAccess';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
@@ -45,7 +36,6 @@ import { displayWorldDef, type WorldDef } from '@features/learning/data/worldMet
 
 function WorldCard({
   world,
-  competenciaLabel,
   progress,
   isUnlocked,
   prevWorldName,
@@ -56,7 +46,6 @@ function WorldCard({
   t,
 }: {
   world: WorldDef;
-  competenciaLabel: string;
   progress: number;
   isUnlocked: boolean;
   /** Name of the previous world in the CLASS order (drives the locked note). */
@@ -145,20 +134,6 @@ function WorldCard({
             {world.description}
           </Text>
 
-          <View style={cardSt.competenciaTag}>
-            <Ionicons
-              name="school-outline"
-              size={12}
-              color={isUnlocked ? world.color : colors.text.quaternary}
-            />
-            <Text
-              style={[cardSt.competenciaText, { color: colors.text.tertiary }]}
-              numberOfLines={1}
-            >
-              {competenciaLabel}
-            </Text>
-          </View>
-
           {isUnlocked ? (
             <View style={cardSt.progressRow}>
               <View style={[cardSt.progressTrack, { backgroundColor: colors.materials.highlight }]}>
@@ -240,11 +215,8 @@ export default function WorldsScreen() {
     [classConfig, uid, answers, remoteProgress, isWorldComplete]
   );
 
-  // Visible worlds joined with their display metadata: default defs merged
-  // with the professor's overrides, or custom (`cw_*`) worlds built from their
-  // config entry (RQ-PR11/PR12). Unknown ids are skipped defensively. The card
-  // number is the CLASS-order position; the competencia tag resolves the
-  // default mapping, the assigned competency, or the "tema del profesor" label.
+  // Visible worlds joined with their display metadata. Without a tenant,
+  // `classConfig` is null and `resolveClassWorlds` provides the basic worlds.
   const visibleWorlds = useMemo(
     () =>
       classWorlds
@@ -253,18 +225,12 @@ export default function WorldsScreen() {
           const disp = displayWorldDef(cw.worldId, entry);
           if (!disp) return null;
           const def: WorldDef = { ...disp, number: index + 1 };
-          const competencia =
-            competenciaForWorld(cw.worldId)?.label ??
-            (entry?.competencia && entry.competencia !== COMPETENCIA_PERSONALIZADA
-              ? competenciaLabel(entry.competencia)
-              : t('worlds.competenciaPersonalizada'));
-          return { cw, def, competencia };
+          return { cw, def };
         })
         .filter(
-          (x): x is { cw: (typeof classWorlds)[number]; def: WorldDef; competencia: string } =>
-            x !== null
+          (x): x is { cw: (typeof classWorlds)[number]; def: WorldDef } => x !== null
         ),
-    [classWorlds, classConfig, t]
+    [classWorlds, classConfig]
   );
 
   // Per-world pointer to the course's custom content (RQ-PR11); null without a
@@ -283,7 +249,7 @@ export default function WorldsScreen() {
   // known (avoids fetching worlds the class doesn't serve). The store guard
   // keys on (grado, seedKey), so this correctly re-fetches if grade resolves later.
   useEffect(() => {
-    if (!hasAccess || !grado || !classConfigLoaded) return;
+    if (!grado || !classConfigLoaded) return;
     for (const { def } of visibleWorlds) {
       void fetchWorldQuestions(grado, def.id, seedKey, courseContentFor(def.id));
     }
@@ -334,16 +300,6 @@ export default function WorldsScreen() {
   ).length;
   const totalAll = QUESTIONS_PER_WORLD * visibleWorlds.length;
 
-  if (!hasAccess) {
-    return (
-      <ScreenWrapper style={{ flex: 1, backgroundColor: colors.background.base }}>
-        <View style={styles.joinWrap}>
-          <ClassCodeForm onJoin={joinClass} />
-        </View>
-      </ScreenWrapper>
-    );
-  }
-
   return (
     <ScreenWrapper style={{ flex: 1, backgroundColor: colors.background.base }}>
       <ScrollView
@@ -362,9 +318,6 @@ export default function WorldsScreen() {
           {t('worlds.lessonsCompleted', { done: totalDone, total: totalAll })}
         </Text>
 
-        <AuthorizationPendingBanner />
-        <StudentAssignmentsBanner />
-
         {!classConfigLoaded ? (
           <View style={styles.emptyState}>
             <ActivityIndicator size="large" color={colors.text.tertiary} />
@@ -378,11 +331,10 @@ export default function WorldsScreen() {
           </View>
         ) : (
           <View style={styles.list}>
-            {visibleWorlds.map(({ cw, def, competencia }, index) => (
+            {visibleWorlds.map(({ cw, def }, index) => (
               <WorldCard
                 key={def.id}
                 world={def}
-                competenciaLabel={competencia}
                 progress={progressMap[def.id] ?? 0}
                 isUnlocked={cw.unlocked}
                 prevWorldName={index > 0 ? visibleWorlds[index - 1].def.name : undefined}
@@ -401,7 +353,6 @@ export default function WorldsScreen() {
 }
 
 const styles = StyleSheet.create({
-  joinWrap: { flex: 1, justifyContent: 'center', paddingHorizontal: Spacing.base },
   scroll: {
     width: '100%',
     maxWidth: 680,
@@ -492,16 +443,6 @@ const cardSt = StyleSheet.create({
   worldDesc: {
     ...Typography.caption1,
     lineHeight: 17,
-  },
-  competenciaTag: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    marginTop: 6,
-  },
-  competenciaText: {
-    ...Typography.caption2,
-    fontWeight: '600',
   },
   progressRow: {
     flexDirection: 'row',

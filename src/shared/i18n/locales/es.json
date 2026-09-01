@@ -8,11 +8,9 @@
   "welcome": {
     "overline": "Innovación",
     "title": "Ceti",
-    "subtitle": "Tu mundo crece con tus decisiones",
-    "ctaStart": "Crear cuenta / Entrar",
-    "ctaHasAccount": "Ya tengo cuenta",
-    "ctaOffline": "Continuar solo en este dispositivo",
-    "footer": "Diseñado para el futuro de la educación financiera"
+    "subtitle": "Explora tus decisiones y organiza tu dinero",
+    "ctaStart": "Entrar como invitado",
+    "footer": "Diseñado para tomar mejores decisiones con tu dinero"
   },
   "roles": {
     "admin": "Admin Ceti",
@@ -199,7 +197,7 @@
     "continuar": "Continuar al quiz"
   },
   "saga": {
-    "loading": "Preparando la lección…"
+    "loading": "Preparando tu mundo…"
   },
   "school": {
     "reportLink": "Reporte del colegio",
@@ -275,12 +273,12 @@
   },
   "worlds": {
     "pageTitle": "Tu Galaxia",
-    "lessonsCompleted": "{{done}} de {{total}} lecciones completadas",
+    "lessonsCompleted": "{{done}} de {{total}} mundos completados",
     "worldNumber": "Mundo {{n}}",
     "lockedNote": "Completa el Mundo {{n}} para desbloquear",
     "lockedNoteNamed": "Completa {{name}} para desbloquear",
     "openWorld": "Abrir Mundo {{n}}",
-    "mastered": "Dominado",
+    "mastered": "Completado",
     "competenciaPersonalizada": "Tema de tu profesor",
     "emptyClass": "Tu profesor está preparando la clase. Vuelve pronto.",
     "classUpdated": "Tu profesor actualizó la clase. Este mundo ya no está disponible; puedes terminar lo que empezaste."
@@ -545,7 +543,7 @@
     "stepAvatarSubtitle": "Este te identificará en la app",
     "stepWelcomeOverline": "¡Todo listo!",
     "stepWelcomeTitle": "Bienvenido/a",
-    "stepWelcomeSubtitle": "Tu viaje financiero comienza ahora. Completa retos, gana Cetis y alcanza tus metas.",
+    "stepWelcomeSubtitle": "Ya puedes explorar tus mundos y organizar tu dinero.",
     "sessionExpired": "Tu sesión expiró. Vuelve a iniciar sesión.",
     "saveError": "No se pudo guardar el perfil.",
     "start": "Comenzar",

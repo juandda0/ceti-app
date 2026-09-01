@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Platform, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Platform, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { safeRouterBack } from '@shared/utils/safeRouterBack';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -10,32 +9,19 @@ import { Spacing, BorderRadius } from '@shared/constants/theme';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import PageHeader from '@shared/components/PageHeader';
 import CetiButton from '@shared/components/CetiButton';
-import CetiBottomSheet from '@shared/components/CetiBottomSheet';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useThemeStore } from '@shared/store/useThemeStore';
 import { isFirebaseConfigured } from '@shared/lib/firebase/app';
-import { loginIntent, type LoginIntent } from '@features/auth/data/loginIntent';
-import {
-  configureGoogleSignIn,
-  isAppleSignInAvailable,
-  signInWithApple,
-  signInWithGoogle,
-} from '@shared/lib/firebase/oauth';
-
-type Provider = 'google' | 'apple';
+import { loginIntent } from '@features/auth/data/loginIntent';
+import { configureGoogleSignIn, signInWithGoogle } from '@shared/lib/firebase/oauth';
 
 export default function LoginScreen() {
   const router = useRouter();
   const colors = useThemeColors();
   const mode = useThemeStore((s) => s.mode);
   const styles = getStyles(colors, mode);
-  const { t } = useTranslation();
-
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  // Role bottom sheet (D-ADMIN): the user declares estudiante/profesor before
-  // the OAuth popup; `pendingProvider` remembers which button opened it.
-  const [pendingProvider, setPendingProvider] = useState<Provider | null>(null);
 
   useEffect(() => {
     configureGoogleSignIn();
@@ -43,12 +29,11 @@ export default function LoginScreen() {
 
   const goHome = () => router.replace('/');
 
-  const doSignIn = async (provider: Provider) => {
+  const doSignIn = async () => {
     setError('');
     setBusy(true);
     try {
-      if (provider === 'google') await signInWithGoogle();
-      else await signInWithApple();
+      await signInWithGoogle();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       goHome();
     } catch (e) {
@@ -60,15 +45,10 @@ export default function LoginScreen() {
     }
   };
 
-  const onPickRole = (role: LoginIntent) => {
-    loginIntent.set(role);
-    const provider = pendingProvider;
-    setPendingProvider(null);
-    if (provider) void doSignIn(provider);
+  const onGoogle = () => {
+    loginIntent.set('estudiante');
+    void doSignIn();
   };
-
-  const onGoogle = () => setPendingProvider('google');
-  const onApple = () => setPendingProvider('apple');
 
   const offlineContinue = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -103,8 +83,6 @@ export default function LoginScreen() {
     );
   }
 
-  const showApple = isAppleSignInAvailable();
-
   return (
     <ScreenWrapper style={styles.root}>
       <View style={styles.content}>
@@ -119,7 +97,7 @@ export default function LoginScreen() {
         <PageHeader
           overline="Cuenta"
           title="Entra a Ceti"
-          subtitle="Usa tu cuenta de Google o Apple para guardar tu progreso en la nube de forma segura."
+          subtitle="Usa tu cuenta de Google para guardar tu progreso de forma segura."
           style={{ marginBottom: Spacing['2xl'] }}
         />
 
@@ -148,7 +126,7 @@ export default function LoginScreen() {
         ) : null}
 
         <CetiButton
-          label="Continuar con Google"
+          label="Entrar como invitado"
           icon="logo-google"
           onPress={onGoogle}
           variant="primary"
@@ -157,56 +135,11 @@ export default function LoginScreen() {
           isLoading={busy}
         />
 
-        {showApple ? (
-          <CetiButton
-            label="Continuar con Apple"
-            icon="logo-apple"
-            onPress={onApple}
-            variant="secondary"
-            size="large"
-            disabled={busy}
-            isLoading={busy}
-            style={{ marginTop: Spacing.md }}
-          />
-        ) : null}
-
         <Text style={[styles.hint, { color: colors.text.tertiary }]}>
           Al continuar aceptas el uso de tu nombre y correo según la política de privacidad del
           proyecto.
         </Text>
       </View>
-
-      <CetiBottomSheet
-        visible={pendingProvider !== null}
-        onClose={() => setPendingProvider(null)}
-        closeOnBackdropPress
-        title={t('roleChooser.title')}
-        subtitle={t('roleChooser.subtitle')}
-      >
-        {(['estudiante', 'profesor'] as LoginIntent[]).map((role) => (
-          <TouchableOpacity
-            key={role}
-            onPress={() => onPickRole(role)}
-            accessibilityRole="button"
-            style={[styles.roleCard, { borderColor: colors.materials.border }]}
-          >
-            <Ionicons
-              name={role === 'estudiante' ? 'rocket-outline' : 'school-outline'}
-              size={24}
-              color={colors.brand.primary}
-            />
-            <View style={styles.roleTextWrap}>
-              <Text style={[styles.roleTitle, { color: colors.text.primary }]}>
-                {t(`roleChooser.${role}`)}
-              </Text>
-              <Text style={[styles.roleHint, { color: colors.text.tertiary }]}>
-                {t(`roleChooser.${role}Hint`)}
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
-          </TouchableOpacity>
-        ))}
-      </CetiBottomSheet>
     </ScreenWrapper>
   );
 }
@@ -251,15 +184,4 @@ const getStyles = (colors: ReturnType<typeof useThemeColors>, _mode: string) =>
       marginTop: Spacing['2xl'],
       lineHeight: 18,
     },
-    roleCard: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 14,
-      borderWidth: 1,
-      borderRadius: BorderRadius.md,
-      padding: Spacing.base,
-    },
-    roleTextWrap: { flex: 1, gap: 2 },
-    roleTitle: { ...Typography.headline, fontWeight: '800' },
-    roleHint: { ...Typography.caption1 },
   });
