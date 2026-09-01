@@ -70,8 +70,24 @@ export default function AppTabLayout() {
           ),
         }}
       />
-      <Tabs.Screen name="savings" options={{ href: null }} />
-      <Tabs.Screen name="movimientos" options={{ href: null }} />
+      <Tabs.Screen
+        name="actividad"
+        options={{
+          title: 'Actividad',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? 'list' : 'list-outline'} size={TAB_ICON_SIZE} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="metas"
+        options={{
+          title: 'Metas',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? 'flag' : 'flag-outline'} size={TAB_ICON_SIZE} color={color} />
+          ),
+        }}
+      />
       <Tabs.Screen
         name="profile"
         options={{

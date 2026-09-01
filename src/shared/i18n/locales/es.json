@@ -487,6 +487,39 @@
     "dias": "{{dias}} días registrando",
     "hoyPendiente": "registra hoy para no perderla"
   },
+  "financialSummary": {
+    "title": "Resumen",
+    "subtitle": "Administra valores autodeclarados. Ceti no guarda ni mueve tu dinero.",
+    "total": "Ahorro total",
+    "unassigned": "Sin asignar",
+    "budgets": "Configurar topes"
+  },
+  "financialActivity": {
+    "title": "Actividad",
+    "subtitle": "Consulta y organiza tus gastos y operaciones de ahorro.",
+    "all": "Todos",
+    "expenses": "Gastos",
+    "savings": "Ahorros",
+    "delete": "Eliminar",
+    "cancel": "Cancelar",
+    "deleteExpenseTitle": "Eliminar gasto",
+    "deleteExpenseBody": "Se quitará del historial y de los análisis de gastos.",
+    "deleteOperationTitle": "Eliminar operación",
+    "deleteOperationBody": "El ahorro y el progreso de la meta se recalcularán."
+  },
+  "financialGoals": {
+    "title": "Metas",
+    "subtitle": "Crea metas y registra aportes para alcanzarlas.",
+    "new": "Nueva meta",
+    "edit": "Editar {{title}}",
+    "contribute": "Aportar a {{title}}",
+    "deleteGoal": "Eliminar {{title}}",
+    "progress": "{{current}} de {{target}}",
+    "delete": "Eliminar meta",
+    "cancel": "Cancelar",
+    "deleteTitle": "Eliminar meta",
+    "deleteBody": "{{amount}} quedará como ahorro sin asignar."
+  },
   "profile": {
     "pageTitle": "Mi perfil",
     "logout": "Cerrar sesión"
