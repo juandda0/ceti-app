@@ -7,6 +7,7 @@ import Segmented from '@features/savings/components/Segmented';
 import ActivityList from '@features/savings/components/ActivityList';
 import ExpenseFormSheet from '@features/savings/components/ExpenseFormSheet';
 import SavingsOperationSheet from '@features/savings/components/SavingsOperationSheet';
+import FloatingVoiceButton from '@features/savings/components/FloatingVoiceButton';
 import { confirmAction } from '@shared/lib/dialogs';
 import { useMovimientosStore, type Movimiento } from '@features/savings/store/useMovimientosStore';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
@@ -44,6 +45,7 @@ export default function ActividadScreen() {
     </ScrollView>
     <ExpenseFormSheet visible={form === 'expense'} expense={editingExpense} onClose={closeForms} />
     <SavingsOperationSheet visible={form === 'aporte' || form === 'retiro'} type={(form === 'retiro' ? 'retiro' : 'aporte') as SavingsOperationType} operation={editingOperation} onClose={closeForms} />
+    <FloatingVoiceButton />
   </ScreenWrapper>;
 }
 

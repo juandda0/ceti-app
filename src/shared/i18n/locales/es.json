@@ -520,6 +520,9 @@
     "deleteTitle": "Eliminar meta",
     "deleteBody": "{{amount}} quedará como ahorro sin asignar."
   },
+  "financialVoice": {
+    "open": "Registrar movimiento por voz"
+  },
   "profile": {
     "pageTitle": "Mi perfil",
     "logout": "Cerrar sesión"

@@ -7,6 +7,7 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { formatDisplayCopGoals } from '@shared/utils/formatDisplayCop';
 import InsightCards from '@features/savings/components/InsightCards';
 import PresupuestosSheet from '@features/savings/components/PresupuestosSheet';
+import FloatingVoiceButton from '@features/savings/components/FloatingVoiceButton';
 import { useMovimientosStore } from '@features/savings/store/useMovimientosStore';
 import { usePresupuestosStore } from '@features/savings/store/usePresupuestosStore';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
@@ -44,6 +45,7 @@ export default function MiDineroScreen() {
       <InsightCards movimientos={expenses} goals={domainGoals} operations={operations} presupuestos={budgets} />
     </ScrollView>
     <PresupuestosSheet visible={budgetsVisible} onClose={() => setBudgetsVisible(false)} />
+    <FloatingVoiceButton />
   </ScreenWrapper>;
 }
 
