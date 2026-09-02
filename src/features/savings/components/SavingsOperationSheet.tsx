@@ -22,7 +22,8 @@ export default function SavingsOperationSheet({
   onClose: () => void;
 }) {
   const colors = useThemeColors();
-  const goals = useSavingsStore((state) => state.goals.filter((goal) => !goal.deletedAt));
+  const savedGoals = useSavingsStore((state) => state.goals);
+  const goals = savedGoals.filter((goal) => !goal.deletedAt);
   const createOperation = useSavingsStore((state) => state.createOperation);
   const updateOperation = useSavingsStore((state) => state.updateOperation);
   const [amount, setAmount] = useState('');

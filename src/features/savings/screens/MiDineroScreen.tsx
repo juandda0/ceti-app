@@ -24,15 +24,15 @@ type Form = 'none' | 'goal' | 'expense' | 'aporte' | 'retiro' | 'budgets';
 
 export default function MiDineroScreen() {
   const colors = useThemeColors();
-  const goals = useSavingsStore((state) => state.goals.filter((goal) => !goal.deletedAt));
+  const savedGoals = useSavingsStore((state) => state.goals);
+  const goals = savedGoals.filter((goal) => !goal.deletedAt);
   const operations = useSavingsStore((state) => state.operations);
   const budgets = usePresupuestosStore((state) => state.topes);
   const projection = useSavingsStore((state) => state.projection)();
   const deleteGoal = useSavingsStore((state) => state.deleteGoal);
   const deleteOperation = useSavingsStore((state) => state.deleteOperation);
-  const expenses = useMovimientosStore((state) =>
-    state.movimientos.filter((item) => item.tipo === 'gasto')
-  );
+  const movimientos = useMovimientosStore((state) => state.movimientos);
+  const expenses = movimientos.filter((item) => item.tipo === 'gasto');
   const deleteExpense = useMovimientosStore((state) => state.deleteExpense);
   const [section, setSection] = useState<'resumen' | 'actividad' | 'metas'>('resumen');
   const [filter, setFilter] = useState<'todos' | 'gastos' | 'ahorros'>('todos');

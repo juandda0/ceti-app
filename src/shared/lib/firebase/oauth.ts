@@ -29,6 +29,7 @@ function readExtra(): Extra {
 let googleConfigured = false;
 
 export function configureGoogleSignIn(): void {
+  if (Platform.OS === 'web') return;
   if (googleConfigured) return;
   const { googleWebClientId, googleIosClientId } = readExtra();
   if (!googleWebClientId) return;
