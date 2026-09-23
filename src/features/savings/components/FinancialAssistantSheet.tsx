@@ -29,6 +29,15 @@ const MONEY_FIELDS = ['monto', 'amount', 'targetAmount'] as const;
 const TEXT_FIELDS = ['descripcion', 'description', 'title'] as const;
 const DATE_FIELDS = ['fecha', 'deadline', 'desde', 'hasta'] as const;
 
+type ReviewKind = 'expense' | 'saving' | 'newGoal';
+
+function reviewKind(action: FinancialAction): ReviewKind {
+  const payload = action.payload as Record<string, unknown>;
+  if (action.domain === 'meta' && action.operation === 'crear') return 'newGoal';
+  if (action.domain === 'ahorro' || payload.tipo === 'ahorro') return 'saving';
+  return 'expense';
+}
+
 function actionName(action: FinancialAction): string {
   const payload = action.payload as Record<string, unknown>;
   return String(
@@ -38,10 +47,6 @@ function actionName(action: FinancialAction): string {
       action.resourceId ??
       action.domain
   );
-}
-
-function actionTitle(action: FinancialAction): string {
-  return `${action.operation} ${action.domain} ${actionName(action)}`;
 }
 
 function DateInput({
@@ -117,11 +122,13 @@ export default function FinancialAssistantSheet({ visible, plan, onChange, onClo
   const [draft, setDraft] = useState<FinancialPlan | null>(plan);
   const [results, setResults] = useState<ActionResult[] | null>(null);
   const [executing, setExecuting] = useState(false);
+  const [editing, setEditing] = useState(false);
 
   useEffect(() => {
     if (visible) {
       setDraft(plan);
       setResults(null);
+      setEditing(false);
     }
   }, [plan, visible]);
 
@@ -239,6 +246,10 @@ export default function FinancialAssistantSheet({ visible, plan, onChange, onClo
         {draft.actions.map((action, index) => {
           const payload = action.payload as Record<string, unknown>;
           const name = actionName(action);
+          const kind = reviewKind(action);
+          const amount = payload.monto ?? payload.amount;
+          const goalId = typeof payload.goalId === 'string' ? payload.goalId : undefined;
+          const goal = goalId ? goals.find((item) => item.id === goalId) : undefined;
           const result = results?.find((item) => item.actionId === action.actionId);
           const resources =
             action.domain === 'meta'
@@ -256,9 +267,9 @@ export default function FinancialAssistantSheet({ visible, plan, onChange, onClo
             >
               <View style={styles.cardHeader}>
                 <Text style={[styles.cardTitle, { color: colors.text.primary }]}>
-                  {actionTitle(action)}
+                  {t(`financialAssistant.review.${kind}`)}
                 </Text>
-                {!results ? (
+                {editing && !results ? (
                   <TouchableOpacity
                     onPress={() => changeActions(draft.actions.filter((_, item) => item !== index))}
                     accessibilityRole="button"
@@ -270,7 +281,48 @@ export default function FinancialAssistantSheet({ visible, plan, onChange, onClo
                 ) : null}
               </View>
 
-              {!results &&
+              {!editing && !results ? (
+                <View style={styles.summary}>
+                  {typeof amount === 'number' ? (
+                    <Text style={[styles.summaryText, { color: colors.text.primary }]}>
+                      {t('financialAssistant.review.amount', {
+                        value: formatMoneyInputThousands(String(amount)),
+                      })}
+                    </Text>
+                  ) : null}
+                  {typeof payload.descripcion === 'string' || typeof payload.description === 'string' ? (
+                    <Text style={[styles.summaryText, { color: colors.text.primary }]}>
+                      {t('financialAssistant.review.description', {
+                        value: String(payload.descripcion ?? payload.description),
+                      })}
+                    </Text>
+                  ) : null}
+                  {kind === 'expense' && typeof payload.categoria === 'string' ? (
+                    <Text style={[styles.summaryText, { color: colors.text.primary }]}>
+                      {t('financialAssistant.review.category', {
+                        value: t(`movimientos.categorias.${payload.categoria}`),
+                      })}
+                    </Text>
+                  ) : null}
+                  {kind === 'saving' ? (
+                    <Text style={[styles.summaryText, { color: colors.text.primary }]}>
+                      {goal
+                        ? t('financialAssistant.review.goal', { value: goal.title })
+                        : t('financialAssistant.review.noGoal')}
+                    </Text>
+                  ) : null}
+                  {kind === 'newGoal' && typeof payload.targetAmount === 'number' ? (
+                    <Text style={[styles.summaryText, { color: colors.text.primary }]}>
+                      {t('financialAssistant.review.target', {
+                        value: formatMoneyInputThousands(String(payload.targetAmount)),
+                      })}
+                    </Text>
+                  ) : null}
+                </View>
+              ) : null}
+
+              {editing &&
+                !results &&
                 MONEY_FIELDS.map((field) =>
                   typeof payload[field] === 'number' || action.needsInput.includes(field) ? (
                     <TextInput
@@ -296,7 +348,8 @@ export default function FinancialAssistantSheet({ visible, plan, onChange, onClo
                   ) : null
                 )}
 
-              {!results &&
+              {editing &&
+                !results &&
                 TEXT_FIELDS.map((field) =>
                   typeof payload[field] === 'string' || action.needsInput.includes(field) ? (
                     <TextInput
@@ -315,7 +368,8 @@ export default function FinancialAssistantSheet({ visible, plan, onChange, onClo
                   ) : null
                 )}
 
-              {!results &&
+              {editing &&
+                !results &&
                 DATE_FIELDS.map((field) =>
                   typeof payload[field] === 'number' || action.needsInput.includes(field) ? (
                     <DateInput
@@ -330,7 +384,7 @@ export default function FinancialAssistantSheet({ visible, plan, onChange, onClo
                   ) : null
                 )}
 
-              {!results && (payload.tipo || action.needsInput.includes('tipo')) ? (
+              {editing && !results && (payload.tipo || action.needsInput.includes('tipo')) ? (
                 <View style={styles.chips} accessibilityLabel={t('financialAssistant.fields.tipo')}>
                   {(['gasto', 'ahorro'] as const).map((type) => (
                     <TouchableOpacity
@@ -352,7 +406,7 @@ export default function FinancialAssistantSheet({ visible, plan, onChange, onClo
                 </View>
               ) : null}
 
-              {!results && (payload.type || action.needsInput.includes('type')) ? (
+              {editing && !results && (payload.type || action.needsInput.includes('type')) ? (
                 <View style={styles.chips} accessibilityLabel={t('financialAssistant.fields.type')}>
                   {(['aporte', 'retiro'] as const).map((type) => (
                     <TouchableOpacity
@@ -374,7 +428,8 @@ export default function FinancialAssistantSheet({ visible, plan, onChange, onClo
                 </View>
               ) : null}
 
-              {!results &&
+              {editing &&
+              !results &&
               action.domain === 'movimiento' &&
               (payload.categoria || action.needsInput.includes('categoria')) ? (
                 <View
@@ -403,7 +458,8 @@ export default function FinancialAssistantSheet({ visible, plan, onChange, onClo
                 </View>
               ) : null}
 
-              {!results &&
+              {editing &&
+              !results &&
               action.domain === 'meta' &&
               (payload.category || action.needsInput.includes('category')) ? (
                 <View
@@ -432,7 +488,8 @@ export default function FinancialAssistantSheet({ visible, plan, onChange, onClo
                 </View>
               ) : null}
 
-              {!results &&
+              {editing &&
+              !results &&
               action.domain === 'meta' &&
               (payload.iconId || action.needsInput.includes('iconId')) ? (
                 <View
@@ -463,7 +520,7 @@ export default function FinancialAssistantSheet({ visible, plan, onChange, onClo
                 </View>
               ) : null}
 
-              {!results && action.needsInput.includes('resourceId') ? (
+              {editing && !results && action.needsInput.includes('resourceId') ? (
                 <View style={styles.chips}>
                   {resources.map((resource) => (
                     <TouchableOpacity
@@ -481,7 +538,7 @@ export default function FinancialAssistantSheet({ visible, plan, onChange, onClo
                 </View>
               ) : null}
 
-              {!results && action.needsInput.includes('goalId') ? (
+              {editing && !results && kind === 'saving' && action.operation === 'crear' ? (
                 <View
                   style={styles.chips}
                   accessibilityLabel={t('financialAssistant.fields.goalId')}
@@ -492,7 +549,11 @@ export default function FinancialAssistantSheet({ visible, plan, onChange, onClo
                       onPress={() => updatePayload(index, 'goalId', goal.id)}
                       accessibilityRole="button"
                       accessibilityLabel={`${t('financialAssistant.selectResource')} ${goal.title}`}
-                      style={[styles.chip, { borderColor: colors.materials.border }]}
+                      style={[
+                        styles.chip,
+                        { borderColor: colors.materials.border },
+                        goalId === goal.id && { backgroundColor: colors.materials.highlight },
+                      ]}
                     >
                       <Text style={{ color: colors.text.primary }}>{goal.title}</Text>
                     </TouchableOpacity>
@@ -534,18 +595,24 @@ export default function FinancialAssistantSheet({ visible, plan, onChange, onClo
         })}
       </ScrollView>
       {!results ? (
-        <CetiButton
-          label={t('financialAssistant.confirm')}
-          onPress={() => void confirm()}
-          disabled={!valid}
-          isLoading={executing}
-        />
-      ) : null}
-      <CetiButton
-        label={t(results ? 'financialAssistant.close' : 'financialAssistant.cancel')}
-        onPress={onClose}
-        variant="ghost"
-      />
+        <View style={styles.actions}>
+          {!editing ? (
+            <CetiButton
+              label={t('financialAssistant.review.correct')}
+              onPress={() => setEditing(true)}
+              variant="glass"
+            />
+          ) : null}
+          <CetiButton
+            label={t('financialAssistant.confirm')}
+            onPress={() => void confirm()}
+            disabled={!valid}
+            isLoading={executing}
+          />
+        </View>
+      ) : (
+        <CetiButton label={t('financialAssistant.close')} onPress={onClose} variant="ghost" />
+      )}
     </CetiBottomSheet>
   );
 }
@@ -564,6 +631,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+  summary: { gap: 4 },
+  summaryText: { ...Typography.subheadline },
+  actions: { gap: 8 },
   chip: { borderWidth: 1, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 7 },
   pending: { ...Typography.caption1, fontWeight: '700' },
   result: { ...Typography.subheadline, fontWeight: '800' },

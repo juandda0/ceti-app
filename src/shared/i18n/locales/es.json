@@ -352,6 +352,18 @@
     "requestPlaceholder": "Ej: gasté 12.000 en almuerzo y crea una meta para una bici",
     "organize": "Organizar",
     "selectResource": "Seleccionar",
+    "review": {
+      "expense": "Gasto",
+      "saving": "Ahorro",
+      "newGoal": "Nueva meta",
+      "amount": "Monto: ${{value}}",
+      "description": "Descripción: {{value}}",
+      "category": "Categoría: {{value}}",
+      "goal": "Meta: {{value}}",
+      "noGoal": "Sin meta",
+      "target": "Objetivo: ${{value}}",
+      "correct": "Corregir"
+    },
     "fields": {
       "monto": "Monto",
       "amount": "Monto",
