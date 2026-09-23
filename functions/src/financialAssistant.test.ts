@@ -98,6 +98,60 @@ test('envía solo texto y contexto al modelo y valida el plan devuelto', async (
   });
 });
 
+test('expande K y conserva la instrucción de clasificar dinero encontrado como ahorro', async () => {
+  const callModel = jest.fn().mockResolvedValue(
+    JSON.stringify({
+      actions: [
+        {
+          domain: 'ahorro',
+          operation: 'crear',
+          payload: { type: 'aporte', amount: 50000, description: 'TEXT_0', fecha: 1 },
+          needsInput: [],
+        },
+      ],
+    })
+  );
+
+  await planFinancialActions(
+    { text: 'me encontré 50K pesos en el suelo', requestId: 'r1', context: emptyContext },
+    callModel
+  );
+
+  const modelText = JSON.parse(callModel.mock.calls[0]?.[1]).untrustedData.text;
+  expect(modelText).toContain('50000');
+  expect(modelText).toContain('encontré');
+  expect(buildFinancialPrompt()).toContain('encuentra');
+});
+
+test.each([
+  ['gasté 50K en un helado', 'helado', 'comida'],
+  ['gasté 20K en una salida con mi novia', 'salida', 'entretenimiento'],
+] as const)('conserva %s como pista para la categoría %s', async (text, keyword, category) => {
+  const callModel = jest.fn().mockResolvedValue(
+    JSON.stringify({
+      actions: [
+        {
+          domain: 'movimiento',
+          operation: 'crear',
+          payload: {
+            tipo: 'gasto',
+            monto: text.includes('50K') ? 50000 : 20000,
+            descripcion: 'TEXT_0',
+            categoria: category,
+            fecha: 1,
+          },
+          needsInput: [],
+        },
+      ],
+    })
+  );
+
+  await planFinancialActions({ text, requestId: 'r1', context: emptyContext }, callModel);
+
+  expect(JSON.parse(callModel.mock.calls[0]?.[1]).untrustedData.text).toContain(keyword);
+  expect(buildFinancialPrompt()).toContain(`${keyword} → ${category}`);
+});
+
 test('seudonimiza y rehidrata la descripción de un gasto', async () => {
   const callModel = jest.fn().mockResolvedValue(
     JSON.stringify({

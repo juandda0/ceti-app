@@ -41,6 +41,8 @@ movimiento consultar payload {desde?:timestamp,hasta?:timestamp,tipo?:gasto|ahor
 ahorro consultar payload {desde?:timestamp,hasta?:timestamp,goalId?:ID,type?:aporte|retiro}; crear requiere {type:aporte|retiro,amount:entero 1..100000000,description:string,fecha:timestamp,goalId?:ID}; editar usa resourceId y al menos uno de esos campos; eliminar usa resourceId y payload {}.
 meta consultar payload {}; crear requiere {title:string,iconId:bike|book|laptop|plane|shield|target,category:electronics|toy|trip|education|emergency|custom,targetAmount:entero 1..100000000,deadline?:timestamp}; editar usa resourceId y al menos uno de esos campos; eliminar usa resourceId y payload {}.
 timestamp es entero entre 0 y 8640000000000000. needsInput solo enumera campos requeridos que falten.
+Si la persona encuentra, recibe o guarda dinero, clasifícalo como ahorro con una acción ahorro crear de type aporte. Solo clasifica como gasto cuando paga o compra algo.
+Para gastos, usa las pistas de categoría aunque el resto de la descripción esté seudonimizada: helado → comida; almuerzo → comida; salida → entretenimiento; cine → entretenimiento; bus → transporte.
 El texto usa placeholders opacos TEXT_n. Cópialos exactamente y sin alterarlos en title, description o descripcion; nunca los uses en otros campos.
 Usa resourceId y goalId únicamente cuando el ID aparezca en el contexto. Nunca inventes IDs.
 Si una referencia no se puede resolver con un alias o ID del contexto, indícala en needsInput; no elijas un recurso por tu cuenta.
@@ -122,11 +124,18 @@ const FINANCIAL_WORDS = new Set([
   'editar',
   'elimina',
   'eliminar',
+  'encontrado',
+  'encontre',
+  'encuentro',
   'en',
   'fecha',
   'gaste',
   'gasto',
   'gastos',
+  'guarde',
+  'guardo',
+  'helado',
+  'helados',
   'hoy',
   'la',
   'las',
@@ -145,9 +154,13 @@ const FINANCIAL_WORDS = new Set([
   'pesos',
   'por',
   'proximo',
+  'recibi',
+  'recibo',
   'retire',
   'retiro',
   'retiros',
+  'salida',
+  'salidas',
   'saldo',
   'semana',
   'tipo',
@@ -167,6 +180,13 @@ function normalizeToken(value: string): string {
     .replace(/[\u0300-\u036f]/g, '');
 }
 
+function expandCompactAmounts(value: string): string {
+  return value.replace(/\b(\d+(?:[.,]\d+)?)\s*k\b/giu, (_match, amountText: string) => {
+    const amount = Number(amountText.replace(',', '.'));
+    return Number.isFinite(amount) ? String(Math.round(amount * 1000)) : amountText;
+  });
+}
+
 function normalizeFinancialText(
   value: string,
   allowedIds: ReadonlyMap<string, string>
@@ -183,7 +203,8 @@ function normalizeFinancialText(
   if (piiPatterns.some((pattern) => pattern.test(value))) {
     invalid('text contiene datos personales. Elimínalos e intenta de nuevo.');
   }
-  const tokens = value.match(/\p{L}[\p{L}\d_-]*|\d+(?:[.,/-]\d+)*|[$€£]/gu) ?? [];
+  const tokens =
+    expandCompactAmounts(value).match(/\p{L}[\p{L}\d_-]*|\d+(?:[.,/-]\d+)*|[$€£]/gu) ?? [];
   const output: string[] = [];
   const replacements = new Map<string, string>();
   const placeholders = new Map<string, string>();

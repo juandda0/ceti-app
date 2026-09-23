@@ -45,8 +45,9 @@ export default function MovimientosScreen() {
   const [financialPlan, setFinancialPlan] = useState<FinancialPlan | null>(null);
   const [assistantVisible, setAssistantVisible] = useState(false);
   const [manualCaptureVisible, setManualCaptureVisible] = useState(false);
+  const [capturedText, setCapturedText] = useState('');
 
-  const onTranscript = (texto: string) => {
+  const organizeTranscript = (texto: string) => {
     setProcessing(true);
     void (async () => {
       try {
@@ -68,6 +69,7 @@ export default function MovimientosScreen() {
         const plan = await vozService.planificar(texto, context, `voice_${Date.now()}`);
         setFinancialPlan(plan);
         setManualCaptureVisible(false);
+        setCapturedText('');
         setAssistantVisible(true);
       } catch {
         showCetiNotice({
@@ -79,6 +81,10 @@ export default function MovimientosScreen() {
         setProcessing(false);
       }
     })();
+  };
+
+  const onTranscript = (texto: string) => {
+    organizeTranscript(texto);
   };
 
   const { state, transcript, start, stop, cancel } = useVoiceCapture(onTranscript);
@@ -198,18 +204,19 @@ export default function MovimientosScreen() {
       </ScreenWrapper>
 
       <VoiceCaptureSheet
-        visible={capturando || manualCaptureVisible}
+        visible={state === 'listening' || manualCaptureVisible}
         processing={processing}
-        transcript={transcript}
+        transcript={state === 'listening' ? transcript : capturedText}
+        initialText={manualCaptureVisible ? capturedText : ''}
         onStop={stop}
         onCancel={() => {
           setManualCaptureVisible(false);
+          setCapturedText('');
           cancel();
         }}
         onSubmitText={(text) => {
           cancel();
-          setManualCaptureVisible(false);
-          onTranscript(text);
+          organizeTranscript(text);
         }}
         onSwitchToText={() => {
           cancel();
