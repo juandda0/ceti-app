@@ -9,7 +9,6 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { formatDisplayCopGoals } from '@shared/utils/formatDisplayCop';
 import GoalFormSheet from '@features/savings/components/GoalFormSheet';
 import SavingsOperationSheet from '@features/savings/components/SavingsOperationSheet';
-import FloatingVoiceButton from '@features/savings/components/FloatingVoiceButton';
 import { GoalIcon } from '@features/savings/icons/GoalIcon';
 import { useSavingsStore, type SavingsGoal } from '@features/savings/store/useSavingsStore';
 
@@ -46,7 +45,6 @@ export default function MetasScreen() {
     </ScrollView>
     <GoalFormSheet visible={form === 'goal'} goal={editingGoal} onClose={closeForms} />
     <SavingsOperationSheet visible={form === 'aporte'} type="aporte" preselectedGoalId={editingGoal?.id} onClose={closeForms} />
-    <FloatingVoiceButton />
   </ScreenWrapper>;
 }
 

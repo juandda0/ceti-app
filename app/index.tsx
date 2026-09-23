@@ -169,7 +169,7 @@ export default function Index() {
     }
 
     if (!isFirebaseConfigured()) {
-      resolveOffline();
+      setTarget('/(auth)/welcome');
       return () => {
         cancelled = true;
       };

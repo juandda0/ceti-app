@@ -6,6 +6,7 @@ import { useThemeStore } from '@shared/store/useThemeStore';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { buildMainTabScreenOptions } from '@shared/navigation/mainTabBarOptions';
 import { performLogoutAndGo } from '@features/auth/performLogout';
+import FloatingVoiceButton from '@features/savings/components/FloatingVoiceButton';
 
 const TAB_ICON_SIZE = 24;
 const TAB_HEIGHT = 90;
@@ -41,13 +42,14 @@ export default function AppTabLayout() {
   const colors = useThemeColors();
 
   return (
-    <Tabs
-      screenOptions={buildMainTabScreenOptions({
-        colors,
-        isLight,
-        tabBarHeight: TAB_HEIGHT,
-      })}
-    >
+    <>
+      <Tabs
+        screenOptions={buildMainTabScreenOptions({
+          colors,
+          isLight,
+          tabBarHeight: TAB_HEIGHT,
+        })}
+      >
       <Tabs.Screen
         name="saga"
         options={{
@@ -60,7 +62,7 @@ export default function AppTabLayout() {
       <Tabs.Screen
         name="dinero"
         options={{
-          title: 'Mi dinero',
+          title: 'Ahorros',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? 'wallet' : 'wallet-outline'}
@@ -73,7 +75,7 @@ export default function AppTabLayout() {
       <Tabs.Screen
         name="actividad"
         options={{
-          title: 'Actividad',
+          title: 'Gastos y ahorros',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? 'list' : 'list-outline'} size={TAB_ICON_SIZE} color={color} />
           ),
@@ -85,6 +87,15 @@ export default function AppTabLayout() {
           title: 'Metas',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? 'flag' : 'flag-outline'} size={TAB_ICON_SIZE} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="graficas"
+        options={{
+          title: 'Gráficas',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? 'bar-chart' : 'bar-chart-outline'} size={TAB_ICON_SIZE} color={color} />
           ),
         }}
       />
@@ -101,6 +112,8 @@ export default function AppTabLayout() {
           ),
         }}
       />
-    </Tabs>
+      </Tabs>
+      <FloatingVoiceButton />
+    </>
   );
 }

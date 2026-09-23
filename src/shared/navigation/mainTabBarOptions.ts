@@ -17,7 +17,7 @@ export function buildMainTabScreenOptions({
 }: MainTabBarNavOptionsArgs) {
   return {
     headerShown: false,
-    tabBarShowLabel: false,
+    tabBarShowLabel: true,
     tabBarActiveTintColor: isLight ? colors.brand.primary : colors.text.secondary,
     tabBarInactiveTintColor: isLight ? colors.text.tertiary : colors.text.quaternary,
     tabBarStyle: [

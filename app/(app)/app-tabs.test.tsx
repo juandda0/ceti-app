@@ -21,11 +21,13 @@ jest.mock('@shared/navigation/mainTabBarOptions', () => ({
   buildMainTabScreenOptions: () => ({}),
 }));
 jest.mock('@features/auth/performLogout', () => ({ performLogoutAndGo: jest.fn() }));
+jest.mock('@features/savings/components/FloatingVoiceButton', () => () => null);
 
 import AppTabLayout from './_layout';
 
-test('registra exactamente las cinco pestañas financieras', () => {
+test('registra las pestañas públicas de aprendizaje y finanzas', () => {
   render(<AppTabLayout />);
 
-  expect(mockTabNames).toEqual(['saga', 'dinero', 'actividad', 'metas', 'profile']);
+  expect(mockTabNames).toEqual(['saga', 'dinero', 'actividad', 'metas', 'graficas', 'profile']);
+  expect(mockTabNames).not.toContain('staff');
 });

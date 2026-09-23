@@ -518,6 +518,13 @@
     "deleteTitle": "Eliminar meta",
     "deleteBody": "{{amount}} quedará como ahorro sin asignar."
   },
+  "financialCharts": {
+    "title": "Gráficas",
+    "subtitle": "Mira cómo se mueven tus gastos y tus ahorros.",
+    "month": "Resumen",
+    "expenses": "Gastos",
+    "savings": "Ahorros"
+  },
   "financialVoice": {
     "open": "Registrar movimiento por voz"
   },

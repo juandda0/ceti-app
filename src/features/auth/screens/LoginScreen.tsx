@@ -50,11 +50,6 @@ export default function LoginScreen() {
     void doSignIn();
   };
 
-  const offlineContinue = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    router.replace('/(auth)/onboarding/user-setup');
-  };
-
   if (!isFirebaseConfigured()) {
     return (
       <ScreenWrapper style={styles.root}>
@@ -62,14 +57,8 @@ export default function LoginScreen() {
           <PageHeader
             overline="Acceso"
             title="Modo local"
-            subtitle="No hay proyecto Firebase en las variables EXPO_PUBLIC_FIREBASE_*. Puedes continuar solo en este dispositivo o configurar .env y reiniciar."
+            subtitle="El acceso con Google no está disponible en este entorno. Configura Firebase y vuelve a intentarlo."
             style={{ marginBottom: Spacing['2xl'] }}
-          />
-          <CetiButton
-            label="Continuar sin cuenta"
-            onPress={offlineContinue}
-            variant="primary"
-            size="large"
           />
           <CetiButton
             label="Volver"
