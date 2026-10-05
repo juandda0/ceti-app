@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: ceti-backend
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5433/ceti}
+    username: ${DATABASE_USER:ceti}
+    password: ${DATABASE_PASSWORD:ceti}
+  jackson:
+    deserialization:
+      # Equivalente al `hasOnly` de las antiguas firestore.rules: un campo
+      # desconocido en un body tipado es un 400, no se ignora en silencio.
+      fail-on-unknown-properties: true
+      # Montos y timestamps son enteros: 1.5 es un 400, no se trunca.
+      accept-float-as-int: false
+    # Campos opcionales ausentes no salen como null (mismo shape que los docs de Firestore).
+    default-property-inclusion: non_null
+  threads:
+    virtual:
+      enabled: true
+
+server:
+  port: ${PORT:8080}
+  error:
+    include-message: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+ceti:
+  # Base64 o texto de >= 32 bytes. Obligatorio fuera de local.
+  jwt-secret: ${CETI_JWT_SECRET:}
+  token-ttl: ${CETI_TOKEN_TTL:30d}
+  # El admin raíz siempre está; CETI_ADMIN_EMAILS añade más (coma-separados).
+  admin-emails: juandiegodiazave@gmail.com,${CETI_ADMIN_EMAILS:}
+  google:
+    # Client IDs OAuth aceptados como `aud` del ID token (web, iOS, Android).
+    client-ids: ${CETI_GOOGLE_CLIENT_IDS:}
+    # Solo para el flujo web (code + popup); el nativo manda el ID token directo.
+    client-secret: ${CETI_GOOGLE_CLIENT_SECRET:}
+  # Login sin Google para desarrollo/E2E. NUNCA activar en producción.
+  dev-login-enabled: ${CETI_DEV_LOGIN:false}
+  cors-origins: ${CETI_CORS_ORIGINS:http://localhost:8081,http://localhost:19006}
+  groq-api-key: ${GROQ_API_KEY:}

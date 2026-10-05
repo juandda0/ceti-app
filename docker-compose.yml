@@ -1,0 +1,42 @@
+# Desarrollo local: Postgres + backend Spring Boot.
+#   docker compose up --build
+# La app Expo apunta a él con EXPO_PUBLIC_API_URL=http://localhost:8080
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ceti
+      POSTGRES_USER: ceti
+      POSTGRES_PASSWORD: ceti
+    ports:
+      - '5433:5432'
+    volumes:
+      - ceti-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ceti']
+      interval: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - '8080:8080'
+    environment:
+      DATABASE_URL: jdbc:postgresql://db:5432/ceti
+      DATABASE_USER: ceti
+      DATABASE_PASSWORD: ceti
+      # Solo local. En producción usa un secreto real de >= 32 bytes.
+      CETI_JWT_SECRET: local-dev-secret-change-me-0123456789
+      CETI_DEV_LOGIN: 'true'
+      CETI_GOOGLE_CLIENT_IDS: ${CETI_GOOGLE_CLIENT_IDS:-}
+      CETI_GOOGLE_CLIENT_SECRET: ${CETI_GOOGLE_CLIENT_SECRET:-}
+      CETI_CORS_ORIGINS: http://localhost:8081,http://localhost:19006
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+
+volumes:
+  ceti-db:

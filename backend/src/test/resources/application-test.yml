@@ -1,0 +1,6 @@
+ceti:
+  jwt-secret: test-secret-test-secret-test-secret-123
+  dev-login-enabled: true
+  google:
+    client-ids: test-client
+  groq-api-key: fake-key-never-called
