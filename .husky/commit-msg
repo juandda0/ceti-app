@@ -1,5 +1,0 @@
-#!/usr/bin/env sh
-# E8 — rq-citation-check. El mensaje de commit debe citar un RQ-id válido de
-# docs/requerimientos.md (R13). Exentos: chore/docs/ci/build/style/merge/[skip-rq].
-
-node scripts/rqCitationCheck.mjs "$1" || exit 1

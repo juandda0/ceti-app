@@ -4,13 +4,11 @@ rules_version = '2';
 // CLAIMS (role, colegioId, cursoId) set by a Cloud Function; never by
 // client-writable fields (R2). Students are identified by their Auth `uid` (R1):
 // there is no pseudonym key and no active sede claim. Tenant isolation: a request
-// can only ever touch its own colegioId. Implements the rol×acción matrix
-// (docs/requerimientos.md §1.3) as least-privilege rules (R12). Default deny.
+// can only ever touch its own colegioId. Uses least-privilege rules. Default deny.
 //
-// D-PIVOT (2026-07-09): only two app roles remain client-side — `profesor` and
-// `estudiante`. `admin` is a BACKEND-ONLY claim: all admin/provisioning work goes
-// through Cloud Functions (registerColegio/createCurso/assignRole) via the Admin
-// SDK, which BYPASSES these rules — so the client rules grant admin NOTHING.
+// D-PIVOT/D-ADMIN: `admin`, `profesor` and `estudiante` are the only roles.
+// Admin provisioning is requested from its in-app panel but executed by Cloud
+// Functions, so these rules intentionally grant no direct structure writes.
 // `rector` and `coordinador` are removed entirely.
 service cloud.firestore {
   match /databases/{database}/documents {

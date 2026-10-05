@@ -24,6 +24,7 @@ export default function VoiceCaptureSheet({
   visible,
   processing,
   transcript,
+  initialText,
   onStop,
   onCancel,
   onSubmitText,
@@ -32,6 +33,7 @@ export default function VoiceCaptureSheet({
   visible: boolean;
   processing: boolean;
   transcript: string;
+  initialText: string;
   onStop: () => void;
   onCancel: () => void;
   onSubmitText: (text: string) => void;
@@ -46,8 +48,11 @@ export default function VoiceCaptureSheet({
     if (!visible) {
       setWriting(false);
       setText('');
+    } else if (initialText) {
+      setWriting(true);
+      setText(initialText);
     }
-  }, [visible]);
+  }, [visible, initialText]);
 
   return (
     <CetiBottomSheet visible={visible} onClose={onCancel} closeOnBackdropPress={false} contentOnly>

@@ -3,7 +3,7 @@ export class ModelApiError extends Error {}
 
 export type ModelCaller = (systemPrompt: string, userText: string) => Promise<string>;
 
-const GROQ_MODEL = 'llama-3.3-70b-versatile';
+const GROQ_MODEL = 'qwen/qwen3.8-27b';
 
 export function groqCaller(
   apiKey: string,

@@ -1,13 +1,27 @@
-import { parsearRegistroVoz } from '@features/savings/data/vozParser';
 import {
   parseClientFinancialPlan,
   type FinancialContext,
   type FinancialPlan,
 } from '@features/savings/assistant/financialPlan';
+import type {
+  MovimientoCategoria,
+  MovimientoIntencion,
+  MovimientoTipo,
+} from '@features/savings/store/useMovimientosStore';
 import { callFunction } from '@shared/lib/firebase/functions';
-export type { ClasificacionMovimiento } from '@features/savings/data/vozParser';
 
 export const VOZ_MAX_CHARS = 300;
+
+export interface ClasificacionMovimiento {
+  intencion: MovimientoIntencion;
+  tipo: MovimientoTipo;
+  monto: number;
+  descripcion: string;
+  categoria: MovimientoCategoria;
+  confianza: number;
+  offsetDias: number;
+  diaSemana?: string;
+}
 
 function escapeRegex(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -34,8 +48,6 @@ function truncateAtTokenBoundary(text: string): string {
 }
 
 export const vozService = {
-  clasificarRegistroLocal: async (texto: string) =>
-    parsearRegistroVoz(texto.slice(0, VOZ_MAX_CHARS)),
   planificar: async (
     texto: string,
     context: FinancialContext,
@@ -43,34 +55,12 @@ export const vozService = {
   ): Promise<FinancialPlan> => {
     const rawText = texto.slice(0, VOZ_MAX_CHARS);
     const remoteText = truncateAtTokenBoundary(replaceGoalAliases(rawText, context));
-    try {
-      return parseClientFinancialPlan(
-        await callFunction('planificarAccionesFinancieras', {
-          text: remoteText,
-          context,
-          requestId,
-        })
-      );
-    } catch (error) {
-      const local = parsearRegistroVoz(rawText);
-      if (local.some((item) => item.intencion === 'no_entendido')) throw error;
-      const now = Date.now();
-      return {
-        source: 'local',
-        actions: local.map((item, index) => ({
-          actionId: `${requestId}:${index}`,
-          domain: 'movimiento',
-          operation: 'crear',
-          payload: {
-            tipo: item.tipo,
-            monto: item.monto,
-            descripcion: item.descripcion,
-            categoria: item.categoria,
-            fecha: now + item.offsetDias * 86_400_000,
-          },
-          needsInput: [],
-        })),
-      };
-    }
+    return parseClientFinancialPlan(
+      await callFunction('planificarAccionesFinancieras', {
+        text: remoteText,
+        context,
+        requestId,
+      })
+    );
   },
 };

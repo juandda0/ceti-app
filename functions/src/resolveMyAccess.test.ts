@@ -43,3 +43,17 @@ test('crea un colegio propio y activa a quien se registra como profesor', async 
   expect(mockDoc).toHaveBeenCalledTimes(1);
   expect(mockDoc).toHaveBeenCalledWith('membership/profesor-nuevo');
 });
+
+test('activa a una persona invitada como estudiante sin asignarle una clase', async () => {
+  mockSetCustomUserClaims.mockClear();
+  mockDoc.mockClear();
+
+  const result = await (resolveMyAccess as unknown as (request: unknown) => Promise<unknown>)({
+    auth: { uid: 'invitada', token: { email: 'invitada@example.com' } },
+    data: {},
+  });
+
+  expect(result).toEqual({ role: 'estudiante', colegioId: null, cursoId: null });
+  expect(mockSetCustomUserClaims).toHaveBeenCalledWith('invitada', { role: 'estudiante' });
+  expect(mockDoc).toHaveBeenCalledWith('membership/invitada');
+});

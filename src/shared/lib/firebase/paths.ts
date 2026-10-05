@@ -15,7 +15,7 @@ export const FIRESTORE_COLLECTIONS = {
   bancosEligeCamino: 'bancosEligeCamino',
   // Micro-theory card banks. Doc id: `${grado}_${worldId}`.
   microteoria: 'microteoria',
-  // Tenancy tree (B2B2C). See docs/data-model.md.
+  // Tenancy tree (B2B2C).
   colegios: 'colegios',
   sedes: 'sedes',
   cursos: 'cursos',
@@ -114,7 +114,7 @@ export function bancoDocRef(db: Firestore, grado: string, worldId: string, tipo:
 
 // ---------------------------------------------------------------------------
 // Tenancy tree: colegio → (sede, dormant) → curso → estudiante → progress.
-// See docs/data-model.md. Students are keyed by their Auth `uid` (R1) — there is
+// Students are keyed by their Auth `uid` (R1) — there is
 // no school-provided pseudonym key.
 // ---------------------------------------------------------------------------
 

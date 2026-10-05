@@ -41,8 +41,8 @@ import {
 
 initializeApp();
 
-// Tres roles (D-PIVOT): en la app solo profesor+estudiante; admin es claim de
-// backend para aprovisionamiento. Rector y coordinador eliminados.
+// Tres roles (D-PIVOT/D-ADMIN): admin aprovisiona desde un panel in-app mediante
+// Functions. Rector y coordinador eliminados.
 const ROLES = ['admin', 'profesor', 'estudiante'] as const;
 type Role = (typeof ROLES)[number];
 
@@ -101,6 +101,9 @@ async function applyClaims(uid: string, payload: ClaimsPayload): Promise<void> {
   if (payload.role === 'admin') {
     // admin is global — no colegioId/cursoId (R3).
     claims = { role: 'admin' };
+  } else if (payload.role === 'estudiante' && !payload.colegioId && !payload.cursoId) {
+    // Invitados del evento usan las funciones personales sin pertenecer a una clase.
+    claims = { role: 'estudiante' };
   } else {
     if (!payload.colegioId) {
       throw new HttpsError('invalid-argument', `Role '${payload.role}' requires a colegioId.`);
@@ -152,8 +155,8 @@ async function assertStaffOfCurso(
 }
 
 // ---------------------------------------------------------------------------
-// Role assignment (admin-only — D7/RQ-FN06). No adult self-assigns; students are
-// assigned only via joinByCode.
+// Role assignment for existing professors (admin-only). New professors receive
+// their claims through resolveMyAccess; students are assigned via joinByCode.
 // ---------------------------------------------------------------------------
 
 /**
@@ -201,7 +204,7 @@ export const assignRole = onCall(async (request) => {
 });
 
 // ---------------------------------------------------------------------------
-// Colegio / curso provisioning (admin-only — matriz §1.3 "Estructura").
+// Colegio provisioning (admin-only) and legacy global course provisioning.
 // ---------------------------------------------------------------------------
 
 /** Admin creates a colegio (RQ-AD02). Always born with sedesEnabled:false. */
@@ -345,8 +348,9 @@ export const resolveMyAccess = onCall(async (request) => {
     return { role: 'profesor', colegioId: colegioRef.id, cursoId: null };
   }
 
-  // (4) Prospective student — no claims; the client shows the join-by-code gate.
-  return { role: null, colegioId: null, cursoId: null };
+  // (4) Invitado: estudiante autenticado sin clase para la experiencia pública.
+  await applyClaims(caller.uid, { role: 'estudiante' });
+  return { role: 'estudiante', colegioId: null, cursoId: null };
 });
 
 /**

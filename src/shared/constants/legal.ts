@@ -1,6 +1,6 @@
 /**
  * Legal links surfaced in-app. The privacy / data-treatment policy must be
- * linked in-app per Ley 1581 (see docs/COMPLIANCE.md). Set via
+ * linked in-app per Ley 1581. Set via
  * EXPO_PUBLIC_PRIVACY_POLICY_URL.
  */
 import Constants from 'expo-constants';

@@ -1,11 +1,13 @@
 import { render } from '@testing-library/react-native';
 
 const mockTabNames: string[] = [];
+const mockTabOptions: Record<string, unknown> = {};
 
 jest.mock('expo-router', () => ({
   Tabs: Object.assign(({ children }: { children: React.ReactNode }) => <>{children}</>, {
-    Screen: ({ name }: { name: string }) => {
+    Screen: ({ name, options }: { name: string; options?: unknown }) => {
       mockTabNames.push(name);
+      mockTabOptions[name] = options;
       return null;
     },
   }),
@@ -28,6 +30,20 @@ import AppTabLayout from './_layout';
 test('registra las pestañas públicas de aprendizaje y finanzas', () => {
   render(<AppTabLayout />);
 
-  expect(mockTabNames).toEqual(['saga', 'dinero', 'actividad', 'metas', 'graficas', 'profile']);
-  expect(mockTabNames).not.toContain('staff');
+  const visibleTabs = mockTabNames.filter(
+    (name) => (mockTabOptions[name] as { href?: unknown } | undefined)?.href !== null
+  );
+  expect(visibleTabs).toEqual(['saga', 'actividad', 'metas', 'graficas', 'profile']);
+  expect(visibleTabs).not.toContain('staff');
+});
+
+test('oculta rutas auxiliares de la barra de pestañas', () => {
+  render(<AppTabLayout />);
+
+  expect(mockTabOptions).toMatchObject({
+    dinero: { href: null },
+    savings: { href: null },
+    movimientos: { href: null },
+    'app-tabs.test': { href: null },
+  });
 });

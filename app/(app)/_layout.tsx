@@ -50,68 +50,71 @@ export default function AppTabLayout() {
           tabBarHeight: TAB_HEIGHT,
         })}
       >
-      <Tabs.Screen
-        name="saga"
-        options={{
-          title: 'Aprender',
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'map' : 'map-outline'} size={TAB_ICON_SIZE} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="dinero"
-        options={{
-          title: 'Ahorros',
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? 'wallet' : 'wallet-outline'}
-              size={TAB_ICON_SIZE}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="actividad"
-        options={{
-          title: 'Gastos y ahorros',
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'list' : 'list-outline'} size={TAB_ICON_SIZE} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="metas"
-        options={{
-          title: 'Metas',
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'flag' : 'flag-outline'} size={TAB_ICON_SIZE} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="graficas"
-        options={{
-          title: 'Gráficas',
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'bar-chart' : 'bar-chart-outline'} size={TAB_ICON_SIZE} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'Perfil',
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? 'person' : 'person-outline'}
-              size={TAB_ICON_SIZE}
-              color={color}
-            />
-          ),
-        }}
-      />
+        <Tabs.Screen
+          name="saga"
+          options={{
+            title: 'Aprender',
+            tabBarIcon: ({ color, focused }) => (
+              <Ionicons name={focused ? 'map' : 'map-outline'} size={TAB_ICON_SIZE} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="actividad"
+          options={{
+            title: 'Gastos y ahorros',
+            tabBarIcon: ({ color, focused }) => (
+              <Ionicons
+                name={focused ? 'list' : 'list-outline'}
+                size={TAB_ICON_SIZE}
+                color={color}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="metas"
+          options={{
+            title: 'Metas',
+            tabBarIcon: ({ color, focused }) => (
+              <Ionicons
+                name={focused ? 'flag' : 'flag-outline'}
+                size={TAB_ICON_SIZE}
+                color={color}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="graficas"
+          options={{
+            title: 'Gráficas',
+            tabBarIcon: ({ color, focused }) => (
+              <Ionicons
+                name={focused ? 'bar-chart' : 'bar-chart-outline'}
+                size={TAB_ICON_SIZE}
+                color={color}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: 'Perfil',
+            tabBarIcon: ({ color, focused }) => (
+              <Ionicons
+                name={focused ? 'person' : 'person-outline'}
+                size={TAB_ICON_SIZE}
+                color={color}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen name="dinero" options={{ href: null }} />
+        <Tabs.Screen name="savings" options={{ href: null }} />
+        <Tabs.Screen name="movimientos" options={{ href: null }} />
+        <Tabs.Screen name="app-tabs.test" options={{ href: null }} />
       </Tabs>
       <FloatingVoiceButton />
     </>

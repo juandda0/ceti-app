@@ -1,15 +1,14 @@
 /**
  * Tenancy & role types for the B2B2C model. Shared across features (auth,
- * dashboard, learning). Source of truth for the schema: docs/data-model.md and
- * docs/requerimientos.md §1.
+ * dashboard, learning).
  *
  * Identity (Ley 1581, R1/R4): a student is keyed by their Firebase Auth `uid`;
  * the only PII stored is `email` + `nombre`. There is NO pseudonym key
  * and NO active sede claim.
  */
 
-// D-PIVOT: only two app roles (profesor + estudiante). `admin` is a backend-only
-// claim (provisioning via Admin SDK) with no UI; rector/coordinador removed.
+// D-PIVOT/D-ADMIN: three roles. Admin provisions through an in-app panel backed
+// by Cloud Functions; rector/coordinador are removed.
 export const ROLES = ['admin', 'profesor', 'estudiante'] as const;
 export type Role = (typeof ROLES)[number];
 

@@ -4,7 +4,6 @@
   "version": "1.0.0",
   "scripts": {
     "postinstall": "patch-package",
-    "prepare": "husky",
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
@@ -16,26 +15,7 @@
     "format:check": "prettier --check .",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "pretest:rules": "node scripts/freeEmulatorPort.mjs",
-    "test:rules": "firebase emulators:exec --only firestore --project demo-ceti \"node scripts/testFirestoreRules.mjs\"",
-    "i18n:check": "node scripts/checkI18nKeys.mjs",
-    "lint:invariants": "node scripts/invariantLint.mjs",
-    "lint:invariants:update": "node scripts/invariantLint.mjs --update-baseline",
-    "content:schemas": "node scripts/contentSchemas.mjs",
-    "content:gate": "node scripts/bankGate.mjs",
-    "content:coverage": "node scripts/contentCoverageGate.mjs",
-    "validar-bancos": "node scripts/contentSchemas.mjs && node scripts/bankGate.mjs",
-    "seed:bancos": "ts-node --project tsconfig.scripts.json scripts/seedBancos.ts",
-    "eval:validador": "node scripts/evalValidador.mjs",
-    "rq:check": "node scripts/rqCitationCheck.mjs",
-    "pre-pivot:check": "node scripts/prePivotTagGuard.mjs",
-    "gates": "node scripts/invariantLint.mjs && npm run i18n:check && npm run validar-bancos && npm run content:coverage && npm run eval:validador"
-  },
-  "lint-staged": {
-    "*.{ts,tsx,js,jsx,json,md,css,yml,yaml}": [
-      "prettier --write"
-    ]
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

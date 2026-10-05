@@ -1,39 +1,9 @@
-import { parsearRegistroVoz } from '@features/savings/data/vozParser';
 import { vozService } from '@features/savings/data/vozService';
 import { callFunction } from '@shared/lib/firebase/functions';
 
 jest.mock('@shared/lib/firebase/functions', () => ({ callFunction: jest.fn() }));
 
 const callFunctionMock = jest.mocked(callFunction);
-
-describe('parsearRegistroVoz', () => {
-  it('clasifica un gasto con miles y categoría conocida', () => {
-    expect(parsearRegistroVoz('gasté 5 mil en un helado')).toEqual([
-      expect.objectContaining({
-        intencion: 'movimiento',
-        tipo: 'gasto',
-        monto: 5000,
-        categoria: 'comida',
-      }),
-    ]);
-  });
-
-  it('clasifica ahorro y fecha relativa', () => {
-    expect(parsearRegistroVoz('ayer ahorré 20 lucas')).toEqual([
-      expect.objectContaining({ tipo: 'ahorro', monto: 20000, offsetDias: -1 }),
-    ]);
-  });
-
-  it('separa hasta cinco movimientos unidos por y/luego', () => {
-    expect(parsearRegistroVoz('gasté 2 mil en bus y luego 5 mil en comida')).toHaveLength(2);
-  });
-
-  it('no inventa datos cuando falta el monto', () => {
-    expect(parsearRegistroVoz('compré un helado')).toEqual([
-      expect.objectContaining({ intencion: 'no_entendido', monto: 0, confianza: 0 }),
-    ]);
-  });
-});
 
 describe('vozService.planificar', () => {
   beforeEach(() => callFunctionMock.mockReset());
@@ -169,19 +139,17 @@ describe('vozService.planificar', () => {
     expect(sent.text).toContain(goalId);
   });
 
-  it('convierte gastos y ahorros simples en fallback local', async () => {
-    callFunctionMock.mockRejectedValue(new Error('offline'));
-    const plan = await vozService.planificar(
-      'gasté 12 mil en almuerzo y luego ahorré 5 mil',
-      { goals: [], movements: [], operations: [] },
-      'r'
-    );
+  it('no registra con el parser local cuando la IA no está disponible', async () => {
+    const remoteError = new Error('offline');
+    callFunctionMock.mockRejectedValue(remoteError);
 
-    expect(plan.source).toBe('local');
-    expect(plan.actions).toEqual([
-      expect.objectContaining({ actionId: 'r:0', domain: 'movimiento', operation: 'crear' }),
-      expect.objectContaining({ actionId: 'r:1', domain: 'movimiento', operation: 'crear' }),
-    ]);
+    await expect(
+      vozService.planificar(
+        'me encontré 50K pesos en el suelo',
+        { goals: [], movements: [], operations: [] },
+        'r'
+      )
+    ).rejects.toBe(remoteError);
   });
 
   it('relanza el error remoto cuando el fallback no entiende la solicitud', async () => {
