@@ -15,7 +15,7 @@ import ScreenWrapper from '@shared/components/ScreenWrapper';
 import PageHeader from '@shared/components/PageHeader';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { logEvent } from '@shared/lib/analytics/logEvent';
-import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/app';
+import { isBackendConfigured } from '@shared/lib/api/client';
 import { userRepository } from '@features/auth/data/userRepository';
 
 const AVATARS = [
@@ -61,25 +61,18 @@ export default function UserSetupScreen() {
 
     setProfile(nickname, nickname, avatarId, emoji);
 
-    if (isFirebaseConfigured()) {
-      const u = getFirebaseClients()?.auth.currentUser;
-      if (!u) {
+    if (isBackendConfigured()) {
+      const uid = useAuthStore.getState().uid;
+      if (!uid) {
         setError(t('onboarding.sessionExpired'));
         router.replace('/(auth)/welcome');
         return;
       }
       setFinishing(true);
       try {
-        useUserStore.getState().loadProfile({ id: u.uid });
-        await userRepository.upsertProfile(u.uid, {
+        useUserStore.getState().loadProfile({ id: uid });
+        await userRepository.upsertProfile({
           displayName: nickname,
-          email: u.email ?? null,
-          photoURL: u.photoURL ?? null,
-          provider: u.providerData?.some((p) => p.providerId?.includes('google'))
-            ? 'google'
-            : u.providerData?.some((p) => p.providerId?.includes('apple'))
-              ? 'apple'
-              : 'unknown',
           profile: { nickname, fullName: nickname, avatarId, avatarEmoji: emoji },
         });
       } catch (e) {

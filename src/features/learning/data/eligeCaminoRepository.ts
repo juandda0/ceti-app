@@ -1,22 +1,18 @@
 /**
- * eligeCaminoRepository — fetches a situational EligeCamino bank from Firestore.
+ * eligeCaminoRepository — fetches a situational EligeCamino bank from the backend.
  *
- * Collection: `bancosEligeCamino/{grado}_{worldId}`
+ * Id: `{grado}_{worldId}`
  * R7: no runtime adaptive selection; R8: read-only from runtime client.
  * R5: the student's choice is NOT persisted per-student.
  *
  * Returns null when:
- *  - Firebase is not configured (demo/offline mode).
+ *  - The backend is not configured (offline mode).
  *  - The document does not exist for the given (grado, worldId).
  *  - A network error occurs.
  */
-import { getDoc } from 'firebase/firestore';
-import { getFirebaseClients } from '@shared/lib/firebase/app';
-import {
-  contenidoDocId,
-  cursoContenidoDocRef,
-  eligeCaminoDocRef,
-} from '@shared/lib/firebase/paths';
+import { api, isBackendConfigured, seg } from '@shared/lib/api/client';
+import { contentPath, contenidoDocId, cursoPath } from '@shared/lib/api/paths';
+import { recordError } from '@shared/lib/analytics/errorReporting';
 import type { EligeCaminoBank } from './content.types';
 import type { Grado, WorldId } from './quiz.types';
 
@@ -30,24 +26,17 @@ export const eligeCaminoRepository = {
     worldId: WorldId,
     custom?: { colegioId: string; cursoId: string } | null
   ): Promise<EligeCaminoBank | null> {
-    const clients = getFirebaseClients();
-    if (!clients) return null;
+    if (!isBackendConfigured()) return null;
     try {
       if (custom) {
-        const customSnap = await getDoc(
-          cursoContenidoDocRef(
-            clients.firestore,
-            custom.colegioId,
-            custom.cursoId,
-            contenidoDocId.eligeCamino(worldId)
-          )
+        const doc = await api.getOrNull<EligeCaminoBank>(
+          `${cursoPath(custom.colegioId, custom.cursoId)}/contenido/${seg(contenidoDocId.eligeCamino(worldId))}`
         );
-        if (customSnap.exists()) return customSnap.data() as EligeCaminoBank;
+        if (doc) return doc;
       }
-      const snap = await getDoc(eligeCaminoDocRef(clients.firestore, grado, worldId));
-      if (!snap.exists()) return null;
-      return snap.data() as EligeCaminoBank;
-    } catch {
+      return await api.getOrNull<EligeCaminoBank>(contentPath.eligeCamino(grado, worldId));
+    } catch (e) {
+      recordError(e, 'eligeCamino_fetch');
       return null;
     }
   },

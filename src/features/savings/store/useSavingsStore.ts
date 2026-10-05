@@ -172,18 +172,18 @@ export const useSavingsStore = create<SavingsStore>()(
         void (async () => {
           try {
             const { useAuthStore } = await import('@features/auth/store/useAuthStore');
-            const uid = useAuthStore.getState().firebaseUid;
+            const uid = useAuthStore.getState().uid;
             if (!uid) return;
             const { depositsRepository } =
               await import('@features/savings/data/depositsRepository');
-            await depositsRepository.upsertDeposit(uid, deposit);
+            await depositsRepository.upsertDeposit(deposit);
             if (goalId) {
               const { goalsRepository } = await import('@features/savings/data/goalsRepository');
               const goal = useSavingsStore.getState().goals.find((g) => g.id === goalId);
-              if (goal) await goalsRepository.upsertGoal(uid, goal);
+              if (goal) await goalsRepository.upsertGoal(goal);
             }
           } catch (e) {
-            void import('@shared/lib/analytics/crashlytics').then((m) =>
+            void import('@shared/lib/analytics/errorReporting').then((m) =>
               m.recordError(e instanceof Error ? e : new Error(String(e)), 'savings_add_deposit')
             );
           }
@@ -217,39 +217,27 @@ export const useSavingsStore = create<SavingsStore>()(
         void (async () => {
           try {
             const { useAuthStore } = await import('@features/auth/store/useAuthStore');
-            const uid = useAuthStore.getState().firebaseUid;
+            const uid = useAuthStore.getState().uid;
             if (!uid) return;
             const { depositsRepository } =
               await import('@features/savings/data/depositsRepository');
-            await depositsRepository.removeDeposit(uid, depositId);
+            await depositsRepository.removeDeposit(depositId);
             if (deposit.goalId) {
               const { goalsRepository } = await import('@features/savings/data/goalsRepository');
               const goal = useSavingsStore.getState().goals.find((g) => g.id === deposit.goalId);
-              if (goal) await goalsRepository.upsertGoal(uid, goal);
+              if (goal) await goalsRepository.upsertGoal(goal);
             }
           } catch (e) {
-            void import('@shared/lib/analytics/crashlytics').then((m) =>
+            void import('@shared/lib/analytics/errorReporting').then((m) =>
               m.recordError(e instanceof Error ? e : new Error(String(e)), 'savings_remove_deposit')
             );
           }
         })();
       },
 
+      // Solo local: en el servidor las metas se borran en blando (deleteGoal).
       removeGoal: (goalId) => {
         set((s) => ({ goals: s.goals.filter((g) => g.id !== goalId) }));
-        void (async () => {
-          try {
-            const { useAuthStore } = await import('@features/auth/store/useAuthStore');
-            const uid = useAuthStore.getState().firebaseUid;
-            if (!uid) return;
-            const { goalsRepository } = await import('@features/savings/data/goalsRepository');
-            await goalsRepository.removeGoal(uid, goalId);
-          } catch (e) {
-            void import('@shared/lib/analytics/crashlytics').then((m) =>
-              m.recordError(e instanceof Error ? e : new Error(String(e)), 'savings_remove_goal')
-            );
-          }
-        })();
       },
 
       resetSavings: () => set({ goals: [], deposits: [], operations: [] }),
@@ -286,16 +274,16 @@ export const useSavingsStore = create<SavingsStore>()(
         set({ goals: [...previous, goal] });
         try {
           const { useAuthStore } = await import('@features/auth/store/useAuthStore');
-          const authUid = useAuthStore.getState().firebaseUid;
+          const authUid = useAuthStore.getState().uid;
           if (authUid) {
             const { goalsRepository } = await import('@features/savings/data/goalsRepository');
-            await goalsRepository.upsertGoal(authUid, goal);
+            await goalsRepository.upsertGoal(goal);
           }
           void logEvent('goal_created');
           return { ok: true, value: goal };
         } catch (error) {
           set({ goals: previous });
-          void import('@shared/lib/analytics/crashlytics').then((module) =>
+          void import('@shared/lib/analytics/errorReporting').then((module) =>
             module.recordError(
               error instanceof Error ? error : new Error(String(error)),
               'savings_create_goal'
@@ -325,16 +313,16 @@ export const useSavingsStore = create<SavingsStore>()(
         set({ goals: previous.map((goal) => (goal.id === goalId ? updated : goal)) });
         try {
           const { useAuthStore } = await import('@features/auth/store/useAuthStore');
-          const authUid = useAuthStore.getState().firebaseUid;
+          const authUid = useAuthStore.getState().uid;
           if (authUid) {
             const { goalsRepository } = await import('@features/savings/data/goalsRepository');
-            await goalsRepository.upsertGoal(authUid, updated);
+            await goalsRepository.upsertGoal(updated);
           }
           void logEvent('goal_updated');
           return { ok: true, value: updated };
         } catch (error) {
           set({ goals: previous });
-          void import('@shared/lib/analytics/crashlytics').then((module) =>
+          void import('@shared/lib/analytics/errorReporting').then((module) =>
             module.recordError(
               error instanceof Error ? error : new Error(String(error)),
               'savings_update_goal'
@@ -352,16 +340,16 @@ export const useSavingsStore = create<SavingsStore>()(
         set({ goals: previous.map((goal) => (goal.id === goalId ? deleted : goal)) });
         try {
           const { useAuthStore } = await import('@features/auth/store/useAuthStore');
-          const authUid = useAuthStore.getState().firebaseUid;
+          const authUid = useAuthStore.getState().uid;
           if (authUid) {
             const { goalsRepository } = await import('@features/savings/data/goalsRepository');
-            await goalsRepository.upsertGoal(authUid, deleted);
+            await goalsRepository.upsertGoal(deleted);
           }
           void logEvent('goal_deleted');
           return { ok: true, value: deleted };
         } catch (error) {
           set({ goals: previous });
-          void import('@shared/lib/analytics/crashlytics').then((module) =>
+          void import('@shared/lib/analytics/errorReporting').then((module) =>
             module.recordError(
               error instanceof Error ? error : new Error(String(error)),
               'savings_delete_goal'
@@ -390,11 +378,11 @@ export const useSavingsStore = create<SavingsStore>()(
         set({ operations: next });
         try {
           const { useAuthStore } = await import('@features/auth/store/useAuthStore');
-          const authUid = useAuthStore.getState().firebaseUid;
+          const authUid = useAuthStore.getState().uid;
           if (authUid) {
             const { depositsRepository } =
               await import('@features/savings/data/depositsRepository');
-            await depositsRepository.upsertOperation(authUid, operation);
+            await depositsRepository.upsertOperation(operation);
           }
           void logEvent('savings_operation_created', {
             type: data.type,
@@ -402,7 +390,7 @@ export const useSavingsStore = create<SavingsStore>()(
           return { ok: true, value: operation };
         } catch (error) {
           set({ operations: previous });
-          void import('@shared/lib/analytics/crashlytics').then((module) =>
+          void import('@shared/lib/analytics/errorReporting').then((module) =>
             module.recordError(
               error instanceof Error ? error : new Error(String(error)),
               'savings_create_operation'
@@ -432,17 +420,17 @@ export const useSavingsStore = create<SavingsStore>()(
         set({ operations: next });
         try {
           const { useAuthStore } = await import('@features/auth/store/useAuthStore');
-          const authUid = useAuthStore.getState().firebaseUid;
+          const authUid = useAuthStore.getState().uid;
           if (authUid) {
             const { depositsRepository } =
               await import('@features/savings/data/depositsRepository');
-            await depositsRepository.upsertOperation(authUid, updated);
+            await depositsRepository.upsertOperation(updated);
           }
           void logEvent('savings_operation_updated', { type: updated.type });
           return { ok: true, value: updated };
         } catch (error) {
           set({ operations: previous });
-          void import('@shared/lib/analytics/crashlytics').then((module) =>
+          void import('@shared/lib/analytics/errorReporting').then((module) =>
             module.recordError(
               error instanceof Error ? error : new Error(String(error)),
               'savings_update_operation'
@@ -462,17 +450,17 @@ export const useSavingsStore = create<SavingsStore>()(
         set({ operations: next });
         try {
           const { useAuthStore } = await import('@features/auth/store/useAuthStore');
-          const authUid = useAuthStore.getState().firebaseUid;
+          const authUid = useAuthStore.getState().uid;
           if (authUid) {
             const { depositsRepository } =
               await import('@features/savings/data/depositsRepository');
-            await depositsRepository.removeDeposit(authUid, operationId);
+            await depositsRepository.removeDeposit(operationId);
           }
           void logEvent('savings_operation_deleted', { type: current.type });
           return { ok: true, value: current };
         } catch (error) {
           set({ operations: previous });
-          void import('@shared/lib/analytics/crashlytics').then((module) =>
+          void import('@shared/lib/analytics/errorReporting').then((module) =>
             module.recordError(
               error instanceof Error ? error : new Error(String(error)),
               'savings_delete_operation'

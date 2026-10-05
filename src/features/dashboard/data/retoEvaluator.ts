@@ -1,7 +1,7 @@
 /**
  * Evaluador de retos financieros (RQ-PR14-CA5): computa el estado de un reto
  * desde los stores LOCALES del estudiante (gastos/metas/operaciones) sobre la
- * ventana [fechaInicio, deadline]. 100% cliente: ninguna Cloud Function ni regla
+ * ventana [fechaInicio, deadline]. 100% cliente: ningún endpoint del backend
  * lee el diario. Devuelve avance + estado; al profesor solo cruza el estado.
  *
  * El tipo canónico `RetoFinancieroTipo` vive en src/shared/types/tenancy.ts.

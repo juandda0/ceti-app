@@ -42,7 +42,7 @@ export default function CourseDashboardScreen() {
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
   const colegioId = useAuthStore((s) => s.colegioId);
-  const uid = useAuthStore((s) => s.firebaseUid);
+  const uid = useAuthStore((s) => s.uid);
   const params = useLocalSearchParams<{ cursoId: string; nombre?: string }>();
   const cursoId = params.cursoId;
   const cursoNombre = params.nombre ?? cursoId;

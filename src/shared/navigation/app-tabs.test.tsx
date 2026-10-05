@@ -25,7 +25,7 @@ jest.mock('@shared/navigation/mainTabBarOptions', () => ({
 jest.mock('@features/auth/performLogout', () => ({ performLogoutAndGo: jest.fn() }));
 jest.mock('@features/savings/components/FloatingVoiceButton', () => () => null);
 
-import AppTabLayout from './_layout';
+import AppTabLayout from '@/app/(app)/_layout';
 
 test('registra las pestañas públicas de aprendizaje y finanzas', () => {
   render(<AppTabLayout />);

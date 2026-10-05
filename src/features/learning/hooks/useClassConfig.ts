@@ -1,7 +1,7 @@
 /**
  * useClassConfig — live class configuration for the signed-in student
  * (D-ORQ, RQ-PR10 CA3). Subscribes to `cursos/{cursoId}/config/mundos` via
- * onSnapshot so the professor's edits reach the student in real time.
+ * polling so the professor's edits reach the student within seconds.
  *
  * `config: null` = no config (doc absent, offline, demo without tenant) →
  * callers resolve to the defaults (classConfig.ts), i.e. pre-D-ORQ behavior.

@@ -12,9 +12,10 @@ interface AuthState {
   isAuthenticated: boolean;
   lastLogin: number | null;
   authReady: boolean;
-  firebaseUid: string | null;
-  // Tenancy/role mirrored from the Auth token (see lib/firebase/claims.ts).
-  // Authoritative source is always the token; these are for routing/UI only.
+  /** Id de la cuenta en el backend. */
+  uid: string | null;
+  // Rol/tenant reflejados de la cuenta (ver lib/auth/session.ts). La fuente
+  // autoritativa es siempre el servidor; aquí solo enrutan la UI.
   role: Role | null;
   colegioId: string | null;
   cursoId: string | null;
@@ -23,9 +24,9 @@ interface AuthState {
 interface AuthActions {
   login: () => void;
   logout: () => Promise<void>;
-  resetSessionFlagsFromFirebase: () => void;
+  resetSession: () => void;
   markAuthReady: () => void;
-  setFirebaseUid: (uid: string | null) => void;
+  setUid: (uid: string | null) => void;
   setClaims: (claims: CetiClaims | null) => void;
 }
 
@@ -35,7 +36,7 @@ const initialState: AuthState = {
   isAuthenticated: false,
   lastLogin: null,
   authReady: false,
-  firebaseUid: null,
+  uid: null,
   role: null,
   colegioId: null,
   cursoId: null,
@@ -54,7 +55,7 @@ export const useAuthStore = create<AuthStore>()(
 
       markAuthReady: () => set({ authReady: true }),
 
-      setFirebaseUid: (uid) => set({ firebaseUid: uid }),
+      setUid: (uid) => set({ uid }),
 
       setClaims: (claims) =>
         set({
@@ -63,11 +64,11 @@ export const useAuthStore = create<AuthStore>()(
           cursoId: claims?.cursoId ?? null,
         }),
 
-      resetSessionFlagsFromFirebase: () =>
+      resetSession: () =>
         set({
           isAuthenticated: false,
           lastLogin: null,
-          firebaseUid: null,
+          uid: null,
           role: null,
           colegioId: null,
           cursoId: null,
@@ -86,12 +87,6 @@ export const useAuthStore = create<AuthStore>()(
         } catch {
           /* noop */
         }
-        try {
-          const push = await import('@shared/session/userProgressPush');
-          await push.flushUserProgressPush();
-        } catch {
-          /* noop */
-        }
         useSavingsStore.getState().resetSavings();
         // El diario de bolsillo es PII financiera del menor (Ley 1581): sin este
         // reset, la siguiente cuenta en el mismo navegador vería los movimientos
@@ -101,8 +96,8 @@ export const useAuthStore = create<AuthStore>()(
         useLearningFlowStore.getState().reset();
         useUserStore.getState().resetUser();
         try {
-          const m = await import('@shared/lib/firebase/authSession');
-          await m.signOutFirebaseSession();
+          const m = await import('@shared/lib/auth/authSession');
+          await m.signOutSession();
         } catch {
           /* noop */
         }
@@ -119,7 +114,7 @@ export const useAuthStore = create<AuthStore>()(
         ...current,
         ...(persisted as object),
         authReady: false,
-        firebaseUid: null,
+        uid: null,
         isAuthenticated: false,
         role: null,
         colegioId: null,

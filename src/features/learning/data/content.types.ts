@@ -1,10 +1,10 @@
 /**
  * Tipos para los bancos de contenido EligeCamino y Micro-teoría.
  *
- * Los campos van en español para reflejar el shape del documento Firestore
+ * Los campos van en español para reflejar el shape del documento JSON
  * generado por el pipeline de authoring-time (R7, R8).
  *
- * Contratos de colecciones (read-only; sembrado vía Admin SDK):
+ * Contratos de colecciones (read-only; servidos por el backend desde content/):
  *  - bancosEligeCamino/{grado}_{worldId}
  *  - microteoria/{grado}_{worldId}
  *

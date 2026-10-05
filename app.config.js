@@ -1,5 +1,5 @@
 /**
- * Configuración Expo: extiende app.json con variables de entorno (Firebase, EAS, OAuth).
+ * Configuración Expo: extiende app.json con variables de entorno (backend, EAS, OAuth).
  * @param {{ config?: import('expo/config').ExpoConfig }} ctx
  */
 /** Enlazado con EAS (@juanndda/ceti). Sustituir con env solo si cambias de proyecto. */
@@ -15,10 +15,6 @@ const appJson = require('./app.json');
 module.exports = ({ config } = {}) => {
   const expo = { ...appJson.expo, ...(config || {}) };
 
-  const appleOn =
-    process.env.EXPO_PUBLIC_FEATURE_APPLE_SIGNIN === '1' ||
-    process.env.EXPO_PUBLIC_FEATURE_APPLE_SIGNIN === 'true';
-
   const googleIosUrlScheme = process.env.EXPO_PUBLIC_GOOGLE_IOS_URL_SCHEME || '';
 
   const basePlugins = Array.isArray(expo.plugins) ? expo.plugins : [];
@@ -26,31 +22,16 @@ module.exports = ({ config } = {}) => {
   const nativePlugins = [
     ...basePlugins,
     './plugins/withAndroidMainActivitySingleTask.js',
-    '@react-native-firebase/app',
-    '@react-native-firebase/crashlytics',
-    '@react-native-firebase/perf',
-    [
-      'expo-build-properties',
-      {
-        ios: { useFrameworks: 'static' },
-        android: { minSdkVersion: 24 },
-      },
-    ],
+    ['expo-build-properties', { android: { minSdkVersion: 24 } }],
   ];
 
-  if (appleOn) {
-    nativePlugins.push('expo-apple-authentication');
-  }
-
-  // Android: sin opciones → integración vía google-services.json (Firebase).
-  // iOS: si defines EXPO_PUBLIC_GOOGLE_IOS_URL_SCHEME, usa el modo con scheme explícito.
+  // Google Sign-In sin Firebase: Android solo necesita el Web client ID en
+  // runtime; iOS necesita el URL scheme del OAuth client iOS.
   if (googleIosUrlScheme) {
     nativePlugins.push([
       '@react-native-google-signin/google-signin',
       { iosUrlScheme: googleIosUrlScheme },
     ]);
-  } else {
-    nativePlugins.push('@react-native-google-signin/google-signin');
   }
 
   return {
@@ -60,31 +41,19 @@ module.exports = ({ config } = {}) => {
       ...(expo.ios || {}),
       bundleIdentifier: process.env.IOS_BUNDLE_ID || 'com.juanndda.ceti',
     },
-    android: {
-      ...(expo.android || {}),
-      googleServicesFile: './google-services.json',
-    },
     extra: {
       ...(expo.extra || {}),
       eas: {
         ...(expo.extra?.eas || {}),
         projectId: process.env.EAS_PROJECT_ID || expo.extra?.eas?.projectId || EAS_PROJECT_ID,
       },
-      firebase: {
-        apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY || '',
-        authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN || '',
-        projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID || '',
-        storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET || '',
-        messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '',
-        appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID || '',
-        measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID || '',
-      },
+      apiUrl: process.env.EXPO_PUBLIC_API_URL || '',
+      devLogin: process.env.EXPO_PUBLIC_DEV_LOGIN === '1',
       pinPepper: process.env.EXPO_PUBLIC_PIN_PEPPER || '',
       privacyPolicyUrl: process.env.EXPO_PUBLIC_PRIVACY_POLICY_URL || '',
       googleWebClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID || '',
       googleIosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || '',
       googleIosUrlScheme,
-      featureAppleSignIn: appleOn,
     },
   };
 };

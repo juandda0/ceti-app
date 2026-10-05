@@ -90,7 +90,7 @@ export function buildSchoolReport(input: BuildSchoolReportInput): SchoolReport {
 /**
  * Build the school report from PRECOMPUTED per-course aggregates — the profesor's
  * path (D-PIVOT). The profesor is denied nominal collection-group progress outside
- * their own courses by firestore.rules (matriz §1.3); they read `agregados/resumen`
+ * their own courses by the backend (matriz §1.3); they read the per-course `agregado`
  * per course instead. The aggregates carry ZERO nominal data, so this report
  * exposes only counts and averages.
  *

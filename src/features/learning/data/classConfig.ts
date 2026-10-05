@@ -1,5 +1,5 @@
 /**
- * Class-config resolution (D-ORQ, RQ-PR10). Pure logic — no Firebase here.
+ * Class-config resolution (D-ORQ, RQ-PR10). Pure logic — no I/O here.
  *
  * The professor's config doc (`cursos/{cursoId}/config/mundos`) decides which
  * worlds a class sees and in which order. ABSENCE of the doc (or a malformed one

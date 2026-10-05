@@ -179,11 +179,11 @@ export default function WorldsScreen() {
   const { t } = useTranslation();
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
-  // Per-account key (Firebase uid); fallback to local profile id only offline.
+  // Per-account key (account id); fallback to local profile id only offline.
   // Both hooks must run every render (no conditional hook calls).
-  const firebaseUid = useAuthStore((s) => s.firebaseUid);
+  const authUid = useAuthStore((s) => s.uid);
   const localProfileId = useUserStore((s) => s.id);
-  const userId = firebaseUid ?? localProfileId;
+  const userId = authUid ?? localProfileId;
   // Tenant identity (provisioned students only) — used to rehydrate progress.
   const colegioId = useAuthStore((s) => s.colegioId);
   const cursoId = useAuthStore((s) => s.cursoId);
@@ -202,12 +202,12 @@ export default function WorldsScreen() {
   // while resolving so we never prefetch the wrong grade's banco.
   const grado = useStudentGrado();
 
-  // seedKey = Firebase uid (stable per-account); fallback to local id in demo/offline.
+  // seedKey = account id (stable per-account); fallback to local id in demo/offline.
   const seedKey = userId ?? 'demo';
   const uid = userId ?? '';
 
   // Class config (D-ORQ, RQ-PR10): which worlds this class sees and in which
-  // order. Live via onSnapshot; null → defaults.
+  // order. Polled from the backend; null → defaults.
   const { config: classConfig, loaded: classConfigLoaded } = useClassConfig();
   const { worlds: classWorlds } = useMemo(
     () => resolveClassWorlds(classConfig, (w) => isWorldComplete(uid, w as WorldId)),
@@ -259,13 +259,13 @@ export default function WorldsScreen() {
   // Rehydrate per-world mastery from the tenant tree so unlock/progress survive
   // logout and new devices (the local answers cache is empty there).
   useEffect(() => {
-    if (!hasAccess || !colegioId || !cursoId || !firebaseUid) return;
+    if (!hasAccess || !colegioId || !cursoId || !authUid) return;
     let cancelled = false;
     void (async () => {
       const docs = await worldProgressRepository.getStudentProgress(
         colegioId,
         cursoId,
-        firebaseUid
+        authUid
       );
       if (cancelled) return;
       const byWorld: Partial<Record<WorldId, number>> = {};
@@ -275,7 +275,7 @@ export default function WorldsScreen() {
     return () => {
       cancelled = true;
     };
-  }, [hasAccess, colegioId, cursoId, firebaseUid, setRemoteProgress]);
+  }, [hasAccess, colegioId, cursoId, authUid, setRemoteProgress]);
 
   // Recompute when local answers OR the hydrated remote snapshot change.
   // (getWorldProgress/isWorldComplete read both internally.)

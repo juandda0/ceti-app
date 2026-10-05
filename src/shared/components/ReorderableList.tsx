@@ -45,7 +45,7 @@ export default function ReorderableList<T>({
   const idsKey = ids.join('|');
   const positions = useSharedValue<Positions>(Object.fromEntries(ids.map((id, i) => [id, i])));
 
-  // Re-seed positions when the incoming order/keys change (e.g. a Firestore
+  // Re-seed positions when the incoming order/keys change (e.g. a remote
   // snapshot after our own save, or an add/remove) so the animation matches data.
   useEffect(() => {
     positions.value = Object.fromEntries(idsKey.split('|').map((id, i) => [id, i]));

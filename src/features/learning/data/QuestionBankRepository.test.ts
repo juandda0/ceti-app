@@ -6,7 +6,7 @@
  *  2. Two calls with the same seedKey return the SAME set and order (determinism / anti-R7).
  *  3. Two calls with DIFFERENT seedKeys may return different subsets.
  *  4. Returns [] when any banco has fewer items than required.
- *  5. Returns [] when any banco is missing (null from Firestore).
+ *  5. Returns [] when any banco is missing (404 → null from the API).
  */
 import { jest } from '@jest/globals';
 import type {
@@ -16,21 +16,6 @@ import type {
   BancoDoc,
   QuizItem,
 } from './quiz.types';
-
-// ── Typed Firestore snap stub ─────────────────────────────────────────────────
-
-interface FakeSnap {
-  exists(): boolean;
-  data(): BancoDoc | undefined;
-}
-
-function presentSnap(doc: BancoDoc): FakeSnap {
-  return { exists: () => true as const, data: () => doc };
-}
-
-function missingSnap(): FakeSnap {
-  return { exists: () => false as const, data: () => undefined };
-}
 
 // ── Item factories ────────────────────────────────────────────────────────────
 
@@ -78,7 +63,7 @@ function makeBancoDoc(tipo: BancoDoc['tipo'], items: BancoDoc['items']): BancoDo
     version: 1,
     generadoPor: 'test',
     pendiente_validacion_docente: false,
-    // Real Firestore banco items carry NO `tipo` (it lives on the doc, S5 schema).
+    // Real banco items carry NO `tipo` (it lives on the doc, S5 schema).
     // Strip it so the test proves fetchAssembledQuiz stamps the discriminator.
     items: items.map((it) => {
       const { tipo: _omit, ...rest } = it as QuizItem & { tipo: string };
@@ -87,22 +72,20 @@ function makeBancoDoc(tipo: BancoDoc['tipo'], items: BancoDoc['items']): BancoDo
   };
 }
 
-// ── Helper: build a getDoc mock function given per-type docs ──────────────────
+// ── Helper: mock the API given per-type docs ──────────────────────────────────
 
-function makeGetDocFn(mcDoc: BancoDoc | null, vfDoc: BancoDoc | null, ordDoc: BancoDoc | null) {
-  return async (ref: { __docId: string }): Promise<FakeSnap> => {
-    const docId: string = ref.__docId;
-    // doc id format: `${grado}_${worldId}_${tipo}`  e.g. "9_world_1_multiple_choice"
-    if (docId.endsWith('_multiple_choice')) return mcDoc ? presentSnap(mcDoc) : missingSnap();
-    if (docId.endsWith('_true_false')) return vfDoc ? presentSnap(vfDoc) : missingSnap();
-    if (docId.endsWith('_ordenar')) return ordDoc ? presentSnap(ordDoc) : missingSnap();
-    return missingSnap();
+function makeGetOrNull(mcDoc: BancoDoc | null, vfDoc: BancoDoc | null, ordDoc: BancoDoc | null) {
+  return async (path: string): Promise<BancoDoc | null> => {
+    // path: `/api/content/bancos/${grado}_${worldId}_${tipo}`
+    if (path.endsWith('_multiple_choice')) return mcDoc;
+    if (path.endsWith('_true_false')) return vfDoc;
+    if (path.endsWith('_ordenar')) return ordDoc;
+    return null;
   };
 }
 
 /**
- * Sets up all three mocks (firebase/app, firebase/paths, firebase/firestore)
- * and imports a fresh copy of QuestionBankRepository.
+ * Mocks the API client and imports a fresh copy of QuestionBankRepository.
  * Must be called AFTER jest.resetModules() in each test.
  */
 async function setupAndImport(
@@ -110,16 +93,10 @@ async function setupAndImport(
   vfDoc: BancoDoc | null,
   ordDoc: BancoDoc | null
 ) {
-  jest.doMock('@shared/lib/firebase/app', () => ({
-    getFirebaseClients: () => ({ firestore: {} }),
-  }));
-  jest.doMock('@shared/lib/firebase/paths', () => ({
-    bancoDocRef: (_db: unknown, grado: string, worldId: string, tipo: string) => ({
-      __docId: `${grado}_${worldId}_${tipo}`,
-    }),
-  }));
-  jest.doMock('firebase/firestore', () => ({
-    getDoc: jest.fn(makeGetDocFn(mcDoc, vfDoc, ordDoc)),
+  jest.doMock('@shared/lib/api/client', () => ({
+    api: { getOrNull: jest.fn(makeGetOrNull(mcDoc, vfDoc, ordDoc)) },
+    isBackendConfigured: () => true,
+    seg: encodeURIComponent,
   }));
 
   const { questionBankRepository } = await import('./QuestionBankRepository');

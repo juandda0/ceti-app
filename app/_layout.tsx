@@ -4,7 +4,7 @@ import { Buffer } from 'buffer';
 import { Blob, FileReader } from 'blob-polyfill';
 
 import { useEffect, useState } from 'react';
-import { LogBox, Platform } from 'react-native';
+import { LogBox } from 'react-native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -19,12 +19,9 @@ import { useThemeStore } from '@shared/store/useThemeStore';
 import CetiOverlayHost from '@shared/components/CetiOverlayHost';
 import { AppErrorBoundary } from '@shared/components/AppErrorBoundary';
 import { rehydrateAllPersistedStores } from '@shared/session/hydrateStores';
-import { initFirebaseAuthSession } from '@shared/lib/firebase/authSession';
-import { seedLocalDataToRemoteIfNeeded } from '@shared/session/syncRemote';
-import { isNativeFirebaseAppAvailable } from '@shared/lib/analytics/crashlytics';
+import { initAuthSession } from '@shared/lib/auth/authSession';
 import { startUserRemoteSync, stopUserRemoteSync } from '@shared/session/userRemoteSync';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
-import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/app';
 
 import '@shared/i18n';
 
@@ -87,15 +84,15 @@ export default function RootLayout() {
         /* noop */
       }
       try {
-        await initFirebaseAuthSession();
+        await initAuthSession();
       } catch {
         useAuthStore.getState().markAuthReady();
       }
 
       function syncRemoteIfAuthenticated() {
-        const { isAuthenticated, firebaseUid } = useAuthStore.getState();
-        if (isAuthenticated && firebaseUid?.trim()) {
-          startUserRemoteSync(firebaseUid.trim());
+        const { isAuthenticated, uid } = useAuthStore.getState();
+        if (isAuthenticated && uid?.trim()) {
+          startUserRemoteSync(uid.trim());
         } else {
           stopUserRemoteSync();
         }
@@ -103,21 +100,6 @@ export default function RootLayout() {
 
       if (!cancelled) syncRemoteIfAuthenticated();
       cleanups.push(useAuthStore.subscribe(syncRemoteIfAuthenticated));
-
-      if (!cancelled && isFirebaseConfigured()) {
-        const clients = getFirebaseClients();
-        if (clients) {
-          const seedUnsub = clients.auth.onIdTokenChanged(async (user) => {
-            if (!user) return;
-            try {
-              await seedLocalDataToRemoteIfNeeded();
-            } catch {
-              /* noop */
-            }
-          });
-          cleanups.push(seedUnsub);
-        }
-      }
 
       if (!cancelled) setHydrated(true);
     })();
@@ -139,32 +121,6 @@ export default function RootLayout() {
       }
     })();
   }, [hydrated]);
-
-  useEffect(() => {
-    if (Platform.OS === 'web' || __DEV__) return;
-    if (!isNativeFirebaseAppAvailable()) return;
-    type CrashMod = () => { recordError: (e: Error) => void; log: (m: string) => void };
-    let getCrashlytics: CrashMod;
-    try {
-      getCrashlytics = require('@react-native-firebase/crashlytics').default as CrashMod;
-    } catch {
-      return;
-    }
-    const prev = console.error;
-    console.error = (...args: unknown[]) => {
-      prev(...args);
-      try {
-        const first = args[0];
-        if (first instanceof Error) getCrashlytics().recordError(first);
-        else getCrashlytics().log(args.map(String).join(' '));
-      } catch {
-        /* noop */
-      }
-    };
-    return () => {
-      console.error = prev;
-    };
-  }, []);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

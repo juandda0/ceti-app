@@ -1,7 +1,7 @@
 /**
  * Builds a tenant-tree WorldProgress doc from a world's quiz result. Pure (takes
  * `now` as input) so it is testable and deterministic. The output shape matches
- * the type/range checks in firestore.rules (denormalized keys, mastery 0..1,
+ * the type/range checks in the backend (denormalized keys, mastery 0..1,
  * numbers, bools), so it is safe to write via the world-progress repository (F6).
  *
  * `competencia` is taken from the world↔CONPES mapping — this is how the teacher

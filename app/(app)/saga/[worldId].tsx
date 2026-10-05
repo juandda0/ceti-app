@@ -62,9 +62,9 @@ export default function WorldSagaScreen() {
   const { t } = useTranslation();
   const colors = useThemeColors();
 
-  const firebaseUid = useAuthStore((s) => s.firebaseUid);
+  const authUid = useAuthStore((s) => s.uid);
   const localProfileId = useUserStore((s) => s.id);
-  const uid = firebaseUid ?? localProfileId ?? 'demo';
+  const uid = authUid ?? localProfileId ?? 'demo';
   const colegioId = useAuthStore((s) => s.colegioId);
   const cursoId = useAuthStore((s) => s.cursoId);
   const grado = useStudentGrado();

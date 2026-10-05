@@ -1,5 +1,5 @@
 /**
- * Loads a course's report from Firestore: roster + each student's tenant-tree
+ * Loads a course's report from the backend: roster + each student's tenant-tree
  * progress (aggregated by buildCourseReport), plus the course's reto prompts.
  * Individual reto progress stays private on each student's device.
  */

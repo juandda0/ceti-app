@@ -34,7 +34,7 @@ interface QuestionBankState {
   fetchStatus: Partial<Record<WorldId, 'idle' | 'loading' | 'success' | 'error'>>;
   answers: QuestionAnswer[];
   /**
-   * Per-world mastery (0..1) hydrated from the Firestore tenant tree on app load.
+   * Per-world mastery (0..1) hydrated from the backend on app load.
    * Lets unlock/progress survive logout and new devices, where the local `answers`
    * cache is empty. Combined with local answers via max() (never summed).
    */

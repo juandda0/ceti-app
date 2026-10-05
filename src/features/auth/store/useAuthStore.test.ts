@@ -7,7 +7,7 @@ describe('useAuthStore', () => {
       isAuthenticated: false,
       lastLogin: null,
       authReady: false,
-      firebaseUid: null,
+      uid: null,
     });
   });
 
@@ -21,7 +21,7 @@ describe('useAuthStore', () => {
       isAuthenticated: true,
       lastLogin: 1,
       authReady: true,
-      firebaseUid: 'x',
+      uid: 'x',
     });
     await useAuthStore.getState().logout();
     const s = useAuthStore.getState();

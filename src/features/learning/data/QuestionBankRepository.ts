@@ -8,9 +8,9 @@
  * No Math.random. No runtime adaptive logic (R7). Returns [] when any banco
  * is missing or has insufficient items — the screen shows offline state.
  */
-import { getDoc } from 'firebase/firestore';
-import { getFirebaseClients } from '@shared/lib/firebase/app';
-import { bancoDocRef, contenidoDocId, cursoContenidoDocRef } from '@shared/lib/firebase/paths';
+import { api, isBackendConfigured, seg } from '@shared/lib/api/client';
+import { contentPath, contenidoDocId, cursoPath } from '@shared/lib/api/paths';
+import { recordError } from '@shared/lib/analytics/errorReporting';
 import { hashStr, stableShuffle } from '@shared/lib/quizUtils';
 import type { CourseContentRef } from '@shared/types/tenancy';
 import {
@@ -41,7 +41,7 @@ const REQUIRED_ORDENAR = 3;
  * piece, RQ-PR11) it reads the course copy under `cursos/{cursoId}/contenido/*`
  * and falls back to the global default if the copy is missing (stale flag —
  * fail-soft, the student must never hit a broken world). Returns null when the
- * doc doesn't exist or Firebase is not available (offline / demo mode).
+ * doc doesn't exist or the backend is not reachable (offline).
  */
 async function fetchBancoDoc(
   grado: Grado,
@@ -49,26 +49,19 @@ async function fetchBancoDoc(
   tipo: string,
   custom?: { colegioId: string; cursoId: string } | null
 ): Promise<BancoDoc | null> {
-  const clients = getFirebaseClients();
-  if (!clients) return null;
+  if (!isBackendConfigured()) return null;
   try {
     if (custom) {
-      const customSnap = await getDoc(
-        cursoContenidoDocRef(
-          clients.firestore,
-          custom.colegioId,
-          custom.cursoId,
-          contenidoDocId.banco(worldId, tipo)
-        )
+      const doc = await api.getOrNull<BancoDoc>(
+        `${cursoPath(custom.colegioId, custom.cursoId)}/contenido/${seg(contenidoDocId.banco(worldId, tipo))}`
       );
-      if (customSnap.exists()) return customSnap.data() as BancoDoc;
+      if (doc) return doc;
     }
     // Custom (`cw_*`) worlds have no global default to fall back to.
     if (worldId.startsWith('cw_')) return null;
-    const snap = await getDoc(bancoDocRef(clients.firestore, seededGrado(grado), worldId, tipo));
-    if (!snap.exists()) return null;
-    return snap.data() as BancoDoc;
-  } catch {
+    return await api.getOrNull<BancoDoc>(contentPath.banco(seededGrado(grado), worldId, tipo));
+  } catch (e) {
+    recordError(e, 'banco_fetch');
     return null;
   }
 }

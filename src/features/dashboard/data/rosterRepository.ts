@@ -1,83 +1,50 @@
-import { getDoc, getDocs } from 'firebase/firestore';
-import { getFirebaseClients } from '@shared/lib/firebase/app';
-import {
-  colegioDocRef,
-  cursoDocRef,
-  cursosByProfesorQuery,
-  cursosCollectionRef,
-  estudianteDocRef,
-  estudiantesCollectionRef,
-} from '@shared/lib/firebase/paths';
-import type { Colegio, Curso, Estudiante } from '@shared/types/tenancy';
+import { api, isBackendConfigured, seg } from '@shared/lib/api/client';
+import { cursoPath, estudiantePath } from '@shared/lib/api/paths';
+import type { Curso, Estudiante, Grado } from '@shared/types/tenancy';
 
 export type CursoWithId = Curso & { id: string };
 export type EstudianteWithId = { uid: string } & Estudiante;
 
 /** Reads the institutional roster (courses a teacher manages, students in a course). */
 export const rosterRepository = {
-  async getCursosByProfesor(colegioId: string, uid: string): Promise<CursoWithId[]> {
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return [];
-    const snap = await getDocs(cursosByProfesorQuery(clients.firestore, colegioId, uid));
-    return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Curso) }));
+  async getCursosByProfesor(colegioId: string): Promise<CursoWithId[]> {
+    if (!isBackendConfigured()) return [];
+    return api.get<CursoWithId[]>(`/api/colegios/${seg(colegioId)}/cursos`);
   },
-
-  /** All courses in the colegio (profesor school-wide report). */
+  /** Courses of the school report: the backend only ever returns the caller's own. */
   async getAllCursos(colegioId: string): Promise<CursoWithId[]> {
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return [];
-    const snap = await getDocs(cursosCollectionRef(clients.firestore, colegioId));
-    return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Curso) }));
+    return this.getCursosByProfesor(colegioId);
   },
-
   /**
-   * Reads the colegio's display name (rules: any colegio member may read its
-   * identity — nombre/logo for headers). Falls back to null offline / not found,
-   * so callers can show the id or a placeholder.
+   * Reads the colegio's display name (any colegio member). Falls back to null
+   * offline / not found, so callers can show the id or a placeholder.
    */
   async getColegioNombre(colegioId: string): Promise<string | null> {
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return null;
-    const snap = await getDoc(colegioDocRef(clients.firestore, colegioId));
-    if (!snap.exists()) return null;
-    return (snap.data() as Colegio).nombre ?? null;
+    if (!isBackendConfigured()) return null;
+    const c = await api.getOrNull<{ nombre: string }>(`/api/colegios/${seg(colegioId)}`);
+    return c?.nombre ?? null;
   },
-
   async getRoster(colegioId: string, cursoId: string): Promise<EstudianteWithId[]> {
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return [];
-    const snap = await getDocs(estudiantesCollectionRef(clients.firestore, colegioId, cursoId));
-    return snap.docs.map((d) => ({ uid: d.id, ...(d.data() as Estudiante) }));
+    if (!isBackendConfigured()) return [];
+    return api.get<EstudianteWithId[]>(`${cursoPath(colegioId, cursoId)}/estudiantes`);
   },
-
-  /** A single roster slot — used by a student to read their own status (rules allow self). */
+  /** A single roster slot — the teacher, or a student reading their own status (even pending). */
   async getEstudiante(
     colegioId: string,
     cursoId: string,
     uid: string
   ): Promise<EstudianteWithId | null> {
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return null;
-    const snap = await getDoc(estudianteDocRef(clients.firestore, colegioId, cursoId, uid));
-    if (!snap.exists()) return null;
-    return { uid: snap.id, ...(snap.data() as Estudiante) };
+    if (!isBackendConfigured()) return null;
+    return api.getOrNull<EstudianteWithId>(estudiantePath(colegioId, cursoId, uid));
   },
-
   /**
-   * Reads only the `grado` field of a course doc (R4: grado comes from the
-   * course, never from the student record). Used to determine which banco set
-   * to load for the quiz (R7/R9). Rules allow any colegio member to read cursos.
+   * Reads only the `grado` of a course (R4: grado comes from the course, never
+   * from the student record). Used to pick the banco set for the quiz (R7/R9).
    * Falls back to null when offline / course not found.
    */
-  async getCursoGrado(
-    colegioId: string,
-    cursoId: string
-  ): Promise<import('@shared/types/tenancy').Grado | null> {
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return null;
-    const snap = await getDoc(cursoDocRef(clients.firestore, colegioId, cursoId));
-    if (!snap.exists()) return null;
-    const data = snap.data() as import('@shared/types/tenancy').Curso;
-    return data.grado ?? null;
+  async getCursoGrado(colegioId: string, cursoId: string): Promise<Grado | null> {
+    if (!isBackendConfigured()) return null;
+    const c = await api.getOrNull<Curso>(cursoPath(colegioId, cursoId));
+    return c?.grado ?? null;
   },
 };

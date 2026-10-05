@@ -1,6 +1,7 @@
 import React, { Component, type ErrorInfo, type ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { DarkColors } from '@shared/constants/colors';
+import { recordBoundaryError } from '@shared/lib/analytics/errorReporting';
 
 type Props = {
   children: ReactNode;
@@ -13,7 +14,7 @@ type State = {
 
 /**
  * Captura errores de render y evita que tumbe toda la app sin feedback.
- * Crashlytics se engancha en `componentDidCatch` cuando Firebase esté configurado.
+ * El error se reporta en `componentDidCatch` (ver lib/analytics/errorReporting).
  */
 export class AppErrorBoundary extends Component<Props, State> {
   override state: State = { hasError: false, error: null };
@@ -26,14 +27,7 @@ export class AppErrorBoundary extends Component<Props, State> {
     if (__DEV__) {
       console.error('[AppErrorBoundary]', error.message, info.componentStack);
     }
-    try {
-      // Lazy optional: evita hard dependency si el módulo no está enlazado aún
-      const mod =
-        require('../lib/analytics/crashlytics') as typeof import('../lib/analytics/crashlytics');
-      void mod.recordBoundaryError(error, info.componentStack ?? '');
-    } catch {
-      /* Firebase no instalado o no listo */
-    }
+    recordBoundaryError(error, info.componentStack ?? '');
   }
 
   private handleRetry = (): void => {

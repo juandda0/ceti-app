@@ -2,7 +2,7 @@
  * Loads the school-wide aggregate report for the profesor (D-PIVOT).
  *
  * The profesor is DENIED nominal collection-group progress outside their own
- * courses (firestore.rules, matriz §1.3), but MAY read the per-course
+ * courses (backend authz, matriz §1.3), but MAY read the per-course
  * `agregados/resumen` across the whole colegio (written by the
  * onProgressWriteAggregate Function). So the school report is built purely from
  * those non-nominal aggregates — zero individual minor data.

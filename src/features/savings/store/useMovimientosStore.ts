@@ -133,13 +133,13 @@ export const useMovimientosStore = create<MovimientosStore>()(
         void (async () => {
           try {
             const { useAuthStore } = await import('@features/auth/store/useAuthStore');
-            const authUid = useAuthStore.getState().firebaseUid;
+            const authUid = useAuthStore.getState().uid;
             if (!authUid) return;
             const { movimientosRepository } =
               await import('@features/savings/data/movimientosRepository');
-            await movimientosRepository.upsertMovimiento(authUid, movimiento);
+            await movimientosRepository.upsertMovimiento(movimiento);
           } catch (e) {
-            void import('@shared/lib/analytics/crashlytics').then((m) =>
+            void import('@shared/lib/analytics/errorReporting').then((m) =>
               m.recordError(e instanceof Error ? e : new Error(String(e)), 'movimientos_add')
             );
           }
@@ -183,13 +183,13 @@ export const useMovimientosStore = create<MovimientosStore>()(
         void (async () => {
           try {
             const { useAuthStore } = await import('@features/auth/store/useAuthStore');
-            const authUid = useAuthStore.getState().firebaseUid;
+            const authUid = useAuthStore.getState().uid;
             if (!authUid) return;
             const { movimientosRepository } =
               await import('@features/savings/data/movimientosRepository');
-            await movimientosRepository.removeMovimiento(authUid, movimientoId);
+            await movimientosRepository.removeMovimiento(movimientoId);
           } catch (e) {
-            void import('@shared/lib/analytics/crashlytics').then((m) =>
+            void import('@shared/lib/analytics/errorReporting').then((m) =>
               m.recordError(e instanceof Error ? e : new Error(String(e)), 'movimientos_remove')
             );
           }
@@ -221,17 +221,17 @@ export const useMovimientosStore = create<MovimientosStore>()(
         set({ movimientos: [...previous, movimiento] });
         try {
           const { useAuthStore } = await import('@features/auth/store/useAuthStore');
-          const authUid = useAuthStore.getState().firebaseUid;
+          const authUid = useAuthStore.getState().uid;
           if (authUid) {
             const { movimientosRepository } =
               await import('@features/savings/data/movimientosRepository');
-            await movimientosRepository.upsertMovimiento(authUid, movimiento);
+            await movimientosRepository.upsertMovimiento(movimiento);
           }
           void logEvent('movimiento_registrado', { origen: movimiento.origen, tipo: 'gasto' });
           return { ok: true, value: movimiento };
         } catch (error) {
           set({ movimientos: previous });
-          void import('@shared/lib/analytics/crashlytics').then((module) =>
+          void import('@shared/lib/analytics/errorReporting').then((module) =>
             module.recordError(
               error instanceof Error ? error : new Error(String(error)),
               'movimientos_create_expense'
@@ -267,17 +267,17 @@ export const useMovimientosStore = create<MovimientosStore>()(
         });
         try {
           const { useAuthStore } = await import('@features/auth/store/useAuthStore');
-          const authUid = useAuthStore.getState().firebaseUid;
+          const authUid = useAuthStore.getState().uid;
           if (authUid) {
             const { movimientosRepository } =
               await import('@features/savings/data/movimientosRepository');
-            await movimientosRepository.upsertMovimiento(authUid, updated);
+            await movimientosRepository.upsertMovimiento(updated);
           }
           void logEvent('movimiento_actualizado', { origen: updated.origen, tipo: 'gasto' });
           return { ok: true, value: updated };
         } catch (error) {
           set({ movimientos: previous });
-          void import('@shared/lib/analytics/crashlytics').then((module) =>
+          void import('@shared/lib/analytics/errorReporting').then((module) =>
             module.recordError(
               error instanceof Error ? error : new Error(String(error)),
               'movimientos_update_expense'
@@ -294,17 +294,17 @@ export const useMovimientosStore = create<MovimientosStore>()(
         set({ movimientos: previous.filter((movimiento) => movimiento.id !== movimientoId) });
         try {
           const { useAuthStore } = await import('@features/auth/store/useAuthStore');
-          const authUid = useAuthStore.getState().firebaseUid;
+          const authUid = useAuthStore.getState().uid;
           if (authUid) {
             const { movimientosRepository } =
               await import('@features/savings/data/movimientosRepository');
-            await movimientosRepository.removeMovimiento(authUid, movimientoId);
+            await movimientosRepository.removeMovimiento(movimientoId);
           }
           void logEvent('movimiento_eliminado', { origen: current.origen, tipo: 'gasto' });
           return { ok: true, value: current };
         } catch (error) {
           set({ movimientos: previous });
-          void import('@shared/lib/analytics/crashlytics').then((module) =>
+          void import('@shared/lib/analytics/errorReporting').then((module) =>
             module.recordError(
               error instanceof Error ? error : new Error(String(error)),
               'movimientos_delete_expense'

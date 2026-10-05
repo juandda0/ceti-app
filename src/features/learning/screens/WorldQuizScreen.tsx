@@ -440,10 +440,10 @@ export default function WorldQuizScreen() {
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
 
-  // Per-account key (Firebase uid); fallback to local profile id in offline/demo mode.
-  const firebaseUid = useAuthStore((s) => s.firebaseUid);
+  // Per-account key (account id); fallback to local profile id in offline/demo mode.
+  const authUid = useAuthStore((s) => s.uid);
   const localProfileId = useUserStore((s) => s.id);
-  const userId = firebaseUid ?? localProfileId;
+  const userId = authUid ?? localProfileId;
 
   // Tenant identity (set only for provisioned students). Used to mirror progress
   // to the school tree for the teacher dashboard; no-op when not provisioned.
@@ -505,13 +505,13 @@ export default function WorldQuizScreen() {
   // On completion, mirror progress to the tenant tree for the teacher dashboard.
   useEffect(() => {
     if (!isComplete) return;
-    if (role !== 'estudiante' || !colegioId || !cursoId || !firebaseUid || !worldId) return;
+    if (role !== 'estudiante' || !colegioId || !cursoId || !authUid || !worldId) return;
     const { done, total } = getWorldProgress(userId ?? '', worldId as WorldId);
     if (total <= 0) return;
     const progress = buildWorldProgress({
       colegioId,
       cursoId,
-      uid: firebaseUid,
+      uid: authUid,
       worldId: worldId as WorldId,
       correct: done,
       total,
@@ -520,13 +520,13 @@ export default function WorldQuizScreen() {
       competencia: configEntry?.competencia,
       now: Date.now(),
     });
-    void worldProgressRepository.upsert(colegioId, cursoId, firebaseUid, worldId, progress);
+    void worldProgressRepository.upsert(colegioId, cursoId, authUid, worldId, progress);
   }, [
     isComplete,
     role,
     colegioId,
     cursoId,
-    firebaseUid,
+    authUid,
     worldId,
     userId,
     getWorldProgress,

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Platform, ScrollView } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Platform, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
+import Constants from 'expo-constants';
 import { safeRouterBack } from '@shared/utils/safeRouterBack';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -11,9 +12,13 @@ import PageHeader from '@shared/components/PageHeader';
 import CetiButton from '@shared/components/CetiButton';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useThemeStore } from '@shared/store/useThemeStore';
-import { isFirebaseConfigured } from '@shared/lib/firebase/app';
+import { isBackendConfigured } from '@shared/lib/api/client';
+import { signInDev } from '@shared/lib/auth/session';
 import { loginIntent } from '@features/auth/data/loginIntent';
-import { configureGoogleSignIn, signInWithGoogle } from '@shared/lib/firebase/oauth';
+import { configureGoogleSignIn, signInWithGoogle } from '@shared/lib/auth/oauth';
+
+// Solo desarrollo/E2E: el backend además lo rechaza salvo CETI_DEV_LOGIN=true.
+const DEV_LOGIN = (Constants.expoConfig?.extra as { devLogin?: boolean } | undefined)?.devLogin === true;
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -22,6 +27,7 @@ export default function LoginScreen() {
   const styles = getStyles(colors, mode);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [devEmail, setDevEmail] = useState('');
 
   useEffect(() => {
     configureGoogleSignIn();
@@ -29,11 +35,11 @@ export default function LoginScreen() {
 
   const goHome = () => router.replace('/');
 
-  const doSignIn = async () => {
+  const doSignIn = async (signIn: () => Promise<unknown>) => {
     setError('');
     setBusy(true);
     try {
-      await signInWithGoogle();
+      await signIn();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       goHome();
     } catch (e) {
@@ -47,17 +53,22 @@ export default function LoginScreen() {
 
   const onGoogle = () => {
     loginIntent.set('estudiante');
-    void doSignIn();
+    void doSignIn(signInWithGoogle);
   };
 
-  if (!isFirebaseConfigured()) {
+  const onDevLogin = () => {
+    loginIntent.set('estudiante');
+    void doSignIn(() => signInDev(devEmail.trim()));
+  };
+
+  if (!isBackendConfigured()) {
     return (
       <ScreenWrapper style={styles.root}>
         <View style={styles.content}>
           <PageHeader
             overline="Acceso"
             title="Modo local"
-            subtitle="El acceso con Google no está disponible en este entorno. Configura Firebase y vuelve a intentarlo."
+            subtitle="El acceso con Google no está disponible en este entorno. Configura EXPO_PUBLIC_API_URL y vuelve a intentarlo."
             style={{ marginBottom: Spacing['2xl'] }}
           />
           <CetiButton
@@ -124,6 +135,28 @@ export default function LoginScreen() {
           isLoading={busy}
         />
 
+        {DEV_LOGIN ? (
+          <View style={styles.devBox}>
+            <TextInput
+              value={devEmail}
+              onChangeText={setDevEmail}
+              placeholder="correo@ejemplo.test"
+              placeholderTextColor={colors.text.tertiary}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              accessibilityLabel="Correo para entrar en modo desarrollo"
+              style={[styles.devInput, { color: colors.text.primary, borderColor: colors.materials.highlight }]}
+            />
+            <CetiButton
+              label="Entrar (modo desarrollo)"
+              onPress={onDevLogin}
+              variant="ghost"
+              size="medium"
+              disabled={busy || !devEmail.includes('@')}
+            />
+          </View>
+        ) : null}
+
         <Text style={[styles.hint, { color: colors.text.tertiary }]}>
           Al continuar aceptas el uso de tu nombre y correo según la política de privacidad del
           proyecto.
@@ -166,6 +199,17 @@ const getStyles = (colors: ReturnType<typeof useThemeColors>, _mode: string) =>
       ...Typography.caption1,
       fontWeight: '600',
       lineHeight: 20,
+    },
+    devBox: {
+      marginTop: Spacing.lg,
+      gap: Spacing.sm,
+    },
+    devInput: {
+      borderWidth: 1,
+      borderRadius: BorderRadius.md,
+      paddingHorizontal: Spacing.base,
+      paddingVertical: Spacing.sm,
+      ...Typography.body,
     },
     hint: {
       ...Typography.caption2,

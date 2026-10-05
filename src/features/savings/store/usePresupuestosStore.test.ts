@@ -5,7 +5,7 @@ import { logEvent } from '@shared/lib/analytics/logEvent';
 import { presupuestosRepository } from '@features/savings/data/presupuestosRepository';
 
 jest.mock('@shared/lib/analytics/logEvent', () => ({ logEvent: jest.fn() }));
-jest.mock('@shared/lib/analytics/crashlytics', () => ({ recordError: jest.fn() }));
+jest.mock('@shared/lib/analytics/errorReporting', () => ({ recordError: jest.fn() }));
 jest.mock('@features/savings/data/presupuestosRepository', () => ({
   presupuestosRepository: {
     guardar: jest.fn().mockResolvedValue(true),
@@ -13,7 +13,7 @@ jest.mock('@features/savings/data/presupuestosRepository', () => ({
   },
 }));
 jest.mock('@features/auth/store/useAuthStore', () => ({
-  useAuthStore: { getState: () => ({ firebaseUid: 'u1' }) },
+  useAuthStore: { getState: () => ({ uid: 'u1' }) },
 }));
 
 const guardar = presupuestosRepository.guardar as jest.Mock;
@@ -29,7 +29,7 @@ describe('usePresupuestosStore', () => {
     usePresupuestosStore.getState().setTope('comida', 20000);
     expect(usePresupuestosStore.getState().topes).toEqual({ comida: 20000 });
     await flush();
-    expect(guardar).toHaveBeenCalledWith('u1', { comida: 20000 });
+    expect(guardar).toHaveBeenCalledWith({ comida: 20000 });
   });
 
   it('setTope(cat, null) elimina la clave del mapa', async () => {
@@ -37,7 +37,7 @@ describe('usePresupuestosStore', () => {
     usePresupuestosStore.getState().setTope('comida', null);
     expect(usePresupuestosStore.getState().topes).toEqual({ transporte: 5000 });
     await flush();
-    expect(guardar).toHaveBeenLastCalledWith('u1', { transporte: 5000 });
+    expect(guardar).toHaveBeenLastCalledWith({ transporte: 5000 });
   });
 
   it('un tope ≤ 0 tampoco se guarda como valor', () => {
@@ -54,7 +54,7 @@ describe('usePresupuestosStore', () => {
     expect(logEvent).not.toHaveBeenCalled();
   });
 
-  it('saveBudgets revierte el estado cuando Firestore falla', async () => {
+  it('saveBudgets revierte el estado cuando el backend falla', async () => {
     usePresupuestosStore.setState({ topes: { comida: 5000 } });
     guardar.mockRejectedValueOnce(new Error('offline'));
 

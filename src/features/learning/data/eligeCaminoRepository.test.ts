@@ -4,26 +4,23 @@
  * Covers:
  *  1. Returns a typed EligeCaminoBank when the doc exists.
  *  2. Returns null when the doc is missing.
- *  3. Returns null when Firebase is not configured (demo mode).
+ *  3. Returns null when the backend is not configured (offline mode).
  *  4. Returns null on a network error (fail-soft).
  *  5. Equivalent coverage for microteoriaRepository.
  */
 import { jest } from '@jest/globals';
 import type { EligeCaminoBank, MicroteoriaBank } from './content.types';
 
-// ── Fake snap helpers ─────────────────────────────────────────────────────────
+// ── Fake API responses ────────────────────────────────────────────────────────
 
-interface FakeSnap {
-  exists(): boolean;
-  data(): unknown;
+type FakeResponse = { payload: unknown } | 'missing' | 'throw';
+
+function presentSnap(payload: unknown): FakeResponse {
+  return { payload };
 }
 
-function presentSnap(payload: unknown): FakeSnap {
-  return { exists: () => true, data: () => payload };
-}
-
-function missingSnap(): FakeSnap {
-  return { exists: () => false, data: () => undefined };
+function missingSnap(): FakeResponse {
+  return 'missing';
 }
 
 // ── Sample payloads ───────────────────────────────────────────────────────────
@@ -60,58 +57,41 @@ const sampleMT: MicroteoriaBank = {
 
 // ── Setup helper ──────────────────────────────────────────────────────────────
 
-async function setupEC(snap: FakeSnap | 'throw') {
-  jest.doMock('@shared/lib/firebase/app', () => ({
-    getFirebaseClients: () => ({ firestore: {} }),
+const getOrNull = jest.fn<(path: string) => Promise<unknown>>();
+
+function mockApi(response: FakeResponse | 'offline') {
+  getOrNull.mockReset();
+  if (response === 'throw') getOrNull.mockRejectedValue(new Error('network error'));
+  else if (response === 'missing' || response === 'offline') getOrNull.mockResolvedValue(null);
+  else getOrNull.mockResolvedValue(response.payload);
+  jest.doMock('@shared/lib/api/client', () => ({
+    api: { getOrNull },
+    isBackendConfigured: () => response !== 'offline',
+    seg: encodeURIComponent,
   }));
-  jest.doMock('@shared/lib/firebase/paths', () => ({
-    eligeCaminoDocRef: () => ({ __id: 'eligecamino-ref' }),
-  }));
-  jest.doMock('firebase/firestore', () => ({
-    getDoc:
-      snap === 'throw'
-        ? jest.fn(() => Promise.reject(new Error('network error')))
-        : jest.fn(() => Promise.resolve(snap)),
-  }));
+  jest.doMock('@shared/lib/analytics/errorReporting', () => ({ recordError: jest.fn() }));
+}
+
+async function setupEC(response: FakeResponse) {
+  mockApi(response);
   const { eligeCaminoRepository } = await import('./eligeCaminoRepository');
   return eligeCaminoRepository;
 }
 
-async function setupMT(snap: FakeSnap | 'throw') {
-  jest.doMock('@shared/lib/firebase/app', () => ({
-    getFirebaseClients: () => ({ firestore: {} }),
-  }));
-  jest.doMock('@shared/lib/firebase/paths', () => ({
-    microteoriaDocRef: () => ({ __id: 'microteoria-ref' }),
-  }));
-  jest.doMock('firebase/firestore', () => ({
-    getDoc:
-      snap === 'throw'
-        ? jest.fn(() => Promise.reject(new Error('network error')))
-        : jest.fn(() => Promise.resolve(snap)),
-  }));
+async function setupMT(response: FakeResponse) {
+  mockApi(response);
   const { microteoriaRepository } = await import('./microteoriaRepository');
   return microteoriaRepository;
 }
 
 async function setupECOffline() {
-  jest.doMock('@shared/lib/firebase/app', () => ({
-    getFirebaseClients: () => null, // offline / demo
-  }));
-  jest.doMock('@shared/lib/firebase/paths', () => ({
-    eligeCaminoDocRef: () => ({}),
-  }));
+  mockApi('offline');
   const { eligeCaminoRepository } = await import('./eligeCaminoRepository');
   return eligeCaminoRepository;
 }
 
 async function setupMTOffline() {
-  jest.doMock('@shared/lib/firebase/app', () => ({
-    getFirebaseClients: () => null,
-  }));
-  jest.doMock('@shared/lib/firebase/paths', () => ({
-    microteoriaDocRef: () => ({}),
-  }));
+  mockApi('offline');
   const { microteoriaRepository } = await import('./microteoriaRepository');
   return microteoriaRepository;
 }
@@ -127,6 +107,7 @@ describe('eligeCaminoRepository.fetch', () => {
     expect(result).toEqual(sampleEC);
     expect(result?.situaciones).toHaveLength(1);
     expect(result?.situaciones[0]?.opcionA.consecuencia).toBe('Pagas intereses altos.');
+    expect(getOrNull).toHaveBeenCalledWith('/api/content/elige-camino/9_world_1');
   });
 
   it('returns null when the doc does not exist', async () => {
@@ -135,7 +116,7 @@ describe('eligeCaminoRepository.fetch', () => {
     expect(result).toBeNull();
   });
 
-  it('returns null when Firebase is not configured (demo / offline)', async () => {
+  it('returns null when the backend is not configured (offline)', async () => {
     const repo = await setupECOffline();
     const result = await repo.fetch('9', 'world_1');
     expect(result).toBeNull();
@@ -157,6 +138,7 @@ describe('microteoriaRepository.fetch', () => {
     expect(result).toEqual(sampleMT);
     expect(result?.cards).toHaveLength(2);
     expect(result?.cards[1]?.ejemplo).toBe('Billetes vs. transferencias.');
+    expect(getOrNull).toHaveBeenCalledWith('/api/content/microteoria/9_world_1');
   });
 
   it('returns null when the doc does not exist', async () => {
@@ -165,7 +147,7 @@ describe('microteoriaRepository.fetch', () => {
     expect(result).toBeNull();
   });
 
-  it('returns null when Firebase is not configured (demo / offline)', async () => {
+  it('returns null when the backend is not configured (offline)', async () => {
     const repo = await setupMTOffline();
     const result = await repo.fetch('9', 'world_1');
     expect(result).toBeNull();

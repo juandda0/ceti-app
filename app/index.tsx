@@ -8,7 +8,6 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { Redirect, type Href } from 'expo-router';
-import { onAuthStateChanged } from 'firebase/auth';
 import { useAuthStore, isStaffRole } from '@features/auth/store/useAuthStore';
 import { useUserStore } from '@features/auth/store/useUserStore';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
@@ -16,12 +15,12 @@ import { useMovimientosStore } from '@features/savings/store/useMovimientosStore
 import { usePresupuestosStore } from '@features/savings/store/usePresupuestosStore';
 import { useQuestionBankStore } from '@features/learning/store/useQuestionBankStore';
 import { useLearningFlowStore } from '@features/learning/store/useLearningFlowStore';
-import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/app';
-import { readCetiClaims } from '@shared/lib/firebase/claims';
-import { userRepository } from '@features/auth/data/userRepository';
+import { isBackendConfigured } from '@shared/lib/api/client';
+import { getSessionUser, toCetiClaims, type SessionUser } from '@shared/lib/auth/session';
 import { adminService } from '@features/dashboard/data/adminService';
 import { loginIntent } from '@features/auth/data/loginIntent';
 import { hasClassAccess } from '@features/learning/data/classAccess';
+import { recordError } from '@shared/lib/analytics/errorReporting';
 
 export default function Index() {
   const authReady = useAuthStore((s) => s.authReady);
@@ -35,27 +34,13 @@ export default function Index() {
     if (!authReady) return;
     let cancelled = false;
 
-    function resolveOffline(): void {
-      const { isAuthenticated } = useAuthStore.getState();
-      const isOnboarded = useUserStore.getState().isOnboarded;
-
-      if (!isAuthenticated) {
-        if (!cancelled) setTarget('/(auth)/welcome');
-        return;
-      }
-      if (!isOnboarded) {
-        if (!cancelled) setTarget('/(auth)/onboarding/user-setup');
-        return;
-      }
-      if (!cancelled) setTarget('/(app)/saga');
-    }
-
-    async function resolveFirebase(clients: NonNullable<ReturnType<typeof getFirebaseClients>>) {
+    async function resolveSession() {
       const mySeq = ++seq.current;
       setBootstrapError(false);
 
+      let u: SessionUser | null;
       try {
-        await clients.auth.authStateReady();
+        u = await getSessionUser();
       } catch {
         if (cancelled || mySeq !== seq.current) return;
         setBootstrapError(true);
@@ -64,27 +49,25 @@ export default function Index() {
       }
       if (cancelled || mySeq !== seq.current) return;
 
-      const u = clients.auth.currentUser;
       if (!u) {
         setTarget('/(auth)/welcome');
         return;
       }
 
-      useAuthStore.getState().setFirebaseUid(u.uid);
+      useAuthStore.getState().setUid(u.id);
 
-      // Role/tenant from custom claims (set by Cloud Functions).
-      let claims = await readCetiClaims(u);
-      if (cancelled || mySeq !== seq.current) return;
+      // Role/tenant come from the account (set only by the backend).
+      let claims = toCetiClaims(u);
 
       // Settle access on first login. A declared professor is provisioned into
       // their own isolated colegio; a student remains on the join-by-code path.
-      // Refresh the token to pick up any newly-set claims.
-      if (!claims?.role) {
+      if (!u.role) {
         try {
           const access = await adminService.resolveMyAccess(loginIntent.get());
-          if (access.role) claims = await readCetiClaims(u, true);
-        } catch {
-          // offline / function error → treat as prospective student below
+          claims = toCetiClaims(access);
+        } catch (e) {
+          // offline / server error → treat as prospective student below
+          recordError(e, 'resolve_my_access');
         }
         if (cancelled || mySeq !== seq.current) return;
       }
@@ -103,21 +86,9 @@ export default function Index() {
         return;
       }
 
-      let remote: Awaited<ReturnType<typeof userRepository.getUser>>;
-      try {
-        remote = await userRepository.getUser(u.uid);
-      } catch {
-        if (cancelled || mySeq !== seq.current) return;
-        setBootstrapError(true);
-        setTarget(null);
-        return;
-      }
-
-      if (cancelled || mySeq !== seq.current) return;
-
       const localUser = useUserStore.getState();
       const persistedId = (localUser.id ?? '').trim();
-      const idMismatch = persistedId !== u.uid && (persistedId !== '' || localUser.isOnboarded);
+      const idMismatch = persistedId !== u.id && (persistedId !== '' || localUser.isOnboarded);
 
       if (idMismatch) {
         // Otra cuenta en el mismo dispositivo: purga TODO el estado local del
@@ -131,21 +102,16 @@ export default function Index() {
         useLearningFlowStore.getState().reset();
       }
 
-      if (!remote) {
-        setTarget('/(auth)/onboarding/user-setup');
-        return;
-      }
-
       const hasProfile =
-        remote.profile != null &&
-        typeof remote.profile.nickname === 'string' &&
-        remote.profile.nickname.trim().length >= 2;
+        u.profile != null &&
+        typeof u.profile.nickname === 'string' &&
+        u.profile.nickname.trim().length >= 2;
 
       if (!hasProfile || !useUserStore.getState().isOnboarded) {
-        if (remote.profile) {
-          const p = remote.profile;
+        if (u.profile) {
+          const p = u.profile;
           useUserStore.getState().loadProfile({
-            id: u.uid,
+            id: u.id,
             nickname: typeof p.nickname === 'string' ? p.nickname : '',
             fullName: typeof p.fullName === 'string' ? p.fullName : '',
             avatarId: typeof p.avatarId === 'string' ? p.avatarId : '',
@@ -168,30 +134,17 @@ export default function Index() {
       setTarget('/(app)/saga');
     }
 
-    if (!isFirebaseConfigured()) {
+    if (!isBackendConfigured()) {
       setTarget('/(auth)/welcome');
       return () => {
         cancelled = true;
       };
     }
 
-    const clients = getFirebaseClients();
-    if (!clients) {
-      setTarget('/(auth)/welcome');
-      return () => {
-        cancelled = true;
-      };
-    }
-
-    const unsub = onAuthStateChanged(clients.auth, () => {
-      void resolveFirebase(clients);
-    });
-
-    void resolveFirebase(clients);
+    void resolveSession();
 
     return () => {
       cancelled = true;
-      unsub();
     };
   }, [authReady, routeRetry]);
 
@@ -220,7 +173,7 @@ export default function Index() {
   }
 
   if (target === null) {
-    if (isFirebaseConfigured()) {
+    if (isBackendConfigured()) {
       return (
         <View style={styles.loadingWrap}>
           <ActivityIndicator size="large" color="#6366f1" />

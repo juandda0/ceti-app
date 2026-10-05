@@ -30,13 +30,13 @@ function sync(topes: Presupuestos) {
   void (async () => {
     try {
       const { useAuthStore } = await import('@features/auth/store/useAuthStore');
-      const uid = useAuthStore.getState().firebaseUid;
+      const uid = useAuthStore.getState().uid;
       if (!uid) return;
       const { presupuestosRepository } =
         await import('@features/savings/data/presupuestosRepository');
-      await presupuestosRepository.guardar(uid, topes);
+      await presupuestosRepository.guardar(topes);
     } catch (e) {
-      void import('@shared/lib/analytics/crashlytics').then((m) =>
+      void import('@shared/lib/analytics/errorReporting').then((m) =>
         m.recordError(e instanceof Error ? e : new Error(String(e)), 'presupuestos_sync')
       );
     }
@@ -74,17 +74,17 @@ export const usePresupuestosStore = create<PresupuestosStore>()(
         set({ topes: valid });
         try {
           const { useAuthStore } = await import('@features/auth/store/useAuthStore');
-          const uid = useAuthStore.getState().firebaseUid;
+          const uid = useAuthStore.getState().uid;
           if (uid) {
             const { presupuestosRepository } =
               await import('@features/savings/data/presupuestosRepository');
-            await presupuestosRepository.guardar(uid, valid);
+            await presupuestosRepository.guardar(valid);
           }
           if (Object.keys(valid).length > 0) void logEvent('presupuesto_definido');
           return { ok: true };
         } catch (error) {
           set({ topes: previous });
-          void import('@shared/lib/analytics/crashlytics').then((module) =>
+          void import('@shared/lib/analytics/errorReporting').then((module) =>
             module.recordError(
               error instanceof Error ? error : new Error(String(error)),
               'presupuestos_save'

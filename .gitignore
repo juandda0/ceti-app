@@ -34,18 +34,13 @@ yarn-error.*
 .env
 .env*.local
 
-# Firebase service account (nunca commitear — tiene privilegios de admin)
+# Credenciales de servicio (nunca commitear — tiene privilegios de admin)
 serviceAccount.json
 serviceAccount*.json
 dist-scripts/
 
-# Cloud Functions (salida de tsc)
-functions/lib/
 
-# Firebase emulator debug logs
 *-debug.log
-firestore-debug.log
-firebase-debug.log
 ui-debug.log
 
 # typescript
@@ -58,15 +53,12 @@ app-example
 /android
 
 # Harness — artefactos generados (no versionar)
-.firebase/
 content/approved/*.json
 .pr-msg.txt
 
 # Claude Code — settings personales (no compartir; settings.json sí se versiona)
 .claude/settings.local.json
 
-# Secrets locales del emulador de functions (RQ-ES10)
-functions/.secret.local
 
 # Artefactos locales del acompañamiento visual
 .superpowers/

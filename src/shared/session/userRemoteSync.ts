@@ -1,5 +1,4 @@
-import { onSnapshot } from 'firebase/firestore';
-import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/app';
+import { api, isBackendConfigured } from '@shared/lib/api/client';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
 import {
   useMovimientosStore,
@@ -8,22 +7,20 @@ import {
 } from '@features/savings/store/useMovimientosStore';
 import { usePresupuestosStore } from '@features/savings/store/usePresupuestosStore';
 import { isSavingsGoal, isSavingsOperation } from '@features/savings/domain/savings';
-import { recordError } from '@shared/lib/analytics/crashlytics';
-import {
-  userGoalsCollectionRef,
-  userDepositsCollectionRef,
-  userMovimientosCollectionRef,
-  userConfigPresupuestosDocRef,
-} from '@shared/lib/firebase/paths';
+import { recordError } from '@shared/lib/analytics/errorReporting';
 
-let unsubs: (() => void)[] = [];
+type Finanzas = {
+  goals: unknown[];
+  deposits: unknown[];
+  movimientos: unknown[];
+  presupuestos: { topes?: unknown } | null;
+};
+
 let activeSyncUid = '';
 
 export function stopUserRemoteSync(): void {
   const hadActiveUser = activeSyncUid !== '';
   activeSyncUid = '';
-  unsubs.forEach((u) => u());
-  unsubs = [];
   if (hadActiveUser) {
     useSavingsStore.getState().resetSavings();
     useMovimientosStore.getState().resetMovimientos();
@@ -31,114 +28,47 @@ export function stopUserRemoteSync(): void {
   }
 }
 
-function retryOnPermissionDenied(
-  uid: string,
-  register: (uid: string) => void,
-  context: string,
-  err: unknown
-): void {
-  const code =
-    err && typeof err === 'object' && 'code' in err ? String((err as { code?: string }).code) : '';
-  if (code === 'permission-denied' && activeSyncUid === uid) {
-    setTimeout(() => {
-      if (activeSyncUid === uid) register(uid);
-    }, 3000);
-  } else {
-    void recordError(err, context);
-  }
+function validTopes(topes: unknown): Record<string, number> {
+  if (typeof topes !== 'object' || topes === null || Array.isArray(topes)) return {};
+  return Object.fromEntries(
+    Object.entries(topes).filter(
+      ([key, amount]) =>
+        MOVIMIENTO_CATEGORIAS.includes(key as (typeof MOVIMIENTO_CATEGORIAS)[number]) &&
+        Number.isInteger(amount) &&
+        Number(amount) > 0 &&
+        Number(amount) <= 100_000_000
+    )
+  ) as Record<string, number>;
 }
 
+/**
+ * Carga los datos personales de la cuenta (metas, operaciones, diario,
+ * presupuestos) al iniciar sesión. Las escrituras van por los repositorios;
+ * aquí solo se rehidrata desde el servidor (fuente de verdad entre dispositivos).
+ * ponytail: una carga por sesión en vez de listeners en vivo; recargar al volver
+ * a primer plano si un mismo usuario usa dos dispositivos a la vez.
+ */
 export function startUserRemoteSync(uid: string): void {
+  if (activeSyncUid === uid) return;
   stopUserRemoteSync();
-  if (!isFirebaseConfigured()) return;
-  const clients = getFirebaseClients();
-  if (!clients?.firestore) return;
-  const db = clients.firestore;
-  if (!uid.trim()) return;
+  if (!isBackendConfigured() || !uid.trim()) return;
   activeSyncUid = uid;
 
-  function listenGoals(listenUid: string) {
-    unsubs.push(
-      onSnapshot(
-        userGoalsCollectionRef(db, listenUid),
-        (snap) => {
-          if (snap.metadata.hasPendingWrites) return;
-          const goals = snap.docs
-            .map((x) => x.data())
-            .filter(isSavingsGoal)
-            .map((goal) => ({
-              ...goal,
-              description: '',
-              emoji: '',
-              currentAmount: 0,
-              frequency: 'total' as const,
-            }));
-          useSavingsStore.setState({ goals });
-        },
-        (err) => retryOnPermissionDenied(listenUid, listenGoals, 'user_remote_goals', err)
-      )
-    );
-  }
-
-  function listenDeposits(listenUid: string) {
-    unsubs.push(
-      onSnapshot(
-        userDepositsCollectionRef(db, listenUid),
-        (snap) => {
-          if (snap.metadata.hasPendingWrites) return;
-          const operations = snap.docs.map((x) => x.data()).filter(isSavingsOperation);
-          useSavingsStore.setState({ operations });
-        },
-        (err) => retryOnPermissionDenied(listenUid, listenDeposits, 'user_remote_deposits', err)
-      )
-    );
-  }
-
-  function listenMovimientos(listenUid: string) {
-    unsubs.push(
-      onSnapshot(
-        userMovimientosCollectionRef(db, listenUid),
-        (snap) => {
-          if (snap.metadata.hasPendingWrites) return;
-          useMovimientosStore.setState({
-            movimientos: snap.docs.map((item) => item.data()).filter(isExpenseSnapshot),
-          });
-        },
-        (err) => retryOnPermissionDenied(listenUid, listenMovimientos, 'user_remote_expenses', err)
-      )
-    );
-  }
-
-  function listenPresupuestos(listenUid: string) {
-    unsubs.push(
-      onSnapshot(
-        userConfigPresupuestosDocRef(db, listenUid),
-        (snap) => {
-          if (snap.metadata.hasPendingWrites) return;
-          const topes = snap.data()?.topes;
-          if (typeof topes !== 'object' || topes === null || Array.isArray(topes)) {
-            usePresupuestosStore.setState({ topes: {} });
-            return;
-          }
-          usePresupuestosStore.setState({
-            topes: Object.fromEntries(
-              Object.entries(topes).filter(
-                ([key, amount]) =>
-                  MOVIMIENTO_CATEGORIAS.includes(key as (typeof MOVIMIENTO_CATEGORIAS)[number]) &&
-                  Number.isInteger(amount) &&
-                  Number(amount) > 0 &&
-                  Number(amount) <= 100_000_000
-              )
-            ),
-          });
-        },
-        (err) => retryOnPermissionDenied(listenUid, listenPresupuestos, 'user_remote_budgets', err)
-      )
-    );
-  }
-
-  listenGoals(uid);
-  listenDeposits(uid);
-  listenMovimientos(uid);
-  listenPresupuestos(uid);
+  void api
+    .get<Finanzas>('/api/me/finanzas')
+    .then((f) => {
+      // Otra cuenta inició sesión mientras llegaba la respuesta: no mezclar datos.
+      if (activeSyncUid !== uid) return;
+      const goals = f.goals.filter(isSavingsGoal).map((goal) => ({
+        ...goal,
+        description: '',
+        emoji: '',
+        currentAmount: 0,
+        frequency: 'total' as const,
+      }));
+      useSavingsStore.setState({ goals, operations: f.deposits.filter(isSavingsOperation) });
+      useMovimientosStore.setState({ movimientos: f.movimientos.filter(isExpenseSnapshot) });
+      usePresupuestosStore.setState({ topes: validTopes(f.presupuestos?.topes) });
+    })
+    .catch((e) => recordError(e, 'user_remote_finanzas'));
 }

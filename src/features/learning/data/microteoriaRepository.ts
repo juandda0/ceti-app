@@ -1,21 +1,17 @@
 /**
- * microteoriaRepository — fetches a micro-theory card bank from Firestore.
+ * microteoriaRepository — fetches a micro-theory card bank from the backend.
  *
- * Collection: `microteoria/{grado}_{worldId}`
+ * Id: `{grado}_{worldId}`
  * R7: static content only; R8: read-only from runtime client.
  *
  * Returns null when:
- *  - Firebase is not configured (demo/offline mode).
+ *  - The backend is not configured (offline mode).
  *  - The document does not exist for the given (grado, worldId).
  *  - A network error occurs.
  */
-import { getDoc } from 'firebase/firestore';
-import { getFirebaseClients } from '@shared/lib/firebase/app';
-import {
-  contenidoDocId,
-  cursoContenidoDocRef,
-  microteoriaDocRef,
-} from '@shared/lib/firebase/paths';
+import { api, isBackendConfigured, seg } from '@shared/lib/api/client';
+import { contentPath, contenidoDocId, cursoPath } from '@shared/lib/api/paths';
+import { recordError } from '@shared/lib/analytics/errorReporting';
 import type { MicroteoriaBank } from './content.types';
 import type { Grado, WorldId } from './quiz.types';
 
@@ -29,24 +25,17 @@ export const microteoriaRepository = {
     worldId: WorldId,
     custom?: { colegioId: string; cursoId: string } | null
   ): Promise<MicroteoriaBank | null> {
-    const clients = getFirebaseClients();
-    if (!clients) return null;
+    if (!isBackendConfigured()) return null;
     try {
       if (custom) {
-        const customSnap = await getDoc(
-          cursoContenidoDocRef(
-            clients.firestore,
-            custom.colegioId,
-            custom.cursoId,
-            contenidoDocId.microteoria(worldId)
-          )
+        const doc = await api.getOrNull<MicroteoriaBank>(
+          `${cursoPath(custom.colegioId, custom.cursoId)}/contenido/${seg(contenidoDocId.microteoria(worldId))}`
         );
-        if (customSnap.exists()) return customSnap.data() as MicroteoriaBank;
+        if (doc) return doc;
       }
-      const snap = await getDoc(microteoriaDocRef(clients.firestore, grado, worldId));
-      if (!snap.exists()) return null;
-      return snap.data() as MicroteoriaBank;
-    } catch {
+      return await api.getOrNull<MicroteoriaBank>(contentPath.microteoria(grado, worldId));
+    } catch (e) {
+      recordError(e, 'microteoria_fetch');
       return null;
     }
   },

@@ -42,7 +42,7 @@ jest.mock('react-i18next', () => ({
       })[key] ?? key,
   }),
 }));
-jest.mock('@shared/lib/firebase/app', () => ({ isFirebaseConfigured: () => false }));
+jest.mock('@shared/lib/api/client', () => ({ isBackendConfigured: () => false }));
 jest.mock('@features/auth/data/userRepository', () => ({ userRepository: { upsertProfile: jest.fn() } }));
 jest.mock('@features/dashboard/data/joinClass', () => ({ joinClass: jest.fn() }));
 jest.mock('@features/dashboard/data/pendingInvite', () => ({ pendingInvite: { consume: jest.fn() } }));

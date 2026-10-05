@@ -47,7 +47,7 @@ export default function CreateWorldScreen() {
   const params = useLocalSearchParams<{ cursoId: string }>();
   const cursoId = params.cursoId ?? '';
   const colegioId = useAuthStore((s) => s.colegioId) ?? '';
-  const firebaseUid = useAuthStore((s) => s.firebaseUid) ?? '';
+  const authUid = useAuthStore((s) => s.uid) ?? '';
 
   const [nombre, setNombre] = useState('');
   const [tema, setTema] = useState('');
@@ -115,7 +115,7 @@ export default function CreateWorldScreen() {
       const created = await courseContentRepository.createCustomWorld({
         colegioId,
         cursoId,
-        uid: firebaseUid,
+        uid: authUid,
         config,
         worldId,
         meta: {

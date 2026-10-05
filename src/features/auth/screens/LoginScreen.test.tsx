@@ -20,12 +20,11 @@ jest.mock('@shared/hooks/useThemeColors', () => ({
 jest.mock('@shared/store/useThemeStore', () => ({
   useThemeStore: (selector: (state: { mode: string }) => unknown) => selector({ mode: 'light' }),
 }));
-jest.mock('@shared/lib/firebase/app', () => ({ isFirebaseConfigured: () => true }));
-jest.mock('@shared/lib/firebase/oauth', () => ({
+jest.mock('@shared/lib/api/client', () => ({ isBackendConfigured: () => true }));
+jest.mock('@shared/lib/auth/session', () => ({ signInDev: jest.fn() }));
+jest.mock('@shared/lib/auth/oauth', () => ({
   configureGoogleSignIn: jest.fn(),
-  isAppleSignInAvailable: () => false,
   signInWithGoogle: (...args: unknown[]) => mockSignInWithGoogle(...args),
-  signInWithApple: jest.fn(),
 }));
 jest.mock('@features/auth/data/loginIntent', () => ({
   loginIntent: { set: (...args: unknown[]) => mockSetIntent(...args) },

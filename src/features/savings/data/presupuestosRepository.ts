@@ -1,29 +1,19 @@
-import { deleteDoc, setDoc } from 'firebase/firestore';
-import { getFirebaseClients } from '@shared/lib/firebase/app';
-import { userConfigPresupuestosDocRef } from '@shared/lib/firebase/paths';
-import { stripUndefinedValues } from '@shared/lib/firebase/sanitizeForFirestore';
+import { api, isBackendConfigured } from '@shared/lib/api/client';
 import type { Presupuestos } from '@features/savings/data/presupuestos';
 
 export const presupuestosRepository = {
   /**
-   * Escribe el doc COMPLETO sin merge: un tope quitado desaparece del mapa. Un
-   * merge profundo dejaría el tope viejo fantasma. RQ-ES11-CA1.
+   * Escribe el doc COMPLETO: un tope quitado desaparece del mapa. Un merge
+   * profundo dejaría el tope viejo fantasma. RQ-ES11-CA1.
    */
-  async guardar(uid: string, topes: Presupuestos): Promise<boolean> {
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return false;
-    const ref = userConfigPresupuestosDocRef(clients.firestore, uid);
-    await setDoc(
-      ref,
-      stripUndefinedValues({ topes, updatedAt: Date.now() } as Record<string, unknown>)
-    );
+  async guardar(topes: Presupuestos): Promise<boolean> {
+    if (!isBackendConfigured()) return false;
+    await api.put('/api/me/presupuestos', { topes, updatedAt: Date.now() });
     return true;
   },
-
-  async borrar(uid: string): Promise<boolean> {
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return false;
-    await deleteDoc(userConfigPresupuestosDocRef(clients.firestore, uid));
+  async borrar(): Promise<boolean> {
+    if (!isBackendConfigured()) return false;
+    await api.del('/api/me/presupuestos');
     return true;
   },
 };

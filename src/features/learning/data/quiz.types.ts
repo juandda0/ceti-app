@@ -1,6 +1,6 @@
 /**
- * Quiz item types for the static question bank (bancos/ collection in Firestore).
- * Fields are in Spanish to match the Firestore document shape authored via the
+ * Quiz item types for the static question bank (served by the backend from content/).
+ * Fields are in Spanish to match the JSON document shape authored via the
  * content pipeline (authoring-time). R8: banks are read-only at runtime; R7: no
  * adaptive/ML selection at runtime; R9: exactly 10 items = 4 MC + 3 VF + 3 ordenar.
  */
@@ -65,7 +65,7 @@ export type QuizItem = MultipleChoiceItem | TrueFalseItem | OrdenarItem;
 // ─── Banco document shape ──────────────────────────────────────────────────────
 
 /**
- * A single Firestore document in the `bancos` top-level collection.
+ * A single banco document (`/api/content/bancos/{id}`).
  * Document id: `${grado}_${worldId}_${tipo}` (e.g. "9_world_1_multiple_choice").
  */
 export interface BancoDoc {

@@ -26,14 +26,14 @@ export default function StudentAssignmentsBanner() {
   const role = useAuthStore((s) => s.role);
   const colegioId = useAuthStore((s) => s.colegioId);
   const cursoId = useAuthStore((s) => s.cursoId);
-  const uid = useAuthStore((s) => s.firebaseUid);
+  const uid = useAuthStore((s) => s.uid);
 
   const [items, setItems] = useState<AsignacionWithId[]>([]);
 
   useEffect(() => {
     let cancelled = false;
     if (role !== 'estudiante' || !colegioId || !cursoId || !uid) return;
-    void asignacionRepository.listForStudent(colegioId, cursoId, uid).then((list) => {
+    void asignacionRepository.listForStudent(colegioId, cursoId).then((list) => {
       if (!cancelled) setItems(list);
     });
     return () => {

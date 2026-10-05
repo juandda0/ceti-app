@@ -27,8 +27,8 @@ const POLICY_VERSION = 'v1';
 /**
  * Per-course operations screen for the profesor (D-PIVOT): class code, class
  * collaboration toggle, roster with Ley 1581 attestation, and suppression. The
- * profesor operates ONLY their own course (firestore.rules + the Cloud Functions
- * enforce it). Assigning teachers / creating structure is Admin SDK only (backend).
+ * profesor operates ONLY their own course (the backend
+ * enforces it). Assigning teachers / creating structure is backend-only.
  */
 export default function CourseManageScreen() {
   const { t } = useTranslation();

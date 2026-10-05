@@ -1,15 +1,15 @@
 import { vozService } from '@features/savings/data/vozService';
-import { callFunction } from '@shared/lib/firebase/functions';
+import { api } from '@shared/lib/api/client';
 
-jest.mock('@shared/lib/firebase/functions', () => ({ callFunction: jest.fn() }));
+jest.mock('@shared/lib/api/client', () => ({ api: { post: jest.fn() } }));
 
-const callFunctionMock = jest.mocked(callFunction);
+const postMock = jest.mocked(api.post);
 
 describe('vozService.planificar', () => {
-  beforeEach(() => callFunctionMock.mockReset());
+  beforeEach(() => postMock.mockReset());
 
   it('sustituye el título exacto de una meta por su ID opaco antes de enviarlo', async () => {
-    callFunctionMock.mockResolvedValue({
+    postMock.mockResolvedValue({
       actions: [
         {
           actionId: 'r:0',
@@ -29,7 +29,7 @@ describe('vozService.planificar', () => {
 
     await vozService.planificar('elimina Viaje a Japón', context, 'r');
 
-    expect(callFunctionMock).toHaveBeenCalledWith('planificarAccionesFinancieras', {
+    expect(postMock).toHaveBeenCalledWith('/api/ia/plan-financiero', {
       text: 'elimina goal_opaque_1',
       context,
       requestId: 'r',
@@ -38,7 +38,7 @@ describe('vozService.planificar', () => {
   });
 
   it('limita a 300 el texto final después de expandir un alias', async () => {
-    callFunctionMock.mockResolvedValue({
+    postMock.mockResolvedValue({
       actions: [
         {
           actionId: 'r:0',
@@ -57,12 +57,12 @@ describe('vozService.planificar', () => {
 
     await vozService.planificar('B'.repeat(300), context, 'r');
 
-    const sent = callFunctionMock.mock.calls[0]?.[1] as { text: string };
+    const sent = postMock.mock.calls[0]?.[1] as { text: string };
     expect(sent.text).toHaveLength(300);
   });
 
   it('reemplaza títulos sin importar mayúsculas, con límites de frase Unicode', async () => {
-    callFunctionMock.mockResolvedValue({
+    postMock.mockResolvedValue({
       actions: [
         {
           actionId: 'r:0',
@@ -81,14 +81,14 @@ describe('vozService.planificar', () => {
 
     await vozService.planificar('edita viaje (JAPÓN), no Viaje (Japón)es', context, 'r');
 
-    expect(callFunctionMock).toHaveBeenCalledWith(
-      'planificarAccionesFinancieras',
+    expect(postMock).toHaveBeenCalledWith(
+      '/api/ia/plan-financiero',
       expect.objectContaining({ text: 'edita goal_1, no Viaje (Japón)es' })
     );
   });
 
   it('no reemplaza un título dentro de otra palabra', async () => {
-    callFunctionMock.mockResolvedValue({
+    postMock.mockResolvedValue({
       actions: [
         {
           actionId: 'r:0',
@@ -107,14 +107,14 @@ describe('vozService.planificar', () => {
 
     await vozService.planificar('consulta Viajes', context, 'r');
 
-    expect(callFunctionMock).toHaveBeenCalledWith(
-      'planificarAccionesFinancieras',
+    expect(postMock).toHaveBeenCalledWith(
+      '/api/ia/plan-financiero',
       expect.objectContaining({ text: 'consulta Viajes' })
     );
   });
 
   it('conserva un ID completo cerca del límite de 300', async () => {
-    callFunctionMock.mockResolvedValue({
+    postMock.mockResolvedValue({
       actions: [
         {
           actionId: 'r:0',
@@ -134,14 +134,14 @@ describe('vozService.planificar', () => {
 
     await vozService.planificar(`${'a'.repeat(240)} Viaje ${'b'.repeat(100)}`, context, 'r');
 
-    const sent = callFunctionMock.mock.calls[0]?.[1] as { text: string };
+    const sent = postMock.mock.calls[0]?.[1] as { text: string };
     expect(sent.text.length).toBeLessThanOrEqual(300);
     expect(sent.text).toContain(goalId);
   });
 
   it('no registra con el parser local cuando la IA no está disponible', async () => {
     const remoteError = new Error('offline');
-    callFunctionMock.mockRejectedValue(remoteError);
+    postMock.mockRejectedValue(remoteError);
 
     await expect(
       vozService.planificar(
@@ -154,7 +154,7 @@ describe('vozService.planificar', () => {
 
   it('relanza el error remoto cuando el fallback no entiende la solicitud', async () => {
     const remoteError = new Error('offline');
-    callFunctionMock.mockRejectedValue(remoteError);
+    postMock.mockRejectedValue(remoteError);
 
     await expect(
       vozService.planificar(

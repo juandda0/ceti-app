@@ -83,7 +83,7 @@ export default function ContentEditorScreen() {
   const cursoId = params.cursoId ?? '';
   const worldId = params.worldId ?? '';
   const colegioId = useAuthStore((s) => s.colegioId) ?? '';
-  const firebaseUid = useAuthStore((s) => s.firebaseUid) ?? '';
+  const authUid = useAuthStore((s) => s.uid) ?? '';
 
   const def = worldDefById(worldId);
 
@@ -222,7 +222,7 @@ export default function ContentEditorScreen() {
       const ok = await courseContentRepository.savePiece({
         colegioId,
         cursoId,
-        uid: firebaseUid,
+        uid: authUid,
         config,
         worldId,
         piece,
@@ -265,7 +265,7 @@ export default function ContentEditorScreen() {
       const ok = await courseContentRepository.savePiece({
         colegioId,
         cursoId,
-        uid: firebaseUid,
+        uid: authUid,
         config,
         worldId,
         piece: 'teoria',
@@ -295,7 +295,7 @@ export default function ContentEditorScreen() {
           await courseContentRepository.restorePiece({
             colegioId,
             cursoId,
-            uid: firebaseUid,
+            uid: authUid,
             config,
             worldId,
             piece,
@@ -312,7 +312,7 @@ export default function ContentEditorScreen() {
       await courseContentRepository.saveWorldMeta({
         colegioId,
         cursoId,
-        uid: firebaseUid,
+        uid: authUid,
         config,
         worldId,
         meta: metaDraft,

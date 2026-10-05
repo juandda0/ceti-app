@@ -1,4 +1,4 @@
-// The store fires a fire-and-forget Firestore sync via dynamic import() inside
+// The store fires a fire-and-forget backend sync via dynamic import() inside
 // addDeposit/removeGoal. We mock those modules so the side-effect resolves
 // cleanly in the Jest VM. The pure client logic under test is untouched.
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
@@ -6,9 +6,9 @@ import { goalsRepository } from '@features/savings/data/goalsRepository';
 import { logEvent } from '@shared/lib/analytics/logEvent';
 
 jest.mock('@shared/lib/analytics/logEvent', () => ({ logEvent: jest.fn() }));
-jest.mock('@shared/lib/analytics/crashlytics', () => ({ recordError: jest.fn() }));
+jest.mock('@shared/lib/analytics/errorReporting', () => ({ recordError: jest.fn() }));
 jest.mock('@features/auth/store/useAuthStore', () => ({
-  useAuthStore: { getState: () => ({ firebaseUid: 'uid-test' }) },
+  useAuthStore: { getState: () => ({ uid: 'uid-test' }) },
 }));
 jest.mock('@features/savings/data/depositsRepository', () => ({
   depositsRepository: {

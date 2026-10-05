@@ -2,7 +2,7 @@ import type { Href, ImperativeRouter } from 'expo-router';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 
 /**
- * Cierra sesión (stores + Firebase OAuth) y redirige. Un solo punto de salida.
+ * Cierra sesión (stores + sesión del backend + Google) y redirige. Un solo punto de salida.
  */
 export async function performLogoutAndGo(
   router: ImperativeRouter,

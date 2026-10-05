@@ -4,7 +4,7 @@
  * The professor curates their class here: show/hide worlds and reorder them
  * (drag: long-press and move up/down). Every interaction saves immediately (no
  * "save" button — least friction) and reaches students in real time via their
- * onSnapshot on the same doc. "Restaurar configuración" deletes the doc, which
+ * polling of the same config. "Restaurar configuración" deletes the doc, which
  * IS the defaults, so it is always safe.
  */
 import { useEffect, useMemo, useState } from 'react';
@@ -36,7 +36,7 @@ export default function ClassWorldsManager({
   const { t } = useTranslation();
   const colors = useThemeColors();
   const router = useRouter();
-  const firebaseUid = useAuthStore((s) => s.firebaseUid);
+  const authUid = useAuthStore((s) => s.uid);
   const [config, setConfig] = useState<CursoConfigMundos | null>(null);
   const [loaded, setLoaded] = useState(false);
 
@@ -57,13 +57,13 @@ export default function ClassWorldsManager({
     [config]
   );
   const save = (mundos: CursoConfigMundoEntry[]) => {
-    if (!firebaseUid) return;
+    if (!authUid) return;
     // buildCuratedConfig preserva `overrides` (fuente de verdad del contenido
     // copy-on-write): perderlos revertía las ediciones del profesor.
     void classConfigRepository.upsert(
       colegioId,
       cursoId,
-      buildCuratedConfig(config, mundos, firebaseUid, Date.now())
+      buildCuratedConfig(config, mundos, authUid, Date.now())
     );
   };
 
@@ -102,7 +102,7 @@ export default function ClassWorldsManager({
         void courseContentRepository.deleteCustomWorld({
           colegioId,
           cursoId,
-          uid: firebaseUid ?? '',
+          uid: authUid ?? '',
           config,
           worldId,
         }),
@@ -113,8 +113,8 @@ export default function ClassWorldsManager({
   const [targetCursos, setTargetCursos] = useState<{ id: string; nombre: string }[] | null>(null);
   const onDuplicate = async (worldId: string, name: string) => {
     setDuplicateFor({ worldId, name });
-    if (targetCursos === null && firebaseUid) {
-      const cursos = await rosterRepository.getCursosByProfesor(colegioId, firebaseUid);
+    if (targetCursos === null && authUid) {
+      const cursos = await rosterRepository.getCursosByProfesor(colegioId);
       setTargetCursos(
         cursos.filter((c) => c.id !== cursoId).map((c) => ({ id: c.id, nombre: c.nombre }))
       );
@@ -128,7 +128,7 @@ export default function ClassWorldsManager({
       colegioId,
       fromCursoId: cursoId,
       toCursoId,
-      uid: firebaseUid ?? '',
+      uid: authUid ?? '',
       worldId,
     });
     showMessage(

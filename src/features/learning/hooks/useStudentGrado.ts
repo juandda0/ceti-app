@@ -2,7 +2,7 @@
  * useStudentGrado — resolves the student's grado from their CURSO.
  *
  * R4: grado lives on `cursos/{cursoId}.grado`, never on the minor. The student
- * carries `colegioId`/`cursoId` as custom claims; the grade is read from the
+ * carries `colegioId`/`cursoId` (set by the backend); the grade is read from the
  * course doc. Returns `null` while resolving so callers can avoid fetching
  * content for the wrong grade; falls back to '9' for demo/offline students with
  * no provisioned course.

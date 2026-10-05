@@ -44,7 +44,7 @@ export interface WorldFlowResult {
 /**
  * Resolves the three-phase flow for a given (uid, grado, worldId).
  *
- * @param uid       Firebase UID (or local/demo fallback).
+ * @param uid       Account id (or local/demo fallback).
  * @param grado     Student's grade — null while still resolving (spinner gate).
  * @param worldId   The world being entered.
  */

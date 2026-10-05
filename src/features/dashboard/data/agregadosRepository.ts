@@ -1,16 +1,12 @@
-import { getDoc } from 'firebase/firestore';
-import { getFirebaseClients } from '@shared/lib/firebase/app';
-import { agregadoDocRef } from '@shared/lib/firebase/paths';
+import { api } from '@shared/lib/api/client';
+import { cursoPath } from '@shared/lib/api/paths';
 
 /**
- * Per-course aggregate doc (`agregados/resumen`), written ONLY by the
- * onProgressWriteAggregate Cloud Function (Admin SDK). Contains ZERO nominal
- * data — only counts and per-competency / per-world averages (RQ-FN09). This is
- * the profesor's colegio-wide reporting view (D-PIVOT): nominal progress outside
- * their own courses is denied by firestore.rules, so the school report is built
- * from these aggregates instead (matriz §1.3).
+ * Per-course aggregate, computed by the backend from the course's progress.
+ * Contains ZERO nominal data — only counts and per-competency / per-world
+ * averages (RQ-FN09). This is the profesor's colegio-wide reporting view
+ * (D-PIVOT), so the school report is built from these aggregates (matriz §1.3).
  */
-export const AGREGADO_RESUMEN_ID = 'resumen';
 
 export interface CompetenciaAgregado {
   masteryPromedio: number;
@@ -32,19 +28,13 @@ export interface ResumenAgregado {
   estudiantesActivos: number;
   masteryPromedio: number;
   porcentajeCompletado: number;
-  /** Firestore Timestamp; not consumed by the UI, kept for freshness/debug. */
-  actualizadoAt?: unknown;
+  /** Epoch ms; not consumed by the UI, kept for freshness/debug. */
+  actualizadoAt?: number;
 }
 
 export const agregadosRepository = {
   /** The course's aggregate resumen, or null if none has been computed yet. */
   async getResumen(colegioId: string, cursoId: string): Promise<ResumenAgregado | null> {
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return null;
-    const snap = await getDoc(
-      agregadoDocRef(clients.firestore, colegioId, cursoId, AGREGADO_RESUMEN_ID)
-    );
-    if (!snap.exists()) return null;
-    return snap.data() as ResumenAgregado;
+    return api.getOrNull<ResumenAgregado>(`${cursoPath(colegioId, cursoId)}/agregado`);
   },
 };

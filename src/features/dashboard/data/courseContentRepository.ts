@@ -2,21 +2,14 @@
  * courseContentRepository — professor-side writes of course-custom content
  * (D-ORQ, RQ-PR11). Copy-on-write: the global defaults are NEVER mutated; the
  * first save of a piece copies it (with the edit applied) into
- * `cursos/{cursoId}/contenido/*` and flips the piece's override flag in the
- * class-config doc — both in ONE batch, so there is never a mixed state. Every
+ * the course's contenido and flips the piece's override flag in the
+ * class-config doc — both in ONE backend transaction, so there is never a mixed state. Every
  * save bumps the config `version`, which is the students' cache-invalidation
  * key. "Restaurar default" deletes the copy and clears the flag (also a batch).
  */
-import { getDoc, writeBatch } from 'firebase/firestore';
-import { getFirebaseClients } from '@shared/lib/firebase/app';
-import {
-  bancoDocRef,
-  contenidoDocId,
-  cursoConfigMundosDocRef,
-  cursoContenidoDocRef,
-  microteoriaDocRef,
-} from '@shared/lib/firebase/paths';
-import { stripUndefinedValues } from '@shared/lib/firebase/sanitizeForFirestore';
+import { api, isBackendConfigured, seg } from '@shared/lib/api/client';
+import { contentPath, contenidoDocId, cursoPath } from '@shared/lib/api/paths';
+import { classConfigRepository } from '@features/dashboard/data/classConfigRepository';
 import { WORLD_ORDER } from '@features/learning/data/competencias';
 import type { BancoDoc, Grado, QuizTipo } from '@features/learning/data/quiz.types';
 import type { MicroteoriaBank } from '@features/learning/data/content.types';
@@ -29,6 +22,20 @@ export const PIECE_TO_TIPO: Record<'mc' | 'vf' | 'ordenar', QuizTipo> = {
   vf: 'true_false',
   ordenar: 'ordenar',
 };
+
+function contenidoPath(colegioId: string, cursoId: string, docId: string): string {
+  return `${cursoPath(colegioId, cursoId)}/contenido/${seg(docId)}`;
+}
+
+/** Contenido + config en UNA transacción del backend: nunca queda un estado mixto. */
+async function commitBatch(
+  colegioId: string,
+  cursoId: string,
+  batch: { config: CursoConfigMundos; set?: Record<string, unknown>; delete?: string[] }
+): Promise<void> {
+  await api.post(`${cursoPath(colegioId, cursoId)}/contenido/batch`, batch);
+  classConfigRepository.notifyChanged(colegioId, cursoId);
+}
 
 function docIdForPiece(worldId: string, piece: ContentPiece): string {
   if (piece === 'teoria') return contenidoDocId.microteoria(worldId);
@@ -100,17 +107,18 @@ export const courseContentRepository = {
     piece: 'mc' | 'vf' | 'ordenar',
     isCustom: boolean
   ): Promise<{ doc: BancoDoc | null; source: 'custom' | 'default' }> {
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return { doc: null, source: 'default' };
+    if (!isBackendConfigured()) return { doc: null, source: 'default' };
     const tipo = PIECE_TO_TIPO[piece];
     if (isCustom) {
-      const snap = await getDoc(
-        cursoContenidoDocRef(clients.firestore, colegioId, cursoId, docIdForPiece(worldId, piece))
+      const doc = await api.getOrNull<BancoDoc>(
+        contenidoPath(colegioId, cursoId, docIdForPiece(worldId, piece))
       );
-      if (snap.exists()) return { doc: snap.data() as BancoDoc, source: 'custom' };
+      if (doc) return { doc, source: 'custom' };
     }
-    const snap = await getDoc(bancoDocRef(clients.firestore, grado, worldId, tipo));
-    return { doc: snap.exists() ? (snap.data() as BancoDoc) : null, source: 'default' };
+    return {
+      doc: await api.getOrNull<BancoDoc>(contentPath.banco(grado, worldId, tipo)),
+      source: 'default',
+    };
   },
 
   async loadResolvedMicroteoria(
@@ -120,21 +128,17 @@ export const courseContentRepository = {
     worldId: string,
     isCustom: boolean
   ): Promise<{ doc: MicroteoriaBank | null; source: 'custom' | 'default' }> {
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return { doc: null, source: 'default' };
+    if (!isBackendConfigured()) return { doc: null, source: 'default' };
     if (isCustom) {
-      const snap = await getDoc(
-        cursoContenidoDocRef(
-          clients.firestore,
-          colegioId,
-          cursoId,
-          docIdForPiece(worldId, 'teoria')
-        )
+      const doc = await api.getOrNull<MicroteoriaBank>(
+        contenidoPath(colegioId, cursoId, docIdForPiece(worldId, 'teoria'))
       );
-      if (snap.exists()) return { doc: snap.data() as MicroteoriaBank, source: 'custom' };
+      if (doc) return { doc, source: 'custom' };
     }
-    const snap = await getDoc(microteoriaDocRef(clients.firestore, grado, worldId));
-    return { doc: snap.exists() ? (snap.data() as MicroteoriaBank) : null, source: 'default' };
+    return {
+      doc: await api.getOrNull<MicroteoriaBank>(contentPath.microteoria(grado, worldId)),
+      source: 'default',
+    };
   },
 
   /**
@@ -152,21 +156,14 @@ export const courseContentRepository = {
     doc: Record<string, unknown>;
   }): Promise<boolean> {
     const { colegioId, cursoId, uid, config, worldId, piece } = params;
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return false;
-    const batch = writeBatch(clients.firestore);
-    batch.set(
-      cursoContenidoDocRef(clients.firestore, colegioId, cursoId, docIdForPiece(worldId, piece)),
-      stripUndefinedValues(params.doc)
-    );
+    if (!isBackendConfigured()) return false;
     const nextConfig = buildNextConfig(config, uid, (draft) =>
       setOverrideFlag(draft, worldId, piece, true)
     );
-    batch.set(
-      cursoConfigMundosDocRef(clients.firestore, colegioId, cursoId),
-      stripUndefinedValues({ ...nextConfig } as Record<string, unknown>)
-    );
-    await batch.commit();
+    await commitBatch(colegioId, cursoId, {
+      config: nextConfig,
+      set: { [docIdForPiece(worldId, piece)]: params.doc },
+    });
     return true;
   },
 
@@ -180,20 +177,14 @@ export const courseContentRepository = {
     piece: ContentPiece;
   }): Promise<boolean> {
     const { colegioId, cursoId, uid, config, worldId, piece } = params;
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return false;
-    const batch = writeBatch(clients.firestore);
-    batch.delete(
-      cursoContenidoDocRef(clients.firestore, colegioId, cursoId, docIdForPiece(worldId, piece))
-    );
+    if (!isBackendConfigured()) return false;
     const nextConfig = buildNextConfig(config, uid, (draft) =>
       setOverrideFlag(draft, worldId, piece, false)
     );
-    batch.set(
-      cursoConfigMundosDocRef(clients.firestore, colegioId, cursoId),
-      stripUndefinedValues({ ...nextConfig } as Record<string, unknown>)
-    );
-    await batch.commit();
+    await commitBatch(colegioId, cursoId, {
+      config: nextConfig,
+      delete: [docIdForPiece(worldId, piece)],
+    });
     return true;
   },
 
@@ -214,41 +205,28 @@ export const courseContentRepository = {
     pieces?: Partial<Record<ContentPiece, Record<string, unknown>>>;
   }): Promise<string | null> {
     const { colegioId, cursoId, uid, config, worldId, meta, pieces } = params;
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return null;
-    const batch = writeBatch(clients.firestore);
+    if (!isBackendConfigured()) return null;
+    const set: Record<string, unknown> = {};
     for (const [piece, doc] of Object.entries(pieces ?? {})) {
-      batch.set(
-        cursoContenidoDocRef(
-          clients.firestore,
-          colegioId,
-          cursoId,
-          docIdForPiece(worldId, piece as ContentPiece)
-        ),
-        stripUndefinedValues(doc)
-      );
+      set[docIdForPiece(worldId, piece as ContentPiece)] = doc;
     }
     const nextConfig = buildNextConfig(config, uid, (draft) => {
       draft.mundos = [
         ...draft.mundos,
-        stripUndefinedValues({
+        {
           worldId,
           activo: false,
           nombre: meta.nombre.trim(),
           subtitle: meta.subtitle?.trim() || undefined,
           descripcion: meta.descripcion?.trim() || undefined,
           competencia: meta.competencia || undefined,
-        }) as CursoConfigMundos['mundos'][number],
+        },
       ];
       for (const piece of Object.keys(pieces ?? {})) {
         setOverrideFlag(draft, worldId, piece as ContentPiece, true);
       }
     });
-    batch.set(
-      cursoConfigMundosDocRef(clients.firestore, colegioId, cursoId),
-      stripUndefinedValues({ ...nextConfig } as Record<string, unknown>)
-    );
-    await batch.commit();
+    await commitBatch(colegioId, cursoId, { config: nextConfig, set });
     return worldId;
   },
 
@@ -262,15 +240,13 @@ export const courseContentRepository = {
     cursoId: string,
     worldId: string
   ): Promise<{ ready: boolean; faltan: ('mc' | 'vf' | 'ordenar' | 'teoria')[] }> {
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return { ready: false, faltan: ['mc', 'vf', 'ordenar', 'teoria'] };
+    if (!isBackendConfigured()) return { ready: false, faltan: ['mc', 'vf', 'ordenar', 'teoria'] };
     const minimums = { mc: 4, vf: 3, ordenar: 3, teoria: 1 } as const;
     const reads = await Promise.all(
       (['mc', 'vf', 'ordenar', 'teoria'] as const).map(async (piece) => {
-        const snap = await getDoc(
-          cursoContenidoDocRef(clients.firestore, colegioId, cursoId, docIdForPiece(worldId, piece))
+        const data = await api.getOrNull<Record<string, unknown>>(
+          contenidoPath(colegioId, cursoId, docIdForPiece(worldId, piece))
         );
-        const data = snap.exists() ? (snap.data() as Record<string, unknown>) : null;
         const list = (piece === 'teoria' ? data?.cards : data?.items) as unknown[] | undefined;
         return { piece, count: list?.length ?? 0 };
       })
@@ -292,25 +268,18 @@ export const courseContentRepository = {
     worldId: string;
   }): Promise<boolean> {
     const { colegioId, cursoId, uid, config, worldId } = params;
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return false;
-    const batch = writeBatch(clients.firestore);
-    for (const piece of ['mc', 'vf', 'ordenar', 'teoria', 'eligeCamino'] as ContentPiece[]) {
-      batch.delete(
-        cursoContenidoDocRef(clients.firestore, colegioId, cursoId, docIdForPiece(worldId, piece))
-      );
-    }
+    if (!isBackendConfigured()) return false;
+    const pieces: ContentPiece[] = ['mc', 'vf', 'ordenar', 'teoria', 'eligeCamino'];
     const nextConfig = buildNextConfig(config, uid, (draft) => {
       draft.mundos = draft.mundos.filter((m) => m.worldId !== worldId);
       const overrides = { ...(draft.overrides ?? {}) };
       delete overrides[worldId];
       draft.overrides = overrides;
     });
-    batch.set(
-      cursoConfigMundosDocRef(clients.firestore, colegioId, cursoId),
-      stripUndefinedValues({ ...nextConfig } as Record<string, unknown>)
-    );
-    await batch.commit();
+    await commitBatch(colegioId, cursoId, {
+      config: nextConfig,
+      delete: pieces.map((piece) => docIdForPiece(worldId, piece)),
+    });
     return true;
   },
 
@@ -327,47 +296,27 @@ export const courseContentRepository = {
     worldId: string;
   }): Promise<boolean> {
     const { colegioId, fromCursoId, toCursoId, uid, worldId } = params;
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return false;
-    const [fromConfigSnap, toConfigSnap] = await Promise.all([
-      getDoc(cursoConfigMundosDocRef(clients.firestore, colegioId, fromCursoId)),
-      getDoc(cursoConfigMundosDocRef(clients.firestore, colegioId, toCursoId)),
-    ]);
-    const fromConfig = fromConfigSnap.exists()
-      ? (fromConfigSnap.data() as CursoConfigMundos)
-      : null;
+    if (!isBackendConfigured()) return false;
+    const configOf = (c: string) =>
+      api.getOrNull<CursoConfigMundos>(`${cursoPath(colegioId, c)}/config`);
+    const [fromConfig, toConfig] = await Promise.all([configOf(fromCursoId), configOf(toCursoId)]);
     const entry = fromConfig?.mundos.find((m) => m.worldId === worldId);
     if (!entry) return false;
-    const toConfig = toConfigSnap.exists() ? (toConfigSnap.data() as CursoConfigMundos) : null;
     if (toConfig?.mundos.some((m) => m.worldId === worldId)) return false; // already there
 
     const pieces: ContentPiece[] = ['mc', 'vf', 'ordenar', 'teoria', 'eligeCamino'];
     const docs = await Promise.all(
       pieces.map(async (piece) => {
-        const snap = await getDoc(
-          cursoContenidoDocRef(
-            clients.firestore,
-            colegioId,
-            fromCursoId,
-            docIdForPiece(worldId, piece)
-          )
+        const data = await api.getOrNull<Record<string, unknown>>(
+          contenidoPath(colegioId, fromCursoId, docIdForPiece(worldId, piece))
         );
-        return { piece, data: snap.exists() ? snap.data() : null };
+        return { piece, data };
       })
     );
 
-    const batch = writeBatch(clients.firestore);
+    const set: Record<string, unknown> = {};
     for (const { piece, data } of docs) {
-      if (!data) continue;
-      batch.set(
-        cursoContenidoDocRef(
-          clients.firestore,
-          colegioId,
-          toCursoId,
-          docIdForPiece(worldId, piece)
-        ),
-        data
-      );
+      if (data) set[docIdForPiece(worldId, piece)] = data;
     }
     const nextConfig = buildNextConfig(toConfig, uid, (draft) => {
       draft.mundos = [...draft.mundos, { ...entry, activo: false }];
@@ -375,11 +324,7 @@ export const courseContentRepository = {
         if (data) setOverrideFlag(draft, worldId, piece, true);
       }
     });
-    batch.set(
-      cursoConfigMundosDocRef(clients.firestore, colegioId, toCursoId),
-      stripUndefinedValues({ ...nextConfig } as Record<string, unknown>)
-    );
-    await batch.commit();
+    await commitBatch(colegioId, toCursoId, { config: nextConfig, set });
     return true;
   },
 
@@ -397,8 +342,7 @@ export const courseContentRepository = {
     meta: { nombre?: string; subtitle?: string; descripcion?: string };
   }): Promise<boolean> {
     const { colegioId, cursoId, uid, config, worldId, meta } = params;
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return false;
+    if (!isBackendConfigured()) return false;
     const nextConfig = buildNextConfig(config, uid, (draft) => {
       draft.mundos = draft.mundos.map((m) => {
         if (m.worldId !== worldId) return m;
@@ -414,12 +358,6 @@ export const courseContentRepository = {
         return entry;
       });
     });
-    const { setDoc } = await import('firebase/firestore');
-    await setDoc(
-      cursoConfigMundosDocRef(clients.firestore, colegioId, cursoId),
-      stripUndefinedValues({ ...nextConfig } as Record<string, unknown>),
-      { merge: false }
-    );
-    return true;
+    return classConfigRepository.upsert(colegioId, cursoId, nextConfig);
   },
 };

@@ -1,15 +1,10 @@
-import { getDocs, setDoc } from 'firebase/firestore';
-import { getFirebaseClients } from '@shared/lib/firebase/app';
-import {
-  estudianteProgressCollectionRef,
-  estudianteProgressDocRef,
-} from '@shared/lib/firebase/paths';
-import { stripUndefinedValues } from '@shared/lib/firebase/sanitizeForFirestore';
+import { api, isBackendConfigured, seg } from '@shared/lib/api/client';
+import { estudiantePath } from '@shared/lib/api/paths';
 import type { WorldProgress } from '@shared/types/tenancy';
 
 /**
- * Tenant-tree progress: students write their own (gated by firestore.rules to
- * estado=='activo'); teachers/staff read it for the dashboard.
+ * Tenant-tree progress: students write their own (the backend gates it to
+ * estado=='activo'); teachers read it for the dashboard.
  */
 export const worldProgressRepository = {
   async upsert(
@@ -19,27 +14,17 @@ export const worldProgressRepository = {
     worldId: string,
     progress: WorldProgress
   ): Promise<boolean> {
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return false;
-    const ref = estudianteProgressDocRef(clients.firestore, colegioId, cursoId, uid, worldId);
-    await setDoc(ref, stripUndefinedValues({ ...progress } as Record<string, unknown>), {
-      merge: true,
-    });
+    if (!isBackendConfigured()) return false;
+    await api.put(`${estudiantePath(colegioId, cursoId, uid)}/progress/${seg(worldId)}`, progress);
     return true;
   },
-
+  /** Each entry carries its `worldId` so callers can rehydrate per-world state. */
   async getStudentProgress(
     colegioId: string,
     cursoId: string,
     uid: string
   ): Promise<(WorldProgress & { worldId: string })[]> {
-    const clients = getFirebaseClients();
-    if (!clients?.firestore) return [];
-    const snap = await getDocs(
-      estudianteProgressCollectionRef(clients.firestore, colegioId, cursoId, uid)
-    );
-    // The doc id is the worldId (path key); callers need it to rehydrate per-world
-    // unlock/progress state, so surface it alongside the denormalized data.
-    return snap.docs.map((d) => ({ ...(d.data() as WorldProgress), worldId: d.id }));
+    if (!isBackendConfigured()) return [];
+    return api.get(`${estudiantePath(colegioId, cursoId, uid)}/progress`);
   },
 };

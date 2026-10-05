@@ -29,7 +29,7 @@ export default function StaffHomeScreen() {
   const insets = useSafeAreaInsets();
   const role = useAuthStore((s) => s.role);
   const colegioId = useAuthStore((s) => s.colegioId);
-  const uid = useAuthStore((s) => s.firebaseUid);
+  const uid = useAuthStore((s) => s.uid);
 
   const [cursos, setCursos] = useState<CursoWithId[]>([]);
   const [colegioNombre, setColegioNombre] = useState<string | null>(null);
@@ -54,7 +54,7 @@ export default function StaffHomeScreen() {
     }
     setStatus('loading');
     void rosterRepository
-      .getCursosByProfesor(colegioId, uid)
+      .getCursosByProfesor(colegioId)
       .then((list) => {
         if (!cancelled) {
           setCursos(list);

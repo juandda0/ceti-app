@@ -8,7 +8,7 @@ import type {
   MovimientoIntencion,
   MovimientoTipo,
 } from '@features/savings/store/useMovimientosStore';
-import { callFunction } from '@shared/lib/firebase/functions';
+import { api } from '@shared/lib/api/client';
 
 export const VOZ_MAX_CHARS = 300;
 
@@ -56,7 +56,7 @@ export const vozService = {
     const rawText = texto.slice(0, VOZ_MAX_CHARS);
     const remoteText = truncateAtTokenBoundary(replaceGoalAliases(rawText, context));
     return parseClientFinancialPlan(
-      await callFunction('planificarAccionesFinancieras', {
+      await api.post('/api/ia/plan-financiero', {
         text: remoteText,
         context,
         requestId,

@@ -2,13 +2,13 @@
  * Tenancy & role types for the B2B2C model. Shared across features (auth,
  * dashboard, learning).
  *
- * Identity (Ley 1581, R1/R4): a student is keyed by their Firebase Auth `uid`;
+ * Identity (Ley 1581, R1/R4): a student is keyed by their account id (`uid`);
  * the only PII stored is `email` + `nombre`. There is NO pseudonym key
  * and NO active sede claim.
  */
 
 // D-PIVOT/D-ADMIN: three roles. Admin provisions through an in-app panel backed
-// by Cloud Functions; rector/coordinador are removed.
+// by the backend; rector/coordinador are removed.
 export const ROLES = ['admin', 'profesor', 'estudiante'] as const;
 export type Role = (typeof ROLES)[number];
 
@@ -20,8 +20,8 @@ export function isRole(value: unknown): value is Role {
 export const STAFF_ROLES = ['profesor'] as const;
 
 /**
- * Custom claims set on the Firebase Auth token (see functions/). The ONLY
- * trusted source of authorization (R2). `admin` is global (no `colegioId`);
+ * Role/tenant of the account, set ONLY by the backend (see backend/). The
+ * server is the trusted source of authorization (R2); the client mirrors it. `admin` is global (no `colegioId`);
  * `cursoId` only applies to `estudiante`. No pseudonym, no sede claim (R1/R2).
  */
 export type CetiClaims = {
@@ -151,7 +151,7 @@ export type CursoConfigMundoEntry = {
  * `cursos/{cursoId}/config/mundos`. ABSENCE of the doc = defaults (the 5
  * default worlds, canonical order, all active) — that is what keeps pre-existing
  * courses working with zero migration. Written only by the course profesor; read
- * by the course (students subscribe via onSnapshot).
+ * by the course (students poll it).
  */
 export type CursoConfigMundos = {
   /** Ordered world list; order here IS the unlock order. */
