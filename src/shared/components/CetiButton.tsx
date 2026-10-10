@@ -21,8 +21,18 @@ import { Ionicons } from '@expo/vector-icons';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { Typography } from '@shared/constants/typography';
 import { BorderRadius, Spacing, Shadows } from '@shared/constants/theme';
+import { BrandColors } from '@shared/constants/colors';
 
-type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'destructive' | 'gold' | 'glass' | 'solid';
+type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'ghost'
+  | 'destructive'
+  | 'gold'
+  | 'glass'
+  | 'solid'
+  /** Sobre fondo naranja de marca: blanco con contorno tinta y relieve, como el logo. */
+  | 'onBrand';
 type ButtonSize = 'large' | 'medium' | 'small';
 
 interface CetiButtonProps {
@@ -102,9 +112,15 @@ export default function CetiButton({
         case 'glass':
           baseStyle.backgroundColor = colors.materials.base;
           break;
+        case 'onBrand':
+          baseStyle.backgroundColor = BrandColors.white;
+          baseStyle.borderWidth = 3;
+          baseStyle.borderBottomWidth = 6;
+          baseStyle.borderColor = BrandColors.ink;
+          break;
       }
     }
-    if (variant !== 'ghost' && variant !== 'glass') {
+    if (variant !== 'ghost' && variant !== 'glass' && variant !== 'onBrand') {
       const shadow =
         variant === 'gold' ? Shadows.gold : variant === 'primary' ? Shadows.brand : Shadows.medium;
       Object.assign(baseStyle, shadow);
@@ -128,6 +144,8 @@ export default function CetiButton({
         return { color: colors.text.primary, fontWeight: '700' };
       case 'ghost':
         return { color: colors.text.primary, fontWeight: '700' };
+      case 'onBrand':
+        return { color: BrandColors.ink, fontWeight: '800' };
       default:
         return { color: colors.text.onBrand, fontWeight: '700' };
     }

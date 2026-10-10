@@ -1,68 +1,45 @@
-// app/(auth)/welcome.tsx — Welcome screen with smooth transitions
+// app/(auth)/welcome.tsx — Bienvenida de marca: fondo naranja y Ceti saliendo del portal
 import { useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withDelay,
   withTiming,
-  withRepeat,
   Easing,
   FadeIn,
 } from 'react-native-reanimated';
-import LottieView from 'lottie-react-native';
 import { Typography } from '@shared/constants/typography';
 import { Spacing } from '@shared/constants/theme';
+import { BrandColors } from '@shared/constants/colors';
 import CetiButton from '@shared/components/CetiButton';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
-import PageHeader from '@shared/components/PageHeader';
-import { useThemeColors } from '@shared/hooks/useThemeColors';
-import { useThemeStore } from '@shared/store/useThemeStore';
-import { lottieSpeed, motionMs } from '@shared/constants/motion';
+import { motionMs } from '@shared/constants/motion';
+import { CetiAnimation } from '@features/animations';
 import { useTranslation } from 'react-i18next';
 
-const piggyCoinsAnimation = require('../../../../assets/lottie/piggy-coins-out.json');
+// Ceti termina de salir del portal hacia el ~1.2 s; el texto entra justo después para no competir.
+const TEXT_DELAY = 900;
+const BUTTON_DELAY = 1100;
 
 export default function WelcomeScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const colors = useThemeColors();
-  const mode = useThemeStore((s) => s.mode);
-  const styles = getStyles(colors, mode);
 
-  const logoScale = useSharedValue(0);
-  const logoOpacity = useSharedValue(0);
   const contentOpacity = useSharedValue(0);
   const buttonTranslateY = useSharedValue(30);
   const buttonOpacity = useSharedValue(0);
-  const logoPulse = useSharedValue(1);
 
   useEffect(() => {
-    const logoStart = 100;
-    logoScale.value = withDelay(
-      logoStart,
-      withTiming(1, { duration: 240, easing: Easing.out(Easing.cubic) })
-    );
-    logoOpacity.value = withDelay(logoStart, withTiming(1, { duration: 240 }));
-    contentOpacity.value = withDelay(280, withTiming(1, { duration: motionMs.fade }));
-    buttonOpacity.value = withDelay(420, withTiming(1, { duration: motionMs.fade }));
+    contentOpacity.value = withDelay(TEXT_DELAY, withTiming(1, { duration: motionMs.fade }));
+    buttonOpacity.value = withDelay(BUTTON_DELAY, withTiming(1, { duration: motionMs.fade }));
     buttonTranslateY.value = withDelay(
-      420,
+      BUTTON_DELAY,
       withTiming(0, { duration: motionMs.fade, easing: Easing.out(Easing.cubic) })
     );
-
-    logoPulse.value = withRepeat(
-      withTiming(1.015, { duration: 2200, easing: Easing.inOut(Easing.ease) }),
-      -1,
-      true
-    );
-  }, []);
-
-  const logoAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: logoOpacity.value,
-    transform: [{ scale: logoScale.value * logoPulse.value }],
-  }));
+  }, [contentOpacity, buttonOpacity, buttonTranslateY]);
 
   const contentAnimatedStyle = useAnimatedStyle(() => ({
     opacity: contentOpacity.value,
@@ -73,91 +50,92 @@ export default function WelcomeScreen() {
     transform: [{ translateY: buttonTranslateY.value }],
   }));
 
-  const handleLogin = () => {
-    router.push('/(auth)/login');
-  };
-
   return (
     <ScreenWrapper style={styles.container}>
+      <StatusBar style="dark" />
       <View style={styles.centerColumn}>
         <View style={styles.heroBlock}>
-          <Animated.View style={[styles.logoContainer, logoAnimatedStyle]}>
-            <LottieView
-              source={piggyCoinsAnimation}
-              speed={lottieSpeed.subtle}
-              autoPlay
-              loop={false}
-              style={styles.logoLottie}
-            />
-          </Animated.View>
+          <CetiAnimation id="brand.ceti-portal" size={260} />
 
           <Animated.View style={[styles.textContainer, contentAnimatedStyle]}>
-            <PageHeader
-              overline={t('welcome.overline')}
-              title={t('welcome.title')}
-              subtitle={t('welcome.subtitle')}
-              showAccentLine={false}
-              style={{ alignItems: 'center' }}
-            />
+            <Text style={styles.overline}>{t('welcome.overline').toUpperCase()}</Text>
+            <Text accessibilityRole="header" style={styles.title}>
+              {t('welcome.title')}
+            </Text>
+            <Text style={styles.subtitle}>{t('welcome.subtitle')}</Text>
           </Animated.View>
 
           <Animated.View style={[styles.buttonContainer, buttonAnimatedStyle]}>
             <CetiButton
-              label="Entrar como invitado"
-              onPress={handleLogin}
-              variant="primary"
+              label={t('welcome.ctaStart')}
+              onPress={() => router.push('/(auth)/login')}
+              variant="onBrand"
               size="large"
             />
           </Animated.View>
         </View>
       </View>
 
-      <Animated.Text entering={FadeIn.duration(motionMs.fade).delay(560)} style={styles.version}>
+      <Animated.Text
+        entering={FadeIn.duration(motionMs.fade).delay(BUTTON_DELAY + 140)}
+        style={styles.footer}
+      >
         {t('welcome.footer')}
       </Animated.Text>
     </ScreenWrapper>
   );
 }
 
-const getStyles = (colors: any, _mode: string) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: colors.background.base,
-    },
-    centerColumn: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      paddingHorizontal: Spacing['2xl'],
-    },
-    heroBlock: {
-      width: '100%',
-      maxWidth: 400,
-      alignItems: 'center',
-    },
-    logoContainer: {
-      marginBottom: Spacing.md,
-      alignItems: 'center',
-    },
-    logoLottie: {
-      width: 220,
-      height: 220,
-    },
-    textContainer: {
-      alignItems: 'center',
-      width: '100%',
-      marginBottom: Spacing.lg,
-    },
-    buttonContainer: {
-      alignSelf: 'stretch',
-      width: '100%',
-    },
-    version: {
-      ...Typography.caption2,
-      color: colors.text.tertiary,
-      textAlign: 'center',
-      paddingBottom: Spacing.lg,
-      paddingHorizontal: Spacing.lg,
-    },
-  });
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: BrandColors.orange,
+  },
+  centerColumn: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: Spacing['2xl'],
+  },
+  heroBlock: {
+    width: '100%',
+    maxWidth: 400,
+    alignItems: 'center',
+  },
+  textContainer: {
+    alignItems: 'center',
+    width: '100%',
+    marginTop: Spacing.md,
+    marginBottom: Spacing.xl,
+  },
+  overline: {
+    ...Typography.caption1,
+    color: BrandColors.ink,
+    fontWeight: '800',
+    letterSpacing: 2,
+    marginBottom: Spacing.xs,
+  },
+  title: {
+    ...Typography.largeTitle,
+    color: BrandColors.ink,
+    fontWeight: '900',
+    textAlign: 'center',
+  },
+  subtitle: {
+    ...Typography.body,
+    color: BrandColors.ink,
+    textAlign: 'center',
+    marginTop: Spacing.xs,
+  },
+  buttonContainer: {
+    alignSelf: 'stretch',
+    width: '100%',
+  },
+  footer: {
+    ...Typography.caption2,
+    color: BrandColors.ink,
+    textAlign: 'center',
+    paddingBottom: Spacing.lg,
+    paddingHorizontal: Spacing.lg,
+  },
+});

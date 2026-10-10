@@ -160,6 +160,17 @@ export const LightColors = {
   },
 } as const;
 
+/**
+ * Colores fijos de la marca (docs/marca/identidad.md): no cambian con el tema.
+ * Sobre `orange` el texto va en `ink` — blanco sobre este naranja no pasa WCAG AA.
+ */
+export const BrandColors = {
+  orange: '#FF8A1F',
+  ink: '#1E1A18',
+  white: '#FFFFFF',
+  belly: '#FFE0B8',
+} as const;
+
 /** @deprecated Prefer `useThemeColors()`. Siempre apunta a la paleta oscura. */
 export const Colors = DarkColors;
 

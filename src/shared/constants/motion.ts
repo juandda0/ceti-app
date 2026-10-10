@@ -63,9 +63,3 @@ export const motion = {
   zoomIn: ZoomIn.duration(motionMs.zoom),
   layout: Layout.duration(motionMs.layout),
 } as const;
-
-/** Velocidad sugerida para Lottie (1 = normal). */
-export const lottieSpeed = {
-  default: 1.35,
-  subtle: 1.15,
-} as const;
