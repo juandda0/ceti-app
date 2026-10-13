@@ -28,6 +28,18 @@ import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/a
 
 import '@shared/i18n';
 
+// "ceti-d3769.web.app." (punto final, típico al pegar el enlace al final de una frase)
+// es otro dominio para el navegador y Firebase Auth lo rechaza: lo normalizamos.
+if (
+  Platform.OS === 'web' &&
+  typeof window !== 'undefined' &&
+  window.location.hostname.endsWith('.')
+) {
+  const url = new URL(window.location.href);
+  url.hostname = url.hostname.replace(/\.+$/, '');
+  window.location.replace(url.toString());
+}
+
 if (!global.btoa) global.btoa = encode;
 if (!global.atob) global.atob = decode;
 if (!global.Buffer) global.Buffer = Buffer;
