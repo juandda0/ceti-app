@@ -51,12 +51,22 @@ const catalog = {
   },
   'streak.fire': {
     source: require('@/assets/animations/streak/fire.json'),
+    status: 'approved',
+    loop: true,
+    speed: 1,
+    haptic: 'success',
+    usedIn: [],
+    brief: 'Llama de la racha: se enciende cuando el usuario registra el día y mantiene la racha.',
+  },
+  'streak.fueguito': {
+    source: require('@/assets/animations/streak/fueguito.json'),
     status: 'shipped',
     loop: true,
     speed: 1,
     haptic: 'success',
     usedIn: ['StreakCard'],
-    brief: 'Llama de la racha: se enciende cuando el usuario registra el día y mantiene la racha.',
+    brief:
+      'Fueguito de racha: se llena de naranja, tiembla y explota al completarse; luego arde con brasas.',
   },
   'celebration.rocket-launch': {
     source: require('@/assets/animations/celebration/rocket-launch.json'),

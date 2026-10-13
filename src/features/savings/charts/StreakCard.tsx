@@ -2,7 +2,8 @@
  * Constancia: racha de días seguidos anotando + los 7 días de esta semana.
  * Día con registro = punto lleno con check; sin registro = anillo vacío.
  */
-import { StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { CetiAnimation } from '@features/animations';
@@ -15,6 +16,9 @@ const DIAS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 export default function StreakCard({ data, palette }: { data: Constancia; palette: ChartPalette }) {
   const { t } = useTranslation();
   const colors = useThemeColors();
+  const encendida = data.racha > 0;
+  // Tocar el fueguito lo reinicia desde el fotograma 0.
+  const [pasada, setPasada] = useState(0);
   const texto =
     data.racha <= 0
       ? t('graficasSeccion.racha.cero')
@@ -25,7 +29,15 @@ export default function StreakCard({ data, palette }: { data: Constancia; palett
   return (
     <ChartCard title={t('graficasSeccion.racha.titulo')}>
       <View style={styles.head}>
-        {data.racha > 0 ? <CetiAnimation id="streak.fire" size={56} /> : null}
+        {encendida ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('graficasSeccion.racha.titulo')}
+            onPress={() => setPasada((n) => n + 1)}
+          >
+            <CetiAnimation key={pasada} id="streak.fueguito" size={84} />
+          </Pressable>
+        ) : null}
         <Text style={[styles.big, { color: colors.text.primary }]}>{Math.max(0, data.racha)}</Text>
         <Text style={[styles.text, { color: colors.text.secondary }]}>{texto}</Text>
       </View>

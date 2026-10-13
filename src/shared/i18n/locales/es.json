@@ -295,6 +295,11 @@
     "next": "Siguiente",
     "worldComplete": "¡Mundo completado!",
     "tryAgainTitle": "¡Buen intento!",
+    "streakLabelOne": "día de racha",
+    "streakLabel": "días de racha",
+    "streakContinue": "Continuar",
+    "streakChip": "Racha: {{dias}} días",
+    "streakChipOne": "Racha: 1 día",
     "needToUnlock": "Necesitas 8 de 10 respuestas correctas para desbloquear el siguiente mundo. ¡Inténtalo de nuevo!",
     "score": "respuestas correctas · {{pct}}% de precisión",
     "backToWorlds": "Volver a los mundos",
@@ -640,8 +645,8 @@
     },
     "racha": {
       "titulo": "Tu constancia",
-      "dias": "{{dias}} días seguidos anotando 🔥",
-      "diaUno": "1 día anotando. ¡Vuelve mañana! 🔥",
+      "dias": "{{dias}} días seguidos anotando",
+      "diaUno": "1 día anotando. ¡Vuelve mañana!",
       "cero": "Anota algo hoy y empieza tu racha",
       "semana": "Días con algo anotado esta semana"
     },

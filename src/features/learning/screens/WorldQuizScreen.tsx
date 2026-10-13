@@ -36,6 +36,8 @@ import {
 } from '@features/learning/store/useQuestionBankStore';
 import { useStudentGrado } from '@features/learning/hooks/useStudentGrado';
 import { isMastered } from '@features/learning/data/mastery';
+import { useQuizStreakStore } from '@features/learning/store/useQuizStreakStore';
+import StreakCelebration from '@features/learning/components/StreakCelebration';
 import { hashStr, stableShuffle } from '@shared/lib/quizUtils';
 import { useClassConfig } from '@features/learning/hooks/useClassConfig';
 import { displayWorldDef } from '@features/learning/data/worldMeta';
@@ -542,6 +544,8 @@ export default function WorldQuizScreen() {
   // Linear traversal state (R7: no adaptive selection)
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
+  const [celebracion, setCelebracion] = useState<number | null>(null);
+  const registrarQuiz = useQuizStreakStore((s) => s.registrarQuiz);
   const [attemptCorrect, setAttemptCorrect] = useState(0);
 
   // Per-question answer state (reset on each new question)
@@ -663,6 +667,10 @@ export default function WorldQuizScreen() {
     const nextIndex = currentIndex + 1;
     if (nextIndex >= questions.length) {
       setIsComplete(true);
+      if (userId) {
+        const { primeroHoy, racha } = registrarQuiz(userId);
+        if (primeroHoy) setCelebracion(racha);
+      }
     } else {
       setCurrentIndex(nextIndex);
       setSelectedOption(null);
@@ -742,6 +750,7 @@ export default function WorldQuizScreen() {
       worldId as WorldId
     );
     return (
+      <>
       <CompletionScreen
         worldName={meta.name}
         accentColor={meta.color}
@@ -754,6 +763,12 @@ export default function WorldQuizScreen() {
         insetBottom={insets.bottom}
         t={t}
       />
+      <StreakCelebration
+        racha={celebracion ?? 0}
+        visible={celebracion !== null}
+        onClose={() => setCelebracion(null)}
+      />
+      </>
     );
   }
 

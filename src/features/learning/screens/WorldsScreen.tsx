@@ -25,6 +25,7 @@ import { useStudentGrado } from '@features/learning/hooks/useStudentGrado';
 import { useClassConfig } from '@features/learning/hooks/useClassConfig';
 import { resolveClassWorlds } from '@features/learning/data/classConfig';
 import { worldStatus } from '@features/learning/data/worldStatus';
+import { computeQuizRacha, useQuizStreakStore } from '@features/learning/store/useQuizStreakStore';
 import { hasClassAccess } from '@features/learning/data/classAccess';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
@@ -205,6 +206,8 @@ export default function WorldsScreen() {
   // seedKey = Firebase uid (stable per-account); fallback to local id in demo/offline.
   const seedKey = userId ?? 'demo';
   const uid = userId ?? '';
+  const diasQuiz = useQuizStreakStore((s) => s.daysByUid[uid]);
+  const rachaQuiz = useMemo(() => computeQuizRacha(diasQuiz ?? []), [diasQuiz]);
 
   // Class config (D-ORQ, RQ-PR10): which worlds this class sees and in which
   // order. Live via onSnapshot; null → defaults.
@@ -315,6 +318,16 @@ export default function WorldsScreen() {
         <Text style={[styles.pageSubtitle, { color: colors.text.secondary }]}>
           {t('worlds.lessonsCompleted', { done: totalDone, total: totalAll })}
         </Text>
+        {rachaQuiz > 0 ? (
+          <View style={[styles.streakChip, { backgroundColor: colors.brand.primary + '22' }]}>
+            <Ionicons name="flame" size={16} color={colors.brand.primary} />
+            <Text style={[styles.streakChipText, { color: colors.brand.primary }]}>
+              {rachaQuiz === 1
+                ? t('quiz.streakChipOne')
+                : t('quiz.streakChip', { dias: rachaQuiz })}
+            </Text>
+          </View>
+        ) : null}
 
         {!classConfigLoaded ? (
           <View style={styles.emptyState}>
@@ -351,6 +364,17 @@ export default function WorldsScreen() {
 }
 
 const styles = StyleSheet.create({
+  streakChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    marginTop: 8,
+  },
+  streakChipText: { fontSize: 14, fontWeight: '800' },
   scroll: {
     width: '100%',
     maxWidth: 680,
