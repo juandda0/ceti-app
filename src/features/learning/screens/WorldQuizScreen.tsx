@@ -29,6 +29,8 @@ import {
   QUESTIONS_PER_WORLD,
 } from '@features/learning/store/useQuestionBankStore';
 import { useStudentGrado } from '@features/learning/hooks/useStudentGrado';
+import { isMastered } from '@features/learning/data/mastery';
+import { hashStr, stableShuffle } from '@shared/lib/quizUtils';
 import { useClassConfig } from '@features/learning/hooks/useClassConfig';
 import { displayWorldDef } from '@features/learning/data/worldMeta';
 import { useUserStore } from '@features/auth/store/useUserStore';
@@ -250,9 +252,14 @@ function OrdenarWidget({
   colors: ThemeColors;
   t: (key: string, options?: Record<string, unknown>) => string;
 }) {
-  const available = item.elementos
-    .map((el, idx) => ({ el, idx }))
-    .filter(({ idx }) => !chosen.includes(idx));
+  const displayOrder = useMemo(() => {
+    const base = item.elementos.map((el, idx) => ({ el, idx }));
+    const shuffled = stableShuffle(base, hashStr(item.id));
+    // Si el barajado coincide con el orden correcto, rotamos para no regalar la respuesta.
+    const solved = shuffled.every(({ idx }, pos) => item.ordenCanonico[pos] === idx);
+    return solved && shuffled.length > 1 ? [...shuffled.slice(1), shuffled[0]] : shuffled;
+  }, [item]);
+  const available = displayOrder.filter(({ idx }) => !chosen.includes(idx));
 
   const handlePickAvailable = (idx: number) => {
     if (submitted) return;
@@ -363,6 +370,7 @@ function CompletionScreen({
   accentColor,
   correct,
   total,
+  mastered,
   onBack,
   colors,
   insetTop,
@@ -373,6 +381,7 @@ function CompletionScreen({
   accentColor: string;
   correct: number;
   total: number;
+  mastered: boolean;
   onBack: () => void;
   colors: ThemeColors;
   insetTop: number;
@@ -393,12 +402,14 @@ function CompletionScreen({
       >
         <Animated.View entering={FadeIn.duration(300)} style={completeSt.center}>
           <View style={[completeSt.iconCircle, { backgroundColor: accentColor + '22' }]}>
-            <Ionicons name="trophy" size={52} color={accentColor} />
+            <Ionicons name={mastered ? 'trophy' : 'refresh'} size={52} color={accentColor} />
           </View>
           <Text style={[completeSt.title, { color: colors.text.primary }]}>
-            {t('quiz.worldComplete')}
+            {mastered ? t('quiz.worldComplete') : t('quiz.tryAgainTitle')}
           </Text>
-          <Text style={[completeSt.subtitle, { color: colors.text.secondary }]}>{worldName}</Text>
+          <Text style={[completeSt.subtitle, { color: colors.text.secondary }]}>
+            {mastered ? worldName : t('quiz.needToUnlock')}
+          </Text>
           <View
             style={[
               completeSt.scoreCard,
@@ -471,6 +482,7 @@ export default function WorldQuizScreen() {
   // Linear traversal state (R7: no adaptive selection)
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
+  const [attemptCorrect, setAttemptCorrect] = useState(0);
 
   // Per-question answer state (reset on each new question)
   // For multiple_choice/true_false: selectedOption (string representation)
@@ -583,6 +595,7 @@ export default function WorldQuizScreen() {
       correct ? Haptics.ImpactFeedbackStyle.Light : Haptics.ImpactFeedbackStyle.Heavy
     );
     recordAnswer(userId, currentQuestion.id, worldId as WorldId, correct);
+    if (correct) setAttemptCorrect((n) => n + 1);
     setHasSubmitted(true);
   };
 
@@ -600,6 +613,7 @@ export default function WorldQuizScreen() {
 
   const handleBack = () => {
     if (router.canGoBack()) router.back();
+    else router.replace('/(app)/saga');
   };
 
   // ── Loading ────────────────────────────────────────────────────────────────
@@ -671,8 +685,9 @@ export default function WorldQuizScreen() {
       <CompletionScreen
         worldName={meta.name}
         accentColor={meta.color}
-        correct={worldDone}
-        total={worldTotal > 0 ? worldTotal : QUESTIONS_PER_WORLD}
+        correct={attemptCorrect}
+        total={questions.length > 0 ? questions.length : QUESTIONS_PER_WORLD}
+        mastered={isMastered(worldDone, worldTotal > 0 ? worldTotal : QUESTIONS_PER_WORLD)}
         onBack={handleBack}
         colors={colors}
         insetTop={insets.top}
@@ -729,7 +744,10 @@ export default function WorldQuizScreen() {
         <Animated.View entering={FadeInDown.duration(250).delay(100)} style={styles.options}>
           {currentQuestion.tipo === 'multiple_choice' && (
             <>
-              {currentQuestion.opciones.map((opt, idx) => {
+              {stableShuffle(
+                currentQuestion.opciones.map((opt, idx) => ({ opt, idx })),
+                hashStr(currentQuestion.id)
+              ).map(({ opt, idx }) => {
                 let state: 'idle' | 'selected' | 'correct' | 'wrong' = 'idle';
                 if (hasSubmitted) {
                   if (idx === currentQuestion.correctIndex) state = 'correct';

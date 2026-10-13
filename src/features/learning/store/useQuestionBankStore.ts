@@ -120,12 +120,22 @@ export const useQuestionBankStore = create<QuestionBankStore>()(
       },
 
       recordAnswer: (uid, questionId, worldId, isCorrect) => {
-        set((s) => ({
-          answers: [
-            ...s.answers.filter((a) => !(a.uid === uid && a.questionId === questionId)),
-            { uid, questionId, worldId, isCorrect, answeredAt: Date.now() },
-          ],
-        }));
+        set((s) => {
+          const prev = s.answers.find((a) => a.uid === uid && a.questionId === questionId);
+          // Conserva el mejor resultado: repetir un mundo nunca vuelve a bloquear el siguiente.
+          return {
+            answers: [
+              ...s.answers.filter((a) => !(a.uid === uid && a.questionId === questionId)),
+              {
+                uid,
+                questionId,
+                worldId,
+                isCorrect: isCorrect || prev?.isCorrect === true,
+                answeredAt: Date.now(),
+              },
+            ],
+          };
+        });
       },
 
       getWorldProgress: (uid, worldId) => {
@@ -134,7 +144,9 @@ export const useQuestionBankStore = create<QuestionBankStore>()(
         // per R9). If questions haven't been fetched yet, total stays 0 so remote
         // mastery correctly contributes 0 while offline.
         const fetched = get().questionsByWorld[worldId];
-        const total = fetched != null ? fetched.length || QUESTIONS_PER_WORLD : 0;
+        // Sin preguntas cargadas (p. ej. tras recargar) usamos el tamaño fijo del quiz
+        // para que el progreso guardado y los desbloqueos no caigan a 0.
+        const total = fetched != null ? fetched.length || QUESTIONS_PER_WORLD : QUESTIONS_PER_WORLD;
         const localDone = get().answers.filter(
           (a) => a.uid === uid && a.worldId === worldId && a.isCorrect
         ).length;

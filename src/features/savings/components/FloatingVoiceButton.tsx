@@ -8,6 +8,7 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { usePathname } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { showCetiToast } from '@shared/store/useCetiOverlayStore';
@@ -31,6 +32,8 @@ function isRateLimited(error: unknown): boolean {
 export default function FloatingVoiceButton() {
   const { t } = useTranslation();
   const colors = useThemeColors();
+  // Dentro de un mundo (micro-teoría y quiz) el botón taparía "Comprobar"/"Siguiente".
+  const inWorld = /^\/saga\/./.test(usePathname() ?? '');
   const movimientos = useMovimientosStore((s) => s.movimientos);
   const goals = useSavingsStore((s) => s.goals);
   const operations = useSavingsStore((s) => s.operations);
@@ -141,7 +144,7 @@ export default function FloatingVoiceButton() {
 
   return (
     <>
-      {!sheetOpen ? (
+      {!sheetOpen && !inWorld ? (
         <TouchableOpacity
           accessibilityRole="button"
           accessibilityLabel={t('financialVoice.open')}

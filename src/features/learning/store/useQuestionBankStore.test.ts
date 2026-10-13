@@ -101,13 +101,20 @@ describe('useQuestionBankStore', () => {
       });
     });
 
-    it('total is 0 when no questions have been fetched', () => {
+    it('keeps saved progress before questions are fetched (e.g. after reload)', () => {
       const store = useQuestionBankStore.getState();
       store.recordAnswer(UID, 'q1', WORLD, true);
       expect(useQuestionBankStore.getState().getWorldProgress(UID, WORLD)).toEqual({
-        done: 0,
-        total: 0,
+        done: 1,
+        total: QUESTIONS_PER_WORLD,
       });
+    });
+
+    it('keeps the best result when a question is answered again', () => {
+      const store = useQuestionBankStore.getState();
+      store.recordAnswer(UID, 'q1', WORLD, true);
+      store.recordAnswer(UID, 'q1', WORLD, false);
+      expect(useQuestionBankStore.getState().getWorldProgress(UID, WORLD).done).toBe(1);
     });
 
     it(`in-progress quiz reports total = ${QUESTIONS_PER_WORLD} when 10 questions are fetched`, () => {
@@ -146,11 +153,11 @@ describe('useQuestionBankStore', () => {
       });
     });
 
-    it('remote mastery contributes 0 when no questions are fetched (total 0)', () => {
+    it('remote mastery counts against the fixed quiz size before questions are fetched', () => {
       useQuestionBankStore.getState().setRemoteProgress({ [WORLD]: 1 });
       expect(useQuestionBankStore.getState().getWorldProgress(UID, WORLD)).toEqual({
-        done: 0,
-        total: 0,
+        done: QUESTIONS_PER_WORLD,
+        total: QUESTIONS_PER_WORLD,
       });
     });
   });
