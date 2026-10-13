@@ -10,7 +10,12 @@ import { useEffect, useRef, useState } from 'react';
 import { Platform } from 'react-native';
 
 export type VoiceState = 'unavailable' | 'idle' | 'listening' | 'denied';
-export type VoiceCaptureError = 'no-speech' | 'audio-capture' | 'network' | 'start-failed';
+export type VoiceCaptureError =
+  | 'no-speech'
+  | 'audio-capture'
+  | 'network'
+  | 'start-failed'
+  | 'denied';
 
 /** iOS en modo PWA (pantalla de inicio): SpeechRecognition existe pero no funciona. */
 function isIosStandalone(): boolean {
@@ -93,6 +98,7 @@ export function useVoiceCapture(
       if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
         abortedRef.current = true;
         setState('denied');
+        onErrorRef.current?.('denied');
         return;
       }
       if (

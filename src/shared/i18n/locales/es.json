@@ -513,6 +513,7 @@
     "rateLimited": "Función no disponible",
     "noSpeech": "No te escuché. Toca el micrófono e intenta de nuevo.",
     "audioCapture": "No encontramos un micrófono. Puedes escribirlo.",
+    "micDenied": "El micrófono está bloqueado. Actívalo en tu navegador o escribe lo que quieres registrar.",
     "networkError": "Sin conexión para dictar. Puedes escribirlo.",
     "voiceErrorMsg": "Ceti no pudo entender eso. Revisa el texto e intenta de nuevo.",
     "retryMic": "Intentar de nuevo"

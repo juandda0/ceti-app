@@ -30,6 +30,7 @@ export default function VoiceCaptureSheet({
   onSubmitText,
   onSwitchToText,
   errorMessage,
+  startInWriting = false,
 }: {
   visible: boolean;
   processing: boolean;
@@ -41,6 +42,8 @@ export default function VoiceCaptureSheet({
   onSwitchToText: () => void;
   /** Error al organizar: se muestra encima del texto para corregir y reintentar. */
   errorMessage?: string | null;
+  /** Abre directamente el modo escribir (sin micrófono o tras un error). */
+  startInWriting?: boolean;
 }) {
   const colors = useThemeColors();
   const { t } = useTranslation();
@@ -51,11 +54,11 @@ export default function VoiceCaptureSheet({
     if (!visible) {
       setWriting(false);
       setText('');
-    } else if (initialText) {
+    } else if (initialText || startInWriting) {
       setWriting(true);
       setText(initialText);
     }
-  }, [visible, initialText]);
+  }, [visible, initialText, startInWriting]);
 
   return (
     <CetiBottomSheet visible={visible} onClose={onCancel} closeOnBackdropPress={false} contentOnly>

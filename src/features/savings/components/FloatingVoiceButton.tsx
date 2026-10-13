@@ -88,7 +88,11 @@ export default function FloatingVoiceButton() {
     }
     // Sin micrófono / sin red / fallo al iniciar: pasamos a escribir.
     setErrorMessage(
-      error === 'network' ? t('movimientos.networkError') : t('movimientos.audioCapture')
+      error === 'denied'
+        ? t('movimientos.micDenied')
+        : error === 'network'
+          ? t('movimientos.networkError')
+          : t('movimientos.audioCapture')
     );
     setManualCaptureVisible(true);
   };
@@ -154,6 +158,7 @@ export default function FloatingVoiceButton() {
         transcript={listening ? transcript : capturedText}
         initialText={manualCaptureVisible ? capturedText : ''}
         errorMessage={errorMessage}
+        startInWriting={manualCaptureVisible && !listening}
         onStop={stop}
         onCancel={() => {
           setManualCaptureVisible(false);
