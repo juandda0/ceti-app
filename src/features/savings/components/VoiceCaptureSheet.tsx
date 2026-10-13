@@ -29,6 +29,7 @@ export default function VoiceCaptureSheet({
   onCancel,
   onSubmitText,
   onSwitchToText,
+  errorMessage,
 }: {
   visible: boolean;
   processing: boolean;
@@ -38,6 +39,8 @@ export default function VoiceCaptureSheet({
   onCancel: () => void;
   onSubmitText: (text: string) => void;
   onSwitchToText: () => void;
+  /** Error al organizar: se muestra encima del texto para corregir y reintentar. */
+  errorMessage?: string | null;
 }) {
   const colors = useThemeColors();
   const { t } = useTranslation();
@@ -70,8 +73,20 @@ export default function VoiceCaptureSheet({
 
         <View style={styles.content}>
           <Text style={[styles.status, { color: colors.text.tertiary }]}>
-            {processing ? t('movimientos.processing') : t('movimientos.listeningTitle')}
+            {processing
+              ? t('movimientos.processing')
+              : writing
+                ? t('movimientos.writingTitle')
+                : t('movimientos.listeningTitle')}
           </Text>
+          {errorMessage && !processing ? (
+            <Text
+              accessibilityRole="alert"
+              style={[styles.error, { color: colors.system.red }]}
+            >
+              {errorMessage}
+            </Text>
+          ) : null}
           {writing ? (
             <>
               <TextInput
@@ -131,8 +146,13 @@ export default function VoiceCaptureSheet({
               accessibilityRole="button"
               accessibilityLabel={t('movimientos.listo')}
             >
-              <Ionicons name="mic" size={30} color={colors.text.onBrand} />
+              <Ionicons name="stop" size={30} color={colors.text.onBrand} />
             </TouchableOpacity>
+          ) : null}
+          {!processing && !writing ? (
+            <Text style={[styles.doneLabel, { color: colors.text.secondary }]}>
+              {t('movimientos.listo')}
+            </Text>
           ) : null}
           {!processing && !writing ? (
             <TouchableOpacity
@@ -180,4 +200,6 @@ const styles = StyleSheet.create({
   organizeText: { ...Typography.buttonLarge, fontWeight: '800' },
   writeInstead: { ...Typography.subheadline, fontWeight: '700', paddingVertical: 12 },
   disabled: { opacity: 0.4 },
+  error: { ...Typography.subheadline, fontWeight: '700' },
+  doneLabel: { ...Typography.subheadline, fontWeight: '700', paddingTop: 6 },
 });

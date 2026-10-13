@@ -10,13 +10,34 @@ import { useEffect, useRef, useState } from 'react';
 import { Platform } from 'react-native';
 
 export type VoiceState = 'unavailable' | 'idle' | 'listening' | 'denied';
+export type VoiceCaptureError = 'no-speech' | 'audio-capture' | 'network' | 'start-failed';
+
+/** iOS en modo PWA (pantalla de inicio): SpeechRecognition existe pero no funciona. */
+function isIosStandalone(): boolean {
+  if (typeof navigator === 'undefined' || typeof window === 'undefined') return false;
+  const nav = navigator as Navigator & { standalone?: boolean };
+  const ios =
+    /iPad|iPhone|iPod/.test(nav.userAgent ?? '') ||
+    (nav.platform === 'MacIntel' && (nav.maxTouchPoints ?? 0) > 1);
+  if (!ios) return false;
+  if (nav.standalone === true) return true;
+  try {
+    return window.matchMedia?.('(display-mode: standalone)').matches ?? false;
+  } catch {
+    return false;
+  }
+}
 
 function getRecognitionCtor(): (new () => WebSpeechRecognition) | undefined {
   if (Platform.OS !== 'web' || typeof window === 'undefined') return undefined;
+  if (isIosStandalone()) return undefined;
   return window.SpeechRecognition ?? window.webkitSpeechRecognition;
 }
 
-export function useVoiceCapture(onTranscript: (texto: string) => void): {
+export function useVoiceCapture(
+  onTranscript: (texto: string) => void,
+  onError?: (error: VoiceCaptureError) => void
+): {
   state: VoiceState;
   transcript: string;
   start: () => void;
@@ -33,6 +54,8 @@ export function useVoiceCapture(onTranscript: (texto: string) => void): {
   const abortedRef = useRef(false);
   const onTranscriptRef = useRef(onTranscript);
   onTranscriptRef.current = onTranscript;
+  const onErrorRef = useRef(onError);
+  onErrorRef.current = onError;
 
   useEffect(() => {
     return () => recognitionRef.current?.abort();
@@ -70,8 +93,20 @@ export function useVoiceCapture(onTranscript: (texto: string) => void): {
       if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
         abortedRef.current = true;
         setState('denied');
+        return;
       }
-      // 'no-speech'/'aborted' se resuelven en onend sin clasificar.
+      if (
+        event.error === 'no-speech' ||
+        event.error === 'audio-capture' ||
+        event.error === 'network'
+      ) {
+        // Sin texto útil: avisamos y no clasificamos (salvo que ya haya transcript).
+        if (!fullTextRef.current.trim()) {
+          abortedRef.current = true;
+          onErrorRef.current?.(event.error);
+        }
+      }
+      // 'aborted' se resuelve en onend sin clasificar.
     };
     recognition.onend = () => {
       recognitionRef.current = null;
@@ -83,7 +118,14 @@ export function useVoiceCapture(onTranscript: (texto: string) => void): {
 
     recognitionRef.current = recognition;
     setState('listening');
-    recognition.start();
+    try {
+      // Debe llamarse síncrono dentro del gesto del usuario (Safari iOS).
+      recognition.start();
+    } catch {
+      recognitionRef.current = null;
+      setState('idle');
+      onErrorRef.current?.('start-failed');
+    }
   };
 
   // "Listo": finaliza y dispara la clasificación con lo dicho.

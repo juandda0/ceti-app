@@ -199,7 +199,9 @@ it('muestra la clasificación antes de abrir Corregir', () => {
     <FinancialAssistantSheet visible plan={plan} onChange={jest.fn()} onClose={jest.fn()} />
   );
 
-  expect(view.getAllByText('Gasto')).toHaveLength(2);
+  expect(view.getAllByText('Gasto')).toHaveLength(1);
+  expect(view.getByText('financialAssistant.review.deleteGoal')).toBeTruthy();
+  expect(view.getByText('financialAssistant.review.destructiveWarning')).toBeTruthy();
   expect(view.getByText('Categoría: Comida')).toBeTruthy();
   expect(view.getByText('Corregir')).toBeTruthy();
   expect(view.queryByLabelText('Monto de Almuerzo')).toBeNull();
@@ -288,5 +290,22 @@ it('muestra los datos devueltos por una consulta', async () => {
     <FinancialAssistantSheet visible plan={queryPlan} onChange={jest.fn()} onClose={jest.fn()} />
   );
   fireEvent.press(view.getByText('financialAssistant.confirm'));
-  await waitFor(() => expect(view.getByText('Almuerzo: 12000')).toBeTruthy());
+  await waitFor(() => expect(view.getByText('Almuerzo: $12.000')).toBeTruthy());
+});
+
+it('muestra un mensaje claro cuando el plan no tiene acciones y permite dictar de nuevo', () => {
+  const onRedictate = jest.fn();
+  const view = render(
+    <FinancialAssistantSheet
+      visible
+      plan={{ source: 'remote', actions: [] }}
+      onChange={jest.fn()}
+      onClose={jest.fn()}
+      onRedictate={onRedictate}
+    />
+  );
+  expect(view.getByText('financialAssistant.emptyPlan')).toBeTruthy();
+  expect(view.queryByText('0 acciones')).toBeNull();
+  fireEvent.press(view.getByText('financialAssistant.redictate'));
+  expect(onRedictate).toHaveBeenCalled();
 });

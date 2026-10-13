@@ -632,7 +632,7 @@ export const planificarAccionesFinancieras = onCall(
     try {
       return await planFinancialActionsWithQuota(
         request.data,
-        groqCaller(GROQ_API_KEY.value(), { maxTokens: 1200, timeoutMs: 20_000 }),
+        groqCaller(GROQ_API_KEY.value(), { maxTokens: 500, timeoutMs: 25_000 }),
         async () => {
           await getFirestore().runTransaction(async (transaction) => {
             const usage =

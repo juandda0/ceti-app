@@ -4,7 +4,6 @@
  * La voz es el ÚNICO camino de registro (D-ES10-03); si la clasificación falla,
  * la tarjeta de confirmación se abre pre-llenada con el transcript.
  */
-import { useState } from 'react';
 import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,20 +14,11 @@ import { motion } from '@shared/constants/motion';
 import { Spacing } from '@shared/constants/theme';
 import { Typography } from '@shared/constants/typography';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
-import { showCetiNotice } from '@shared/store/useCetiOverlayStore';
-import FinancialAssistantSheet from '@features/savings/components/FinancialAssistantSheet';
 import MicButton from '@features/savings/components/MicButton';
-import VoiceCaptureSheet from '@features/savings/components/VoiceCaptureSheet';
 import MovimientoListItem from '@features/savings/components/MovimientoListItem';
 import { movimientosOrdenados } from '@features/savings/data/movimientosStats';
-import { vozService } from '@features/savings/data/vozService';
-import {
-  buildFinancialContext,
-  type FinancialPlan,
-} from '@features/savings/assistant/financialPlan';
-import { useVoiceCapture } from '@features/savings/hooks/useVoiceCapture';
 import { useMovimientosStore } from '@features/savings/store/useMovimientosStore';
-import { useSavingsStore } from '@features/savings/store/useSavingsStore';
+import { useVoiceAssistantStore } from '@features/savings/store/useVoiceAssistantStore';
 
 const HISTORIAL_MAX = 30;
 
@@ -38,56 +28,13 @@ export default function MovimientosScreen() {
   const insets = useSafeAreaInsets();
   const movimientos = useMovimientosStore((s) => s.movimientos);
   const deleteExpense = useMovimientosStore((s) => s.deleteExpense);
-  const goals = useSavingsStore((s) => s.goals);
-  const operations = useSavingsStore((s) => s.operations);
-
-  const [processing, setProcessing] = useState(false);
-  const [financialPlan, setFinancialPlan] = useState<FinancialPlan | null>(null);
-  const [assistantVisible, setAssistantVisible] = useState(false);
-  const [manualCaptureVisible, setManualCaptureVisible] = useState(false);
-  const [capturedText, setCapturedText] = useState('');
-
-  const organizeTranscript = (texto: string) => {
-    setProcessing(true);
-    void (async () => {
-      try {
-        const context = buildFinancialContext(
-          movimientos,
-          goals.map((goal) => ({
-            id: goal.id,
-            title: goal.title,
-            iconId: goal.iconId ?? 'target',
-            category: goal.category,
-            targetAmount: goal.targetAmount,
-            createdAt: goal.createdAt,
-            updatedAt: goal.updatedAt ?? goal.createdAt,
-            ...(goal.deadline === undefined ? {} : { deadline: goal.deadline }),
-            ...(goal.deletedAt === undefined ? {} : { deletedAt: goal.deletedAt }),
-          })),
-          operations
-        );
-        const plan = await vozService.planificar(texto, context, `voice_${Date.now()}`);
-        setFinancialPlan(plan);
-        setManualCaptureVisible(false);
-        setCapturedText('');
-        setAssistantVisible(true);
-      } catch {
-        showCetiNotice({
-          variant: 'error',
-          title: t('movimientos.errorTitle'),
-          message: t('movimientos.errorMsg'),
-        });
-      } finally {
-        setProcessing(false);
-      }
-    })();
-  };
-
-  const onTranscript = (texto: string) => {
-    organizeTranscript(texto);
-  };
-
-  const { state, transcript, start, stop, cancel } = useVoiceCapture(onTranscript);
+  // La captura/organización vive en FloatingVoiceButton (layout): un solo flujo
+  // compartido; aquí solo disparamos start/stop dentro del onPress (gesto iOS).
+  const state = useVoiceAssistantStore((s) => s.voiceState);
+  const processing = useVoiceAssistantStore((s) => s.processing);
+  const start = useVoiceAssistantStore((s) => s.start);
+  const stop = useVoiceAssistantStore((s) => s.stop);
+  const openWriting = useVoiceAssistantStore((s) => s.openWriting);
   const historial = movimientosOrdenados(movimientos).slice(0, HISTORIAL_MAX);
   const capturando = state === 'listening' || processing;
 
@@ -124,7 +71,7 @@ export default function MovimientosScreen() {
                   {t('movimientos.unavailableBody')}
                 </Text>
                 <TouchableOpacity
-                  onPress={() => setManualCaptureVisible(true)}
+                  onPress={() => openWriting()}
                   accessibilityRole="button"
                   accessibilityLabel={t('financialAssistant.writeInstead')}
                 >
@@ -148,7 +95,16 @@ export default function MovimientosScreen() {
                   {t('movimientos.deniedBody')}
                 </Text>
                 <TouchableOpacity
-                  onPress={() => setManualCaptureVisible(true)}
+                  onPress={() => start()}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('movimientos.retryMic')}
+                >
+                  <Text style={[styles.writeFallback, { color: colors.brand.primary }]}>
+                    {t('movimientos.retryMic')}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => openWriting()}
                   accessibilityRole="button"
                   accessibilityLabel={t('financialAssistant.writeInstead')}
                 >
@@ -158,7 +114,12 @@ export default function MovimientosScreen() {
                 </TouchableOpacity>
               </View>
             ) : (
-              <MicButton state={state} processing={capturando} onStart={start} onStop={stop} />
+              <MicButton
+                state={state}
+                processing={capturando}
+                onStart={() => start()}
+                onStop={() => stop()}
+              />
             )}
           </Animated.View>
 
@@ -202,34 +163,6 @@ export default function MovimientosScreen() {
           )}
         </ScrollView>
       </ScreenWrapper>
-
-      <VoiceCaptureSheet
-        visible={state === 'listening' || manualCaptureVisible}
-        processing={processing}
-        transcript={state === 'listening' ? transcript : capturedText}
-        initialText={manualCaptureVisible ? capturedText : ''}
-        onStop={stop}
-        onCancel={() => {
-          setManualCaptureVisible(false);
-          setCapturedText('');
-          cancel();
-        }}
-        onSubmitText={(text) => {
-          cancel();
-          organizeTranscript(text);
-        }}
-        onSwitchToText={() => {
-          cancel();
-          setManualCaptureVisible(true);
-        }}
-      />
-
-      <FinancialAssistantSheet
-        visible={assistantVisible}
-        plan={financialPlan}
-        onChange={setFinancialPlan}
-        onClose={() => setAssistantVisible(false)}
-      />
     </>
   );
 }

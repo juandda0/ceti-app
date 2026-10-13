@@ -7,8 +7,9 @@ import {
   parseFinancialContext,
   planFinancialActions,
   planFinancialActionsWithQuota,
+  sanitizeModelPlan,
 } from './financialAssistant';
-import { ModelApiError } from './modelProvider';
+import { ModelApiError, ModelRateLimitError } from './modelProvider';
 import { FinancialPlanError } from './financialPlan';
 
 const emptyContext = { goals: [], movements: [] };
@@ -69,35 +70,6 @@ test('rechaza más de 30 recursos de contexto', () => {
   ).toThrow();
 });
 
-test('envía solo texto y contexto al modelo y valida el plan devuelto', async () => {
-  const callModel = jest.fn().mockResolvedValue(
-    JSON.stringify({
-      actions: [
-        {
-          domain: 'meta',
-          operation: 'consultar',
-          payload: {},
-          needsInput: [],
-        },
-      ],
-    })
-  );
-
-  const result = await planFinancialActions(
-    { text: 'muéstrame mis metas', requestId: 'r1', context: emptyContext },
-    callModel
-  );
-
-  expect(result.actions[0].actionId).toBe('r1:0');
-  expect(callModel.mock.calls[0][0]).toBe(buildFinancialPrompt());
-  expect(JSON.parse(callModel.mock.calls[0][1])).toEqual({
-    untrustedData: {
-      text: 'muéstrame mis metas',
-      context: { ...emptyContext, operations: [] },
-    },
-  });
-});
-
 test('expande K y conserva la instrucción de clasificar dinero encontrado como ahorro', async () => {
   const callModel = jest.fn().mockResolvedValue(
     JSON.stringify({
@@ -124,100 +96,6 @@ test('expande K y conserva la instrucción de clasificar dinero encontrado como 
 });
 
 test.each([
-  ['gasté 50K en un helado', 'helado', 'comida'],
-  ['gasté 20K en una salida con mi novia', 'salida', 'entretenimiento'],
-] as const)('conserva %s como pista para la categoría %s', async (text, keyword, category) => {
-  const callModel = jest.fn().mockResolvedValue(
-    JSON.stringify({
-      actions: [
-        {
-          domain: 'movimiento',
-          operation: 'crear',
-          payload: {
-            tipo: 'gasto',
-            monto: text.includes('50K') ? 50000 : 20000,
-            descripcion: 'TEXT_0',
-            categoria: category,
-            fecha: 1,
-          },
-          needsInput: [],
-        },
-      ],
-    })
-  );
-
-  await planFinancialActions({ text, requestId: 'r1', context: emptyContext }, callModel);
-
-  expect(JSON.parse(callModel.mock.calls[0]?.[1]).untrustedData.text).toContain(keyword);
-  expect(buildFinancialPrompt()).toContain(`${keyword} → ${category}`);
-});
-
-test('seudonimiza y rehidrata la descripción de un gasto', async () => {
-  const callModel = jest.fn().mockResolvedValue(
-    JSON.stringify({
-      actions: [
-        {
-          domain: 'movimiento',
-          operation: 'crear',
-          payload: {
-            tipo: 'gasto',
-            monto: 20000,
-            descripcion: 'TEXT_0 en TEXT_1',
-            categoria: 'comida',
-            fecha: 1,
-          },
-          needsInput: [],
-        },
-      ],
-    })
-  );
-  const result = await planFinancialActions(
-    {
-      text: 'gasté 20000 en almuerzo en El Corral',
-      requestId: 'r1',
-      context: emptyContext,
-    },
-    callModel
-  );
-  const modelText = JSON.parse(callModel.mock.calls[0][1]).untrustedData.text;
-  expect(modelText).toBe('gasté 20000 en TEXT_0 en TEXT_1');
-  expect(modelText).not.toMatch(/almuerzo|corral/i);
-  expect(result.actions[0]?.payload).toMatchObject({ descripcion: 'almuerzo en El Corral' });
-});
-
-test('seudonimiza y rehidrata el título de una meta', async () => {
-  const callModel = jest.fn().mockResolvedValue(
-    JSON.stringify({
-      actions: [
-        {
-          domain: 'meta',
-          operation: 'crear',
-          payload: {
-            title: 'TEXT_0',
-            iconId: 'plane',
-            category: 'trip',
-            targetAmount: 3000000,
-          },
-          needsInput: [],
-        },
-      ],
-    })
-  );
-  const result = await planFinancialActions(
-    {
-      text: 'crea una meta para viaje familiar por 3000000',
-      requestId: 'r1',
-      context: emptyContext,
-    },
-    callModel
-  );
-  const modelText = JSON.parse(callModel.mock.calls[0][1]).untrustedData.text;
-  expect(modelText).toBe('crea una meta para TEXT_0 por 3000000');
-  expect(modelText).not.toContain('viaje familiar');
-  expect(result.actions[0]?.payload).toMatchObject({ title: 'viaje familiar' });
-});
-
-test.each([
   'escríbeme a menor@ejemplo.com sobre el gasto',
   'mi teléfono es 300 123 4567 y gasté 10000',
   'llama al 3001234567 para confirmar el gasto',
@@ -241,21 +119,6 @@ test.each([
     planFinancialActions({ text, requestId: 'r1', context: emptyContext }, callModel)
   ).rejects.toThrow('datos personales');
   expect(callModel).not.toHaveBeenCalled();
-});
-
-test.each([
-  ['Juan Pérez me prestó 20000', /Juan|Pérez|prestó/i],
-  ['regalo Juan Pérez', /Juan|Pérez/i],
-  ['escribe al teléfono', /escribe|teléfono/i],
-])('ningún texto libre cruza al modelo: %s', async (text, freeText) => {
-  const callModel = jest
-    .fn()
-    .mockResolvedValue(
-      '{"actions":[{"domain":"meta","operation":"consultar","payload":{},"needsInput":[]}]}'
-    );
-  await planFinancialActions({ text, requestId: 'r1', context: emptyContext }, callModel);
-  expect(callModel.mock.calls[0][1]).not.toMatch(freeText);
-  expect(JSON.parse(callModel.mock.calls[0][1]).untrustedData.text).toContain('TEXT_');
 });
 
 test('rechaza un documento escrito como CC antes del modelo', async () => {
@@ -290,11 +153,6 @@ test.each([8_640_000_000_000_000, 8_640_000_000_000_001])(
     else expect(parse).toThrow('movement inválido');
   }
 );
-
-test('el prompt exige needsInput cuando una referencia no se puede resolver', () => {
-  expect(buildFinancialPrompt()).toContain('referencia no se puede resolver');
-  expect(buildFinancialPrompt()).toContain('needsInput');
-});
 
 test.each([
   {
@@ -396,4 +254,89 @@ test('genera una ruta diaria UTC sin datos de la solicitud', () => {
   expect(dailyFinancialAssistantUsagePath('student_1', new Date('2026-08-29T23:59:00Z'))).toBe(
     'financialAssistantUsage/student_1_2026-08-29'
   );
+});
+
+test('envía el texto completo con la fecha actual y valida el plan devuelto', async () => {
+  const callModel = jest.fn().mockResolvedValue(
+    JSON.stringify({
+      actions: [
+        {
+          domain: 'movimiento',
+          operation: 'crear',
+          payload: { tipo: 'gasto', monto: 5000, descripcion: 'helado', categoria: 'comida' },
+          needsInput: ['monto'],
+        },
+      ],
+    })
+  );
+  const plan = await planFinancialActions(
+    { text: 'gasté 5 mil en un helado', requestId: 'r1', context: emptyContext },
+    callModel
+  );
+  const sent = JSON.parse(callModel.mock.calls[0][1]);
+  expect(sent.untrustedData.text).toBe('gasté 5 mil en un helado');
+  expect(typeof sent.ahora).toBe('number');
+  expect(plan.actions[0]).toMatchObject({
+    domain: 'movimiento',
+    operation: 'crear',
+    payload: { monto: 5000, descripcion: 'helado' },
+    needsInput: [],
+  });
+  expect(typeof (plan.actions[0].payload as { fecha?: unknown }).fecha).toBe('number');
+});
+
+test('sanea nulos, montos en texto, íconos de meta y needsInput de consultas', () => {
+  const now = 1_000_000_000_000;
+  const plan = JSON.parse(
+    sanitizeModelPlan(
+      JSON.stringify({
+        actions: [
+          {
+            domain: 'meta',
+            operation: 'crear',
+            resourceId: null,
+            payload: { title: 'viaje', targetAmount: '2000000', iconId: 'avion', extra: 1 },
+            needsInput: ['title', 'category'],
+          },
+          { domain: 'movimiento', operation: 'consultar', payload: {}, needsInput: ['desde'] },
+          { domain: 'meta', operation: 'eliminar', payload: {}, needsInput: [] },
+        ],
+      }),
+      now
+    )
+  );
+  expect(plan.actions[0]).toEqual({
+    domain: 'meta',
+    operation: 'crear',
+    payload: { title: 'viaje', targetAmount: 2000000, iconId: 'target', category: 'custom' },
+    needsInput: [],
+  });
+  expect(plan.actions[1].needsInput).toEqual([]);
+  expect(plan.actions[2].needsInput).toEqual(['resourceId']);
+});
+
+test('reemplaza fechas futuras de un gasto por la fecha actual', () => {
+  const now = 1_000_000_000_000;
+  const plan = JSON.parse(
+    sanitizeModelPlan(
+      JSON.stringify({
+        actions: [
+          {
+            domain: 'ahorro',
+            operation: 'crear',
+            payload: { type: 'aporte', amount: 1000, description: 'a', fecha: now * 2 },
+          },
+        ],
+      }),
+      now
+    )
+  );
+  expect(plan.actions[0].payload.fecha).toBe(now);
+});
+
+test('el límite de Groq se muestra como función no disponible', () => {
+  expect(classifyFinancialAssistantError(new ModelRateLimitError('429'))).toEqual({
+    code: 'resource-exhausted',
+    message: 'Función no disponible',
+  });
 });
