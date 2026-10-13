@@ -1,5 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
+import { enterFadeUp, listExit, listLayout } from '@shared/constants/motion';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { formatDisplayCopGoals } from '@shared/utils/formatDisplayCop';
 import type { Movimiento } from '@features/savings/store/useMovimientosStore';
@@ -63,7 +65,7 @@ export default function ActivityList({
     );
   return (
     <View style={[styles.box, { borderColor: colors.materials.border }]}>
-      {items.map((item) => {
+      {items.map((item, index) => {
         const isExpense = item.kind === 'gasto';
         const amount = isExpense ? item.expense.monto : item.operation.amount;
         const label = isExpense
@@ -71,7 +73,13 @@ export default function ActivityList({
           : item.operation.description || (item.operation.type === 'aporte' ? 'Aporte' : 'Retiro');
         const sign = isExpense || (!isExpense && item.operation.type === 'retiro') ? '−' : '+';
         return (
-          <View key={item.id} style={[styles.row, { borderBottomColor: colors.materials.border }]}>
+          <Animated.View
+            key={item.id}
+            entering={enterFadeUp(index)}
+            exiting={listExit}
+            layout={listLayout}
+            style={[styles.row, { borderBottomColor: colors.materials.border }]}
+          >
             <Ionicons
               name={isExpense ? 'receipt-outline' : 'wallet-outline'}
               size={22}
@@ -110,7 +118,7 @@ export default function ActivityList({
             >
               <Ionicons name="trash-outline" size={20} color={colors.system.red} />
             </TouchableOpacity>
-          </View>
+          </Animated.View>
         );
       })}
     </View>

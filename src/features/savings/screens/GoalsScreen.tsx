@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -10,10 +10,15 @@ import {
   Keyboard,
   Platform,
 } from 'react-native';
-import Animated from 'react-native-reanimated';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withTiming,
+} from 'react-native-reanimated';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { motion } from '@shared/constants/motion';
+import { motion, progressTiming, softMs, staggerDelay } from '@shared/constants/motion';
 import { Ionicons } from '@expo/vector-icons';
 import { Typography } from '@shared/constants/typography';
 import { Spacing } from '@shared/constants/theme';
@@ -55,9 +60,17 @@ function VisualGoalCard({
   const status = goalStatus(goal);
   const statusLabel = status === 'cumplida' ? t('goals.goalReached') : t('goals.yourGoal');
 
+  // La barra (y su indicador) se llenan suavemente hasta el progreso actual.
+  const fill = useSharedValue(0);
+  useEffect(() => {
+    fill.value = withDelay(Math.min(delay, softMs.maxDelay), withTiming(progress, progressTiming));
+  }, [progress, delay, fill]);
+  const fillStyle = useAnimatedStyle(() => ({ width: `${fill.value}%` }));
+  const indicatorStyle = useAnimatedStyle(() => ({ left: `${fill.value}%` }));
+
   return (
     <Animated.View
-      entering={motion.enterDown(delay)}
+      entering={motion.enterFadeUp(0, delay)}
       style={[
         styles.goalCard,
         { backgroundColor: colors.materials.base, borderColor: colors.materials.border },
@@ -88,11 +101,8 @@ function VisualGoalCard({
       <View style={styles.progressArea}>
         <View style={styles.barContainer}>
           <View style={[styles.barBg, { backgroundColor: colors.materials.highlight }]}>
-            <View
-              style={[
-                styles.barFill,
-                { width: `${progress}%` as any, backgroundColor: colors.brand.primary },
-              ]}
+            <Animated.View
+              style={[styles.barFill, { backgroundColor: colors.brand.primary }, fillStyle]}
             />
           </View>
           {progress > 0 && progress < 100 && (
@@ -100,10 +110,10 @@ function VisualGoalCard({
               style={[
                 styles.progressIndicator,
                 {
-                  left: `${progress}%` as any,
                   backgroundColor: colors.brand.primary,
                   borderColor: colors.background.base,
                 },
+                indicatorStyle,
               ]}
             />
           )}
@@ -169,7 +179,7 @@ export default function GoalsScreen() {
             {t('goals.pageSubtitle', { name: nickname })}
           </Text>
 
-          <Animated.View entering={motion.enterDown(72)} style={stylesD.economyRow}>
+          <Animated.View entering={motion.enterFadeUp(0, 40)} style={stylesD.economyRow}>
             <StatTile
               icon="wallet-outline"
               label={t('goals.savingsTotal')}
@@ -193,7 +203,7 @@ export default function GoalsScreen() {
             </TouchableOpacity>
           </View>
 
-          <Animated.View entering={motion.enterDown(128)} style={stylesD.section}>
+          <Animated.View entering={motion.enterFadeUp(1, 40)} style={stylesD.section}>
             <Text style={[stylesD.sectionTitle, { color: colors.text.primary }]}>
               {t('goals.yourGoals')}
             </Text>
@@ -202,7 +212,7 @@ export default function GoalsScreen() {
                 <VisualGoalCard
                   key={g.id}
                   goal={g}
-                  delay={96 + i * 40}
+                  delay={staggerDelay(i, 120)}
                   onDeposit={() => openDeposit(g)}
                 />
               ))

@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { ScrollView, StyleSheet, Text } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
+import Animated from 'react-native-reanimated';
+import { enterFadeUp } from '@shared/constants/motion';
 import { useTranslation } from 'react-i18next';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
@@ -29,8 +31,8 @@ export default function ActividadScreen() {
 
   return <ScreenWrapper>
     <ScrollView contentContainerStyle={styles.page}>
-      <Text style={[styles.title, { color: colors.text.primary }]}>{t('financialActivity.title')}</Text>
-      <Text style={{ color: colors.text.secondary }}>{t('financialActivity.subtitle')}</Text>
+      <Animated.Text entering={enterFadeUp(0)} style={[styles.title, { color: colors.text.primary }]}>{t('financialActivity.title')}</Animated.Text>
+      <Animated.Text entering={enterFadeUp(1)} style={{ color: colors.text.secondary }}>{t('financialActivity.subtitle')}</Animated.Text>
       <Segmented options={[
         { key: 'todos', label: t('financialActivity.all') },
         { key: 'gastos', label: t('financialActivity.expenses') },

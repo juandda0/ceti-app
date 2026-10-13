@@ -273,7 +273,7 @@
   },
   "worlds": {
     "pageTitle": "Tu Galaxia",
-    "lessonsCompleted": "{{done}} de {{total}} mundos completados",
+    "lessonsCompleted": "{{done}} de {{total}} preguntas logradas",
     "worldNumber": "Mundo {{n}}",
     "lockedNote": "Completa el Mundo {{n}} para desbloquear",
     "lockedNoteNamed": "Completa {{name}} para desbloquear",
@@ -294,6 +294,8 @@
     "result": "Ver resultado",
     "next": "Siguiente",
     "worldComplete": "¡Mundo completado!",
+    "tryAgainTitle": "¡Buen intento!",
+    "needToUnlock": "Necesitas 8 de 10 respuestas correctas para desbloquear el siguiente mundo. ¡Inténtalo de nuevo!",
     "score": "respuestas correctas · {{pct}}% de precisión",
     "backToWorlds": "Volver a los mundos",
     "verdadero": "Verdadero",
@@ -586,6 +588,65 @@
     "month": "Resumen",
     "expenses": "Gastos",
     "savings": "Ahorros"
+  },
+  "graficasSeccion": {
+    "periodo": {
+      "semana": "Semana",
+      "mes": "Mes",
+      "todo": "Todo"
+    },
+    "gastado": "Gastaste",
+    "ahorrado": "Ahorraste",
+    "balance": "Te queda",
+    "balanceNegativo": "Te pasaste",
+    "insight": {
+      "menos_semana": "Esta semana gastaste {{pct}}% menos que la anterior 🎉",
+      "mas_semana": "Esta semana gastaste {{pct}}% más que la anterior 👀",
+      "igual_semana": "Vas gastando casi lo mismo que la semana pasada 👌",
+      "arranque_semana": "Primera semana con gastos anotados. ¡Así se empieza! 💪",
+      "menos_mes": "Este mes gastaste {{pct}}% menos que el anterior 🎉",
+      "mas_mes": "Este mes gastaste {{pct}}% más que el anterior 👀",
+      "igual_mes": "Vas gastando casi lo mismo que el mes pasado 👌",
+      "arranque_mes": "Primer mes con gastos anotados. ¡Así se empieza! 💪",
+      "soloAhorro": "Solo ahorros, cero gastos. ¡Qué nivel! 🏆",
+      "ahorroPositivo": "En total has ahorrado más de lo que gastaste 🙌",
+      "gastoMayor": "En total gastaste más de lo que ahorraste. ¡Tú le das la vuelta! 💪",
+      "vacio": "Aún no hay movimientos en este periodo."
+    },
+    "categorias": {
+      "titulo": "¿En qué se va tu plata?",
+      "ayuda": "Toca una barra para ver el detalle",
+      "detalle": "{{categoria}}: {{monto}} ({{pct}}% de tus gastos)",
+      "vacio": "Sin gastos por aquí. Toca el micrófono y di \"gasté 5 mil en un helado\" 🍦"
+    },
+    "tiempo": {
+      "titulo_semana": "Tu semana, día a día",
+      "titulo_mes": "Tu mes, semana a semana",
+      "titulo_todo": "Tus últimos 6 meses",
+      "ayuda": "Toca una columna para ver cuánto",
+      "detalle": "{{label}}: gastaste {{gastos}} y ahorraste {{ahorros}}",
+      "hoy": "Hoy",
+      "vacio": "Aún no hay movimientos. Toca el micrófono y di \"ahorré 10 mil\" 🎙️"
+    },
+    "metas": {
+      "titulo": "Tus metas",
+      "faltan": "Faltan {{monto}}",
+      "cumplida": "¡Meta cumplida! 🎉",
+      "ritmo": "A tu ritmo llegas en ~{{meses}} meses",
+      "ritmoUno": "A tu ritmo llegas en ~1 mes",
+      "sinRitmo": "Abona algo y te digo cuándo llegas",
+      "vacio": "Aún no tienes metas. Crea una y mira cómo se llena la barra",
+      "crear": "Crear una meta"
+    },
+    "racha": {
+      "titulo": "Tu constancia",
+      "dias": "{{dias}} días seguidos anotando 🔥",
+      "diaUno": "1 día anotando. ¡Vuelve mañana! 🔥",
+      "cero": "Anota algo hoy y empieza tu racha",
+      "semana": "Días con algo anotado esta semana"
+    },
+    "vacioTitulo": "Tus gráficas aparecerán aquí",
+    "vacioTexto": "Toca el micrófono y di \"gasté 5 mil en un helado\". Ceti lo anota y lo dibuja"
   },
   "financialVoice": {
     "open": "Registrar movimiento por voz"

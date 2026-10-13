@@ -51,11 +51,11 @@ const catalog = {
   },
   'streak.fire': {
     source: require('@/assets/animations/streak/fire.json'),
-    status: 'approved',
+    status: 'shipped',
     loop: true,
     speed: 1,
     haptic: 'success',
-    usedIn: [],
+    usedIn: ['StreakCard'],
     brief: 'Llama de la racha: se enciende cuando el usuario registra el día y mantiene la racha.',
   },
   'celebration.rocket-launch': {

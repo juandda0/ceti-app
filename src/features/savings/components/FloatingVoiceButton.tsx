@@ -7,10 +7,17 @@
  */
 import { useEffect, useState } from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { usePathname } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
+import {
+  enterSoftScale,
+  pressInTiming,
+  pressOutTiming,
+  pressScale,
+} from '@shared/constants/motion';
 import { showCetiToast } from '@shared/store/useCetiOverlayStore';
 import FinancialAssistantSheet from '@features/savings/components/FinancialAssistantSheet';
 import VoiceCaptureSheet from '@features/savings/components/VoiceCaptureSheet';
@@ -44,6 +51,9 @@ export default function FloatingVoiceButton() {
   const [manualCaptureVisible, setManualCaptureVisible] = useState(false);
   const [capturedText, setCapturedText] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  // Feedback de toque del botón flotante (escala sutil).
+  const fabScale = useSharedValue(1);
+  const fabPressStyle = useAnimatedStyle(() => ({ transform: [{ scale: fabScale.value }] }));
 
   const organizeTranscript = (texto: string) => {
     setProcessing(true);
@@ -145,14 +155,22 @@ export default function FloatingVoiceButton() {
   return (
     <>
       {!sheetOpen && !inWorld ? (
-        <TouchableOpacity
-          accessibilityRole="button"
-          accessibilityLabel={t('financialVoice.open')}
-          onPress={startCapture}
-          style={[styles.button, { backgroundColor: colors.brand.primary }]}
-        >
-          <Ionicons name="mic" size={24} color={colors.text.onBrand} />
-        </TouchableOpacity>
+        <Animated.View entering={enterSoftScale()} style={[styles.fab, fabPressStyle]}>
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel={t('financialVoice.open')}
+            onPress={startCapture}
+            onPressIn={() => {
+              fabScale.value = withTiming(pressScale, pressInTiming);
+            }}
+            onPressOut={() => {
+              fabScale.value = withTiming(1, pressOutTiming);
+            }}
+            style={[styles.button, { backgroundColor: colors.brand.primary }]}
+          >
+            <Ionicons name="mic" size={24} color={colors.text.onBrand} />
+          </TouchableOpacity>
+        </Animated.View>
       ) : null}
 
       <VoiceCaptureSheet
@@ -191,10 +209,12 @@ export default function FloatingVoiceButton() {
 }
 
 const styles = StyleSheet.create({
-  button: {
+  fab: {
     position: 'absolute',
     right: 20,
     bottom: 106,
+  },
+  button: {
     width: 56,
     height: 56,
     borderRadius: 28,

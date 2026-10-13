@@ -10,18 +10,14 @@ import {
   Pressable,
   View,
 } from 'react-native';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  Easing,
-} from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { Typography } from '@shared/constants/typography';
 import { BorderRadius, Spacing, Shadows } from '@shared/constants/theme';
 import { BrandColors } from '@shared/constants/colors';
+import { pressInTiming, pressOutTiming, pressScale } from '@shared/constants/motion';
 
 type ButtonVariant =
   | 'primary'
@@ -63,12 +59,12 @@ export default function CetiButton({
   const colors = useThemeColors();
   const handlePressIn = () => {
     if (disabled || isLoading) return;
-    scale.value = withTiming(0.97, { duration: 85, easing: Easing.out(Easing.quad) });
+    scale.value = withTiming(pressScale, pressInTiming);
   };
 
   const handlePressOut = () => {
     if (disabled || isLoading) return;
-    scale.value = withTiming(1, { duration: 120, easing: Easing.out(Easing.quad) });
+    scale.value = withTiming(1, pressOutTiming);
   };
 
   const handlePress = () => {

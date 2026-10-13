@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
+import { enterSoftFade } from '@shared/constants/motion';
 import { useTranslation } from 'react-i18next';
 import { Typography } from '@shared/constants/typography';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
@@ -61,7 +63,7 @@ export default function MovimientoListItem({
       </View>
 
       {confirming ? (
-        <View style={styles.confirmRow}>
+        <Animated.View entering={enterSoftFade()} style={styles.confirmRow}>
           <TouchableOpacity
             onPress={() => setConfirming(false)}
             hitSlop={8}
@@ -82,7 +84,7 @@ export default function MovimientoListItem({
               {t('movimientos.borrarCorto')}
             </Text>
           </TouchableOpacity>
-        </View>
+        </Animated.View>
       ) : (
         <Text
           style={[styles.amount, { color: esAhorro ? colors.system.green : colors.system.red }]}

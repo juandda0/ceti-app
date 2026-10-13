@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
-import { motion } from '@shared/constants/motion';
+import { motion, listExit, listLayout } from '@shared/constants/motion';
 import { Spacing } from '@shared/constants/theme';
 import { Typography } from '@shared/constants/typography';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
@@ -55,7 +55,7 @@ export default function MovimientosScreen() {
             {t('movimientos.pageSubtitle')}
           </Text>
 
-          <Animated.View entering={motion.enterDown(72)} style={styles.micSection}>
+          <Animated.View entering={motion.enterFadeUp(0)} style={styles.micSection}>
             {state === 'unavailable' ? (
               <View
                 style={[
@@ -125,7 +125,7 @@ export default function MovimientosScreen() {
 
           {movimientos.length === 0 ? (
             <Animated.View
-              entering={motion.enterDown(104)}
+              entering={motion.enterFadeUp(1, 40)}
               style={[
                 styles.emptyCard,
                 { backgroundColor: colors.materials.base, borderColor: colors.materials.border },
@@ -140,7 +140,7 @@ export default function MovimientosScreen() {
               </Text>
             </Animated.View>
           ) : (
-            <Animated.View entering={motion.enterDown(104)} style={styles.section}>
+            <Animated.View entering={motion.enterFadeUp(1, 40)} style={styles.section}>
               <View
                 style={[
                   styles.historyBox,
@@ -151,12 +151,18 @@ export default function MovimientosScreen() {
                 ]}
               >
                 {historial.map((m, i, arr) => (
-                  <MovimientoListItem
+                  <Animated.View
                     key={m.id}
-                    movimiento={m}
-                    showDivider={i < arr.length - 1}
-                    onDelete={() => void deleteExpense(m.id)}
-                  />
+                    entering={motion.enterFadeUp(i, 60)}
+                    exiting={listExit}
+                    layout={listLayout}
+                  >
+                    <MovimientoListItem
+                      movimiento={m}
+                      showDivider={i < arr.length - 1}
+                      onDelete={() => void deleteExpense(m.id)}
+                    />
+                  </Animated.View>
                 ))}
               </View>
             </Animated.View>

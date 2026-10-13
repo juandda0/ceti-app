@@ -30,7 +30,8 @@ import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { Typography } from '@shared/constants/typography';
 import { Spacing, BorderRadius } from '@shared/constants/theme';
-import { motion } from '@shared/constants/motion';
+import { motion, staggerDelay } from '@shared/constants/motion';
+import AnimatedProgressFill from '@shared/components/motion/AnimatedProgressFill';
 import type { ThemeColors } from '@shared/constants/colors';
 import { displayWorldDef, type WorldDef } from '@features/learning/data/worldMeta';
 
@@ -61,7 +62,7 @@ function WorldCard({
   const status = worldStatus(isUnlocked, progress);
 
   return (
-    <Animated.View entering={motion.enterDown(index * 45)} style={cardSt.row}>
+    <Animated.View entering={motion.enterFadeUp(index)} style={cardSt.row}>
       <View style={cardSt.rail} pointerEvents="none">
         <View
           style={[
@@ -137,11 +138,10 @@ function WorldCard({
           {isUnlocked ? (
             <View style={cardSt.progressRow}>
               <View style={[cardSt.progressTrack, { backgroundColor: colors.materials.highlight }]}>
-                <View
-                  style={[
-                    cardSt.progressFill,
-                    { width: `${pct}%` as const, backgroundColor: world.color },
-                  ]}
+                <AnimatedProgressFill
+                  pct={pct}
+                  delay={staggerDelay(index, 120)}
+                  style={[cardSt.progressFill, { backgroundColor: world.color }]}
                 />
               </View>
               {status === 'dominado' ? (
@@ -227,9 +227,7 @@ export default function WorldsScreen() {
           const def: WorldDef = { ...disp, number: index + 1 };
           return { cw, def };
         })
-        .filter(
-          (x): x is { cw: (typeof classWorlds)[number]; def: WorldDef } => x !== null
-        ),
+        .filter((x): x is { cw: (typeof classWorlds)[number]; def: WorldDef } => x !== null),
     [classWorlds, classConfig]
   );
 

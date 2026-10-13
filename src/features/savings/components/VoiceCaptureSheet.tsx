@@ -14,11 +14,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import CetiBottomSheet from '@shared/components/CetiBottomSheet';
 import { Typography } from '@shared/constants/typography';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
+import { enterSoftFade, enterSoftScale } from '@shared/constants/motion';
+import ListeningPulse from '@shared/components/motion/ListeningPulse';
 
 export default function VoiceCaptureSheet({
   visible,
@@ -83,15 +86,12 @@ export default function VoiceCaptureSheet({
                 : t('movimientos.listeningTitle')}
           </Text>
           {errorMessage && !processing ? (
-            <Text
-              accessibilityRole="alert"
-              style={[styles.error, { color: colors.system.red }]}
-            >
+            <Text accessibilityRole="alert" style={[styles.error, { color: colors.system.red }]}>
               {errorMessage}
             </Text>
           ) : null}
           {writing ? (
-            <>
+            <Animated.View entering={enterSoftFade()} style={styles.writingGroup}>
               <TextInput
                 autoFocus
                 multiline
@@ -123,16 +123,17 @@ export default function VoiceCaptureSheet({
                   {t('financialAssistant.organize')}
                 </Text>
               </TouchableOpacity>
-            </>
+            </Animated.View>
           ) : (
-            <Text
+            <Animated.Text
+              entering={enterSoftFade()}
               style={[
                 styles.transcript,
                 { color: transcript ? colors.text.primary : colors.text.tertiary },
               ]}
             >
               {transcript || t('movimientos.transcriptPlaceholder')}
-            </Text>
+            </Animated.Text>
           )}
         </View>
 
@@ -142,15 +143,19 @@ export default function VoiceCaptureSheet({
               <ActivityIndicator color={colors.brand.primary} />
             </View>
           ) : !writing ? (
-            <TouchableOpacity
-              onPress={onStop}
-              activeOpacity={0.85}
-              style={[styles.mic, { backgroundColor: colors.system.red }]}
-              accessibilityRole="button"
-              accessibilityLabel={t('movimientos.listo')}
-            >
-              <Ionicons name="stop" size={30} color={colors.text.onBrand} />
-            </TouchableOpacity>
+            <Animated.View entering={enterSoftScale()} style={styles.micStack}>
+              {/* Anillo suave solo MIENTRAS se escucha. */}
+              <ListeningPulse size={72} color={colors.system.red} />
+              <TouchableOpacity
+                onPress={onStop}
+                activeOpacity={0.85}
+                style={[styles.mic, { backgroundColor: colors.system.red }]}
+                accessibilityRole="button"
+                accessibilityLabel={t('movimientos.listo')}
+              >
+                <Ionicons name="stop" size={30} color={colors.text.onBrand} />
+              </TouchableOpacity>
+            </Animated.View>
           ) : null}
           {!processing && !writing ? (
             <Text style={[styles.doneLabel, { color: colors.text.secondary }]}>
@@ -184,6 +189,8 @@ const styles = StyleSheet.create({
   status: { ...Typography.subheadline, fontWeight: '600' },
   transcript: { ...Typography.title2, fontWeight: '700', lineHeight: 32 },
   micWrap: { alignItems: 'center', paddingTop: 20 },
+  micStack: { width: 72, height: 72, alignItems: 'center', justifyContent: 'center' },
+  writingGroup: { gap: 12 },
   mic: {
     width: 72,
     height: 72,

@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import CetiBottomSheet from '@shared/components/CetiBottomSheet';
 import CetiButton from '@shared/components/CetiButton';
 import { Spacing } from '@shared/constants/theme';
 import { Typography } from '@shared/constants/typography';
+import { enterFadeUp, enterSoftFade, listExit, listLayout } from '@shared/constants/motion';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { formatMoneyInputThousands, parseMoneyAmountInt } from '@shared/utils/moneyInputFormat';
 import { executeFinancialPlan, type ActionResult } from '../assistant/executeFinancialPlan';
@@ -80,8 +82,23 @@ function describeAction(
   action: FinancialAction,
   t: TFn,
   data: {
-    movements: { id: string; tipo: 'gasto' | 'ahorro'; monto: number; descripcion: string; categoria: string; fecha?: number; createdAt: number }[];
-    operations: { id: string; type: 'aporte' | 'retiro'; amount: number; description: string; fecha: number; goalId?: string }[];
+    movements: {
+      id: string;
+      tipo: 'gasto' | 'ahorro';
+      monto: number;
+      descripcion: string;
+      categoria: string;
+      fecha?: number;
+      createdAt: number;
+    }[];
+    operations: {
+      id: string;
+      type: 'aporte' | 'retiro';
+      amount: number;
+      description: string;
+      fecha: number;
+      goalId?: string;
+    }[];
     goals: { id: string; title: string; targetAmount?: number; deadline?: number }[];
   }
 ): ReviewInfo {
@@ -130,7 +147,11 @@ function describeAction(
       range();
       return {
         title: title(
-          p.tipo === 'ahorro' ? 'querySavings' : p.tipo === 'gasto' ? 'queryExpenses' : 'queryMovements'
+          p.tipo === 'ahorro'
+            ? 'querySavings'
+            : p.tipo === 'gasto'
+              ? 'queryExpenses'
+              : 'queryMovements'
         ),
         destructive,
         lines,
@@ -475,8 +496,11 @@ export default function FinancialAssistantSheet({
                 ? operations
                 : [...movements, ...operations];
           return (
-            <View
+            <Animated.View
               key={action.actionId}
+              entering={enterFadeUp(index, 60)}
+              exiting={listExit}
+              layout={listLayout}
               style={[
                 styles.card,
                 { backgroundColor: colors.materials.base, borderColor: colors.materials.border },
@@ -768,7 +792,7 @@ export default function FinancialAssistantSheet({
                 </Text>
               ) : null}
               {result ? (
-                <View>
+                <Animated.View entering={enterSoftFade()}>
                   <Text
                     style={[
                       styles.result,
@@ -791,9 +815,9 @@ export default function FinancialAssistantSheet({
                       {querySummary(result.data, t as TFn)}
                     </Text>
                   ) : null}
-                </View>
+                </Animated.View>
               ) : null}
-            </View>
+            </Animated.View>
           );
         })}
       </ScrollView>

@@ -18,7 +18,13 @@ import {
   Platform,
   ActivityIndicator,
 } from 'react-native';
-import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
+import Animated, {
+  ReduceMotion,
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
@@ -41,6 +47,17 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { Typography } from '@shared/constants/typography';
 import { Spacing, BorderRadius } from '@shared/constants/theme';
+import {
+  enterFadeUp,
+  enterSlideUp,
+  enterSoftFade,
+  enterSoftScale,
+  pressInTiming,
+  pressOutTiming,
+  pressScale,
+  softEasing,
+} from '@shared/constants/motion';
+import AnimatedProgressFill from '@shared/components/motion/AnimatedProgressFill';
 import type {
   QuizItem,
   MultipleChoiceItem,
@@ -132,8 +149,10 @@ function QuizHeader({
         <View style={{ width: 34 }} />
       </View>
       <View style={[headerSt.track, { backgroundColor: colors.materials.highlight }]}>
-        <View
-          style={[headerSt.fill, { width: `${pct}%` as const, backgroundColor: accentColor }]}
+        <AnimatedProgressFill
+          pct={pct}
+          duration={320}
+          style={[headerSt.fill, { backgroundColor: accentColor }]}
         />
       </View>
     </View>
@@ -173,19 +192,53 @@ function OptionButton({
       : state === 'wrong'
         ? colors.system.red
         : colors.text.primary;
+  const interactive = state === 'idle' || state === 'selected';
+
+  // Feedback: escala al presionar, pulso suave si es correcta, sacudida leve si no.
+  const scale = useSharedValue(1);
+  const shakeX = useSharedValue(0);
+  useEffect(() => {
+    if (state === 'correct') {
+      scale.value = withSequence(
+        withTiming(1.03, { duration: 130, easing: softEasing, reduceMotion: ReduceMotion.System }),
+        withTiming(1, { duration: 170, easing: softEasing, reduceMotion: ReduceMotion.System })
+      );
+    } else if (state === 'wrong') {
+      const step = { duration: 42, easing: softEasing, reduceMotion: ReduceMotion.System };
+      shakeX.value = withSequence(
+        withTiming(-4, step),
+        withTiming(4, step),
+        withTiming(-4, step),
+        withTiming(4, step),
+        withTiming(-2, step),
+        withTiming(0, step)
+      );
+    }
+  }, [state, scale, shakeX]);
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: shakeX.value }, { scale: scale.value }],
+  }));
 
   return (
-    <TouchableOpacity
-      activeOpacity={state === 'idle' || state === 'selected' ? 0.75 : 1}
-      onPress={state === 'idle' || state === 'selected' ? onPress : undefined}
-      style={[optSt.btn, { backgroundColor: bg, borderColor: border }]}
-    >
-      <Text style={[optSt.label, { color: textColor }]}>{label}</Text>
-      {state === 'correct' && (
-        <Ionicons name="checkmark-circle" size={20} color={colors.system.green} />
-      )}
-      {state === 'wrong' && <Ionicons name="close-circle" size={20} color={colors.system.red} />}
-    </TouchableOpacity>
+    <Animated.View style={animatedStyle}>
+      <TouchableOpacity
+        activeOpacity={interactive ? 0.75 : 1}
+        onPress={interactive ? onPress : undefined}
+        onPressIn={() => {
+          if (interactive) scale.value = withTiming(pressScale, pressInTiming);
+        }}
+        onPressOut={() => {
+          if (interactive) scale.value = withTiming(1, pressOutTiming);
+        }}
+        style={[optSt.btn, { backgroundColor: bg, borderColor: border }]}
+      >
+        <Text style={[optSt.label, { color: textColor }]}>{label}</Text>
+        {state === 'correct' && (
+          <Ionicons name="checkmark-circle" size={20} color={colors.system.green} />
+        )}
+        {state === 'wrong' && <Ionicons name="close-circle" size={20} color={colors.system.red} />}
+      </TouchableOpacity>
+    </Animated.View>
   );
 }
 
@@ -209,7 +262,7 @@ function FeedbackBanner({
 
   return (
     <Animated.View
-      entering={FadeInDown.duration(220)}
+      entering={enterSlideUp()}
       style={[feedbackSt.wrap, { backgroundColor: bgColor, borderColor: iconColor }]}
     >
       <View style={feedbackSt.titleRow}>
@@ -400,32 +453,39 @@ function CompletionScreen({
           },
         ]}
       >
-        <Animated.View entering={FadeIn.duration(300)} style={completeSt.center}>
-          <View style={[completeSt.iconCircle, { backgroundColor: accentColor + '22' }]}>
+        <Animated.View entering={enterSoftFade()} style={completeSt.center}>
+          <Animated.View
+            entering={enterSoftScale(60)}
+            style={[completeSt.iconCircle, { backgroundColor: accentColor + '22' }]}
+          >
             <Ionicons name={mastered ? 'trophy' : 'refresh'} size={52} color={accentColor} />
-          </View>
+          </Animated.View>
           <Text style={[completeSt.title, { color: colors.text.primary }]}>
             {mastered ? t('quiz.worldComplete') : t('quiz.tryAgainTitle')}
           </Text>
           <Text style={[completeSt.subtitle, { color: colors.text.secondary }]}>
             {mastered ? worldName : t('quiz.needToUnlock')}
           </Text>
-          <View
+          <Animated.View
+            entering={enterFadeUp(2, 40)}
             style={[
               completeSt.scoreCard,
               { backgroundColor: colors.background.elevated, borderColor: colors.materials.border },
             ]}
           >
-            <Text style={[completeSt.scoreNum, { color: accentColor }]}>
+            <Animated.Text
+              entering={enterSoftScale(180)}
+              style={[completeSt.scoreNum, { color: accentColor }]}
+            >
               {correct}/{total}
-            </Text>
+            </Animated.Text>
             <Text style={[completeSt.scoreLabel, { color: colors.text.tertiary }]}>
               {t('quiz.score', { pct })}
             </Text>
-          </View>
+          </Animated.View>
         </Animated.View>
 
-        <View style={completeSt.actions}>
+        <Animated.View entering={enterFadeUp(3, 40)} style={completeSt.actions}>
           <TouchableOpacity
             onPress={onBack}
             activeOpacity={0.85}
@@ -435,7 +495,7 @@ function CompletionScreen({
           >
             <Text style={[completeSt.btnText, { color: '#fff' }]}>{t('quiz.backToWorlds')}</Text>
           </TouchableOpacity>
-        </View>
+        </Animated.View>
       </View>
     </ScreenWrapper>
   );
@@ -721,7 +781,11 @@ export default function WorldQuizScreen() {
         keyboardShouldPersistTaps="handled"
       >
         {/* Question type */}
-        <Animated.View entering={FadeIn.duration(200)} style={styles.badgeRow}>
+        <Animated.View
+          key={`badge-${currentIndex}`}
+          entering={enterSoftFade()}
+          style={styles.badgeRow}
+        >
           <View style={[styles.badge, { backgroundColor: colors.materials.highlight }]}>
             <Text style={[styles.badgeText, { color: colors.text.tertiary }]}>
               {currentQuestion.tipo === 'multiple_choice'
@@ -734,14 +798,18 @@ export default function WorldQuizScreen() {
         </Animated.View>
 
         {/* Question text */}
-        <Animated.View entering={FadeInDown.duration(250).delay(40)}>
+        <Animated.View key={`q-${currentIndex}`} entering={enterFadeUp(0, 40)}>
           <Text style={[styles.questionText, { color: colors.text.primary }]}>
             {currentQuestion.enunciado}
           </Text>
         </Animated.View>
 
         {/* ── Answer area per tipo ── */}
-        <Animated.View entering={FadeInDown.duration(250).delay(100)} style={styles.options}>
+        <Animated.View
+          key={`opts-${currentIndex}`}
+          entering={enterFadeUp(1, 40)}
+          style={styles.options}
+        >
           {currentQuestion.tipo === 'multiple_choice' && (
             <>
               {stableShuffle(

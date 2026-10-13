@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
+import { Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import Animated from 'react-native-reanimated';
@@ -41,18 +41,24 @@ export default function ProfileScreen() {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={[styles.pageTitle, { color: colors.text.primary }]}>
+        <Animated.Text
+          entering={motion.enterSoftFade()}
+          style={[styles.pageTitle, { color: colors.text.primary }]}
+        >
           {t('profile.pageTitle')}
-        </Text>
+        </Animated.Text>
 
-        <Animated.View entering={motion.enterDown(56)} style={styles.levelCard}>
-          <View style={[styles.avatarCircle, { borderColor: colors.brand.primary }]}>
+        <Animated.View entering={motion.enterFadeUp(1)} style={styles.levelCard}>
+          <Animated.View
+            entering={motion.enterSoftScale(120)}
+            style={[styles.avatarCircle, { borderColor: colors.brand.primary }]}
+          >
             {avatarEmoji || AVATARS[avatarId] ? (
               <Text style={styles.avatarText}>{avatarEmoji || AVATARS[avatarId]}</Text>
             ) : (
               <Ionicons name="person" size={40} color={colors.brand.primary} />
             )}
-          </View>
+          </Animated.View>
 
           <Text style={[styles.nameText, { color: colors.text.primary }]}>{nickname}</Text>
           {fullName && fullName !== nickname ? (
@@ -60,17 +66,19 @@ export default function ProfileScreen() {
           ) : null}
         </Animated.View>
 
-        <TouchableOpacity
-          style={styles.logoutBtn}
-          onPress={() => void performLogoutAndGo(router, '/(auth)/welcome')}
-          accessibilityRole="button"
-          accessibilityLabel={t('profile.logout')}
-        >
-          <Ionicons name="log-out-outline" size={20} color={colors.system.red} />
-          <Text style={[styles.logoutText, { color: colors.system.red }]}>
-            {t('profile.logout')}
-          </Text>
-        </TouchableOpacity>
+        <Animated.View entering={motion.enterFadeUp(2)}>
+          <TouchableOpacity
+            style={styles.logoutBtn}
+            onPress={() => void performLogoutAndGo(router, '/(auth)/welcome')}
+            accessibilityRole="button"
+            accessibilityLabel={t('profile.logout')}
+          >
+            <Ionicons name="log-out-outline" size={20} color={colors.system.red} />
+            <Text style={[styles.logoutText, { color: colors.system.red }]}>
+              {t('profile.logout')}
+            </Text>
+          </TouchableOpacity>
+        </Animated.View>
       </ScrollView>
     </ScreenWrapper>
   );

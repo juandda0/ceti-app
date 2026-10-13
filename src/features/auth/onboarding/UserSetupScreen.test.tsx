@@ -13,10 +13,14 @@ jest.mock('expo-haptics', () => ({
 }));
 jest.mock('react-native-reanimated', () => {
   const { View } = require('react-native');
-  const animation = {
+  const animation: Record<string, unknown> = {
     duration: () => animation,
     delay: () => animation,
+    easing: () => animation,
+    withInitialValues: () => animation,
+    reduceMotion: () => animation,
   };
+  const easingFn = (t: number) => t;
   return {
     __esModule: true,
     default: { View },
@@ -29,6 +33,12 @@ jest.mock('react-native-reanimated', () => {
     FadeOutUp: animation,
     ZoomIn: animation,
     Layout: animation,
+    LinearTransition: animation,
+    Keyframe: function Keyframe() {
+      return animation;
+    },
+    Easing: { out: () => easingFn, quad: easingFn, cubic: easingFn },
+    ReduceMotion: { System: 'system' },
   };
 });
 jest.mock('react-i18next', () => ({
