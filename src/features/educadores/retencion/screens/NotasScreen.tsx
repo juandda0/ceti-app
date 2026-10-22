@@ -45,6 +45,7 @@ import {
   tapsConTeclado,
   type Tono,
 } from '@features/dashboard/components/profe/kit';
+import { useNombreCurso } from '@features/dashboard/hooks/useNombreCurso';
 
 /** Orden del resumen: de mayor a menor desempeño, y al final quienes no tienen datos. */
 const ORDEN_RESUMEN: Desempeno[] = ['superior', 'alto', 'basico', 'bajo'];
@@ -82,7 +83,7 @@ export default function NotasScreen() {
   const colegioId = useAuthStore((s) => s.colegioId);
   const params = useLocalSearchParams<{ cursoId: string; nombre?: string }>();
   const cursoId = params.cursoId;
-  const cursoNombre = params.nombre ?? cursoId;
+  const cursoNombre = useNombreCurso(cursoId, params.nombre);
   const { puede, cargando: cargandoPlan } = useMiPlan();
   const habilitado = !cargandoPlan && puede('notasPeriodo');
 

@@ -63,6 +63,15 @@ export const rosterRepository = {
     return { uid: snap.id, ...(snap.data() as Estudiante) };
   },
 
+  /** Nombre visible de la clase (para enlaces directos que no traen `?nombre=`). */
+  async getCursoNombre(colegioId: string, cursoId: string): Promise<string | null> {
+    const clients = getFirebaseClients();
+    if (!clients?.firestore) return null;
+    const snap = await getDoc(cursoDocRef(clients.firestore, colegioId, cursoId));
+    if (!snap.exists()) return null;
+    return (snap.data() as Curso).nombre ?? null;
+  },
+
   /**
    * Reads only the `grado` field of a course doc (R4: grado comes from the
    * course, never from the student record). Used to determine which banco set

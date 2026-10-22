@@ -33,6 +33,7 @@ import {
 } from '@features/dashboard/components/profe/kit';
 import ImportarLista from '@features/educadores/retencion/components/ImportarLista';
 import type { EstudianteEstado } from '@shared/types/tenancy';
+import { useNombreCurso } from '@features/dashboard/hooks/useNombreCurso';
 
 const POLICY_VERSION = 'v1';
 
@@ -58,7 +59,7 @@ export default function CourseManageScreen() {
   const colegioId = useAuthStore((s) => s.colegioId);
   const params = useLocalSearchParams<{ cursoId: string; nombre?: string }>();
   const cursoId = params.cursoId;
-  const cursoNombre = params.nombre ?? cursoId;
+  const cursoNombre = useNombreCurso(cursoId, params.nombre);
 
   const [vista, setVista] = useState<Vista>('invitar');
   const [roster, setRoster] = useState<EstudianteWithId[]>([]);

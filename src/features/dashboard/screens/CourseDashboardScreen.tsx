@@ -35,6 +35,7 @@ import {
   paletaTono,
   tonoNivel,
 } from '@features/dashboard/components/profe/kit';
+import { useNombreCurso } from '@features/dashboard/hooks/useNombreCurso';
 
 const FLAG_KEY: Record<RiskFlag, string> = {
   no_activity: 'dashboard.flagNoActivity',
@@ -69,7 +70,7 @@ export default function CourseDashboardScreen() {
   const uid = useAuthStore((s) => s.firebaseUid);
   const params = useLocalSearchParams<{ cursoId: string; nombre?: string; vista?: string }>();
   const cursoId = params.cursoId;
-  const cursoNombre = params.nombre ?? cursoId;
+  const cursoNombre = useNombreCurso(cursoId, params.nombre);
   const { puede, cargando: planCargando } = useMiPlan();
   // Mientras se lee el plan no se muestra ni la herramienta ni su adelanto.
   const conAlertas = !planCargando && puede('alertasTempranas');
