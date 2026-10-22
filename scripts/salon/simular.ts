@@ -117,9 +117,7 @@ async function practicar(
     hoy,
     ahora
   );
-  // Nunca más viejo que el documento anterior (ver docJuego en comun.ts).
-  const estado = { ...r.estado, actualizadoEn: Math.max(ahora, antes.actualizadoEn + 1) };
-  const escrituras: Promise<unknown>[] = [db.doc(rutaJuego(e.uid)).set(serializable(estado))];
+  const escrituras: Promise<unknown>[] = [db.doc(rutaJuego(e.uid)).set(serializable(r.estado))];
   if (correct !== null) {
     const progress = buildWorldProgress({
       colegioId: CURSO.colegioId,

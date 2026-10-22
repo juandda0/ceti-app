@@ -60,7 +60,7 @@ La barra de arriba tiene estos controles:
 
 - **Estudiantes:** de 4 a 24 (8 por defecto).
 - **Disposición:** _Profe + salón_ (lado a lado), _Profe arriba_ o _Solo estudiantes_.
-- **Pantalla del profe:** Tablero 10°B, Bitácora, Clases o Inicio. Hoy _Clases_ e _Inicio_ muestran "Algo no cargó" (ver Problemas conocidos); para presentar usa el Tablero o la Bitácora.
+- **Pantalla del profe:** Tablero 10°B, Bitácora, Clases o Inicio.
 - **Actualizar tablero cada 20 s:** el tablero del profe no escucha cambios en vivo, así que el salón lo recarga sin parpadeo (carga la versión nueva por detrás y luego la cambia).
 - **Pantalla completa** y **Modo presentación:** el modo presentación oculta la barra y agranda los nombres. Para salir usa Esc o el botón "Salir".
 - **Hosts:** cambia a `127.0.0.x` cuando el navegador no resuelve `*.localhost`. Safari es el caso típico.
@@ -113,7 +113,7 @@ Para repetir la presentación desde cero, corre `npm run salon:sembrar`. No hace
 
 **Un teléfono se quedó en "Cargando…".** Usa el botón ↻ que aparece al pasar el mouse sobre él.
 
-**"Algo no cargó" en la pantalla Clases del profe, y aviso de "sin conexión" en la Bitácora.** La lista de clases se arma con la consulta `profesorUids array-contains uid`. La regla de lectura de `cursos` (`isProfesorDe(cid, cursoId)`, que hace un `get()` con el id del documento) no se puede evaluar en una consulta `list`, así que el emulador responde `PERMISSION_DENIED`. Viene de las reglas desde el pivote a 3 roles y se reportó a Educadores. Mientras tanto, el tablero de cada clase y la Bitácora guardada sí funcionan.
+**"Algo no cargó" en Clases del profe.** Pasaba cuando la regla de `cursos` no permitía consultar la lista `profesorUids array-contains uid`. Educadores la corrigió en `firestore.rules`. Si vuelve a pasar, revisa que el emulador tenga las reglas actuales: las recarga solo al guardar el archivo.
 
 **La estudiante pendiente (`est-23`) muestra un error rojo de desarrollo.** Mientras está pendiente de atestación, las reglas le niegan la configuración de la clase y una suscripción sin manejo de error deja la superposición roja de desarrollo. Es un bug de la app (reportado). Para presentar, usa `n` ≤ 22 o explícalo como "así ve la app a un estudiante sin autorización del acudiente".
 
@@ -128,7 +128,7 @@ Para repetir la presentación desde cero, corre `npm run salon:sembrar`. No hace
   - Los agregados de curso los calcula el disparador real `onProgressWriteAggregate` en el emulador de Functions. La adopción y la Bitácora salen de llamar a `recalcularAdopcionColegio` y `bitacoraDeProfe`.
   - El contenido global (bancos, Elige camino y micro-teoría) se carga desde `content/`.
 - **Simulador** (`scripts/salon/simular.ts`): escribe lo mismo que la app al terminar una práctica. Cada 5 eventos regenera la Bitácora de la semana.
-- **Estado de juego:** se siembra con `actualizadoEn` un año en el futuro. Así el teléfono adopta el estado remoto en su primer inicio de sesión. Sin eso, `orbitaSync` le daba prioridad al estado local vacío y borraba el remoto. El bug ya se reportó a Órbita.
+- **Estado de juego:** un solo documento, `users/{uid}/juego/orbita`, construido con el dominio de Órbita. Al iniciar sesión en un teléfono nuevo gana el remoto: se corrigió en bb7df02, a partir de un reporte de esta sesión.
 
 ## Capturas
 

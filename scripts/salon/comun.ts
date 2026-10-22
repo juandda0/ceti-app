@@ -231,20 +231,9 @@ export function rutaJuego(uid: string): string {
   return `users/${uid}/juego/orbita`;
 }
 
-/**
- * Contención (reportada a Órbita el 2026-10-22): en un dispositivo nuevo,
- * orbitaSync compara `actualizadoEn` contra un estado local recién creado con
- * Date.now() y, si el remoto es más viejo, lo pisa con el vacío. Sembrar el
- * documento con `actualizadoEn` a un año hace que el remoto gane en el primer
- * inicio de sesión de cada teléfono del salón, sea cuando sea la presentación.
- */
-export const MARGEN_ACTUALIZADO_MS = 365 * DIA_MS;
-
+/** Documento de juego listo para Firestore (sin undefined, como orbitaSync). */
 export function docJuego(e: EstadoOrbita): Record<string, unknown> {
-  return serializable({
-    ...e,
-    actualizadoEn: e.actualizadoEn + MARGEN_ACTUALIZADO_MS,
-  }) as unknown as Record<string, unknown>;
+  return serializable(e) as unknown as Record<string, unknown>;
 }
 
 /** Número pseudoaleatorio estable por semilla (la siembra es reproducible). */
