@@ -116,6 +116,7 @@ service cloud.firestore {
             || isEstudianteActivoEnCurso(cid, cursoId, request.auth.uid);
           allow create, update: if configId == 'mundos'
             && isProfesorDe(cid, cursoId)
+            && tienePlanEdicion(cid)
             && request.resource.data.keys().hasOnly(['mundos', 'overrides', 'version', 'updatedAt', 'updatedByUid'])
             && (!('overrides' in request.resource.data) || request.resource.data.overrides is map)
             && request.resource.data.mundos is list
@@ -137,6 +138,7 @@ service cloud.firestore {
           allow read: if isProfesorDe(cid, cursoId)
             || isEstudianteActivoEnCurso(cid, cursoId, request.auth.uid);
           allow create, update: if isProfesorDe(cid, cursoId)
+            && tienePlanEdicion(cid)
             && (
               (docId.matches('banco_.*')
                 && request.resource.data.keys().hasOnly(['bancoId', 'grado', 'worldId', 'tipo', 'version', 'generadoPor', 'pendiente_validacion_docente', 'items'])
@@ -417,6 +419,73 @@ service cloud.firestore {
     match /classCodes/{code} {
       allow read, write: if false;
     }
+
+    // ── EDUCADORES (inicio) ──
+    // Cobros y retención del profe (docs/educadores/modelo-datos.md). Todo lo
+    // escriben Cloud Functions (Admin SDK); el cliente solo lee lo suyo.
+    match /suscripciones/{uid} {
+      allow read: if isSelf(uid);
+      allow write: if false;
+
+      // Contador mensual de IA: lo escribe el servidor al generar.
+      match /uso/{mes} {
+        allow read: if isSelf(uid);
+        allow write: if false;
+      }
+    }
+
+    // Pagos, cobros recurrentes y reembolsos. Se lista con where('uid', '==', …).
+    match /pagos/{pagoId} {
+      allow read: if signedIn() && resource.data.uid == request.auth.uid;
+      allow write: if false;
+    }
+
+    // Bitácora del domingo (la genera bitacoraSemanal).
+    match /bitacoras/{uid}/semanas/{semana} {
+      allow read: if isSelf(uid);
+      allow write: if false;
+    }
+
+    // Solo servidor: facturas, idempotencia del webhook, contador de fundadores y
+    // la cola de la extensión Trigger Email.
+    match /facturas/{id} {
+      allow read, write: if false;
+    }
+    match /eventosPago/{id} {
+      allow read, write: if false;
+    }
+    match /fundadores/{id} {
+      allow read, write: if false;
+    }
+    match /mail/{id} {
+      allow read, write: if false;
+    }
+
+    // Lista del curso invitada por correo (invitarLista). La lee un profe de la
+    // clase; solo la escribe el servidor. El doc de búsqueda por correo es solo
+    // del servidor (resolveMyAccess).
+    match /colegios/{cid}/cursos/{cursoId}/invitados/{correo} {
+      allow read: if isProfesorDe(cid, cursoId);
+      allow write: if false;
+    }
+    match /invitacionesPorCorreo/{correo} {
+      allow read, write: if false;
+    }
+
+    // ¿El profe puede editar contenido y la configuración de mundos? Piloto o
+    // superior vigente (suscripciones/{uid}.planVigente + vigenteHasta, que
+    // escribe el servidor), o la licencia Nave vigente del colegio. Al bajar de
+    // plan no se borra nada: solo deja de poder escribir (restaurar sigue libre).
+    function tienePlanEdicion(cid) {
+      let subRef = /databases/$(database)/documents/suscripciones/$(request.auth.uid);
+      let licencia = get(/databases/$(database)/documents/colegios/$(cid)).data.get('licencia', {});
+      return (exists(subRef)
+          && get(subRef).data.get('planVigente', '') in ['piloto', 'comandante', 'nave']
+          && request.time.toMillis() < get(subRef).data.get('vigenteHasta', 0))
+        || (licencia.get('plan', '') == 'nave'
+          && request.time.toMillis() < licencia.get('hasta', 0));
+    }
+    // ── EDUCADORES (fin) ──
 
     match /{document=**} {
       allow read, write: if false;

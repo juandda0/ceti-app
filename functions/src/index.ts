@@ -38,6 +38,14 @@ import {
   TEMA_MAX,
   type ItemTipo,
 } from './mundoBorrador';
+import { asegurarSuscripcion, refSuscripcion } from './educadores/plan';
+import {
+  asegurarCupoEstudiante,
+  asegurarIaDisponible,
+  asegurarPuedeCrearClase,
+  registrarGeneracionIa,
+} from './educadores/limites';
+import { cerrarInvitacion, invitacionDeCorreo } from './educadores/invitaciones';
 
 initializeApp();
 
@@ -312,20 +320,32 @@ export const createCurso = onCall(async (request) => {
  * (4) otherwise → prospective student (no claims set — they
  * must join a class by code). Demo tokens already carry a role so they
  * short-circuit at (1).
+ *
+ * Ceti Educadores: un profe sin suscripción recibe la prueba de 14 días (en (1)
+ * y en (3)), y un estudiante sin clase con invitación por correo
+ * (`invitacionesPorCorreo`) queda unido a esa clase (en (1) y en (4)).
  */
 export const resolveMyAccess = onCall(async (request) => {
   const caller = request.auth;
   requireAuth(caller);
+  const email = (caller.token.email as string | undefined)?.toLowerCase();
 
   if (isRole(caller.token.role)) {
+    // Profes de antes del cobro: reciben la prueba de 14 días al volver (get barato).
+    if (caller.token.role === 'profesor') {
+      await asegurarPruebaDeProfe(caller.uid);
+    }
+    // Estudiante sin clase (se registró antes de que su profe subiera la lista).
+    if (caller.token.role === 'estudiante' && !caller.token.cursoId) {
+      const unido = await unirPorInvitacion(caller, email);
+      if (unido) return unido;
+    }
     return {
       role: caller.token.role,
       colegioId: (caller.token.colegioId as string | undefined) ?? null,
       cursoId: (caller.token.cursoId as string | undefined) ?? null,
     };
   }
-
-  const email = (caller.token.email as string | undefined)?.toLowerCase();
 
   // (2) Ceti staff admin.
   if (isAllowlistedAdminEmail(email)) {
@@ -345,13 +365,54 @@ export const resolveMyAccess = onCall(async (request) => {
       createdByUid: caller.uid,
     });
     await applyClaims(caller.uid, { role: 'profesor', colegioId: colegioRef.id });
+    // Ceti Educadores: prueba de Piloto de 14 días (nunca sobrescribe).
+    await asegurarPruebaDeProfe(caller.uid);
     return { role: 'profesor', colegioId: colegioRef.id, cursoId: null };
   }
 
-  // (4) Invitado: estudiante autenticado sin clase para la experiencia pública.
+  // (4) Si su profe lo invitó por correo (invitarLista), entra directo a la clase.
+  const unido = await unirPorInvitacion(caller, email);
+  if (unido) return unido;
+
+  // Invitado: estudiante autenticado sin clase para la experiencia pública.
   await applyClaims(caller.uid, { role: 'estudiante' });
   return { role: 'estudiante', colegioId: null, cursoId: null };
 });
+
+/** Prueba de Piloto para un profe sin suscripción. Nunca bloquea el inicio de sesión. */
+async function asegurarPruebaDeProfe(uid: string): Promise<void> {
+  try {
+    if ((await refSuscripcion(uid).get()).exists) return;
+    await asegurarSuscripcion(uid);
+  } catch (e) {
+    console.error('resolveMyAccess: no se pudo crear la prueba', { uid, error: String(e) });
+  }
+}
+
+/**
+ * Une al estudiante a la clase que le dejó su profe en `invitacionesPorCorreo`,
+ * igual que joinByCode (cupo incluido). Si no hay invitación, la clase está
+ * llena o algo falla, devuelve null y el inicio de sesión sigue como invitado;
+ * la invitación queda pendiente para el próximo intento.
+ */
+async function unirPorInvitacion(
+  caller: Caller,
+  email: string | undefined
+): Promise<{ role: 'estudiante'; colegioId: string; cursoId: string } | null> {
+  try {
+    const inv = await invitacionDeCorreo(email);
+    if (!inv) return null;
+    await unirEstudianteACurso(caller, inv.colegioId, inv.cursoId, inv.nombre);
+    await cerrarInvitacion(inv, caller.uid);
+    return { role: 'estudiante', colegioId: inv.colegioId, cursoId: inv.cursoId };
+  } catch (e) {
+    console.error('resolveMyAccess: no se pudo unir por invitación', {
+      uid: caller.uid,
+      error: String(e),
+    });
+    return null;
+  }
+}
 
 /**
  * A professor creates their OWN course in their colegio (RQ-PR13, D-ADMIN).
@@ -374,6 +435,8 @@ export const crearMiCurso = onCall(async (request) => {
   if (!isGradoValido(grado)) {
     throw new HttpsError('invalid-argument', "'grado' must be '1'..'11'.");
   }
+  // Ceti Educadores: Cadete tiene 1 clase (details.codigo = 'limite_clases').
+  await asegurarPuedeCrearClase(caller.uid, colegioId);
 
   const db = getFirestore();
   const cursoRef = db.collection(`colegios/${colegioId}/cursos`).doc();
@@ -591,18 +654,55 @@ export const joinByCode = onCall(async (request) => {
   if (!codeSnap.exists) throw new HttpsError('not-found', 'Código de clase inválido.');
   const { colegioId, cursoId } = codeSnap.data() as { colegioId: string; cursoId: string };
 
-  // Already linked to this exact course → no-op (idempotent).
-  if (caller.token.colegioId === colegioId && caller.token.cursoId === cursoId) {
-    return { ok: true, colegioId, cursoId };
+  const nuevo = await unirEstudianteACurso(caller, colegioId, cursoId);
+  // Si también estaba invitado por correo a esta clase, la invitación ya no ocupa cupo.
+  if (nuevo) {
+    try {
+      const inv = await invitacionDeCorreo(caller.token.email as string | undefined);
+      if (inv && inv.colegioId === colegioId && inv.cursoId === cursoId) {
+        await cerrarInvitacion(inv, caller.uid);
+      }
+    } catch (e) {
+      console.error('joinByCode: no se pudo cerrar la invitación', {
+        uid: caller.uid,
+        error: String(e),
+      });
+    }
   }
 
+  return { ok: true, colegioId, cursoId };
+});
+
+/**
+ * Núcleo de la unión de un estudiante a una clase (joinByCode y la invitación
+ * por correo de resolveMyAccess). Crea el cupo en el roster keyed por uid (R1)
+ * en 'pendiente_atestacion' y fija los claims. Idempotente: si ya está en esa
+ * clase no hace nada, y si ya tenía cupo lo conserva (y su activación). Solo un
+ * cupo nuevo exige que quepa en el plan del dueño de la clase
+ * (details.codigo = 'limite_estudiantes'). Devuelve si cambió algo.
+ */
+async function unirEstudianteACurso(
+  caller: Caller,
+  colegioId: string,
+  cursoId: string,
+  nombrePreferido?: string | null
+): Promise<boolean> {
+  // Already linked to this exact course → no-op (idempotent).
+  if (caller.token.colegioId === colegioId && caller.token.cursoId === cursoId) return false;
+
+  const db = getFirestore();
   const email = (caller.token.email as string | undefined) ?? '';
-  const nombre = (caller.token.name as string | undefined) || email.split('@')[0] || 'Estudiante';
+  const nombre =
+    nombrePreferido ||
+    (caller.token.name as string | undefined) ||
+    email.split('@')[0] ||
+    'Estudiante';
 
   const estRef = db.doc(`colegios/${colegioId}/cursos/${cursoId}/estudiantes/${caller.uid}`);
   const existing = await estRef.get();
   // Preserve an existing activation if the student was already attested.
   if (!existing.exists) {
+    await asegurarCupoEstudiante(colegioId, cursoId, db);
     await estRef.set({
       email,
       nombre,
@@ -612,9 +712,8 @@ export const joinByCode = onCall(async (request) => {
     });
   }
   await applyClaims(caller.uid, { role: 'estudiante', colegioId, cursoId });
-
-  return { ok: true, colegioId, cursoId };
-});
+  return true;
+}
 
 const GROQ_API_KEY = defineSecret('GROQ_API_KEY');
 function financialAssistantUsageRef(uid: string) {
@@ -690,6 +789,9 @@ export const generarBorradorMundo = onCall({ secrets: [GROQ_API_KEY] }, async (r
     throw new HttpsError('invalid-argument', 'Parámetros fuera de rango.');
   }
   await assertStaffOfCurso(caller, colegioId, cursoId);
+  // Ceti Educadores: IA con Piloto o superior y cupo mensual del plan
+  // (details.codigo = 'requiere_plan' | 'limite_ia').
+  await asegurarIaDisponible(caller.uid, colegioId);
 
   // Cap diario (mismo criterio que la voz: solo el éxito consume cuota).
   const usoSnap = await iaAuthoringUsoRef(caller.uid).get();
@@ -712,10 +814,13 @@ export const generarBorradorMundo = onCall({ secrets: [GROQ_API_KEY] }, async (r
     throw new HttpsError('internal', 'No se pudo generar el borrador.');
   }
 
-  await iaAuthoringUsoRef(caller.uid).set(
-    { count: FieldValue.increment(1), updatedAt: FieldValue.serverTimestamp() },
-    { merge: true }
-  );
+  await Promise.all([
+    iaAuthoringUsoRef(caller.uid).set(
+      { count: FieldValue.increment(1), updatedAt: FieldValue.serverTimestamp() },
+      { merge: true }
+    ),
+    registrarGeneracionIa(caller.uid),
+  ]);
   return borrador;
 });
 
@@ -764,6 +869,8 @@ export const generarItemContenido = onCall({ secrets: [GROQ_API_KEY] }, async (r
       ? detalleRaw.trim().slice(0, DETALLE_MAX)
       : undefined;
   await assertStaffOfCurso(caller, colegioId, cursoId);
+  // Ceti Educadores: mismo cupo mensual que los borradores de mundo.
+  await asegurarIaDisponible(caller.uid, colegioId);
 
   const usoSnap = await iaItemUsoRef(caller.uid).get();
   const count = (usoSnap.data()?.count as number | undefined) ?? 0;
@@ -794,10 +901,13 @@ export const generarItemContenido = onCall({ secrets: [GROQ_API_KEY] }, async (r
     throw new HttpsError('internal', 'No se pudo generar el contenido.');
   }
 
-  await iaItemUsoRef(caller.uid).set(
-    { count: FieldValue.increment(1), updatedAt: FieldValue.serverTimestamp() },
-    { merge: true }
-  );
+  await Promise.all([
+    iaItemUsoRef(caller.uid).set(
+      { count: FieldValue.increment(1), updatedAt: FieldValue.serverTimestamp() },
+      { merge: true }
+    ),
+    registrarGeneracionIa(caller.uid),
+  ]);
   return item;
 });
 
@@ -962,3 +1072,18 @@ export const onProgressWriteAggregate = onDocumentWritten(
     await recomputeCursoAgregado(cid, cursoId);
   }
 );
+
+// Ceti Educadores · límites.
+export { activarLicenciaNave } from './educadores/limites';
+export { invitarLista } from './educadores/invitaciones';
+export { bitacoraSemanal } from './educadores/bitacoraSemanal';
+
+// Ceti Educadores · cobros (Wompi, ciclo diario de suscripciones).
+export {
+  cotizarPlan,
+  crearCheckoutPlan,
+  suscribirConMedio,
+  gestionarSuscripcion,
+  wompiEventos,
+  cicloSuscripciones,
+} from './educadores/suscripciones';

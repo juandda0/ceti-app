@@ -31,11 +31,14 @@ const mockFirestore = {
 
 jest.mock('firebase-functions/v2/https', () => ({
   onCall: (_options: unknown, handler?: unknown) => handler ?? _options,
+  onRequest: jest.fn(),
   HttpsError: class HttpsError extends Error {},
 }));
 jest.mock('firebase-functions/v2/firestore', () => ({ onDocumentWritten: jest.fn() }));
+jest.mock('firebase-functions/v2/scheduler', () => ({ onSchedule: jest.fn() }));
 jest.mock('firebase-functions/params', () => ({
   defineSecret: () => ({ value: () => 'test' }),
+  defineString: () => ({ value: () => '' }),
 }));
 jest.mock('firebase-admin/app', () => ({ initializeApp: jest.fn() }));
 jest.mock('firebase-admin/auth', () => ({
@@ -46,6 +49,9 @@ jest.mock('firebase-admin/firestore', () => ({
   FieldValue: { serverTimestamp: jest.fn(), increment: jest.fn() },
   FieldPath: { documentId: () => '__name__' },
 }));
+// Ceti Educadores: tareas programadas y cobros no participan de esta prueba.
+jest.mock('./educadores/bitacoraSemanal', () => ({}));
+jest.mock('./educadores/suscripciones', () => ({}));
 
 // El import debe ocurrir después de instalar los mocks de Firebase.
 // eslint-disable-next-line import/first
