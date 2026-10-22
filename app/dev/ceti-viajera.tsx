@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Redirect } from 'expo-router';
 import { View, useWindowDimensions } from 'react-native';
 import { ESPACIO, FondoEstrellas } from '@features/learning/components/galaxia/espacio';
-import CarruselPlanetas from '@features/learning/components/galaxia/CarruselPlanetas';
+import CarruselPlanetas, { PuntosCarrusel } from '@features/learning/components/galaxia/CarruselPlanetas';
 import { planetaDeMundo } from '@features/learning/data/planetas';
 
 // Herramienta interna: el carrusel de Tu Galaxia con mundos de ejemplo, para ver a Ceti saltar entre
@@ -30,6 +30,14 @@ export default function CetiViajeraRoute() {
         ancho={ancho}
         alto={Math.round(Math.min(320, Math.max(240, height * 0.36)))}
       />
+      <View style={{ marginTop: 16 }}>
+        <PuntosCarrusel
+          total={MUNDOS.length}
+          activo={activo}
+          conquistados={MUNDOS.map((_, i) => i < 1)}
+          acento={MUNDOS[activo].planeta.acento}
+        />
+      </View>
     </View>
   );
 }

@@ -9,11 +9,14 @@ import { useEffect, useRef, useState } from 'react';
 import { Platform, Pressable, StyleSheet, View, type ViewStyle } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
+  Easing,
   interpolate,
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
+  withDelay,
   withSpring,
+  withTiming,
   type SharedValue,
 } from 'react-native-reanimated';
 import Svg, { Ellipse } from 'react-native-svg';
@@ -233,7 +236,18 @@ export default function CarruselPlanetas({
   );
 }
 
-/** Puntos bajo el carrusel: dorado = conquistado, acento = el actual, gris = el resto. */
+// Puntos fijos cada PASO px; la píldora del mundo actual va encima y mide PILDORA.
+const PUNTO = 8;
+const PASO = 22;
+const PILDORA = 22;
+const BORDE_RAPIDO = { duration: 200, easing: Easing.out(Easing.cubic) };
+const BORDE_LENTO = { duration: 280, easing: Easing.inOut(Easing.cubic) };
+
+/**
+ * Puntos bajo el carrusel: dorado = conquistado, gris = el resto, y una píldora del color del
+ * mundo sobre el actual. Al cambiar de mundo la píldora no salta: su borde delantero corre hasta el
+ * punto nuevo y se lo "come", se estira entre los dos y luego el borde de atrás la alcanza.
+ */
 export function PuntosCarrusel({
   total,
   activo,
@@ -245,23 +259,57 @@ export function PuntosCarrusel({
   conquistados: readonly boolean[];
   acento: string;
 }) {
+  const izquierdaDe = (i: number) => i * PASO + PUNTO / 2 - PILDORA / 2;
+  const izq = useSharedValue(izquierdaDe(activo));
+  const der = useSharedValue(izquierdaDe(activo) + PILDORA);
+  const color = useSharedValue(acento);
+  const previo = useRef(activo);
+
+  useEffect(() => {
+    const desde = previo.current;
+    previo.current = activo;
+    const L = izquierdaDe(activo);
+    const R = L + PILDORA;
+    if (activo > desde) {
+      der.value = withTiming(R, BORDE_RAPIDO);
+      izq.value = withDelay(90, withTiming(L, BORDE_LENTO));
+    } else if (activo < desde) {
+      izq.value = withTiming(L, BORDE_RAPIDO);
+      der.value = withDelay(90, withTiming(R, BORDE_LENTO));
+    } else {
+      izq.value = L;
+      der.value = R;
+    }
+  }, [activo, izq, der]);
+
+  useEffect(() => {
+    color.value = withTiming(acento, { duration: 260 });
+  }, [acento, color]);
+
+  const pildora = useAnimatedStyle(() => ({
+    left: izq.value,
+    width: der.value - izq.value,
+    backgroundColor: color.value,
+  }));
+
   return (
     <View
       style={styles.puntos}
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
     >
-      {Array.from({ length: total }, (_, i) => (
-        <View
-          key={i}
-          style={[
-            styles.punto,
-            i === activo
-              ? { width: 26, backgroundColor: acento }
-              : { backgroundColor: conquistados[i] ? ESPACIO.oro : '#3A3A66' },
-          ]}
-        />
-      ))}
+      <View style={{ width: Math.max(total - 1, 0) * PASO + PUNTO, height: PUNTO }}>
+        {Array.from({ length: total }, (_, i) => (
+          <View
+            key={i}
+            style={[
+              styles.punto,
+              { left: i * PASO, backgroundColor: conquistados[i] ? ESPACIO.oro : '#3A3A66' },
+            ]}
+          />
+        ))}
+        {total > 0 ? <Animated.View style={[styles.pildora, pildora]} /> : null}
+      </View>
     </View>
   );
 }
@@ -302,11 +350,18 @@ const styles = StyleSheet.create({
   puntos: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 8,
   },
   punto: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    position: 'absolute',
+    top: 0,
+    width: PUNTO,
+    height: PUNTO,
+    borderRadius: PUNTO / 2,
+  },
+  pildora: {
+    position: 'absolute',
+    top: 0,
+    height: PUNTO,
+    borderRadius: PUNTO / 2,
   },
 });
