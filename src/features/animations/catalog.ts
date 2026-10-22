@@ -88,7 +88,8 @@ const catalog = {
   'streak.fueguito': {
     source: require('@/assets/animations/streak/fueguito.json'),
     status: 'shipped',
-    loop: true,
+    // Una sola pasada y queda en su último cuadro (pedido del dueño, 2026-10-22).
+    loop: false,
     speed: 1,
     haptic: 'success',
     usedIn: ['StreakCard'],

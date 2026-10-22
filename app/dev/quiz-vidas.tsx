@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Redirect, useLocalSearchParams } from 'expo-router';
 import LeccionScreen, { type ResultadoLeccion } from '@features/learning/screens/LeccionScreen';
 import FinLeccion from '@features/orbita/components/FinLeccion';
+import StreakCelebration from '@features/learning/components/StreakCelebration';
 import { useOrbitaStore } from '@features/orbita/store/useOrbitaStore';
 import type { RecompensaPractica } from '@features/orbita/domain/orbita';
 import { useUserStore } from '@features/auth/store/useUserStore';
@@ -47,12 +48,25 @@ export default function QuizVidasRoute() {
   const tipo = modo === 'jefe' ? 'jefe' : 'leccion';
   const [ronda, setRonda] = useState(0);
   const [fin, setFin] = useState<{ r: RecompensaPractica; res: ResultadoLeccion } | null>(null);
+  const [celebracion, setCelebracion] = useState<RecompensaPractica | null>(null);
   useEffect(() => {
     if (!__DEV__) return;
     if (!useUserStore.getState().id) useUserStore.setState({ id: UID_DEV });
   }, []);
   if (!__DEV__) return <Redirect href="/" />;
   const uid = useUserStore.getState().id || UID_DEV;
+  if (fin && celebracion) {
+    // Como en el planeta: primero la racha, después el resumen del nivel.
+    return (
+      <StreakCelebration
+        racha={celebracion.racha}
+        hito={celebracion.hito}
+        reparada={celebracion.reparada}
+        visible
+        onClose={() => setCelebracion(null)}
+      />
+    );
+  }
   if (fin) {
     return (
       <FinLeccion
@@ -87,6 +101,7 @@ export default function QuizVidasRoute() {
           perfecta: res.perfecta,
         });
         setFin({ r, res });
+        if (r.primeroHoy || r.reparada || r.hito) setCelebracion(r);
       }}
     />
   );

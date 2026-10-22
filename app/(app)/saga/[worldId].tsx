@@ -222,13 +222,12 @@ export default function WorldSagaScreen() {
 
     setJugando(null);
     setFin({ recompensa: r, resultado, tipo, conquistado: ganoPlaneta });
+    // Si la lección tocó la racha (primer día, reparación o hito), la racha va
+    // primero y el resumen del nivel después.
+    if (r.primeroHoy || r.reparada || r.hito) setCelebracion(r);
   };
 
-  const alContinuar = () => {
-    const r = fin?.recompensa;
-    setFin(null);
-    if (r && (r.primeroHoy || r.reparada || r.hito)) setCelebracion(r);
-  };
+  const alContinuar = () => setFin(null);
 
   let content: React.ReactElement;
   if (phase === 'loading' || !grado || !despegueListo) {
@@ -261,6 +260,9 @@ export default function WorldSagaScreen() {
         onFinish={handleMTFinish}
       />
     );
+  } else if (fin && celebracion) {
+    // ── La racha se celebra primero (modal encima); el cierre espera ─────────
+    content = <View style={styles.esperaRacha} />;
   } else if (fin) {
     // ── Cierre con recompensas ───────────────────────────────────────────────
     content = (
@@ -354,6 +356,7 @@ export default function WorldSagaScreen() {
 }
 
 const styles = StyleSheet.create({
+  esperaRacha: { flex: 1, backgroundColor: '#0E0F13' },
   centro: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 },
   centroTitulo: { ...Typography.headline, textAlign: 'center' },
   centroTexto: { ...Typography.footnote, textAlign: 'center' },
