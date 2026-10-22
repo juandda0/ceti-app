@@ -40,7 +40,7 @@ export function SelectorPersonaje({
             <AvatarView
               config={{ ...config, personaje: p.id, prenda: 'traje', accesorio: null }}
               encuadre="retrato"
-              size={56}
+              size={44}
             />
             <Text style={[styles.nombre, { color: colors.text.primary }]}>{p.nombre}</Text>
           </Bounceable>
@@ -106,19 +106,19 @@ const styles = StyleSheet.create({
     flex: 1,
     maxWidth: 110,
     alignItems: 'center',
-    gap: 6,
-    paddingVertical: 10,
-    borderRadius: 20,
+    gap: 4,
+    paddingVertical: 8,
+    borderRadius: 18,
     borderWidth: 2,
   },
   nombre: { ...Typography.footnote, fontWeight: '700' },
-  bloque: { gap: 10, width: '100%' },
+  bloque: { gap: 6, width: '100%' },
   titulo: { ...Typography.subheadline, fontWeight: '700' },
   muestras: { flexDirection: 'row', justifyContent: 'space-between' },
   muestra: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     borderWidth: 3,
     justifyContent: 'center',
     alignItems: 'center',

@@ -20,6 +20,7 @@ import AvatarView from '@features/avatar/components/AvatarView';
 import { SelectorColor, SelectorPersonaje } from '@features/avatar/components/Selectores';
 import {
   AVATAR_POR_DEFECTO,
+  muestrasPelo,
   muestrasPiel,
   personajePorId,
   type AvatarConfig,
@@ -165,7 +166,7 @@ export default function UserSetupScreen() {
             />
             <View style={[styles.escenario, { backgroundColor: colors.materials.base }]}>
               <View style={[styles.halo, { backgroundColor: colors.fill.brandSubtle }]} />
-              <AvatarView config={avatar} size={150} />
+              <AvatarView config={avatar} size={112} />
               <Text style={[styles.rol, { color: colors.text.secondary }]}>
                 {t(`avatar.rol.${personajePorId(avatar.personaje).rol}`)}
               </Text>
@@ -181,6 +182,13 @@ export default function UserSetupScreen() {
                 valor={avatar.tono}
                 onChange={(tono) => setAvatar((a) => ({ ...a, tono }))}
                 etiqueta={(id) => t(`avatar.tono.${id}`)}
+              />
+              <SelectorColor
+                titulo={t('avatar.colorPelo')}
+                opciones={muestrasPelo(avatar)}
+                valor={avatar.pelo}
+                onChange={(pelo) => setAvatar((a) => ({ ...a, pelo }))}
+                etiqueta={(id) => t(`avatar.pelo.${id}`)}
               />
             </View>
           </Animated.View>
@@ -258,9 +266,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     overflow: 'hidden',
   },
-  halo: { position: 'absolute', bottom: 20, width: 140, height: 140, borderRadius: 70 },
+  halo: { position: 'absolute', bottom: 18, width: 104, height: 104, borderRadius: 52 },
   rol: { ...Typography.subheadline, fontWeight: '700', marginTop: 4 },
-  selectores: { width: '100%', gap: Spacing.base, marginTop: Spacing.base },
+  selectores: { width: '100%', gap: Spacing.sm, marginTop: Spacing.sm },
   finalAvatarContainer: {
     width: 120,
     height: 120,

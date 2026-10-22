@@ -18,14 +18,11 @@ import { getFirebaseClients } from '@shared/lib/firebase/app';
 import { useUserStore } from '@features/auth/store/useUserStore';
 import { userRepository } from '@features/auth/data/userRepository';
 import AvatarView from '@features/avatar/components/AvatarView';
-import { SelectorColor, SelectorPersonaje } from '@features/avatar/components/Selectores';
 import { iconoDeAccesorio, type AccesorioId } from '@features/avatar/domain/accesorios';
 import {
   ACCESORIOS,
   AVATAR_POR_DEFECTO,
   PRENDAS,
-  muestrasPelo,
-  muestrasPiel,
   personajePorId,
   requisitoDe,
   type AvatarConfig,
@@ -34,8 +31,10 @@ import {
 import { avanceDe, estaDisponible, type ProgresoAvatar } from '@features/avatar/domain/desbloqueos';
 import { useProgresoAvatar } from '@features/avatar/hooks/useProgresoAvatar';
 
-type Tab = 'piel' | 'pelo' | 'ropa' | 'accesorios';
-const TABS: readonly Tab[] = ['piel', 'pelo', 'ropa', 'accesorios'];
+// El tripulante, su piel y su pelo se eligen una sola vez en el onboarding;
+// aquí solo se cambia lo que se pone encima.
+type Tab = 'ropa' | 'accesorios';
+const TABS: readonly Tab[] = ['ropa', 'accesorios'];
 
 type Colors = ReturnType<typeof useThemeColors>;
 
@@ -128,7 +127,7 @@ export default function VestidorScreen() {
   const textoRequisito = useTextoRequisito();
 
   const [avatar, setAvatar] = useState<AvatarConfig>(guardado);
-  const [tab, setTab] = useState<Tab>('piel');
+  const [tab, setTab] = useState<Tab>('ropa');
   const [guardando, setGuardando] = useState(false);
   const cambiar = (parcial: Partial<AvatarConfig>) => setAvatar((a) => ({ ...a, ...parcial }));
 
@@ -182,17 +181,6 @@ export default function VestidorScreen() {
           <AvatarView config={avatar} size={260} />
         </View>
 
-        <SelectorPersonaje
-          config={avatar}
-          onChange={(p) =>
-            // La prenda elegida puede no tener dibujo para el otro tripulante.
-            cambiar({
-              personaje: p,
-              prenda: personajePorId(p).prendas[avatar.prenda] ? avatar.prenda : 'traje',
-            })
-          }
-        />
-
         <View
           accessibilityRole="tablist"
           style={[
@@ -224,26 +212,6 @@ export default function VestidorScreen() {
             );
           })}
         </View>
-
-        {tab === 'piel' && (
-          <SelectorColor
-            titulo={t('avatar.tonoPiel')}
-            opciones={muestrasPiel(avatar)}
-            valor={avatar.tono}
-            onChange={(tono) => cambiar({ tono })}
-            etiqueta={(id) => t(`avatar.tono.${id}`)}
-          />
-        )}
-
-        {tab === 'pelo' && (
-          <SelectorColor
-            titulo={t('avatar.colorPelo')}
-            opciones={muestrasPelo(avatar)}
-            valor={avatar.pelo}
-            onChange={(pelo) => cambiar({ pelo })}
-            etiqueta={(id) => t(`avatar.pelo.${id}`)}
-          />
-        )}
 
         {tab === 'ropa' && (
           <View style={styles.rejilla}>
