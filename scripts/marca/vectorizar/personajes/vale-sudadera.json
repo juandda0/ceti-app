@@ -1,0 +1,526 @@
+{
+ "src": "assets/brand/bocetos/vale-sudadera-01-alineada.png",
+ "box": [
+  0,
+  0,
+  520,
+  790
+ ],
+ "salida": "assets/brand/vale/vale-sudadera.svg",
+ "fondo_interior": "#FCE4C0",
+ "min_area": 6,
+ "partes": {
+  "cabeza": {
+   "poligono": [
+    [
+     100,
+     10
+    ],
+    [
+     380,
+     10
+    ],
+    [
+     380,
+     268
+    ],
+    [
+     100,
+     268
+    ]
+   ],
+   "pivote": [
+    240,
+    262
+   ],
+   "solapa": 6,
+   "excluir": [
+    "#FEBF4F",
+    "#D99A3D",
+    "#B37327",
+    "#B27025",
+    "#A26624"
+   ],
+   "nota": "la capucha (amarillos) queda en cuerpo, detrás de la cabeza del traje"
+  },
+  "brazo-izq": {
+   "poligono": [
+    [
+     55,
+     330
+    ],
+    [
+     100,
+     290
+    ],
+    [
+     122,
+     296
+    ],
+    [
+     132,
+     330
+    ],
+    [
+     140,
+     380
+    ],
+    [
+     146,
+     420
+    ],
+    [
+     150,
+     470
+    ],
+    [
+     150,
+     575
+    ],
+    [
+     55,
+     575
+    ]
+   ],
+   "pivote": [
+    128,
+    328
+   ],
+   "solapa": 7
+  },
+  "brazo-der": {
+   "poligono": [
+    [
+     335,
+     292
+    ],
+    [
+     312,
+     390
+    ],
+    [
+     318,
+     462
+    ],
+    [
+     232,
+     462
+    ],
+    [
+     228,
+     568
+    ],
+    [
+     300,
+     570
+    ],
+    [
+     470,
+     570
+    ],
+    [
+     470,
+     480
+    ],
+    [
+     405,
+     400
+    ],
+    [
+     395,
+     330
+    ]
+   ],
+   "pivote": [
+    340,
+    320
+   ],
+   "solapa": 20
+  }
+ },
+ "experimentos": {
+  "parpado_v1": true
+ },
+ "retoques": [
+  {
+   "op": "recolor",
+   "de": "#EDAF93",
+   "a": "#F0B095",
+   "nota": "piel de Vale (manos y cuello)"
+  },
+  {
+   "op": "recolor",
+   "de": "#C28A6F",
+   "a": "#B97567",
+   "nota": "manos: borde de piel"
+  },
+  {
+   "op": "recolor",
+   "de": "#B9856B",
+   "a": "#B97567"
+  },
+  {
+   "op": "recolor",
+   "de": "#B57666",
+   "a": "#B97567"
+  },
+  {
+   "op": "recolor",
+   "de": "#966044",
+   "a": "#B97567"
+  },
+  {
+   "op": "recolor",
+   "de": "#D4947B",
+   "a": "#D99780",
+   "nota": "cuello: sombra"
+  },
+  {
+   "op": "recolor",
+   "de": "#FEBF4F",
+   "a": "#FDC253",
+   "nota": "sudadera: amarillo sol de Vale"
+  },
+  {
+   "op": "recolor",
+   "de": "#B37327",
+   "a": "#B8772B",
+   "nota": "sudadera: borde"
+  },
+  {
+   "op": "recolor",
+   "de": "#D99A3D",
+   "a": "#DB9E41",
+   "nota": "sudadera: sombra"
+  },
+  {
+   "op": "recolor",
+   "de": "#C98D3B",
+   "a": "#CB913F",
+   "nota": "puños y elástico"
+  },
+  {
+   "op": "recolor",
+   "de": "#B27025",
+   "a": "#B77429",
+   "nota": "sudadera: borde oscuro"
+  },
+  {
+   "op": "recolor",
+   "de": "#A5661F",
+   "a": "#AA6A23"
+  },
+  {
+   "op": "recolor",
+   "de": "#A26624",
+   "a": "#A76A28"
+  },
+  {
+   "op": "recolor",
+   "de": "#FDE4BF",
+   "a": "#FEE9C9",
+   "nota": "pantalón como el traje"
+  },
+  {
+   "op": "recolor",
+   "de": "#D6BD94",
+   "a": "#C08A6A"
+  },
+  {
+   "op": "recolor",
+   "de": "#D8BD85",
+   "a": "#C08A6A"
+  },
+  {
+   "op": "recolor",
+   "de": "#FFE4B2",
+   "a": "#FFF1E0",
+   "nota": "cordones"
+  },
+  {
+   "op": "recolor",
+   "de": "#E0BF9E",
+   "a": "#E2C3A7",
+   "nota": "botas como el traje"
+  },
+  {
+   "op": "recolor",
+   "de": "#BC9975",
+   "a": "#CD9575"
+  },
+  {
+   "op": "recolor",
+   "de": "#EAB98D",
+   "a": "#EABC91",
+   "nota": "sombra del piso"
+  },
+  {
+   "op": "recolor",
+   "de": "#2F302F",
+   "a": "#2B2B2B",
+   "nota": "pelo como el traje"
+  },
+  {
+   "op": "recolor",
+   "de": "#BCB9B4",
+   "a": "#BFBEBA",
+   "nota": "llave como el traje"
+  },
+  {
+   "op": "recolor",
+   "de": "#848382",
+   "a": "#828180"
+  },
+  {
+   "op": "recolor",
+   "de": "#F0842E",
+   "a": "#F98022",
+   "nota": "naranja de la tripulación"
+  },
+  {
+   "op": "forma",
+   "grupo": "cuerpo",
+   "pos": "debajo",
+   "puntos": [
+    [
+     160,
+     300
+    ],
+    [
+     310,
+     300
+    ],
+    [
+     318,
+     470
+    ],
+    [
+     155,
+     470
+    ]
+   ],
+   "color": "#FDC253",
+   "suave": false,
+   "nota": "fondo de la sudadera: sin huecos al quitar piezas"
+  },
+  {
+   "op": "borrar",
+   "grupo": "cuerpo",
+   "zona": [
+    186,
+    326,
+    286,
+    384
+   ],
+   "colores": [
+    "#F98022",
+    "#CB5A00",
+    "#EABC91",
+    "#FFF1E0",
+    "#FEE9C9"
+   ],
+   "nota": "ballena y cordones de la hoja (se redibujan)"
+  },
+  {
+   "op": "borrar",
+   "grupo": "cuerpo",
+   "zona": [
+    196,
+    292,
+    276,
+    384
+   ],
+   "colores": [
+    "#FFF1E0"
+   ]
+  },
+  {
+   "op": "copiar_de",
+   "svg": "assets/brand/juan/juan-frente.svg",
+   "de": "cuerpo",
+   "colores": [
+    "#C9520D",
+    "#FB6711",
+    "#E58A6A",
+    "#FFF1E0",
+    "#8B4A2B"
+   ],
+   "zona": [
+    170,
+    320,
+    262,
+    380
+   ],
+   "escala": 1.02,
+   "mover": [
+    14.16,
+    2.98
+   ],
+   "grupo": "cuerpo",
+   "nota": "ballena de Ceti (insignia del traje de Juan), en el sitio de la hoja"
+  },
+  {
+   "op": "raya",
+   "grupo": "cuerpo",
+   "puntos": [
+    [
+     208.6,
+     304
+    ],
+    [
+     207,
+     320
+    ],
+    [
+     204.5,
+     345
+    ],
+    [
+     202,
+     376
+    ]
+   ],
+   "ancho": 5.5,
+   "color": "#FFF1E0",
+   "suave": true,
+   "nota": "cordón izq"
+  },
+  {
+   "op": "raya",
+   "grupo": "cuerpo",
+   "puntos": [
+    [
+     263,
+     304
+    ],
+    [
+     264.6,
+     320
+    ],
+    [
+     266.5,
+     345
+    ],
+    [
+     268.5,
+     376
+    ]
+   ],
+   "ancho": 5.5,
+   "color": "#FFF1E0",
+   "suave": true,
+   "nota": "cordón der"
+  },
+  {
+   "op": "elipse",
+   "grupo": "cuerpo",
+   "cx": 204,
+   "cy": 387.6,
+   "rx": 6.2,
+   "ry": 9.2,
+   "color": "#F98022",
+   "nota": "puntas de los cordones"
+  },
+  {
+   "op": "elipse",
+   "grupo": "cuerpo",
+   "cx": 265.4,
+   "cy": 387.8,
+   "rx": 6,
+   "ry": 9.2,
+   "color": "#F98022"
+  },
+  {
+   "op": "borrar",
+   "grupo": "cuerpo",
+   "zona": [
+    136,
+    545,
+    352,
+    646
+   ],
+   "colores": [
+    "#FDC253",
+    "#B8772B",
+    "#C08A6A",
+    "#AA6A23",
+    "#B77429",
+    "#A76A28",
+    "#DB9E41",
+    "#CB913F",
+    "#FFF1E0"
+   ],
+   "nota": "rodilleras de la hoja (borde mezclado con la costura)"
+  },
+  {
+   "op": "copiar_de",
+   "svg": "assets/brand/vale/vale-frente.svg",
+   "de": "cuerpo",
+   "colores": [
+    "#FDC253",
+    "#B8772B"
+   ],
+   "zona": [
+    136,
+    545,
+    352,
+    646
+   ],
+   "grupo": "cuerpo",
+   "nota": "rodilleras y correa idénticas a las del traje"
+  },
+  {
+   "op": "borrar",
+   "grupo": "brazo-der",
+   "zona": [
+    268,
+    558,
+    312,
+    576
+   ],
+   "colores": [
+    "#C08A6A",
+    "#B8772B"
+   ],
+   "nota": "borde de arriba de la rodillera der (en el brazo, como en el traje)"
+  },
+  {
+   "op": "copiar_de",
+   "svg": "assets/brand/vale/vale-frente.svg",
+   "de": "brazo-der",
+   "colores": [
+    "#B8772B"
+   ],
+   "zona": [
+    268,
+    558,
+    312,
+    576
+   ],
+   "grupo": "brazo-der"
+  },
+  {
+   "op": "circulo",
+   "grupo": "cuerpo",
+   "pos": "debajo",
+   "cx": 331.5,
+   "cy": 260,
+   "r": 5,
+   "color": "#2B2B2B",
+   "nota": "rendija entre la capucha y el pelo"
+  },
+  {
+   "op": "grupo_de",
+   "svg": "assets/brand/vale/vale-frente.svg",
+   "id": "cabeza",
+   "despues": "cuerpo",
+   "nota": "cabeza idéntica a la del traje"
+  },
+  {
+   "op": "grupo_de",
+   "svg": "assets/brand/vale/vale-frente.svg",
+   "id": "sombra-piso",
+   "nota": "sombra del piso idéntica a la del traje"
+  }
+ ]
+}

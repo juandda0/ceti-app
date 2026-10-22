@@ -101,7 +101,7 @@ Claves (defectos en `pipeline.DEFECTOS`):
 | `juan-capitan` | juan-02-capitan | cabeza, brazo-izq, brazo-der |
 | `sofi` | sofi-01-hoja-modelo | cabeza (con `excluir` del traje: el pelo largo cruza el cuello), brazo-izq, brazo-der; `fondo_interior` #FEE9CA, bordes y `lineas.excluir` para pelo, cordón y lunar; `parpado_v1` |
 | `ceti` | ceti-05-hoja-modelo | aleta-izq, aleta-der, cola (ojos en `cuerpo`); `capas_geometricas.contencion: false` (la contención deformaba las cejas: N37; mismo puntaje) |
-| `<p>-sudadera` | <p>-sudadera-01-alineada (juan, santiago, sofi) | prenda del vestidor: misma viewBox y partes que el traje; `grupo_de` copia la cabeza (y la sombra) del `<p>-frente.svg` y `copiar_de` la ballena (y el radar de Santiago), así la cara y los accesorios no cambian al cambiar de ropa |
+| `<p>-sudadera` | <p>-sudadera-01-alineada (juan, santiago, sofi, vale) | prenda del vestidor: misma viewBox y partes que el traje; `grupo_de` copia la cabeza (y la sombra) del `<p>-frente.svg` y `copiar_de` la ballena (y el radar de Santiago), así la cara y los accesorios no cambian al cambiar de ropa |
 
 ## Revisión crítica y retoques (obligatorio antes de entregar)
 
