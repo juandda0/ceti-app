@@ -65,8 +65,12 @@
     "auth": {
       "port": 9098
     },
+    "functions": {
+      "port": 5001
+    },
     "ui": {
       "enabled": true
-    }
+    },
+    "singleProjectMode": true
   }
 }

@@ -17,7 +17,11 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "anim:optimize": "node ./scripts/optimize-animations.mjs",
-    "avatar:svgs": "node ./scripts/avatar/generar-svgs.mjs"
+    "avatar:svgs": "node ./scripts/avatar/generar-svgs.mjs",
+    "salon:emuladores": "node ./scripts/salon/emuladores.mjs",
+    "salon:sembrar": "node ./scripts/salon/correr.cjs sembrar",
+    "salon:simular": "node ./scripts/salon/correr.cjs simular",
+    "salon:web": "node ./scripts/salon/web.mjs"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

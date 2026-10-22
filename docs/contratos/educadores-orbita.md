@@ -17,6 +17,7 @@
 | `src/features/auth/onboarding/UserSetupScreen.tsx` (+ test), `src/features/auth/screens/ProfileScreen.tsx` | Órbita |
 | Notificaciones push (`expo-notifications`, permisos, horarios, límites) | Órbita |
 | `docs/gamificacion-orbita.html` | Órbita |
+| `scripts/salon/**`, `src/features/salon/**`, `app/dev/salon.tsx`, `app/dev/entrar.tsx`, `docs/salon-demo.md`, `docs/salon-capturas/**`; en `src/shared/lib/firebase/app.ts`, solo la conexión a emuladores (`USA_EMULADORES`); en `firebase.json`, el bloque `emulators`; en `package.json`, los scripts `salon:*` | Salón demo (emuladores locales, sesión iniciada por Educadores). Lee el juego con el dominio de Órbita, sin tocarlo |
 
 ## Archivos compartidos
 

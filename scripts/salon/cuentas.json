@@ -1,0 +1,416 @@
+{
+  "_nota": "Cuentas del Salón demo. SOLO existen en los emuladores locales (proyecto demo-ceti); no sirven en producción. Ver docs/salon-demo.md.",
+  "proyecto": "demo-ceti",
+  "password": "salon-ceti-2026",
+  "cuentas": [
+    {
+      "id": "admin",
+      "rol": "admin",
+      "nombre": "Equipo Ceti",
+      "email": "admin@salon.ceti.test",
+      "descripcion": "Administrador global: panel de colegios y licencias."
+    },
+    {
+      "id": "profe-piloto",
+      "rol": "profesor",
+      "nombre": "Andrés Rojas",
+      "email": "andres.rojas@salon.ceti.test",
+      "colegio": "San Mateo",
+      "descripcion": "Capitán de 10°B y 9°A en el Colegio San Mateo (licencia Nave). Plan Piloto con tarifa fundador, 2 pagos, Bitácora, asignaciones y un mundo propio.",
+      "ir": "/curso/10b?nombre=10%C2%B0B"
+    },
+    {
+      "id": "profe-cadete",
+      "rol": "profesor",
+      "nombre": "Lucía Herrera",
+      "email": "lucia.herrera@salon.ceti.test",
+      "colegio": "Los Andes",
+      "descripcion": "Colegio Los Andes, 1 clase (8°A). Su prueba venció: plan Cadete, muro de planes y contenido en solo lectura."
+    },
+    {
+      "id": "profe-prueba",
+      "rol": "profesor",
+      "nombre": "Camilo Pérez",
+      "email": "camilo.perez@salon.ceti.test",
+      "colegio": "Nuevo Horizonte",
+      "descripcion": "Recién registrado: prueba de Piloto con 9 días restantes, 1 clase (7°C)."
+    },
+    {
+      "id": "est-1",
+      "rol": "estudiante",
+      "nombre": "Mariana López",
+      "email": "mariana.lopez@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "10b",
+      "alias": "estudiante",
+      "descripcion": "Estudiante de 10°B con racha, XP, Cetis y un CDT en la Bóveda."
+    },
+    {
+      "id": "est-2",
+      "rol": "estudiante",
+      "nombre": "Santiago Gómez",
+      "email": "santiago.gomez@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "10b"
+    },
+    {
+      "id": "est-3",
+      "rol": "estudiante",
+      "nombre": "Valentina Rodríguez",
+      "email": "valentina.rodriguez@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "10b"
+    },
+    {
+      "id": "est-4",
+      "rol": "estudiante",
+      "nombre": "Samuel Martínez",
+      "email": "samuel.martinez@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "10b"
+    },
+    {
+      "id": "est-5",
+      "rol": "estudiante",
+      "nombre": "Isabella García",
+      "email": "isabella.garcia@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "10b"
+    },
+    {
+      "id": "est-6",
+      "rol": "estudiante",
+      "nombre": "Matías Hernández",
+      "email": "matias.hernandez@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "10b"
+    },
+    {
+      "id": "est-7",
+      "rol": "estudiante",
+      "nombre": "Sofía Ramírez",
+      "email": "sofia.ramirez@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "10b"
+    },
+    {
+      "id": "est-8",
+      "rol": "estudiante",
+      "nombre": "Juan José Torres",
+      "email": "juan.jose.torres@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "10b"
+    },
+    {
+      "id": "est-9",
+      "rol": "estudiante",
+      "nombre": "Luciana Díaz",
+      "email": "luciana.diaz@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "10b"
+    },
+    {
+      "id": "est-10",
+      "rol": "estudiante",
+      "nombre": "Emmanuel Vargas",
+      "email": "emmanuel.vargas@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "10b"
+    },
+    {
+      "id": "est-11",
+      "rol": "estudiante",
+      "nombre": "Gabriela Moreno",
+      "email": "gabriela.moreno@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "10b"
+    },
+    {
+      "id": "est-12",
+      "rol": "estudiante",
+      "nombre": "Tomás Castro",
+      "email": "tomas.castro@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "10b"
+    },
+    {
+      "id": "est-13",
+      "rol": "estudiante",
+      "nombre": "Antonella Rojas",
+      "email": "antonella.rojas@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "10b"
+    },
+    {
+      "id": "est-14",
+      "rol": "estudiante",
+      "nombre": "Miguel Ángel Ortiz",
+      "email": "miguel.angel.ortiz@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "10b"
+    },
+    {
+      "id": "est-15",
+      "rol": "estudiante",
+      "nombre": "Salomé Jiménez",
+      "email": "salome.jimenez@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "10b"
+    },
+    {
+      "id": "est-16",
+      "rol": "estudiante",
+      "nombre": "Jerónimo Ruiz",
+      "email": "jeronimo.ruiz@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "10b"
+    },
+    {
+      "id": "est-17",
+      "rol": "estudiante",
+      "nombre": "Mariángel Suárez",
+      "email": "mariangel.suarez@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "10b"
+    },
+    {
+      "id": "est-18",
+      "rol": "estudiante",
+      "nombre": "David Santiago Peña",
+      "email": "david.santiago.pena@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "10b"
+    },
+    {
+      "id": "est-19",
+      "rol": "estudiante",
+      "nombre": "Sara Cárdenas",
+      "email": "sara.cardenas@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "10b"
+    },
+    {
+      "id": "est-20",
+      "rol": "estudiante",
+      "nombre": "Andrés Felipe Mejía",
+      "email": "andres.felipe.mejia@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "10b"
+    },
+    {
+      "id": "est-21",
+      "rol": "estudiante",
+      "nombre": "Laura Sofía Quintero",
+      "email": "laura.sofia.quintero@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "10b"
+    },
+    {
+      "id": "est-22",
+      "rol": "estudiante",
+      "nombre": "Nicolás Ospina",
+      "email": "nicolas.ospina@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "10b"
+    },
+    {
+      "id": "est-23",
+      "rol": "estudiante",
+      "nombre": "María José Restrepo",
+      "email": "maria.jose.restrepo@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "10b"
+    },
+    {
+      "id": "est-24",
+      "rol": "estudiante",
+      "nombre": "Juan Pablo Arango",
+      "email": "juan.pablo.arango@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "10b"
+    },
+    {
+      "id": "est9a-1",
+      "rol": "estudiante",
+      "nombre": "Camila Pardo",
+      "email": "camila.pardo.9a@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "9a"
+    },
+    {
+      "id": "est9a-2",
+      "rol": "estudiante",
+      "nombre": "Daniel Rincón",
+      "email": "daniel.rincon.9a@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "9a"
+    },
+    {
+      "id": "est9a-3",
+      "rol": "estudiante",
+      "nombre": "Paula Andrea Gil",
+      "email": "paula.andrea.gil.9a@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "9a"
+    },
+    {
+      "id": "est9a-4",
+      "rol": "estudiante",
+      "nombre": "Esteban Muñoz",
+      "email": "esteban.munoz.9a@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "9a"
+    },
+    {
+      "id": "est9a-5",
+      "rol": "estudiante",
+      "nombre": "Manuela Cifuentes",
+      "email": "manuela.cifuentes.9a@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "9a"
+    },
+    {
+      "id": "est9a-6",
+      "rol": "estudiante",
+      "nombre": "Sebastián Lozano",
+      "email": "sebastian.lozano.9a@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "9a"
+    },
+    {
+      "id": "est9a-7",
+      "rol": "estudiante",
+      "nombre": "Juliana Patiño",
+      "email": "juliana.patino.9a@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "9a"
+    },
+    {
+      "id": "est9a-8",
+      "rol": "estudiante",
+      "nombre": "Alejandro Benítez",
+      "email": "alejandro.benitez.9a@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "9a"
+    },
+    {
+      "id": "est9a-9",
+      "rol": "estudiante",
+      "nombre": "Natalia Galeano",
+      "email": "natalia.galeano.9a@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "9a"
+    },
+    {
+      "id": "est9a-10",
+      "rol": "estudiante",
+      "nombre": "Felipe Ocampo",
+      "email": "felipe.ocampo.9a@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "9a"
+    },
+    {
+      "id": "est9a-11",
+      "rol": "estudiante",
+      "nombre": "Mariana Zuluaga",
+      "email": "mariana.zuluaga.9a@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "9a"
+    },
+    {
+      "id": "est9a-12",
+      "rol": "estudiante",
+      "nombre": "Kevin Salazar",
+      "email": "kevin.salazar.9a@salon.ceti.test",
+      "colegio": "San Mateo",
+      "curso": "9a"
+    },
+    {
+      "id": "andes-1",
+      "rol": "estudiante",
+      "nombre": "Isabel Cortés",
+      "email": "isabel.cortes.andes@salon.ceti.test",
+      "colegio": "Los Andes",
+      "curso": "8a"
+    },
+    {
+      "id": "andes-2",
+      "rol": "estudiante",
+      "nombre": "Martín Acosta",
+      "email": "martin.acosta.andes@salon.ceti.test",
+      "colegio": "Los Andes",
+      "curso": "8a"
+    },
+    {
+      "id": "andes-3",
+      "rol": "estudiante",
+      "nombre": "Daniela Vélez",
+      "email": "daniela.velez.andes@salon.ceti.test",
+      "colegio": "Los Andes",
+      "curso": "8a"
+    },
+    {
+      "id": "andes-4",
+      "rol": "estudiante",
+      "nombre": "Simón Guerrero",
+      "email": "simon.guerrero.andes@salon.ceti.test",
+      "colegio": "Los Andes",
+      "curso": "8a"
+    },
+    {
+      "id": "andes-5",
+      "rol": "estudiante",
+      "nombre": "Ana María Rivas",
+      "email": "ana.maria.rivas.andes@salon.ceti.test",
+      "colegio": "Los Andes",
+      "curso": "8a"
+    },
+    {
+      "id": "andes-6",
+      "rol": "estudiante",
+      "nombre": "Julián Montoya",
+      "email": "julian.montoya.andes@salon.ceti.test",
+      "colegio": "Los Andes",
+      "curso": "8a"
+    },
+    {
+      "id": "horizonte-1",
+      "rol": "estudiante",
+      "nombre": "Valeria Duque",
+      "email": "valeria.duque.horizonte@salon.ceti.test",
+      "colegio": "Nuevo Horizonte",
+      "curso": "7c"
+    },
+    {
+      "id": "horizonte-2",
+      "rol": "estudiante",
+      "nombre": "Thiago Londoño",
+      "email": "thiago.londono.horizonte@salon.ceti.test",
+      "colegio": "Nuevo Horizonte",
+      "curso": "7c"
+    },
+    {
+      "id": "horizonte-3",
+      "rol": "estudiante",
+      "nombre": "Elena Bermúdez",
+      "email": "elena.bermudez.horizonte@salon.ceti.test",
+      "colegio": "Nuevo Horizonte",
+      "curso": "7c"
+    },
+    {
+      "id": "horizonte-4",
+      "rol": "estudiante",
+      "nombre": "Mateo Franco",
+      "email": "mateo.franco.horizonte@salon.ceti.test",
+      "colegio": "Nuevo Horizonte",
+      "curso": "7c"
+    },
+    {
+      "id": "joven",
+      "rol": "estudiante",
+      "nombre": "Valentina Ríos",
+      "email": "valentina.rios@salon.ceti.test",
+      "descripcion": "Joven B2C de 20 años, sin clase: metas de ahorro, movimientos y presupuesto."
+    }
+  ]
+}
