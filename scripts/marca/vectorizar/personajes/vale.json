@@ -1,0 +1,768 @@
+{
+  "src": "assets/brand/bocetos/vale-01-hoja-modelo.jpg",
+  "box": [
+    100,
+    30,
+    620,
+    820
+  ],
+  "salida": "assets/brand/vale/vale-frente.svg",
+  "fondo_interior": "#FCE4C0",
+  "min_area": 6,
+  "partes": {
+    "cabeza": {
+      "poligono": [
+        [
+          100,
+          10
+        ],
+        [
+          380,
+          10
+        ],
+        [
+          380,
+          268
+        ],
+        [
+          100,
+          268
+        ]
+      ],
+      "excluir": [
+        "#FDE4BF",
+        "#D6BD94",
+        "#E1C1A2"
+      ],
+      "pivote": [
+        240,
+        262
+      ],
+      "solapa": 6
+    },
+    "brazo-izq": {
+      "poligono": [
+        [
+          55,
+          330
+        ],
+        [
+          100,
+          293
+        ],
+        [
+          120,
+          298
+        ],
+        [
+          126,
+          320
+        ],
+        [
+          132,
+          345
+        ],
+        [
+          140,
+          365
+        ],
+        [
+          145,
+          388
+        ],
+        [
+          146,
+          410
+        ],
+        [
+          146,
+          440
+        ],
+        [
+          148,
+          480
+        ],
+        [
+          148,
+          575
+        ],
+        [
+          55,
+          575
+        ]
+      ],
+      "pivote": [
+        128,
+        328
+      ],
+      "solapa": 7
+    },
+    "brazo-der": {
+      "poligono": [
+        [
+          335,
+          292
+        ],
+        [
+          312,
+          390
+        ],
+        [
+          318,
+          462
+        ],
+        [
+          232,
+          462
+        ],
+        [
+          228,
+          568
+        ],
+        [
+          300,
+          570
+        ],
+        [
+          470,
+          570
+        ],
+        [
+          470,
+          480
+        ],
+        [
+          405,
+          400
+        ],
+        [
+          395,
+          330
+        ]
+      ],
+      "pivote": [
+        340,
+        320
+      ],
+      "solapa": 20
+    }
+  },
+  "experimentos": {
+    "parpado_v1": true
+  },
+  "retoques": [
+    {
+      "op": "borrar",
+      "zona": [
+        192,
+        336,
+        284,
+        390
+      ],
+      "colores": [
+        "#F4832D",
+        "#EDB98C",
+        "#A4705B",
+        "#D99780"
+      ],
+      "nota": "quita la ballena (insignia de capitán)"
+    },
+    {
+      "op": "copiar_de",
+      "svg": "assets/brand/sofi/sofi-frente.svg",
+      "de": "cuerpo",
+      "colores": [
+        "#F98022"
+      ],
+      "zona": [
+        238,
+        340,
+        278,
+        362
+      ],
+      "nota": "luz naranja de la tripulación, igual a Sofi"
+    },
+    {
+      "op": "recolor",
+      "de": "#FDE4BF",
+      "a": "#FEE9C9",
+      "nota": "traje crema"
+    },
+    {
+      "op": "recolor",
+      "de": "#D6BD94",
+      "a": "#C08A6A",
+      "nota": "borde del traje"
+    },
+    {
+      "op": "recolor",
+      "de": "#A4705B",
+      "a": "#C08A6A",
+      "nota": "borde del traje (tramos)"
+    },
+    {
+      "op": "recolor",
+      "de": "#E1C1A2",
+      "a": "#E2C3A7",
+      "nota": "guantes y botas"
+    },
+    {
+      "op": "recolor",
+      "de": "#BC9A77",
+      "a": "#CD9575",
+      "nota": "borde de guantes y botas"
+    },
+    {
+      "op": "recolor",
+      "de": "#EDB98C",
+      "a": "#EABC91",
+      "nota": "sombra de piso"
+    },
+    {
+      "op": "recolor",
+      "de": "#925300",
+      "a": "#B8772B",
+      "nota": "barras oscuras -> borde dorado"
+    },
+    {
+      "op": "borrar",
+      "zona": [
+        205,
+        350,
+        223,
+        367
+      ],
+      "colores": [
+        "#B8772B",
+        "#FDC253"
+      ],
+      "nota": "ojo de la ballena que quedó en el panel"
+    },
+    {
+      "op": "borrar",
+      "zona": [
+        305,
+        668,
+        322,
+        700
+      ],
+      "colores": [
+        "#93504F",
+        "#B97567"
+      ],
+      "nota": "mancha en la bota derecha"
+    },
+    {
+      "op": "recolor",
+      "de": "#171717",
+      "a": "#2B2B2B",
+      "nota": "pelo de un solo tono (sin vetas en la frente)"
+    },
+    {
+      "op": "recolor",
+      "de": "#693734",
+      "a": "#8A4B44",
+      "zona": [
+        160,
+        150,
+        312,
+        180
+      ],
+      "nota": "párpados y pestañas un tono más claro que el iris, como la hoja"
+    },
+    {
+      "op": "ojo",
+      "lado": "izq",
+      "cx": 194.0,
+      "cy": 178.8,
+      "rx": 22.0,
+      "ry": 12.4,
+      "giro": 0,
+      "esclera": "#FEFDFB",
+      "iris": {
+        "r": 13.6,
+        "dx": 2.9,
+        "dy": -3.0,
+        "color": "#693734"
+      },
+      "brillos": [
+        {
+          "r": 3.1,
+          "dx": -7.6,
+          "dy": -3.6
+        }
+      ],
+      "parpado": {
+        "color": "#8A4B44",
+        "ancho": 3.6,
+        "desde": -155,
+        "hasta": -45
+      },
+      "nota": "ojo izq: iris redondo bajo el párpado (sin corte recto)"
+    },
+    {
+      "op": "ojo",
+      "lado": "der",
+      "cx": 277.8,
+      "cy": 178.6,
+      "rx": 22.0,
+      "ry": 12.4,
+      "giro": 0,
+      "esclera": "#FEFDFB",
+      "iris": {
+        "r": 13.6,
+        "dx": -1.7,
+        "dy": -3.2,
+        "color": "#693734"
+      },
+      "brillos": [
+        {
+          "r": 2.8,
+          "dx": -8.0,
+          "dy": -2.4
+        }
+      ],
+      "parpado": {
+        "color": "#8A4B44",
+        "ancho": 3.6,
+        "desde": -135,
+        "hasta": -25
+      },
+      "nota": "ojo der: iris redondo bajo el párpado"
+    },
+    {
+      "op": "forma",
+      "grupo": "cabeza",
+      "color": "#F0B095",
+      "suave": false,
+      "puntos": [
+        [
+          165.5,
+          173.4
+        ],
+        [
+          172.5,
+          173.4
+        ],
+        [
+          172.7,
+          175.5
+        ],
+        [
+          171.9,
+          177.5
+        ],
+        [
+          171.7,
+          180.0
+        ],
+        [
+          165.5,
+          180.0
+        ]
+      ],
+      "nota": "quita la colita del párpado bajo la esquina externa (ojo izq)"
+    },
+    {
+      "op": "forma",
+      "grupo": "cabeza",
+      "color": "#F0B095",
+      "suave": false,
+      "puntos": [
+        [
+          299.3,
+          173.6
+        ],
+        [
+          305.5,
+          173.6
+        ],
+        [
+          305.5,
+          180.0
+        ],
+        [
+          300.0,
+          180.0
+        ],
+        [
+          299.9,
+          177.5
+        ],
+        [
+          299.1,
+          175.5
+        ]
+      ],
+      "nota": "quita la colita del párpado bajo la esquina externa (ojo der)"
+    },
+    {
+      "op": "borrar",
+      "grupo": "cabeza",
+      "zona": [
+        309,
+        229,
+        332,
+        254
+      ],
+      "colores": [
+        "#D99780",
+        "#C08A6A",
+        "#B97567"
+      ],
+      "nota": "rayita suelta junto al mentón"
+    },
+    {
+      "op": "borrar",
+      "grupo": "cabeza",
+      "zona": [
+        200,
+        214,
+        276,
+        247
+      ],
+      "colores": [
+        "#B97567",
+        "#93504F",
+        "#D99780"
+      ],
+      "nota": "quita la boca del motor (se redibuja abajo)"
+    },
+    {
+      "op": "forma",
+      "grupo": "cabeza",
+      "color": "#D4837B",
+      "puntos": [
+        [
+          211.5,
+          226.6
+        ],
+        [
+          218,
+          228.0
+        ],
+        [
+          225,
+          228.9
+        ],
+        [
+          236.5,
+          229.5
+        ],
+        [
+          248,
+          228.8
+        ],
+        [
+          255,
+          227.9
+        ],
+        [
+          261.5,
+          226.4
+        ],
+        [
+          259.5,
+          231.5
+        ],
+        [
+          253,
+          237.2
+        ],
+        [
+          245,
+          240.6
+        ],
+        [
+          236.5,
+          241.7
+        ],
+        [
+          228,
+          240.6
+        ],
+        [
+          220,
+          237.2
+        ],
+        [
+          213.5,
+          231.5
+        ]
+      ],
+      "nota": "labio de abajo rosado (como la hoja)"
+    },
+    {
+      "op": "forma",
+      "grupo": "cabeza",
+      "color": "#C77672",
+      "puntos": [
+        [
+          209.5,
+          224.5
+        ],
+        [
+          216,
+          221.4
+        ],
+        [
+          226,
+          219.6
+        ],
+        [
+          236.5,
+          219.6
+        ],
+        [
+          247,
+          219.6
+        ],
+        [
+          257,
+          221.2
+        ],
+        [
+          264.5,
+          223.8
+        ],
+        [
+          251,
+          227.6
+        ],
+        [
+          236.5,
+          228.8
+        ],
+        [
+          222,
+          227.6
+        ]
+      ],
+      "nota": "labio de arriba"
+    },
+    {
+      "op": "raya",
+      "grupo": "cabeza",
+      "color": "#A5615A",
+      "ancho": 2.9,
+      "puntos": [
+        [
+          203.6,
+          222.4
+        ],
+        [
+          207,
+          224.4
+        ],
+        [
+          214,
+          226.6
+        ],
+        [
+          225,
+          228.4
+        ],
+        [
+          236.5,
+          229.0
+        ],
+        [
+          248,
+          228.2
+        ],
+        [
+          259,
+          226.0
+        ],
+        [
+          266,
+          223.4
+        ],
+        [
+          271.2,
+          219.6
+        ]
+      ],
+      "nota": "línea de la sonrisa con hoyuelos"
+    },
+    {
+      "op": "borrar",
+      "grupo": "cabeza",
+      "zona": [
+        316,
+        185,
+        330,
+        203
+      ],
+      "colores": [
+        "#EABC91",
+        "#F0B095",
+        "#B97567",
+        "#EDB98C"
+      ],
+      "nota": "puntitos claros en la oreja der"
+    },
+    {
+      "op": "borrar",
+      "grupo": "cabeza",
+      "zona": [
+        138,
+        194,
+        158,
+        214
+      ],
+      "colores": [
+        "#D99780"
+      ],
+      "nota": "mancha en la oreja izq"
+    },
+    {
+      "op": "recolor",
+      "de": "#D59C06",
+      "a": "#B8772B",
+      "nota": "borde de abajo del mango de la llave (y restos en las correas)"
+    },
+    {
+      "op": "raya",
+      "puntos": [
+        [
+          154.1,
+          562
+        ],
+        [
+          156.4,
+          600
+        ],
+        [
+          158.85,
+          640
+        ]
+      ],
+      "ancho": 6.3,
+      "color": "#C08A6A",
+      "nota": "línea del traje junto a la rodillera izq (la tapaba la barra dorada)"
+    },
+    {
+      "op": "raya",
+      "puntos": [
+        [
+          228.7,
+          562
+        ],
+        [
+          225.9,
+          600
+        ],
+        [
+          222.95,
+          640
+        ]
+      ],
+      "ancho": 6.2,
+      "color": "#C08A6A",
+      "nota": "línea interior pierna izq continua sobre la correa"
+    },
+    {
+      "op": "raya",
+      "puntos": [
+        [
+          243.05,
+          562
+        ],
+        [
+          245.5,
+          600
+        ],
+        [
+          248.0,
+          640
+        ]
+      ],
+      "ancho": 6.2,
+      "color": "#C08A6A",
+      "nota": "línea interior pierna der continua sobre la correa"
+    },
+    {
+      "op": "raya",
+      "puntos": [
+        [
+          316.8,
+          562
+        ],
+        [
+          314.3,
+          600
+        ],
+        [
+          311.8,
+          640
+        ]
+      ],
+      "ancho": 6.3,
+      "color": "#C08A6A",
+      "nota": "línea del traje junto a la rodillera der"
+    },
+    {
+      "op": "raya",
+      "puntos": [
+        [
+          316.0,
+          666
+        ],
+        [
+          313.9,
+          686
+        ],
+        [
+          311.7,
+          703
+        ]
+      ],
+      "ancho": 6.4,
+      "color": "#CD9575",
+      "nota": "borde de la bota der (tenía un hueco)"
+    },
+    {
+      "op": "borrar",
+      "grupo": "brazo-der",
+      "zona": [
+        375,
+        358,
+        388,
+        377
+      ],
+      "colores": [
+        "#D99780"
+      ],
+      "nota": "astilla rosada entre el pelo y la manga der"
+    },
+    {
+      "op": "borrar",
+      "grupo": "cuerpo",
+      "zona": [
+        150,
+        228,
+        166,
+        243
+      ],
+      "colores": [
+        "#D99780"
+      ],
+      "nota": "piquito en el borde del cuello (izq)"
+    },
+    {
+      "op": "borrar",
+      "grupo": "cabeza",
+      "zona": [
+        150,
+        228,
+        166,
+        243
+      ],
+      "colores": [
+        "#D99780"
+      ],
+      "nota": "piquito en el borde del cuello (izq)"
+    }
+  ]
+}
