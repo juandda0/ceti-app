@@ -1,0 +1,13 @@
+/**
+ * Dominio de Ceti Educadores (cobros y retención del módulo profe). Puro y
+ * compartido: lo usan las Cloud Functions y la app
+ * (`@/functions/src/educadores/dominio`). No importar Firebase aquí.
+ */
+export * from './planes';
+export * from './precios';
+export * from './calendario';
+export * from './suscripcion';
+export * from './notas1290';
+export * from './bitacora';
+export * from './listaCsv';
+export * from './adopcion';
