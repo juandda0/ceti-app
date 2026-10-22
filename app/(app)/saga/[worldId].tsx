@@ -191,7 +191,11 @@ export default function WorldSagaScreen() {
           competencia: configEntry?.competencia,
           now: Date.now(),
         });
-        void worldProgressRepository.upsert(colegioId, cursoId, firebaseUid, worldId, progress);
+        // Si aún no está activo en el curso las reglas lo niegan: el progreso
+        // queda local y se reintenta en la próxima conquista.
+        worldProgressRepository
+          .upsert(colegioId, cursoId, firebaseUid, worldId, progress)
+          .catch(() => undefined);
       }
     }
 

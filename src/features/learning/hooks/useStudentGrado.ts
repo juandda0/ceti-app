@@ -5,7 +5,8 @@
  * carries `colegioId`/`cursoId` as custom claims; the grade is read from the
  * course doc. Returns `null` while resolving so callers can avoid fetching
  * content for the wrong grade; falls back to '9' for demo/offline students with
- * no provisioned course.
+ * no provisioned course, and also when the course can't be read yet (a student
+ * pending attestation is denied by the rules until they are active).
  */
 import { useEffect, useState } from 'react';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
@@ -27,9 +28,16 @@ export function useStudentGrado(): Grado | null {
     // Reset to "resolving" while we read the new course, so content isn't fetched
     // for a stale grade between course switches.
     setGrado(null);
-    void rosterRepository.getCursoGrado(colegioId, cursoId).then((g) => {
-      if (active) setGrado(g ?? '9');
-    });
+    // Sin permiso para leer el curso (p. ej. estudiante pendiente de atestación,
+    // aún no activo) o sin red: se trata como "sin clase todavía" → grado por defecto.
+    rosterRepository
+      .getCursoGrado(colegioId, cursoId)
+      .then((g) => {
+        if (active) setGrado(g ?? '9');
+      })
+      .catch(() => {
+        if (active) setGrado('9');
+      });
     return () => {
       active = false;
     };

@@ -150,11 +150,14 @@ export default function WorldsScreen() {
     if (!hasAccess || !colegioId || !cursoId || !firebaseUid) return;
     let cancelled = false;
     void (async () => {
-      const docs = await worldProgressRepository.getStudentProgress(
-        colegioId,
-        cursoId,
-        firebaseUid
-      );
+      // Un estudiante aún no activo (pendiente de atestación) no puede leer el
+      // árbol del curso: se queda con el progreso local, sin error en pantalla.
+      let docs: Awaited<ReturnType<typeof worldProgressRepository.getStudentProgress>>;
+      try {
+        docs = await worldProgressRepository.getStudentProgress(colegioId, cursoId, firebaseUid);
+      } catch {
+        return;
+      }
       if (cancelled) return;
       const byWorld: Partial<Record<WorldId, number>> = {};
       for (const d of docs) byWorld[d.worldId as WorldId] = d.mastery;
