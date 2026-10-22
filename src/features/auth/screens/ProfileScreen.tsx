@@ -13,22 +13,14 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { performLogoutAndGo } from '@features/auth/performLogout';
-
-const AVATARS: Record<string, string> = {
-  avatar_1: '🦁',
-  avatar_2: '🐸',
-  avatar_3: '🦊',
-  avatar_4: '🐼',
-  avatar_5: '🐱',
-  avatar_6: '🐶',
-  avatar_7: '🦄',
-  avatar_8: '🐨',
-};
+import CetiButton from '@shared/components/CetiButton';
+import AvatarView from '@features/avatar/components/AvatarView';
+import { AVATAR_POR_DEFECTO } from '@features/avatar/domain/catalogo';
 
 export default function ProfileScreen() {
   const router = useRouter();
   const { t } = useTranslation();
-  const { nickname, fullName, avatarId, avatarEmoji } = useUserStore();
+  const { nickname, fullName, avatar } = useUserStore();
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
   const styles = getStyles(colors);
@@ -54,17 +46,22 @@ export default function ProfileScreen() {
             entering={motion.enterSoftScale(120)}
             style={[styles.avatarCircle, { borderColor: colors.brand.primary }]}
           >
-            {avatarEmoji || AVATARS[avatarId] ? (
-              <Text style={styles.avatarText}>{avatarEmoji || AVATARS[avatarId]}</Text>
-            ) : (
-              <Ionicons name="person" size={40} color={colors.brand.primary} />
-            )}
+            <AvatarView config={avatar ?? AVATAR_POR_DEFECTO} encuadre="retrato" size={96} />
           </Animated.View>
 
           <Text style={[styles.nameText, { color: colors.text.primary }]}>{nickname}</Text>
           {fullName && fullName !== nickname ? (
             <Text style={[styles.fullNameText, { color: colors.text.secondary }]}>{fullName}</Text>
           ) : null}
+
+          <CetiButton
+            label={t('profile.vestidor')}
+            icon="shirt-outline"
+            onPress={() => router.push('/(app)/vestidor')}
+            variant="secondary"
+            size="medium"
+            style={styles.vestidorBtn}
+          />
         </Animated.View>
 
         <Animated.View entering={motion.enterFadeUp(2)}>
@@ -103,13 +100,14 @@ const getStyles = (colors: any) =>
       width: 100,
       height: 100,
       borderRadius: 50,
+      overflow: 'hidden',
       backgroundColor: colors.materials.highlight,
       justifyContent: 'center',
       alignItems: 'center',
       borderWidth: 2,
       marginBottom: 16,
     },
-    avatarText: { fontSize: 54 },
+    vestidorBtn: { marginTop: 20, alignSelf: 'stretch' },
     nameText: { ...Typography.title1, fontWeight: '900', marginTop: 12 },
     fullNameText: { ...Typography.subheadline, marginTop: 2 },
 

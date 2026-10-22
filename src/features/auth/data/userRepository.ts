@@ -3,6 +3,7 @@ import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { getFirebaseClients } from '@shared/lib/firebase/app';
 import { FIRESTORE_COLLECTIONS } from '@shared/lib/firebase/paths';
 import { stripUndefinedValues } from '@shared/lib/firebase/sanitizeForFirestore';
+import type { AvatarConfig } from '@features/avatar/domain/catalogo';
 
 function providerFromAuthUser(u: User): 'google' | 'apple' | 'unknown' {
   if (u.providerData?.some((p) => p.providerId?.includes('google'))) return 'google';
@@ -15,6 +16,7 @@ export type UserProfileDraft = {
   fullName: string;
   avatarId: string;
   avatarEmoji: string;
+  avatar?: AvatarConfig;
 };
 
 export type RemoteUserDoc = {
@@ -89,6 +91,19 @@ export const userRepository = {
         updatedAt: serverTimestamp(),
         createdAt: serverTimestamp(),
       } as Record<string, unknown>),
+      { merge: true }
+    );
+    return true;
+  },
+
+  /** Guarda solo el avatar dentro de `profile`, sin tocar el resto del perfil. */
+  async updateAvatar(uid: string, avatar: AvatarConfig): Promise<boolean> {
+    const clients = getFirebaseClients();
+    if (!clients?.firestore) return false;
+    const ref = doc(clients.firestore, FIRESTORE_COLLECTIONS.users, uid);
+    await setDoc(
+      ref,
+      { profile: { avatar, avatarId: avatar.personaje }, updatedAt: serverTimestamp() },
       { merge: true }
     );
     return true;

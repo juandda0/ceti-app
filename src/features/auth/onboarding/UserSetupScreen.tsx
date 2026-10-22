@@ -10,24 +10,20 @@ import { BorderRadius, Spacing } from '@shared/constants/theme';
 import { useUserStore } from '@features/auth/store/useUserStore';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import CetiButton from '@shared/components/CetiButton';
-import Bounceable from '@shared/components/Bounceable';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import PageHeader from '@shared/components/PageHeader';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { logEvent } from '@shared/lib/analytics/logEvent';
 import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/app';
 import { userRepository } from '@features/auth/data/userRepository';
-
-const AVATARS = [
-  { id: 'avatar_1', emoji: '🦁' },
-  { id: 'avatar_2', emoji: '🐸' },
-  { id: 'avatar_3', emoji: '🦊' },
-  { id: 'avatar_4', emoji: '🐼' },
-  { id: 'avatar_5', emoji: '🐱' },
-  { id: 'avatar_6', emoji: '🐶' },
-  { id: 'avatar_7', emoji: '🦄' },
-  { id: 'avatar_8', emoji: '🐨' },
-];
+import AvatarView from '@features/avatar/components/AvatarView';
+import { SelectorColor, SelectorPersonaje } from '@features/avatar/components/Selectores';
+import {
+  AVATAR_POR_DEFECTO,
+  muestrasPiel,
+  personajePorId,
+  type AvatarConfig,
+} from '@features/avatar/domain/catalogo';
 
 export default function UserSetupScreen() {
   const router = useRouter();
@@ -37,16 +33,15 @@ export default function UserSetupScreen() {
 
   const [step, setStep] = useState(0);
   const [name, setName] = useState('');
-  const [avatarId, setAvatarId] = useState('');
+  const [avatar, setAvatar] = useState<AvatarConfig>(AVATAR_POR_DEFECTO);
   const [error, setError] = useState('');
   const [finishing, setFinishing] = useState(false);
 
   // Steps: 0 = name, 1 = avatar, 2 = welcome
   const canAdvance = useCallback(() => {
     if (step === 0) return name.trim().length >= 2;
-    if (step === 1) return avatarId !== '';
     return true;
-  }, [step, name, avatarId]);
+  }, [step, name]);
 
   const handleNext = () => {
     if (!canAdvance() || step >= 2) return;
@@ -56,10 +51,9 @@ export default function UserSetupScreen() {
   };
 
   const finishSetup = async () => {
-    const emoji = AVATARS.find((a) => a.id === avatarId)?.emoji ?? '🦁';
     const nickname = name.trim();
 
-    setProfile(nickname, nickname, avatarId, emoji);
+    setProfile(nickname, nickname, avatar);
 
     if (isFirebaseConfigured()) {
       const u = getFirebaseClients()?.auth.currentUser;
@@ -80,7 +74,13 @@ export default function UserSetupScreen() {
             : u.providerData?.some((p) => p.providerId?.includes('apple'))
               ? 'apple'
               : 'unknown',
-          profile: { nickname, fullName: nickname, avatarId, avatarEmoji: emoji },
+          profile: {
+            nickname,
+            fullName: nickname,
+            avatarId: avatar.personaje,
+            avatarEmoji: '',
+            avatar,
+          },
         });
       } catch (e) {
         setError(e instanceof Error ? e.message : t('onboarding.saveError'));
@@ -163,32 +163,25 @@ export default function UserSetupScreen() {
               subtitle={t('onboarding.stepAvatarSubtitle')}
               style={{ alignItems: 'center' }}
             />
-            <View style={styles.avatarGrid}>
-              {AVATARS.map((av) => (
-                <Bounceable
-                  key={av.id}
-                  accessibilityRole="button"
-                  accessibilityLabel={t('onboarding.selectAvatar')}
-                  accessibilityState={{ selected: avatarId === av.id }}
-                  onPress={() => {
-                    setAvatarId(av.id);
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  }}
-                  style={[
-                    styles.avatarButton,
-                    {
-                      backgroundColor: colors.materials.base,
-                      borderColor: colors.materials.border,
-                    },
-                    avatarId === av.id && {
-                      borderColor: colors.brand.primary,
-                      backgroundColor: colors.fill.brandSubtle,
-                    },
-                  ]}
-                >
-                  <Text style={styles.avatarEmojiText}>{av.emoji}</Text>
-                </Bounceable>
-              ))}
+            <View style={[styles.escenario, { backgroundColor: colors.materials.base }]}>
+              <View style={[styles.halo, { backgroundColor: colors.fill.brandSubtle }]} />
+              <AvatarView config={avatar} size={150} />
+              <Text style={[styles.rol, { color: colors.text.secondary }]}>
+                {t(`avatar.rol.${personajePorId(avatar.personaje).rol}`)}
+              </Text>
+            </View>
+            <View style={styles.selectores}>
+              <SelectorPersonaje
+                config={avatar}
+                onChange={(personaje) => setAvatar((a) => ({ ...a, personaje }))}
+              />
+              <SelectorColor
+                titulo={t('avatar.tonoPiel')}
+                opciones={muestrasPiel(avatar)}
+                valor={avatar.tono}
+                onChange={(tono) => setAvatar((a) => ({ ...a, tono }))}
+                etiqueta={(id) => t(`avatar.tono.${id}`)}
+              />
             </View>
           </Animated.View>
         )}
@@ -215,9 +208,7 @@ export default function UserSetupScreen() {
                 },
               ]}
             >
-              <Text style={styles.welcomeAvatar}>
-                {AVATARS.find((a) => a.id === avatarId)?.emoji ?? '🦁'}
-              </Text>
+              <AvatarView config={avatar} encuadre="retrato" size={116} />
             </View>
           </Animated.View>
         )}
@@ -258,16 +249,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     borderWidth: 1,
   },
-  avatarGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 16 },
-  avatarButton: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    justifyContent: 'center',
+  escenario: {
+    width: '100%',
+    marginTop: Spacing.md,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.sm,
+    borderRadius: 28,
     alignItems: 'center',
-    borderWidth: 2,
+    overflow: 'hidden',
   },
-  avatarEmojiText: { fontSize: 40 },
+  halo: { position: 'absolute', bottom: 20, width: 140, height: 140, borderRadius: 70 },
+  rol: { ...Typography.subheadline, fontWeight: '700', marginTop: 4 },
+  selectores: { width: '100%', gap: Spacing.base, marginTop: Spacing.base },
   finalAvatarContainer: {
     width: 120,
     height: 120,
@@ -277,7 +270,6 @@ const styles = StyleSheet.create({
     marginTop: Spacing.xl,
     borderWidth: 1,
   },
-  welcomeAvatar: { fontSize: 72 },
   footer: { paddingHorizontal: Spacing.base, paddingBottom: 50 },
   errorText: {
     ...Typography.caption1,

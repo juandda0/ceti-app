@@ -661,7 +661,8 @@
   },
   "profile": {
     "pageTitle": "Mi perfil",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "vestidor": "Personalizar mi tripulante"
   },
   "roleChooser": {
     "title": "¿Cómo usarás Ceti?",
@@ -676,9 +677,9 @@
     "stepNameTitle": "¿Cómo te llamas?",
     "stepNameSubtitle": "Escribe tu nombre para personalizar tu experiencia",
     "namePlaceholder": "Tu nombre...",
-    "stepAvatarOverline": "Identidad",
-    "stepAvatarTitle": "Elige tu avatar",
-    "stepAvatarSubtitle": "Este te identificará en la app",
+    "stepAvatarOverline": "Tu tripulante",
+    "stepAvatarTitle": "Elige tu tripulante",
+    "stepAvatarSubtitle": "Te acompaña en todo el viaje. Puedes cambiar su look cuando quieras desde tu perfil.",
     "stepWelcomeOverline": "¡Todo listo!",
     "stepWelcomeTitle": "Bienvenido/a",
     "stepWelcomeSubtitle": "Ya puedes explorar tus mundos y organizar tu dinero.",
@@ -717,5 +718,64 @@
     "enEsteMundo": "EN ESTE MUNDO",
     "guiaVacia": "Este mundo todavía no tiene guía. Entra al mundo y aprende jugando.",
     "volver": "VOLVER"
+  },
+  "avatar": {
+    "rol": {
+      "capitan": "Capitán de la nave",
+      "navegante": "Navegante",
+      "ingeniera": "Ingeniera de la nave"
+    },
+    "tonoPiel": "Tono de piel",
+    "colorPelo": "Color de pelo",
+    "tono": {
+      "original": "Original",
+      "clara": "Clara",
+      "media": "Media",
+      "canela": "Canela",
+      "morena": "Morena",
+      "oscura": "Oscura"
+    },
+    "pelo": {
+      "original": "Original",
+      "negro": "Negro",
+      "castano": "Castaño",
+      "rubio": "Rubio",
+      "pelirrojo": "Pelirrojo",
+      "azul": "Azul"
+    },
+    "prenda": {
+      "traje": "Traje de tripulación",
+      "sudadera": "Sudadera Ceti"
+    },
+    "accesorio": {
+      "ninguno": "Ninguno",
+      "gafas-sol": "Gafas de sol",
+      "gorra": "Gorra Ceti",
+      "audifonos": "Audífonos",
+      "estrellas": "Corona de estrellas"
+    },
+    "requisito": {
+      "racha": "Racha de {{dias}} días",
+      "dias-aprendiendo": "Aprende {{dias}} días",
+      "meta-cumplida": "Cumple una meta de ahorro",
+      "avance": "{{actual}}/{{meta}}"
+    },
+    "bloqueado": "Bloqueado: {{requisito}}",
+    "vestidor": {
+      "titulo": "Vestidor",
+      "tabs": {
+        "piel": "Piel",
+        "pelo": "Pelo",
+        "ropa": "Ropa",
+        "accesorios": "Accesorios"
+      },
+      "guardar": "Guardar",
+      "guardado": "¡Tu tripulante quedó listo!",
+      "errorGuardar": "No se pudo guardar en la nube. Quedó guardado en este teléfono."
+    },
+    "desbloqueo": {
+      "titulo": "¡Desbloqueaste {{item}}!",
+      "mensaje": "Póntelo desde el vestidor de tu perfil."
+    }
   }
 }

@@ -3,6 +3,7 @@ import { render } from '@testing-library/react-native';
 const mockTabNames: string[] = [];
 const mockTabOptions: Record<string, unknown> = {};
 
+jest.mock('@features/avatar/hooks/useProgresoAvatar', () => ({ useVigilarDesbloqueos: () => {} }));
 jest.mock('expo-router', () => ({
   Tabs: Object.assign(({ children }: { children: React.ReactNode }) => <>{children}</>, {
     Screen: ({ name, options }: { name: string; options?: unknown }) => {

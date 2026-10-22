@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createZustandMmkvStorage } from '@shared/lib/storage/mmkv';
+import type { AvatarConfig } from '@features/avatar/domain/catalogo';
 
 export interface UserState {
   id: string;
@@ -8,11 +9,14 @@ export interface UserState {
   fullName: string;
   avatarId: string;
   avatarEmoji: string;
+  /** Tripulante elegido; null en perfiles anteriores al avatar (se muestra el de por defecto). */
+  avatar: AvatarConfig | null;
   isOnboarded: boolean;
 }
 
 interface UserActions {
-  setProfile: (nickname: string, fullName: string, avatarId: string, avatarEmoji: string) => void;
+  setProfile: (nickname: string, fullName: string, avatar: AvatarConfig) => void;
+  setAvatar: (avatar: AvatarConfig) => void;
   loadProfile: (profile: Partial<UserState>) => void;
   resetUser: () => void;
 }
@@ -31,6 +35,7 @@ const initialState: UserState = {
   fullName: '',
   avatarId: '',
   avatarEmoji: '',
+  avatar: null,
   isOnboarded: false,
 };
 
@@ -39,17 +44,20 @@ export const useUserStore = create<UserStore>()(
     (set) => ({
       ...initialState,
 
-      setProfile: (nickname, fullName, avatarId, avatarEmoji) => {
+      setProfile: (nickname, fullName, avatar) => {
         set((state) => ({
           ...state,
           id: ensureId(state.id),
           nickname,
           fullName,
-          avatarId,
-          avatarEmoji,
+          avatarId: avatar.personaje,
+          avatarEmoji: '',
+          avatar,
           isOnboarded: true,
         }));
       },
+
+      setAvatar: (avatar) => set({ avatar, avatarId: avatar.personaje }),
 
       loadProfile: (profile) => {
         set((state) => ({

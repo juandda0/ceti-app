@@ -22,6 +22,7 @@ import { userRepository } from '@features/auth/data/userRepository';
 import { adminService } from '@features/dashboard/data/adminService';
 import { loginIntent } from '@features/auth/data/loginIntent';
 import { hasClassAccess } from '@features/learning/data/classAccess';
+import { leerAvatar } from '@features/avatar/domain/catalogo';
 
 export default function Index() {
   const authReady = useAuthStore((s) => s.authReady);
@@ -150,6 +151,7 @@ export default function Index() {
             fullName: typeof p.fullName === 'string' ? p.fullName : '',
             avatarId: typeof p.avatarId === 'string' ? p.avatarId : '',
             avatarEmoji: typeof p.avatarEmoji === 'string' ? p.avatarEmoji : '',
+            avatar: leerAvatar(p.avatar),
           });
         }
         if (!useUserStore.getState().isOnboarded) {

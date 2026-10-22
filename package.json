@@ -16,7 +16,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "anim:optimize": "node ./scripts/optimize-animations.mjs"
+    "anim:optimize": "node ./scripts/optimize-animations.mjs",
+    "avatar:svgs": "node ./scripts/avatar/generar-svgs.mjs"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

@@ -7,6 +7,7 @@ const mockLogin = jest.fn();
 jest.mock('expo-router', () => ({ useRouter: () => ({ replace: mockReplace }) }));
 jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(),
+  selectionAsync: jest.fn(),
   notificationAsync: jest.fn(),
   ImpactFeedbackStyle: { Light: 'light' },
   NotificationFeedbackType: { Success: 'success', Error: 'error' },
@@ -48,7 +49,6 @@ jest.mock('react-i18next', () => ({
         'onboarding.namePlaceholder': 'Tu nombre...',
         'onboarding.next': 'Siguiente',
         'onboarding.start': 'Comenzar',
-        'onboarding.selectAvatar': 'Seleccionar avatar',
       })[key] ?? key,
   }),
 }));
@@ -69,7 +69,8 @@ jest.mock('@shared/hooks/useThemeColors', () => ({
     brand: { primary: '#000' },
     fill: { brandSubtle: '#eee' },
     materials: { highlight: '#eee', base: '#fff', border: '#ddd' },
-    text: { primary: '#000', tertiary: '#666' },
+    background: { base: '#fff' },
+    text: { primary: '#000', secondary: '#333', tertiary: '#666' },
     system: { red: '#f00' },
   }),
 }));
@@ -88,18 +89,27 @@ jest.mock('@shared/components/Bounceable', () => {
   return ({ children, ...props }: { children: React.ReactNode }) => <Pressable {...props}>{children}</Pressable>;
 });
 jest.mock('@features/dashboard/components/ClassCodeForm', () => () => <>Código de clase</>);
+jest.mock('@features/avatar/components/AvatarView', () => () => null);
 
 import UserSetupScreen from './UserSetupScreen';
 
-test('termina después de elegir nombre y avatar sin pedir código', async () => {
+test('termina después de elegir nombre y tripulante sin pedir código', async () => {
   render(<UserSetupScreen />);
 
   fireEvent.changeText(screen.getByPlaceholderText('Tu nombre...'), 'Ana');
   fireEvent.press(screen.getByRole('button', { name: 'Siguiente' }));
-  fireEvent.press(screen.getAllByRole('button', { name: 'Seleccionar avatar' })[0]);
+  fireEvent.press(screen.getByRole('button', { name: 'Sofi' }));
+  fireEvent.press(screen.getByRole('button', { name: 'avatar.tonoPiel: avatar.tono.morena' }));
   fireEvent.press(screen.getByRole('button', { name: 'Siguiente' }));
   fireEvent.press(screen.getByRole('button', { name: 'Comenzar' }));
 
   await waitFor(() => expect(mockReplace).toHaveBeenCalledWith('/'));
+  expect(mockSetProfile).toHaveBeenCalledWith('Ana', 'Ana', {
+    personaje: 'sofi',
+    tono: 'morena',
+    pelo: 'original',
+    prenda: 'traje',
+    accesorio: null,
+  });
   expect(screen.queryByText('Código de clase')).toBeNull();
 });
