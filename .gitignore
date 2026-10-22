@@ -71,3 +71,7 @@ functions/.secret.local
 # Artefactos locales del acompañamiento visual
 .superpowers/
 .playwright-cli/
+
+# Configuración del IDE y capturas temporales
+.idea/
+.tmp-figma-shots/
