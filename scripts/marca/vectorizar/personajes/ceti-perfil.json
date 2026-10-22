@@ -1,0 +1,83 @@
+{
+  "src": "assets/brand/bocetos/ceti-06-vuelo-perfil.png",
+  "box": [
+    323,
+    185,
+    560,
+    365
+  ],
+  "salida": "assets/brand/ceti/vuelo/ceti-perfil.svg",
+  "cara_en": "cuerpo",
+  "piso": null,
+  "partes": {},
+  "experimentos": {
+    "capas_geometricas": {
+      "piso": true,
+      "contencion": false,
+      "iris": true
+    }
+  },
+  "retoques": [
+    {
+      "op": "borrar",
+      "grupo": "cuerpo",
+      "zona": [
+        80,
+        112,
+        100,
+        130
+      ],
+      "colores": [
+        "#981A00",
+        "#A70E00"
+      ],
+      "nota": "mancha roja en la panza"
+    },
+    {
+      "op": "recolor",
+      "de": "#981A00",
+      "a": "#BC4B03",
+      "nota": "mancha roja al tono del borde"
+    },
+    {
+      "op": "recolor",
+      "de": "#A70E00",
+      "a": "#BC4B03",
+      "nota": "mancha roja al tono del borde"
+    },
+    {
+      "op": "borrar",
+      "grupo": "cuerpo",
+      "zona": [
+        77,
+        121,
+        88,
+        130
+      ],
+      "colores": [
+        "#FFFDF3"
+      ],
+      "nota": "filo claro del fondo en la silueta"
+    },
+    {
+      "op": "borrar",
+      "grupo": "cuerpo",
+      "zona": [
+        94,
+        80,
+        104,
+        92
+      ],
+      "colores": [
+        "#FFFDF3"
+      ],
+      "nota": "filo claro del fondo en la silueta"
+    },
+    {
+      "op": "recolor",
+      "de": "#E5AF79",
+      "a": "#FBDDA8",
+      "nota": "sin surcos: estilo plano como los planetas"
+    }
+  ]
+}

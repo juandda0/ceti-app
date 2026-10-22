@@ -1,0 +1,10 @@
+{
+  "src": "assets/brand/bocetos/juan-02-capitan.jpg",
+  "box": [120, 40, 580, 820],
+  "salida": "assets/brand/juan/juan-capitan-vectorizado.svg",
+  "partes": {
+    "cabeza": {"poligono": [[70, 20], [360, 20], [360, 262], [70, 262]], "excluir": ["#FEE1BD", "#BE8C6D"], "pivote": [213, 252], "solapa": 6},
+    "brazo-izq": {"poligono": [[96, 270], [133, 372], [128, 470], [124, 565], [25, 565], [25, 320]], "pivote": [113, 302], "solapa": 7},
+    "brazo-der": {"poligono": [[330, 270], [294, 372], [296, 402], [232, 402], [228, 545], [410, 545], [410, 320]], "pivote": [313, 302], "solapa": 7}
+  }
+}

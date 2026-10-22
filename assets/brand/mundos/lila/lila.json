@@ -1,0 +1,81 @@
+{
+  "origen": [
+    32.0,
+    31.0
+  ],
+  "lado": 960,
+  "planeta": {
+    "c": [
+      479.4,
+      480.5
+    ],
+    "r": 369.8,
+    "color_sombra": "#A07FC7",
+    "luz": {
+      "c": [
+        383.4,
+        386.8
+      ],
+      "r": 353.7
+    },
+    "color_luz": "#BB99E5",
+    "brillos": [
+      {
+        "c": [
+          282.5,
+          247.5
+        ],
+        "rx": 50.0,
+        "ry": 28.2,
+        "giro": 138.6
+      }
+    ],
+    "color_brillo": "#D7C1EF"
+  },
+  "orbita": {
+    "c": [
+      477.9,
+      475.5
+    ],
+    "a": 467.6,
+    "b": 163.3,
+    "giro": -34.5,
+    "reparto": 0.6
+  },
+  "satelites": {
+    "tipo": "moneda",
+    "rx": 70.0,
+    "ry": 67.0,
+    "giro": -70.0,
+    "canto": 13.0,
+    "contorno": 8.0,
+    "brillos": [
+      [
+        -0.35,
+        0.05
+      ],
+      [
+        0.2,
+        0.32
+      ]
+    ],
+    "angulo_brillo": 90.0,
+    "aro": 0.72,
+    "aro_ancho": 5.0,
+    "aro_corrimiento": 2.5,
+    "color_cara": "#F2B542",
+    "color_brillo": "#F9CF66",
+    "color_canto": "#B97F25",
+    "color_aro": "#B97F25",
+    "n": 1,
+    "fase": 0.181,
+    "escala_atras": 0.75,
+    "avance": 1.0
+  },
+  "desfile": null,
+  "animacion": {
+    "duracion": 6,
+    "inclinar": 1.2
+  },
+  "anima_extras": {}
+}

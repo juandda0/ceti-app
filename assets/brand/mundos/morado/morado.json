@@ -1,0 +1,53 @@
+{
+  "origen": [
+    31.0,
+    31.0
+  ],
+  "lado": 960,
+  "planeta": {
+    "c": [
+      480.5,
+      480.5
+    ],
+    "r": 343.9,
+    "color_sombra": "#814299",
+    "luz": {
+      "c": [
+        426.0,
+        417.1
+      ],
+      "r": 340.1
+    },
+    "color_luz": "#AF6CD2",
+    "brillos": [
+      {
+        "c": [
+          302.7,
+          270.5
+        ],
+        "rx": 44.9,
+        "ry": 28.6,
+        "giro": 139.0
+      },
+      {
+        "c": [
+          246.60000000000002,
+          341.0
+        ],
+        "rx": 17.0,
+        "ry": 14.0,
+        "giro": 121.0
+      }
+    ],
+    "color_brillo": "#D6B5EA"
+  },
+  "orbita": null,
+  "satelites": null,
+  "desfile": null,
+  "animacion": {
+    "duracion": 6
+  },
+  "anima_extras": {
+    "mecer": 6
+  }
+}

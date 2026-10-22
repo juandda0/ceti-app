@@ -1,0 +1,739 @@
+{
+ "version": "v1",
+ "congelado": true,
+ "notas": "Banco de retos de la Empresa Vectorizador. Cajas (x0,y0,x1,y1) en px de la hoja; detalle en px del recorte. Sintéticos: box = imagen completa generada por banco/sinteticos.py en ~/.cache/vectorizar/banco/<id>/.",
+ "casos": [
+  {
+   "id": "R1",
+   "nombre": "tato-frente",
+   "tipo": "real",
+   "reto": "parecido global, insignia, bolsa; contorno marrón a recolorear",
+   "src": "assets/brand/bocetos/tato-03-hoja-modelo.jpg",
+   "box": [
+    100,
+    30,
+    620,
+    820
+   ],
+   "fondo": "FBEFDB",
+   "linea": {
+    "recolor": true,
+    "colores": [
+     "B88969",
+     "924D3C"
+    ]
+   },
+   "detalle": {
+    "ojos": [
+     175,
+     125,
+     300,
+     200
+    ],
+    "insignia": [
+     180,
+     325,
+     285,
+     390
+    ],
+    "mano-izq": [
+     60,
+     440,
+     150,
+     560
+    ],
+    "bolsa-asa": [
+     300,
+     510,
+     430,
+     600
+    ]
+   },
+   "ids": [
+    "sombra-piso",
+    "cuerpo",
+    "cabeza",
+    "brazo-izq",
+    "brazo-der",
+    "ojo-izq",
+    "ojo-der"
+   ],
+   "config": {
+    "base": "tato"
+   },
+   "base_calco": "tato",
+   "presupuesto": {
+    "nodos": 1810,
+    "kb": 72.4,
+    "regla": "0.15 nodos por px de borde de la referencia; kb = 0.04 por nodo"
+   }
+  },
+  {
+   "id": "R2",
+   "nombre": "juan-capitan",
+   "tipo": "real",
+   "reto": "accesorios diminutos: reloj, pulsera, tablet, insignia de ballena",
+   "src": "assets/brand/bocetos/juan-02-capitan.jpg",
+   "box": [
+    120,
+    40,
+    580,
+    820
+   ],
+   "fondo": "FCEFDB",
+   "linea": {
+    "recolor": true,
+    "colores": [
+     "BB8C6E",
+     "8C4E31",
+     "AD6556"
+    ]
+   },
+   "detalle": {
+    "ojos": [
+     150,
+     115,
+     310,
+     190
+    ],
+    "reloj-tablet": [
+     230,
+     400,
+     400,
+     540
+    ],
+    "pulsera": [
+     45,
+     455,
+     120,
+     500
+    ],
+    "insignia": [
+     165,
+     320,
+     265,
+     385
+    ]
+   },
+   "ids": [
+    "sombra-piso",
+    "cuerpo",
+    "cabeza",
+    "brazo-izq",
+    "brazo-der",
+    "ojo-izq",
+    "ojo-der"
+   ],
+   "config": {
+    "base": "juan-capitan"
+   },
+   "base_calco": "juan",
+   "presupuesto": {
+    "nodos": 2090,
+    "kb": 83.6,
+    "regla": "0.15 nodos por px de borde de la referencia; kb = 0.04 por nodo"
+   }
+  },
+  {
+   "id": "R3",
+   "nombre": "ceti-frente",
+   "tipo": "real",
+   "reto": "contorno saturado sobre naranja, degradados suaves, ojos (el contorno ya es de marca: su color sí cuenta)",
+   "src": "assets/brand/bocetos/ceti-05-hoja-modelo.jpg",
+   "box": [
+    96,
+    150,
+    736,
+    770
+   ],
+   "fondo": "F9F3E1",
+   "linea": {
+    "recolor": false
+   },
+   "detalle": {
+    "ceja-ojo-izq": [
+     195,
+     115,
+     270,
+     200
+    ],
+    "centro-cara": [
+     270,
+     80,
+     370,
+     250
+    ],
+    "boca": [
+     220,
+     200,
+     420,
+     260
+    ],
+    "borde-aleta": [
+     480,
+     330,
+     620,
+     415
+    ]
+   },
+   "ids": [
+    "sombra-piso",
+    "cuerpo",
+    "aleta-izq",
+    "aleta-der",
+    "cola",
+    "ojo-izq",
+    "ojo-der"
+   ],
+   "config": {
+    "base": "ceti"
+   },
+   "base_svg": "assets/brand/ceti/ceti-frente.svg",
+   "presupuesto": {
+    "nodos": 1260,
+    "kb": 50.4,
+    "regla": "0.15 nodos por px de borde de la referencia; kb = 0.04 por nodo"
+   }
+  },
+  {
+   "id": "R4",
+   "nombre": "tato-perfil-casco",
+   "tipo": "real",
+   "reto": "vista lateral, casco de vidrio translúcido con brillo, mochila",
+   "src": "assets/brand/bocetos/tato-01-hoja-concepto.jpg",
+   "box": [
+    1480,
+    80,
+    1960,
+    790
+   ],
+   "fondo": "FAF2E0",
+   "linea": {
+    "recolor": true,
+    "colores": [
+     "AA7954",
+     "8E432D"
+    ]
+   },
+   "detalle": {
+    "casco-brillo": [
+     120,
+     60,
+     220,
+     150
+    ],
+    "cara-oreja": [
+     180,
+     160,
+     380,
+     310
+    ],
+    "mochila": [
+     60,
+     320,
+     180,
+     530
+    ],
+    "mano": [
+     170,
+     460,
+     290,
+     580
+    ]
+   },
+   "ids": [
+    "cuerpo"
+   ],
+   "config": {
+    "base": "tato",
+    "overrides": {
+     "partes": {}
+    }
+   },
+   "presupuesto": {
+    "nodos": 1640,
+    "kb": 65.6,
+    "regla": "0.15 nodos por px de borde de la referencia; kb = 0.04 por nodo"
+   }
+  },
+  {
+   "id": "R5",
+   "nombre": "tato-salto",
+   "tipo": "real",
+   "reto": "pose de salto: puños, dedos, extremidades superpuestas, destellos",
+   "src": "assets/brand/bocetos/tato-03-hoja-modelo.jpg",
+   "box": [
+    640,
+    800,
+    1090,
+    1510
+   ],
+   "fondo": "FBEFDB",
+   "linea": {
+    "recolor": true,
+    "colores": [
+     "B88969",
+     "904C3D"
+    ]
+   },
+   "detalle": {
+    "cara": [
+     110,
+     100,
+     310,
+     270
+    ],
+    "puno-der": [
+     330,
+     110,
+     430,
+     230
+    ],
+    "puno-izq": [
+     20,
+     260,
+     110,
+     390
+    ],
+    "destellos": [
+     290,
+     20,
+     400,
+     110
+    ]
+   },
+   "ids": [
+    "cuerpo"
+   ],
+   "config": {
+    "base": "tato",
+    "overrides": {
+     "partes": {}
+    }
+   },
+   "presupuesto": {
+    "nodos": 1740,
+    "kb": 69.6,
+    "regla": "0.15 nodos por px de borde de la referencia; kb = 0.04 por nodo"
+   }
+  },
+  {
+   "id": "R6",
+   "nombre": "juan-rostro",
+   "tipo": "real",
+   "reto": "primer plano: orejas, cuello, cabello, tonos de piel casi iguales, ojos grandes",
+   "src": "assets/brand/bocetos/juan-03-comparacion-cara.png",
+   "box": [
+    0,
+    0,
+    420,
+    405
+   ],
+   "fondo": "FDEBD3",
+   "linea": {
+    "recolor": true,
+    "colores": [
+     "AE6D5C",
+     "B67765",
+     "8A5246",
+     "6C4132",
+     "BE8D73"
+    ]
+   },
+   "detalle": {
+    "ojos": [
+     100,
+     185,
+     320,
+     265
+    ],
+    "oreja-izq": [
+     30,
+     190,
+     110,
+     300
+    ],
+    "boca-nariz": [
+     140,
+     240,
+     290,
+     340
+    ],
+    "cabello": [
+     60,
+     20,
+     360,
+     130
+    ]
+   },
+   "ids": [
+    "cuerpo",
+    "ojo-izq",
+    "ojo-der"
+   ],
+   "config": {
+    "base": "juan-capitan",
+    "overrides": {
+     "partes": {},
+     "piso": null
+    }
+   },
+   "presupuesto": {
+    "nodos": 870,
+    "kb": 34.8,
+    "regla": "0.15 nodos por px de borde de la referencia; kb = 0.04 por nodo"
+   }
+  },
+  {
+   "id": "R7",
+   "nombre": "ceti-curva",
+   "tipo": "real",
+   "reto": "silueta compleja curvada, oscuro sobre naranja, surcos superpuestos, destellos",
+   "src": "assets/brand/bocetos/ceti-02-siluetas.jpg",
+   "box": [
+    2070,
+    390,
+    2670,
+    1340
+   ],
+   "fondo": "FBF4E5",
+   "linea": {
+    "recolor": false
+   },
+   "detalle": {
+    "ojo-ceja": [
+     270,
+     225,
+     380,
+     345
+    ],
+    "aleta": [
+     50,
+     370,
+     250,
+     580
+    ],
+    "surcos": [
+     200,
+     370,
+     510,
+     630
+    ],
+    "destellos": [
+     270,
+     20,
+     380,
+     130
+    ]
+   },
+   "ids": [
+    "cuerpo"
+   ],
+   "config": {
+    "base": "ceti",
+    "overrides": {
+     "partes": {}
+    }
+   },
+   "presupuesto": {
+    "nodos": 1390,
+    "kb": 55.6,
+    "regla": "0.15 nodos por px de borde de la referencia; kb = 0.04 por nodo"
+   }
+  },
+  {
+   "id": "R8",
+   "nombre": "ceti-portal",
+   "tipo": "real",
+   "reto": "escena: portal oscuro con estrellas, muchos colores, fondo, degradados",
+   "src": "assets/brand/bocetos/ceti-04-portal-inclinado.jpg",
+   "box": [
+    720,
+    140,
+    2040,
+    1400
+   ],
+   "fondo": "FBF5E2",
+   "linea": {
+    "recolor": false
+   },
+   "detalle": {
+    "ojos": [
+     720,
+     300,
+     1130,
+     460
+    ],
+    "estrellas": [
+     60,
+     160,
+     340,
+     500
+    ],
+    "cola": [
+     220,
+     690,
+     500,
+     880
+    ],
+    "destellos": [
+     720,
+     15,
+     880,
+     160
+    ]
+   },
+   "ids": [
+    "cuerpo"
+   ],
+   "config": {
+    "base": "ceti",
+    "overrides": {
+     "partes": {},
+     "escala": 2
+    }
+   },
+   "presupuesto": {
+    "nodos": 3040,
+    "kb": 121.6,
+    "regla": "0.15 nodos por px de borde de la referencia; kb = 0.04 por nodo"
+   }
+  },
+  {
+   "id": "S1",
+   "nombre": "tato-degradado",
+   "tipo": "sintetico",
+   "reto": "verdad exacta: tato-frente.svg + contorno marrón 3 px, σ 0.6, 60 %, JPEG q78",
+   "generador": {
+    "fn": "degradar",
+    "svg": "assets/brand/tato/tato-frente.svg",
+    "escala": 0.6,
+    "linea_hex": "#9A6A4E",
+    "ancho": 3,
+    "sigma": 0.6,
+    "q": 78,
+    "semilla": 1
+   },
+   "fondo": "FBEFDB",
+   "linea": {
+    "recolor": true
+   },
+   "detalle": {
+    "ojos": [
+     105,
+     84,
+     180,
+     120
+    ],
+    "insignia": [
+     108,
+     195,
+     171,
+     234
+    ],
+    "mano-izq": [
+     36,
+     264,
+     90,
+     336
+    ],
+    "bolsa-asa": [
+     180,
+     306,
+     258,
+     360
+    ]
+   },
+   "ids": [
+    "sombra-piso",
+    "cuerpo",
+    "cabeza",
+    "brazo-izq",
+    "brazo-der",
+    "ojo-izq",
+    "ojo-der"
+   ],
+   "config": {
+    "base": "tato",
+    "escalar": 0.6
+   },
+   "presupuesto": {
+    "nodos": 4906,
+    "kb": 173.6,
+    "regla": "1.2x verdad tato-frente.svg (4088 nodos, 144.7 KB)"
+   }
+  },
+  {
+   "id": "S2",
+   "nombre": "ceti-degradado",
+   "tipo": "sintetico",
+   "reto": "verdad exacta: ceti-frente.svg + contorno marrón saturado 3 px, 50 %, JPEG q75",
+   "generador": {
+    "fn": "degradar",
+    "svg": "assets/brand/ceti/ceti-frente.svg",
+    "escala": 0.5,
+    "linea_hex": "#8E3A12",
+    "ancho": 3,
+    "sigma": 0.6,
+    "q": 75,
+    "semilla": 2
+   },
+   "fondo": "F9F3E1",
+   "linea": {
+    "recolor": true
+   },
+   "detalle": {
+    "ceja-ojo-izq": [
+     97,
+     57,
+     135,
+     100
+    ],
+    "centro-cara": [
+     135,
+     40,
+     185,
+     125
+    ],
+    "boca": [
+     110,
+     100,
+     210,
+     130
+    ],
+    "borde-aleta": [
+     240,
+     165,
+     310,
+     208
+    ]
+   },
+   "ids": [
+    "sombra-piso",
+    "cuerpo",
+    "aleta-izq",
+    "aleta-der",
+    "cola",
+    "ojo-izq",
+    "ojo-der"
+   ],
+   "config": {
+    "base": "ceti",
+    "escalar": 0.5
+   },
+   "presupuesto": {
+    "nodos": 860,
+    "kb": 31.1,
+    "regla": "1.2x verdad ceti-frente.svg (717 nodos, 25.9 KB)"
+   }
+  },
+  {
+   "id": "S3",
+   "nombre": "tato-miniatura",
+   "tipo": "sintetico",
+   "reto": "miniatura de 237 px de alto: detalle minúsculo (cara, insignia, bolsa)",
+   "generador": {
+    "fn": "degradar",
+    "svg": "assets/brand/tato/tato-frente.svg",
+    "escala": 0.3,
+    "linea_hex": "#9A6A4E",
+    "ancho": 3,
+    "sigma": 0.6,
+    "q": 80,
+    "semilla": 3
+   },
+   "fondo": "FBEFDB",
+   "linea": {
+    "recolor": true
+   },
+   "detalle": {
+    "cara": [
+     39,
+     18,
+     102,
+     81
+    ],
+    "insignia": [
+     54,
+     97,
+     86,
+     117
+    ],
+    "bolsa": [
+     90,
+     153,
+     129,
+     180
+    ]
+   },
+   "ids": [
+    "cuerpo",
+    "cabeza",
+    "brazo-izq",
+    "brazo-der"
+   ],
+   "config": {
+    "base": "tato",
+    "escalar": 0.3
+   },
+   "presupuesto": {
+    "nodos": 4906,
+    "kb": 173.6,
+    "regla": "1.2x verdad tato-frente.svg (4088 nodos, 144.7 KB)"
+   }
+  },
+  {
+   "id": "S4",
+   "nombre": "estres",
+   "tipo": "sintetico",
+   "reto": "franjas paralelas de 2–3 px, degradado radial, 5 tonos con ΔE 4–8, trazo uniforme",
+   "generador": {
+    "fn": "estres",
+    "escala": 0.5,
+    "sigma": 0.6,
+    "q": 75,
+    "semilla": 4
+   },
+   "fondo": "FBEFDB",
+   "linea": {
+    "recolor": false
+   },
+   "detalle": {
+    "franjas": [
+     20,
+     20,
+     190,
+     190
+    ],
+    "degradado": [
+     210,
+     15,
+     390,
+     195
+    ],
+    "tonos": [
+     20,
+     210,
+     380,
+     390
+    ]
+   },
+   "ids": [
+    "cuerpo"
+   ],
+   "config": {
+    "overrides": {
+     "partes": {},
+     "ojos": null,
+     "piso": null
+    }
+   },
+   "presupuesto": {
+    "nodos": 369,
+    "kb": 8.0,
+    "regla": "1.2x verdad (274 nodos, 5.0 KB) + 40 nodos/2 KB para bandas del degradado radial"
+   }
+  }
+ ],
+ "congelado_en": "2026-10-20 ronda 0 (QA). Cambiar cajas, presupuestos o ids exige aprobación del Director y recalcular todo el histórico."
+}

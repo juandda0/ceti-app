@@ -1,0 +1,178 @@
+{
+  "src": "assets/brand/bocetos/ceti-06-vuelo-frenando.png",
+  "box": [
+    839,
+    199,
+    1014,
+    404
+  ],
+  "salida": "assets/brand/ceti/vuelo/ceti-frenando.svg",
+  "cara_en": "cuerpo",
+  "piso": null,
+  "partes": {},
+  "experimentos": {
+    "capas_geometricas": {
+      "piso": true,
+      "contencion": false,
+      "iris": true
+    }
+  },
+  "retoques": [
+    {
+      "op": "recolor",
+      "de": "#9D1800",
+      "a": "#C14B03",
+      "nota": "manchas rojas (cola) al tono del borde"
+    },
+    {
+      "op": "forma",
+      "grupo": "cuerpo",
+      "color": "#C14B03",
+      "nota": "aleta de adelante: borde oscuro",
+      "puntos": [
+        [
+          80,
+          74
+        ],
+        [
+          87,
+          78
+        ],
+        [
+          93,
+          90
+        ],
+        [
+          98,
+          104
+        ],
+        [
+          103,
+          118
+        ],
+        [
+          104,
+          128
+        ],
+        [
+          99,
+          131
+        ],
+        [
+          92,
+          126
+        ],
+        [
+          85,
+          115
+        ],
+        [
+          79,
+          102
+        ],
+        [
+          76,
+          88
+        ],
+        [
+          77,
+          79
+        ]
+      ]
+    },
+    {
+      "op": "forma",
+      "grupo": "cuerpo",
+      "color": "#F86506",
+      "nota": "aleta de adelante: relleno",
+      "puntos": [
+        [
+          81.5,
+          78
+        ],
+        [
+          86,
+          81
+        ],
+        [
+          91,
+          92
+        ],
+        [
+          95.5,
+          105
+        ],
+        [
+          99.5,
+          118
+        ],
+        [
+          100.5,
+          125.5
+        ],
+        [
+          98,
+          127.5
+        ],
+        [
+          93,
+          122.5
+        ],
+        [
+          87,
+          112.5
+        ],
+        [
+          81.5,
+          100.5
+        ],
+        [
+          79,
+          88
+        ],
+        [
+          79.5,
+          81
+        ]
+      ]
+    },
+    {
+      "op": "borrar",
+      "grupo": "cuerpo",
+      "zona": [
+        98,
+        120,
+        118,
+        142
+      ],
+      "colores": [
+        "#FEF2CE",
+        "#FAF2DD",
+        "#FCDEA9"
+      ],
+      "nota": "astillas claras bajo la aleta"
+    },
+    {
+      "op": "borrar",
+      "grupo": "cuerpo",
+      "zona": [
+        58,
+        112,
+        102,
+        142
+      ],
+      "colores": [
+        "#FEF2CE",
+        "#FCDEA9",
+        "#FAF2DD"
+      ],
+      "nota": "filo claro del fondo en la silueta"
+    },
+    {
+      "op": "recolor",
+      "de": "#D5B77C",
+      "a": "#FCDEA9",
+      "nota": "sin surcos: estilo plano como los planetas"
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "src": "assets/brand/bocetos/ceti-06-vuelo-concentrada.png",
+  "box": [
+    514,
+    182,
+    675,
+    381
+  ],
+  "salida": "assets/brand/ceti/vuelo/ceti-concentrada.svg",
+  "cara_en": "cuerpo",
+  "piso": null,
+  "partes": {},
+  "experimentos": {
+    "capas_geometricas": {
+      "piso": true,
+      "contencion": false,
+      "iris": true
+    }
+  },
+  "retoques": [
+    {
+      "op": "borrar",
+      "grupo": "cuerpo",
+      "zona": [
+        0,
+        100,
+        24,
+        132
+      ],
+      "colores": [
+        "#FEFEF1"
+      ],
+      "nota": "filo crema en la silueta"
+    },
+    {
+      "op": "borrar",
+      "grupo": "cuerpo",
+      "zona": [
+        50,
+        139,
+        73,
+        155
+      ],
+      "colores": [
+        "#FEFEF1"
+      ],
+      "nota": "filo claro del fondo en la silueta"
+    },
+    {
+      "op": "borrar",
+      "grupo": "cuerpo",
+      "zona": [
+        113,
+        166,
+        124,
+        175
+      ],
+      "colores": [
+        "#FEFEF1"
+      ],
+      "nota": "filo claro del fondo en la silueta"
+    },
+    {
+      "op": "borrar",
+      "grupo": "cuerpo",
+      "zona": [
+        90,
+        148,
+        102,
+        159
+      ],
+      "colores": [
+        "#FEFEF1"
+      ],
+      "nota": "filo claro del fondo en la silueta"
+    },
+    {
+      "op": "borrar",
+      "grupo": "cuerpo",
+      "zona": [
+        24,
+        115,
+        34,
+        128
+      ],
+      "colores": [
+        "#FEFEF1"
+      ],
+      "nota": "filo claro del fondo en la silueta"
+    }
+  ]
+}

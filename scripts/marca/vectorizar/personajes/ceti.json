@@ -1,0 +1,103 @@
+{
+  "src": "assets/brand/bocetos/ceti-05-hoja-modelo.jpg",
+  "box": [
+    96,
+    150,
+    736,
+    770
+  ],
+  "salida": "assets/brand/ceti/ceti-frente-vectorizado.svg",
+  "cara_en": "cuerpo",
+  "partes": {
+    "aleta-izq": {
+      "poligono": [
+        [
+          0,
+          250
+        ],
+        [
+          175,
+          250
+        ],
+        [
+          190,
+          300
+        ],
+        [
+          175,
+          420
+        ],
+        [
+          0,
+          420
+        ]
+      ],
+      "pivote": [
+        165,
+        300
+      ],
+      "solapa": 8
+    },
+    "aleta-der": {
+      "poligono": [
+        [
+          465,
+          250
+        ],
+        [
+          640,
+          250
+        ],
+        [
+          640,
+          420
+        ],
+        [
+          465,
+          420
+        ],
+        [
+          450,
+          300
+        ]
+      ],
+      "pivote": [
+        475,
+        300
+      ],
+      "solapa": 8
+    },
+    "cola": {
+      "poligono": [
+        [
+          200,
+          500
+        ],
+        [
+          440,
+          500
+        ],
+        [
+          440,
+          600
+        ],
+        [
+          200,
+          600
+        ]
+      ],
+      "pivote": [
+        320,
+        505
+      ],
+      "solapa": 8
+    }
+  },
+  "experimentos": {
+    "capas_geometricas": {
+      "piso": true,
+      "contencion": false,
+      "iris": true
+    }
+  }
+}

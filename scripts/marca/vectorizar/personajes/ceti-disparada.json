@@ -1,0 +1,133 @@
+{
+  "src": "assets/brand/bocetos/ceti-06-vuelo-disparada.png",
+  "box": [
+    629,
+    211,
+    881,
+    367
+  ],
+  "salida": "assets/brand/ceti/vuelo/ceti-disparada.svg",
+  "cara_en": "cuerpo",
+  "piso": null,
+  "partes": {},
+  "experimentos": {
+    "capas_geometricas": {
+      "piso": true,
+      "contencion": false,
+      "iris": true
+    }
+  },
+  "retoques": [
+    {
+      "op": "borrar",
+      "grupo": "cuerpo",
+      "zona": [
+        66,
+        38,
+        82,
+        50
+      ],
+      "colores": [
+        "#FFFDF3"
+      ],
+      "nota": "mota blanca en el lomo"
+    },
+    {
+      "op": "borrar",
+      "grupo": "cuerpo",
+      "zona": [
+        70,
+        60,
+        90,
+        80
+      ],
+      "colores": [
+        "#FFFDF3",
+        "#922614",
+        "#CA3F00",
+        "#CB4A02"
+      ],
+      "nota": "motas en el borde de la panza"
+    },
+    {
+      "op": "borrar",
+      "grupo": "cuerpo",
+      "zona": [
+        106,
+        82,
+        120,
+        94
+      ],
+      "colores": [
+        "#922614",
+        "#CA3F00",
+        "#BC4B07"
+      ],
+      "nota": "mota oscura en la panza"
+    },
+    {
+      "op": "borrar",
+      "grupo": "cuerpo",
+      "zona": [
+        58,
+        56,
+        96,
+        84
+      ],
+      "colores": [
+        "#FFFDF3",
+        "#FBDFA9",
+        "#FDD79A"
+      ],
+      "nota": "motas claras en el borde de la panza"
+    },
+    {
+      "op": "borrar",
+      "grupo": "cuerpo",
+      "zona": [
+        46,
+        46,
+        55,
+        58
+      ],
+      "colores": [
+        "#FFFDF3"
+      ],
+      "nota": "filo claro del fondo en la silueta"
+    },
+    {
+      "op": "borrar",
+      "grupo": "cuerpo",
+      "zona": [
+        100,
+        40,
+        111,
+        53
+      ],
+      "colores": [
+        "#FFFDF3"
+      ],
+      "nota": "filo claro del fondo en la silueta"
+    },
+    {
+      "op": "borrar",
+      "grupo": "cuerpo",
+      "zona": [
+        46,
+        37,
+        56,
+        46
+      ],
+      "colores": [
+        "#FFFDF3"
+      ],
+      "nota": "filo claro del fondo en la silueta"
+    },
+    {
+      "op": "recolor",
+      "de": "#E5B178",
+      "a": "#FBDFA9",
+      "nota": "sin surcos: estilo plano como los planetas"
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "src": "assets/brand/bocetos/ceti-06-vuelo-tres-cuartos.png",
+  "box": [
+    167,
+    155,
+    378,
+    394
+  ],
+  "salida": "assets/brand/ceti/vuelo/ceti-tres-cuartos.svg",
+  "cara_en": "cuerpo",
+  "piso": null,
+  "partes": {},
+  "experimentos": {
+    "capas_geometricas": {
+      "piso": true,
+      "contencion": false,
+      "iris": true
+    }
+  },
+  "retoques": [
+    {
+      "op": "borrar",
+      "zona": [
+        94,
+        30,
+        112,
+        48
+      ],
+      "colores": [
+        "#E8B15D"
+      ],
+      "nota": "destello convertido en rombo"
+    },
+    {
+      "op": "borrar",
+      "grupo": "cuerpo",
+      "zona": [
+        136,
+        74,
+        156,
+        98
+      ],
+      "colores": [
+        "#FEFDF5"
+      ],
+      "nota": "astillas blancas junto al ojo derecho"
+    },
+    {
+      "op": "ojo",
+      "lado": "der",
+      "grupo": "cuerpo",
+      "cx": 144.6,
+      "cy": 85.8,
+      "rx": 6.3,
+      "ry": 6.6,
+      "esclera": "#FEFDF5",
+      "iris": {
+        "r": 4.3,
+        "dx": -0.8,
+        "dy": 0.6,
+        "color": "#7E221E"
+      },
+      "brillos": [
+        {
+          "r": 1.6,
+          "dx": -1.5,
+          "dy": -1.7,
+          "color": "#FEFDF5"
+        }
+      ],
+      "nota": "ojo derecho redibujado"
+    },
+    {
+      "op": "borrar",
+      "grupo": "cuerpo",
+      "zona": [
+        128,
+        112,
+        148,
+        165
+      ],
+      "colores": [
+        "#FEFDF5"
+      ],
+      "nota": "raya blanca suelta en la panza"
+    },
+    {
+      "op": "borrar",
+      "grupo": "cuerpo",
+      "zona": [
+        34,
+        170,
+        48,
+        186
+      ],
+      "colores": [
+        "#7E221E",
+        "#B54002"
+      ],
+      "nota": "mota oscura en la cola"
+    },
+    {
+      "op": "borrar",
+      "grupo": "cuerpo",
+      "zona": [
+        54,
+        190,
+        63,
+        199
+      ],
+      "colores": [
+        "#FEFDF5"
+      ],
+      "nota": "filo claro en la cola"
+    },
+    {
+      "op": "recolor",
+      "de": "#D4B67B",
+      "a": "#FBDDA8",
+      "nota": "sin surcos: estilo plano como los planetas"
+    }
+  ]
+}

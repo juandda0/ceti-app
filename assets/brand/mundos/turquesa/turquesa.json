@@ -1,0 +1,34 @@
+{
+  "origen": [
+    32.0,
+    30.0
+  ],
+  "lado": 960,
+  "planeta": {
+    "c": [
+      479.4,
+      480.4
+    ],
+    "r": 362.6,
+    "color_sombra": "#187374",
+    "luz": {
+      "c": [
+        409.3,
+        416.5
+      ],
+      "r": 345.9
+    },
+    "color_luz": "#289F9D",
+    "brillos": [],
+    "color_brillo": "#F3C76E"
+  },
+  "orbita": null,
+  "satelites": null,
+  "desfile": null,
+  "animacion": {
+    "duracion": 6
+  },
+  "anima_extras": {
+    "estirar": 6
+  }
+}

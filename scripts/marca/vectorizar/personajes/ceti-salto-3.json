@@ -1,0 +1,55 @@
+{
+  "src": "assets/brand/bocetos/ceti-07-salto-pose3.png",
+  "box": [
+    205,
+    95,
+    820,
+    475
+  ],
+  "salida": "assets/brand/ceti/salto/ceti-salto-3.svg",
+  "piso": null,
+  "partes": {},
+  "retoques": [
+    {
+      "op": "forma",
+      "grupo": "cuerpo",
+      "color": "#FFEFCC",
+      "suave": false,
+      "puntos": [
+        [
+          486.0,
+          183.0
+        ],
+        [
+          499.0,
+          170.0
+        ],
+        [
+          540.0,
+          163.0
+        ],
+        [
+          584.0,
+          174.0
+        ],
+        [
+          586.0,
+          192.0
+        ],
+        [
+          541.0,
+          184.0
+        ],
+        [
+          507.0,
+          208.0
+        ],
+        [
+          486.0,
+          206.0
+        ]
+      ],
+      "nota": "tapa la rayita suelta sobre la panza (va unida al contorno, no se puede borrar sola)"
+    }
+  ]
+}

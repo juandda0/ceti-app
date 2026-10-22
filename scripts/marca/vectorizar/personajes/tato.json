@@ -1,0 +1,10 @@
+{
+  "src": "assets/brand/bocetos/tato-03-hoja-modelo.jpg",
+  "box": [100, 30, 620, 820],
+  "salida": "assets/brand/tato/tato-frente-vectorizado.svg",
+  "partes": {
+    "cabeza": {"poligono": [[120, 20], [345, 20], [345, 262], [120, 262]], "excluir": ["#FDE6C2", "#BB8A6A"], "pivote": [232, 252], "solapa": 6},
+    "brazo-izq": {"poligono": [[112, 284], [147, 386], [147, 470], [146, 580], [40, 580], [40, 330]], "pivote": [128, 318], "solapa": 7},
+    "brazo-der": {"poligono": [[352, 284], [317, 386], [317, 470], [318, 515], [300, 520], [300, 645], [440, 645], [440, 330]], "pivote": [336, 318], "solapa": 7}
+  }
+}
