@@ -115,7 +115,7 @@ Para repetir la presentación desde cero, corre `npm run salon:sembrar`. No hace
 
 **"Algo no cargó" en Clases del profe.** Pasaba cuando la regla de `cursos` no permitía consultar la lista `profesorUids array-contains uid`. Educadores la corrigió en `firestore.rules`. Si vuelve a pasar, revisa que el emulador tenga las reglas actuales: las recarga solo al guardar el archivo.
 
-**La estudiante pendiente (`est-23`) muestra un error rojo de desarrollo.** Mientras está pendiente de atestación, las reglas le niegan la configuración de la clase y una suscripción sin manejo de error deja la superposición roja de desarrollo. Es un bug de la app (reportado). Para presentar, usa `n` ≤ 22 o explícalo como "así ve la app a un estudiante sin autorización del acudiente".
+**La estudiante pendiente (`est-23`).** Entra a la galaxia sin progreso, porque las reglas no le dejan leer su clase hasta que la atesten. Antes aparecía un aviso rojo de desarrollo; Órbita lo corrigió en a468f72.
 
 **Las metas de Valentina salen en $0.** La sincronización remota de la app reconstruye las metas con `currentAmount: 0` y no suma los aportes guardados en `deposits`. Es una limitación de la app, no de la siembra: los aportes están en el emulador.
 
