@@ -30,6 +30,8 @@ Operaciones (todas aceptan `grupo` = id del <g> donde van, por defecto `cuerpo`,
   {"op": "copiar_de", "svg", "de": "cuerpo", "colores": [...], "zona", "escala": 1.17, "mover": [dx, dy],
        "grupo", "pos"}
      copia piezas (subtrazados enteros en la zona) de otro SVG, escaladas y movidas: p. ej. la ballena del traje.
+  {"op": "subir", "grupo", "zona", "colores": [...]}
+     trae al frente del grupo los subtrazados de esos colores enteros en la zona (la mano sobre la llave copiada).
 
 Pulido lógico (pulido.py): "trazo", "silueta", "elipse_de", "aplanar" rehacen una pieza existente con la forma
 que le corresponde (línea de grosor parejo, contorno continuo, elipse exacta, zona de un solo tono).
@@ -300,6 +302,32 @@ def _copiar_de(svg, r):
     return _insertar(svg, r.get('grupo', 'cuerpo'), frag, r.get('pos', 'encima'))
 
 
+def _subir(svg, r):
+    """Trae al frente del grupo los subtrazados de `colores` que caben enteros en `zona` (p. ej. la mano encima
+    de una llave copiada), conservando su orden."""
+    gid = r.get('grupo', 'cuerpo')
+    _, e, c, _ = _grupo(svg, gid)
+    cols = {_hex(x) for x in r['colores']}
+    frag, arriba = svg[e:c], []
+
+    def path(m):
+        tag = m.group(0)
+        vals = {v.upper() for v in re.findall(r'\s(?:fill|stroke)="(#[0-9A-Fa-f]{6})"', tag)}
+        if not vals & cols:
+            return tag
+        d = re.search(r'\sd="([^"]*)"', tag).group(1)
+        subs = [s for s in re.split(r'(?=M)', d) if s.strip()]
+        dentro = [s for s in subs if _en(r['zona'], _bbox_d(s))]
+        if not dentro:
+            return tag
+        arriba.append(tag.replace(f'd="{d}"', f'd="{"".join(dentro)}"'))
+        quedan = [s for s in subs if s not in dentro]
+        return tag.replace(f'd="{d}"', f'd="{"".join(quedan)}"') if quedan else ''
+
+    frag = re.sub(r'<path\b[^>]*>', path, frag)
+    return svg[:e] + frag + ''.join(arriba) + svg[c:]
+
+
 def aplicar(svg, retoques, log=print):
     for i, r in enumerate(retoques or []):
         op = r['op']
@@ -347,6 +375,8 @@ def aplicar(svg, retoques, log=print):
             svg = _grupo_de(svg, r)
         elif op == 'copiar_de':
             svg = _copiar_de(svg, r)
+        elif op == 'subir':
+            svg = _subir(svg, r)
         elif op == 'ojo':
             gid = f'ojo-{r["lado"]}'
             radio = max(r['rx'], r.get('ry', r['rx'])) + (r.get('aro') or {}).get('ancho', 0)

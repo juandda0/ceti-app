@@ -497,17 +497,245 @@
     312,
     576
    ],
-   "grupo": "brazo-der"
+   "grupo": "brazo-der",
+   "pos": "debajo",
+   "nota": "borde de arriba de la rodillera der, debajo como en el traje"
   },
   {
-   "op": "circulo",
+   "op": "borrar",
+   "grupo": "cuerpo",
+   "zona": [
+    78,
+    150,
+    402,
+    402
+   ],
+   "colores": [
+    "#2B2B2B"
+   ],
+   "nota": "pelo largo de la hoja (cortado en línea recta por la cabeza): se usa el del traje"
+  },
+  {
+   "op": "borrar",
+   "grupo": "brazo-izq",
+   "zona": [
+    58,
+    240,
+    172,
+    402
+   ],
+   "colores": [
+    "#2B2B2B"
+   ]
+  },
+  {
+   "op": "borrar",
+   "grupo": "brazo-der",
+   "zona": [
+    318,
+    240,
+    422,
+    402
+   ],
+   "colores": [
+    "#2B2B2B"
+   ]
+  },
+  {
+   "op": "copiar_de",
+   "svg": "assets/brand/vale/vale-frente.svg",
+   "de": "cuerpo",
+   "colores": [
+    "#2B2B2B"
+   ],
+   "zona": [
+    78,
+    150,
+    402,
+    482
+   ],
    "grupo": "cuerpo",
    "pos": "debajo",
-   "cx": 331.5,
-   "cy": 260,
-   "r": 5,
+   "nota": "pelo largo corregido del traje (siluetas lisas), detrás de la capucha y el torso"
+  },
+  {
+   "op": "borrar",
+   "grupo": "brazo-der",
+   "zona": [
+    226,
+    450,
+    470,
+    566
+   ],
+   "colores": [
+    "#BFBEBA",
+    "#828180"
+   ],
+   "nota": "llave de la hoja (se usa la del traje)"
+  },
+  {
+   "op": "borrar",
+   "grupo": "brazo-der",
+   "zona": [
+    294,
+    490,
+    416,
+    546
+   ],
+   "colores": [
+    "#FDC253",
+    "#B8772B"
+   ],
+   "nota": "mango de la llave de la hoja"
+  },
+  {
+   "op": "copiar_de",
+   "svg": "assets/brand/vale/vale-frente.svg",
+   "de": "brazo-der",
+   "colores": [
+    "#BFBEBA",
+    "#828180"
+   ],
+   "zona": [
+    226,
+    450,
+    470,
+    566
+   ],
+   "grupo": "brazo-der",
+   "pos": "encima",
+   "nota": "llave corregida del traje"
+  },
+  {
+   "op": "copiar_de",
+   "svg": "assets/brand/vale/vale-frente.svg",
+   "de": "brazo-der",
+   "colores": [
+    "#FDC253",
+    "#B8772B"
+   ],
+   "zona": [
+    294,
+    492,
+    416,
+    544
+   ],
+   "grupo": "brazo-der",
+   "pos": "encima",
+   "nota": "mango de la llave corregido del traje"
+  },
+  {
+   "op": "subir",
+   "grupo": "brazo-der",
+   "zona": [
+    314,
+    474,
+    404,
+    560
+   ],
+   "colores": [
+    "#F0B095",
+    "#B97567"
+   ],
+   "nota": "la mano encima de la llave"
+  },
+  {
+   "op": "borrar",
+   "grupo": "brazo-izq",
+   "zona": [
+    84,
+    348,
+    92,
+    368
+   ],
+   "colores": [
+    "#B8772B"
+   ],
+   "nota": "rayita dorada suelta sobre el pelo izq"
+  },
+  {
+   "op": "forma",
+   "grupo": "cuerpo",
+   "pos": "debajo",
+   "puntos": [
+    [
+     100,
+     350
+    ],
+    [
+     84,
+     350
+    ],
+    [
+     83.8,
+     358
+    ],
+    [
+     84.5,
+     368
+    ],
+    [
+     86,
+     377
+    ],
+    [
+     89,
+     386
+    ],
+    [
+     93,
+     392
+    ],
+    [
+     100,
+     384
+    ]
+   ],
    "color": "#2B2B2B",
-   "nota": "rendija entre la capucha y el pelo"
+   "suave": false,
+   "nota": "punta del pelo izq hasta la manga (sin corte recto)"
+  },
+  {
+   "op": "forma",
+   "grupo": "cuerpo",
+   "pos": "debajo",
+   "puntos": [
+    [
+     372,
+     350
+    ],
+    [
+     387.2,
+     350
+    ],
+    [
+     387.5,
+     360
+    ],
+    [
+     387,
+     368
+    ],
+    [
+     385.5,
+     376
+    ],
+    [
+     382,
+     384
+    ],
+    [
+     377,
+     390
+    ],
+    [
+     370,
+     382
+    ]
+   ],
+   "color": "#2B2B2B",
+   "suave": false,
+   "nota": "punta del pelo der hasta la manga (sin corte recto)"
   },
   {
    "op": "grupo_de",
