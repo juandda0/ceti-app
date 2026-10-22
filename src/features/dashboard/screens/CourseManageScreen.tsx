@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, Platform } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,6 +13,8 @@ import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { rosterRepository, type EstudianteWithId } from '@features/dashboard/data/rosterRepository';
 import { adminService } from '@features/dashboard/data/adminService';
 import ClassWorldsManager from '@features/dashboard/components/ClassWorldsManager';
+import { useClaseSoloLectura } from '@features/educadores/components/useClaseSoloLectura';
+import { rutaPlanes } from '@features/educadores/components/MuroPlan';
 import { confirmAction, showMessage } from '@shared/lib/dialogs';
 import Segmented from '@features/savings/components/Segmented';
 import { FadeIn } from '@features/savings/charts/ChartParts';
@@ -26,8 +28,10 @@ import {
   Seccion,
   Tarjeta,
   Vacio,
+  tapsConTeclado,
   type Tono,
 } from '@features/dashboard/components/profe/kit';
+import ImportarLista from '@features/educadores/retencion/components/ImportarLista';
 import type { EstudianteEstado } from '@shared/types/tenancy';
 
 const POLICY_VERSION = 'v1';
@@ -61,6 +65,9 @@ export default function CourseManageScreen() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [code, setCode] = useState<string | null>(null);
+  // Al bajar de plan, las clases que pasan del límite se ven pero no se editan (nada se borra).
+  const router = useRouter();
+  const soloLectura = useClaseSoloLectura(colegioId, cursoId);
   const [codeBusy, setCodeBusy] = useState(false);
 
   const reload = useCallback(async () => {
@@ -230,10 +237,12 @@ export default function CourseManageScreen() {
           icono="key-outline"
           variante={code ? 'secundario' : 'primario'}
           cargando={codeBusy}
+          deshabilitado={soloLectura}
           onPress={() => void onGenerateCode()}
         />
       </Tarjeta>
       <Aviso icono="people" tono="azul" texto={t('admin.rosterSelfJoinHint')} />
+      {colegioId && cursoId ? <ImportarLista colegioId={colegioId} cursoId={cursoId} /> : null}
     </View>
   );
 
@@ -321,6 +330,7 @@ export default function CourseManageScreen() {
       <ContextScrollView
         contentContainerStyle={[styles.page, { paddingTop: insets.top + 12 }]}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps={tapsConTeclado}
       >
         <Encabezado
           atras="/(staff)/clases"
@@ -329,6 +339,20 @@ export default function CourseManageScreen() {
           subtitulo={t('profe.gestionarSub')}
         />
 
+        {soloLectura ? (
+          <Aviso icono="lock-closed-outline" tono="neutro" texto={t('educadores.muro.soloLectura')}>
+            <View style={{ alignSelf: 'flex-start' }}>
+              <BotonChunky
+                texto={t('educadores.muro.soloLecturaCta')}
+                icono="sparkles"
+                variante="secundario"
+                compacto
+                onPress={() => router.push(rutaPlanes('clases'))}
+              />
+            </View>
+          </Aviso>
+        ) : null}
+
         <Segmented options={vistas} value={vista} onChange={setVista} />
 
         <FadeIn key={vista}>
@@ -336,7 +360,11 @@ export default function CourseManageScreen() {
             invitar
           ) : vista === 'mundos' ? (
             colegioId && cursoId ? (
-              <ClassWorldsManager colegioId={colegioId} cursoId={cursoId} />
+              <ClassWorldsManager
+                colegioId={colegioId}
+                cursoId={cursoId}
+                soloLectura={soloLectura}
+              />
             ) : null
           ) : (
             estudiantes

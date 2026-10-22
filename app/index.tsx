@@ -88,6 +88,24 @@ export default function Index() {
           // offline / function error → treat as prospective student below
         }
         if (cancelled || mySeq !== seq.current) return;
+      } else if (claims.role === 'profesor') {
+        // Educadores: crea la prueba de Piloto a profes que ya existían antes de
+        // los planes. No bloquea la entrada ni cambia los claims.
+        void adminService.resolveMyAccess(null).catch(() => undefined);
+      } else if (claims.role === 'estudiante' && !claims.cursoId) {
+        // Un estudiante sin clase pudo ser invitado por correo desde la lista del
+        // profe: el servidor lo une y aquí se recogen los claims nuevos.
+        // Máximo 3 s: la entrada de los estudiantes B2C no se frena por esto.
+        try {
+          const access = await Promise.race([
+            adminService.resolveMyAccess(null),
+            new Promise<null>((resolve) => setTimeout(() => resolve(null), 3000)),
+          ]);
+          if (access?.cursoId) claims = await readCetiClaims(u, true);
+        } catch {
+          // sin red → sigue como estudiante sin clase
+        }
+        if (cancelled || mySeq !== seq.current) return;
       }
       useAuthStore.getState().setClaims(claims);
 

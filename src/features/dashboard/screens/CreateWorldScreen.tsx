@@ -32,6 +32,8 @@ import { rosterRepository } from '@features/dashboard/data/rosterRepository';
 import { ALL_COMPETENCIAS, COMPETENCIA_PERSONALIZADA } from '@features/learning/data/competencias';
 import { CUSTOM_WORLD_COLOR } from '@features/learning/data/worldMeta';
 import { FadeIn } from '@features/savings/charts/ChartParts';
+import { useMuro } from '@features/educadores/components/MuroPlan';
+import { motivoDeError } from '@features/educadores/data/planUi';
 import {
   BotonChunky,
   Campo,
@@ -59,6 +61,8 @@ export default function CreateWorldScreen() {
   const [saving, setSaving] = useState(false);
 
   const accent = CUSTOM_WORLD_COLOR;
+  // Mundos propios y borradores generados dependen del plan (el servidor lo hace cumplir).
+  const muro = useMuro();
 
   const onGenerate = async () => {
     if (!nombre.trim()) {
@@ -77,6 +81,11 @@ export default function CreateWorldScreen() {
       });
       setDraft(result);
     } catch (e) {
+      const motivo = motivoDeError(e, 'iaAuthoring');
+      if (motivo) {
+        muro.abrir(motivo);
+        return;
+      }
       if (__DEV__) console.warn('[createWorld] generate error:', e);
       showMessage(t('createWorld.generateError'), undefined, 'error');
     } finally {
@@ -90,6 +99,7 @@ export default function CreateWorldScreen() {
       showMessage(t('createWorld.nombreRequired'));
       return;
     }
+    if (!muro.exigir('iaAuthoring')) return;
     confirmAction({
       title: t('createWorld.generateConfirmTitle'),
       body: t('createWorld.generateConfirmBody'),
@@ -104,6 +114,7 @@ export default function CreateWorldScreen() {
       showMessage(t('createWorld.nombreRequired'));
       return;
     }
+    if (!muro.exigir('mundosPropios')) return;
     setSaving(true);
     try {
       const [config, grado] = await Promise.all([
@@ -285,6 +296,7 @@ export default function CreateWorldScreen() {
           ) : null}
         </View>
       </ContextScrollView>
+      {muro.hoja}
     </ScreenWrapper>
   );
 }

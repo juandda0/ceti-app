@@ -48,6 +48,8 @@ import {
   type BorradorVfItem,
 } from '@features/dashboard/data/courseContentSchemas';
 import GenerateContentSheet from '@features/dashboard/components/GenerateContentSheet';
+import { useMuro } from '@features/educadores/components/MuroPlan';
+import { motivoDeError } from '@features/educadores/data/planUi';
 import { rosterRepository } from '@features/dashboard/data/rosterRepository';
 import { worldDefById } from '@features/learning/data/worldMeta';
 import { planetaDeMundo } from '@features/learning/data/planetas';
@@ -97,6 +99,9 @@ export default function ContentEditorScreen() {
   const firebaseUid = useAuthStore((s) => s.firebaseUid) ?? '';
 
   const def = worldDefById(worldId);
+  // Editar y generar dependen del plan; el muro se abre en vez de guardar (el servidor y
+  // firestore.rules lo hacen cumplir igual).
+  const muro = useMuro();
 
   const [config, setConfig] = useState<CursoConfigMundos | null>(null);
   const [configLoaded, setConfigLoaded] = useState(false);
@@ -294,7 +299,8 @@ export default function ContentEditorScreen() {
       }
     });
 
-  const restorePiece = (piece: ContentPiece) =>
+  const restorePiece = (piece: ContentPiece) => {
+    if (!muro.exigir('editarContenido')) return;
     confirmAction({
       title: t('contentEditor.restoreConfirmTitle'),
       body: t('contentEditor.restoreConfirmBody'),
@@ -317,6 +323,7 @@ export default function ContentEditorScreen() {
           setPieceSource((prev) => ({ ...prev, [piece]: 'default' }));
         }),
     });
+  };
 
   const saveMeta = () =>
     guard(async () => {
@@ -458,6 +465,11 @@ export default function ContentEditorScreen() {
       }
       setSheetOpen(false);
     } catch (e) {
+      // Límite de plan o de ayudas del mes: lo muestra la hoja de generar (abre el muro).
+      if (motivoDeError(e, 'iaAuthoring')) {
+        setSheetOpen(false);
+        throw e;
+      }
       if (__DEV__) console.warn('[contentEditor] generate error', e);
       showMessage(t('contentEditor.generateError'), undefined, 'error');
     } finally {
@@ -495,6 +507,7 @@ export default function ContentEditorScreen() {
     tab === 'info' ? true : tab === 'teoria' ? cards !== null : items[tab] !== undefined;
 
   const onSave = () => {
+    if (!muro.exigir('editarContenido')) return;
     if (tab === 'info') void saveMeta();
     else if (tab === 'teoria') void saveTeoria();
     else void saveQuizPiece(tab);
@@ -604,7 +617,7 @@ export default function ContentEditorScreen() {
           icono="sparkles"
           variante="secundario"
           color={accent}
-          onPress={() => setSheetOpen(true)}
+          onPress={() => muro.exigir('iaAuthoring') && setSheetOpen(true)}
         />
       </View>
     );
@@ -703,7 +716,7 @@ export default function ContentEditorScreen() {
           icono="sparkles"
           variante="secundario"
           color={accent}
-          onPress={() => setSheetOpen(true)}
+          onPress={() => muro.exigir('iaAuthoring') && setSheetOpen(true)}
         />
       </View>
     );
@@ -804,9 +817,10 @@ export default function ContentEditorScreen() {
           accent={accent}
           generating={genBusy}
           onClose={() => !genBusy && setSheetOpen(false)}
-          onGenerate={(detalle) => void runGenerate(detalle)}
+          onGenerate={(detalle) => runGenerate(detalle)}
         />
       )}
+      {muro.hoja}
     </ScreenWrapper>
   );
 }

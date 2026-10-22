@@ -10,6 +10,11 @@
  * Cada fila muestra el mismo planeta que ve el estudiante en Tu Galaxia. Tocar el
  * mundo abre su editor; en los mundos propios (`cw_*`) el botón "más" abre una
  * hoja con duplicar y eliminar.
+ *
+ * Plan: configurar la lista es `configurarMundos`, abrir el editor
+ * `editarContenido` y crear o duplicar mundos propios `mundosPropios`; sin el
+ * plan se abre el muro y nada cambia. `soloLectura` (clase que pasó del límite
+ * al bajar de plan) muestra la lista sin acciones.
  */
 import { useEffect, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, Switch, ActivityIndicator, Pressable } from 'react-native';
@@ -30,6 +35,7 @@ import { buildCuratedConfig } from '@features/learning/data/classConfig';
 import { WORLD_DEFS, displayWorldDef, isCustomWorldId } from '@features/learning/data/worldMeta';
 import { planetaDeMundo } from '@features/learning/data/planetas';
 import { Chip, Esqueleto, Pill } from '@features/dashboard/components/profe/kit';
+import { useMuro } from '@features/educadores/components/MuroPlan';
 import type { CursoConfigMundoEntry, CursoConfigMundos } from '@shared/types/tenancy';
 
 const ROW_HEIGHT = 84;
@@ -37,9 +43,11 @@ const ROW_HEIGHT = 84;
 export default function ClassWorldsManager({
   colegioId,
   cursoId,
+  soloLectura = false,
 }: {
   colegioId: string;
   cursoId: string;
+  soloLectura?: boolean;
 }) {
   const { t } = useTranslation();
   const colors = useThemeColors();
@@ -47,6 +55,11 @@ export default function ClassWorldsManager({
   const firebaseUid = useAuthStore((s) => s.firebaseUid);
   const [config, setConfig] = useState<CursoConfigMundos | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const muro = useMuro();
+  // Si un arrastre no se guarda (sin plan o solo lectura), la lista se vuelve a montar
+  // para que las filas regresen a su lugar.
+  const [listaKey, setListaKey] = useState(0);
+  const puedeConfigurar = () => !soloLectura && muro.exigir('configurarMundos');
 
   useEffect(
     () =>
@@ -76,6 +89,7 @@ export default function ClassWorldsManager({
   };
 
   const onToggle = async (worldId: string) => {
+    if (!puedeConfigurar()) return;
     const entry = entries.find((e) => e.worldId === worldId);
     // Activation gate for custom worlds (RQ-PR12 CA1): never expose an empty
     // world — it must cover the quiz minimums + 1 theory card first.
@@ -123,6 +137,7 @@ export default function ClassWorldsManager({
   const [duplicateFor, setDuplicateFor] = useState<{ worldId: string; name: string } | null>(null);
   const [targetCursos, setTargetCursos] = useState<{ id: string; nombre: string }[] | null>(null);
   const onDuplicate = async (worldId: string, name: string) => {
+    if (!muro.exigir('mundosPropios')) return;
     setDuplicateFor({ worldId, name });
     if (targetCursos === null && firebaseUid) {
       const cursos = await rosterRepository.getCursosByProfesor(colegioId, firebaseUid);
@@ -150,6 +165,10 @@ export default function ClassWorldsManager({
   };
 
   const onReorder = (orderedIds: string[]) => {
+    if (!puedeConfigurar()) {
+      setListaKey((k) => k + 1);
+      return;
+    }
     const byId = new Map(entries.map((e) => [e.worldId, e]));
     const next = orderedIds
       .map((id) => byId.get(id))
@@ -158,6 +177,7 @@ export default function ClassWorldsManager({
   };
 
   const confirmReset = () =>
+    puedeConfigurar() &&
     confirmAction({
       title: t('classWorlds.resetConfirmTitle'),
       body: t('classWorlds.resetConfirmBody'),
@@ -166,8 +186,14 @@ export default function ClassWorldsManager({
       onConfirm: () => void classConfigRepository.reset(colegioId, cursoId),
     });
 
-  const abrirEditor = (worldId: string) =>
+  const abrirEditor = (worldId: string) => {
+    if (soloLectura || !muro.exigir('editarContenido')) return;
     router.push(`/(staff)/contenido/${cursoId}/${worldId}` as never);
+  };
+  const crearMundo = () => {
+    if (!muro.exigir('mundosPropios')) return;
+    router.push(`/(staff)/crear-mundo/${cursoId}` as never);
+  };
 
   if (!loaded) return <Esqueleto filas={4} alto={ROW_HEIGHT - 10} />;
 
@@ -224,7 +250,7 @@ export default function ClassWorldsManager({
             </View>
             <Ionicons name="chevron-forward" size={16} color={colors.text.quaternary} />
           </Pressable>
-          {esCustom ? (
+          {esCustom && !soloLectura ? (
             <Bounceable
               onPress={() => setMenuFor({ worldId: entry.worldId, name: def.name })}
               activeScale={0.9}
@@ -238,6 +264,7 @@ export default function ClassWorldsManager({
           <Switch
             value={entry.activo}
             onValueChange={() => void onToggle(entry.worldId)}
+            disabled={soloLectura}
             trackColor={{ true: colors.brand.primary, false: colors.materials.border }}
             thumbColor="#FFFFFF"
             {...({ activeThumbColor: '#FFFFFF' } as object)}
@@ -286,14 +313,17 @@ export default function ClassWorldsManager({
   return (
     <View style={styles.wrap}>
       <Text style={[styles.hint, { color: colors.text.secondary }]}>{t('classWorlds.hint')}</Text>
-      <View style={styles.dragRow}>
-        <Ionicons name="hand-left-outline" size={14} color={colors.text.tertiary} />
-        <Text style={[styles.dragHint, { color: colors.text.tertiary }]}>
-          {t('classWorlds.dragHint')}
-        </Text>
-      </View>
+      {soloLectura ? null : (
+        <View style={styles.dragRow}>
+          <Ionicons name="hand-left-outline" size={14} color={colors.text.tertiary} />
+          <Text style={[styles.dragHint, { color: colors.text.tertiary }]}>
+            {t('classWorlds.dragHint')}
+          </Text>
+        </View>
+      )}
 
       <ReorderableList
+        key={listaKey}
         data={entries}
         keyExtractor={(e) => e.worldId}
         rowHeight={ROW_HEIGHT}
@@ -301,22 +331,24 @@ export default function ClassWorldsManager({
         renderItem={renderRow}
       />
 
-      <Bounceable
-        onPress={() => router.push(`/(staff)/crear-mundo/${cursoId}` as never)}
-        activeScale={0.98}
-        accessibilityRole="button"
-        accessibilityLabel={t('classWorlds.createWorld')}
-        style={[styles.crear, { borderColor: colors.brand.primary }]}
-      >
-        <View style={[styles.crearIcono, { backgroundColor: colors.fill.brandSubtle }]}>
-          <Ionicons name="rocket" size={20} color={colors.brand.primary} />
-        </View>
-        <Text style={[styles.crearTexto, { color: colors.brand.primary }]}>
-          {t('classWorlds.createWorld')}
-        </Text>
-      </Bounceable>
+      {soloLectura ? null : (
+        <Bounceable
+          onPress={crearMundo}
+          activeScale={0.98}
+          accessibilityRole="button"
+          accessibilityLabel={t('classWorlds.createWorld')}
+          style={[styles.crear, { borderColor: colors.brand.primary }]}
+        >
+          <View style={[styles.crearIcono, { backgroundColor: colors.fill.brandSubtle }]}>
+            <Ionicons name="rocket" size={20} color={colors.brand.primary} />
+          </View>
+          <Text style={[styles.crearTexto, { color: colors.brand.primary }]}>
+            {t('classWorlds.createWorld')}
+          </Text>
+        </Bounceable>
+      )}
 
-      {config ? (
+      {config && !soloLectura ? (
         <Pressable onPress={confirmReset} accessibilityRole="button" style={styles.resetBtn}>
           <Ionicons name="refresh" size={15} color={colors.text.tertiary} />
           <Text style={[styles.resetText, { color: colors.text.tertiary }]}>
@@ -384,6 +416,7 @@ export default function ClassWorldsManager({
           </View>
         )}
       </CetiBottomSheet>
+      {muro.hoja}
     </View>
   );
 }

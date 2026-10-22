@@ -15,6 +15,8 @@ import { courseReportToCsv } from '@features/dashboard/data/courseReport';
 import { buildWeaknessReport } from '@features/dashboard/data/weaknessReport';
 import { buildEarlyWarning, type RiskFlag } from '@features/dashboard/data/earlyWarning';
 import AssignmentsManager from '@features/dashboard/components/AssignmentsManager';
+import { useMiPlan } from '@features/educadores/hooks/useMiPlan';
+import TarjetaBloqueada from '@features/educadores/retencion/components/TarjetaBloqueada';
 import { showMessage } from '@shared/lib/dialogs';
 import { downloadTextFile, printPage } from '@shared/lib/export/downloadFile';
 import Segmented from '@features/savings/components/Segmented';
@@ -42,6 +44,8 @@ const FLAG_KEY: Record<RiskFlag, string> = {
 
 type Vista = 'resumen' | 'estudiantes' | 'tareas';
 
+const VISTAS: Vista[] = ['resumen', 'estudiantes', 'tareas'];
+
 function pct(m: number): number {
   return Math.round(m * 100);
 }
@@ -49,7 +53,12 @@ function pct(m: number): number {
 /**
  * Tablero de una clase: resumen (cifras, alertas y diagnóstico), estudiantes con
  * su dominio, y tareas (asignaciones y retos). Las tres vistas se alternan con el
- * mismo control segmentado de Actividad y Gráficas.
+ * mismo control segmentado de Actividad y Gráficas; `?vista=` abre una de ellas
+ * (la Bitácora lleva directo a estudiantes o tareas).
+ *
+ * El avance básico (cifras y dominio por estudiante) es de todos los planes. Las
+ * alertas tempranas, la competencia más débil y el CSV son de Piloto: con Cadete
+ * se ve un adelanto con el valor en una línea.
  */
 export default function CourseDashboardScreen() {
   const { t } = useTranslation();
@@ -58,13 +67,21 @@ export default function CourseDashboardScreen() {
   const insets = useSafeAreaInsets();
   const colegioId = useAuthStore((s) => s.colegioId);
   const uid = useAuthStore((s) => s.firebaseUid);
-  const params = useLocalSearchParams<{ cursoId: string; nombre?: string }>();
+  const params = useLocalSearchParams<{ cursoId: string; nombre?: string; vista?: string }>();
   const cursoId = params.cursoId;
   const cursoNombre = params.nombre ?? cursoId;
+  const { puede, cargando: planCargando } = useMiPlan();
+  // Mientras se lee el plan no se muestra ni la herramienta ni su adelanto.
+  const conAlertas = !planCargando && puede('alertasTempranas');
+  const conDebil = !planCargando && puede('competenciaDebil');
+  const conCsv = !planCargando && puede('exportarCsv');
+  const conNotas = planCargando || puede('notasPeriodo');
 
   const [report, setReport] = useState<CourseReportWithRetos | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
-  const [vista, setVista] = useState<Vista>('resumen');
+  const [vista, setVista] = useState<Vista>(
+    VISTAS.includes(params.vista as Vista) ? (params.vista as Vista) : 'resumen'
+  );
   const weakness = useMemo(() => (report ? buildWeaknessReport(report) : null), [report]);
   const warning = useMemo(() => (report ? buildEarlyWarning(report, Date.now()) : null), [report]);
 
@@ -142,14 +159,16 @@ export default function CourseDashboardScreen() {
       </View>
 
       {report.weakestCompetencia ? (
-        <Aviso
-          icono="alert-circle"
-          tono="naranja"
-          texto={t('dashboard.weakest', {
-            competencia: report.weakestCompetencia.label,
-            pct: `${pct(report.weakestCompetencia.averageMastery)}%`,
-          })}
-        />
+        conDebil ? (
+          <Aviso
+            icono="alert-circle"
+            tono="naranja"
+            texto={t('dashboard.weakest', {
+              competencia: report.weakestCompetencia.label,
+              pct: `${pct(report.weakestCompetencia.averageMastery)}%`,
+            })}
+          />
+        ) : null
       ) : (
         <Vacio
           icono="sparkles-outline"
@@ -158,7 +177,25 @@ export default function CourseDashboardScreen() {
         />
       )}
 
-      {warning && warning.atRisk.length > 0 ? (
+      {warning && warning.atRisk.length > 0 && !conAlertas && !planCargando ? (
+        <TarjetaBloqueada
+          titulo={t('educadores.teaser.alertasTitulo')}
+          valor={t('educadores.teaser.alertasValor', { count: warning.atRisk.length })}
+          motivo="alertasTempranas"
+          icono="notifications"
+        />
+      ) : null}
+
+      {report.weakestCompetencia && !conDebil && !planCargando ? (
+        <TarjetaBloqueada
+          titulo={t('educadores.teaser.debilTitulo')}
+          valor={t('educadores.teaser.debilValor')}
+          motivo="competenciaDebil"
+          icono="analytics"
+        />
+      ) : null}
+
+      {conAlertas && warning && warning.atRisk.length > 0 ? (
         <>
           <Seccion texto={t('dashboard.earlyWarningTitle')} />
           <Tarjeta style={{ gap: 14 }}>
@@ -189,7 +226,7 @@ export default function CourseDashboardScreen() {
       {weakness && weakness.hasData ? (
         weakness.weakCompetencias.length === 0 && weakness.studentsAtRisk.length === 0 ? (
           <Aviso icono="checkmark-circle" tono="verde" texto={t('dashboard.allStrong')} />
-        ) : (
+        ) : !conDebil ? null : (
           <>
             {weakness.weakCompetencias.length > 0 ? (
               <ChartCard
@@ -264,15 +301,26 @@ export default function CourseDashboardScreen() {
         )
       ) : null}
 
-      <View style={styles.exportar}>
-        <BotonChunky
-          texto={t('dashboard.exportCsv')}
-          icono="download-outline"
-          variante="secundario"
-          compacto
-          onPress={onExportCsv}
-          style={{ flex: 1 }}
+      {!conCsv && !planCargando ? (
+        <TarjetaBloqueada
+          titulo={t('educadores.teaser.csvTitulo')}
+          valor={t('educadores.teaser.csvValor')}
+          motivo="exportarCsv"
+          icono="download"
         />
+      ) : null}
+
+      <View style={styles.exportar}>
+        {conCsv ? (
+          <BotonChunky
+            texto={t('dashboard.exportCsv')}
+            icono="download-outline"
+            variante="secundario"
+            compacto
+            onPress={onExportCsv}
+            style={{ flex: 1 }}
+          />
+        ) : null}
         <BotonChunky
           texto={t('profe.imprimir')}
           icono="print-outline"
@@ -363,17 +411,32 @@ export default function CourseDashboardScreen() {
           subtitulo={t('dashboard.courseReport')}
         />
 
-        <BotonChunky
-          texto={t('profe.gestionarClase')}
-          icono="settings-outline"
-          variante="secundario"
-          compacto
-          onPress={() =>
-            router.push(
-              `/(staff)/gestionar/${cursoId}?nombre=${encodeURIComponent(cursoNombre)}` as Href
-            )
-          }
-        />
+        <View style={styles.exportar}>
+          <BotonChunky
+            texto={t('profe.gestionarClase')}
+            icono="settings-outline"
+            variante="secundario"
+            compacto
+            onPress={() =>
+              router.push(
+                `/(staff)/gestionar/${cursoId}?nombre=${encodeURIComponent(cursoNombre)}` as Href
+              )
+            }
+            style={{ flex: 1 }}
+          />
+          <BotonChunky
+            texto={t('educadores.notas.entrada')}
+            icono={conNotas ? 'document-text-outline' : 'lock-closed-outline'}
+            variante="secundario"
+            compacto
+            onPress={() =>
+              router.push(
+                `/(staff)/notas/${cursoId}?nombre=${encodeURIComponent(cursoNombre)}` as Href
+              )
+            }
+            style={{ flex: 1 }}
+          />
+        </View>
 
         {status === 'ready' && report ? (
           <Segmented options={vistas} value={vista} onChange={setVista} />

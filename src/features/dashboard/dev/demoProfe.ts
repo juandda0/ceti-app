@@ -18,16 +18,39 @@ import { adminService } from '../data/adminService';
 import { newMcItem, newOrdenarItem, newVfItem } from '../data/courseContentSchemas';
 import type { CursoConfigMundos, WorldProgress } from '@shared/types/tenancy';
 import type { BancoDoc, QuizItem } from '@features/learning/data/quiz.types';
+import { aplicarDemoSuscripcion } from '@features/educadores/data/demoSuscripcion';
+import { aplicarDemoRetencion } from '@features/educadores/dev/demoRetencion';
 
 const COLEGIO = 'demo-colegio';
 const PROFE = 'demo-profe';
 const DIA = 24 * 60 * 60 * 1000;
 const COMPETENCIAS = ['ingreso', 'presupuesto', 'ahorro', 'credito', 'deuda'];
 
+// createdAt: al bajar a Cadete queda editable la más reciente (las demás, solo lectura).
 const cursos: CursoWithId[] = [
-  { id: 'c10b', nombre: '10°B Finanzas', grado: '10', profesorUids: [PROFE], codigo: 'K7P2QX' },
-  { id: 'c9a', nombre: '9°A Matemáticas', grado: '9', profesorUids: [PROFE], codigo: 'M4R8TZ' },
-  { id: 'c11', nombre: '11° Emprendimiento', grado: '11', profesorUids: [PROFE] },
+  {
+    id: 'c10b',
+    nombre: '10°B Finanzas',
+    grado: '10',
+    profesorUids: [PROFE],
+    codigo: 'K7P2QX',
+    createdAt: Date.now() - 60 * DIA,
+  },
+  {
+    id: 'c9a',
+    nombre: '9°A Matemáticas',
+    grado: '9',
+    profesorUids: [PROFE],
+    codigo: 'M4R8TZ',
+    createdAt: Date.now() - 40 * DIA,
+  },
+  {
+    id: 'c11',
+    nombre: '11° Emprendimiento',
+    grado: '11',
+    profesorUids: [PROFE],
+    createdAt: Date.now() - 4 * DIA,
+  },
 ];
 
 const NOMBRES = [
@@ -103,6 +126,8 @@ function resumenDe(cursoId: string, mastery: number, activos: number): ResumenAg
     estudiantesActivos: activos,
     masteryPromedio: mastery,
     porcentajeCompletado: mastery * 0.8,
+    // El panel de adopción de la pestaña Colegio lee la frescura del agregado.
+    actualizadoAt: Date.now() - DIA,
     porMundo: {},
     porCompetencia: Object.fromEntries(
       COMPETENCIAS.map((c, i) => [
@@ -317,6 +342,10 @@ export function activarDemoProfe(): void {
       eligeCamino: [],
     };
   };
+
+  // Plan y cobros (prueba de Piloto con ~9 días, sin red) y retención (lista, Bitácora).
+  aplicarDemoSuscripcion();
+  aplicarDemoRetencion();
 
   entrarComoProfe();
   // El arranque de Firebase (sin usuario) puede limpiar la sesión después: se reaplica.

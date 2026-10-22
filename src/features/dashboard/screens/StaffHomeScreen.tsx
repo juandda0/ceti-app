@@ -10,6 +10,11 @@ import ContextScrollView from '@shared/components/motion/ContextScrollView';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { rosterRepository, type CursoWithId } from '@features/dashboard/data/rosterRepository';
+import { puedeCrearClase } from '@/functions/src/educadores/dominio';
+import { useMiPlan } from '@features/educadores/hooks/useMiPlan';
+import { useMuro } from '@features/educadores/components/MuroPlan';
+import BannerPrueba from '@features/educadores/components/BannerPrueba';
+import BitacoraTarjeta from '@features/educadores/retencion/components/BitacoraTarjeta';
 import {
   BotonChunky,
   Encabezado,
@@ -74,7 +79,16 @@ export default function StaffHomeScreen() {
 
   const abrirClase = (c: CursoWithId) =>
     router.push(`/(staff)/curso/${c.id}?nombre=${encodeURIComponent(c.nombre)}` as Href);
-  const crearClase = () => router.push('/(staff)/crear-clase' as Href);
+  const { plan, cargando: cargandoPlan } = useMiPlan();
+  const muro = useMuro();
+  // Con Cadete se abre 1 clase; la que sigue abre el muro (el servidor lo hace cumplir igual).
+  const crearClase = () => {
+    if (!cargandoPlan && !puedeCrearClase(plan, cursos.length)) {
+      muro.abrir('clases');
+      return;
+    }
+    router.push('/(staff)/crear-clase' as Href);
+  };
 
   return (
     <ScreenWrapper>
@@ -88,6 +102,9 @@ export default function StaffHomeScreen() {
             colegioNombre ? t('profe.saludoColegio', { colegio: colegioNombre }) : t('profe.saludo')
           }
         />
+        <BitacoraTarjeta />
+
+        <BannerPrueba />
 
         {status === 'loading' ? <Esqueleto filas={3} alto={96} /> : null}
 
@@ -165,6 +182,7 @@ export default function StaffHomeScreen() {
           </Bounceable>
         ) : null}
       </ContextScrollView>
+      {muro.hoja}
     </ScreenWrapper>
   );
 }

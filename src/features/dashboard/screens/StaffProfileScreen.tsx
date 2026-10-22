@@ -16,6 +16,7 @@ import { getFirebaseClients } from '@shared/lib/firebase/app';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { performLogoutAndGo } from '@features/auth/performLogout';
 import { rosterRepository } from '@features/dashboard/data/rosterRepository';
+import TarjetaPlan from '@features/educadores/components/TarjetaPlan';
 import {
   Avatar,
   BotonChunky,
@@ -93,6 +94,8 @@ export default function StaffProfileScreen() {
           {fila('business-outline', t('staff.colegioLabel'), colegioNombre ?? '…')}
           {correo ? fila('mail-outline', t('profe.correo'), correo) : null}
         </Tarjeta>
+
+        <TarjetaPlan />
 
         <View style={{ gap: 14 }}>
           <BotonChunky

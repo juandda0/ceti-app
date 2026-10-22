@@ -12,12 +12,14 @@ import { schoolReportToCsv, type SchoolReport } from '@features/dashboard/data/s
 import { downloadTextFile, printPage } from '@shared/lib/export/downloadFile';
 import { showMessage } from '@shared/lib/dialogs';
 import { ChartCard, GrowBar } from '@features/savings/charts/ChartParts';
+import AdopcionColegio from '@features/educadores/retencion/components/AdopcionColegio';
 import {
   Aviso,
   BotonChunky,
   Encabezado,
   Esqueleto,
   NumeroAnimado,
+  Seccion,
   Tarjeta,
   Vacio,
   paletaTono,
@@ -29,8 +31,9 @@ function pct(m: number): number {
 }
 
 /**
- * Pestaña Colegio: dominio promedio de todo el colegio, por curso y por
- * competencia (solo agregados no nominales, D-PIVOT), y exportación.
+ * Pestaña Colegio: adopción (profes y estudiantes activos frente a la meta, lo
+ * que el colegio mira para renovar), dominio promedio de todo el colegio, por
+ * curso y por competencia (solo agregados no nominales, D-PIVOT), y exportación.
  */
 export default function SchoolReportScreen() {
   const { t } = useTranslation();
@@ -97,6 +100,10 @@ export default function SchoolReportScreen() {
           titulo={t('profe.colegioTitulo')}
           subtitulo={colegioNombre ?? t('school.title')}
         />
+
+        <AdopcionColegio />
+
+        {status === 'ready' ? <Seccion texto={t('educadores.adopcion.dominioTitulo')} /> : null}
 
         {status === 'loading' ? <Esqueleto filas={3} alto={110} /> : null}
 
