@@ -18,6 +18,7 @@ import {
   festivosColombia,
   finRetracto,
   formatoCop,
+  formatoMinutosCorto,
   inicioDiaBogota,
   leerLista,
   notaDesdeMaestria,
@@ -275,5 +276,13 @@ describe('adopción', () => {
     expect(a.senalNave).toBe(true);
     expect(a.adopcion).toBeCloseTo(0.8);
     expect(a.cumpleMeta).toBe(true);
+  });
+});
+
+describe('formato corto de minutos', () => {
+  it('usa horas con coma decimal en mosaicos', () => {
+    expect(formatoMinutosCorto(35)).toBe('35 min');
+    expect(formatoMinutosCorto(166)).toBe('2,8 h');
+    expect(formatoMinutosCorto(180)).toBe('3 h');
   });
 });

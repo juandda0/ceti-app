@@ -11,7 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Bounceable from '@shared/components/Bounceable';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { CetiAnimation } from '@features/animations';
-import { formatoMinutos } from '@/functions/src/educadores/dominio';
+import { formatoMinutosCorto } from '@/functions/src/educadores/dominio';
 import {
   BotonChunky,
   Esqueleto,
@@ -98,7 +98,7 @@ export default function BitacoraTarjeta() {
           tono={b.alertas.length > 0 ? 'naranja' : 'verde'}
         />
         <Mini
-          valor={`≈${formatoMinutos(b.minutosAhorrados)}`}
+          valor={`≈${formatoMinutosCorto(b.minutosAhorrados)}`}
           etiqueta={t('educadores.bitacora.ahorradoCorto')}
           tono="azul"
         />

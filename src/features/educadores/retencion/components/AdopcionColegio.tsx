@@ -140,7 +140,7 @@ export default function AdopcionColegio() {
               color={colors.system.purple}
               compacto
               onPress={() => router.push(rutaPlanes('panelCapitan'))}
-              style={{ flex: 1 }}
+              style={{ flexGrow: 1, minWidth: 150 }}
             />
             <BotonChunky
               texto={t('educadores.adopcion.whatsapp')}
@@ -149,7 +149,7 @@ export default function AdopcionColegio() {
               color={colors.system.green}
               compacto
               onPress={() => abrirWhatsApp(t('educadores.adopcion.whatsappTexto'))}
-              style={{ flex: 1 }}
+              style={{ flexGrow: 1, minWidth: 150 }}
             />
           </View>
         </Aviso>

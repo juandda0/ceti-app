@@ -136,3 +136,10 @@ export function formatoMinutos(min: number): string {
   const m = min % 60;
   return m === 0 ? `${h} h` : `${h} h ${m} min`;
 }
+
+/** Versión corta para cifras en mosaico: '35 min' / '2,8 h' / '3 h'. */
+export function formatoMinutosCorto(min: number): string {
+  if (min < 60) return `${min} min`;
+  const horas = Math.round((min / 60) * 10) / 10;
+  return `${String(horas).replace('.', ',')} h`;
+}
