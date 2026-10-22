@@ -75,3 +75,6 @@ functions/.secret.local
 # Configuración del IDE y capturas temporales
 .idea/
 .tmp-figma-shots/
+
+# Cuentas de prueba locales (antes .env.cuentas-prueba.local: Expo bundleaba ese nombre como JS)
+cuentas-prueba*.env
