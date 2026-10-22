@@ -1,15 +1,22 @@
 /**
  * Datos de ejemplo de la retención del profe (invitados por lista, Bitácora),
  * SOLO para desarrollo. Reemplaza en memoria los métodos de los repositorios
- * para probar "Importar lista" sin cuenta ni Cloud Functions. Nunca escribe nada.
+ * para probar "Importar lista" sin cuenta ni Cloud Functions, y simula el
+ * agregado de adopción del colegio que calcula el servidor. Nunca escribe nada.
  * Se usa junto a `activarDemoProfe()` (src/features/dashboard/dev/demoProfe.ts).
  */
-import { leerLista, type InvitadoLista } from '@/functions/src/educadores/dominio';
+import {
+  calcularAdopcion,
+  leerLista,
+  type CursoAdopcion,
+  type InvitadoLista,
+} from '@/functions/src/educadores/dominio';
 import {
   invitadosRepository,
   type Invitado,
 } from '@features/educadores/retencion/data/invitadosRepository';
 import { bitacoraRepository } from '@features/educadores/retencion/data/bitacoraRepository';
+import { adopcionRepository } from '@features/educadores/retencion/data/adopcionRepository';
 
 const PROFE = 'demo-profe';
 const DIA = 24 * 60 * 60 * 1000;
@@ -17,6 +24,36 @@ const DIA = 24 * 60 * 60 * 1000;
 const CUPO = 45;
 /** Estudiantes que ya están en la clase de la demo (rosterDe en demoProfe). */
 const EN_CLASE = 8;
+
+/**
+ * El colegio entero como lo ve el servidor (`colegios/{cid}/agregados/adopcion`):
+ * más cursos y profes que las clases del profe de la demo, que es justo lo que
+ * el panel no podría calcular solo con lo que el profe ve.
+ */
+function adopcionDemo(ahora: number) {
+  const curso = (
+    profes: string[],
+    estudiantes: number,
+    activos: number,
+    diasSinActividad: number | null
+  ): CursoAdopcion => ({
+    profesorUids: profes,
+    estudiantes,
+    estudiantesActivos: activos,
+    ultimaActividad: diasSinActividad === null ? null : ahora - diasSinActividad * DIA,
+  });
+  const cursos = [
+    curso([PROFE], 32, 27, 0),
+    curso([PROFE], 30, 22, 1),
+    curso(['profe-matematicas'], 35, 29, 2),
+    curso(['profe-matematicas'], 33, 24, 3),
+    curso(['profe-sociales', 'profe-etica'], 31, 21, 5),
+    curso(['profe-emprendimiento'], 28, 9, 45),
+    curso(['profe-nuevo'], 29, 0, null),
+  ];
+  // Calculado de madrugada por la tarea diaria.
+  return { ...calcularAdopcion(cursos, ahora), actualizadoAt: ahora - 6 * 60 * 60 * 1000 };
+}
 
 /** Invitados por curso (clave `colegioId/cursoId`). */
 const porCurso: Record<string, Invitado[]> = {};
@@ -84,4 +121,9 @@ export function aplicarDemoRetencion(): void {
   };
 
   bitacoraRepository.leerSemana = async () => null;
+
+  adopcionRepository.leerAgregado = async () => {
+    await new Promise((r) => setTimeout(r, 300));
+    return adopcionDemo(Date.now());
+  };
 }

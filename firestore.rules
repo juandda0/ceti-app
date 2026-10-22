@@ -472,6 +472,13 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Adopción del colegio (adopcionColegio.ts): solo cifras, ningún dato
+    // nominal. La lee cualquier profe del colegio; solo la escribe el servidor.
+    match /colegios/{cid}/agregados/adopcion {
+      allow read: if isStaff() && sameColegio(cid);
+      allow write: if false;
+    }
+
     // ¿El profe puede editar contenido y la configuración de mundos? Piloto o
     // superior vigente (suscripciones/{uid}.planVigente + vigenteHasta, que
     // escribe el servidor), o la licencia Nave vigente del colegio. Al bajar de

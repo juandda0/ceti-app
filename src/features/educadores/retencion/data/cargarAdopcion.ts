@@ -1,18 +1,28 @@
 /**
- * Adopción del colegio para la pestaña Colegio: cursos, agregados por curso y,
- * de las clases propias, el tamaño de la lista. Solo agregados; de las clases
- * ajenas nunca se lee la lista.
+ * Adopción del colegio para la pestaña Colegio. Primero el agregado del
+ * servidor (`colegios/{cid}/agregados/adopcion`), que cubre el colegio entero.
+ * Si aún no existe, se calcula con lo que el profe ve: cursos, agregados por
+ * curso y, de las clases propias, el tamaño de la lista. Solo agregados; de las
+ * clases ajenas nunca se lee la lista.
  */
 import { rosterRepository, type CursoWithId } from '@features/dashboard/data/rosterRepository';
 import { agregadosRepository } from '@features/dashboard/data/agregadosRepository';
-import { calcularAdopcion, type Adopcion } from '@/functions/src/educadores/dominio';
-import { cursosAdopcionDesdeColegio, type ResumenAdopcion } from './adopcionCursos';
+import { calcularAdopcion } from '@/functions/src/educadores/dominio';
+import {
+  cursosAdopcionDesdeColegio,
+  type AdopcionPanel,
+  type ResumenAdopcion,
+} from './adopcionCursos';
+import { adopcionRepository } from './adopcionRepository';
 
 export async function cargarAdopcion(
   colegioId: string,
   uid: string,
   ahora: number
-): Promise<Adopcion> {
+): Promise<AdopcionPanel> {
+  const delServidor = await adopcionRepository.leerAgregado(colegioId).catch(() => null);
+  if (delServidor) return delServidor;
+
   // Si las reglas no dejan listar todos los cursos, al menos las clases propias.
   const cursos: CursoWithId[] = await rosterRepository
     .getAllCursos(colegioId)
@@ -34,5 +44,8 @@ export async function cargarAdopcion(
       };
     })
   );
-  return calcularAdopcion(cursosAdopcionDesdeColegio(detalle, ahora), ahora);
+  return {
+    ...calcularAdopcion(cursosAdopcionDesdeColegio(detalle, ahora), ahora),
+    actualizadoAt: null,
+  };
 }

@@ -11,9 +11,10 @@ import { useTranslation } from 'react-i18next';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { GrowBar } from '@features/savings/charts/ChartParts';
-import { META_ADOPCION, type Adopcion } from '@/functions/src/educadores/dominio';
+import { META_ADOPCION } from '@/functions/src/educadores/dominio';
 import { useMiPlan } from '@features/educadores/hooks/useMiPlan';
 import { abrirWhatsApp } from '@features/educadores/components/abrirEnlace';
+import { fechaLarga } from '@features/educadores/data/planUi';
 import {
   Aviso,
   BotonChunky,
@@ -24,6 +25,7 @@ import {
   Tarjeta,
 } from '@features/dashboard/components/profe/kit';
 import { cargarAdopcion } from '../data/cargarAdopcion';
+import type { AdopcionPanel } from '../data/adopcionCursos';
 import { rutaPlanes } from './TarjetaBloqueada';
 
 export default function AdopcionColegio() {
@@ -33,7 +35,7 @@ export default function AdopcionColegio() {
   const colegioId = useAuthStore((s) => s.colegioId);
   const uid = useAuthStore((s) => s.firebaseUid);
   const { plan } = useMiPlan();
-  const [adopcion, setAdopcion] = useState<Adopcion | null>(null);
+  const [adopcion, setAdopcion] = useState<AdopcionPanel | null>(null);
   const [estado, setEstado] = useState<'cargando' | 'lista' | 'error'>('cargando');
 
   useEffect(() => {
@@ -124,6 +126,9 @@ export default function AdopcionColegio() {
 
       <Text style={[styles.sub, { color: colors.text.tertiary }]}>
         {t('educadores.adopcion.privacidad')}
+        {adopcion.actualizadoAt !== null
+          ? ` ${t('educadores.adopcion.actualizado', { fecha: fechaLarga(adopcion.actualizadoAt) })}`
+          : ''}
       </Text>
 
       {adopcion.senalNave && plan !== 'nave' ? (

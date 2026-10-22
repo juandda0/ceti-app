@@ -2,7 +2,12 @@
  * Del colegio a `CursoAdopcion` (dominio): profes, estudiantes y actividad de
  * cada curso, solo con agregados. Nunca toca un perfil individual. Puro.
  */
-import { DIAS_ACTIVO, DIA_MS, type CursoAdopcion } from '@/functions/src/educadores/dominio';
+import {
+  DIAS_ACTIVO,
+  DIA_MS,
+  type Adopcion,
+  type CursoAdopcion,
+} from '@/functions/src/educadores/dominio';
 import type { ResumenAgregado } from '@features/dashboard/data/agregadosRepository';
 
 /**
@@ -57,4 +62,49 @@ export function cursosAdopcionDesdeColegio(cursos: CursoColegio[], ahora: number
       ultimaActividad,
     };
   });
+}
+
+/** La adopción que muestra el panel, con la hora del cálculo si vino del servidor. */
+export type AdopcionPanel = Adopcion & { actualizadoAt: number | null };
+
+const cifra = (v: unknown): number | null =>
+  typeof v === 'number' && Number.isFinite(v) && v >= 0 ? v : null;
+
+/**
+ * El doc `colegios/{cid}/agregados/adopcion` (lo escribe adopcionColegio.ts en
+ * el servidor) a `AdopcionPanel`. Si le falta alguna cifra, null: el panel cae
+ * al cálculo con las clases visibles. Lee solo las cifras, nunca otro campo.
+ */
+export function adopcionDesdeAgregado(d: unknown): AdopcionPanel | null {
+  if (!d || typeof d !== 'object') return null;
+  const o = d as Record<string, unknown>;
+  const profes = cifra(o.profes);
+  const profesActivos = cifra(o.profesActivos);
+  const cursos = cifra(o.cursos);
+  const estudiantes = cifra(o.estudiantes);
+  const estudiantesActivos = cifra(o.estudiantesActivos);
+  const adopcion = cifra(o.adopcion);
+  if (
+    profes === null ||
+    profesActivos === null ||
+    cursos === null ||
+    estudiantes === null ||
+    estudiantesActivos === null ||
+    adopcion === null ||
+    typeof o.cumpleMeta !== 'boolean' ||
+    typeof o.senalNave !== 'boolean'
+  ) {
+    return null;
+  }
+  return {
+    profes,
+    profesActivos,
+    cursos,
+    estudiantes,
+    estudiantesActivos,
+    adopcion: Math.min(adopcion, 1),
+    cumpleMeta: o.cumpleMeta,
+    senalNave: o.senalNave,
+    actualizadoAt: msDeMarca(o.actualizadoAt),
+  };
 }

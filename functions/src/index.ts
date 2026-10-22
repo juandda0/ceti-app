@@ -46,6 +46,7 @@ import {
   registrarGeneracionIa,
 } from './educadores/limites';
 import { cerrarInvitacion, invitacionDeCorreo } from './educadores/invitaciones';
+import { recalcularAdopcionSiToca } from './educadores/adopcionColegio';
 
 initializeApp();
 
@@ -1063,15 +1064,23 @@ async function recomputeCursoAgregado(colegioId: string, cursoId: string): Promi
 
 /**
  * Trigger: any change to a student's per-world progress recomputes the affected
- * course's aggregate. Writes via Admin SDK (bypasses rules).
+ * course's aggregate, and then (throttled) the colegio's adoption aggregate.
+ * Writes via Admin SDK (bypasses rules).
  */
 export const onProgressWriteAggregate = onDocumentWritten(
   'colegios/{cid}/cursos/{cursoId}/estudiantes/{uid}/progress/{worldId}',
   async (event) => {
     const { cid, cursoId } = event.params;
     await recomputeCursoAgregado(cid, cursoId);
+    // A failure here must not hide the course aggregate; adopcionDiaria catches up.
+    await recalcularAdopcionSiToca(cid).catch((e) =>
+      console.error('adopcion: recálculo por progreso falló', { colegioId: cid, error: String(e) })
+    );
   }
 );
+
+// Ceti Educadores · adopción del colegio (agregado colegios/{cid}/agregados/adopcion).
+export { adopcionDiaria } from './educadores/adopcionColegio';
 
 // Ceti Educadores · límites.
 export { activarLicenciaNave } from './educadores/limites';

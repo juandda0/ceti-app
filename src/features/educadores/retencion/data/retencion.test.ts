@@ -14,7 +14,7 @@ import {
   type ProgresoMundo,
 } from './bitacoraCursos';
 import { entradasNotaDesdeReporte, rangoPeriodo } from './notasEntradas';
-import { cursosAdopcionDesdeColegio, msDeMarca } from './adopcionCursos';
+import { adopcionDesdeAgregado, cursosAdopcionDesdeColegio, msDeMarca } from './adopcionCursos';
 
 const AHORA = Date.parse('2026-10-22T15:00:00.000Z');
 
@@ -241,5 +241,41 @@ describe('Adopción desde el colegio', () => {
     const a = calcularAdopcion(cursos, AHORA);
     expect(a.profesActivos).toBe(2);
     expect(a.estudiantes).toBe(105);
+  });
+});
+
+describe('adopcionDesdeAgregado', () => {
+  const doc = {
+    profes: 6,
+    profesActivos: 4,
+    cursos: 7,
+    estudiantes: 218,
+    estudiantesActivos: 132,
+    adopcion: 132 / 218,
+    cumpleMeta: false,
+    senalNave: true,
+    actualizadoAt: { seconds: AHORA / 1000 },
+  };
+
+  it('lee solo las cifras del agregado del servidor', () => {
+    expect(adopcionDesdeAgregado({ ...doc, uids: ['ana'] })).toEqual({
+      ...doc,
+      actualizadoAt: AHORA,
+    });
+  });
+
+  it('sin hora sigue sirviendo; la adopción nunca pasa de 1', () => {
+    const { actualizadoAt: _sinHora, ...resto } = doc;
+    expect(adopcionDesdeAgregado({ ...resto, adopcion: 1.4 })).toMatchObject({
+      adopcion: 1,
+      actualizadoAt: null,
+    });
+  });
+
+  it('un doc incompleto o raro cae al cálculo local (null)', () => {
+    expect(adopcionDesdeAgregado(null)).toBeNull();
+    expect(adopcionDesdeAgregado({ ...doc, profes: '6' })).toBeNull();
+    expect(adopcionDesdeAgregado({ ...doc, estudiantes: -1 })).toBeNull();
+    expect(adopcionDesdeAgregado({ ...doc, senalNave: undefined })).toBeNull();
   });
 });

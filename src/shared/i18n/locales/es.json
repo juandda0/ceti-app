@@ -1227,7 +1227,8 @@
       "verNave": "Ver Nave",
       "whatsapp": "Hablar con Ceti",
       "whatsappTexto": "Hola, en mi colegio ya varios profes usamos Ceti. Quiero saber más del plan Nave.",
-      "dominioTitulo": "Dominio del colegio"
+      "dominioTitulo": "Dominio del colegio",
+      "actualizado": "Cifras del {{fecha}}."
     },
     "lista": {
       "titulo": "Importar lista",
