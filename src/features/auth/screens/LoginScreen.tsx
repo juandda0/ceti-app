@@ -1,176 +1,153 @@
-import { useEffect, useState } from 'react';
+/**
+ * Acceso con correo — SOLO para pruebas del equipo (probar cuentas con distintos
+ * roles sin Google). Los usuarios entran desde la bienvenida con "Entrar como
+ * estudiante / profe". El rol elegido aquí solo cuenta para una cuenta nueva: a
+ * una cuenta que ya tiene rol la gobiernan sus claims.
+ */
+import { useState } from 'react';
 import { View, Text, StyleSheet, Platform, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { safeRouterBack } from '@shared/utils/safeRouterBack';
-import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import { Typography } from '@shared/constants/typography';
-import { Spacing, BorderRadius } from '@shared/constants/theme';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
-import PageHeader from '@shared/components/PageHeader';
-import CetiButton from '@shared/components/CetiButton';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
-import { useThemeStore } from '@shared/store/useThemeStore';
 import { isFirebaseConfigured } from '@shared/lib/firebase/app';
-import { loginIntent } from '@features/auth/data/loginIntent';
-import { configureGoogleSignIn, signInWithGoogle } from '@shared/lib/firebase/oauth';
+import { createAccountWithEmail, signInWithEmail } from '@shared/lib/firebase/emailAuth';
+import { loginIntent, type LoginIntent } from '@features/auth/data/loginIntent';
+import {
+  Aviso,
+  BotonChunky,
+  Campo,
+  Chip,
+  Encabezado,
+  tapsConTeclado,
+} from '@features/dashboard/components/profe/kit';
 
 export default function LoginScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const colors = useThemeColors();
-  const mode = useThemeStore((s) => s.mode);
-  const styles = getStyles(colors, mode);
-  const [busy, setBusy] = useState(false);
+  const insets = useSafeAreaInsets();
+  const [rol, setRol] = useState<LoginIntent>('estudiante');
+  const [correo, setCorreo] = useState('');
+  const [clave, setClave] = useState('');
+  const [busy, setBusy] = useState<'entrar' | 'crear' | null>(null);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    configureGoogleSignIn();
-  }, []);
-
-  const goHome = () => router.replace('/');
-
-  const doSignIn = async () => {
+  const enviar = async (modo: 'entrar' | 'crear') => {
+    if (busy) return;
+    if (!correo.trim() || !clave) {
+      setError(t('loginCorreo.faltan'));
+      return;
+    }
     setError('');
-    setBusy(true);
+    setBusy(modo);
+    loginIntent.set(rol);
     try {
-      await signInWithGoogle();
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      goHome();
+      if (modo === 'entrar') await signInWithEmail(correo, clave);
+      else await createAccountWithEmail(correo, clave);
+      if (Platform.OS !== 'web') {
+        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
+      router.replace('/');
     } catch (e) {
-      const msg = e instanceof Error ? e.message : 'No se pudo iniciar sesión';
-      setError(msg);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      setError(e instanceof Error ? e.message : String(e));
+      if (Platform.OS !== 'web') {
+        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      }
     } finally {
-      setBusy(false);
+      setBusy(null);
     }
   };
 
-  const onGoogle = () => {
-    loginIntent.set('estudiante');
-    void doSignIn();
-  };
-
-  if (!isFirebaseConfigured()) {
-    return (
-      <ScreenWrapper style={styles.root}>
-        <View style={styles.content}>
-          <PageHeader
-            overline="Acceso"
-            title="Modo local"
-            subtitle="El acceso con Google no está disponible en este entorno. Configura Firebase y vuelve a intentarlo."
-            style={{ marginBottom: Spacing['2xl'] }}
-          />
-          <CetiButton
-            label="Volver"
-            onPress={() => safeRouterBack(router, '/(auth)/welcome')}
-            variant="ghost"
-            size="medium"
-            style={{ marginTop: Spacing.md }}
-          />
-        </View>
-      </ScreenWrapper>
-    );
-  }
-
   return (
-    <ScreenWrapper style={styles.root}>
-      <View style={styles.content}>
-        <CetiButton
-          label="← Volver"
-          onPress={() => safeRouterBack(router, '/(auth)/welcome')}
-          variant="ghost"
-          size="small"
-          style={{ alignSelf: 'flex-start', marginBottom: Spacing.md }}
+    <ScreenWrapper>
+      <ScrollView
+        contentContainerStyle={[styles.page, { paddingTop: insets.top + 12 }]}
+        keyboardShouldPersistTaps={tapsConTeclado}
+        showsVerticalScrollIndicator={false}
+      >
+        <Encabezado
+          atras="/(auth)/welcome"
+          sobretitulo={t('loginCorreo.sobretitulo')}
+          titulo={t('loginCorreo.titulo')}
+          subtitulo={t('loginCorreo.subtitulo')}
         />
 
-        <PageHeader
-          overline="Cuenta"
-          title="Entra a Ceti"
-          subtitle="Usa tu cuenta de Google para guardar tu progreso de forma segura."
-          style={{ marginBottom: Spacing['2xl'] }}
-        />
+        {!isFirebaseConfigured() ? (
+          <Aviso icono="cloud-offline" tono="rojo" texto={t('loginCorreo.sinFirebase')} />
+        ) : (
+          <>
+            <View style={{ gap: 10 }}>
+              <Text style={[styles.etiqueta, { color: colors.text.secondary }]}>
+                {t('loginCorreo.rol')}
+              </Text>
+              <View style={styles.roles}>
+                <Chip
+                  grande
+                  icono="rocket"
+                  texto={t('roleChooser.estudiante')}
+                  seleccionado={rol === 'estudiante'}
+                  onPress={() => setRol('estudiante')}
+                />
+                <Chip
+                  grande
+                  icono="school"
+                  texto={t('roleChooser.profesor')}
+                  seleccionado={rol === 'profesor'}
+                  onPress={() => setRol('profesor')}
+                />
+              </View>
+              <Text style={[styles.ayuda, { color: colors.text.tertiary }]}>
+                {t('loginCorreo.rolAyuda')}
+              </Text>
+            </View>
 
-        {error ? (
-          <View
-            style={[
-              styles.errorBox,
-              { backgroundColor: colors.system.red + '22', borderColor: colors.system.red },
-            ]}
-          >
-            <Ionicons
-              name="alert-circle"
-              size={20}
-              color={colors.system.red}
-              style={styles.errorIcon}
+            <Campo
+              etiqueta={t('loginCorreo.correo')}
+              value={correo}
+              onChangeText={setCorreo}
+              placeholder="profe1@prueba.ceti"
+              tipo="correo"
             />
-            <ScrollView
-              style={styles.errorScroll}
-              nestedScrollEnabled
-              keyboardShouldPersistTaps="handled"
-              showsVerticalScrollIndicator
-            >
-              <Text style={[styles.errorText, { color: colors.system.red }]}>{error}</Text>
-            </ScrollView>
-          </View>
-        ) : null}
+            <Campo
+              etiqueta={t('loginCorreo.clave')}
+              value={clave}
+              onChangeText={setClave}
+              placeholder="••••••"
+              tipo="clave"
+            />
 
-        <CetiButton
-          label="Entrar como invitado"
-          icon="logo-google"
-          onPress={onGoogle}
-          variant="primary"
-          size="large"
-          disabled={busy}
-          isLoading={busy}
-        />
+            {error ? <Aviso icono="alert-circle" tono="rojo" texto={error} /> : null}
 
-        <Text style={[styles.hint, { color: colors.text.tertiary }]}>
-          Al continuar aceptas el uso de tu nombre y correo según la política de privacidad del
-          proyecto.
-        </Text>
-      </View>
+            <View style={{ gap: 12 }}>
+              <BotonChunky
+                texto={t('loginCorreo.entrar')}
+                icono="log-in"
+                cargando={busy === 'entrar'}
+                deshabilitado={busy === 'crear'}
+                onPress={() => void enviar('entrar')}
+              />
+              <BotonChunky
+                texto={t('loginCorreo.crear')}
+                icono="person-add"
+                variante="secundario"
+                cargando={busy === 'crear'}
+                deshabilitado={busy === 'entrar'}
+                onPress={() => void enviar('crear')}
+              />
+            </View>
+          </>
+        )}
+      </ScrollView>
     </ScreenWrapper>
   );
 }
 
-const getStyles = (colors: ReturnType<typeof useThemeColors>, _mode: string) =>
-  StyleSheet.create({
-    root: {
-      flex: 1,
-      backgroundColor: colors.background.base,
-    },
-    content: {
-      flex: 1,
-      paddingHorizontal: Spacing.xl,
-      paddingTop: Platform.OS === 'ios' ? 56 : 40,
-      paddingBottom: Spacing['2xl'],
-    },
-    errorBox: {
-      flexDirection: 'row',
-      alignItems: 'flex-start',
-      gap: 8,
-      padding: Spacing.base,
-      borderRadius: BorderRadius.md,
-      borderWidth: 1,
-      marginBottom: Spacing.lg,
-      maxHeight: 240,
-    },
-    errorIcon: {
-      marginTop: 2,
-    },
-    errorScroll: {
-      flex: 1,
-      flexShrink: 1,
-    },
-    errorText: {
-      ...Typography.caption1,
-      fontWeight: '600',
-      lineHeight: 20,
-    },
-    hint: {
-      ...Typography.caption2,
-      textAlign: 'center',
-      marginTop: Spacing['2xl'],
-      lineHeight: 18,
-    },
-  });
+const styles = StyleSheet.create({
+  page: { paddingHorizontal: 20, paddingBottom: 48, gap: 18 },
+  etiqueta: { fontSize: 14, fontWeight: '800' },
+  roles: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  ayuda: { fontSize: 13, lineHeight: 18, fontWeight: '500' },
+});

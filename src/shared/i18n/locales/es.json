@@ -9,8 +9,11 @@
     "overline": "Innovación",
     "title": "Ceti",
     "subtitle": "Explora tus decisiones y organiza tu dinero",
-    "ctaStart": "Entrar como invitado",
-    "footer": "Diseñado para tomar mejores decisiones con tu dinero"
+    "footer": "Diseñado para tomar mejores decisiones con tu dinero",
+    "errorTitulo": "No se pudo entrar",
+    "ctaProfe": "Entrar como profe",
+    "ctaEstudiante": "Entrar como estudiante",
+    "ctaCorreo": "Entrar con correo (pruebas)"
   },
   "roles": {
     "admin": "Admin Ceti",
@@ -781,5 +784,18 @@
       "titulo": "¡Desbloqueaste {{item}}!",
       "mensaje": "Póntelo desde el vestidor de tu perfil."
     }
+  },
+  "loginCorreo": {
+    "sobretitulo": "Solo pruebas",
+    "titulo": "Entrar con correo",
+    "subtitulo": "Para el equipo: entra con cuentas de prueba y revisa cada rol sin usar Google.",
+    "rol": "¿Con qué rol?",
+    "rolAyuda": "Solo cuenta al crear una cuenta nueva. Una cuenta que ya tiene rol entra con el suyo.",
+    "correo": "Correo",
+    "clave": "Contraseña",
+    "entrar": "Entrar",
+    "crear": "Crear cuenta de prueba",
+    "faltan": "Escribe el correo y la contraseña.",
+    "sinFirebase": "El acceso no está disponible en este entorno: falta configurar Firebase."
   }
 }

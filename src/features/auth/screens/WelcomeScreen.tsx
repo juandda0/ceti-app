@@ -1,6 +1,6 @@
 // app/(auth)/welcome.tsx — Bienvenida de marca: fondo naranja y Ceti saliendo del portal
-import { useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import Animated, {
@@ -19,6 +19,9 @@ import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { motionMs } from '@shared/constants/motion';
 import { CetiEntradaReposo } from '@features/animations';
 import { useTranslation } from 'react-i18next';
+import { showMessage } from '@shared/lib/dialogs';
+import { configureGoogleSignIn, signInWithGoogle } from '@shared/lib/firebase/oauth';
+import { loginIntent, type LoginIntent } from '@features/auth/data/loginIntent';
 
 // Ceti sale del portal, da la vuelta y cae asomada hacia los ~2 s; el texto entra cuando ya cayó.
 const TEXT_DELAY = 1450;
@@ -27,6 +30,30 @@ const BUTTON_DELAY = 1700;
 export default function WelcomeScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  // Rol con el que se está entrando (muestra la carga en su botón).
+  const [entrando, setEntrando] = useState<LoginIntent | null>(null);
+
+  useEffect(() => {
+    configureGoogleSignIn();
+  }, []);
+
+  // El rol elegido viaja como intención (D-ADMIN): el servidor crea el colegio del
+  // profe; el estudiante sigue al ingreso por código. Luego decide el resolver (/).
+  const entrar = async (rol: LoginIntent) => {
+    if (entrando) return;
+    loginIntent.set(rol);
+    setEntrando(rol);
+    try {
+      await signInWithGoogle();
+      router.replace('/');
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      // Cerrar el selector de Google no es un error que haya que avisar.
+      if (!/cancelad/i.test(msg)) showMessage(t('welcome.errorTitulo'), msg, 'error');
+    } finally {
+      setEntrando(null);
+    }
+  };
 
   const contentOpacity = useSharedValue(0);
   const buttonTranslateY = useSharedValue(30);
@@ -71,11 +98,32 @@ export default function WelcomeScreen() {
 
           <Animated.View style={[styles.buttonContainer, buttonAnimatedStyle]}>
             <CetiButton
-              label={t('welcome.ctaStart')}
-              onPress={() => router.push('/(auth)/login')}
+              label={t('welcome.ctaEstudiante')}
+              icon="rocket"
+              onPress={() => void entrar('estudiante')}
               variant="onBrand"
               size="large"
+              isLoading={entrando === 'estudiante'}
+              disabled={entrando === 'profesor'}
             />
+            <CetiButton
+              label={t('welcome.ctaProfe')}
+              icon="school"
+              onPress={() => void entrar('profesor')}
+              variant="onBrand"
+              size="large"
+              isLoading={entrando === 'profesor'}
+              disabled={entrando === 'estudiante'}
+              style={{ marginTop: Spacing.md }}
+            />
+            <Pressable
+              onPress={() => router.push('/(auth)/login')}
+              accessibilityRole="button"
+              hitSlop={8}
+              style={styles.correo}
+            >
+              <Text style={styles.correoTexto}>{t('welcome.ctaCorreo')}</Text>
+            </Pressable>
           </Animated.View>
         </View>
       </View>
@@ -134,6 +182,13 @@ const styles = StyleSheet.create({
   buttonContainer: {
     alignSelf: 'stretch',
     width: '100%',
+  },
+  correo: { alignSelf: 'center', marginTop: Spacing.lg, paddingVertical: Spacing.xs },
+  correoTexto: {
+    ...Typography.caption1,
+    color: BrandColors.ink,
+    fontWeight: '700',
+    textDecorationLine: 'underline',
   },
   footer: {
     ...Typography.caption2,

@@ -1,62 +1,79 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 
-const mockSignInWithGoogle = jest.fn();
+const mockSignIn = jest.fn();
+const mockCreate = jest.fn();
 const mockSetIntent = jest.fn();
+const mockReplace = jest.fn();
 
-jest.mock('expo-router', () => ({ useRouter: () => ({ replace: jest.fn(), back: jest.fn() }) }));
-jest.mock('expo-haptics', () => ({
-  notificationAsync: jest.fn(),
-  NotificationFeedbackType: { Success: 'success', Error: 'error' },
+jest.mock('expo-router', () => ({
+  useRouter: () => ({ replace: mockReplace, back: jest.fn(), canGoBack: () => true }),
 }));
-jest.mock('@shared/hooks/useThemeColors', () => ({
-  useThemeColors: () => ({
-    background: { base: '#fff' },
-    brand: { primary: '#000' },
-    text: { primary: '#000', tertiary: '#666' },
-    system: { red: '#f00' },
-    materials: { border: '#ddd' },
-  }),
-}));
-jest.mock('@shared/store/useThemeStore', () => ({
-  useThemeStore: (selector: (state: { mode: string }) => unknown) => selector({ mode: 'light' }),
+jest.mock('react-native-safe-area-context', () => ({
+  useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
 }));
 jest.mock('@shared/lib/firebase/app', () => ({ isFirebaseConfigured: () => true }));
-jest.mock('@shared/lib/firebase/oauth', () => ({
-  configureGoogleSignIn: jest.fn(),
-  isAppleSignInAvailable: () => false,
-  signInWithGoogle: (...args: unknown[]) => mockSignInWithGoogle(...args),
-  signInWithApple: jest.fn(),
+jest.mock('@shared/lib/firebase/emailAuth', () => ({
+  signInWithEmail: (...args: unknown[]) => mockSignIn(...args),
+  createAccountWithEmail: (...args: unknown[]) => mockCreate(...args),
 }));
 jest.mock('@features/auth/data/loginIntent', () => ({
   loginIntent: { set: (...args: unknown[]) => mockSetIntent(...args) },
 }));
 jest.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
-jest.mock('@shared/components/ScreenWrapper', () => ({ children }: { children: React.ReactNode }) => <>{children}</>);
-jest.mock('@shared/components/PageHeader', () => ({ title }: { title: string }) => <>{title}</>);
-jest.mock('@shared/components/CetiButton', () => {
-  const { Pressable, Text } = require('react-native');
-  return ({ label, onPress }: { label: string; onPress: () => void }) => (
-    <Pressable accessibilityRole="button" onPress={onPress}>
-      <Text>{label}</Text>
-    </Pressable>
-  );
-});
-jest.mock('@shared/components/CetiBottomSheet', () => ({
-  children,
-  visible,
-}: {
-  children: React.ReactNode;
-  visible: boolean;
-}) => (visible ? <>{children}</> : null));
+jest.mock(
+  '@shared/components/ScreenWrapper',
+  () =>
+    function MockScreenWrapper({ children }: { children: React.ReactNode }) {
+      return <>{children}</>;
+    }
+);
 
+// eslint-disable-next-line import/first -- los jest.mock deben ir antes del import.
 import LoginScreen from './LoginScreen';
 
-test('inicia Google como visitante sin abrir selector de rol', async () => {
+beforeEach(() => {
+  jest.clearAllMocks();
+});
+
+function llenar() {
+  fireEvent.changeText(screen.getByLabelText('loginCorreo.correo'), 'profe1@prueba.ceti');
+  fireEvent.changeText(screen.getByLabelText('loginCorreo.clave'), 'secreto1');
+}
+
+test('entra con correo como profesor y vuelve al resolver', async () => {
   render(<LoginScreen />);
+  fireEvent.press(screen.getByLabelText('roleChooser.profesor'));
+  llenar();
+  fireEvent.press(screen.getByLabelText('loginCorreo.entrar'));
 
-  fireEvent.press(screen.getByRole('button', { name: 'Entrar como invitado' }));
+  await waitFor(() => expect(mockSignIn).toHaveBeenCalledWith('profe1@prueba.ceti', 'secreto1'));
+  expect(mockSetIntent).toHaveBeenCalledWith('profesor');
+  expect(mockReplace).toHaveBeenCalledWith('/');
+});
 
-  await waitFor(() => expect(mockSignInWithGoogle).toHaveBeenCalledTimes(1));
+test('crea una cuenta de prueba como estudiante por defecto', async () => {
+  render(<LoginScreen />);
+  llenar();
+  fireEvent.press(screen.getByLabelText('loginCorreo.crear'));
+
+  await waitFor(() => expect(mockCreate).toHaveBeenCalledTimes(1));
   expect(mockSetIntent).toHaveBeenCalledWith('estudiante');
-  expect(screen.queryByText('¿Cómo usarás Ceti?')).toBeNull();
+});
+
+test('sin correo ni contraseña avisa y no intenta entrar', () => {
+  render(<LoginScreen />);
+  fireEvent.press(screen.getByLabelText('loginCorreo.entrar'));
+
+  expect(screen.getByText('loginCorreo.faltan')).toBeTruthy();
+  expect(mockSignIn).not.toHaveBeenCalled();
+});
+
+test('muestra el error de Firebase', async () => {
+  mockSignIn.mockRejectedValueOnce(new Error('Correo o contraseña incorrectos.'));
+  render(<LoginScreen />);
+  llenar();
+  fireEvent.press(screen.getByLabelText('loginCorreo.entrar'));
+
+  expect(await screen.findByText('Correo o contraseña incorrectos.')).toBeTruthy();
+  expect(mockReplace).not.toHaveBeenCalled();
 });
