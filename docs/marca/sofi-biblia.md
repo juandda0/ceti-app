@@ -56,3 +56,30 @@ Sofi es la que mira el mapa cuando todos miran por la ventana. En la nave de Cet
 - **Saludo:** levanta la mano libre y saluda, ladeando la cabeza.
 - **Espera (tipo B):** quieta en su pose, solo parpadea.
 - **Celebración (tipo B):** salto suave con el brazo arriba y estrellas; vuelve a la pose inicial (~1,5 s).
+
+## Sudadera (prenda del vestidor, 2026-10-22)
+
+- SVG: `assets/brand/sofi/sofi-sudadera.svg` (viewBox `0 0 520 790`, la misma del traje). Grupos: `sombra-piso`, `cuerpo`, `cabeza` (con `ojo-izq` y `ojo-der`), `brazo-izq`, `brazo-der`, con los mismos pivotes que `sofi-frente.svg`.
+- Hoja: `assets/brand/bocetos/sofi-sudadera-01.jpg` (Gemini 3.6 Flash, edición de la vista de frente de `sofi-01-hoja-modelo.jpg`); alineada en `sofi-sudadera-01-alineada.png`. Vector: `scripts/marca/vectorizar/personajes/sofi-sudadera.json`.
+- Diseño: sudadera rosa/lila `#D5A2B1` con borde `#B77784` (sombras `#C18692`, `#A1636F`), capucha bajada (el pelo cae a los lados), escote en V con el collar de cordón negro y la flor rosada encima, bolsillo canguro, puños y elástico acanalados, cordones crema `#FFF1E0` con puntas `#FB6711` y la ballena de Ceti en el pecho (la de la insignia del traje de Juan; su traje no la tenía). Manos sin guante; el mapa estelar como en la hoja.
+- La cabeza (con los ojos) y la sombra del piso se copian **idénticas** de `sofi-frente.svg` (retoque `grupo_de`).
+
+### Paleta de piel (tal como está en el SVG)
+
+| uso | hex |
+|---|---|
+| piel base (cara, orejas, cuello, manos) | `#F6B69C` |
+| bordes (contorno de cara y mandíbula, orejas, manos) | `#C47F70` |
+| nariz, interior de las orejas, sombra bajo el flequillo, cuello | `#DB947F` |
+| sombras finas (boca, base de la nariz, orejas) | `#B56D61` |
+| rubor | `#EE9683` |
+| labios | sonrisa `#B56D61`, labio de abajo `#DB947F` |
+| lunar | `#141414` |
+| barba | no tiene |
+
+### Ojos (coordenadas de la viewBox)
+
+| ojo | centro (data-centro) | radio |
+|---|---|---|
+| `ojo-izq` | 193.9, 177.3 | 17.2 |
+| `ojo-der` | 278.2, 177.2 | 17.2 |

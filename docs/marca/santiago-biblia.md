@@ -54,3 +54,31 @@ Juan y Santiago armaron la nave de Ceti juntos y la mandan juntos: ninguno es el
 - **Saludo:** levanta la mano libre y saluda con calma.
 - **Espera (tipo B):** quieto en su pose, solo parpadea.
 - **Celebración (tipo B):** salto corto con el brazo arriba y estrellas; vuelve a la pose inicial (~1,5 s).
+
+## Sudadera (prenda del vestidor, 2026-10-22)
+
+- SVG: `assets/brand/santiago/santiago-sudadera.svg` (viewBox `0 0 520 790`, la misma del traje). Grupos: `sombra-piso`, `cuerpo`, `gafas` (vacío, como en el traje), `cabeza` (con `ojo-izq` y `ojo-der`), `brazo-izq`, `brazo-der`, con los mismos pivotes que `santiago-frente.svg`.
+- Hoja: `assets/brand/bocetos/santiago-sudadera-01.jpg` (Gemini 3.6 Flash, edición de la vista de frente de `santiago-01-hoja-modelo.jpg`); alineada en `santiago-sudadera-01-alineada.png`. Vector: `scripts/marca/vectorizar/personajes/santiago-sudadera.json`.
+- Diseño: sudadera verde menta `#95DAB1` con borde `#5F9E86` (sombras `#77B393`, `#58947C`), capucha bajada, escote en V, bolsillo canguro, puños y elástico acanalados, cordones crema `#FFF1E0` con puntas `#FA8636` y la ballena de su insignia del traje en el pecho. Manos sin guante. Sin el aparato de la muñeca (como en el traje): en su lugar va el puño acanalado.
+- La cabeza (con ojos y gafas), el radar y la sombra del piso se copian **idénticos** de `santiago-frente.svg` (retoques `grupo_de` y `copiar_de`). A la cabeza se le quita el collar crema del traje; el cuello va dibujado en el cuerpo, detrás de la capucha.
+
+### Paleta de piel (tal como está en el SVG)
+
+| uso | hex |
+|---|---|
+| piel base (cara, orejas, cuello, manos) | `#EEAD8F` |
+| bordes (orejas, manos, lados del cuello) | `#B5705F` |
+| borde de la mandíbula | `#A96B59` |
+| nariz, mejillas bajo las gafas, sombra del cuello | `#DB9A7F` |
+| sombras de la frente bajo el pelo, interior de las orejas, base de la nariz | `#B67463`, `#CD8D74`, `#B17363`, `#B06A5C` |
+| labios | sonrisa `#B27361`, labio de abajo `#D58F7B` |
+| barba (sombra plana) | `#C39580` |
+| rubor | sin color propio (lo hace `#DB9A7F`) |
+| párpados | `#6B3326` |
+
+### Ojos (coordenadas de la viewBox)
+
+| ojo | centro (data-centro) | radio | centro del iris |
+|---|---|---|---|
+| `ojo-izq` | 196, 187.5 | 20 | 198.5, 188 |
+| `ojo-der` | 276.5, 187.5 | 20.5 | 275, 188 |

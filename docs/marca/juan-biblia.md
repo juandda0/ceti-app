@@ -25,3 +25,31 @@
 3. Traje de la tripulación con paneles azul cielo (`#7EC8F0`) e insignia de capitán: la ballena naranja de Ceti en el pecho. Lleva una tablet de mando de la nave.
 4. Pulsera roja y reloj dorado como firma.
 5. Ajustes del vector sobre la hoja (acordados con Juan): pelo intermedio `#BA8C5E` (menos amarillo que la hoja), iris verde con anillo y centro ámbar, mandíbula un poco más ovalada y entradas más redondeadas. Calco: `scripts/marca/calco-juan.py` → `assets/brand/juan/juan-frente.svg`.
+
+## Sudadera (prenda del vestidor, 2026-10-22)
+
+- SVG: `assets/brand/juan/juan-sudadera.svg` (viewBox `0 0 460 780`, la misma del traje). Grupos: `sombra-piso`, `cuerpo`, `cabeza` (con `ojo-izq` y `ojo-der`), `brazo-izq`, `brazo-der`, con los mismos pivotes que `juan-frente.svg`.
+- Hoja: `assets/brand/bocetos/juan-sudadera-01.jpg` (Gemini 3.6 Flash, edición de la vista de frente de `juan-03-rapado-mono.jpg`); alineada a la hoja del traje en `juan-sudadera-01-alineada.png`. Vector: `scripts/marca/vectorizar/personajes/juan-sudadera.json`.
+- Diseño: sudadera azul cielo `#7EC8F0` con borde `#4E9CC2` (sombras `#62ADD5`, `#3D8BB4`), capucha bajada detrás del cuello, escote en V, bolsillo canguro, puños y elástico acanalados, cordones crema `#FFF1E0` con puntas naranjas y la ballena de la insignia del traje en el pecho. Manos sin guante. Pantalón con rodilleras, botas, tablet, pulsera y reloj como en el traje.
+- La cabeza (con los ojos) y la sombra del piso se copian **idénticas** de `juan-frente.svg` (retoque `grupo_de`): la cara no cambia al cambiar de ropa y los accesorios caen en el mismo sitio con las dos prendas.
+
+### Paleta de piel (tal como está en el SVG)
+
+| uso | hex |
+|---|---|
+| piel base (cara, orejas, cuello, manos) | `#F4B596` |
+| bordes (contorno de cara y orejas, boca, manos, lados del cuello) | `#C46F5B` |
+| interior de las orejas, sombra del cuello | `#E8977C` |
+| nariz | `#E8977E` |
+| rubor | `#EC917A` |
+| contorno del ojo | `#D27F69` |
+| párpados | `#9E5546` |
+| labios | sin color propio: la boca abierta es el borde `#C46F5B` con dientes `#FFFFFF` |
+| barba | no tiene |
+
+### Ojos (coordenadas de la viewBox)
+
+| ojo | centro (data-centro) | radio | centro del iris |
+|---|---|---|---|
+| `ojo-izq` | 176.32, 164.24 | 19.93 | 178.34, 162.76 |
+| `ojo-der` | 259.57, 164.04 | 20.45 | 256.72, 162.43 |

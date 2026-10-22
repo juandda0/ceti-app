@@ -1,0 +1,990 @@
+{
+ "src": "assets/brand/bocetos/santiago-sudadera-01-alineada.png",
+ "box": [
+  0,
+  0,
+  520,
+  790
+ ],
+ "salida": "assets/brand/santiago/santiago-sudadera.svg",
+ "fondo_interior": "#FEEAC9",
+ "min_area": 6,
+ "partes": {
+  "cabeza": {
+   "poligono": [
+    [
+     125,
+     15
+    ],
+    [
+     355,
+     15
+    ],
+    [
+     355,
+     240
+    ],
+    [
+     330,
+     252
+    ],
+    [
+     315,
+     275
+    ],
+    [
+     290,
+     288
+    ],
+    [
+     240,
+     292
+    ],
+    [
+     190,
+     288
+    ],
+    [
+     165,
+     275
+    ],
+    [
+     150,
+     252
+    ],
+    [
+     125,
+     240
+    ]
+   ],
+   "pivote": [
+    240,
+    262
+   ],
+   "solapa": 6,
+   "excluir": [
+    "#95D4AD",
+    "#588A79",
+    "#73A68A",
+    "#51806F"
+   ],
+   "nota": "la capucha (verdes) queda en cuerpo, detrás de la cabeza del traje"
+  },
+  "brazo-izq": {
+   "poligono": [
+    [
+     55,
+     330
+    ],
+    [
+     100,
+     290
+    ],
+    [
+     122,
+     296
+    ],
+    [
+     132,
+     330
+    ],
+    [
+     140,
+     380
+    ],
+    [
+     146,
+     420
+    ],
+    [
+     150,
+     470
+    ],
+    [
+     150,
+     575
+    ],
+    [
+     55,
+     575
+    ]
+   ],
+   "pivote": [
+    130,
+    325
+   ],
+   "solapa": 7
+  },
+  "brazo-der": {
+   "poligono": [
+    [
+     340,
+     288
+    ],
+    [
+     318,
+     330
+    ],
+    [
+     318,
+     400
+    ],
+    [
+     322,
+     460
+    ],
+    [
+     330,
+     470
+    ],
+    [
+     318,
+     500
+    ],
+    [
+     318,
+     530
+    ],
+    [
+     340,
+     552
+    ],
+    [
+     402,
+     552
+    ],
+    [
+     418,
+     500
+    ],
+    [
+     416,
+     440
+    ],
+    [
+     404,
+     370
+    ],
+    [
+     392,
+     320
+    ],
+    [
+     372,
+     294
+    ]
+   ],
+   "pivote": [
+    345,
+    318
+   ],
+   "solapa": 7,
+   "nota": "solo manga y mano; el radar se copia del traje"
+  }
+ },
+ "experimentos": {
+  "parpado_v1": true
+ },
+ "retoques": [
+  {
+   "op": "recolor",
+   "de": "#EDAD90",
+   "a": "#EEAD8F",
+   "nota": "manos: piel de Santiago (sin guante)"
+  },
+  {
+   "op": "recolor",
+   "de": "#C38870",
+   "a": "#B5705F",
+   "nota": "manos: borde de piel"
+  },
+  {
+   "op": "recolor",
+   "de": "#95D4AD",
+   "a": "#95DAB1",
+   "nota": "sudadera: verde menta de Santiago"
+  },
+  {
+   "op": "recolor",
+   "de": "#588A79",
+   "a": "#5F9E86",
+   "nota": "sudadera: borde"
+  },
+  {
+   "op": "recolor",
+   "de": "#73A68A",
+   "a": "#77B393",
+   "nota": "sudadera: sombra"
+  },
+  {
+   "op": "recolor",
+   "de": "#51806F",
+   "a": "#58947C",
+   "nota": "sudadera: borde oscuro"
+  },
+  {
+   "op": "recolor",
+   "de": "#D7C3A0",
+   "a": "#BD866D",
+   "nota": "pantalón: costuras como el traje"
+  },
+  {
+   "op": "recolor",
+   "de": "#FEECBD",
+   "a": "#FFEACB"
+  },
+  {
+   "op": "recolor",
+   "de": "#D5C591",
+   "a": "#9EDCB9",
+   "nota": "correa de rodilleras"
+  },
+  {
+   "op": "recolor",
+   "de": "#E1BDA3",
+   "a": "#E2C0A5",
+   "nota": "botas como el traje"
+  },
+  {
+   "op": "recolor",
+   "de": "#CA9077",
+   "a": "#CA9176"
+  },
+  {
+   "op": "recolor",
+   "de": "#EBB78A",
+   "a": "#E9B888",
+   "nota": "sombra del piso"
+  },
+  {
+   "op": "recolor",
+   "de": "#CA9176",
+   "a": "#B5705F",
+   "zona": [
+    66,
+    476,
+    154,
+    572
+   ],
+   "nota": "mano izq: restos de guante -> piel"
+  },
+  {
+   "op": "recolor",
+   "de": "#C5905F",
+   "a": "#B5705F",
+   "zona": [
+    66,
+    476,
+    154,
+    572
+   ]
+  },
+  {
+   "op": "recolor",
+   "de": "#E2C0A5",
+   "a": "#EEAD8F",
+   "zona": [
+    66,
+    476,
+    154,
+    572
+   ]
+  },
+  {
+   "op": "recolor",
+   "de": "#E9B888",
+   "a": "#EEAD8F",
+   "zona": [
+    66,
+    476,
+    154,
+    572
+   ]
+  },
+  {
+   "op": "recolor",
+   "de": "#C39580",
+   "a": "#B5705F",
+   "zona": [
+    66,
+    476,
+    154,
+    572
+   ]
+  },
+  {
+   "op": "recolor",
+   "de": "#F8863A",
+   "a": "#FA8636",
+   "nota": "naranja de Ceti (como el traje)"
+  },
+  {
+   "op": "forma",
+   "grupo": "cuerpo",
+   "pos": "debajo",
+   "puntos": [
+    [
+     160,
+     300
+    ],
+    [
+     310,
+     300
+    ],
+    [
+     318,
+     480
+    ],
+    [
+     155,
+     480
+    ]
+   ],
+   "color": "#95DAB1",
+   "suave": false,
+   "nota": "fondo de la sudadera: sin huecos al quitar piezas"
+  },
+  {
+   "op": "borrar",
+   "grupo": "cuerpo",
+   "zona": [
+    186,
+    330,
+    284,
+    387
+   ],
+   "colores": [
+    "#FA8636",
+    "#E9B888",
+    "#7D8576",
+    "#FFEACB"
+   ],
+   "nota": "ballena y cordones del motor (se redibujan)"
+  },
+  {
+   "op": "borrar",
+   "grupo": "cuerpo",
+   "zona": [
+    196,
+    296,
+    276,
+    387
+   ],
+   "colores": [
+    "#FFEACB"
+   ]
+  },
+  {
+   "op": "copiar_de",
+   "svg": "assets/brand/santiago/santiago-frente.svg",
+   "de": "cuerpo",
+   "colores": [
+    "#FA8636",
+    "#FBE1C0",
+    "#C68D6C",
+    "#4A2C22"
+   ],
+   "zona": [
+    190,
+    330,
+    280,
+    392
+   ],
+   "escala": 1.0,
+   "mover": [
+    -0.3,
+    -0.6
+   ],
+   "grupo": "cuerpo",
+   "nota": "ballena de Ceti idéntica a la insignia del traje (misma posición que en la hoja)"
+  },
+  {
+   "op": "raya",
+   "grupo": "cuerpo",
+   "puntos": [
+    [
+     206.2,
+     300
+    ],
+    [
+     205.8,
+     330
+    ],
+    [
+     205,
+     360
+    ],
+    [
+     204.8,
+     380
+    ]
+   ],
+   "ancho": 6,
+   "color": "#FFF1E0",
+   "suave": true,
+   "nota": "cordón izq"
+  },
+  {
+   "op": "raya",
+   "grupo": "cuerpo",
+   "puntos": [
+    [
+     264,
+     300
+    ],
+    [
+     264.6,
+     330
+    ],
+    [
+     265.2,
+     360
+    ],
+    [
+     265.2,
+     380
+    ]
+   ],
+   "ancho": 6,
+   "color": "#FFF1E0",
+   "suave": true,
+   "nota": "cordón der"
+  },
+  {
+   "op": "elipse",
+   "grupo": "cuerpo",
+   "cx": 205.5,
+   "cy": 390,
+   "rx": 5.4,
+   "ry": 8,
+   "color": "#FA8636",
+   "nota": "puntas de los cordones encima de la ballena"
+  },
+  {
+   "op": "elipse",
+   "grupo": "cuerpo",
+   "cx": 266,
+   "cy": 389.5,
+   "rx": 5.2,
+   "ry": 8.3,
+   "color": "#FA8636"
+  },
+  {
+   "op": "borrar",
+   "grupo": "cuerpo",
+   "zona": [
+    250,
+    400,
+    422,
+    548
+   ],
+   "colores": [
+    "#7D8576",
+    "#71E49F",
+    "#49664E",
+    "#A7E9AE",
+    "#52996F",
+    "#5D2D20",
+    "#4C302A",
+    "#A56C5E"
+   ],
+   "nota": "radar del motor en el cuerpo"
+  },
+  {
+   "op": "borrar",
+   "grupo": "brazo-der",
+   "zona": [
+    250,
+    400,
+    422,
+    548
+   ],
+   "colores": [
+    "#7D8576",
+    "#71E49F",
+    "#49664E",
+    "#A7E9AE",
+    "#52996F",
+    "#5D2D20",
+    "#4C302A",
+    "#FFEACB",
+    "#BD866D",
+    "#E2C0A5",
+    "#A56C5E"
+   ],
+   "nota": "radar del motor (se usa el del traje)"
+  },
+  {
+   "op": "borrar",
+   "grupo": "brazo-der",
+   "zona": [
+    352,
+    452,
+    404,
+    506
+   ],
+   "colores": [
+    "#95DAB1",
+    "#5F9E86",
+    "#77B393",
+    "#58947C"
+   ],
+   "nota": "aparato de la muñeca (fuera, como en el traje)"
+  },
+  {
+   "op": "copiar_de",
+   "svg": "assets/brand/santiago/santiago-frente.svg",
+   "de": "brazo-der",
+   "colores": [
+    "#4E6B5F",
+    "#8AA79A",
+    "#3E9A6C",
+    "#63E39B",
+    "#8AF0B5",
+    "#9FF5C3",
+    "#F2FFF7",
+    "#FFFFFF",
+    "#FA8636",
+    "#C8FBDD",
+    "#95DAB1",
+    "#5F9E86"
+   ],
+   "zona": [
+    250,
+    405,
+    382,
+    546
+   ],
+   "grupo": "brazo-der",
+   "pos": "debajo",
+   "nota": "radar idéntico al del traje, debajo de la manga y la mano"
+  },
+  {
+   "op": "borrar",
+   "grupo": "brazo-der",
+   "zona": [
+    394,
+    494,
+    418,
+    522
+   ],
+   "colores": [
+    "#95DAB1",
+    "#5F9E86",
+    "#77B393",
+    "#58947C"
+   ],
+   "nota": "resto de la correa"
+  },
+  {
+   "op": "forma",
+   "grupo": "brazo-der",
+   "puntos": [
+    [
+     328,
+     464
+    ],
+    [
+     366,
+     459
+    ],
+    [
+     403,
+     453
+    ],
+    [
+     409,
+     470
+    ],
+    [
+     408,
+     492
+    ],
+    [
+     370,
+     503
+    ],
+    [
+     334,
+     506
+    ],
+    [
+     327,
+     485
+    ]
+   ],
+   "color": "#77B393",
+   "suave": true,
+   "nota": "puño de la sudadera (en lugar del aparato)"
+  },
+  {
+   "op": "raya",
+   "grupo": "brazo-der",
+   "puntos": [
+    [
+     338.9,
+     469.8
+    ],
+    [
+     342.6,
+     490.0
+    ]
+   ],
+   "ancho": 2.6,
+   "color": "#58947C",
+   "suave": false,
+   "nota": "puño: costillas"
+  },
+  {
+   "op": "raya",
+   "grupo": "brazo-der",
+   "puntos": [
+    [
+     349.2,
+     468.4
+    ],
+    [
+     352.7,
+     488.9
+    ]
+   ],
+   "ancho": 2.6,
+   "color": "#58947C",
+   "suave": false
+  },
+  {
+   "op": "raya",
+   "grupo": "brazo-der",
+   "puntos": [
+    [
+     359.6,
+     467.0
+    ],
+    [
+     362.8,
+     487.8
+    ]
+   ],
+   "ancho": 2.6,
+   "color": "#58947C",
+   "suave": false
+  },
+  {
+   "op": "raya",
+   "grupo": "brazo-der",
+   "puntos": [
+    [
+     370.0,
+     465.6
+    ],
+    [
+     372.9,
+     486.7
+    ]
+   ],
+   "ancho": 2.6,
+   "color": "#58947C",
+   "suave": false
+  },
+  {
+   "op": "raya",
+   "grupo": "brazo-der",
+   "puntos": [
+    [
+     380.3,
+     464.2
+    ],
+    [
+     383.0,
+     485.6
+    ]
+   ],
+   "ancho": 2.6,
+   "color": "#58947C",
+   "suave": false
+  },
+  {
+   "op": "raya",
+   "grupo": "brazo-der",
+   "puntos": [
+    [
+     390.7,
+     462.8
+    ],
+    [
+     393.0,
+     484.4
+    ]
+   ],
+   "ancho": 2.6,
+   "color": "#58947C",
+   "suave": false
+  },
+  {
+   "op": "raya",
+   "grupo": "brazo-der",
+   "puntos": [
+    [
+     328,
+     464
+    ],
+    [
+     366,
+     459
+    ],
+    [
+     403,
+     453
+    ],
+    [
+     409,
+     470
+    ],
+    [
+     408,
+     492
+    ],
+    [
+     370,
+     503
+    ],
+    [
+     334,
+     506
+    ],
+    [
+     327,
+     485
+    ],
+    [
+     328,
+     464
+    ]
+   ],
+   "ancho": 4.5,
+   "color": "#5F9E86",
+   "suave": true,
+   "nota": "puño: borde"
+  },
+  {
+   "op": "raya",
+   "grupo": "cuerpo",
+   "pos": "debajo",
+   "puntos": [
+    [
+     207,
+     252
+    ],
+    [
+     207,
+     282
+    ]
+   ],
+   "ancho": 4.5,
+   "color": "#B5705F",
+   "suave": false,
+   "nota": "cuello (debajo de la capucha): lados"
+  },
+  {
+   "op": "raya",
+   "grupo": "cuerpo",
+   "pos": "debajo",
+   "puntos": [
+    [
+     263,
+     252
+    ],
+    [
+     263,
+     282
+    ]
+   ],
+   "ancho": 4.5,
+   "color": "#B5705F",
+   "suave": false
+  },
+  {
+   "op": "forma",
+   "grupo": "cuerpo",
+   "pos": "debajo",
+   "puntos": [
+    [
+     200,
+     250
+    ],
+    [
+     270,
+     250
+    ],
+    [
+     270,
+     281
+    ],
+    [
+     252,
+     286
+    ],
+    [
+     235,
+     287
+    ],
+    [
+     218,
+     286
+    ],
+    [
+     200,
+     281
+    ]
+   ],
+   "color": "#DB9A7F",
+   "suave": false,
+   "nota": "cuello: sombra bajo la barbilla"
+  },
+  {
+   "op": "forma",
+   "grupo": "cuerpo",
+   "pos": "debajo",
+   "puntos": [
+    [
+     196,
+     250
+    ],
+    [
+     274,
+     250
+    ],
+    [
+     274,
+     286
+    ],
+    [
+     240,
+     306
+    ],
+    [
+     196,
+     286
+    ]
+   ],
+   "color": "#EEAD8F",
+   "suave": false,
+   "nota": "cuello: piel"
+  },
+  {
+   "op": "borrar",
+   "grupo": "brazo-izq",
+   "zona": [
+    84,
+    538,
+    100,
+    554
+   ],
+   "colores": [
+    "#EEAD8F"
+   ],
+   "nota": "mano izq: motas de piel en las puntas de los dedos"
+  },
+  {
+   "op": "borrar",
+   "grupo": "brazo-izq",
+   "zona": [
+    100,
+    542,
+    120,
+    562
+   ],
+   "colores": [
+    "#EEAD8F"
+   ]
+  },
+  {
+   "op": "circulo",
+   "grupo": "brazo-izq",
+   "cx": 108.6,
+   "cy": 552.6,
+   "r": 2.6,
+   "color": "#B5705F",
+   "nota": "tapa la rendija entre dedos"
+  },
+  {
+   "op": "grupo_de",
+   "svg": "assets/brand/santiago/santiago-frente.svg",
+   "id": "gafas",
+   "despues": "cuerpo",
+   "nota": "grupo de gafas del traje (vacío, mismo pivote)"
+  },
+  {
+   "op": "grupo_de",
+   "svg": "assets/brand/santiago/santiago-frente.svg",
+   "id": "cabeza",
+   "despues": "gafas",
+   "nota": "cabeza idéntica a la del traje"
+  },
+  {
+   "op": "borrar",
+   "grupo": "cabeza",
+   "zona": [
+    185,
+    256,
+    292,
+    298
+   ],
+   "colores": [
+    "#B06A5C",
+    "#B17363"
+   ],
+   "nota": "sombra del collar bajo la barbilla (la pone el cuello nuevo)"
+  },
+  {
+   "op": "borrar",
+   "grupo": "cabeza",
+   "zona": [
+    130,
+    228,
+    350,
+    300
+   ],
+   "colores": [
+    "#FFEACB",
+    "#E2C0A5",
+    "#F6DFC0",
+    "#BD866D"
+   ],
+   "nota": "collar crema del traje fuera de la cabeza"
+  },
+  {
+   "op": "borrar",
+   "grupo": "cabeza",
+   "zona": [
+    165,
+    256,
+    206,
+    287
+   ],
+   "colores": [
+    "#C39580"
+   ],
+   "nota": "sombras del collar"
+  },
+  {
+   "op": "borrar",
+   "grupo": "cabeza",
+   "zona": [
+    266,
+    256,
+    309,
+    287
+   ],
+   "colores": [
+    "#C39580"
+   ]
+  },
+  {
+   "op": "grupo_de",
+   "svg": "assets/brand/santiago/santiago-frente.svg",
+   "id": "sombra-piso",
+   "nota": "sombra del piso idéntica a la del traje"
+  }
+ ]
+}

@@ -1,0 +1,971 @@
+{
+ "src": "assets/brand/bocetos/juan-sudadera-01-alineada.png",
+ "box": [
+  0,
+  0,
+  460,
+  780
+ ],
+ "salida": "assets/brand/juan/juan-sudadera.svg",
+ "fondo_interior": "#FCE9D0",
+ "min_area": 6,
+ "partes": {
+  "cabeza": {
+   "poligono": [
+    [
+     70,
+     10
+    ],
+    [
+     360,
+     10
+    ],
+    [
+     360,
+     230
+    ],
+    [
+     320,
+     245
+    ],
+    [
+     290,
+     262
+    ],
+    [
+     215,
+     272
+    ],
+    [
+     140,
+     262
+    ],
+    [
+     110,
+     245
+    ],
+    [
+     70,
+     230
+    ]
+   ],
+   "pivote": [
+    213,
+    252
+   ],
+   "solapa": 6,
+   "excluir": [
+    "#86C6E8",
+    "#69A8C7",
+    "#5494AE",
+    "#4583A0",
+    "#497F9A"
+   ],
+   "nota": "la capucha (azules) queda en cuerpo, detrás de la cabeza del traje"
+  },
+  "brazo-izq": {
+   "poligono": [
+    [
+     100,
+     266
+    ],
+    [
+     70,
+     290
+    ],
+    [
+     48,
+     380
+    ],
+    [
+     36,
+     470
+    ],
+    [
+     36,
+     560
+    ],
+    [
+     140,
+     560
+    ],
+    [
+     132,
+     470
+    ],
+    [
+     122,
+     380
+    ],
+    [
+     122,
+     300
+    ]
+   ],
+   "pivote": [
+    113,
+    302
+   ],
+   "solapa": 7
+  },
+  "brazo-der": {
+   "poligono": [
+    [
+     326,
+     266
+    ],
+    [
+     312,
+     380
+    ],
+    [
+     236,
+     400
+    ],
+    [
+     228,
+     548
+    ],
+    [
+     420,
+     548
+    ],
+    [
+     420,
+     400
+    ],
+    [
+     398,
+     300
+    ]
+   ],
+   "pivote": [
+    313,
+    302
+   ],
+   "solapa": 7
+  }
+ },
+ "experimentos": {
+  "parpado_v1": true
+ },
+ "retoques": [
+  {
+   "op": "recolor",
+   "de": "#E6BA96",
+   "a": "#F4B596",
+   "zona": [
+    50,
+    460,
+    140,
+    560
+   ],
+   "nota": "mano izq: piel (sin guante)"
+  },
+  {
+   "op": "recolor",
+   "de": "#EAB486",
+   "a": "#F4B596",
+   "zona": [
+    50,
+    460,
+    140,
+    560
+   ]
+  },
+  {
+   "op": "recolor",
+   "de": "#C0936C",
+   "a": "#C46F5B",
+   "zona": [
+    50,
+    460,
+    140,
+    560
+   ],
+   "nota": "mano izq: borde de piel"
+  },
+  {
+   "op": "recolor",
+   "de": "#E6BA96",
+   "a": "#F4B596",
+   "zona": [
+    296,
+    470,
+    384,
+    545
+   ],
+   "nota": "mano der: piel"
+  },
+  {
+   "op": "recolor",
+   "de": "#C0936C",
+   "a": "#C46F5B",
+   "zona": [
+    296,
+    470,
+    384,
+    545
+   ],
+   "nota": "mano der: borde de piel"
+  },
+  {
+   "op": "recolor",
+   "de": "#86C6E8",
+   "a": "#7EC8F0",
+   "nota": "sudadera: azul cielo de Juan"
+  },
+  {
+   "op": "recolor",
+   "de": "#69A8C7",
+   "a": "#62ADD5",
+   "nota": "sudadera: sombra"
+  },
+  {
+   "op": "recolor",
+   "de": "#5494AE",
+   "a": "#4E9CC2",
+   "nota": "sudadera: borde"
+  },
+  {
+   "op": "recolor",
+   "de": "#4583A0",
+   "a": "#3D8BB4",
+   "nota": "sudadera: borde oscuro"
+  },
+  {
+   "op": "recolor",
+   "de": "#497F9A",
+   "a": "#4387AE"
+  },
+  {
+   "op": "recolor",
+   "de": "#86B7C0",
+   "a": "#7EC8F0",
+   "nota": "rodilleras como el traje"
+  },
+  {
+   "op": "recolor",
+   "de": "#5F91A0",
+   "a": "#4E9CC2"
+  },
+  {
+   "op": "recolor",
+   "de": "#FFDEB5",
+   "a": "#FDE6C2",
+   "nota": "pantalón: crema del traje"
+  },
+  {
+   "op": "recolor",
+   "de": "#D8B68A",
+   "a": "#E2BC92"
+  },
+  {
+   "op": "recolor",
+   "de": "#FCEACF",
+   "a": "#FFF1E0",
+   "nota": "cordones"
+  },
+  {
+   "op": "recolor",
+   "de": "#E6BA96",
+   "a": "#DDB894",
+   "nota": "botas como el traje"
+  },
+  {
+   "op": "recolor",
+   "de": "#C0936C",
+   "a": "#C99F7C"
+  },
+  {
+   "op": "recolor",
+   "de": "#EAB486",
+   "a": "#E8BD93",
+   "nota": "sombra del piso"
+  },
+  {
+   "op": "recolor",
+   "de": "#F2AD90",
+   "a": "#F4B596",
+   "nota": "cuello: piel de Juan"
+  },
+  {
+   "op": "recolor",
+   "de": "#B76E62",
+   "a": "#C46F5B"
+  },
+  {
+   "op": "recolor",
+   "de": "#E3927B",
+   "a": "#E8977C"
+  },
+  {
+   "op": "recolor",
+   "de": "#FD7B28",
+   "a": "#FB6711",
+   "nota": "ballena: naranja de Ceti"
+  },
+  {
+   "op": "recolor",
+   "de": "#B32728",
+   "a": "#D23A33",
+   "nota": "pulsera"
+  },
+  {
+   "op": "recolor",
+   "de": "#910000",
+   "a": "#9E1F22"
+  },
+  {
+   "op": "recolor",
+   "de": "#B68331",
+   "a": "#C98A2E",
+   "nota": "reloj"
+  },
+  {
+   "op": "recolor",
+   "de": "#925526",
+   "a": "#8B4A2B"
+  },
+  {
+   "op": "recolor",
+   "de": "#54596D",
+   "a": "#3E4C5A",
+   "nota": "tablet: colores del traje"
+  },
+  {
+   "op": "recolor",
+   "de": "#BBBCC4",
+   "a": "#C9DDE4"
+  },
+  {
+   "op": "recolor",
+   "de": "#7F96B3",
+   "a": "#4E9CC2"
+  },
+  {
+   "op": "recolor",
+   "de": "#639CA2",
+   "a": "#4E9CC2"
+  },
+  {
+   "op": "recolor",
+   "de": "#B1E8E4",
+   "a": "#D6F3F5"
+  },
+  {
+   "op": "recolor",
+   "de": "#2A3A4C",
+   "a": "#2E3A46"
+  },
+  {
+   "op": "recolor",
+   "de": "#697B6A",
+   "a": "#2F5A5E"
+  },
+  {
+   "op": "recolor",
+   "de": "#BDFF81",
+   "a": "#C8F27A"
+  },
+  {
+   "op": "recolor",
+   "de": "#85EAD3",
+   "a": "#8FE3D2"
+  },
+  {
+   "op": "recolor",
+   "de": "#7CF2C4",
+   "a": "#8FE3D2"
+  },
+  {
+   "op": "recolor",
+   "de": "#91F7B4",
+   "a": "#8FE3D2"
+  },
+  {
+   "op": "recolor",
+   "de": "#FDFDFD",
+   "a": "#FFF1E0",
+   "zona": [
+    170,
+    320,
+    270,
+    395
+   ],
+   "nota": "ballena: rayas de la panza crema"
+  },
+  {
+   "op": "forma",
+   "grupo": "cuerpo",
+   "pos": "debajo",
+   "puntos": [
+    [
+     166,
+     232
+    ],
+    [
+     264,
+     232
+    ],
+    [
+     264,
+     282
+    ],
+    [
+     166,
+     282
+    ]
+   ],
+   "color": "#3D8BB4",
+   "suave": false,
+   "nota": "interior de la capucha bajo la barbilla (sin rendijas con la cabeza del traje)"
+  },
+  {
+   "op": "forma",
+   "grupo": "cuerpo",
+   "pos": "debajo",
+   "puntos": [
+    [
+     140,
+     282
+    ],
+    [
+     290,
+     282
+    ],
+    [
+     300,
+     470
+    ],
+    [
+     130,
+     470
+    ]
+   ],
+   "color": "#7EC8F0",
+   "suave": false,
+   "nota": "fondo de la sudadera: sin huecos al quitar piezas"
+  },
+  {
+   "op": "borrar",
+   "grupo": "cuerpo",
+   "zona": [
+    168,
+    318,
+    272,
+    384
+   ],
+   "colores": [
+    "#FB6711",
+    "#826159",
+    "#FFF1E0",
+    "#FDE6C2"
+   ],
+   "nota": "ballena y cordones del motor (se redibujan)"
+  },
+  {
+   "op": "borrar",
+   "grupo": "cuerpo",
+   "zona": [
+    180,
+    284,
+    252,
+    384
+   ],
+   "colores": [
+    "#FFF1E0",
+    "#FDE6C2"
+   ]
+  },
+  {
+   "op": "copiar_de",
+   "svg": "assets/brand/juan/juan-frente.svg",
+   "de": "cuerpo",
+   "colores": [
+    "#C9520D",
+    "#FB6711",
+    "#E58A6A",
+    "#FFF1E0",
+    "#8B4A2B"
+   ],
+   "zona": [
+    170,
+    320,
+    262,
+    380
+   ],
+   "escala": 1.17,
+   "mover": [
+    -34.43,
+    -60.16
+   ],
+   "grupo": "cuerpo",
+   "nota": "ballena de Ceti idéntica a la insignia del traje, escalada"
+  },
+  {
+   "op": "raya",
+   "grupo": "cuerpo",
+   "puntos": [
+    [
+     190.5,
+     291
+    ],
+    [
+     189.5,
+     325
+    ],
+    [
+     188.4,
+     360
+    ],
+    [
+     188.2,
+     379
+    ]
+   ],
+   "ancho": 5.5,
+   "color": "#FFF1E0",
+   "suave": true,
+   "nota": "cordón izq"
+  },
+  {
+   "op": "raya",
+   "grupo": "cuerpo",
+   "puntos": [
+    [
+     241.3,
+     291
+    ],
+    [
+     242.6,
+     325
+    ],
+    [
+     244.2,
+     360
+    ],
+    [
+     244.6,
+     379
+    ]
+   ],
+   "ancho": 5.5,
+   "color": "#FFF1E0",
+   "suave": true,
+   "nota": "cordón der"
+  },
+  {
+   "op": "borrar",
+   "grupo": "cuerpo",
+   "zona": [
+    192,
+    532,
+    242,
+    656
+   ],
+   "colores": [
+    "#E2BC92"
+   ],
+   "nota": "costuras del pantalón con bultos en la correa (se redibujan)"
+  },
+  {
+   "op": "raya",
+   "grupo": "cuerpo",
+   "puntos": [
+    [
+     208.8,
+     536
+    ],
+    [
+     207.1,
+     560
+    ],
+    [
+     204.6,
+     600
+    ],
+    [
+     202,
+     648
+    ]
+   ],
+   "ancho": 6.5,
+   "color": "#E2BC92",
+   "suave": true,
+   "nota": "costura izq"
+  },
+  {
+   "op": "raya",
+   "grupo": "cuerpo",
+   "puntos": [
+    [
+     224.1,
+     536
+    ],
+    [
+     225.9,
+     560
+    ],
+    [
+     228.5,
+     600
+    ],
+    [
+     231.6,
+     648
+    ]
+   ],
+   "ancho": 6.5,
+   "color": "#E2BC92",
+   "suave": true,
+   "nota": "costura der"
+  },
+  {
+   "op": "forma",
+   "grupo": "cuerpo",
+   "puntos": [
+    [
+     179,
+     246
+    ],
+    [
+     253,
+     246
+    ],
+    [
+     253,
+     266
+    ],
+    [
+     216,
+     294
+    ],
+    [
+     179,
+     266
+    ]
+   ],
+   "color": "#F4B596",
+   "suave": false,
+   "nota": "cuello"
+  },
+  {
+   "op": "forma",
+   "grupo": "cuerpo",
+   "puntos": [
+    [
+     179,
+     246
+    ],
+    [
+     253,
+     246
+    ],
+    [
+     253,
+     268
+    ],
+    [
+     236,
+     276
+    ],
+    [
+     216,
+     278
+    ],
+    [
+     196,
+     276
+    ],
+    [
+     179,
+     268
+    ]
+   ],
+   "color": "#E8977C",
+   "suave": false,
+   "nota": "sombra del cuello bajo la barbilla"
+  },
+  {
+   "op": "raya",
+   "grupo": "cuerpo",
+   "puntos": [
+    [
+     182,
+     248
+    ],
+    [
+     182,
+     266
+    ]
+   ],
+   "ancho": 4.5,
+   "color": "#C46F5B",
+   "suave": false,
+   "nota": "lados del cuello"
+  },
+  {
+   "op": "raya",
+   "grupo": "cuerpo",
+   "puntos": [
+    [
+     250,
+     248
+    ],
+    [
+     250,
+     266
+    ]
+   ],
+   "ancho": 4.5,
+   "color": "#C46F5B",
+   "suave": false
+  },
+  {
+   "op": "raya",
+   "grupo": "cuerpo",
+   "puntos": [
+    [
+     164,
+     262
+    ],
+    [
+     178,
+     269
+    ],
+    [
+     192,
+     278
+    ],
+    [
+     206,
+     288
+    ],
+    [
+     216,
+     294.5
+    ],
+    [
+     226,
+     288
+    ],
+    [
+     240,
+     278
+    ],
+    [
+     254,
+     269
+    ],
+    [
+     268,
+     262
+    ]
+   ],
+   "ancho": 7,
+   "color": "#4E9CC2",
+   "suave": true,
+   "nota": "borde del escote en V de la capucha"
+  },
+  {
+   "op": "borrar",
+   "grupo": "brazo-der",
+   "zona": [
+    258,
+    430,
+    306,
+    506
+   ],
+   "colores": [
+    "#2E3A46",
+    "#C8F27A",
+    "#8FE3D2",
+    "#FFF1E0",
+    "#FCEACF",
+    "#FDFDFD"
+   ],
+   "nota": "tablet: iconos del motor (se redibujan)"
+  },
+  {
+   "op": "forma",
+   "grupo": "brazo-der",
+   "puntos": [
+    [
+     267,
+     436
+    ],
+    [
+     302,
+     434
+    ],
+    [
+     304,
+     470
+    ],
+    [
+     300,
+     505
+    ],
+    [
+     280,
+     505
+    ],
+    [
+     273,
+     480
+    ],
+    [
+     268,
+     455
+    ]
+   ],
+   "color": "#3E4C5A",
+   "suave": false,
+   "nota": "tablet: pantalla lisa bajo los iconos"
+  },
+  {
+   "op": "raya",
+   "grupo": "brazo-der",
+   "puntos": [
+    [
+     275,
+     443.6
+    ],
+    [
+     292,
+     439.6
+    ]
+   ],
+   "ancho": 4.4,
+   "color": "#8FE3D2",
+   "suave": false,
+   "nota": "tablet: barras"
+  },
+  {
+   "op": "raya",
+   "grupo": "brazo-der",
+   "puntos": [
+    [
+     277.6,
+     451.4
+    ],
+    [
+     288.4,
+     448.2
+    ]
+   ],
+   "ancho": 4.6,
+   "color": "#8FE3D2",
+   "suave": false
+  },
+  {
+   "op": "raya",
+   "grupo": "brazo-der",
+   "puntos": [
+    [
+     295.2,
+     499
+    ],
+    [
+     300.8,
+     496.6
+    ]
+   ],
+   "ancho": 4.6,
+   "color": "#8FE3D2",
+   "suave": false
+  },
+  {
+   "op": "forma",
+   "grupo": "brazo-der",
+   "puntos": [
+    [
+     281.5,
+     459
+    ],
+    [
+     287.5,
+     457.5
+    ],
+    [
+     293,
+     457.3
+    ],
+    [
+     294.6,
+     463
+    ],
+    [
+     295.3,
+     469.8
+    ],
+    [
+     290,
+     473.3
+    ],
+    [
+     284.5,
+     474
+    ],
+    [
+     282,
+     468.5
+    ],
+    [
+     280.8,
+     463
+    ]
+   ],
+   "color": "#C8F27A",
+   "suave": true,
+   "nota": "tablet: botón grande"
+  },
+  {
+   "op": "circulo",
+   "grupo": "brazo-der",
+   "cx": 286.4,
+   "cy": 478.8,
+   "r": 2.7,
+   "color": "#C8F27A",
+   "nota": "tablet: botones chicos"
+  },
+  {
+   "op": "circulo",
+   "grupo": "brazo-der",
+   "cx": 294.4,
+   "cy": 476.6,
+   "r": 2.7,
+   "color": "#C8F27A"
+  },
+  {
+   "op": "circulo",
+   "grupo": "brazo-der",
+   "cx": 288.6,
+   "cy": 484.8,
+   "r": 2.6,
+   "color": "#C8F27A"
+  },
+  {
+   "op": "circulo",
+   "grupo": "brazo-der",
+   "cx": 297,
+   "cy": 482.4,
+   "r": 2.6,
+   "color": "#C8F27A"
+  },
+  {
+   "op": "grupo_de",
+   "svg": "assets/brand/juan/juan-frente.svg",
+   "id": "cabeza",
+   "despues": "cuerpo",
+   "nota": "cabeza idéntica a la del traje"
+  },
+  {
+   "op": "grupo_de",
+   "svg": "assets/brand/juan/juan-frente.svg",
+   "id": "sombra-piso",
+   "nota": "sombra del piso idéntica a la del traje"
+  }
+ ]
+}

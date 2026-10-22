@@ -101,6 +101,7 @@ Claves (defectos en `pipeline.DEFECTOS`):
 | `juan-capitan` | juan-02-capitan | cabeza, brazo-izq, brazo-der |
 | `sofi` | sofi-01-hoja-modelo | cabeza (con `excluir` del traje: el pelo largo cruza el cuello), brazo-izq, brazo-der; `fondo_interior` #FEE9CA, bordes y `lineas.excluir` para pelo, cordón y lunar; `parpado_v1` |
 | `ceti` | ceti-05-hoja-modelo | aleta-izq, aleta-der, cola (ojos en `cuerpo`); `capas_geometricas.contencion: false` (la contención deformaba las cejas: N37; mismo puntaje) |
+| `<p>-sudadera` | <p>-sudadera-01-alineada (juan, santiago, sofi) | prenda del vestidor: misma viewBox y partes que el traje; `grupo_de` copia la cabeza (y la sombra) del `<p>-frente.svg` y `copiar_de` la ballena (y el radar de Santiago), así la cara y los accesorios no cambian al cambiar de ropa |
 
 ## Revisión crítica y retoques (obligatorio antes de entregar)
 
@@ -114,7 +115,7 @@ El motor vectoriza; **Claude revisa como ilustrador**. La métrica no lo ve todo
 2. **Mirar cada imagen** y responder la lista. Si algo se ve raro a zoom, es un defecto.
 3. Arreglar:
    - **Puntual** (un ojo, una raya que falta, una mota, un color): retoque en el JSON del personaje (`"retoques"`, ver
-     `retoques.py`: `circulo`, `elipse`, `raya`, `forma`, `borrar`, `recolor`, `ojo`). Se prueba en segundos con
+     `retoques.py`: `circulo`, `elipse`, `raya`, `forma`, `borrar`, `recolor`, `ojo`, `grupo_de`, `copiar_de`). Se prueba en segundos con
      `-m vectorizar <personaje> --solo-retoques` (sin volver a correr el motor; usa el SVG base guardado en
      `~/.cache/vectorizar/base/`). Es lo que haría una persona en un editor: dibujar el círculo o la raya.
    - **Sistemático** (se repite en varios personajes): cambio en el motor detrás de un flag + banco completo.

@@ -24,6 +24,12 @@ Operaciones (todas aceptan `grupo` = id del <g> donde van, por defecto `cuerpo`,
        "parpado": {"color", "ancho", "desde": -170, "hasta": -10},              arco sobre la esclera (grados)
        "pestanas": [{"angulo", "largo", "ancho", "color"}]}
      reemplaza el grupo ojo-<lado> entero (mantiene data-centro/data-radio para Lottie).
+  {"op": "grupo_de", "svg": "assets/brand/<p>/<p>-frente.svg", "id": "cabeza", "despues": "cuerpo"}
+     copia un <g id> (con sus grupos anidados) de otro SVG de la misma viewBox; reemplaza el homónimo o lo
+     inserta después de `despues`. Para prendas: la cabeza del traje en la sudadera, idéntica.
+  {"op": "copiar_de", "svg", "de": "cuerpo", "colores": [...], "zona", "escala": 1.17, "mover": [dx, dy],
+       "grupo", "pos"}
+     copia piezas (subtrazados enteros en la zona) de otro SVG, escaladas y movidas: p. ej. la ballena del traje.
 
 Pulido lógico (pulido.py): "trazo", "silueta", "elipse_de", "aplanar" rehacen una pieza existente con la forma
 que le corresponde (línea de grosor parejo, contorno continuo, elipse exacta, zona de un solo tono).
@@ -227,6 +233,73 @@ def _borrar(frag, zona, colores=None):
     return re.sub(r'<(circle|ellipse)\b[^>]*>', prim, frag)
 
 
+def _grupo_de(svg, r):
+    """Copia el <g id> de otro SVG (misma viewBox): p. ej. la cabeza del traje en la sudadera, para que la
+    cara no cambie al cambiar de ropa. Reemplaza el grupo homónimo (y los <g id> anidados que traiga, p. ej.
+    ojo-izq/ojo-der) o, si no existe, lo inserta después del grupo `despues`."""
+    from .pipeline import RAIZ
+    otro = (RAIZ / r['svg']).read_text()
+    suelto = re.compile(rf'<(?:ellipse|circle|path) id="{re.escape(r["id"])}"[^>]*/>')
+    m = suelto.search(otro)
+    if m:  # pieza suelta con id (sombra-piso)
+        return suelto.sub(lambda _: m.group(0), svg, count=1)
+    s, _, _, fin = _grupo(otro, r['id'])
+    frag = otro[s:fin]
+    for gid in re.findall(r'<g id="([^"]+)"', frag)[1:]:
+        try:
+            a, _, _, b = _grupo(svg, gid)
+            svg = svg[:a] + svg[b:]
+        except ValueError:
+            pass
+    try:
+        a, _, _, b = _grupo(svg, r['id'])
+        return svg[:a] + frag + svg[b:]
+    except ValueError:
+        _, _, _, b = _grupo(svg, r.get('despues', 'cuerpo'))
+        return svg[:b] + frag + svg[b:]
+
+
+def _copiar_de(svg, r):
+    """Copia de otro SVG las piezas de `colores` (relleno o trazo) cuyos subtrazados caben enteros en `zona`
+    (grupo `de`), en su orden, escaladas por `escala` y movidas `mover` [dx, dy] (x' = x·escala + dx), al grupo
+    `grupo`. Sin transform: reescribe las coordenadas (contrato: solo M L C Q Z absolutos)."""
+    from .pipeline import RAIZ
+    otro = (RAIZ / r['svg']).read_text()
+    _, e, c, _ = _grupo(otro, r.get('de', 'cuerpo'))
+    k, (dx, dy) = r.get('escala', 1.0), r.get('mover', [0, 0])
+    cols = {_hex(x) for x in r['colores']}
+    zona = r['zona']
+    num = r'(-?\d*\.?\d+(?:e-?\d+)?)'
+
+    def mover(sub):
+        return re.sub(num + r'[\s,]*' + num,
+                      lambda m: f'{f(float(m.group(1)) * k + dx)} {f(float(m.group(2)) * k + dy)}', sub)
+
+    frag = ''
+    for m in re.finditer(r'<(path|circle|ellipse)\b[^>]*>', otro[e:c]):
+        t = m.group(0)
+        vals = {v.upper() for v in re.findall(r'\s(?:fill|stroke)="(#[0-9A-Fa-f]{6})"', t)}
+        if not vals & cols:
+            continue
+        if m.group(1) == 'path':
+            d = re.search(r'\sd="([^"]*)"', t).group(1)
+            subs = [mover(x) for x in re.split(r'(?=M)', d) if x.strip() and _en(zona, _bbox_d(x))]
+            if not subs:
+                continue
+            t = t.replace(f'd="{d}"', f'd="{"".join(subs)}"')
+            t = re.sub(r'stroke-width="([^"]+)"', lambda w: f'stroke-width="{f(float(w.group(1)) * k)}"', t)
+            frag += t
+        else:
+            g = lambda a: float(re.search(rf'\s{a}="([^"]+)"', t).group(1))
+            cx, cy = g('cx'), g('cy')
+            rx = g('r') if m.group(1) == 'circle' else g('rx')
+            ry = g('r') if m.group(1) == 'circle' else g('ry')
+            if _en(zona, (cx - rx, cy - ry, cx + rx, cy + ry)):
+                col = re.search(r'\sfill="([^"]+)"', t).group(1)
+                frag += _prim(cx * k + dx, cy * k + dy, rx * k, ry * k, col)
+    return _insertar(svg, r.get('grupo', 'cuerpo'), frag, r.get('pos', 'encima'))
+
+
 def aplicar(svg, retoques, log=print):
     for i, r in enumerate(retoques or []):
         op = r['op']
@@ -270,6 +343,10 @@ def aplicar(svg, retoques, log=print):
                 svg = re.sub(r'<(path|circle|ellipse)\b[^>]*>', rc, svg)
             else:
                 svg = re.sub(rf'"{de}"', f'"{a}"', svg, flags=re.I)
+        elif op == 'grupo_de':
+            svg = _grupo_de(svg, r)
+        elif op == 'copiar_de':
+            svg = _copiar_de(svg, r)
         elif op == 'ojo':
             gid = f'ojo-{r["lado"]}'
             radio = max(r['rx'], r.get('ry', r['rx'])) + (r.get('aro') or {}).get('ancho', 0)

@@ -1,0 +1,516 @@
+{
+ "src": "assets/brand/bocetos/sofi-sudadera-01-alineada.png",
+ "box": [
+  0,
+  0,
+  520,
+  790
+ ],
+ "salida": "assets/brand/sofi/sofi-sudadera.svg",
+ "fondo_interior": "#FEE9CA",
+ "min_area": 6,
+ "partes": {
+  "cabeza": {
+   "poligono": [
+    [
+     105,
+     15
+    ],
+    [
+     375,
+     15
+    ],
+    [
+     375,
+     312
+    ],
+    [
+     300,
+     312
+    ],
+    [
+     296,
+     262
+    ],
+    [
+     184,
+     262
+    ],
+    [
+     180,
+     312
+    ],
+    [
+     105,
+     312
+    ]
+   ],
+   "pivote": [
+    240,
+    262
+   ],
+   "solapa": 6,
+   "excluir": [
+    "#D49EAC",
+    "#B26D79",
+    "#9C5964",
+    "#BE7F8A"
+   ],
+   "nota": "la capucha (rosas) queda en cuerpo, detrás de la cabeza del traje"
+  },
+  "brazo-izq": {
+   "poligono": [
+    [
+     55,
+     330
+    ],
+    [
+     100,
+     290
+    ],
+    [
+     122,
+     296
+    ],
+    [
+     132,
+     330
+    ],
+    [
+     140,
+     380
+    ],
+    [
+     146,
+     420
+    ],
+    [
+     150,
+     470
+    ],
+    [
+     150,
+     575
+    ],
+    [
+     55,
+     575
+    ]
+   ],
+   "pivote": [
+    128,
+    328
+   ],
+   "solapa": 7
+  },
+  "brazo-der": {
+   "poligono": [
+    [
+     335,
+     292
+    ],
+    [
+     312,
+     390
+    ],
+    [
+     318,
+     480
+    ],
+    [
+     290,
+     500
+    ],
+    [
+     262,
+     505
+    ],
+    [
+     258,
+     545
+    ],
+    [
+     275,
+     570
+    ],
+    [
+     300,
+     575
+    ],
+    [
+     306,
+     640
+    ],
+    [
+     330,
+     648
+    ],
+    [
+     455,
+     615
+    ],
+    [
+     455,
+     480
+    ],
+    [
+     405,
+     400
+    ],
+    [
+     395,
+     330
+    ]
+   ],
+   "pivote": [
+    340,
+    320
+   ],
+   "solapa": 20
+  }
+ },
+ "experimentos": {
+  "parpado_v1": true
+ },
+ "retoques": [
+  {
+   "op": "recolor",
+   "de": "#EABA90",
+   "a": "#F6B69C",
+   "zona": [
+    66,
+    476,
+    154,
+    572
+   ],
+   "nota": "mano izq: piel"
+  },
+  {
+   "op": "recolor",
+   "de": "#F6B399",
+   "a": "#F6B69C",
+   "nota": "piel de Sofi (manos y cuello)"
+  },
+  {
+   "op": "recolor",
+   "de": "#C58572",
+   "a": "#C47F70"
+  },
+  {
+   "op": "recolor",
+   "de": "#DA917D",
+   "a": "#DB947F"
+  },
+  {
+   "op": "recolor",
+   "de": "#B26C61",
+   "a": "#B56D61"
+  },
+  {
+   "op": "recolor",
+   "de": "#D49EAC",
+   "a": "#D5A2B1",
+   "nota": "sudadera: rosa/lila de Sofi"
+  },
+  {
+   "op": "recolor",
+   "de": "#B26D79",
+   "a": "#B77784",
+   "nota": "sudadera: borde"
+  },
+  {
+   "op": "recolor",
+   "de": "#BE7F8A",
+   "a": "#C18692",
+   "nota": "sudadera: sombra"
+  },
+  {
+   "op": "recolor",
+   "de": "#9C5964",
+   "a": "#A1636F",
+   "nota": "sudadera: borde oscuro"
+  },
+  {
+   "op": "recolor",
+   "de": "#D6C29F",
+   "a": "#C08A6A",
+   "nota": "pantalón y mapa: borde como el traje"
+  },
+  {
+   "op": "recolor",
+   "de": "#E3C1A6",
+   "a": "#E2C3A7",
+   "nota": "botas como el traje"
+  },
+  {
+   "op": "recolor",
+   "de": "#CD9376",
+   "a": "#CD9575"
+  },
+  {
+   "op": "recolor",
+   "de": "#EABA90",
+   "a": "#EABC91",
+   "nota": "sombra del piso"
+  },
+  {
+   "op": "recolor",
+   "de": "#292929",
+   "a": "#272727",
+   "nota": "collar"
+  },
+  {
+   "op": "recolor",
+   "de": "#101010",
+   "a": "#191817"
+  },
+  {
+   "op": "recolor",
+   "de": "#D77789",
+   "a": "#D97989",
+   "nota": "flor del collar"
+  },
+  {
+   "op": "recolor",
+   "de": "#F4A3B3",
+   "a": "#F2A8A6"
+  },
+  {
+   "op": "recolor",
+   "de": "#FCBF6B",
+   "a": "#EABC91"
+  },
+  {
+   "op": "recolor",
+   "de": "#F8D2AE",
+   "a": "#F6D0AC",
+   "nota": "mapa como el traje"
+  },
+  {
+   "op": "recolor",
+   "de": "#D2AB83",
+   "a": "#CB9675"
+  },
+  {
+   "op": "recolor",
+   "de": "#C98D6F",
+   "a": "#CA8E6F"
+  },
+  {
+   "op": "recolor",
+   "de": "#EE8535",
+   "a": "#EF8F3A"
+  },
+  {
+   "op": "recolor",
+   "de": "#F9842A",
+   "a": "#F98022"
+  },
+  {
+   "op": "forma",
+   "grupo": "cuerpo",
+   "pos": "debajo",
+   "puntos": [
+    [
+     160,
+     305
+    ],
+    [
+     310,
+     305
+    ],
+    [
+     318,
+     480
+    ],
+    [
+     155,
+     480
+    ]
+   ],
+   "color": "#D5A2B1",
+   "suave": false,
+   "nota": "fondo de la sudadera: sin huecos al quitar piezas"
+  },
+  {
+   "op": "borrar",
+   "grupo": "cuerpo",
+   "zona": [
+    184,
+    330,
+    290,
+    387
+   ],
+   "colores": [
+    "#F98022",
+    "#DF4F10",
+    "#FEE9C9",
+    "#F6D0AC"
+   ],
+   "nota": "ballena con contorno de la hoja y cordones (se redibujan)"
+  },
+  {
+   "op": "borrar",
+   "grupo": "cuerpo",
+   "zona": [
+    196,
+    296,
+    276,
+    386
+   ],
+   "colores": [
+    "#FEE9C9",
+    "#F6D0AC"
+   ]
+  },
+  {
+   "op": "copiar_de",
+   "svg": "assets/brand/juan/juan-frente.svg",
+   "de": "cuerpo",
+   "colores": [
+    "#C9520D",
+    "#FB6711",
+    "#E58A6A",
+    "#FFF1E0",
+    "#8B4A2B"
+   ],
+   "zona": [
+    170,
+    320,
+    262,
+    380
+   ],
+   "escala": 1.1,
+   "mover": [
+    0.3,
+    -24.1
+   ],
+   "grupo": "cuerpo",
+   "nota": "ballena de Ceti (insignia de la tripulación, la del traje de Juan), escalada al sitio de la hoja"
+  },
+  {
+   "op": "raya",
+   "grupo": "cuerpo",
+   "puntos": [
+    [
+     208.5,
+     302
+    ],
+    [
+     206,
+     330
+    ],
+    [
+     203.5,
+     360
+    ],
+    [
+     202.8,
+     388
+    ]
+   ],
+   "ancho": 5.5,
+   "color": "#FFF1E0",
+   "suave": true,
+   "nota": "cordón izq"
+  },
+  {
+   "op": "raya",
+   "grupo": "cuerpo",
+   "puntos": [
+    [
+     263.5,
+     302
+    ],
+    [
+     266.5,
+     330
+    ],
+    [
+     268.8,
+     360
+    ],
+    [
+     269.4,
+     388
+    ]
+   ],
+   "ancho": 5.5,
+   "color": "#FFF1E0",
+   "suave": true,
+   "nota": "cordón der"
+  },
+  {
+   "op": "elipse",
+   "grupo": "cuerpo",
+   "cx": 203.2,
+   "cy": 396.5,
+   "rx": 5.8,
+   "ry": 8.4,
+   "color": "#FB6711",
+   "nota": "puntas de los cordones (naranja de Ceti)"
+  },
+  {
+   "op": "elipse",
+   "grupo": "cuerpo",
+   "cx": 268.8,
+   "cy": 396.3,
+   "rx": 6.2,
+   "ry": 8.4,
+   "color": "#FB6711"
+  },
+  {
+   "op": "borrar",
+   "grupo": "cuerpo",
+   "zona": [
+    196,
+    258,
+    212,
+    286
+   ],
+   "colores": [
+    "#191817"
+   ],
+   "nota": "trozo del cordón del collar que asomaba junto al cuello"
+  },
+  {
+   "op": "forma",
+   "grupo": "cuerpo",
+   "pos": "debajo",
+   "puntos": [
+    [
+     194,
+     250
+    ],
+    [
+     270,
+     250
+    ],
+    [
+     270,
+     292
+    ],
+    [
+     194,
+     292
+    ]
+   ],
+   "color": "#DB947F",
+   "suave": false,
+   "nota": "cuello: fondo sin huecos"
+  },
+  {
+   "op": "grupo_de",
+   "svg": "assets/brand/sofi/sofi-frente.svg",
+   "id": "cabeza",
+   "despues": "cuerpo",
+   "nota": "cabeza idéntica a la del traje"
+  },
+  {
+   "op": "grupo_de",
+   "svg": "assets/brand/sofi/sofi-frente.svg",
+   "id": "sombra-piso",
+   "nota": "sombra del piso idéntica a la del traje"
+  }
+ ]
+}
