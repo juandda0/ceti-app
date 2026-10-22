@@ -99,8 +99,14 @@ service cloud.firestore {
       }
 
       match /cursos/{cursoId} {
-        allow read: if isProfesorDe(cid, cursoId)
+        allow get: if isProfesorDe(cid, cursoId)
           || isEstudianteActivoEnCurso(cid, cursoId, request.auth.uid);
+        // "Mis clases" del profe: consulta `profesorUids array-contains uid`.
+        // isProfesorDe() hace get() con el id del documento y eso no se puede
+        // evaluar en un list; aquí la condición se prueba con la propia consulta.
+        allow list: if isRole('profesor')
+          && sameColegio(cid)
+          && request.auth.uid in resource.data.profesorUids;
         // Course structure/settings and the join code are Admin SDK / Function
         // only (backend). No client writes.
         allow create, update, delete: if false;
