@@ -1,34 +1,51 @@
-import { useCallback, useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  ActivityIndicator,
-  Platform,
-} from 'react-native';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { View, Text, StyleSheet, Platform } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import QRCode from 'react-native-qrcode-svg';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
-import BackButton from '@shared/components/BackButton';
+import Bounceable from '@shared/components/Bounceable';
+import ContextScrollView from '@shared/components/motion/ContextScrollView';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { rosterRepository, type EstudianteWithId } from '@features/dashboard/data/rosterRepository';
 import { adminService } from '@features/dashboard/data/adminService';
 import ClassWorldsManager from '@features/dashboard/components/ClassWorldsManager';
 import { confirmAction, showMessage } from '@shared/lib/dialogs';
+import Segmented from '@features/savings/components/Segmented';
+import { FadeIn } from '@features/savings/charts/ChartParts';
+import {
+  Aviso,
+  Avatar,
+  BotonChunky,
+  Encabezado,
+  Esqueleto,
+  Pill,
+  Seccion,
+  Tarjeta,
+  Vacio,
+  type Tono,
+} from '@features/dashboard/components/profe/kit';
+import type { EstudianteEstado } from '@shared/types/tenancy';
 
 const POLICY_VERSION = 'v1';
 
+type Vista = 'invitar' | 'mundos' | 'estudiantes';
+
+const TONO_ESTADO: Record<EstudianteEstado, Tono> = {
+  activo: 'verde',
+  pendiente_atestacion: 'naranja',
+  suprimido: 'neutro',
+};
+
 /**
  * Per-course operations screen for the profesor (D-PIVOT): class code, class
- * collaboration toggle, roster with Ley 1581 attestation, and suppression. The
- * profesor operates ONLY their own course (firestore.rules + the Cloud Functions
- * enforce it). Assigning teachers / creating structure is Admin SDK only (backend).
+ * worlds, roster with Ley 1581 attestation, and suppression. The profesor
+ * operates ONLY their own course (firestore.rules + the Cloud Functions enforce
+ * it). Assigning teachers / creating structure is Admin SDK only (backend).
+ * Tres vistas con el control segmentado: Invitar · Mundos · Estudiantes.
  */
 export default function CourseManageScreen() {
   const { t } = useTranslation();
@@ -39,6 +56,7 @@ export default function CourseManageScreen() {
   const cursoId = params.cursoId;
   const cursoNombre = params.nombre ?? cursoId;
 
+  const [vista, setVista] = useState<Vista>('invitar');
   const [roster, setRoster] = useState<EstudianteWithId[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -128,197 +146,248 @@ export default function CourseManageScreen() {
     }
   };
 
-  return (
-    <ScreenWrapper style={styles.root}>
-      <ScrollView contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16 }]}>
-        <BackButton fallback="/(staff)" />
-        <Text style={[styles.title, { color: colors.text.primary }]}>{cursoNombre}</Text>
-        <Text style={[styles.subtitle, { color: colors.text.secondary }]}>
-          {t('admin.rosterTitle')}
-        </Text>
+  const vistas = useMemo(
+    () => [
+      { key: 'invitar' as const, label: t('profe.vistaInvitar') },
+      { key: 'mundos' as const, label: t('profe.vistaMundos') },
+      { key: 'estudiantes' as const, label: t('profe.vistaEstudiantes') },
+    ],
+    [t]
+  );
 
-        {/* Class code */}
-        <View style={[styles.codeCard, { backgroundColor: colors.background.secondary }]}>
-          <Text style={[styles.codeLabel, { color: colors.text.secondary }]}>
-            {t('admin.classCode')}
-          </Text>
-          {code ? (
-            <>
-              <Text style={[styles.codeValue, { color: colors.brand.primary }]}>{code}</Text>
-              <View style={styles.qrWrap}>
+  const invitar = (
+    <View style={styles.vista}>
+      <Tarjeta style={styles.codigoTarjeta}>
+        <Text style={[styles.codigoEtiqueta, { color: colors.text.tertiary }]}>
+          {t('admin.classCode').toUpperCase()}
+        </Text>
+        {code ? (
+          <>
+            {/* key={code}: al regenerar, las fichas vuelven a caer en cascada. */}
+            <View key={code} style={styles.fichas} accessible accessibilityLabel={code}>
+              {code.split('').map((letra, i) => (
+                <FadeIn key={i} delay={i * 60}>
+                  <View
+                    style={[
+                      styles.ficha,
+                      {
+                        backgroundColor: colors.fill.brandSubtle,
+                        borderColor: colors.brand.primary,
+                      },
+                    ]}
+                  >
+                    <Text style={[styles.fichaTexto, { color: colors.brand.primary }]}>
+                      {letra}
+                    </Text>
+                  </View>
+                </FadeIn>
+              ))}
+            </View>
+            <FadeIn delay={code.length * 60}>
+              <View style={styles.qr}>
                 <QRCode
                   value={inviteUrl || code}
-                  size={132}
+                  size={164}
                   backgroundColor="#FFFFFF"
-                  color="#000000"
+                  color="#16161A"
                 />
               </View>
-              <Text style={[styles.codeHint, { color: colors.text.tertiary }]}>
-                {t('admin.classCodeScan')}
-              </Text>
-              {Platform.OS === 'web' && (
-                <View style={styles.copyRow}>
-                  <TouchableOpacity
-                    style={[styles.codeBtn, { borderColor: colors.brand.primary }]}
-                    onPress={onCopyCode}
-                    accessibilityRole="button"
-                    accessibilityLabel={t('admin.copyCode')}
-                  >
-                    <Ionicons name="copy-outline" size={16} color={colors.brand.primary} />
-                    <Text style={[styles.codeBtnText, { color: colors.brand.primary }]}>
-                      {t('admin.copyCode')}
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[styles.codeBtn, { borderColor: colors.brand.primary }]}
-                    onPress={onCopyLink}
-                    accessibilityRole="button"
-                    accessibilityLabel={t('admin.copyLink')}
-                  >
-                    <Ionicons name="link-outline" size={16} color={colors.brand.primary} />
-                    <Text style={[styles.codeBtnText, { color: colors.brand.primary }]}>
-                      {t('admin.copyLink')}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-            </>
-          ) : (
-            <Text style={[styles.codeHint, { color: colors.text.tertiary }]}>
+            </FadeIn>
+            <Text style={[styles.codigoAyuda, { color: colors.text.secondary }]}>
+              {t('admin.classCodeScan')}
+            </Text>
+            {Platform.OS === 'web' ? (
+              <View style={styles.dosBotones}>
+                <BotonChunky
+                  texto={t('profe.copiarCodigo')}
+                  icono="copy-outline"
+                  variante="secundario"
+                  compacto
+                  onPress={onCopyCode}
+                />
+                <BotonChunky
+                  texto={t('profe.copiarEnlace')}
+                  icono="link-outline"
+                  variante="secundario"
+                  compacto
+                  onPress={onCopyLink}
+                />
+              </View>
+            ) : null}
+          </>
+        ) : (
+          <>
+            <View style={[styles.llave, { backgroundColor: colors.fill.brandSubtle }]}>
+              <Ionicons name="qr-code" size={40} color={colors.brand.primary} />
+            </View>
+            <Text style={[styles.codigoAyuda, { color: colors.text.secondary }]}>
               {t('admin.classCodeHint')}
             </Text>
-          )}
-          <TouchableOpacity
-            style={[
-              styles.codeBtn,
-              { borderColor: colors.brand.primary, opacity: codeBusy ? 0.6 : 1 },
-            ]}
-            onPress={() => void onGenerateCode()}
-            disabled={codeBusy}
-            accessibilityRole="button"
-          >
-            <Ionicons name="key-outline" size={16} color={colors.brand.primary} />
-            <Text style={[styles.codeBtnText, { color: colors.brand.primary }]}>
-              {code ? t('admin.classCodeShow') : t('admin.classCodeGen')}
-            </Text>
-          </TouchableOpacity>
-        </View>
+          </>
+        )}
+        <BotonChunky
+          texto={code ? t('admin.classCodeShow') : t('admin.classCodeGen')}
+          icono="key-outline"
+          variante={code ? 'secundario' : 'primario'}
+          cargando={codeBusy}
+          onPress={() => void onGenerateCode()}
+        />
+      </Tarjeta>
+      <Aviso icono="people" tono="azul" texto={t('admin.rosterSelfJoinHint')} />
+    </View>
+  );
 
-        {/* Class worlds curation (D-ORQ, RQ-PR10): show/hide, reorder. */}
-        {colegioId && cursoId && <ClassWorldsManager colegioId={colegioId} cursoId={cursoId} />}
-
-        {/* Students self-join by code (no manual roster slot). */}
-        <Text style={[styles.hint, { color: colors.text.tertiary }]}>
-          {t('admin.rosterSelfJoinHint')}
-        </Text>
-
-        {/* Roster */}
-        {loading ? (
-          <ActivityIndicator style={{ marginTop: 8 }} color={colors.brand.primary} />
-        ) : roster.length === 0 ? (
-          <Text style={[styles.muted, { color: colors.text.tertiary }]}>
-            {t('admin.emptyRoster')}
-          </Text>
-        ) : (
-          roster.map((s) => {
+  const estudiantes = (
+    <View style={styles.vista}>
+      <Seccion texto={t('dashboard.students', { count: roster.length })} />
+      {loading ? (
+        <Esqueleto filas={3} alto={64} />
+      ) : roster.length === 0 ? (
+        <Vacio
+          icono="people-outline"
+          titulo={t('admin.emptyRoster')}
+          texto={t('profe.invitaTexto')}
+        />
+      ) : (
+        <Tarjeta style={{ gap: 0, paddingVertical: 4 }}>
+          {roster.map((s, i) => {
             const activo = s.estado === 'activo';
             const suprimido = s.estado === 'suprimido';
             return (
-              <View key={s.uid} style={[styles.row, { borderColor: colors.background.secondary }]}>
-                <View style={{ flex: 1 }}>
-                  <Text style={[styles.rowName, { color: colors.text.primary }]}>{s.nombre}</Text>
+              <View
+                key={s.uid}
+                style={[
+                  styles.alumno,
+                  i > 0 && { borderTopWidth: 1, borderTopColor: colors.materials.border },
+                ]}
+              >
+                <Avatar nombre={s.nombre} />
+                <View style={{ flex: 1, gap: 4 }}>
                   <Text
-                    style={[
-                      styles.rowSub,
-                      { color: activo ? colors.system.green : colors.system.orange },
-                    ]}
+                    style={[styles.alumnoNombre, { color: colors.text.primary }]}
+                    numberOfLines={1}
                   >
-                    {t(`estados.${s.estado}`)}
+                    {s.nombre}
                   </Text>
+                  <Pill texto={t(`estados.${s.estado}`)} tono={TONO_ESTADO[s.estado]} />
                 </View>
-                <View style={styles.rowActions}>
-                  {!suprimido && (
-                    <TouchableOpacity
-                      style={[
-                        styles.authBtn,
-                        { borderColor: activo ? colors.system.red : colors.system.green },
-                      ]}
+                {!suprimido ? (
+                  <View style={styles.acciones}>
+                    <Bounceable
                       onPress={() => onToggleAuth(s.uid, activo)}
                       disabled={busy}
+                      activeScale={0.94}
+                      accessibilityRole="button"
+                      accessibilityLabel={activo ? t('admin.revoke') : t('admin.authorize')}
+                      style={[
+                        styles.accion,
+                        {
+                          borderColor: activo ? colors.materials.border : colors.system.green,
+                          backgroundColor: activo ? colors.materials.base : colors.fill.greenSubtle,
+                        },
+                      ]}
                     >
                       <Text
-                        style={{
-                          color: activo ? colors.system.red : colors.system.green,
-                          fontWeight: '700',
-                          fontSize: 12,
-                        }}
+                        style={[
+                          styles.accionTexto,
+                          { color: activo ? colors.text.secondary : colors.system.green },
+                        ]}
                       >
                         {activo ? t('admin.revoke') : t('admin.authorize')}
                       </Text>
-                    </TouchableOpacity>
-                  )}
-                  {!suprimido && (
-                    <TouchableOpacity
-                      style={[styles.iconBtn, { borderColor: colors.system.red }]}
+                    </Bounceable>
+                    <Bounceable
                       onPress={() => onSuppress(s.uid)}
                       disabled={busy}
+                      activeScale={0.9}
                       accessibilityRole="button"
                       accessibilityLabel={t('admin.suppress')}
+                      style={[styles.icono, { backgroundColor: colors.fill.redSubtle }]}
                     >
-                      <Ionicons name="trash-outline" size={16} color={colors.system.red} />
-                    </TouchableOpacity>
-                  )}
-                </View>
+                      <Ionicons name="trash-outline" size={17} color={colors.system.red} />
+                    </Bounceable>
+                  </View>
+                ) : null}
               </View>
             );
-          })
-        )}
-      </ScrollView>
+          })}
+        </Tarjeta>
+      )}
+    </View>
+  );
+
+  return (
+    <ScreenWrapper>
+      <ContextScrollView
+        contentContainerStyle={[styles.page, { paddingTop: insets.top + 12 }]}
+        showsVerticalScrollIndicator={false}
+      >
+        <Encabezado
+          atras="/(staff)/clases"
+          sobretitulo={t('profe.sobreGestionar')}
+          titulo={cursoNombre}
+          subtitulo={t('profe.gestionarSub')}
+        />
+
+        <Segmented options={vistas} value={vista} onChange={setVista} />
+
+        <FadeIn key={vista}>
+          {vista === 'invitar' ? (
+            invitar
+          ) : vista === 'mundos' ? (
+            colegioId && cursoId ? (
+              <ClassWorldsManager colegioId={colegioId} cursoId={cursoId} />
+            ) : null
+          ) : (
+            estudiantes
+          )}
+        </FadeIn>
+      </ContextScrollView>
     </ScreenWrapper>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1 },
-  scroll: { paddingHorizontal: 24, paddingBottom: 48, gap: 10 },
-  title: { fontSize: 24, fontWeight: '800' },
-  subtitle: { fontSize: 14 },
-  hint: { fontSize: 12, lineHeight: 16 },
-  muted: { fontSize: 13, marginTop: 4 },
-  codeCard: { borderRadius: 14, padding: 16, gap: 6, alignItems: 'center', marginTop: 4 },
-  codeLabel: { fontSize: 13, fontWeight: '600' },
-  codeValue: { fontSize: 32, fontWeight: '900', letterSpacing: 4 },
-  qrWrap: { padding: 10, borderRadius: 12, backgroundColor: '#FFFFFF', marginVertical: 4 },
-  codeHint: { fontSize: 12, textAlign: 'center' },
-  codeBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    borderWidth: 1.5,
-    borderRadius: 10,
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    marginTop: 4,
-  },
-  codeBtnText: { fontSize: 14, fontWeight: '700' },
-  copyRow: { flexDirection: 'row', gap: 8, flexWrap: 'wrap', justifyContent: 'center' },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    borderWidth: 1,
+  page: { paddingHorizontal: 20, paddingBottom: 64, gap: 14 },
+  vista: { gap: 14 },
+  codigoTarjeta: { alignItems: 'center', padding: 20, gap: 16 },
+  codigoEtiqueta: { fontSize: 12, fontWeight: '900', letterSpacing: 1.4 },
+  fichas: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 6 },
+  ficha: {
+    width: 40,
+    height: 50,
     borderRadius: 12,
-    padding: 14,
+    borderWidth: 2,
+    borderBottomWidth: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  rowName: { fontSize: 15, fontWeight: '600' },
-  rowSub: { fontSize: 12, fontWeight: '600' },
-  authBtn: { borderWidth: 1.5, borderRadius: 8, paddingVertical: 6, paddingHorizontal: 12 },
-  rowActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  iconBtn: {
-    borderWidth: 1.5,
-    borderRadius: 8,
-    paddingVertical: 6,
-    paddingHorizontal: 10,
+  fichaTexto: { fontSize: 24, fontWeight: '900' },
+  qr: { padding: 14, borderRadius: 22, backgroundColor: '#FFFFFF' },
+  codigoAyuda: { fontSize: 15, lineHeight: 21, fontWeight: '600', textAlign: 'center' },
+  dosBotones: { gap: 10, alignSelf: 'stretch' },
+  llave: {
+    width: 84,
+    height: 84,
+    borderRadius: 26,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  alumno: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12 },
+  alumnoNombre: { fontSize: 16, fontWeight: '800' },
+  acciones: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  accion: {
+    borderWidth: 2,
+    borderBottomWidth: 4,
+    borderRadius: 12,
+    paddingVertical: 7,
+    paddingHorizontal: 12,
+  },
+  accionTexto: { fontSize: 13, fontWeight: '900' },
+  icono: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },

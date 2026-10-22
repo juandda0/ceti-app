@@ -7,11 +7,9 @@
  * UI copy rule: nunca se muestra "IA"; el disparador es el ícono de destellos.
  */
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Ionicons } from '@expo/vector-icons';
 import CetiBottomSheet from '@shared/components/CetiBottomSheet';
-import { useThemeColors } from '@shared/hooks/useThemeColors';
+import { BotonChunky, Campo, oscurecer } from '@features/dashboard/components/profe/kit';
 
 export default function GenerateContentSheet({
   visible,
@@ -29,7 +27,6 @@ export default function GenerateContentSheet({
   onGenerate: (detalle: string) => void;
 }) {
   const { t } = useTranslation();
-  const colors = useThemeColors();
   const [detalle, setDetalle] = useState('');
 
   // Limpia el enfoque al cerrar para no arrastrarlo a la próxima generación.
@@ -48,59 +45,23 @@ export default function GenerateContentSheet({
       title={title}
       subtitle={t('contentEditor.generateSheetSubtitle')}
     >
-      <TextInput
-        style={[
-          styles.input,
-          {
-            color: colors.text.primary,
-            backgroundColor: colors.background.secondary,
-            borderColor: colors.materials.border,
-          },
-        ]}
+      <Campo
         value={detalle}
         onChangeText={setDetalle}
         placeholder={t('contentEditor.generateDetallePlaceholder')}
-        placeholderTextColor={colors.text.quaternary}
         multiline
         maxLength={300}
         editable={!generating}
+        acento={accent}
       />
-      <TouchableOpacity
+      <BotonChunky
+        texto={generating ? t('contentEditor.generating') : t('contentEditor.generate')}
+        icono="sparkles"
+        color={accent}
+        colorOscuro={oscurecer(accent)}
+        cargando={generating}
         onPress={() => onGenerate(detalle)}
-        disabled={generating}
-        accessibilityRole="button"
-        style={[styles.cta, { backgroundColor: accent, opacity: generating ? 0.6 : 1 }]}
-      >
-        {generating ? (
-          <ActivityIndicator size="small" color="#fff" />
-        ) : (
-          <Ionicons name="sparkles" size={16} color="#fff" />
-        )}
-        <Text style={styles.ctaText}>
-          {generating ? t('contentEditor.generating') : t('contentEditor.generate')}
-        </Text>
-      </TouchableOpacity>
+      />
     </CetiBottomSheet>
   );
 }
-
-const styles = StyleSheet.create({
-  input: {
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    fontSize: 14,
-    minHeight: 64,
-    textAlignVertical: 'top',
-  },
-  cta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    borderRadius: 10,
-    paddingVertical: 12,
-  },
-  ctaText: { color: '#fff', fontSize: 15, fontWeight: '800' },
-});

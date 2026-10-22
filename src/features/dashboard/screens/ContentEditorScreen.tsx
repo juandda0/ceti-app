@@ -7,25 +7,24 @@
  * Saving a piece performs the copy-on-write (courseContentRepository): the
  * global default is never mutated; "Restaurar" deletes the course copy.
  * Quiz minimums (4/3/3, R9) are enforced on save so the class never breaks.
+ *
+ * Misma piel que el estudiante: cada pregunta es una tarjeta, las opciones se
+ * marcan como en el quiz (V/F con dos botones grandes) y "Guardar" queda fijo
+ * abajo, siempre a mano.
  */
-import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import Animated from 'react-native-reanimated';
+import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
+import Bounceable from '@shared/components/Bounceable';
+import ContextScrollView from '@shared/components/motion/ContextScrollView';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { confirmAction, showMessage } from '@shared/lib/dialogs';
+import { listExit, listLayout } from '@shared/constants/motion';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { adminService } from '@features/dashboard/data/adminService';
 import { classConfigRepository } from '@features/dashboard/data/classConfigRepository';
@@ -51,6 +50,8 @@ import {
 import GenerateContentSheet from '@features/dashboard/components/GenerateContentSheet';
 import { rosterRepository } from '@features/dashboard/data/rosterRepository';
 import { worldDefById } from '@features/learning/data/worldMeta';
+import { planetaDeMundo } from '@features/learning/data/planetas';
+import { CetiAnimation } from '@features/animations';
 import {
   COMPETENCIA_PERSONALIZADA,
   competenciaForWorld,
@@ -65,6 +66,17 @@ import type {
 import type { MicroteoriaCard } from '@features/learning/data/content.types';
 import type { CursoConfigMundos } from '@shared/types/tenancy';
 import type { ThemeColors } from '@shared/constants/colors';
+import { FadeIn } from '@features/savings/charts/ChartParts';
+import {
+  BotonChunky,
+  Campo,
+  Chip,
+  Encabezado,
+  Esqueleto,
+  Pill,
+  Tarjeta,
+  tapsConTeclado,
+} from '@features/dashboard/components/profe/kit';
 
 type QuizPiece = 'mc' | 'vf' | 'ordenar';
 type Tab = QuizPiece | 'teoria' | 'info';
@@ -78,7 +90,6 @@ export default function ContentEditorScreen() {
   const { t } = useTranslation();
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
-  const router = useRouter();
   const params = useLocalSearchParams<{ cursoId: string; worldId: string }>();
   const cursoId = params.cursoId ?? '';
   const worldId = params.worldId ?? '';
@@ -461,295 +472,331 @@ export default function ContentEditorScreen() {
   }
 
   const displayName = entry?.nombre ?? def?.name ?? worldId;
-  const accent = def?.color ?? colors.brand.primary;
+  // Mismo planeta (y acento) que ve el estudiante para este mundo en Tu Galaxia.
+  // (Mismo cálculo que la lista de Mundos: lugar entre los visibles, o en la lista si está oculto.)
+  const mundosClase = config?.mundos ?? [];
+  const posVisible = mundosClase
+    .filter((m) => m.activo)
+    .map((m) => m.worldId)
+    .indexOf(worldId);
+  const planeta = planetaDeMundo(
+    worldId,
+    posVisible >= 0
+      ? posVisible
+      : Math.max(
+          0,
+          mundosClase.findIndex((m) => m.worldId === worldId)
+        )
+  );
+  const accent = planeta.acento;
   const currentSource = tab === 'info' ? null : (pieceSource[tab] ?? null);
+  const cargando = !configLoaded || !grado;
+  const tabListo =
+    tab === 'info' ? true : tab === 'teoria' ? cards !== null : items[tab] !== undefined;
 
-  const inputStyle = [
-    styles.input,
-    {
-      color: colors.text.primary,
-      backgroundColor: colors.background.secondary,
-      borderColor: colors.materials.border,
-    },
-  ];
+  const onSave = () => {
+    if (tab === 'info') void saveMeta();
+    else if (tab === 'teoria') void saveTeoria();
+    else void saveQuizPiece(tab);
+  };
 
-  return (
-    <ScreenWrapper style={{ flex: 1, backgroundColor: colors.background.base }}>
-      <ScrollView contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16 }]}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          accessibilityRole="button"
-          accessibilityLabel={t('quiz.back')}
-          style={styles.backBtn}
-        >
-          <Ionicons name="arrow-back" size={20} color={colors.text.secondary} />
-        </TouchableOpacity>
-        <Text style={[styles.title, { color: colors.text.primary }]}>
-          {t('contentEditor.title', { name: displayName })}
+  const quizCount = tab !== 'info' && tab !== 'teoria' ? (items[tab]?.length ?? 0) : 0;
+
+  let body: ReactNode;
+  if (cargando || !tabListo) {
+    body = <Esqueleto filas={3} alto={150} />;
+  } else if (tab === 'info') {
+    body = (
+      <View style={styles.section}>
+        <Tarjeta style={{ gap: 16 }}>
+          <Campo
+            etiqueta={t('contentEditor.metaNombre')}
+            value={metaDraft.nombre}
+            onChangeText={(v) => setMetaDraft((m) => ({ ...m, nombre: v }))}
+            placeholder={def?.name}
+            maxLength={60}
+            acento={accent}
+          />
+          <Campo
+            etiqueta={t('contentEditor.metaSubtitle')}
+            value={metaDraft.subtitle}
+            onChangeText={(v) => setMetaDraft((m) => ({ ...m, subtitle: v }))}
+            placeholder={def?.subtitle}
+            maxLength={80}
+            acento={accent}
+          />
+          <Campo
+            etiqueta={t('contentEditor.metaDescripcion')}
+            value={metaDraft.descripcion}
+            onChangeText={(v) => setMetaDraft((m) => ({ ...m, descripcion: v }))}
+            placeholder={def?.description}
+            multiline
+            maxLength={200}
+            acento={accent}
+          />
+        </Tarjeta>
+        <Text style={[styles.helpText, { color: colors.text.tertiary }]}>
+          {t('contentEditor.metaHint')}
         </Text>
-        <Text style={[styles.subtitle, { color: colors.text.tertiary }]}>
-          {t('contentEditor.subtitle')}
-        </Text>
-
-        {/* Tabs */}
-        <View style={styles.tabRow}>
-          {TABS.map((tb) => (
-            <TouchableOpacity
-              key={tb}
-              onPress={() => setTab(tb)}
-              accessibilityRole="button"
-              style={[
-                styles.tabChip,
-                {
-                  backgroundColor: tab === tb ? accent : colors.background.secondary,
-                },
-              ]}
-            >
-              <Text
-                style={[styles.tabChipText, { color: tab === tb ? '#fff' : colors.text.secondary }]}
-              >
-                {t(`contentEditor.tab_${tb}`)}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {currentSource && (
-          <View style={styles.sourceRow}>
-            <Ionicons
-              name={currentSource === 'custom' ? 'create-outline' : 'library-outline'}
-              size={14}
-              color={currentSource === 'custom' ? accent : colors.text.tertiary}
-            />
-            <Text
-              style={[
-                styles.sourceText,
-                { color: currentSource === 'custom' ? accent : colors.text.tertiary },
-              ]}
-            >
-              {t(
-                currentSource === 'custom'
-                  ? 'contentEditor.sourceCustom'
-                  : 'contentEditor.sourceDefault'
-              )}
-            </Text>
-            {currentSource === 'custom' && tab !== 'info' && (
-              <TouchableOpacity onPress={() => restorePiece(tab)} accessibilityRole="button">
-                <Text style={[styles.restoreLink, { color: colors.system.red }]}>
-                  {t('contentEditor.restore')}
-                </Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        )}
-
-        {!configLoaded || !grado ? (
-          <ActivityIndicator style={{ marginTop: 32 }} color={accent} />
-        ) : tab === 'info' ? (
-          <View style={styles.section}>
-            <Text style={[styles.fieldLabel, { color: colors.text.secondary }]}>
-              {t('contentEditor.metaNombre')}
-            </Text>
-            <TextInput
-              style={inputStyle}
-              value={metaDraft.nombre}
-              onChangeText={(v) => setMetaDraft((m) => ({ ...m, nombre: v }))}
-              placeholder={def?.name}
-              placeholderTextColor={colors.text.quaternary}
-              maxLength={60}
-            />
-            <Text style={[styles.fieldLabel, { color: colors.text.secondary }]}>
-              {t('contentEditor.metaSubtitle')}
-            </Text>
-            <TextInput
-              style={inputStyle}
-              value={metaDraft.subtitle}
-              onChangeText={(v) => setMetaDraft((m) => ({ ...m, subtitle: v }))}
-              placeholder={def?.subtitle}
-              placeholderTextColor={colors.text.quaternary}
-              maxLength={80}
-            />
-            <Text style={[styles.fieldLabel, { color: colors.text.secondary }]}>
-              {t('contentEditor.metaDescripcion')}
-            </Text>
-            <TextInput
-              style={[...inputStyle, styles.multiline]}
-              value={metaDraft.descripcion}
-              onChangeText={(v) => setMetaDraft((m) => ({ ...m, descripcion: v }))}
-              placeholder={def?.description}
-              placeholderTextColor={colors.text.quaternary}
-              multiline
-              maxLength={200}
-            />
-            <Text style={[styles.helpText, { color: colors.text.quaternary }]}>
-              {t('contentEditor.metaHint')}
-            </Text>
-            <PrimaryButton
-              label={t('contentEditor.save')}
-              color={accent}
-              disabled={busy}
-              onPress={() => void saveMeta()}
-            />
-          </View>
-        ) : tab === 'teoria' ? (
-          cards === null ? (
-            <ActivityIndicator style={{ marginTop: 32 }} color={accent} />
-          ) : (
-            <View style={styles.section}>
-              {cards.map((card, i) => (
-                <View key={i} style={[styles.itemCard, { borderColor: colors.materials.border }]}>
-                  <ItemHeader
-                    label={t('contentEditor.cardN', { n: i + 1 })}
-                    colors={colors}
-                    onRemove={() => setCards((prev) => (prev ?? []).filter((_, j) => j !== i))}
-                    removeLabel={t('contentEditor.removeItem')}
-                  />
-                  <TextInput
-                    style={inputStyle}
-                    value={card.titulo}
-                    onChangeText={(v) =>
-                      setCards((prev) =>
-                        (prev ?? []).map((c, j) => (j === i ? { ...c, titulo: v } : c))
-                      )
-                    }
-                    placeholder={t('contentEditor.cardTitulo')}
-                    placeholderTextColor={colors.text.quaternary}
-                    maxLength={80}
-                  />
-                  <TextInput
-                    style={[...inputStyle, styles.multiline]}
-                    value={card.cuerpo}
-                    onChangeText={(v) =>
-                      setCards((prev) =>
-                        (prev ?? []).map((c, j) => (j === i ? { ...c, cuerpo: v } : c))
-                      )
-                    }
-                    placeholder={t('contentEditor.cardCuerpo')}
-                    placeholderTextColor={colors.text.quaternary}
-                    multiline
-                    maxLength={600}
-                  />
-                  <TextInput
-                    style={[...inputStyle, styles.multiline]}
-                    value={card.ejemplo ?? ''}
-                    onChangeText={(v) =>
-                      setCards((prev) =>
-                        (prev ?? []).map((c, j) =>
-                          j === i ? { ...c, ejemplo: v || undefined } : c
-                        )
-                      )
-                    }
-                    placeholder={t('contentEditor.cardEjemplo')}
-                    placeholderTextColor={colors.text.quaternary}
-                    multiline
-                    maxLength={400}
-                  />
-                </View>
-              ))}
-              <AddButton
-                label={t('contentEditor.addCard')}
-                colors={colors}
-                onPress={() => setCards((prev) => [...(prev ?? []), { titulo: '', cuerpo: '' }])}
-              />
-              <GenerateButton
-                label={t('contentEditor.generateCard')}
-                accent={accent}
-                onPress={() => setSheetOpen(true)}
-              />
-              <PrimaryButton
-                label={t('contentEditor.save')}
-                color={accent}
-                disabled={busy}
-                onPress={() => void saveTeoria()}
-              />
-            </View>
-          )
-        ) : items[tab] === undefined ? (
-          <ActivityIndicator style={{ marginTop: 32 }} color={accent} />
-        ) : (
-          <View style={styles.section}>
-            {(items[tab] ?? []).map((item, i) => (
-              <View
-                key={item.id}
-                style={[styles.itemCard, { borderColor: colors.materials.border }]}
-              >
+      </View>
+    );
+  } else if (tab === 'teoria') {
+    body = (
+      <View style={styles.section}>
+        {(cards ?? []).map((card, i) => (
+          <Animated.View key={i} exiting={listExit} layout={listLayout}>
+            <FadeIn delay={Math.min(i, 5) * 50}>
+              <Tarjeta style={styles.itemCard}>
+                <ItemHeader
+                  label={t('contentEditor.cardN', { n: i + 1 })}
+                  n={i + 1}
+                  accent={accent}
+                  colors={colors}
+                  onRemove={() => setCards((prev) => (prev ?? []).filter((_, j) => j !== i))}
+                  removeLabel={t('contentEditor.removeItem')}
+                />
+                <Campo
+                  value={card.titulo}
+                  onChangeText={(v) =>
+                    setCards((prev) =>
+                      (prev ?? []).map((c, j) => (j === i ? { ...c, titulo: v } : c))
+                    )
+                  }
+                  placeholder={t('contentEditor.cardTitulo')}
+                  maxLength={80}
+                  acento={accent}
+                />
+                <Campo
+                  value={card.cuerpo}
+                  onChangeText={(v) =>
+                    setCards((prev) =>
+                      (prev ?? []).map((c, j) => (j === i ? { ...c, cuerpo: v } : c))
+                    )
+                  }
+                  placeholder={t('contentEditor.cardCuerpo')}
+                  multiline
+                  maxLength={600}
+                  acento={accent}
+                />
+                <Campo
+                  value={card.ejemplo ?? ''}
+                  onChangeText={(v) =>
+                    setCards((prev) =>
+                      (prev ?? []).map((c, j) => (j === i ? { ...c, ejemplo: v || undefined } : c))
+                    )
+                  }
+                  placeholder={t('contentEditor.cardEjemplo')}
+                  multiline
+                  maxLength={400}
+                  acento={accent}
+                />
+              </Tarjeta>
+            </FadeIn>
+          </Animated.View>
+        ))}
+        <AddButton
+          label={t('contentEditor.addCard')}
+          colors={colors}
+          onPress={() => setCards((prev) => [...(prev ?? []), { titulo: '', cuerpo: '' }])}
+        />
+        <BotonChunky
+          texto={t('contentEditor.generateCard')}
+          icono="sparkles"
+          variante="secundario"
+          color={accent}
+          onPress={() => setSheetOpen(true)}
+        />
+      </View>
+    );
+  } else {
+    body = (
+      <View style={styles.section}>
+        <Pill
+          texto={t('profe.minimoPreguntas', { n: quizCount, min: QUIZ_MINIMUMS[tab] })}
+          tono={quizCount >= QUIZ_MINIMUMS[tab] ? 'verde' : 'naranja'}
+          icono={quizCount >= QUIZ_MINIMUMS[tab] ? 'checkmark-circle' : 'alert-circle'}
+        />
+        {(items[tab] ?? []).map((item, i) => (
+          <Animated.View key={item.id} exiting={listExit} layout={listLayout}>
+            <FadeIn delay={Math.min(i, 5) * 50}>
+              <Tarjeta style={styles.itemCard}>
                 <ItemHeader
                   label={t('contentEditor.itemN', { n: i + 1 })}
+                  n={i + 1}
+                  accent={accent}
                   colors={colors}
                   onRemove={() => removeItem(tab, i)}
                   removeLabel={t('contentEditor.removeItem')}
                 />
-                <TextInput
-                  style={[...inputStyle, styles.multiline]}
+                <Campo
                   value={item.enunciado}
                   onChangeText={(v) => updateItem(tab, i, { enunciado: v })}
                   placeholder={t('contentEditor.enunciado')}
-                  placeholderTextColor={colors.text.quaternary}
                   multiline
                   maxLength={400}
+                  acento={accent}
                 />
                 {item.tipo === 'multiple_choice' && (
                   <McFields
                     item={item as MultipleChoiceItem}
                     colors={colors}
                     accent={accent}
-                    inputStyle={inputStyle}
                     t={t}
                     onChange={(patch) => updateItem(tab, i, patch)}
                   />
                 )}
                 {item.tipo === 'true_false' && (
-                  <View style={styles.vfRow}>
+                  <View style={{ gap: 8 }}>
                     <Text style={[styles.fieldLabel, { color: colors.text.secondary }]}>
-                      {t('contentEditor.respuestaVerdadera')}
+                      {t('profe.laRespuestaEs')}
                     </Text>
-                    <Switch
-                      value={(item as TrueFalseItem).respuesta}
-                      onValueChange={(v) => updateItem(tab, i, { respuesta: v })}
-                    />
+                    <View style={styles.vfRow}>
+                      <Chip
+                        grande
+                        icono="checkmark-circle"
+                        texto={t('profe.verdadero')}
+                        color={colors.system.green}
+                        seleccionado={(item as TrueFalseItem).respuesta === true}
+                        onPress={() => updateItem(tab, i, { respuesta: true })}
+                      />
+                      <Chip
+                        grande
+                        icono="close-circle"
+                        texto={t('profe.falso')}
+                        color={colors.system.red}
+                        seleccionado={(item as TrueFalseItem).respuesta === false}
+                        onPress={() => updateItem(tab, i, { respuesta: false })}
+                      />
+                    </View>
                   </View>
                 )}
                 {item.tipo === 'ordenar' && (
                   <OrdenarFields
                     elements={item.elementosCanonicos ?? []}
                     colors={colors}
-                    inputStyle={inputStyle}
+                    accent={accent}
                     t={t}
                     onChange={(elementosCanonicos) => updateItem(tab, i, { elementosCanonicos })}
                   />
                 )}
-                <TextInput
-                  style={inputStyle}
+                <Campo
                   value={item.explicacion ?? ''}
                   onChangeText={(v) => updateItem(tab, i, { explicacion: v || undefined })}
                   placeholder={t('contentEditor.explicacion')}
-                  placeholderTextColor={colors.text.quaternary}
                   maxLength={400}
+                  acento={accent}
                 />
-              </View>
-            ))}
-            <Text style={[styles.helpText, { color: colors.text.quaternary }]}>
-              {t('contentEditor.quizMinHint', { n: QUIZ_MINIMUMS[tab] })}
-            </Text>
-            <AddButton
-              label={t('contentEditor.addItem')}
-              colors={colors}
-              onPress={() => addItem(tab)}
-            />
-            <GenerateButton
-              label={t('contentEditor.generateItem')}
-              accent={accent}
-              onPress={() => setSheetOpen(true)}
-            />
-            <PrimaryButton
-              label={t('contentEditor.save')}
+              </Tarjeta>
+            </FadeIn>
+          </Animated.View>
+        ))}
+        <Text style={[styles.helpText, { color: colors.text.tertiary }]}>
+          {t('contentEditor.quizMinHint', { n: QUIZ_MINIMUMS[tab] })}
+        </Text>
+        <AddButton
+          label={t('contentEditor.addItem')}
+          colors={colors}
+          onPress={() => addItem(tab)}
+        />
+        <BotonChunky
+          texto={t('contentEditor.generateItem')}
+          icono="sparkles"
+          variante="secundario"
+          color={accent}
+          onPress={() => setSheetOpen(true)}
+        />
+      </View>
+    );
+  }
+
+  return (
+    <ScreenWrapper>
+      <ContextScrollView
+        contentContainerStyle={[
+          styles.page,
+          { paddingTop: insets.top + 12, paddingBottom: 120 + insets.bottom },
+        ]}
+        keyboardShouldPersistTaps={tapsConTeclado}
+        showsVerticalScrollIndicator={false}
+      >
+        <Encabezado
+          atras="/(staff)/clases"
+          sobretitulo={t('profe.sobreEditor')}
+          titulo={displayName}
+          subtitulo={t('contentEditor.subtitle')}
+          derecha={<CetiAnimation id={planeta.animacion} size={76} />}
+        />
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.tabRow}
+          style={styles.tabScroll}
+        >
+          {TABS.map((tb) => (
+            <Chip
+              key={tb}
+              texto={t(`contentEditor.tab_${tb}`)}
+              icono={TAB_ICON[tb]}
               color={accent}
-              disabled={busy}
-              onPress={() => void saveQuizPiece(tab)}
+              seleccionado={tab === tb}
+              onPress={() => setTab(tb)}
             />
+          ))}
+        </ScrollView>
+
+        {currentSource ? (
+          <View style={styles.sourceRow}>
+            <Pill
+              texto={t(
+                currentSource === 'custom'
+                  ? 'contentEditor.sourceCustom'
+                  : 'contentEditor.sourceDefault'
+              )}
+              tono={currentSource === 'custom' ? 'marca' : 'neutro'}
+              icono={currentSource === 'custom' ? 'create' : 'library'}
+            />
+            {currentSource === 'custom' && tab !== 'info' ? (
+              <Pressable
+                onPress={() => restorePiece(tab)}
+                accessibilityRole="button"
+                hitSlop={8}
+                style={styles.restore}
+              >
+                <Ionicons name="refresh" size={14} color={colors.system.red} />
+                <Text style={[styles.restoreLink, { color: colors.system.red }]}>
+                  {t('contentEditor.restore')}
+                </Text>
+              </Pressable>
+            ) : null}
           </View>
-        )}
-      </ScrollView>
+        ) : null}
+
+        {/* key={tab}: al cambiar de sección el contenido entra suave. */}
+        <FadeIn key={tab}>{body}</FadeIn>
+      </ContextScrollView>
+
+      <View
+        style={[
+          styles.footer,
+          {
+            paddingBottom: Math.max(insets.bottom, 12) + 4,
+            backgroundColor: colors.background.base,
+            borderTopColor: colors.materials.border,
+          },
+        ]}
+      >
+        <BotonChunky
+          texto={t('contentEditor.save')}
+          icono="checkmark"
+          color={accent}
+          colorOscuro={planeta.acentoOscuro}
+          cargando={busy}
+          deshabilitado={cargando || !tabListo}
+          onPress={onSave}
+        />
+      </View>
+
       {tab !== 'info' && (
         <GenerateContentSheet
           visible={sheetOpen}
@@ -764,50 +811,46 @@ export default function ContentEditorScreen() {
   );
 }
 
-// ── Small building blocks ─────────────────────────────────────────────────────
+const TAB_ICON: Record<Tab, keyof typeof Ionicons.glyphMap> = {
+  mc: 'list',
+  vf: 'checkmark-done',
+  ordenar: 'swap-vertical',
+  teoria: 'book',
+  info: 'information-circle',
+};
 
-function GenerateButton({
-  label,
-  accent,
-  onPress,
-}: {
-  label: string;
-  accent: string;
-  onPress: () => void;
-}) {
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      accessibilityRole="button"
-      style={[styles.generateBtn, { borderColor: accent }]}
-    >
-      <Ionicons name="sparkles-outline" size={16} color={accent} />
-      <Text style={[styles.generateBtnText, { color: accent }]}>{label}</Text>
-    </TouchableOpacity>
-  );
-}
+// ── Small building blocks ─────────────────────────────────────────────────────
 
 function ItemHeader({
   label,
+  n,
+  accent,
   colors,
   onRemove,
   removeLabel,
 }: {
   label: string;
+  n: number;
+  accent: string;
   colors: ThemeColors;
   onRemove: () => void;
   removeLabel: string;
 }) {
   return (
     <View style={styles.itemHeader}>
-      <Text style={[styles.itemLabel, { color: colors.text.tertiary }]}>{label}</Text>
-      <TouchableOpacity
+      <View style={[styles.itemNum, { backgroundColor: accent + '26' }]}>
+        <Text style={[styles.itemNumText, { color: colors.text.primary }]}>{n}</Text>
+      </View>
+      <Text style={[styles.itemLabel, { color: colors.text.tertiary }]}>{label.toUpperCase()}</Text>
+      <Bounceable
         onPress={onRemove}
+        activeScale={0.9}
         accessibilityRole="button"
         accessibilityLabel={removeLabel}
+        style={[styles.removeBtn, { backgroundColor: colors.fill.redSubtle }]}
       >
         <Ionicons name="trash-outline" size={16} color={colors.system.red} />
-      </TouchableOpacity>
+      </Bounceable>
     </View>
   );
 }
@@ -822,37 +865,16 @@ function AddButton({
   onPress: () => void;
 }) {
   return (
-    <TouchableOpacity
+    <Bounceable
       onPress={onPress}
+      activeScale={0.98}
       accessibilityRole="button"
+      accessibilityLabel={label}
       style={[styles.addBtn, { borderColor: colors.materials.border }]}
     >
-      <Ionicons name="add" size={16} color={colors.text.secondary} />
+      <Ionicons name="add-circle" size={20} color={colors.text.secondary} />
       <Text style={[styles.addBtnText, { color: colors.text.secondary }]}>{label}</Text>
-    </TouchableOpacity>
-  );
-}
-
-function PrimaryButton({
-  label,
-  color,
-  disabled,
-  onPress,
-}: {
-  label: string;
-  color: string;
-  disabled: boolean;
-  onPress: () => void;
-}) {
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      disabled={disabled}
-      accessibilityRole="button"
-      style={[styles.saveBtn, { backgroundColor: color, opacity: disabled ? 0.6 : 1 }]}
-    >
-      <Text style={styles.saveBtnText}>{label}</Text>
-    </TouchableOpacity>
+    </Bounceable>
   );
 }
 
@@ -860,45 +882,50 @@ function McFields({
   item,
   colors,
   accent,
-  inputStyle,
   t,
   onChange,
 }: {
   item: MultipleChoiceItem;
   colors: ThemeColors;
   accent: string;
-  inputStyle: object[];
   t: (key: string, options?: Record<string, unknown>) => string;
   onChange: (patch: Partial<MultipleChoiceItem>) => void;
 }) {
   return (
-    <View style={{ gap: 6 }}>
-      {item.opciones.map((op, j) => (
-        <View key={j} style={styles.optionRow}>
-          <TouchableOpacity
-            onPress={() => onChange({ correctIndex: j })}
-            accessibilityRole="radio"
-            accessibilityState={{ selected: item.correctIndex === j }}
-            accessibilityLabel={t('contentEditor.markCorrect', { n: j + 1 })}
-          >
-            <Ionicons
-              name={item.correctIndex === j ? 'radio-button-on' : 'radio-button-off'}
-              size={20}
-              color={item.correctIndex === j ? accent : colors.text.quaternary}
+    <View style={{ gap: 8 }}>
+      {item.opciones.map((op, j) => {
+        const correcta = item.correctIndex === j;
+        return (
+          <View key={j} style={styles.optionRow}>
+            <Bounceable
+              onPress={() => onChange({ correctIndex: j })}
+              activeScale={0.88}
+              accessibilityRole="radio"
+              accessibilityState={{ selected: correcta }}
+              accessibilityLabel={t('contentEditor.markCorrect', { n: j + 1 })}
+              style={[
+                styles.radio,
+                correcta
+                  ? { backgroundColor: colors.system.green, borderColor: colors.system.green }
+                  : { borderColor: colors.materials.border },
+              ]}
+            >
+              {correcta ? <Ionicons name="checkmark" size={18} color="#FFFFFF" /> : null}
+            </Bounceable>
+            <Campo
+              value={op}
+              onChangeText={(v) =>
+                onChange({ opciones: item.opciones.map((o, k) => (k === j ? v : o)) })
+              }
+              placeholder={t('contentEditor.opcionN', { n: j + 1 })}
+              maxLength={160}
+              acento={accent}
+              style={{ flex: 1 }}
+              inputStyle={correcta ? { borderColor: colors.system.green } : undefined}
             />
-          </TouchableOpacity>
-          <TextInput
-            style={[...inputStyle, { flex: 1 }]}
-            value={op}
-            onChangeText={(v) =>
-              onChange({ opciones: item.opciones.map((o, k) => (k === j ? v : o)) })
-            }
-            placeholder={t('contentEditor.opcionN', { n: j + 1 })}
-            placeholderTextColor={colors.text.quaternary}
-            maxLength={160}
-          />
-        </View>
-      ))}
+          </View>
+        );
+      })}
     </View>
   );
 }
@@ -906,45 +933,49 @@ function McFields({
 function OrdenarFields({
   elements,
   colors,
-  inputStyle,
+  accent,
   t,
   onChange,
 }: {
   elements: string[];
   colors: ThemeColors;
-  inputStyle: object[];
+  accent: string;
   t: (key: string, options?: Record<string, unknown>) => string;
   onChange: (elements: string[]) => void;
 }) {
   return (
-    <View style={{ gap: 6 }}>
-      <Text style={[styles.helpText, { color: colors.text.quaternary }]}>
+    <View style={{ gap: 8 }}>
+      <Text style={[styles.helpText, { color: colors.text.tertiary }]}>
         {t('contentEditor.ordenarHint')}
       </Text>
       {elements.map((el, j) => (
         <View key={j} style={styles.optionRow}>
-          <Text style={[styles.ordenNum, { color: colors.text.tertiary }]}>{j + 1}.</Text>
-          <TextInput
-            style={[...inputStyle, { flex: 1 }]}
+          <View style={[styles.ordenNum, { backgroundColor: accent + '26' }]}>
+            <Text style={[styles.ordenNumText, { color: colors.text.primary }]}>{j + 1}</Text>
+          </View>
+          <Campo
             value={el}
             onChangeText={(v) => onChange(elements.map((e, k) => (k === j ? v : e)))}
             placeholder={t('contentEditor.elementoN', { n: j + 1 })}
-            placeholderTextColor={colors.text.quaternary}
             maxLength={160}
+            acento={accent}
+            style={{ flex: 1 }}
           />
           {elements.length > 3 && (
-            <TouchableOpacity
+            <Bounceable
               onPress={() => onChange(elements.filter((_, k) => k !== j))}
+              activeScale={0.9}
               accessibilityRole="button"
               accessibilityLabel={t('contentEditor.removeItem')}
+              style={[styles.removeBtn, { backgroundColor: colors.materials.highlight }]}
             >
-              <Ionicons name="close" size={16} color={colors.text.quaternary} />
-            </TouchableOpacity>
+              <Ionicons name="close" size={16} color={colors.text.secondary} />
+            </Bounceable>
           )}
         </View>
       ))}
       {elements.length < 6 && (
-        <TouchableOpacity
+        <Pressable
           onPress={() => onChange([...elements, ''])}
           accessibilityRole="button"
           style={styles.addElementBtn}
@@ -952,62 +983,77 @@ function OrdenarFields({
           <Text style={[styles.addBtnText, { color: colors.text.secondary }]}>
             {t('contentEditor.addElemento')}
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  scroll: { paddingHorizontal: 24, paddingBottom: 64, gap: 10 },
-  backBtn: { alignSelf: 'flex-start', padding: 4 },
-  title: { fontSize: 22, fontWeight: '800' },
-  subtitle: { fontSize: 13, lineHeight: 18 },
-  tabRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 6 },
-  tabChip: { borderRadius: 16, paddingVertical: 6, paddingHorizontal: 12 },
-  tabChipText: { fontSize: 12, fontWeight: '700' },
-  sourceRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 },
-  sourceText: { fontSize: 12, fontWeight: '600', flex: 1 },
-  restoreLink: { fontSize: 12, fontWeight: '700' },
-  section: { gap: 12, marginTop: 8 },
-  itemCard: { borderWidth: 1, borderRadius: 12, padding: 12, gap: 8 },
-  itemHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  itemLabel: { fontSize: 11, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 0.5 },
-  input: {
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    fontSize: 14,
+  page: { paddingHorizontal: 20, gap: 14 },
+  tabScroll: { marginHorizontal: -20 },
+  tabRow: { gap: 8, paddingHorizontal: 20 },
+  sourceRow: { flexDirection: 'row', alignItems: 'center', gap: 10, flexWrap: 'wrap' },
+  restore: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  restoreLink: { fontSize: 13, fontWeight: '800' },
+  section: { gap: 14 },
+  itemCard: { gap: 12 },
+  itemHeader: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  itemNum: {
+    width: 30,
+    height: 30,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  multiline: { minHeight: 64, textAlignVertical: 'top' },
-  fieldLabel: { fontSize: 12, fontWeight: '700' },
-  helpText: { fontSize: 11, lineHeight: 15 },
-  optionRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  ordenNum: { fontSize: 13, fontWeight: '700', width: 18 },
-  vfRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  itemNumText: { fontSize: 14, fontWeight: '900' },
+  itemLabel: { flex: 1, fontSize: 12, fontWeight: '900', letterSpacing: 1.2 },
+  removeBtn: {
+    width: 34,
+    height: 34,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  fieldLabel: { fontSize: 14, fontWeight: '800' },
+  helpText: { fontSize: 13, lineHeight: 18, fontWeight: '500' },
+  optionRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  radio: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  ordenNum: {
+    width: 30,
+    height: 30,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  ordenNumText: { fontSize: 14, fontWeight: '900' },
+  vfRow: { flexDirection: 'row', gap: 10 },
   addBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
-    borderWidth: 1,
+    gap: 8,
+    borderWidth: 2,
     borderStyle: 'dashed',
-    borderRadius: 10,
-    paddingVertical: 10,
+    borderRadius: 18,
+    paddingVertical: 14,
   },
   addElementBtn: { alignSelf: 'flex-start', paddingVertical: 4 },
-  addBtnText: { fontSize: 13, fontWeight: '700' },
-  generateBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    borderWidth: 1.5,
-    borderRadius: 10,
-    paddingVertical: 12,
+  addBtnText: { fontSize: 15, fontWeight: '800' },
+  footer: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    borderTopWidth: StyleSheet.hairlineWidth,
   },
-  generateBtnText: { fontSize: 14, fontWeight: '800' },
-  saveBtn: { borderRadius: 10, paddingVertical: 12, alignItems: 'center' },
-  saveBtnText: { color: '#fff', fontSize: 15, fontWeight: '800' },
 });

@@ -6,9 +6,13 @@
  * "save" button — least friction) and reaches students in real time via their
  * onSnapshot on the same doc. "Restaurar configuración" deletes the doc, which
  * IS the defaults, so it is always safe.
+ *
+ * Cada fila muestra el mismo planeta que ve el estudiante en Tu Galaxia. Tocar el
+ * mundo abre su editor; en los mundos propios (`cw_*`) el botón "más" abre una
+ * hoja con duplicar y eliminar.
  */
 import { useEffect, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, Switch, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Switch, ActivityIndicator, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
@@ -16,15 +20,19 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { confirmAction, showMessage } from '@shared/lib/dialogs';
 import ReorderableList from '@shared/components/ReorderableList';
 import CetiBottomSheet from '@shared/components/CetiBottomSheet';
+import Bounceable from '@shared/components/Bounceable';
+import { CetiAnimation } from '@features/animations';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { classConfigRepository } from '@features/dashboard/data/classConfigRepository';
 import { courseContentRepository } from '@features/dashboard/data/courseContentRepository';
 import { rosterRepository } from '@features/dashboard/data/rosterRepository';
 import { buildCuratedConfig } from '@features/learning/data/classConfig';
 import { WORLD_DEFS, displayWorldDef, isCustomWorldId } from '@features/learning/data/worldMeta';
+import { planetaDeMundo } from '@features/learning/data/planetas';
+import { Chip, Esqueleto, Pill } from '@features/dashboard/components/profe/kit';
 import type { CursoConfigMundoEntry, CursoConfigMundos } from '@shared/types/tenancy';
 
-const ROW_HEIGHT = 58;
+const ROW_HEIGHT = 84;
 
 export default function ClassWorldsManager({
   colegioId,
@@ -108,6 +116,9 @@ export default function ClassWorldsManager({
         }),
     });
 
+  // Hoja de acciones de un mundo propio (personalizar · duplicar · eliminar).
+  const [menuFor, setMenuFor] = useState<{ worldId: string; name: string } | null>(null);
+
   // Duplicate-to-course: opens a sheet listing the professor's OTHER courses.
   const [duplicateFor, setDuplicateFor] = useState<{ worldId: string; name: string } | null>(null);
   const [targetCursos, setTargetCursos] = useState<{ id: string; nombre: string }[] | null>(null);
@@ -155,12 +166,23 @@ export default function ClassWorldsManager({
       onConfirm: () => void classConfigRepository.reset(colegioId, cursoId),
     });
 
-  if (!loaded) return null;
+  const abrirEditor = (worldId: string) =>
+    router.push(`/(staff)/contenido/${cursoId}/${worldId}` as never);
+
+  if (!loaded) return <Esqueleto filas={4} alto={ROW_HEIGHT - 10} />;
+
+  // Mismo planeta que ve el estudiante: los propios rotan por su lugar entre los visibles.
+  const visibles = entries.filter((e) => e.activo).map((e) => e.worldId);
+  const planetaDe = (worldId: string) => {
+    const i = visibles.indexOf(worldId);
+    return planetaDeMundo(worldId, i >= 0 ? i : entries.findIndex((e) => e.worldId === worldId));
+  };
 
   const renderRow = (entry: CursoConfigMundoEntry) => {
     const def = displayWorldDef(entry.worldId, entry);
     if (!def) return null;
     const esCustom = isCustomWorldId(entry.worldId);
+    const planeta = planetaDe(entry.worldId);
     return (
       <View style={styles.rowSlot}>
         <View
@@ -168,67 +190,57 @@ export default function ClassWorldsManager({
             styles.row,
             {
               borderColor: colors.materials.border,
-              backgroundColor: colors.background.elevated,
+              backgroundColor: colors.materials.base,
             },
           ]}
         >
-          <Ionicons name="reorder-three" size={20} color={colors.text.quaternary} />
-          <View
-            style={[
-              styles.dot,
-              { backgroundColor: entry.activo ? def.color : colors.text.quaternary },
-            ]}
-          />
-          <View style={styles.nameRow}>
-            <Text
-              style={[
-                styles.rowName,
-                { color: entry.activo ? colors.text.primary : colors.text.quaternary },
-              ]}
-              numberOfLines={1}
-            >
-              {def.name}
-            </Text>
-            {!entry.activo && (
-              <Text
-                style={[styles.hiddenBadge, { color: colors.text.quaternary }]}
-                numberOfLines={1}
-              >
-                {t('classWorlds.worldHidden')}
-              </Text>
-            )}
-          </View>
-          <TouchableOpacity
-            onPress={() => router.push(`/(staff)/contenido/${cursoId}/${entry.worldId}` as never)}
-            style={styles.iconBtn}
+          <Ionicons name="reorder-three" size={22} color={colors.text.quaternary} />
+          <Pressable
+            onPress={() => abrirEditor(entry.worldId)}
             accessibilityRole="button"
             accessibilityLabel={t('classWorlds.customize', { name: def.name })}
+            style={styles.mundo}
           >
-            <Ionicons name="pencil-outline" size={16} color={colors.text.secondary} />
-          </TouchableOpacity>
-          {esCustom && (
-            <>
-              <TouchableOpacity
-                onPress={() => void onDuplicate(entry.worldId, def.name)}
-                style={styles.iconBtn}
-                accessibilityRole="button"
-                accessibilityLabel={t('classWorlds.duplicate', { name: def.name })}
+            <View style={[styles.planeta, { opacity: entry.activo ? 1 : 0.35 }]}>
+              <CetiAnimation id={planeta.animacion} size={50} autoPlay={false} />
+            </View>
+            <View style={styles.nameCol}>
+              <Text
+                style={[
+                  styles.rowName,
+                  { color: entry.activo ? colors.text.primary : colors.text.tertiary },
+                ]}
+                numberOfLines={1}
               >
-                <Ionicons name="copy-outline" size={16} color={colors.text.secondary} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => onDeleteCustom(entry.worldId, def.name)}
-                style={styles.iconBtn}
-                accessibilityRole="button"
-                accessibilityLabel={t('classWorlds.delete', { name: def.name })}
-              >
-                <Ionicons name="trash-outline" size={16} color={colors.system.red} />
-              </TouchableOpacity>
-            </>
-          )}
+                {def.name}
+              </Text>
+              {entry.activo ? (
+                <Text style={[styles.rowSub, { color: colors.text.tertiary }]} numberOfLines={1}>
+                  {esCustom ? t('profe.mundoPropio') : def.subtitle}
+                </Text>
+              ) : (
+                <Pill texto={t('classWorlds.worldHidden')} icono="eye-off" />
+              )}
+            </View>
+            <Ionicons name="chevron-forward" size={16} color={colors.text.quaternary} />
+          </Pressable>
+          {esCustom ? (
+            <Bounceable
+              onPress={() => setMenuFor({ worldId: entry.worldId, name: def.name })}
+              activeScale={0.9}
+              accessibilityRole="button"
+              accessibilityLabel={t('profe.masAcciones', { name: def.name })}
+              style={[styles.iconBtn, { backgroundColor: colors.materials.highlight }]}
+            >
+              <Ionicons name="ellipsis-horizontal" size={18} color={colors.text.secondary} />
+            </Bounceable>
+          ) : null}
           <Switch
             value={entry.activo}
             onValueChange={() => void onToggle(entry.worldId)}
+            trackColor={{ true: colors.brand.primary, false: colors.materials.border }}
+            thumbColor="#FFFFFF"
+            {...({ activeThumbColor: '#FFFFFF' } as object)}
             accessibilityLabel={t('classWorlds.toggleWorld', { name: def.name })}
           />
         </View>
@@ -236,13 +248,50 @@ export default function ClassWorldsManager({
     );
   };
 
-  return (
-    <View style={[styles.wrap, { backgroundColor: colors.background.secondary }]}>
-      <Text style={[styles.title, { color: colors.text.primary }]}>{t('classWorlds.title')}</Text>
-      <Text style={[styles.hint, { color: colors.text.tertiary }]}>{t('classWorlds.hint')}</Text>
-      <Text style={[styles.dragHint, { color: colors.text.quaternary }]}>
-        {t('classWorlds.dragHint')}
+  const accion = (
+    icono: keyof typeof Ionicons.glyphMap,
+    texto: string,
+    onPress: () => void,
+    peligro = false
+  ) => (
+    <Bounceable
+      onPress={onPress}
+      activeScale={0.98}
+      accessibilityRole="button"
+      style={[
+        styles.accion,
+        { backgroundColor: colors.materials.base, borderColor: colors.materials.border },
+      ]}
+    >
+      <View
+        style={[
+          styles.accionIcono,
+          { backgroundColor: peligro ? colors.fill.redSubtle : colors.materials.highlight },
+        ]}
+      >
+        <Ionicons
+          name={icono}
+          size={18}
+          color={peligro ? colors.system.red : colors.text.primary}
+        />
+      </View>
+      <Text
+        style={[styles.accionTexto, { color: peligro ? colors.system.red : colors.text.primary }]}
+      >
+        {texto}
       </Text>
+    </Bounceable>
+  );
+
+  return (
+    <View style={styles.wrap}>
+      <Text style={[styles.hint, { color: colors.text.secondary }]}>{t('classWorlds.hint')}</Text>
+      <View style={styles.dragRow}>
+        <Ionicons name="hand-left-outline" size={14} color={colors.text.tertiary} />
+        <Text style={[styles.dragHint, { color: colors.text.tertiary }]}>
+          {t('classWorlds.dragHint')}
+        </Text>
+      </View>
 
       <ReorderableList
         data={entries}
@@ -252,25 +301,61 @@ export default function ClassWorldsManager({
         renderItem={renderRow}
       />
 
-      <TouchableOpacity
+      <Bounceable
         onPress={() => router.push(`/(staff)/crear-mundo/${cursoId}` as never)}
+        activeScale={0.98}
         accessibilityRole="button"
-        style={[styles.createBtn, { borderColor: colors.brand.primary }]}
+        accessibilityLabel={t('classWorlds.createWorld')}
+        style={[styles.crear, { borderColor: colors.brand.primary }]}
       >
-        <Ionicons name="add" size={16} color={colors.brand.primary} />
-        <Text style={[styles.createBtnText, { color: colors.brand.primary }]}>
+        <View style={[styles.crearIcono, { backgroundColor: colors.fill.brandSubtle }]}>
+          <Ionicons name="rocket" size={20} color={colors.brand.primary} />
+        </View>
+        <Text style={[styles.crearTexto, { color: colors.brand.primary }]}>
           {t('classWorlds.createWorld')}
         </Text>
-      </TouchableOpacity>
+      </Bounceable>
 
-      {config && (
-        <TouchableOpacity onPress={confirmReset} accessibilityRole="button" style={styles.resetBtn}>
-          <Ionicons name="refresh-outline" size={15} color={colors.text.tertiary} />
+      {config ? (
+        <Pressable onPress={confirmReset} accessibilityRole="button" style={styles.resetBtn}>
+          <Ionicons name="refresh" size={15} color={colors.text.tertiary} />
           <Text style={[styles.resetText, { color: colors.text.tertiary }]}>
             {t('classWorlds.reset')}
           </Text>
-        </TouchableOpacity>
-      )}
+        </Pressable>
+      ) : null}
+
+      <CetiBottomSheet
+        visible={!!menuFor}
+        onClose={() => setMenuFor(null)}
+        closeOnBackdropPress
+        title={menuFor?.name ?? ''}
+      >
+        {menuFor ? (
+          <View style={{ gap: 10 }}>
+            {accion('pencil', t('contentEditor.customize'), () => {
+              const id = menuFor.worldId;
+              setMenuFor(null);
+              abrirEditor(id);
+            })}
+            {accion('copy', t('profe.duplicarAOtro'), () => {
+              const m = menuFor;
+              setMenuFor(null);
+              void onDuplicate(m.worldId, m.name);
+            })}
+            {accion(
+              'trash',
+              t('classWorlds.deleteConfirm'),
+              () => {
+                const m = menuFor;
+                setMenuFor(null);
+                onDeleteCustom(m.worldId, m.name);
+              },
+              true
+            )}
+          </View>
+        ) : null}
+      </CetiBottomSheet>
 
       <CetiBottomSheet
         visible={!!duplicateFor}
@@ -288,16 +373,13 @@ export default function ClassWorldsManager({
         ) : (
           <View style={styles.targetsRow}>
             {targetCursos.map((c) => (
-              <TouchableOpacity
+              <Chip
                 key={c.id}
+                texto={c.nombre}
+                icono="people"
+                seleccionado={false}
                 onPress={() => void onDuplicateTo(c.id)}
-                accessibilityRole="button"
-                style={[styles.targetChip, { borderColor: colors.brand.primary }]}
-              >
-                <Text style={[styles.targetChipText, { color: colors.brand.primary }]}>
-                  {c.nombre}
-                </Text>
-              </TouchableOpacity>
+              />
             ))}
           </View>
         )}
@@ -307,55 +389,73 @@ export default function ClassWorldsManager({
 }
 
 const styles = StyleSheet.create({
-  wrap: { borderRadius: 14, padding: 16, gap: 10, marginTop: 4 },
-  title: { fontSize: 16, fontWeight: '800' },
-  hint: { fontSize: 12, lineHeight: 16 },
-  dragHint: { fontSize: 11, lineHeight: 15, fontStyle: 'italic' },
-  rowSlot: { height: '100%', justifyContent: 'center' },
+  wrap: { gap: 12 },
+  hint: { fontSize: 15, lineHeight: 21, fontWeight: '600' },
+  dragRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  dragHint: { flex: 1, fontSize: 13, lineHeight: 18, fontWeight: '600' },
+  rowSlot: { height: '100%', paddingBottom: 10 },
   row: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
     borderWidth: 1,
-    borderRadius: 12,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    borderRadius: 20,
+    paddingHorizontal: 10,
   },
-  dot: { width: 10, height: 10, borderRadius: 5 },
-  nameRow: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8 },
-  rowName: { fontSize: 14, fontWeight: '600', flexShrink: 1 },
-  hiddenBadge: { fontSize: 11, fontWeight: '600' },
-  rowSub: { fontSize: 11, fontWeight: '600' },
-  iconBtn: { padding: 4 },
+  mundo: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8 },
+  planeta: { width: 50, height: 50, alignItems: 'center', justifyContent: 'center' },
+  nameCol: { flex: 1, gap: 3 },
+  rowName: { fontSize: 16, fontWeight: '900' },
+  rowSub: { fontSize: 13, fontWeight: '600' },
+  iconBtn: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  crear: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    borderRadius: 20,
+    padding: 14,
+  },
+  crearIcono: {
+    width: 40,
+    height: 40,
+    borderRadius: 13,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  crearTexto: { flex: 1, fontSize: 16, fontWeight: '900' },
   resetBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    alignSelf: 'flex-start',
-    paddingVertical: 4,
+    alignSelf: 'center',
+    paddingVertical: 6,
   },
-  resetText: { fontSize: 12, fontWeight: '600' },
-  createBtn: {
+  resetText: { fontSize: 14, fontWeight: '700' },
+  accion: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 12,
+    borderWidth: 2,
+    borderBottomWidth: 4,
+    borderRadius: 16,
+    padding: 12,
+  },
+  accionIcono: {
+    width: 36,
+    height: 36,
+    borderRadius: 12,
+    alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
-    borderWidth: 1.5,
-    borderStyle: 'dashed',
-    borderRadius: 10,
-    paddingVertical: 10,
   },
-  createBtnText: { fontSize: 13, fontWeight: '700' },
-  targetsRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  targetChip: {
-    borderWidth: 1,
-    borderRadius: 14,
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-  },
-  targetChipText: { fontSize: 13, fontWeight: '700' },
+  accionTexto: { fontSize: 16, fontWeight: '800' },
+  targetsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
 });

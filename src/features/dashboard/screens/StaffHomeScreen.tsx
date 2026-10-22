@@ -1,33 +1,36 @@
 import { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  ActivityIndicator,
-} from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useRouter, type Href } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
-import PrivacyPolicyLink from '@shared/components/PrivacyPolicyLink';
+import Bounceable from '@shared/components/Bounceable';
+import ContextScrollView from '@shared/components/motion/ContextScrollView';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
-import { performLogoutAndGo } from '@features/auth/performLogout';
 import { rosterRepository, type CursoWithId } from '@features/dashboard/data/rosterRepository';
+import {
+  BotonChunky,
+  Encabezado,
+  Esqueleto,
+  InsigniaGrado,
+  Pill,
+  Tarjeta,
+  Vacio,
+  tonoDeClase,
+} from '@features/dashboard/components/profe/kit';
 
 /**
- * Landing for the profesor: the school compliance report plus their courses,
- * each linking to the course dashboard (roster + progress + export).
+ * Pestaña Clases del profesor: sus clases como tarjetas (grado, nombre, código)
+ * que llevan al tablero de cada una, y la tarjeta para crear otra. El reporte del
+ * colegio y la sesión viven en sus propias pestañas (Colegio · Perfil).
  */
 export default function StaffHomeScreen() {
   const router = useRouter();
   const { t } = useTranslation();
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
-  const role = useAuthStore((s) => s.role);
   const colegioId = useAuthStore((s) => s.colegioId);
   const uid = useAuthStore((s) => s.firebaseUid);
 
@@ -69,147 +72,132 @@ export default function StaffHomeScreen() {
     };
   }, [colegioId, uid]);
 
-  const roleLabel = role ? t(`roles.${role}`) : '';
+  const abrirClase = (c: CursoWithId) =>
+    router.push(`/(staff)/curso/${c.id}?nombre=${encodeURIComponent(c.nombre)}` as Href);
+  const crearClase = () => router.push('/(staff)/crear-clase' as Href);
 
   return (
-    <ScreenWrapper style={styles.root}>
-      <ScrollView contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 24 }]}>
-        <Text style={[styles.title, { color: colors.text.primary }]}>{t('staff.homeTitle')}</Text>
-        <Text style={[styles.welcome, { color: colors.text.secondary }]}>
-          {t('staff.welcome', { role: roleLabel })}
-        </Text>
+    <ScreenWrapper>
+      <ContextScrollView
+        contentContainerStyle={[styles.page, { paddingTop: insets.top + 16 }]}
+        showsVerticalScrollIndicator={false}
+      >
+        <Encabezado
+          titulo={t('profe.clasesTitulo')}
+          subtitulo={
+            colegioNombre ? t('profe.saludoColegio', { colegio: colegioNombre }) : t('profe.saludo')
+          }
+        />
 
-        <View style={[styles.card, { backgroundColor: colors.background.secondary }]}>
-          <Text style={[styles.cardLabel, { color: colors.text.secondary }]}>
-            {t('staff.colegioLabel')}
-          </Text>
-          <Text style={[styles.cardValue, { color: colors.text.primary }]}>
-            {colegioNombre ?? '…'}
-          </Text>
-        </View>
+        {status === 'loading' ? <Esqueleto filas={3} alto={96} /> : null}
 
-        {/* profesor: aggregated school compliance report (non-nominal, D-PIVOT). */}
-        {role === 'profesor' && (
-          <TouchableOpacity
-            style={[styles.courseRow, { borderColor: colors.brand.primary }]}
+        {status === 'error' ? (
+          <Vacio
+            icono="cloud-offline-outline"
+            tono="rojo"
+            titulo={t('profe.errorTitulo')}
+            texto={t('dashboard.error')}
+          />
+        ) : null}
+
+        {status === 'ready' && cursos.length === 0 ? (
+          <Vacio
+            icono="school-outline"
+            titulo={t('profe.sinClasesTitulo')}
+            texto={t('profe.sinClasesTexto')}
+            accion={
+              <BotonChunky texto={t('createClass.create')} icono="add" onPress={crearClase} />
+            }
+          />
+        ) : null}
+
+        {cursos.map((c, i) => {
+          const tono = tonoDeClase(i);
+          return (
+            <Tarjeta
+              key={c.id}
+              onPress={() => abrirClase(c)}
+              accessibilityLabel={t('profe.abrirClase', { nombre: c.nombre })}
+            >
+              <View style={styles.claseFila}>
+                <InsigniaGrado grado={c.grado} tono={tono} />
+                <View style={styles.claseTexto}>
+                  <Text
+                    style={[styles.claseNombre, { color: colors.text.primary }]}
+                    numberOfLines={2}
+                  >
+                    {c.nombre}
+                  </Text>
+                  <View style={styles.claseMeta}>
+                    <Text style={[styles.claseSub, { color: colors.text.tertiary }]}>
+                      {t('profe.grado', { grado: c.grado })}
+                    </Text>
+                    {c.codigo ? <Pill texto={c.codigo} icono="key" tono="neutro" /> : null}
+                  </View>
+                </View>
+                <View style={[styles.flecha, { backgroundColor: colors.materials.highlight }]}>
+                  <Ionicons name="chevron-forward" size={18} color={colors.text.secondary} />
+                </View>
+              </View>
+            </Tarjeta>
+          );
+        })}
+
+        {status === 'ready' && cursos.length > 0 ? (
+          <Bounceable
+            onPress={crearClase}
+            activeScale={0.98}
             accessibilityRole="button"
-            onPress={() => router.push('/(staff)/colegio' as Href)}
+            accessibilityLabel={t('createClass.create')}
+            style={[styles.crear, { borderColor: colors.brand.primary }]}
           >
-            <Ionicons name="stats-chart-outline" size={20} color={colors.brand.primary} />
-            <View style={styles.courseInfo}>
-              <Text style={[styles.courseName, { color: colors.text.primary }]}>
-                {t('school.reportLink')}
+            <View style={[styles.crearIcono, { backgroundColor: colors.fill.brandSubtle }]}>
+              <Ionicons name="add" size={22} color={colors.brand.primary} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.crearTitulo, { color: colors.brand.primary }]}>
+                {t('createClass.create')}
+              </Text>
+              <Text style={[styles.claseSub, { color: colors.text.tertiary }]}>
+                {t('profe.crearClaseSub')}
               </Text>
             </View>
-            <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
-          </TouchableOpacity>
-        )}
-
-        <Text style={[styles.sectionLabel, { color: colors.text.secondary }]}>
-          {t('staff.coursesLabel')}
-        </Text>
-
-        {status === 'loading' && (
-          <ActivityIndicator style={styles.loader} color={colors.brand.primary} />
-        )}
-        {status === 'error' && (
-          <Text style={[styles.note, { color: colors.text.secondary }]}>
-            {t('dashboard.error')}
-          </Text>
-        )}
-        {status === 'ready' && cursos.length === 0 && (
-          <Text style={[styles.note, { color: colors.text.secondary }]}>
-            {t('staff.noCourses')}
-          </Text>
-        )}
-        {cursos.map((c) => (
-          <TouchableOpacity
-            key={c.id}
-            style={[styles.courseRow, { borderColor: colors.background.secondary }]}
-            accessibilityRole="button"
-            onPress={() =>
-              router.push(`/(staff)/curso/${c.id}?nombre=${encodeURIComponent(c.nombre)}` as Href)
-            }
-          >
-            <Ionicons name="people-outline" size={20} color={colors.brand.primary} />
-            <View style={styles.courseInfo}>
-              <Text style={[styles.courseName, { color: colors.text.primary }]}>{c.nombre}</Text>
-              <Text style={[styles.courseGrade, { color: colors.text.tertiary }]}>{c.grado}</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
-          </TouchableOpacity>
-        ))}
-
-        {/* Professor creates their own classes (D-ADMIN / RQ-PR13). */}
-        {status === 'ready' && (
-          <TouchableOpacity
-            style={[styles.createRow, { borderColor: colors.brand.primary }]}
-            accessibilityRole="button"
-            onPress={() => router.push('/(staff)/crear-clase' as Href)}
-          >
-            <Ionicons name="add-circle-outline" size={20} color={colors.brand.primary} />
-            <Text style={[styles.createText, { color: colors.brand.primary }]}>
-              {t('createClass.create')}
-            </Text>
-          </TouchableOpacity>
-        )}
-
-        <TouchableOpacity
-          style={[styles.logout, { borderColor: colors.brand.primary }]}
-          onPress={() => void performLogoutAndGo(router, '/(auth)/welcome')}
-          accessibilityRole="button"
-        >
-          <Text style={[styles.logoutText, { color: colors.brand.primary }]}>
-            {t('staff.logout')}
-          </Text>
-        </TouchableOpacity>
-
-        <PrivacyPolicyLink style={styles.policy} />
-      </ScrollView>
+          </Bounceable>
+        ) : null}
+      </ContextScrollView>
     </ScreenWrapper>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1 },
-  scroll: { paddingHorizontal: 24, paddingBottom: 48, gap: 14 },
-  title: { fontSize: 26, fontWeight: '800' },
-  welcome: { fontSize: 16 },
-  card: { borderRadius: 16, padding: 16, gap: 4 },
-  cardLabel: { fontSize: 13, fontWeight: '600' },
-  cardValue: { fontSize: 18, fontWeight: '700' },
-  sectionLabel: { fontSize: 13, fontWeight: '600', marginTop: 4 },
-  loader: { marginTop: 8 },
-  note: { fontSize: 14, lineHeight: 20 },
-  courseRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    borderWidth: 1,
-    borderRadius: 12,
-    padding: 14,
-  },
-  courseInfo: { flex: 1, gap: 2 },
-  courseName: { fontSize: 15, fontWeight: '600' },
-  courseGrade: { fontSize: 12 },
-  createRow: {
-    flexDirection: 'row',
+  page: { paddingHorizontal: 20, paddingBottom: 130, gap: 14 },
+  claseFila: { flexDirection: 'row', alignItems: 'center', gap: 14 },
+  claseTexto: { flex: 1, gap: 3 },
+  claseNombre: { fontSize: 20, lineHeight: 24, fontWeight: '900' },
+  claseMeta: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 8 },
+  claseSub: { fontSize: 14, fontWeight: '700' },
+  flecha: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    borderWidth: 1.5,
-    borderStyle: 'dashed',
-    borderRadius: 12,
-    padding: 14,
   },
-  createText: { fontSize: 15, fontWeight: '700' },
-  logout: {
-    marginTop: 8,
-    borderWidth: 1.5,
-    borderRadius: 12,
-    paddingVertical: 14,
+  crear: {
+    flexDirection: 'row',
     alignItems: 'center',
+    gap: 14,
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    borderRadius: 24,
+    padding: 16,
   },
-  logoutText: { fontSize: 16, fontWeight: '700' },
-  policy: { marginTop: 8 },
+  crearIcono: {
+    width: 52,
+    height: 52,
+    borderRadius: 17,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  crearTitulo: { fontSize: 17, fontWeight: '900' },
 });

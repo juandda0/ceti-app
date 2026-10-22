@@ -11,20 +11,13 @@
  * "Generar preguntas" (the model is an implementation detail).
  */
 import { useState } from 'react';
-import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
+import ContextScrollView from '@shared/components/motion/ContextScrollView';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { confirmAction, showMessage } from '@shared/lib/dialogs';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
@@ -38,6 +31,15 @@ import {
 import { rosterRepository } from '@features/dashboard/data/rosterRepository';
 import { ALL_COMPETENCIAS, COMPETENCIA_PERSONALIZADA } from '@features/learning/data/competencias';
 import { CUSTOM_WORLD_COLOR } from '@features/learning/data/worldMeta';
+import { FadeIn } from '@features/savings/charts/ChartParts';
+import {
+  BotonChunky,
+  Campo,
+  Chip,
+  Encabezado,
+  Tarjeta,
+  tapsConTeclado,
+} from '@features/dashboard/components/profe/kit';
 
 export default function CreateWorldScreen() {
   const { t } = useTranslation();
@@ -137,205 +139,181 @@ export default function CreateWorldScreen() {
     }
   };
 
-  const inputStyle = [
-    styles.input,
-    {
-      color: colors.text.primary,
-      backgroundColor: colors.background.secondary,
-      borderColor: colors.materials.border,
-    },
-  ];
+  const conteo = draft
+    ? [
+        { n: draft.teoria.length, label: t('profe.piezaTeoria'), icono: 'book' as const },
+        { n: draft.mc.length, label: t('profe.piezaMc'), icono: 'list' as const },
+        { n: draft.vf.length, label: t('profe.piezaVf'), icono: 'checkmark-done' as const },
+        {
+          n: draft.ordenar.length,
+          label: t('profe.piezaOrdenar'),
+          icono: 'swap-vertical' as const,
+        },
+        {
+          n: draft.eligeCamino.length,
+          label: t('profe.piezaSituaciones'),
+          icono: 'git-branch' as const,
+        },
+      ]
+    : [];
 
   return (
-    <ScreenWrapper style={{ flex: 1, backgroundColor: colors.background.base }}>
-      <ScrollView contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16 }]}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          accessibilityRole="button"
-          accessibilityLabel={t('quiz.back')}
-          style={styles.backBtn}
-        >
-          <Ionicons name="arrow-back" size={20} color={colors.text.secondary} />
-        </TouchableOpacity>
-        <Text style={[styles.title, { color: colors.text.primary }]}>{t('createWorld.title')}</Text>
-        <Text style={[styles.subtitle, { color: colors.text.tertiary }]}>
-          {t('createWorld.subtitle')}
-        </Text>
+    <ScreenWrapper>
+      <ContextScrollView
+        contentContainerStyle={[styles.page, { paddingTop: insets.top + 12 }]}
+        keyboardShouldPersistTaps={tapsConTeclado}
+        showsVerticalScrollIndicator={false}
+      >
+        <Encabezado
+          atras="/(staff)/clases"
+          sobretitulo={t('profe.sobreMundoNuevo')}
+          titulo={t('createWorld.title')}
+          subtitulo={t('createWorld.subtitle')}
+        />
 
-        <Text style={[styles.fieldLabel, { color: colors.text.secondary }]}>
-          {t('createWorld.nombre')}
-        </Text>
-        <TextInput
-          style={inputStyle}
+        <Campo
+          etiqueta={t('createWorld.nombre')}
           value={nombre}
           onChangeText={setNombre}
           placeholder={t('createWorld.nombrePlaceholder')}
-          placeholderTextColor={colors.text.quaternary}
           maxLength={60}
+          acento={accent}
         />
-
-        <Text style={[styles.fieldLabel, { color: colors.text.secondary }]}>
-          {t('createWorld.tema')}
-        </Text>
-        <TextInput
-          style={[...inputStyle, styles.multiline]}
+        <Campo
+          etiqueta={t('createWorld.tema')}
           value={tema}
           onChangeText={setTema}
           placeholder={t('createWorld.temaPlaceholder')}
-          placeholderTextColor={colors.text.quaternary}
           multiline
           maxLength={200}
+          acento={accent}
         />
 
-        <Text style={[styles.fieldLabel, { color: colors.text.secondary }]}>
-          {t('createWorld.competencia')}
-        </Text>
-        <View style={styles.chipRow}>
-          <TouchableOpacity
-            onPress={() => setCompetencia(null)}
-            accessibilityRole="button"
-            style={[
-              styles.chip,
-              {
-                backgroundColor: competencia === null ? accent : colors.background.secondary,
-              },
-            ]}
-          >
-            <Text
-              style={[
-                styles.chipText,
-                { color: competencia === null ? '#fff' : colors.text.secondary },
-              ]}
-            >
-              {t('createWorld.competenciaNinguna')}
-            </Text>
-          </TouchableOpacity>
-          {ALL_COMPETENCIAS.map((c) => (
-            <TouchableOpacity
-              key={c.id}
-              onPress={() => setCompetencia(c.id)}
-              accessibilityRole="button"
-              style={[
-                styles.chip,
-                {
-                  backgroundColor: competencia === c.id ? accent : colors.background.secondary,
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.chipText,
-                  { color: competencia === c.id ? '#fff' : colors.text.secondary },
-                ]}
-              >
-                {c.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
+        <View style={{ gap: 10 }}>
+          <Text style={[styles.etiqueta, { color: colors.text.secondary }]}>
+            {t('createWorld.competencia')}
+          </Text>
+          <View style={styles.chips}>
+            <Chip
+              texto={t('createWorld.competenciaNinguna')}
+              seleccionado={competencia === null}
+              color={accent}
+              onPress={() => setCompetencia(null)}
+            />
+            {ALL_COMPETENCIAS.map((c) => (
+              <Chip
+                key={c.id}
+                texto={c.label}
+                seleccionado={competencia === c.id}
+                color={accent}
+                onPress={() => setCompetencia(c.id)}
+              />
+            ))}
+          </View>
+          <Text style={[styles.ayuda, { color: colors.text.tertiary }]}>
+            {t('createWorld.competenciaHint')}
+          </Text>
         </View>
-        <Text style={[styles.helpText, { color: colors.text.quaternary }]}>
-          {t('createWorld.competenciaHint')}
-        </Text>
 
         {/* Generar preguntas (borrador a partir de la descripción del mundo) */}
-        <TouchableOpacity
+        <BotonChunky
+          texto={generating ? t('createWorld.generating') : t('createWorld.generate')}
+          icono="sparkles"
+          variante="secundario"
+          color={accent}
+          cargando={generating}
+          deshabilitado={saving}
           onPress={onGeneratePress}
-          disabled={generating || saving}
-          accessibilityRole="button"
-          style={[styles.iaBtn, { borderColor: accent, opacity: generating ? 0.6 : 1 }]}
-        >
-          {generating ? (
-            <ActivityIndicator size="small" color={accent} />
-          ) : (
-            <Ionicons name="sparkles-outline" size={16} color={accent} />
-          )}
-          <Text style={[styles.iaBtnText, { color: accent }]}>
-            {generating ? t('createWorld.generating') : t('createWorld.generate')}
-          </Text>
-        </TouchableOpacity>
+        />
 
-        {draft && (
-          <View style={[styles.draftCard, { borderColor: accent }]}>
-            <Ionicons name="checkmark-circle" size={16} color={accent} />
-            <Text style={[styles.draftText, { color: colors.text.primary }]}>
-              {t('createWorld.generated', {
-                teoria: draft.teoria.length,
-                mc: draft.mc.length,
-                vf: draft.vf.length,
-                ordenar: draft.ordenar.length,
-                ec: draft.eligeCamino.length,
-              })}
-            </Text>
-          </View>
-        )}
+        {draft ? (
+          <FadeIn>
+            <Tarjeta style={{ gap: 14 }}>
+              <View style={styles.listoFila}>
+                <View style={[styles.listoIcono, { backgroundColor: accent + '22' }]}>
+                  <Ionicons name="checkmark-circle" size={22} color={accent} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.listoTitulo, { color: colors.text.primary }]}>
+                    {t('profe.borradorListo')}
+                  </Text>
+                  <Text style={[styles.ayuda, { color: colors.text.tertiary }]}>
+                    {t('profe.borradorListoSub')}
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.conteo}>
+                {conteo.map((c, i) => (
+                  <FadeIn key={c.label} delay={80 + i * 60}>
+                    <View style={[styles.pieza, { backgroundColor: colors.materials.highlight }]}>
+                      <Ionicons name={c.icono} size={16} color={accent} />
+                      <Text style={[styles.piezaNum, { color: colors.text.primary }]}>{c.n}</Text>
+                      <Text
+                        style={[styles.piezaLabel, { color: colors.text.tertiary }]}
+                        numberOfLines={1}
+                      >
+                        {c.label}
+                      </Text>
+                    </View>
+                  </FadeIn>
+                ))}
+              </View>
+            </Tarjeta>
+          </FadeIn>
+        ) : null}
 
-        <TouchableOpacity
-          onPress={() => void onSave(true)}
-          disabled={saving || (!draft && generating)}
-          accessibilityRole="button"
-          style={[styles.saveBtn, { backgroundColor: accent, opacity: saving ? 0.6 : 1 }]}
-        >
-          <Text style={styles.saveBtnText}>
-            {draft ? t('createWorld.saveDraft') : t('createWorld.createEmpty')}
-          </Text>
-        </TouchableOpacity>
-        {draft && (
-          <TouchableOpacity
-            onPress={() => void onSave(false)}
-            disabled={saving}
-            accessibilityRole="button"
-            style={styles.secondaryBtn}
-          >
-            <Text style={[styles.secondaryBtnText, { color: colors.text.tertiary }]}>
-              {t('createWorld.createEmptyDiscard')}
-            </Text>
-          </TouchableOpacity>
-        )}
-      </ScrollView>
+        <View style={{ gap: 6 }}>
+          <BotonChunky
+            texto={draft ? t('createWorld.saveDraft') : t('createWorld.createEmpty')}
+            icono={draft ? 'save' : 'rocket'}
+            color={accent}
+            cargando={saving}
+            deshabilitado={!draft && generating}
+            onPress={() => void onSave(true)}
+          />
+          {draft ? (
+            <Pressable
+              onPress={() => void onSave(false)}
+              disabled={saving}
+              accessibilityRole="button"
+              style={styles.secundario}
+            >
+              <Text style={[styles.secundarioTexto, { color: colors.text.tertiary }]}>
+                {t('createWorld.createEmptyDiscard')}
+              </Text>
+            </Pressable>
+          ) : null}
+        </View>
+      </ContextScrollView>
     </ScreenWrapper>
   );
 }
 
 const styles = StyleSheet.create({
-  scroll: { paddingHorizontal: 24, paddingBottom: 64, gap: 10 },
-  backBtn: { alignSelf: 'flex-start', padding: 4 },
-  title: { fontSize: 22, fontWeight: '800' },
-  subtitle: { fontSize: 13, lineHeight: 18 },
-  fieldLabel: { fontSize: 12, fontWeight: '700', marginTop: 6 },
-  input: {
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    fontSize: 14,
-  },
-  multiline: { minHeight: 64, textAlignVertical: 'top' },
-  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: { borderRadius: 16, paddingVertical: 6, paddingHorizontal: 12 },
-  chipText: { fontSize: 12, fontWeight: '700' },
-  helpText: { fontSize: 11, lineHeight: 15 },
-  iaBtn: {
-    flexDirection: 'row',
+  page: { paddingHorizontal: 20, paddingBottom: 64, gap: 18 },
+  etiqueta: { fontSize: 14, fontWeight: '800' },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  ayuda: { fontSize: 13, lineHeight: 18, fontWeight: '500' },
+  listoFila: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  listoIcono: {
+    width: 40,
+    height: 40,
+    borderRadius: 13,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    borderWidth: 1.5,
-    borderRadius: 10,
-    paddingVertical: 12,
-    marginTop: 8,
   },
-  iaBtnText: { fontSize: 14, fontWeight: '800' },
-  draftCard: {
+  listoTitulo: { fontSize: 18, fontWeight: '900' },
+  conteo: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  pieza: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 8,
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 12,
+    alignItems: 'center',
+    gap: 6,
+    borderRadius: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
   },
-  draftText: { flex: 1, fontSize: 12, lineHeight: 17 },
-  saveBtn: { borderRadius: 10, paddingVertical: 12, alignItems: 'center', marginTop: 4 },
-  saveBtnText: { color: '#fff', fontSize: 15, fontWeight: '800' },
-  secondaryBtn: { alignItems: 'center', paddingVertical: 8 },
-  secondaryBtnText: { fontSize: 13, fontWeight: '600' },
+  piezaNum: { fontSize: 16, fontWeight: '900' },
+  piezaLabel: { fontSize: 13, fontWeight: '700' },
+  secundario: { alignItems: 'center', paddingVertical: 10 },
+  secundarioTexto: { fontSize: 14, fontWeight: '700' },
 });
