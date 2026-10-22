@@ -44,6 +44,7 @@ jest.mock('@shared/lib/dialogs', () => ({ confirmAction: jest.fn() }));
 jest.mock('@features/savings/store/useSavingsStore', () => ({
   useSavingsStore: (selector: (state: typeof mockSavingsState) => unknown) =>
     selector(mockSavingsState),
+  useSavingsProjection: () => mockSavingsState.projection(),
 }));
 jest.mock('@features/savings/store/useMovimientosStore', () => ({
   useMovimientosStore: (selector: (state: typeof mockMovimientosState) => unknown) =>

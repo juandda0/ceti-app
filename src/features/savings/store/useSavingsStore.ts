@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createZustandMmkvStorage } from '@shared/lib/storage/mmkv';
@@ -490,3 +491,16 @@ export const useSavingsStore = create<SavingsStore>()(
     }
   )
 );
+
+/**
+ * Proyección del ahorro (total, sin asignar y por meta) que se recalcula cuando
+ * cambian las metas o los movimientos. Usar esto y no `s.projection()` dentro
+ * de un selector: el selector devuelve la función, que nunca cambia, y la
+ * pantalla no se vuelve a pintar cuando los aportes llegan después que las
+ * metas (por ejemplo, al sincronizar desde el servidor: metas en $0).
+ */
+export function useSavingsProjection(): ReturnType<typeof projectSavings> {
+  const goals = useSavingsStore((s) => s.goals);
+  const operations = useSavingsStore((s) => s.operations);
+  return useMemo(() => projectSavings(toDomainGoals(goals), operations), [goals, operations]);
+}

@@ -9,14 +9,14 @@ import InsightCards from '@features/savings/components/InsightCards';
 import PresupuestosSheet from '@features/savings/components/PresupuestosSheet';
 import { useMovimientosStore } from '@features/savings/store/useMovimientosStore';
 import { usePresupuestosStore } from '@features/savings/store/usePresupuestosStore';
-import { useSavingsStore } from '@features/savings/store/useSavingsStore';
+import { useSavingsProjection, useSavingsStore } from '@features/savings/store/useSavingsStore';
 
 export default function MiDineroScreen() {
   const { t } = useTranslation();
   const colors = useThemeColors();
   const goals = useSavingsStore((state) => state.goals);
   const operations = useSavingsStore((state) => state.operations);
-  const projection = useSavingsStore((state) => state.projection)();
+  const projection = useSavingsProjection();
   const budgets = usePresupuestosStore((state) => state.topes);
   const expenses = useMovimientosStore((state) => state.movimientos).filter((item) => item.tipo === 'gasto');
   const [budgetsVisible, setBudgetsVisible] = useState(false);

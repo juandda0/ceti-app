@@ -11,7 +11,7 @@ import { formatDisplayCopGoals } from '@shared/utils/formatDisplayCop';
 import GoalFormSheet from '@features/savings/components/GoalFormSheet';
 import SavingsOperationSheet from '@features/savings/components/SavingsOperationSheet';
 import { GoalIcon } from '@features/savings/icons/GoalIcon';
-import { useSavingsStore, type SavingsGoal } from '@features/savings/store/useSavingsStore';
+import { useSavingsProjection, useSavingsStore, type SavingsGoal } from '@features/savings/store/useSavingsStore';
 
 type Form = 'none' | 'goal' | 'aporte';
 
@@ -19,7 +19,7 @@ export default function MetasScreen() {
   const { t } = useTranslation();
   const colors = useThemeColors();
   const goals = useSavingsStore((state) => state.goals).filter((goal) => !goal.deletedAt);
-  const projection = useSavingsStore((state) => state.projection)();
+  const projection = useSavingsProjection();
   const deleteGoal = useSavingsStore((state) => state.deleteGoal);
   const [form, setForm] = useState<Form>('none');
   const [editingGoal, setEditingGoal] = useState<SavingsGoal>();
