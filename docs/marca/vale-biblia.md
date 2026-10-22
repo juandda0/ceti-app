@@ -136,7 +136,7 @@ Hex exactos de `vale-frente.svg`. El sistema de avatar los reemplaza por color: 
 - SVG: `assets/brand/vale/vale-sudadera.svg` (viewBox `0 0 520 790`, la misma del traje). Grupos: `sombra-piso`, `cuerpo`, `cabeza` (con `ojo-izq` y `ojo-der`), `brazo-izq`, `brazo-der`, con los mismos pivotes que `vale-frente.svg`.
 - Hoja: `assets/brand/bocetos/vale-sudadera-01.png` (Gemini 3.6 Flash, edición de la vista de frente de `vale-01-hoja-modelo.jpg`; 765×1024, capturada sin pérdida porque la descarga de Chrome estaba bloqueada); alineada en `vale-sudadera-01-alineada.png`. Vector: `scripts/marca/vectorizar/personajes/vale-sudadera.json`.
 - Diseño: sudadera amarillo sol `#FDC253` con borde `#B8772B` (sombras `#DB9E41`, `#CB913F`, `#B77429`, `#AA6A23`), capucha bajada (el pelo largo cae detrás), escote en V, bolsillo canguro, puños y elástico acanalados, cordones crema `#FFF1E0` con puntas `#F98022` y la ballena de Ceti en el pecho (la de la insignia del traje de Juan). Manos sin guante; gafas de taller y llave como en el traje.
-- La cabeza (con ojos y gafas de taller), las rodilleras y la sombra del piso se copian **idénticas** de `vale-frente.svg` (retoques `grupo_de` y `copiar_de`). Si cambia la cabeza del traje, basta `python -m vectorizar vale-sudadera --solo-retoques` para volver a copiarla.
+- La cabeza (con ojos y gafas de taller), el pelo largo (siluetas lisas, terminan en punta detrás de las mangas), la llave con su mango, las rodilleras y la sombra del piso se copian **idénticos** de `vale-frente.svg` (retoques `grupo_de` y `copiar_de`; rehecha sobre el traje corregido en 81c5f3a). Si cambia la cabeza del traje, basta `python -m vectorizar vale-sudadera --solo-retoques` para volver a copiarla.
 
 ### Paleta de piel (tal como está en el SVG)
 
