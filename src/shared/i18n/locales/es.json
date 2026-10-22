@@ -313,7 +313,11 @@
     "tipoOrdenar": "Ordenar",
     "ordenarSequence": "Tu orden",
     "ordenarTapToAdd": "Toca los elementos de abajo para ordenarlos",
-    "ordenarAvailable": "Elementos disponibles"
+    "ordenarAvailable": "Elementos disponibles",
+    "livesA11y": "Vidas: {{count}} de 3",
+    "gameOverHint": "Tienes que empezar {{world}} desde el principio. ¡Tú puedes!",
+    "livesNone": "¡Te quedaste sin vidas!",
+    "restartWorld": "Empezar de nuevo"
   },
   "goals": {
     "pageTitle": "Mis metas",

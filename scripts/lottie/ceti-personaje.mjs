@@ -159,8 +159,69 @@ const S0 = smilePts[0];
 const S1 = smilePts[smilePts.length - 1];
 const SMID = [(S0[0] + S1[0]) / 2, Math.max(...smilePts.map((p) => p[1]))];
 
+// ---------- Gestos de tristeza ----------
+// Boca: la misma línea de la sonrisa, más corta y volteada (comisuras abajo). Mismos vértices: se interpola.
+const SMILE_SHAPE = parsePath(attr(SMILE, 'd'))[0];
+const FROWN = {
+  c: false,
+  v: SMILE_SHAPE.v.map(([x, y]) => [SMID[0] + (x - SMID[0]) * 0.5, 236 - (y - S0[1]) * 0.7]),
+  i: SMILE_SHAPE.i.map(([x, y]) => [x * 0.5, -y * 0.7]),
+  o: SMILE_SHAPE.o.map(([x, y]) => [x * 0.5, -y * 0.7]),
+};
+// Claves de forma con suavizado escalar (rlottie y lottie-ios no aceptan listas en las formas).
+function shapeAnim(keys) {
+  return {
+    a: 1,
+    k: keys.map(([t, v, ease = 'inOut'], idx) => {
+      if (idx === keys.length - 1) return { t, s: [v] };
+      if (ease === 'hold') return { t, s: [v], h: 1 };
+      const [[ox, oy], [ix, iy]] = EASE[ease];
+      return { t, s: [v], o: { x: ox, y: oy }, i: { x: ix, y: iy } };
+    }),
+  };
+}
+// Cejas de preocupación: cada una gira sobre su centro y sube la punta de adentro.
+function sadBrows(tilt) {
+  return pathsIn(groupInner('cejas')).map((t, n) => {
+    const pts = parsePath(attr(t, 'd'))[0].v;
+    const c = [(pts[0][0] + pts.at(-1)[0]) / 2, (pts[0][1] + pts.at(-1)[1]) / 2];
+    const dir = n === 0 ? -1 : 1; // izquierda: antihorario sube su punta interna (derecha); derecha: al revés
+    return group(`ceja-${n}`, [...shapes(attr(t, 'd')), stroke(num(t, 'stroke-width'), attr(t, 'stroke'))], {
+      a: c, p: c, r: anim(tilt.map(([f, deg, ease]) => [f, deg * dir, ease])),
+    });
+  }).reverse();
+}
+// Párpado superior del color del cuerpo: baja desde arriba del ojo, más caído hacia afuera (mirada triste).
+function upperLid(e, drop) {
+  const [cx, cy] = e.esclera.c;
+  const r = e.esclera.r + 4;
+  const out = e.s === 'izq' ? -1 : 1;
+  const xo = cx + out * r;
+  const xi = cx - out * r;
+  const d = `M${xo} ${cy - r - 70} L${xi} ${cy - r - 70} L${xi} ${cy - r - 4} C${(xi + cx) / 2} ${cy - r - 2} ${(xo + cx) / 2} ${cy - r + 4} ${xo} ${cy - r + 14} Z`;
+  return group('parpado-sup', [...shapes(d), fill(e.parpadoFill)], { p: anim(drop.map(([f, y, ease]) => [f, [0, y], ease])) });
+}
+// Lágrima: se asoma bajo el ojo izquierdo, rueda por la mejilla y se desvanece.
+function tearLayer(t0, op, parent) {
+  const e = EYES[0];
+  const from = [e.esclera.c[0] - 12, e.esclera.c[1] + e.esclera.r - 2];
+  const to = [from[0] - 6, from[1] + 74];
+  const DROP = 'M0 -13 C5 -6 9 -1 9 5 C9 10 5 13 0 13 C-5 13 -9 10 -9 5 C-9 -1 -5 -6 0 -13 Z';
+  return shapeLayer('lagrima', [
+    group('brillo', [ellipse([-3, 4], 4, 6), fill('#FFFFFF')]),
+    group('gota', [...shapes(DROP), fill('#7CC8F8')]),
+  ], {
+    op, parent,
+    ks: {
+      p: anim([[0, from, 'hold'], [t0 + 14, from, 'in'], [t0 + 50, to, 'hold'], [op, to]]),
+      s: anim([[0, [0, 0], 'hold'], [t0, [0, 0], 'out'], [t0 + 12, [100, 115], 'inOut'], [t0 + 18, [100, 100], 'hold'], [op, [100, 100]]]),
+      o: anim([[0, 100, 'hold'], [t0 + 40, 100, 'inOut'], [t0 + 52, 0, 'hold'], [op, 0]]),
+    },
+  });
+}
+
 // ---------- Rig ----------
-function cetiRig({ op, root, control, finL = 0, finR = 0, tail = 0, blink = [100, 100], look = [0, 0], brow = [0, 0], happy, shadowScale = [100, 100] }) {
+function cetiRig({ op, root, control, finL = 0, finR = 0, tail = 0, blink = [100, 100], look = [0, 0], brow = [0, 0], happy, shadowScale = [100, 100], sad }) {
   const parent = control.ind;
   const normal = happy ? anim(happy.map(([t, on]) => [t, on ? 0 : 100, 'hold'])) : 100;
   const joy = happy ? anim(happy.map(([t, on]) => [t, on ? 100 : 0, 'hold'])) : 0;
@@ -168,6 +229,7 @@ function cetiRig({ op, root, control, finL = 0, finR = 0, tail = 0, blink = [100
   const eyeLayers = EYES.flatMap((e) => {
     const eyeNull = nullLayer(`ojo-${e.s}`, { a: e.esclera.c, p: e.esclera.c, s: blink }, op, parent);
     const iris = shapeLayer(`ojo-${e.s}-iris`, [
+      ...(sad ? [upperLid(e, sad.lid)] : []),
       group('parpado', [...shapes(e.parpado), fill(e.parpadoFill)]),
       group('mirada', [
         group('brillo', [ellipse(e.brillo.c, e.brillo.r * 2), fill(e.brillo.fill)]),
@@ -196,10 +258,14 @@ function cetiRig({ op, root, control, finL = 0, finR = 0, tail = 0, blink = [100
   const openMouth = `${attr(SMILE, 'd')} ${lower} Z`;
 
   const layers = [
-    shapeLayer('cejas', [group('cejas', svgPathsToGroups(groupInner('cejas'), 'ceja'), { p: brow })], { op, parent, ks: { o: normal } }),
+    shapeLayer('cejas', [group('cejas', sad ? sadBrows(sad.brow) : svgPathsToGroups(groupInner('cejas'), 'ceja'), { p: brow })], { op, parent, ks: { o: normal } }),
     shapeLayer('ojos-felices', [group('ojos-felices', [...happyEyes.flatMap(shapes), stroke(9, C.maroon)])], { op, parent, ks: { o: joy } }),
     ...eyeLayers,
-    shapeLayer('boca', [group('boca', [...shapes(attr(SMILE, 'd')), stroke(num(SMILE, 'stroke-width'), attr(SMILE, 'stroke'))])], { op, parent }),
+    shapeLayer('boca', [group('boca', [
+      ...(sad ? [{ ty: 'sh', ks: shapeAnim(sad.mouth.map(([t, frown, ease]) => [t, frown ? FROWN : SMILE_SHAPE, ease])) }] : shapes(attr(SMILE, 'd'))),
+      stroke(num(SMILE, 'stroke-width'), attr(SMILE, 'stroke')),
+    ])], { op, parent }),
+    ...(sad?.tear ? [tearLayer(sad.tear, op, parent)] : []),
     shapeLayer('boca-abierta-borde', [group('borde', [...shapes(mouthBottom), stroke(4.5, C.mouthLine)])], { op, parent, ks: { o: joy } }),
     shapeLayer('boca-abierta', [
       group('lengua', [ellipse([SMID[0] + 6, mBottom + 3], mw * 0.5, mw * 0.24), fill(C.tongue)]),
@@ -307,6 +373,38 @@ function espera() {
     blink: anim([[0, [100, 100], 'hold'], [180, [100, 100], 'snap'], [185, [100, 8], 'out'], [192, [100, 100], 'hold'], [240, [100, 100]]]),
   });
   return comp('mascot.ceti-espera', OP, [...layers, shadow, control, root]);
+}
+
+// ---------- Tipo B · triste: perdió todas las vidas. Suspira, se desinfla y suelta una lágrima. Una sola vez ----------
+// Empieza en la pose neutra (empalma con cualquier pantalla) y termina quieta en la pose triste.
+function triste() {
+  IND = 0;
+  const OP = 150; // 2,5 s
+  const root = scene(OP);
+  const control = nullLayer('ceti-control', {
+    a: BASE,
+    p: anim([[0, BASE, 'hold'], [10, BASE, 'inOut'], [30, [BASE[0], BASE[1] - 10], 'inOut'], [64, [BASE[0], BASE[1] + 4], 'inOut'], [84, [BASE[0], BASE[1] + 2], 'inOut'], [110, [BASE[0], BASE[1] + 4], 'hold'], [OP, [BASE[0], BASE[1] + 4]]]),
+    s: anim([[0, [100, 100], 'hold'], [10, [100, 100], 'inOut'], [30, [97, 105], 'inOut'], [64, [105, 93], 'inOut'], [84, [102, 96], 'inOut'], [110, [103, 95], 'hold'], [OP, [103, 95]]]),
+    r: anim([[0, 0, 'hold'], [30, 0, 'inOut'], [64, -2, 'inOut'], [110, -1.5, 'hold'], [OP, -1.5]]),
+  }, OP, root.ind);
+  // Aletas: suben un poco al inhalar y caen sin fuerza al soltar el aire (la derecha llega tarde: superposición).
+  const droop = (dir, lag) => anim([[0, 0, 'hold'], [10, 0, 'inOut'], [30, 8 * dir, 'inOut'], [62 + lag, -18 * dir, 'inOut'], [80 + lag, -14 * dir, 'inOut'], [100 + lag, -16 * dir, 'hold'], [OP, -16 * dir]]);
+  const { layers, shadow } = cetiRig({
+    op: OP, root, control,
+    finL: droop(1, 0), finR: droop(-1, 5),
+    tail: anim([[0, 0, 'hold'], [30, 3, 'inOut'], [66, -6, 'inOut'], [90, -4, 'hold'], [OP, -4]]),
+    look: anim([[0, [0, 0], 'hold'], [34, [0, 0], 'inOut'], [48, [-2, 7], 'hold'], [OP, [-2, 7]]]),
+    blink: anim([[0, [100, 100], 'hold'], [112, [100, 100], 'in'], [118, [100, 12], 'out'], [128, [100, 100], 'hold'], [OP, [100, 100]]]),
+    brow: anim([[0, [0, 0], 'hold'], [18, [0, 0], 'inOut'], [40, [0, -4], 'hold'], [OP, [0, -4]]]),
+    shadowScale: anim([[0, [100, 100], 'hold'], [10, [100, 100], 'inOut'], [30, [94, 94], 'inOut'], [64, [106, 106], 'inOut'], [84, [103, 103], 'hold'], [OP, [103, 103]]]),
+    sad: {
+      mouth: [[0, false, 'hold'], [32, false, 'inOut'], [50, true, 'hold'], [OP, true]],
+      brow: [[0, 0, 'hold'], [18, 0, 'inOut'], [40, 16, 'hold'], [OP, 16]],
+      lid: [[0, 0, 'hold'], [34, 0, 'inOut'], [52, 9, 'hold'], [OP, 9]],
+      tear: 76,
+    },
+  });
+  return comp('mascot.ceti-triste', OP, [...layers, shadow, control, root]);
 }
 
 // ---------- Salto de perfil (poses de Gemini vectorizadas) ----------
@@ -499,7 +597,7 @@ function portal() {
 }
 
 mkdirSync(OUT, { recursive: true });
-for (const [file, json] of [['ceti-reposo', reposo()], ['ceti-celebra', celebra()], ['ceti-espera', espera()], ['ceti-portal', portal()]]) {
+for (const [file, json] of [['ceti-reposo', reposo()], ['ceti-celebra', celebra()], ['ceti-espera', espera()], ['ceti-triste', triste()], ['ceti-portal', portal()]]) {
   writeFileSync(`${OUT}/${file}.json`, JSON.stringify(json, (_k, v) => (typeof v === 'number' ? Math.round(v * 1000) / 1000 : v)));
   console.log(`${OUT}/${file}.json: ${(JSON.stringify(json).length / 1024).toFixed(0)} KB`);
 }

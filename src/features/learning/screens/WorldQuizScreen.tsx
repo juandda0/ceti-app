@@ -1,14 +1,17 @@
 /**
  * WorldQuizScreen — static quiz (R7, R9, R11).
  *
- * Traverses 10 assembled items linearly (indices 0..9). No adaptive selection
- * (R7). No certificate generation (R11). Supports three item types:
+ * Traverses the 10 assembled items in order. No adaptive selection (R7). No
+ * certificate generation (R11). Vidas (quizVidas): 3 por intento; una respuesta
+ * incorrecta cuesta una vida y la pregunta vuelve al final, sin revelar la
+ * respuesta ni la explicación. Hay que contestar bien todas; sin vidas, el mundo
+ * se empieza desde cero. Supports three item types:
  *   - multiple_choice: tap one of opciones[]
  *   - true_false: tap Verdadero / Falso
  *   - ordenar: tap items in sequence to build an order; submit and compare to
  *     ordenCanonico (never shown before submission — R9)
  */
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -41,10 +44,22 @@ import {
   useQuestionBankStore,
   QUESTIONS_PER_WORLD,
 } from '@features/learning/store/useQuestionBankStore';
+import { CetiAnimation } from '@features/animations';
 import { useStudentGrado } from '@features/learning/hooks/useStudentGrado';
 import { isMastered } from '@features/learning/data/mastery';
 import { useQuizStreakStore } from '@features/learning/store/useQuizStreakStore';
 import StreakCelebration from '@features/learning/components/StreakCelebration';
+import QuizSinVidas from '@features/learning/components/QuizSinVidas';
+import {
+  VIDAS_POR_MUNDO,
+  estadoIntento,
+  nuevoIntento,
+  precision,
+  preguntaActual,
+  registrarRespuesta,
+  siguiente,
+  type IntentoQuiz,
+} from '@features/learning/data/quizVidas';
 import { hashStr, stableShuffle } from '@shared/lib/quizUtils';
 import { useClassConfig } from '@features/learning/hooks/useClassConfig';
 import { displayWorldDef } from '@features/learning/data/worldMeta';
@@ -86,6 +101,12 @@ const WORLD_META: Record<string, { name: string; color: string }> = {
   world_4: { name: 'Nebulosa del Crédito', color: '#A884FF' },
   world_5: { name: 'Agujero Negro de las Deudas', color: '#5B9EF5' },
 };
+
+/** Rojo de las vidas (el mismo del corazón de lives.corazon). */
+const HEART_RED = '#FF4B4B';
+
+/** Con la última vida perdida, tiempo para ver el corazón romperse antes de la pantalla de sin vidas. */
+const SIN_VIDAS_DELAY_MS = 1800;
 
 // ─── Correctness helpers ───────────────────────────────────────────────────────
 
@@ -131,26 +152,56 @@ function isAnswerCorrect(item: QuizItem, answer: AnswerState): boolean {
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
+/**
+ * Un corazón de la cabecera. Al perderse, en su lugar se reproduce una vez el corazón que
+ * se vacía y se rompe (lives.corazon), y queda partido. Es el único aviso de la vida perdida.
+ */
+function Corazon({ lleno }: { lleno: boolean }) {
+  return (
+    <View style={headerSt.corazon}>
+      {lleno ? (
+        <Ionicons name="heart" size={20} color={HEART_RED} />
+      ) : (
+        <View style={headerSt.corazonLottie} pointerEvents="none">
+          <CetiAnimation id="lives.corazon" size={CORAZON_LOTTIE} />
+        </View>
+      )}
+    </View>
+  );
+}
+
+/**
+ * Lienzo del Lottie (512 px) en el que el corazón mide ~200 px de alto: a 40 px queda de ~16 px,
+ * lo mismo que el ícono de 20. Va en su propia caja de tamaño fijo, centrada sobre el hueco del
+ * corazón (el dibujo está ~2 px por debajo del centro del lienzo).
+ */
+const CORAZON_LOTTIE = 40;
+const CORAZON_SLOT = 22;
+
 function QuizHeader({
   worldName,
   accentColor,
-  currentIndex,
+  aciertos,
   total,
+  vidas,
   onBack,
   colors,
   insetTop,
   backLabel,
+  livesLabel,
 }: {
   worldName: string;
   accentColor: string;
-  currentIndex: number;
+  aciertos: number;
   total: number;
+  vidas: number;
   onBack: () => void;
   colors: ThemeColors;
   insetTop: number;
   backLabel: string;
+  livesLabel: string;
 }) {
-  const pct = total > 0 ? (currentIndex / total) * 100 : 0;
+  const pct = total > 0 ? (aciertos / total) * 100 : 0;
   return (
     <View
       style={[
@@ -175,10 +226,14 @@ function QuizHeader({
         <View style={headerSt.center}>
           <Text style={[headerSt.worldLabel, { color: accentColor }]}>{worldName}</Text>
           <Text style={[headerSt.counter, { color: colors.text.tertiary }]}>
-            {currentIndex}/{total}
+            {aciertos}/{total}
           </Text>
         </View>
-        <View style={{ width: 34 }} />
+        <View style={headerSt.vidas} accessible accessibilityLabel={livesLabel}>
+          {Array.from({ length: VIDAS_POR_MUNDO }, (_, i) => (
+            <Corazon key={i} lleno={i < vidas} />
+          ))}
+        </View>
       </View>
       <View style={[headerSt.track, { backgroundColor: colors.materials.highlight }]}>
         <AnimatedProgressFill
@@ -191,6 +246,9 @@ function QuizHeader({
   );
 }
 
+/** `muted`: opción no elegida después de comprobar (no se resalta la correcta). */
+type OptionState = 'idle' | 'selected' | 'correct' | 'wrong' | 'muted';
+
 function OptionButton({
   label,
   state,
@@ -198,7 +256,7 @@ function OptionButton({
   colors,
 }: {
   label: string;
-  state: 'idle' | 'selected' | 'correct' | 'wrong';
+  state: OptionState;
   onPress: () => void;
   colors: ThemeColors;
 }) {
@@ -301,7 +359,10 @@ function FeedbackBanner({
         <Ionicons name={iconName} size={20} color={iconColor} />
         <Text style={[feedbackSt.title, { color: iconColor }]}>{label}</Text>
       </View>
-      <Text style={[feedbackSt.text, { color: colors.text.secondary }]}>{explanation}</Text>
+      {/* Al fallar no se da la respuesta ni la explicación: la pregunta vuelve al final. */}
+      {isCorrect && explanation ? (
+        <Text style={[feedbackSt.text, { color: colors.text.secondary }]}>{explanation}</Text>
+      ) : null}
     </Animated.View>
   );
 }
@@ -317,14 +378,15 @@ function FeedbackBanner({
  *
  * Tapping an available element appends it to chosen.
  * Tapping a chosen element removes it (returns to available in original position).
- * After submission, shows each element with correct/wrong coloring per position.
+ * After submission, the whole sequence is marked correct or wrong (never per
+ * position: that would reveal part of the answer when it is wrong).
  *
- * IMPORTANT: ordenCanonico is NEVER displayed (R9). Correctness is only revealed
- * after the student submits.
+ * IMPORTANT: ordenCanonico is NEVER displayed (R9).
  */
 function OrdenarWidget({
   item,
   submitted,
+  isCorrect,
   chosen,
   onChosen,
   colors,
@@ -332,6 +394,7 @@ function OrdenarWidget({
 }: {
   item: OrdenarItem;
   submitted: boolean;
+  isCorrect: boolean;
   chosen: number[];
   onChosen: (indices: number[]) => void;
   colors: ThemeColors;
@@ -370,9 +433,7 @@ function OrdenarWidget({
         ) : (
           chosen.map((elIdx, pos) => {
             let state: 'idle' | 'correct' | 'wrong' = 'idle';
-            if (submitted) {
-              state = item.ordenCanonico[pos] === elIdx ? 'correct' : 'wrong';
-            }
+            if (submitted) state = isCorrect ? 'correct' : 'wrong';
             const bg =
               state === 'correct'
                 ? (colors.fill?.greenSubtle ?? '#1A3B2B')
@@ -471,6 +532,13 @@ function QuestionPage({
   t: (key: string, options?: Record<string, unknown>) => string;
 }) {
   const { selectedOption, chosenOrder, hasSubmitted } = answer;
+  const isCorrect = hasSubmitted && isAnswerCorrect(question, answer);
+  // Tras comprobar solo se marca la opción elegida; la correcta nunca se revela al fallar.
+  const optionState = (value: string): OptionState => {
+    if (value !== selectedOption) return hasSubmitted ? 'muted' : 'idle';
+    if (!hasSubmitted) return 'selected';
+    return isCorrect ? 'correct' : 'wrong';
+  };
   return (
     <ScrollView
       contentContainerStyle={styles.scroll}
@@ -501,51 +569,32 @@ function QuestionPage({
           stableShuffle(
             question.opciones.map((opt, idx) => ({ opt, idx })),
             hashStr(question.id)
-          ).map(({ opt, idx }) => {
-            let state: 'idle' | 'selected' | 'correct' | 'wrong' = 'idle';
-            if (hasSubmitted) {
-              if (idx === question.correctIndex) state = 'correct';
-              else if (String(idx) === selectedOption) state = 'wrong';
-            } else if (String(idx) === selectedOption) {
-              state = 'selected';
-            }
-            return (
-              <OptionButton
-                key={idx}
-                label={opt}
-                state={state}
-                onPress={() => onSelect(String(idx))}
-                colors={colors}
-              />
-            );
-          })}
+          ).map(({ opt, idx }) => (
+            <OptionButton
+              key={idx}
+              label={opt}
+              state={optionState(String(idx))}
+              onPress={() => onSelect(String(idx))}
+              colors={colors}
+            />
+          ))}
 
         {question.tipo === 'true_false' &&
-          (['true', 'false'] as const).map((val) => {
-            const label = val === 'true' ? t('quiz.verdadero') : t('quiz.falso');
-            const isThisCorrect = question.respuesta === (val === 'true');
-            let state: 'idle' | 'selected' | 'correct' | 'wrong' = 'idle';
-            if (hasSubmitted) {
-              if (isThisCorrect) state = 'correct';
-              else if (val === selectedOption) state = 'wrong';
-            } else if (val === selectedOption) {
-              state = 'selected';
-            }
-            return (
-              <OptionButton
-                key={val}
-                label={label}
-                state={state}
-                onPress={() => onSelect(val)}
-                colors={colors}
-              />
-            );
-          })}
+          (['true', 'false'] as const).map((val) => (
+            <OptionButton
+              key={val}
+              label={val === 'true' ? t('quiz.verdadero') : t('quiz.falso')}
+              state={optionState(val)}
+              onPress={() => onSelect(val)}
+              colors={colors}
+            />
+          ))}
 
         {question.tipo === 'ordenar' && (
           <OrdenarWidget
             item={question}
             submitted={hasSubmitted}
+            isCorrect={isCorrect}
             chosen={chosenOrder}
             onChosen={onChosen}
             colors={colors}
@@ -557,7 +606,7 @@ function QuestionPage({
       {/* Feedback */}
       {hasSubmitted && (
         <FeedbackBanner
-          isCorrect={isAnswerCorrect(question, answer)}
+          isCorrect={isCorrect}
           explanation={question.explicacion ?? ''}
           colors={colors}
           t={t}
@@ -607,6 +656,7 @@ function CompletionScreen({
   accentColor,
   correct,
   total,
+  pct,
   mastered,
   onBack,
   colors,
@@ -618,6 +668,8 @@ function CompletionScreen({
   accentColor: string;
   correct: number;
   total: number;
+  /** Precisión del intento: aciertos sobre respuestas enviadas. */
+  pct: number;
   mastered: boolean;
   onBack: () => void;
   colors: ThemeColors;
@@ -625,7 +677,6 @@ function CompletionScreen({
   insetBottom: number;
   t: (key: string, options?: Record<string, unknown>) => string;
 }) {
-  const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
   return (
     <ScreenWrapper style={{ flex: 1, backgroundColor: colors.background.base }}>
       <View
@@ -726,12 +777,27 @@ export default function WorldQuizScreen() {
   const fallback = WORLD_META[worldId ?? ''] ?? { name: 'Mundo', color: '#FF8A1F' };
   const meta = { name: disp?.name ?? fallback.name, color: disp?.color ?? fallback.color };
 
-  // Linear traversal state (R7: no adaptive selection)
-  const [currentIndex, setCurrentIndex] = useState(0);
+  // Intento con vidas (R7: sin selección adaptativa; las falladas vuelven al final de la cola).
+  // Se crea al tener las preguntas y se reinicia si cambia el banco cargado.
+  const [intentoState, setIntento] = useState<IntentoQuiz | null>(null);
+  const intento =
+    intentoState && intentoState.total === questions.length
+      ? intentoState
+      : nuevoIntento(questions.length);
+  const estado = estadoIntento(intento);
+  const currentIndex = intento.pos;
   const [isComplete, setIsComplete] = useState(false);
   const [celebracion, setCelebracion] = useState<number | null>(null);
   const registrarQuiz = useQuizStreakStore((s) => s.registrarQuiz);
-  const [attemptCorrect, setAttemptCorrect] = useState(0);
+  // Al perder la última vida se deja ver el corazón romperse en la esquina y luego sale la pantalla de sin vidas.
+  const [sinVidas, setSinVidas] = useState(false);
+  const sinVidasTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      if (sinVidasTimer.current) clearTimeout(sinVidasTimer.current);
+    },
+    []
+  );
 
   // Per-question answer state (reset on each new question)
   // For multiple_choice/true_false: selectedOption (string representation)
@@ -794,7 +860,7 @@ export default function WorldQuizScreen() {
     configEntry?.competencia,
   ]);
 
-  const currentQuestion = questions[currentIndex] ?? null;
+  const currentQuestion = questions[preguntaActual(intento) ?? -1] ?? null;
 
   // Derived: has the student provided a full answer for the current item?
   const hasAnswer = useMemo(() => {
@@ -883,31 +949,53 @@ export default function WorldQuizScreen() {
     void Haptics.impactAsync(
       correct ? Haptics.ImpactFeedbackStyle.Light : Haptics.ImpactFeedbackStyle.Heavy
     );
-    recordAnswer(userId, currentQuestion.id, worldId as WorldId, correct);
-    if (correct) setAttemptCorrect((n) => n + 1);
+    const despues = registrarRespuesta(intento, correct);
+    setIntento(despues);
     setHasSubmitted(true);
+    if (estadoIntento(despues) === 'perdido') {
+      sinVidasTimer.current = setTimeout(() => setSinVidas(true), SIN_VIDAS_DELAY_MS);
+    }
   };
 
   const handleNext = () => {
-    const nextIndex = currentIndex + 1;
-    if (nextIndex >= questions.length) {
-      setIsComplete(true);
+    if (estado === 'perdido') {
+      if (sinVidasTimer.current) clearTimeout(sinVidasTimer.current);
+      setSinVidas(true);
+      return;
+    }
+    if (estado === 'completado') {
+      // El progreso solo cuenta al terminar el mundo: un intento perdido empieza de cero.
       if (userId) {
+        for (const q of questions) recordAnswer(userId, q.id, worldId as WorldId, true);
         const { primeroHoy, racha } = registrarQuiz(userId);
         if (primeroHoy) setCelebracion(racha);
       }
-    } else {
-      setHistory((h) => {
-        const next = [...h];
-        next[currentIndex] = { selectedOption, chosenOrder, hasSubmitted };
-        return next;
-      });
-      setCurrentIndex(nextIndex);
-      setSelectedOption(null);
-      setChosenOrder([]);
-      setHasSubmitted(false);
-      goTo(nextIndex);
+      setIsComplete(true);
+      return;
     }
+    const nextIndex = currentIndex + 1;
+    setHistory((h) => {
+      const next = [...h];
+      next[currentIndex] = { selectedOption, chosenOrder, hasSubmitted };
+      return next;
+    });
+    setIntento(siguiente(intento));
+    setSelectedOption(null);
+    setChosenOrder([]);
+    setHasSubmitted(false);
+    goTo(nextIndex);
+  };
+
+  /** Sin vidas: el mundo empieza otra vez desde la primera pregunta, con 3 vidas. */
+  const handleRestart = () => {
+    setSinVidas(false);
+    setIntento(nuevoIntento(questions.length));
+    setHistory([]);
+    setSelectedOption(null);
+    setChosenOrder([]);
+    setHasSubmitted(false);
+    setViewIndex(0);
+    pos.set(0);
   };
 
   const handleBack = () => {
@@ -985,8 +1073,9 @@ export default function WorldQuizScreen() {
         <CompletionScreen
           worldName={meta.name}
           accentColor={meta.color}
-          correct={attemptCorrect}
+          correct={intento.aciertos}
           total={questions.length > 0 ? questions.length : QUESTIONS_PER_WORLD}
+          pct={precision(intento)}
           mastered={isMastered(worldDone, worldTotal > 0 ? worldTotal : QUESTIONS_PER_WORLD)}
           onBack={handleBack}
           colors={colors}
@@ -1003,10 +1092,24 @@ export default function WorldQuizScreen() {
     );
   }
 
+  // ── Sin vidas (después de ver el corazón romperse) ────────────────────────
+  if (estado === 'perdido' && sinVidas) {
+    return (
+      <QuizSinVidas
+        worldName={meta.name}
+        accentColor={meta.color}
+        insetTop={insets.top}
+        insetBottom={insets.bottom}
+        onRetry={handleRestart}
+        onBack={handleBack}
+      />
+    );
+  }
+
   if (!currentQuestion) return null;
 
   // ── Quiz ───────────────────────────────────────────────────────────────────
-  const isLastQuestion = currentIndex === questions.length - 1;
+  const isLastQuestion = estado === 'completado';
   const reviewing = viewIndex < currentIndex;
 
   return (
@@ -1014,12 +1117,14 @@ export default function WorldQuizScreen() {
       <QuizHeader
         worldName={meta.name}
         accentColor={meta.color}
-        currentIndex={currentIndex}
+        aciertos={intento.aciertos}
         total={questions.length}
+        vidas={intento.vidas}
         onBack={handleBack}
         colors={colors}
         insetTop={insets.top}
         backLabel={t('quiz.back')}
+        livesLabel={t('quiz.livesA11y', { count: intento.vidas })}
       />
 
       {/* Preguntas: pager horizontal. Se montan la visible y sus vecinas; al
@@ -1027,7 +1132,7 @@ export default function WorldQuizScreen() {
       <GestureDetector gesture={swipe}>
         <View style={styles.pager} onLayout={handlePagerLayout}>
           {[viewIndex - 1, viewIndex, viewIndex + 1]
-            .filter((i) => i >= 0 && i <= currentIndex && questions[i])
+            .filter((i) => i >= 0 && i <= currentIndex && questions[intento.cola[i]])
             .map((i) => {
               const isCurrent = i === currentIndex;
               const answer = isCurrent ? { selectedOption, chosenOrder, hasSubmitted } : history[i];
@@ -1035,7 +1140,7 @@ export default function WorldQuizScreen() {
               return (
                 <PageSlot key={i} index={i} pos={pos} pageW={pageW} active={i === viewIndex}>
                   <QuestionPage
-                    question={questions[i]}
+                    question={questions[intento.cola[i]]}
                     answer={answer}
                     onSelect={(value) => isCurrent && !hasSubmitted && setSelectedOption(value)}
                     onChosen={isCurrent ? setChosenOrder : () => {}}
@@ -1108,6 +1213,7 @@ export default function WorldQuizScreen() {
           </TouchableOpacity>
         )}
       </View>
+
     </ScreenWrapper>
   );
 }
@@ -1186,6 +1292,25 @@ const headerSt = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 12,
+  },
+  vidas: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+  },
+  corazon: {
+    width: CORAZON_SLOT,
+    height: CORAZON_SLOT,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'visible',
+  },
+  corazonLottie: {
+    position: 'absolute',
+    width: CORAZON_LOTTIE,
+    height: CORAZON_LOTTIE,
+    left: (CORAZON_SLOT - CORAZON_LOTTIE) / 2,
+    top: (CORAZON_SLOT - CORAZON_LOTTIE) / 2 - 2,
   },
   backBtn: {
     width: 34,

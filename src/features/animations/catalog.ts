@@ -95,6 +95,17 @@ const catalog = {
     brief:
       'Fueguito de racha: se llena de naranja, tiembla y explota al completarse; luego arde con brasas.',
   },
+  'lives.corazon': {
+    // Generada por scripts/lottie/corazon.mjs (espejo del fueguito): editar ahí, no el JSON.
+    source: require('@/assets/animations/lives/corazon.json'),
+    status: 'shipped',
+    loop: false,
+    speed: 1,
+    haptic: 'medium',
+    usedIn: ['WorldQuizScreen'],
+    brief:
+      'Vida perdida (en los corazones de la cabecera del quiz): late, se vacía temblando, se raja y estalla; queda partido en dos, gris, goteando.',
+  },
   'celebration.rocket-launch': {
     source: require('@/assets/animations/celebration/rocket-launch.json'),
     status: 'approved',
@@ -103,6 +114,16 @@ const catalog = {
     haptic: 'success',
     usedIn: [],
     brief: 'Cohete que despega: celebra un logro grande (meta cumplida, mundo completado).',
+  },
+  'mascot.ceti-triste': {
+    // Tipo B de scripts/lottie/ceti-personaje.mjs (assets/brand/ceti/lottie/ceti-triste.json): editar ahí.
+    source: require('@/assets/animations/mascot/ceti-triste.json'),
+    status: 'shipped',
+    loop: false,
+    speed: 1,
+    usedIn: ['QuizSinVidas'],
+    brief:
+      'Ceti triste: suspira, se desinfla, baja las aletas y suelta una lágrima; termina quieta en la pose triste. Una sola vez.',
   },
   'mascot.ceti-vuelo-reposo': {
     // assets/brand/ceti/lottie/ceti-reposo.json sin las capas sombra-piso (vuela, sin suelo) ni surcos

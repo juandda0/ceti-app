@@ -56,7 +56,7 @@ const WORLD_META: Record<string, { name: string; color: string }> = {
 };
 
 /** Duración mínima del despegue (ms). */
-const DESPEGUE_MS = 5000;
+const DESPEGUE_MS = 2000;
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
