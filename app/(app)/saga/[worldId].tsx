@@ -40,7 +40,7 @@ import type { RecompensaPractica } from '@features/orbita/domain/orbita';
 import { useOrbitaStore } from '@features/orbita/store/useOrbitaStore';
 import { refrescarAvisos } from '@features/orbita/hooks/useOrbita';
 import { eventos } from '@features/orbita/data/eventos';
-import type { WorldId } from '@features/learning/data/quiz.types';
+import type { QuizItem, WorldId } from '@features/learning/data/quiz.types';
 import Despegue from '@features/learning/components/galaxia/Despegue';
 import { planetaDeMundo } from '@features/learning/data/planetas';
 
@@ -139,7 +139,9 @@ export default function WorldSagaScreen() {
     // courseContent es un objeto nuevo en cada render; su versión es la clave.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [grado, worldId, uid, classConfig?.version, cargarNiveles]);
-  const niveles = carga?.estado === 'listo' ? carga.niveles : undefined;
+  // Los últimos niveles buenos, aunque esté recargando: una actualización remota
+  // nunca desmonta el mapa ni la lección.
+  const niveles = carga?.niveles;
   const hechas = useOrbitaStore((s) => s.porUid[uid]?.niveles[worldId ?? ''] ?? 0);
   // Suscripción a respuestas y progreso remoto para que "conquistado" se recalcule.
   useQuestionBankStore((s) => s.answers);
@@ -149,7 +151,16 @@ export default function WorldSagaScreen() {
   const totalLecciones = niveles?.lecciones.length ?? 0;
   const nodos = niveles ? nodosMapa(totalLecciones, hechas, conquistado) : [];
 
-  const [jugando, setJugando] = useState<{ tipo: TipoNivel; nivel: number } | null>(null);
+  // La lección en curso guarda SUS preguntas: si los niveles se recargan por una
+  // actualización remota (config de la clase, grado), la lección no se reinicia.
+  const [jugando, setJugando] = useState<{
+    tipo: TipoNivel;
+    nivel: number;
+    items: QuizItem[];
+  } | null>(null);
+  // Una vez dentro del planeta (mapa o lección), el despegue y las fases de
+  // entrada ya no vuelven aunque grado/config/flujo pasen por "cargando".
+  const yaEntro = useRef(false);
   const [fin, setFin] = useState<{
     recompensa: RecompensaPractica;
     resultado: ResultadoLeccion;
@@ -164,12 +175,14 @@ export default function WorldSagaScreen() {
   };
 
   const abrirNodo = (n: NodoMapa) => {
-    if (n.estado === 'bloqueado') return;
-    setJugando({ tipo: n.tipo, nivel: n.indice });
+    if (n.estado === 'bloqueado' || !niveles) return;
+    const items = n.tipo === 'jefe' ? niveles.jefe : (niveles.lecciones[n.indice] ?? []);
+    if (items.length === 0) return;
+    setJugando({ tipo: n.tipo, nivel: n.indice, items });
   };
 
   const alTerminar = (resultado: ResultadoLeccion) => {
-    if (!jugando || !worldId || !niveles) return;
+    if (!jugando || !worldId) return;
     const { tipo, nivel } = jugando;
     let ganoPlaneta = false;
 
@@ -177,7 +190,7 @@ export default function WorldSagaScreen() {
       // La maestría sale del jefe, con lo acertado a la primera (antes siempre era 10/10).
       const { recordAnswer, getWorldProgress } = useQuestionBankStore.getState();
       const acertadas = new Set(resultado.idsAcertadas);
-      for (const q of niveles.jefe) recordAnswer(uid, q.id, worldId as WorldId, acertadas.has(q.id));
+      for (const q of jugando.items) recordAnswer(uid, q.id, worldId as WorldId, acertadas.has(q.id));
       ganoPlaneta = useQuestionBankStore.getState().isWorldComplete(uid, worldId as WorldId);
       if (role === 'estudiante' && colegioId && cursoId && firebaseUid) {
         const { done, total } = getWorldProgress(uid, worldId as WorldId);
@@ -229,8 +242,13 @@ export default function WorldSagaScreen() {
 
   const alContinuar = () => setFin(null);
 
+  if (jugando || fin || (niveles && phase === 'quiz' && grado && despegueListo)) {
+    yaEntro.current = true;
+  }
+  const entrando = !yaEntro.current;
+
   let content: React.ReactElement;
-  if (phase === 'loading' || !grado || !despegueListo) {
+  if (entrando && (phase === 'loading' || !grado || !despegueListo)) {
     // ── Despegue (carga) ──────────────────────────────────────────────────────
     content = (
       <Despegue
@@ -240,7 +258,7 @@ export default function WorldSagaScreen() {
         duracion={DESPEGUE_MS}
       />
     );
-  } else if (phase === 'eligecamino' && situacion !== null) {
+  } else if (entrando && phase === 'eligecamino' && situacion !== null) {
     // ── EligeCamino (solo la primera vez) ────────────────────────────────────
     content = (
       <EligeCaminoView
@@ -250,7 +268,7 @@ export default function WorldSagaScreen() {
         onFinish={handleECFinish}
       />
     );
-  } else if (phase === 'microteoria' && microteoriaBank !== null) {
+  } else if (entrando && phase === 'microteoria' && microteoriaBank !== null) {
     // ── Micro-teoría (solo la primera vez) ───────────────────────────────────
     content = (
       <MicroteoriaView
@@ -277,14 +295,12 @@ export default function WorldSagaScreen() {
         onContinuar={alContinuar}
       />
     );
-  } else if (jugando && niveles) {
-    // ── Lección o jefe ───────────────────────────────────────────────────────
-    const items =
-      jugando.tipo === 'jefe' ? niveles.jefe : (niveles.lecciones[jugando.nivel] ?? []);
+  } else if (jugando) {
+    // ── Lección o jefe (con sus preguntas fijadas al empezar) ────────────────
     content = (
       <LeccionScreen
         key={`${jugando.tipo}-${jugando.nivel}`}
-        items={items}
+        items={jugando.items}
         modo={jugando.tipo}
         titulo={
           jugando.tipo === 'jefe'
@@ -298,7 +314,7 @@ export default function WorldSagaScreen() {
         onTerminar={alTerminar}
       />
     );
-  } else if (carga?.estado === 'error') {
+  } else if (carga?.estado === 'error' && !niveles) {
     content = (
       <View style={[styles.centro, { backgroundColor: colors.background.base }]}>
         <Ionicons name="cloud-offline" size={48} color={colors.text.quaternary} />

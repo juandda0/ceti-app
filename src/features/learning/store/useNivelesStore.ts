@@ -28,7 +28,14 @@ export const useNivelesStore = create<NivelesState>()((set, get) => ({
     const clave = `${grado}:${semilla}:v${courseContent?.version ?? 0}`;
     const actual = get().porMundo[worldId];
     if (actual?.clave === clave && actual.estado !== 'error') return;
-    set((s) => ({ porMundo: { ...s.porMundo, [worldId]: { clave, estado: 'cargando' } } }));
+    // Mientras recarga (p. ej. el profe guardó la clase) se conservan los niveles
+    // anteriores: el mapa no parpadea y nada de lo que está en pantalla se desmonta.
+    set((s) => ({
+      porMundo: {
+        ...s.porMundo,
+        [worldId]: { clave, estado: 'cargando', niveles: actual?.niveles },
+      },
+    }));
     try {
       const { questionBankRepository } =
         await import('@features/learning/data/QuestionBankRepository');
@@ -40,12 +47,14 @@ export const useNivelesStore = create<NivelesState>()((set, get) => ({
           [worldId]:
             niveles && niveles.jefe.length > 0
               ? { clave, estado: 'listo', niveles }
-              : { clave, estado: 'error' },
+              : { clave, estado: 'error', niveles: actual?.niveles },
         },
       }));
     } catch (err) {
       if (__DEV__) console.warn('[niveles] cargar:', err);
-      set((s) => ({ porMundo: { ...s.porMundo, [worldId]: { clave, estado: 'error' } } }));
+      set((s) => ({
+        porMundo: { ...s.porMundo, [worldId]: { clave, estado: 'error', niveles: actual?.niveles } },
+      }));
     }
   },
   reiniciar: () => set({ porMundo: {} }),
