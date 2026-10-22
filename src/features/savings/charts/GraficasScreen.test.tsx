@@ -17,7 +17,10 @@ jest.mock('react-i18next', () => ({
 jest.mock('@shared/hooks/useThemeColors', () => ({
   useThemeColors: () => jest.requireActual('@shared/constants/colors').DarkColors,
 }));
-jest.mock('expo-router', () => ({ useRouter: () => ({ push: jest.fn() }) }));
+jest.mock('expo-router', () => ({
+  useRouter: () => ({ push: jest.fn() }),
+  useFocusEffect: jest.fn(),
+}));
 jest.mock(
   '@shared/components/ScreenWrapper',
   () =>

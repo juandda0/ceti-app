@@ -17,14 +17,21 @@ import {
   TouchableOpacity,
   Platform,
   ActivityIndicator,
+  useWindowDimensions,
+  type LayoutChangeEvent,
 } from 'react-native';
 import Animated, {
   ReduceMotion,
   useAnimatedStyle,
   useSharedValue,
+  cancelAnimation,
   withSequence,
+  withSpring,
   withTiming,
+  type SharedValue,
 } from 'react-native-reanimated';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { scheduleOnRN } from 'react-native-worklets';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
@@ -54,6 +61,7 @@ import {
   enterSlideUp,
   enterSoftFade,
   enterSoftScale,
+  pageTiming,
   pressInTiming,
   pressOutTiming,
   pressScale,
@@ -97,6 +105,28 @@ function isTFCorrect(item: TrueFalseItem, selected: boolean): boolean {
 function isOrdenarCorrect(item: OrdenarItem, chosen: number[]): boolean {
   if (chosen.length !== item.ordenCanonico.length) return false;
   return chosen.every((v, i) => v === item.ordenCanonico[i]);
+}
+
+/** Respuesta de una pregunta: opción elegida (MC / VF) u orden construido. */
+type AnswerState = {
+  selectedOption: string | null;
+  chosenOrder: number[];
+  hasSubmitted: boolean;
+};
+
+function isAnswerCorrect(item: QuizItem, answer: AnswerState): boolean {
+  switch (item.tipo) {
+    case 'multiple_choice':
+      return (
+        answer.selectedOption !== null && isMCCorrect(item, parseInt(answer.selectedOption, 10))
+      );
+    case 'true_false':
+      return answer.selectedOption !== null && isTFCorrect(item, answer.selectedOption === 'true');
+    case 'ordenar':
+      return isOrdenarCorrect(item, answer.chosenOrder);
+    default:
+      return false;
+  }
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -418,6 +448,158 @@ function OrdenarWidget({
   );
 }
 
+// ─── Página de pregunta ───────────────────────────────────────────────────────
+
+/**
+ * Todo lo que cambia entre preguntas (tipo, enunciado, opciones, feedback) en
+ * un solo bloque, para que se deslice como una pieza. Lo fijo (cabecera,
+ * progreso, botón de abajo) vive fuera.
+ */
+function QuestionPage({
+  question,
+  answer,
+  onSelect,
+  onChosen,
+  colors,
+  t,
+}: {
+  question: QuizItem;
+  answer: AnswerState;
+  onSelect: (value: string) => void;
+  onChosen: (indices: number[]) => void;
+  colors: ThemeColors;
+  t: (key: string, options?: Record<string, unknown>) => string;
+}) {
+  const { selectedOption, chosenOrder, hasSubmitted } = answer;
+  return (
+    <ScrollView
+      contentContainerStyle={styles.scroll}
+      showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
+    >
+      {/* Question type */}
+      <View style={styles.badgeRow}>
+        <View style={[styles.badge, { backgroundColor: colors.materials.highlight }]}>
+          <Text style={[styles.badgeText, { color: colors.text.tertiary }]}>
+            {question.tipo === 'multiple_choice'
+              ? t('quiz.tipoMC')
+              : question.tipo === 'true_false'
+                ? t('quiz.tipoVF')
+                : t('quiz.tipoOrdenar')}
+          </Text>
+        </View>
+      </View>
+
+      {/* Question text */}
+      <Text style={[styles.questionText, { color: colors.text.primary }]}>
+        {question.enunciado}
+      </Text>
+
+      {/* ── Answer area per tipo ── */}
+      <View style={styles.options}>
+        {question.tipo === 'multiple_choice' &&
+          stableShuffle(
+            question.opciones.map((opt, idx) => ({ opt, idx })),
+            hashStr(question.id)
+          ).map(({ opt, idx }) => {
+            let state: 'idle' | 'selected' | 'correct' | 'wrong' = 'idle';
+            if (hasSubmitted) {
+              if (idx === question.correctIndex) state = 'correct';
+              else if (String(idx) === selectedOption) state = 'wrong';
+            } else if (String(idx) === selectedOption) {
+              state = 'selected';
+            }
+            return (
+              <OptionButton
+                key={idx}
+                label={opt}
+                state={state}
+                onPress={() => onSelect(String(idx))}
+                colors={colors}
+              />
+            );
+          })}
+
+        {question.tipo === 'true_false' &&
+          (['true', 'false'] as const).map((val) => {
+            const label = val === 'true' ? t('quiz.verdadero') : t('quiz.falso');
+            const isThisCorrect = question.respuesta === (val === 'true');
+            let state: 'idle' | 'selected' | 'correct' | 'wrong' = 'idle';
+            if (hasSubmitted) {
+              if (isThisCorrect) state = 'correct';
+              else if (val === selectedOption) state = 'wrong';
+            } else if (val === selectedOption) {
+              state = 'selected';
+            }
+            return (
+              <OptionButton
+                key={val}
+                label={label}
+                state={state}
+                onPress={() => onSelect(val)}
+                colors={colors}
+              />
+            );
+          })}
+
+        {question.tipo === 'ordenar' && (
+          <OrdenarWidget
+            item={question}
+            submitted={hasSubmitted}
+            chosen={chosenOrder}
+            onChosen={onChosen}
+            colors={colors}
+            t={t}
+          />
+        )}
+      </View>
+
+      {/* Feedback */}
+      {hasSubmitted && (
+        <FeedbackBanner
+          isCorrect={isAnswerCorrect(question, answer)}
+          explanation={question.explicacion ?? ''}
+          colors={colors}
+          t={t}
+        />
+      )}
+    </ScrollView>
+  );
+}
+
+/**
+ * Ranura de un pager: la página `index` vive en x = (index − pos) · ancho.
+ * Mover `pos` desplaza todas las páginas a la vez y a la misma velocidad
+ * (la que sale y la que entra quedan pegadas), sin fade ni parallax.
+ */
+function PageSlot({
+  index,
+  pos,
+  pageW,
+  active,
+  children,
+}: {
+  index: number;
+  pos: SharedValue<number>;
+  pageW: SharedValue<number>;
+  active: boolean;
+  children: React.ReactNode;
+}) {
+  const style = useAnimatedStyle(() => ({
+    transform: [{ translateX: (index - pos.get()) * pageW.get() }],
+  }));
+  return (
+    <Animated.View
+      style={[StyleSheet.absoluteFill, style]}
+      pointerEvents={active ? 'auto' : 'none'}
+      accessibilityElementsHidden={!active}
+      importantForAccessibility={active ? 'auto' : 'no-hide-descendants'}
+    >
+      {children}
+    </Animated.View>
+  );
+}
+
 // ─── CompletionScreen ─────────────────────────────────────────────────────────
 
 function CompletionScreen({
@@ -506,6 +688,9 @@ function CompletionScreen({
 // ─── Main screen ──────────────────────────────────────────────────────────────
 
 const EMPTY_QUESTIONS: QuizItem[] = [];
+
+/** Velocidad (px/s) a partir de la cual un deslizamiento corto ya cambia de pregunta. */
+const SWIPE_VELOCITY = 500;
 
 export default function WorldQuizScreen() {
   const { worldId } = useLocalSearchParams<{ worldId: string }>();
@@ -620,40 +805,80 @@ export default function WorldQuizScreen() {
     return selectedOption !== null;
   }, [currentQuestion, selectedOption, chosenOrder]);
 
-  // Derived: is the current submitted answer correct?
-  const isCorrect = useMemo<boolean | null>(() => {
-    if (!hasSubmitted || !currentQuestion) return null;
-    switch (currentQuestion.tipo) {
-      case 'multiple_choice':
-        return (
-          selectedOption !== null && isMCCorrect(currentQuestion, parseInt(selectedOption, 10))
-        );
-      case 'true_false':
-        return selectedOption !== null && isTFCorrect(currentQuestion, selectedOption === 'true');
-      case 'ordenar':
-        return isOrdenarCorrect(currentQuestion, chosenOrder);
-      default:
-        return false;
-    }
-  }, [hasSubmitted, currentQuestion, selectedOption, chosenOrder]);
+  // ── Pager entre preguntas ──────────────────────────────────────────────────
+  // `pos` es la pregunta en pantalla (fraccionaria mientras se desliza). La
+  // pregunta `i` vive en x = (i − pos) · ancho, así que todas se mueven juntas.
+  // `viewIndex` ≤ `currentIndex`: hacia atrás se repasan las ya respondidas
+  // (solo lectura); hacia adelante nunca se pasa de la pregunta actual.
+  const { width: windowW } = useWindowDimensions();
+  const pageW = useSharedValue(windowW);
+  const pos = useSharedValue(0);
+  const dragStart = useSharedValue(0);
+  const maxIndex = useSharedValue(0);
+  const [viewIndex, setViewIndex] = useState(0);
+  const [history, setHistory] = useState<AnswerState[]>([]);
+  const handlePagerLayout = (e: LayoutChangeEvent) => {
+    pageW.set(e.nativeEvent.layout.width);
+  };
+  useEffect(() => {
+    maxIndex.set(currentIndex);
+  }, [currentIndex, maxIndex]);
+
+  const goTo = (index: number) => {
+    setViewIndex(index);
+    pos.set(withTiming(index, pageTiming));
+  };
+
+  const swipe = useMemo(
+    () =>
+      Gesture.Pan()
+        // Solo horizontal: el scroll vertical de la pregunta sigue funcionando.
+        .activeOffsetX([-12, 12])
+        .failOffsetY([-12, 12])
+        .onStart(() => {
+          cancelAnimation(pos);
+          dragStart.set(pos.get());
+        })
+        .onUpdate((e) => {
+          const max = maxIndex.get();
+          let next = dragStart.get() - e.translationX / pageW.get();
+          // Resistencia en los bordes (antes de la 1.ª y después de la actual).
+          if (next < 0) next = next / 3;
+          else if (next > max) next = max + (next - max) / 3;
+          pos.set(next);
+        })
+        .onEnd((e) => {
+          const w = pageW.get();
+          const from = Math.round(dragStart.get());
+          const delta = dragStart.get() - e.translationX / w - from;
+          let target = from;
+          // Basta un movimiento rápido o pasar la mitad de la página.
+          if (Math.abs(e.velocityX) > SWIPE_VELOCITY) target = from - Math.sign(e.velocityX);
+          else if (Math.abs(delta) > 0.5) target = from + Math.sign(delta);
+          target = Math.min(Math.max(target, 0), maxIndex.get());
+          pos.set(
+            withSpring(target, {
+              duration: 400,
+              dampingRatio: 1,
+              overshootClamping: true,
+              velocity: -e.velocityX / w,
+              reduceMotion: ReduceMotion.System,
+            })
+          );
+          scheduleOnRN(setViewIndex, target);
+          if (target !== from) scheduleOnRN(Haptics.selectionAsync);
+        }),
+    [pos, dragStart, maxIndex, pageW]
+  );
 
   const handleSubmit = () => {
     if (!hasAnswer || !currentQuestion || !userId || hasSubmitted) return;
 
-    let correct = false;
-    switch (currentQuestion.tipo) {
-      case 'multiple_choice':
-        correct =
-          selectedOption !== null && isMCCorrect(currentQuestion, parseInt(selectedOption, 10));
-        break;
-      case 'true_false':
-        correct =
-          selectedOption !== null && isTFCorrect(currentQuestion, selectedOption === 'true');
-        break;
-      case 'ordenar':
-        correct = isOrdenarCorrect(currentQuestion, chosenOrder);
-        break;
-    }
+    const correct = isAnswerCorrect(currentQuestion, {
+      selectedOption,
+      chosenOrder,
+      hasSubmitted,
+    });
 
     void Haptics.impactAsync(
       correct ? Haptics.ImpactFeedbackStyle.Light : Haptics.ImpactFeedbackStyle.Heavy
@@ -672,10 +897,16 @@ export default function WorldQuizScreen() {
         if (primeroHoy) setCelebracion(racha);
       }
     } else {
+      setHistory((h) => {
+        const next = [...h];
+        next[currentIndex] = { selectedOption, chosenOrder, hasSubmitted };
+        return next;
+      });
       setCurrentIndex(nextIndex);
       setSelectedOption(null);
       setChosenOrder([]);
       setHasSubmitted(false);
+      goTo(nextIndex);
     }
   };
 
@@ -751,23 +982,23 @@ export default function WorldQuizScreen() {
     );
     return (
       <>
-      <CompletionScreen
-        worldName={meta.name}
-        accentColor={meta.color}
-        correct={attemptCorrect}
-        total={questions.length > 0 ? questions.length : QUESTIONS_PER_WORLD}
-        mastered={isMastered(worldDone, worldTotal > 0 ? worldTotal : QUESTIONS_PER_WORLD)}
-        onBack={handleBack}
-        colors={colors}
-        insetTop={insets.top}
-        insetBottom={insets.bottom}
-        t={t}
-      />
-      <StreakCelebration
-        racha={celebracion ?? 0}
-        visible={celebracion !== null}
-        onClose={() => setCelebracion(null)}
-      />
+        <CompletionScreen
+          worldName={meta.name}
+          accentColor={meta.color}
+          correct={attemptCorrect}
+          total={questions.length > 0 ? questions.length : QUESTIONS_PER_WORLD}
+          mastered={isMastered(worldDone, worldTotal > 0 ? worldTotal : QUESTIONS_PER_WORLD)}
+          onBack={handleBack}
+          colors={colors}
+          insetTop={insets.top}
+          insetBottom={insets.bottom}
+          t={t}
+        />
+        <StreakCelebration
+          racha={celebracion ?? 0}
+          visible={celebracion !== null}
+          onClose={() => setCelebracion(null)}
+        />
       </>
     );
   }
@@ -776,6 +1007,7 @@ export default function WorldQuizScreen() {
 
   // ── Quiz ───────────────────────────────────────────────────────────────────
   const isLastQuestion = currentIndex === questions.length - 1;
+  const reviewing = viewIndex < currentIndex;
 
   return (
     <ScreenWrapper style={{ flex: 1, backgroundColor: colors.background.base }}>
@@ -790,114 +1022,31 @@ export default function WorldQuizScreen() {
         backLabel={t('quiz.back')}
       />
 
-      <ScrollView
-        contentContainerStyle={styles.scroll}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-      >
-        {/* Question type */}
-        <Animated.View
-          key={`badge-${currentIndex}`}
-          entering={enterSoftFade()}
-          style={styles.badgeRow}
-        >
-          <View style={[styles.badge, { backgroundColor: colors.materials.highlight }]}>
-            <Text style={[styles.badgeText, { color: colors.text.tertiary }]}>
-              {currentQuestion.tipo === 'multiple_choice'
-                ? t('quiz.tipoMC')
-                : currentQuestion.tipo === 'true_false'
-                  ? t('quiz.tipoVF')
-                  : t('quiz.tipoOrdenar')}
-            </Text>
-          </View>
-        </Animated.View>
-
-        {/* Question text */}
-        <Animated.View key={`q-${currentIndex}`} entering={enterFadeUp(0, 40)}>
-          <Text style={[styles.questionText, { color: colors.text.primary }]}>
-            {currentQuestion.enunciado}
-          </Text>
-        </Animated.View>
-
-        {/* ── Answer area per tipo ── */}
-        <Animated.View
-          key={`opts-${currentIndex}`}
-          entering={enterFadeUp(1, 40)}
-          style={styles.options}
-        >
-          {currentQuestion.tipo === 'multiple_choice' && (
-            <>
-              {stableShuffle(
-                currentQuestion.opciones.map((opt, idx) => ({ opt, idx })),
-                hashStr(currentQuestion.id)
-              ).map(({ opt, idx }) => {
-                let state: 'idle' | 'selected' | 'correct' | 'wrong' = 'idle';
-                if (hasSubmitted) {
-                  if (idx === currentQuestion.correctIndex) state = 'correct';
-                  else if (String(idx) === selectedOption) state = 'wrong';
-                } else if (String(idx) === selectedOption) {
-                  state = 'selected';
-                }
-                return (
-                  <OptionButton
-                    key={idx}
-                    label={opt}
-                    state={state}
-                    onPress={() => !hasSubmitted && setSelectedOption(String(idx))}
+      {/* Preguntas: pager horizontal. Se montan la visible y sus vecinas; al
+          deslizar (dedo o botón) todas se mueven juntas. */}
+      <GestureDetector gesture={swipe}>
+        <View style={styles.pager} onLayout={handlePagerLayout}>
+          {[viewIndex - 1, viewIndex, viewIndex + 1]
+            .filter((i) => i >= 0 && i <= currentIndex && questions[i])
+            .map((i) => {
+              const isCurrent = i === currentIndex;
+              const answer = isCurrent ? { selectedOption, chosenOrder, hasSubmitted } : history[i];
+              if (!answer) return null;
+              return (
+                <PageSlot key={i} index={i} pos={pos} pageW={pageW} active={i === viewIndex}>
+                  <QuestionPage
+                    question={questions[i]}
+                    answer={answer}
+                    onSelect={(value) => isCurrent && !hasSubmitted && setSelectedOption(value)}
+                    onChosen={isCurrent ? setChosenOrder : () => {}}
                     colors={colors}
+                    t={t}
                   />
-                );
-              })}
-            </>
-          )}
-
-          {currentQuestion.tipo === 'true_false' && (
-            <>
-              {(['true', 'false'] as const).map((val) => {
-                const label = val === 'true' ? t('quiz.verdadero') : t('quiz.falso');
-                const isThisCorrect = currentQuestion.respuesta === (val === 'true');
-                let state: 'idle' | 'selected' | 'correct' | 'wrong' = 'idle';
-                if (hasSubmitted) {
-                  if (isThisCorrect) state = 'correct';
-                  else if (val === selectedOption) state = 'wrong';
-                } else if (val === selectedOption) {
-                  state = 'selected';
-                }
-                return (
-                  <OptionButton
-                    key={val}
-                    label={label}
-                    state={state}
-                    onPress={() => !hasSubmitted && setSelectedOption(val)}
-                    colors={colors}
-                  />
-                );
-              })}
-            </>
-          )}
-
-          {currentQuestion.tipo === 'ordenar' && (
-            <OrdenarWidget
-              item={currentQuestion}
-              submitted={hasSubmitted}
-              chosen={chosenOrder}
-              onChosen={setChosenOrder}
-              colors={colors}
-              t={t}
-            />
-          )}
-        </Animated.View>
-
-        {/* Feedback */}
-        {hasSubmitted && isCorrect !== null && (
-          <FeedbackBanner
-            isCorrect={isCorrect}
-            explanation={currentQuestion.explicacion ?? ''}
-            colors={colors}
-            t={t}
-          />
-        )}
-      </ScrollView>
+                </PageSlot>
+              );
+            })}
+        </View>
+      </GestureDetector>
 
       {/* Footer action button */}
       <View
@@ -910,7 +1059,20 @@ export default function WorldQuizScreen() {
           },
         ]}
       >
-        {!hasSubmitted ? (
+        {reviewing ? (
+          <TouchableOpacity
+            activeOpacity={0.85}
+            onPress={() => goTo(currentIndex)}
+            accessibilityRole="button"
+            accessibilityLabel={t('quiz.backToCurrent')}
+            style={[styles.actionBtn, styles.reviewBtn, { borderColor: meta.color }]}
+          >
+            <Text style={[styles.actionBtnText, { color: meta.color }]}>
+              {t('quiz.backToCurrent')}
+            </Text>
+            <Ionicons name="arrow-forward" size={18} color={meta.color} />
+          </TouchableOpacity>
+        ) : !hasSubmitted ? (
           <TouchableOpacity
             activeOpacity={hasAnswer ? 0.85 : 0.4}
             onPress={hasAnswer ? handleSubmit : undefined}
@@ -953,6 +1115,10 @@ export default function WorldQuizScreen() {
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
+  pager: {
+    flex: 1,
+    overflow: 'hidden',
+  },
   scroll: {
     paddingHorizontal: Spacing.base,
     paddingTop: Spacing.lg,
@@ -999,6 +1165,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
+  },
+  reviewBtn: {
+    borderWidth: 2,
   },
   actionBtnText: {
     ...Typography.headline,

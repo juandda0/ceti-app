@@ -23,6 +23,11 @@ export interface AnimationSpec {
   /** Qué comunica y cuándo aparece. */
   brief: string;
   /**
+   * Excepción al tope de peso del catálogo (150 KB), solo con motivo en el `brief`: p. ej. una entrada de tipo C
+   * hecha con poses dibujadas, que no se puede aligerar más sin perder el dibujo.
+   */
+  pesoMaxKb?: number;
+  /**
    * Con "reducir movimiento" activo: 'still' (por defecto) muestra la pose final quieta;
    * 'once' reproduce una vez sin loop. Solo para entradas cortas sin destellos.
    */
@@ -33,12 +38,34 @@ const catalog = {
   'brand.ceti-portal': {
     // Generada por scripts/lottie/ceti.mjs desde la geometría del logo: editar ahí, no el JSON.
     source: require('@/assets/animations/brand/ceti-portal.json'),
+    status: 'deprecated',
+    loop: false,
+    speed: 1,
+    usedIn: [],
+    reducedMotion: 'once',
+    brief: 'Logo animado: se abre el agujero negro, salen las estrellas y Ceti emerge hasta la pose del logo. Reemplazada en la bienvenida por mascot.ceti-portal-entrada/-reposo.',
+  },
+  // Tipo C (entrada + reposo): scripts/lottie/ceti-personaje.mjs genera assets/brand/ceti/lottie/ceti-portal.json
+  // y scripts/lottie/partir-tramos.mjs lo parte en estos dos archivos. Se reproducen con <CetiEntradaReposo>.
+  'mascot.ceti-portal-entrada': {
+    source: require('@/assets/animations/mascot/ceti-portal-entrada.json'),
     status: 'shipped',
     loop: false,
     speed: 1,
+    haptic: 'success',
     usedIn: ['WelcomeScreen'],
-    reducedMotion: 'once',
-    brief: 'Logo animado: se abre el agujero negro, salen las estrellas y Ceti emerge hasta la pose del logo. Splash y bienvenida.',
+    // El salto es un dibujo de perfil que se curva con claves de forma cada 4 fotogramas: no cabe en 150 KB sin
+    // perder fluidez.
+    pesoMaxKb: 230,
+    brief: 'Ceti sale disparada del portal, la fuerza la hace dar una voltereta hacia atrás curvando el cuerpo, cae de cabeza al portal y vuelve a asomar feliz. 2,5 s.',
+  },
+  'mascot.ceti-portal-reposo': {
+    source: require('@/assets/animations/mascot/ceti-portal-reposo.json'),
+    status: 'shipped',
+    loop: true,
+    speed: 1,
+    usedIn: ['WelcomeScreen'],
+    brief: 'Ceti asomada en el portal: flota, parpadea y las estrellas titilan. Empalma con el final de la entrada.',
   },
   'mascot.ceti-idle': {
     // Generada por scripts/lottie/ceti.mjs.
@@ -77,6 +104,16 @@ const catalog = {
     usedIn: [],
     brief: 'Cohete que despega: celebra un logro grande (meta cumplida, mundo completado).',
   },
+  'mascot.ceti-vuelo-reposo': {
+    // assets/brand/ceti/lottie/ceti-reposo.json sin las capas sombra-piso (vuela, sin suelo) ni surcos
+    // (en Tu Galaxia va pequeña junto a los planetas, que son planos: con los surcos se veía más detallada).
+    source: require('@/assets/animations/mascot/ceti-vuelo-reposo.json'),
+    status: 'approved',
+    loop: true,
+    speed: 1,
+    usedIn: ['CetiViajera'],
+    brief: 'Ceti de frente flotando en el espacio, entre salto y salto por Tu Galaxia.',
+  },
   'mascot.piggy-coins-out': {
     source: require('@/assets/animations/mascot/piggy-coins-out.json'),
     status: 'deprecated',
@@ -92,6 +129,72 @@ const catalog = {
     speed: 1,
     usedIn: [],
     brief: 'Alcancía bailando: candidata a estado de ánimo positivo de la mascota.',
+  },
+  // Planetas de la familia de mundos (tipo A, loop). Generados por scripts/marca/mundos/<planeta>.py +
+  // scripts/lottie/mundo-planeta.mjs (fuente en assets/brand/mundos/): editar ahí, no el JSON.
+  'mundos.naranja': {
+    source: require('@/assets/animations/mundos/naranja.json'),
+    status: 'shipped',
+    loop: true,
+    speed: 1,
+    usedIn: ['WorldsScreen', 'WorldLaunch'],
+    brief: 'Planeta naranja con anillo de monedas que gira; el planeta flota. Mundo 1 por defecto.',
+  },
+  'mundos.lila': {
+    source: require('@/assets/animations/mundos/lila.json'),
+    status: 'shipped',
+    loop: true,
+    speed: 1,
+    usedIn: ['WorldsScreen', 'WorldLaunch'],
+    brief: 'Planeta lila con una luna-moneda que da la vuelta (8 s). Mundo 2 por defecto.',
+  },
+  'mundos.menta': {
+    source: require('@/assets/animations/mundos/menta.json'),
+    status: 'shipped',
+    loop: true,
+    speed: 1,
+    usedIn: ['WorldsScreen', 'WorldLaunch'],
+    brief: 'Planeta menta con un anillo liso y una cadena de monedas que gira. Mundo 3 por defecto.',
+  },
+  'mundos.morado': {
+    source: require('@/assets/animations/mundos/morado.json'),
+    status: 'shipped',
+    loop: true,
+    speed: 1,
+    usedIn: ['WorldsScreen', 'WorldLaunch'],
+    brief: 'Planeta morado con pepitas de oro que se mecen. Mundo 4 por defecto.',
+  },
+  'mundos.azul': {
+    source: require('@/assets/animations/mundos/azul.json'),
+    status: 'shipped',
+    loop: true,
+    speed: 1,
+    usedIn: ['WorldsScreen', 'WorldLaunch'],
+    brief: 'Planeta azul con anillo de oro y gemas que lo recorren (8 s). Mundo 5 por defecto.',
+  },
+  'mundos.turquesa': {
+    source: require('@/assets/animations/mundos/turquesa.json'),
+    status: 'shipped',
+    loop: true,
+    speed: 1,
+    usedIn: ['WorldsScreen', 'WorldLaunch'],
+    brief: 'Planeta turquesa con oro derretido que chorrea. Reserva para mundos del profesor.',
+  },
+  'mundos.rosado': {
+    source: require('@/assets/animations/mundos/rosado.json'),
+    status: 'shipped',
+    loop: true,
+    speed: 1,
+    usedIn: ['WorldsScreen', 'WorldLaunch'],
+    brief: 'Planeta rosado con un racimo de cristales que se mece. Reserva para mundos del profesor.',
+  },
+  'mundos.coral': {
+    source: require('@/assets/animations/mundos/coral.json'),
+    status: 'shipped',
+    loop: true,
+    speed: 1,
+    usedIn: ['WorldsScreen', 'WorldLaunch'],
+    brief: 'Planeta coral con un desfile de monedas. Reserva para mundos del profesor.',
   },
   'loading.rocket': {
     source: require('@/assets/animations/loading/rocket.json'),

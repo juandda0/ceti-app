@@ -37,7 +37,7 @@ jest.mock('react-native-reanimated', () => {
     Keyframe: function Keyframe() {
       return animation;
     },
-    Easing: { out: () => easingFn, quad: easingFn, cubic: easingFn },
+    Easing: { out: () => easingFn, quad: easingFn, cubic: easingFn, bezier: () => easingFn },
     ReduceMotion: { System: 'system' },
   };
 });

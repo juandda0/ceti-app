@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import ContextScrollView from '@shared/components/motion/ContextScrollView';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
@@ -25,7 +26,7 @@ export default function MetasScreen() {
   const closeForms = () => { setForm('none'); setEditingGoal(undefined); };
 
   return <ScreenWrapper>
-    <ScrollView contentContainerStyle={styles.page}>
+    <ContextScrollView contentContainerStyle={styles.page}>
       <Text style={[styles.title, { color: colors.text.primary }]}>{t('financialGoals.title')}</Text>
       <Text style={{ color: colors.text.secondary }}>{t('financialGoals.subtitle')}</Text>
       <CetiButton label={t('financialGoals.new')} onPress={() => setForm('goal')} />
@@ -42,7 +43,7 @@ export default function MetasScreen() {
           <Ionicons name="trash-outline" size={22} color={colors.system.red} />
         </TouchableOpacity>
       </View>)}
-    </ScrollView>
+    </ContextScrollView>
     <GoalFormSheet visible={form === 'goal'} goal={editingGoal} onClose={closeForms} />
     <SavingsOperationSheet visible={form === 'aporte'} type="aporte" preselectedGoalId={editingGoal?.id} onClose={closeForms} />
   </ScreenWrapper>;

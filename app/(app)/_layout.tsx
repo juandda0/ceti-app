@@ -4,7 +4,10 @@ import { Tabs, useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '@shared/store/useThemeStore';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
-import { buildMainTabScreenOptions } from '@shared/navigation/mainTabBarOptions';
+import {
+  buildMainTabScreenOptions,
+  simpleTabTransition,
+} from '@shared/navigation/mainTabBarOptions';
 import { performLogoutAndGo } from '@features/auth/performLogout';
 import FloatingVoiceButton from '@features/savings/components/FloatingVoiceButton';
 
@@ -53,6 +56,8 @@ export default function AppTabLayout() {
         <Tabs.Screen
           name="saga"
           options={{
+            // Aprender es más compleja: fundido simple en vez de armado por bloques.
+            ...simpleTabTransition,
             title: 'Aprender',
             tabBarIcon: ({ color, focused }) => (
               <Ionicons name={focused ? 'map' : 'map-outline'} size={TAB_ICON_SIZE} color={color} />

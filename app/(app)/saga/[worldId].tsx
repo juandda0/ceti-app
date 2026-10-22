@@ -25,8 +25,8 @@
  *
  * RQ-ES02, RQ-FN09, RQ-ES06.
  */
-import { useEffect, useRef } from 'react';
-import { ActivityIndicator, Text, View, StyleSheet } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Text, View, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
@@ -39,10 +39,11 @@ import { displayWorldDef } from '@features/learning/data/worldMeta';
 import { useWorldFlow } from '@features/learning/hooks/useWorldFlow';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { Typography } from '@shared/constants/typography';
-import ScreenWrapper from '@shared/components/ScreenWrapper';
 import MicroteoriaView from '@features/learning/components/MicroteoriaView';
 import EligeCaminoView from '@features/learning/components/EligeCaminoView';
 import WorldQuizScreen from '@features/learning/screens/WorldQuizScreen';
+import Despegue from '@features/learning/components/galaxia/Despegue';
+import { planetaDeMundo } from '@features/learning/data/planetas';
 
 // ─── World metadata (mirrors WorldQuizScreen) ─────────────────────────────────
 
@@ -53,6 +54,9 @@ const WORLD_META: Record<string, { name: string; color: string }> = {
   world_4: { name: 'Nebulosa del Crédito', color: '#A884FF' },
   world_5: { name: 'Agujero Negro de las Deudas', color: '#5B9EF5' },
 };
+
+/** Duración mínima del despegue (ms). */
+const DESPEGUE_MS = 5000;
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -115,24 +119,27 @@ export default function WorldSagaScreen() {
   const disp = displayWorldDef(worldId ?? '', configEntry);
   const fallback = WORLD_META[worldId ?? ''] ?? { name: 'Mundo', color: '#FF8A1F' };
   const meta = { name: disp?.name ?? fallback.name, color: disp?.color ?? fallback.color };
+  const posicion = Math.max(0, classConfig?.mundos?.findIndex((m) => m.worldId === worldId) ?? 0);
+  const planeta = planetaDeMundo(worldId ?? '', posicion);
+
+  // El despegue dura al menos DESPEGUE_MS a propósito, para que se alcance a leer (aunque cargue antes).
+  const [despegueListo, setDespegueListo] = useState(false);
+  useEffect(() => {
+    setDespegueListo(false);
+    const id = setTimeout(() => setDespegueListo(true), DESPEGUE_MS);
+    return () => clearTimeout(id);
+  }, [worldId]);
 
   let content: React.ReactElement;
-  if (phase === 'loading' || !grado) {
-    // ── Loading ──────────────────────────────────────────────────────────────
+  if (phase === 'loading' || !grado || !despegueListo) {
+    // ── Despegue (carga) ──────────────────────────────────────────────────────
     content = (
-      <ScreenWrapper
-        style={{
-          flex: 1,
-          backgroundColor: colors.background.base,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <ActivityIndicator size="large" color={meta.color} />
-        <Text style={[styles.loadingText, { color: colors.text.tertiary }]}>
-          {t('saga.loading')}
-        </Text>
-      </ScreenWrapper>
+      <Despegue
+        nombre={meta.name}
+        descripcion={disp?.description}
+        planeta={planeta}
+        duracion={DESPEGUE_MS}
+      />
     );
   } else if (phase === 'eligecamino' && situacion !== null) {
     // ── EligeCamino phase ────────────────────────────────────────────────────
@@ -181,10 +188,6 @@ export default function WorldSagaScreen() {
 }
 
 const styles = StyleSheet.create({
-  loadingText: {
-    ...Typography.footnote,
-    marginTop: 16,
-  },
   classUpdatedBanner: {
     flexDirection: 'row',
     alignItems: 'center',

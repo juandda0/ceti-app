@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
+import ContextScrollView from '@shared/components/motion/ContextScrollView';
 import Animated from 'react-native-reanimated';
 import { enterFadeUp } from '@shared/constants/motion';
 import { useTranslation } from 'react-i18next';
@@ -30,7 +31,7 @@ export default function ActividadScreen() {
   const closeForms = () => { setForm('none'); setEditingExpense(undefined); setEditingOperation(undefined); };
 
   return <ScreenWrapper>
-    <ScrollView contentContainerStyle={styles.page}>
+    <ContextScrollView contentContainerStyle={styles.page}>
       <Animated.Text entering={enterFadeUp(0)} style={[styles.title, { color: colors.text.primary }]}>{t('financialActivity.title')}</Animated.Text>
       <Animated.Text entering={enterFadeUp(1)} style={{ color: colors.text.secondary }}>{t('financialActivity.subtitle')}</Animated.Text>
       <Segmented options={[
@@ -43,7 +44,7 @@ export default function ActividadScreen() {
         onEditOperation={(operation) => { setEditingOperation(operation); setForm(operation.type); }}
         onDeleteExpense={(expense) => confirmAction({ title: t('financialActivity.deleteExpenseTitle'), body: t('financialActivity.deleteExpenseBody'), confirmLabel: t('financialActivity.delete'), cancelLabel: t('financialActivity.cancel'), destructive: true, onConfirm: () => void deleteExpense(expense.id) })}
         onDeleteOperation={(operation) => confirmAction({ title: t('financialActivity.deleteOperationTitle'), body: t('financialActivity.deleteOperationBody'), confirmLabel: t('financialActivity.delete'), cancelLabel: t('financialActivity.cancel'), destructive: true, onConfirm: () => void deleteOperation(operation.id) })} />
-    </ScrollView>
+    </ContextScrollView>
     <ExpenseFormSheet visible={form === 'expense'} expense={editingExpense} onClose={closeForms} />
     <SavingsOperationSheet visible={form === 'aporte' || form === 'retiro'} type={(form === 'retiro' ? 'retiro' : 'aporte') as SavingsOperationType} operation={editingOperation} onClose={closeForms} />
   </ScreenWrapper>;

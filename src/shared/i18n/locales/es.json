@@ -186,7 +186,9 @@
     "ejemplo": "Ejemplo",
     "counter": "{{current}} de {{total}}",
     "siguiente": "Siguiente",
-    "continuar": "Entendido, ir al quiz"
+    "continuar": "Entendido, ir al quiz",
+    "volver": "Volver a Tu Galaxia",
+    "terminarGuia": "Listo, volver a la galaxia"
   },
   "eligeCamino": {
     "badge": "Elige tu camino",
@@ -293,6 +295,7 @@
     "check": "Comprobar",
     "result": "Ver resultado",
     "next": "Siguiente",
+    "backToCurrent": "Volver a la pregunta actual",
     "worldComplete": "¡Mundo completado!",
     "tryAgainTitle": "¡Buen intento!",
     "streakLabelOne": "día de racha",
@@ -684,5 +687,35 @@
     "start": "Comenzar",
     "next": "Siguiente",
     "selectAvatar": "Seleccionar avatar"
+  },
+  "galaxia": {
+    "desliza": "Desliza entre tus mundos",
+    "racha": "{{dias}} días",
+    "rachaUno": "1 día",
+    "rachaEncendida": "Racha de {{etiqueta}}, encendida hoy",
+    "rachaApagada": "Racha de {{etiqueta}}, hoy aún sin encender",
+    "mundoN": "MUNDO {{n}}",
+    "estadoBloqueado": "BLOQUEADO",
+    "estadoNuevo": "NUEVO",
+    "estadoEnCurso": "EN CURSO",
+    "estadoConquistado": "CONQUISTADO",
+    "empezar": "EMPEZAR",
+    "continuar": "CONTINUAR",
+    "repasar": "REPASAR",
+    "bloqueado": "Termina el mundo anterior para abrirlo",
+    "bloqueadoNombre": "Termina {{nombre}} para abrirlo",
+    "preguntas": "{{hechas}} de {{total}} preguntas",
+    "tuProgreso": "TU PROGRESO",
+    "alConquistar": "Al conquistarlo se abre ",
+    "leerGuia": "LEER LA GUÍA DEL MUNDO",
+    "verMundo": "Ver {{nombre}}",
+    "deslizaHint": "Desliza a los lados para cambiar de mundo",
+    "anterior": "Mundo anterior",
+    "siguiente": "Mundo siguiente",
+    "cerrar": "Cerrar",
+    "despegandoHacia": "DESPEGANDO HACIA",
+    "enEsteMundo": "EN ESTE MUNDO",
+    "guiaVacia": "Este mundo todavía no tiene guía. Entra al mundo y aprende jugando.",
+    "volver": "VOLVER"
   }
 }

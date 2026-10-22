@@ -23,6 +23,9 @@ interface MicroteoriaViewProps {
   worldName: string;
   accentColor: string;
   onFinish: () => void;
+  /** Modo guía (leída desde Tu Galaxia): botón de volver arriba y el botón final no lleva al quiz. */
+  onBack?: () => void;
+  finishLabel?: string;
 }
 
 export default function MicroteoriaView({
@@ -30,6 +33,8 @@ export default function MicroteoriaView({
   worldName,
   accentColor,
   onFinish,
+  onBack,
+  finishLabel,
 }: MicroteoriaViewProps) {
   const { t } = useTranslation();
   const colors = useThemeColors();
@@ -63,6 +68,17 @@ export default function MicroteoriaView({
         ]}
       >
         <View style={st.headerRow}>
+          {onBack ? (
+            <TouchableOpacity
+              onPress={onBack}
+              accessibilityRole="button"
+              accessibilityLabel={t('microteoria.volver')}
+              hitSlop={8}
+              style={[st.backBtn, { backgroundColor: colors.background.base }]}
+            >
+              <Ionicons name="chevron-back" size={20} color={colors.text.primary} />
+            </TouchableOpacity>
+          ) : null}
           <View style={[st.badge, { backgroundColor: accentColor + '22' }]}>
             <Ionicons name="book-outline" size={14} color={accentColor} />
             <Text style={[st.badgeText, { color: accentColor }]}>{t('microteoria.badge')}</Text>
@@ -150,13 +166,13 @@ export default function MicroteoriaView({
           activeOpacity={0.85}
           onPress={handleNext}
           accessibilityRole="button"
-          accessibilityLabel={isLast ? t('microteoria.continuar') : t('microteoria.siguiente')}
+          accessibilityLabel={isLast ? (finishLabel ?? t('microteoria.continuar')) : t('microteoria.siguiente')}
           style={[st.btn, { backgroundColor: accentColor }]}
         >
           <Text style={[st.btnText, { color: '#fff' }]}>
-            {isLast ? t('microteoria.continuar') : t('microteoria.siguiente')}
+            {isLast ? (finishLabel ?? t('microteoria.continuar')) : t('microteoria.siguiente')}
           </Text>
-          <Ionicons name="arrow-forward" size={18} color="#fff" />
+          {isLast && finishLabel ? null : <Ionicons name="arrow-forward" size={18} color="#fff" />}
         </TouchableOpacity>
       </View>
     </View>
@@ -167,6 +183,14 @@ const st = StyleSheet.create({
   container: {
     flex: 1,
   },
+  backBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 4,
+  },
   header: {
     paddingHorizontal: Spacing.base,
     paddingBottom: 12,
@@ -176,7 +200,7 @@ const st = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    gap: 8,
   },
   badge: {
     flexDirection: 'row',
@@ -192,6 +216,7 @@ const st = StyleSheet.create({
     letterSpacing: 0.3,
   },
   worldLabel: {
+    marginLeft: 'auto',
     ...Typography.caption1,
     fontWeight: '600',
   },

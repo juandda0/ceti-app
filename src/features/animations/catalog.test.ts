@@ -35,8 +35,10 @@ describe('catálogo de animaciones', () => {
     expect(animationIds).toContain(idFromFile(file));
   });
 
-  it.each(files)(`%s pesa como máximo ${MAX_KB} KB`, (file) => {
-    expect(statSync(join(ROOT, file)).size / 1024).toBeLessThanOrEqual(MAX_KB);
+  it.each(files)(`%s pesa como máximo ${MAX_KB} KB (o su pesoMaxKb)`, (file) => {
+    const id = idFromFile(file) as keyof typeof animations;
+    const max = animations[id]?.pesoMaxKb ?? MAX_KB;
+    expect(statSync(join(ROOT, file)).size / 1024).toBeLessThanOrEqual(max);
   });
 
   it.each(animationIds)('%s es un Lottie válido', (id) => {

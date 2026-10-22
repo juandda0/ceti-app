@@ -12,6 +12,10 @@ const mockSavingsState = {
 };
 const mockMovimientosState = { movimientos: [], deleteExpense: jest.fn() };
 
+jest.mock('expo-router', () => ({
+  ...jest.requireActual('expo-router'),
+  useFocusEffect: jest.fn(),
+}));
 jest.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
 jest.mock('@expo/vector-icons', () => ({ Ionicons: () => null }));
 jest.mock('@shared/hooks/useThemeColors', () => ({

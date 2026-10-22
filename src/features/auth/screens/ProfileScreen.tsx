@@ -1,4 +1,5 @@
-import { Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
+import { Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import ContextScrollView from '@shared/components/motion/ContextScrollView';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import Animated from 'react-native-reanimated';
@@ -34,7 +35,7 @@ export default function ProfileScreen() {
 
   return (
     <ScreenWrapper style={styles.root}>
-      <ScrollView
+      <ContextScrollView
         contentContainerStyle={[
           styles.scroll,
           { paddingTop: Math.max(insets.top, Platform.OS === 'ios' ? 12 : 8) + 16 },
@@ -79,7 +80,7 @@ export default function ProfileScreen() {
             </Text>
           </TouchableOpacity>
         </Animated.View>
-      </ScrollView>
+      </ContextScrollView>
     </ScreenWrapper>
   );
 }

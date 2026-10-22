@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import ContextScrollView from '@shared/components/motion/ContextScrollView';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
@@ -60,7 +61,7 @@ export default function GraficasScreen() {
 
   return (
     <ScreenWrapper>
-      <ScrollView contentContainerStyle={styles.page}>
+      <ContextScrollView contentContainerStyle={styles.page}>
         <View style={styles.header}>
           <Text style={[styles.title, { color: colors.text.primary }]}>
             {t('financialCharts.title')}
@@ -123,7 +124,7 @@ export default function GraficasScreen() {
             <StreakCard data={racha} palette={palette} />
           )}
         </FadeIn>
-      </ScrollView>
+      </ContextScrollView>
     </ScreenWrapper>
   );
 }

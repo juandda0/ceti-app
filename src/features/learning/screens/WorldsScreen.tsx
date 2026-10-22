@@ -1,14 +1,18 @@
-import { useEffect, useMemo } from 'react';
+/**
+ * Tu Galaxia — pestaña Aprender. Carrusel orbital de mundos: cada mundo es un planeta animado, el
+ * activo va grande en el centro y debajo su tarjeta con el progreso y el botón para entrar. Tocar el
+ * planeta abre su ficha. Fondo espacial en los dos temas (diseño: canvas "Ceti · Aprender", A1).
+ */
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  ScrollView,
-  TouchableOpacity,
-  View,
-  Text,
-  StyleSheet,
   Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
 } from 'react-native';
-import Animated from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
@@ -27,159 +31,26 @@ import { resolveClassWorlds } from '@features/learning/data/classConfig';
 import { worldStatus } from '@features/learning/data/worldStatus';
 import { computeQuizRacha, useQuizStreakStore } from '@features/learning/store/useQuizStreakStore';
 import { hasClassAccess } from '@features/learning/data/classAccess';
-import ScreenWrapper from '@shared/components/ScreenWrapper';
-import { useThemeColors } from '@shared/hooks/useThemeColors';
-import { Typography } from '@shared/constants/typography';
-import { Spacing, BorderRadius } from '@shared/constants/theme';
-import { motion, staggerDelay } from '@shared/constants/motion';
-import AnimatedProgressFill from '@shared/components/motion/AnimatedProgressFill';
-import type { ThemeColors } from '@shared/constants/colors';
-import { displayWorldDef, type WorldDef } from '@features/learning/data/worldMeta';
+import { displayWorldDef } from '@features/learning/data/worldMeta';
+import { planetaDeMundo } from '@features/learning/data/planetas';
+import { dayKey } from '@features/savings/data/periodos';
+import { ChipRacha, ESPACIO, FondoEstrellas } from '@features/learning/components/galaxia/espacio';
+import CarruselPlanetas, {
+  PuntosCarrusel,
+} from '@features/learning/components/galaxia/CarruselPlanetas';
+import {
+  FichaMundo,
+  TarjetaMundo,
+  type MundoGalaxia,
+} from '@features/learning/components/galaxia/TarjetaMundo';
 
-function WorldCard({
-  world,
-  progress,
-  isUnlocked,
-  prevWorldName,
-  index,
-  isLast,
-  colors,
-  onPress,
-  t,
-}: {
-  world: WorldDef;
-  progress: number;
-  isUnlocked: boolean;
-  /** Name of the previous world in the CLASS order (drives the locked note). */
-  prevWorldName?: string;
-  index: number;
-  isLast: boolean;
-  colors: ThemeColors;
-  onPress: () => void;
-  t: (key: string, options?: Record<string, unknown>) => string;
-}) {
-  const done = Math.round(progress * QUESTIONS_PER_WORLD);
-  const pct = Math.min(Math.round(progress * 100), 100);
-  const status = worldStatus(isUnlocked, progress);
-
-  return (
-    <Animated.View entering={motion.enterFadeUp(index)} style={cardSt.row}>
-      <View style={cardSt.rail} pointerEvents="none">
-        <View
-          style={[
-            cardSt.railLine,
-            {
-              top: index === 0 ? Spacing.lg + 12 : 0,
-              bottom: isLast ? undefined : 0,
-              height: isLast ? Spacing.lg + 12 : undefined,
-              backgroundColor: colors.materials.border,
-            },
-          ]}
-        />
-        <View
-          style={[
-            cardSt.node,
-            {
-              backgroundColor: isUnlocked ? colors.background.primary : colors.background.secondary,
-              borderColor: isUnlocked ? world.color : colors.materials.border,
-            },
-          ]}
-        >
-          <Ionicons
-            name={status === 'dominado' ? 'checkmark' : isUnlocked ? 'ellipse' : 'lock-closed'}
-            size={status === 'dominado' ? 14 : isUnlocked ? 8 : 12}
-            color={isUnlocked ? world.color : colors.text.quaternary}
-          />
-        </View>
-      </View>
-
-      <TouchableOpacity
-        activeOpacity={isUnlocked ? 0.82 : 1}
-        onPress={isUnlocked ? onPress : undefined}
-        accessibilityRole="button"
-        accessibilityLabel={t('worlds.openWorld', { n: world.number })}
-        accessibilityState={{ disabled: !isUnlocked }}
-        style={[
-          cardSt.card,
-          {
-            backgroundColor: colors.background.primary,
-            borderColor: colors.materials.border,
-            opacity: isUnlocked ? 1 : 0.62,
-          },
-        ]}
-      >
-        <View
-          style={[
-            cardSt.iconWrap,
-            {
-              backgroundColor: isUnlocked ? `${world.color}14` : colors.background.secondary,
-            },
-          ]}
-        >
-          <Ionicons
-            name={isUnlocked ? world.iconName : 'lock-closed'}
-            size={24}
-            color={isUnlocked ? world.color : colors.text.quaternary}
-          />
-        </View>
-
-        <View style={cardSt.body}>
-          <Text
-            style={[cardSt.worldNum, { color: isUnlocked ? world.color : colors.text.quaternary }]}
-          >
-            {t('worlds.worldNumber', { n: world.number })}
-          </Text>
-          <Text style={[cardSt.worldName, { color: colors.text.primary }]} numberOfLines={1}>
-            {world.name}
-          </Text>
-          <Text style={[cardSt.worldDesc, { color: colors.text.tertiary }]} numberOfLines={2}>
-            {world.description}
-          </Text>
-
-          {isUnlocked ? (
-            <View style={cardSt.progressRow}>
-              <View style={[cardSt.progressTrack, { backgroundColor: colors.materials.highlight }]}>
-                <AnimatedProgressFill
-                  pct={pct}
-                  delay={staggerDelay(index, 120)}
-                  style={[cardSt.progressFill, { backgroundColor: world.color }]}
-                />
-              </View>
-              {status === 'dominado' ? (
-                <View style={cardSt.masteredTag}>
-                  <Ionicons name="checkmark-circle" size={14} color={world.color} />
-                  <Text style={[cardSt.masteredText, { color: world.color }]}>
-                    {t('worlds.mastered')}
-                  </Text>
-                </View>
-              ) : (
-                <Text style={[cardSt.progressLabel, { color: colors.text.tertiary }]}>
-                  {done}/{QUESTIONS_PER_WORLD}
-                </Text>
-              )}
-            </View>
-          ) : (
-            <Text style={[cardSt.lockedNote, { color: colors.text.quaternary }]}>
-              {prevWorldName
-                ? t('worlds.lockedNoteNamed', { name: prevWorldName })
-                : t('worlds.lockedNote', { n: world.number - 1 })}
-            </Text>
-          )}
-        </View>
-
-        {isUnlocked && (
-          <Ionicons name="chevron-forward" size={18} color={world.color} style={cardSt.chevron} />
-        )}
-      </TouchableOpacity>
-    </Animated.View>
-  );
-}
+const ANCHO_MAX = 680;
 
 export default function WorldsScreen() {
   const router = useRouter();
   const { t } = useTranslation();
-  const colors = useThemeColors();
   const insets = useSafeAreaInsets();
+  const { width: anchoVentana, height: altoVentana } = useWindowDimensions();
   // Per-account key (Firebase uid); fallback to local profile id only offline.
   // Both hooks must run every render (no conditional hook calls).
   const firebaseUid = useAuthStore((s) => s.firebaseUid);
@@ -208,6 +79,7 @@ export default function WorldsScreen() {
   const uid = userId ?? '';
   const diasQuiz = useQuizStreakStore((s) => s.daysByUid[uid]);
   const rachaQuiz = useMemo(() => computeQuizRacha(diasQuiz ?? []), [diasQuiz]);
+  const rachaHoy = (diasQuiz ?? []).includes(dayKey(Date.now()));
 
   // Class config (D-ORQ, RQ-PR10): which worlds this class sees and in which
   // order. Live via onSnapshot; null → defaults.
@@ -216,22 +88,6 @@ export default function WorldsScreen() {
     () => resolveClassWorlds(classConfig, (w) => isWorldComplete(uid, w as WorldId)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [classConfig, uid, answers, remoteProgress, isWorldComplete]
-  );
-
-  // Visible worlds joined with their display metadata. Without a tenant,
-  // `classConfig` is null and `resolveClassWorlds` provides the basic worlds.
-  const visibleWorlds = useMemo(
-    () =>
-      classWorlds
-        .map((cw, index) => {
-          const entry = classConfig?.mundos?.find((m) => m.worldId === cw.worldId);
-          const disp = displayWorldDef(cw.worldId, entry);
-          if (!disp) return null;
-          const def: WorldDef = { ...disp, number: index + 1 };
-          return { cw, def };
-        })
-        .filter((x): x is { cw: (typeof classWorlds)[number]; def: WorldDef } => x !== null),
-    [classWorlds, classConfig]
   );
 
   // Per-world pointer to the course's custom content (RQ-PR11); null without a
@@ -246,16 +102,46 @@ export default function WorldsScreen() {
         }
       : null;
 
+  // Visible worlds joined with their display metadata, planet and progress.
+  const mundos = useMemo<MundoGalaxia[]>(() => {
+    const base = classWorlds
+      .map((cw, index) => {
+        const entry = classConfig?.mundos?.find((m) => m.worldId === cw.worldId);
+        const disp = displayWorldDef(cw.worldId, entry);
+        if (!disp) return null;
+        const { done, total } = getWorldProgress(uid, cw.worldId as WorldId);
+        const ratio = total > 0 ? done / total : 0;
+        return {
+          id: cw.worldId,
+          numero: index + 1,
+          nombre: disp.name,
+          descripcion: disp.description,
+          planeta: planetaDeMundo(cw.worldId, index),
+          estado: worldStatus(cw.unlocked, ratio),
+          hechas: Math.min(Math.round(ratio * QUESTIONS_PER_WORLD), QUESTIONS_PER_WORLD),
+          total: QUESTIONS_PER_WORLD,
+        };
+      })
+      .filter((x): x is NonNullable<typeof x> => x !== null);
+    return base.map((m, i) => ({
+      ...m,
+      numero: i + 1,
+      anterior: i > 0 ? base[i - 1].nombre : undefined,
+      siguiente: i < base.length - 1 ? base[i + 1].nombre : undefined,
+    }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [classWorlds, classConfig, uid, answers, remoteProgress, getWorldProgress]);
+
   // Prefetch the class's worlds once the real grado AND the class config are
   // known (avoids fetching worlds the class doesn't serve). The store guard
   // keys on (grado, seedKey), so this correctly re-fetches if grade resolves later.
   useEffect(() => {
     if (!grado || !classConfigLoaded) return;
-    for (const { def } of visibleWorlds) {
-      void fetchWorldQuestions(grado, def.id, seedKey, courseContentFor(def.id));
+    for (const m of mundos) {
+      void fetchWorldQuestions(grado, m.id as WorldId, seedKey, courseContentFor(m.id));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasAccess, grado, seedKey, classConfigLoaded, visibleWorlds]);
+  }, [hasAccess, grado, seedKey, classConfigLoaded, mundos.length]);
 
   // Rehydrate per-world mastery from the tenant tree so unlock/progress survive
   // logout and new devices (the local answers cache is empty there).
@@ -278,231 +164,121 @@ export default function WorldsScreen() {
     };
   }, [hasAccess, colegioId, cursoId, firebaseUid, setRemoteProgress]);
 
-  // Recompute when local answers OR the hydrated remote snapshot change.
-  // (getWorldProgress/isWorldComplete read both internally.)
-  const progressMap = useMemo<Record<string, number>>(() => {
-    const ratio = (worldId: WorldId): number => {
-      const { done, total } = getWorldProgress(uid, worldId);
-      return total > 0 ? done / total : 0;
-    };
-    return {
-      world_1: ratio('world_1'),
-      world_2: ratio('world_2'),
-      world_3: ratio('world_3'),
-      world_4: ratio('world_4'),
-      world_5: ratio('world_5'),
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [uid, answers, remoteProgress, getWorldProgress]);
+  // Mundo activo: arranca en el que toca (el primero abierto sin conquistar) y luego lo mueve el usuario.
+  const [activo, setActivo] = useState(0);
+  const [fichaAbierta, setFichaAbierta] = useState(false);
+  const iniciado = useRef(false);
+  useEffect(() => {
+    if (mundos.length === 0) return;
+    if (!iniciado.current) {
+      iniciado.current = true;
+      const actual = mundos.findIndex((m) => m.estado === 'disponible' || m.estado === 'en_progreso');
+      const ultimoAbierto = mundos.map((m) => m.estado !== 'bloqueado').lastIndexOf(true);
+      setActivo(actual >= 0 ? actual : Math.max(0, ultimoAbierto));
+    } else if (activo > mundos.length - 1) {
+      setActivo(mundos.length - 1);
+    }
+  }, [mundos, activo]);
 
-  const visibleIds = visibleWorlds.map((v) => v.def.id as string);
-  const totalDone = answers.filter(
-    (a) => a.uid === uid && a.isCorrect && visibleIds.includes(a.worldId)
-  ).length;
-  const totalAll = QUESTIONS_PER_WORLD * visibleWorlds.length;
+  const ancho = Math.min(anchoVentana, ANCHO_MAX);
+  const altoCarrusel = Math.round(Math.min(320, Math.max(240, altoVentana * 0.36)));
+  const mundo = mundos[activo];
+  const entrar = (m: MundoGalaxia) => {
+    setFichaAbierta(false);
+    router.push(`/saga/${m.id}` as never);
+  };
 
   return (
-    <ScreenWrapper style={{ flex: 1, backgroundColor: colors.background.base }}>
+    <View style={[estilos.raiz, { width: anchoVentana }]}>
+      <FondoEstrellas ancho={anchoVentana} alto={altoVentana} />
       <ScrollView
         contentContainerStyle={[
-          styles.scroll,
+          estilos.scroll,
           {
-            paddingTop: Math.max(insets.top, Platform.OS === 'ios' ? 12 : 8) + 16,
+            width: ancho,
+            paddingTop: Math.max(insets.top, Platform.OS === 'ios' ? 12 : 8) + 12,
           },
         ]}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={[styles.pageTitle, { color: colors.text.primary }]}>
-          {t('worlds.pageTitle')}
-        </Text>
-        <Text style={[styles.pageSubtitle, { color: colors.text.secondary }]}>
-          {t('worlds.lessonsCompleted', { done: totalDone, total: totalAll })}
-        </Text>
-        {rachaQuiz > 0 ? (
-          <View style={[styles.streakChip, { backgroundColor: colors.brand.primary + '22' }]}>
-            <Ionicons name="flame" size={16} color={colors.brand.primary} />
-            <Text style={[styles.streakChipText, { color: colors.brand.primary }]}>
-              {rachaQuiz === 1
-                ? t('quiz.streakChipOne')
-                : t('quiz.streakChip', { dias: rachaQuiz })}
+        <View style={estilos.cabecera}>
+          <View style={{ flex: 1, gap: 4 }}>
+            <Text style={estilos.titulo} accessibilityRole="header">
+              {t('worlds.pageTitle')}
             </Text>
+            <Text style={estilos.subtitulo}>{t('galaxia.desliza')}</Text>
           </View>
-        ) : null}
+          <ChipRacha dias={rachaQuiz} encendidaHoy={rachaHoy} />
+        </View>
 
         {!classConfigLoaded ? (
-          <View style={styles.emptyState}>
-            <ActivityIndicator size="large" color={colors.text.tertiary} />
+          <View style={estilos.vacio}>
+            <ActivityIndicator size="large" color={ESPACIO.textoSuave} />
           </View>
-        ) : visibleWorlds.length === 0 ? (
-          <View style={styles.emptyState}>
-            <Ionicons name="school-outline" size={40} color={colors.text.quaternary} />
-            <Text style={[styles.emptyStateText, { color: colors.text.secondary }]}>
-              {t('worlds.emptyClass')}
-            </Text>
+        ) : mundos.length === 0 || !mundo ? (
+          <View style={estilos.vacio}>
+            <Ionicons name="planet-outline" size={44} color={ESPACIO.textoApagado} />
+            <Text style={estilos.vacioTexto}>{t('worlds.emptyClass')}</Text>
           </View>
         ) : (
-          <View style={styles.list}>
-            {visibleWorlds.map(({ cw, def }, index) => (
-              <WorldCard
-                key={def.id}
-                world={def}
-                progress={progressMap[def.id] ?? 0}
-                isUnlocked={cw.unlocked}
-                prevWorldName={index > 0 ? visibleWorlds[index - 1].def.name : undefined}
-                index={index}
-                isLast={index === visibleWorlds.length - 1}
-                colors={colors}
-                onPress={() => router.push(`/saga/${def.id}` as never)}
-                t={t}
+          <>
+            <CarruselPlanetas
+              mundos={mundos.map((m) => ({
+                id: m.id,
+                nombre: m.nombre,
+                planeta: m.planeta,
+                bloqueado: m.estado === 'bloqueado',
+              }))}
+              activo={activo}
+              onCambio={setActivo}
+              onTocar={() => setFichaAbierta(true)}
+              ancho={ancho}
+              alto={altoCarrusel}
+            />
+            <PuntosCarrusel
+              total={mundos.length}
+              activo={activo}
+              conquistados={mundos.map((m) => m.estado === 'dominado')}
+              acento={mundo.planeta.acento}
+            />
+            <View style={estilos.tarjetaZona}>
+              <TarjetaMundo
+                mundo={mundo}
+                onEntrar={() => entrar(mundo)}
+                onVer={() => setFichaAbierta(true)}
               />
-            ))}
-          </View>
+            </View>
+          </>
         )}
       </ScrollView>
-    </ScreenWrapper>
+
+      <FichaMundo
+        mundo={mundo ?? null}
+        visible={fichaAbierta}
+        onCerrar={() => setFichaAbierta(false)}
+        onEntrar={() => mundo && entrar(mundo)}
+        onGuia={() => {
+          if (!mundo) return;
+          setFichaAbierta(false);
+          router.push(`/saga/guia/${mundo.id}` as never);
+        }}
+      />
+    </View>
   );
 }
 
-const styles = StyleSheet.create({
-  streakChip: {
+const estilos = StyleSheet.create({
+  raiz: { flex: 1, backgroundColor: ESPACIO.fondo, overflow: 'hidden' },
+  scroll: { alignSelf: 'center', paddingBottom: 140, gap: 14 },
+  cabecera: {
     flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    gap: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 999,
-    marginTop: 8,
+    alignItems: 'flex-start',
+    gap: 12,
+    paddingHorizontal: 20,
   },
-  streakChipText: { fontSize: 14, fontWeight: '800' },
-  scroll: {
-    width: '100%',
-    maxWidth: 680,
-    alignSelf: 'center',
-    paddingHorizontal: Spacing.base,
-    paddingBottom: 120,
-  },
-  pageTitle: {
-    ...Typography.largeTitle,
-    fontWeight: '700',
-  },
-  pageSubtitle: {
-    ...Typography.subheadline,
-    marginTop: Spacing.xs,
-    marginBottom: Spacing.xl,
-  },
-  list: {
-    gap: 0,
-  },
-  emptyState: {
-    alignItems: 'center',
-    gap: 10,
-    paddingVertical: 48,
-  },
-  emptyStateText: {
-    ...Typography.subheadline,
-    textAlign: 'center',
-    paddingHorizontal: Spacing.lg,
-  },
-});
-
-const cardSt = StyleSheet.create({
-  row: {
-    minHeight: 132,
-    flexDirection: 'row',
-    alignItems: 'stretch',
-  },
-  rail: {
-    width: 34,
-    alignItems: 'center',
-  },
-  railLine: {
-    position: 'absolute',
-    width: StyleSheet.hairlineWidth,
-  },
-  node: {
-    width: 24,
-    height: 24,
-    marginTop: Spacing.lg,
-    borderRadius: BorderRadius.full,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 1,
-  },
-  card: {
-    flex: 1,
-    minHeight: 112,
-    marginBottom: Spacing.md,
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: BorderRadius.md,
-    borderWidth: StyleSheet.hairlineWidth,
-    padding: Spacing.base,
-    gap: Spacing.md,
-  },
-  iconWrap: {
-    width: 48,
-    height: 48,
-    borderRadius: BorderRadius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  body: {
-    flex: 1,
-    gap: 3,
-  },
-  worldNum: {
-    fontSize: 10,
-    fontWeight: '700',
-    letterSpacing: 0.8,
-    textTransform: 'uppercase',
-  },
-  worldName: {
-    ...Typography.headline,
-    fontWeight: '700',
-  },
-  worldDesc: {
-    ...Typography.caption1,
-    lineHeight: 17,
-  },
-  progressRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginTop: 6,
-  },
-  progressTrack: {
-    flex: 1,
-    height: 5,
-    borderRadius: 3,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: 3,
-  },
-  progressLabel: {
-    fontSize: 11,
-    fontWeight: '700',
-    minWidth: 30,
-    textAlign: 'right',
-  },
-  masteredTag: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 3,
-  },
-  masteredText: {
-    fontSize: 11,
-    fontWeight: '800',
-  },
-  lockedNote: {
-    ...Typography.caption2,
-    marginTop: 5,
-    fontStyle: 'italic',
-  },
-  chevron: {
-    marginLeft: 2,
-  },
+  titulo: { fontSize: 36, lineHeight: 40, fontWeight: '900', color: ESPACIO.texto },
+  subtitulo: { fontSize: 16, fontWeight: '700', color: ESPACIO.textoSuave },
+  tarjetaZona: { paddingHorizontal: 20, marginTop: 8 },
+  vacio: { alignItems: 'center', gap: 12, paddingVertical: 64, paddingHorizontal: 32 },
+  vacioTexto: { fontSize: 15, fontWeight: '700', textAlign: 'center', color: ESPACIO.textoSuave },
 });

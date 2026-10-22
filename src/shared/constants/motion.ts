@@ -189,6 +189,36 @@ export const progressTiming = {
   reduceMotion: ReduceMotion.System,
 } as const;
 
+/**
+ * Paso entre páginas hermanas (p. ej. preguntas del quiz): la que sale y la que
+ * entra se deslizan juntas como un pager, sin fade ni escala. Curva tipo iOS
+ * (arranca firme, frena suave). Con "reducir movimiento" el cambio es instantáneo.
+ */
+export const pageTiming = {
+  duration: softMs.enter,
+  easing: Easing.bezier(0.32, 0.72, 0, 1),
+  reduceMotion: ReduceMotion.System,
+} as const;
+
+/**
+ * Cambio de contexto entre pestañas: la estructura (barra de abajo, fondo) se
+ * queda quieta; los bloques de la pantalla que sale se desarman y los de la que
+ * entra se arman en cascada. Total ≈ 0,4 s (out + stagger·cap + enter).
+ */
+export const contextMs = {
+  /** Desarme de la pantalla que sale (todos juntos). */
+  out: 90,
+  /** Armado de cada bloque de la que entra. */
+  enter: 200,
+  /** Escalón entre bloques. */
+  stagger: 30,
+  /** A partir de este bloque ya no se espera más (listas largas). */
+  staggerCap: 4,
+  /** Desplazamiento vertical (px): entra desde abajo, sale hacia arriba. */
+  enterOffset: 8,
+  outOffset: 4,
+} as const;
+
 /** Escala al presionar (botones, tarjetas, opciones). */
 export const pressScale = 0.97;
 

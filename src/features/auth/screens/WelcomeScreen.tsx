@@ -17,12 +17,12 @@ import { BrandColors } from '@shared/constants/colors';
 import CetiButton from '@shared/components/CetiButton';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { motionMs } from '@shared/constants/motion';
-import { CetiAnimation } from '@features/animations';
+import { CetiEntradaReposo } from '@features/animations';
 import { useTranslation } from 'react-i18next';
 
-// Ceti termina de salir del portal hacia el ~1.2 s; el texto entra justo después para no competir.
-const TEXT_DELAY = 900;
-const BUTTON_DELAY = 1100;
+// Ceti sale del portal, da la vuelta y cae asomada hacia los ~2 s; el texto entra cuando ya cayó.
+const TEXT_DELAY = 1450;
+const BUTTON_DELAY = 1700;
 
 export default function WelcomeScreen() {
   const { t } = useTranslation();
@@ -55,7 +55,11 @@ export default function WelcomeScreen() {
       <StatusBar style="dark" />
       <View style={styles.centerColumn}>
         <View style={styles.heroBlock}>
-          <CetiAnimation id="brand.ceti-portal" size={260} />
+          <CetiEntradaReposo
+            entrada="mascot.ceti-portal-entrada"
+            reposo="mascot.ceti-portal-reposo"
+            size={280}
+          />
 
           <Animated.View style={[styles.textContainer, contentAnimatedStyle]}>
             <Text style={styles.overline}>{t('welcome.overline').toUpperCase()}</Text>
