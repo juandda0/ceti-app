@@ -89,8 +89,15 @@ export function alAbrir(
   const r = revisarRacha(e.racha, hoy);
   const b = liquidar(e.boveda, hoy);
   const cambio = r.estado !== e.racha || b.estado !== e.boveda;
+  // Solo lo que de verdad pasó (escudo, interés, CDT, racha rota) cuenta como
+  // cambio nuevo; la contabilidad de revisión (revisadoEn, ultimoLunes) no, para
+  // que un estado recién abierto no le gane al remoto en la sincronización.
+  const huboEvento =
+    r.escudosUsados > 0 || !!r.rotaReparable || r.perdida !== undefined || b.interes > 0 || b.cdtsVencidos.length > 0;
   return {
-    estado: cambio ? { ...e, racha: r.estado, boveda: b.estado, actualizadoEn: now } : e,
+    estado: cambio
+      ? { ...e, racha: r.estado, boveda: b.estado, actualizadoEn: huboEvento ? now : e.actualizadoEn }
+      : e,
     eventos: {
       escudosUsados: r.escudosUsados,
       rotaReparable: r.rotaReparable,
@@ -233,6 +240,34 @@ export function resumen(e: EstadoOrbita, hoy: string) {
     metaLecciones: LECCIONES_POR_META[e.ajustes.meta],
     cetis: e.boveda.bolsillo,
   };
+}
+
+/** Estado sin nada hecho todavía (recién creado en este dispositivo). */
+export function sinActividad(e: EstadoOrbita): boolean {
+  return (
+    e.racha.dias.length === 0 &&
+    e.racha.cubiertos.length === 0 &&
+    e.progreso.xpTotal === 0 &&
+    e.boveda.bolsillo === 0 &&
+    e.boveda.boveda === 0 &&
+    e.boveda.cdts.length === 0 &&
+    Object.keys(e.niveles).length === 0 &&
+    !e.ajustes.primerVuelo
+  );
+}
+
+/**
+ * Al iniciar sesión, qué estado se queda: el remoto gana si el local no existe,
+ * no tiene actividad o es más viejo (o igual). Un estado creado en este
+ * dispositivo nace con actualizadoEn 0, así que nunca pisa al remoto.
+ */
+export function elegirEstado(
+  local: EstadoOrbita | undefined,
+  remoto: unknown
+): 'local' | 'remoto' | 'ninguno' {
+  if (!esEstadoOrbita(remoto)) return local ? 'local' : 'ninguno';
+  if (!local || sinActividad(local)) return 'remoto';
+  return remoto.actualizadoEn >= local.actualizadoEn ? 'remoto' : 'local';
 }
 
 /**

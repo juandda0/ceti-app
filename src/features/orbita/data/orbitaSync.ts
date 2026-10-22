@@ -1,8 +1,11 @@
 /**
  * Sincroniza el estado de juego con `users/{uid}/juego/orbita`.
  *
- * - Al iniciar sesión lee el documento remoto: gana el más reciente
- *   (`actualizadoEn`). Si el remoto es más viejo o no existe, sube el local.
+ * - Al iniciar sesión lee el documento remoto y decide con `elegirEstado`: el
+ *   remoto gana salvo que el local tenga actividad y sea más nuevo. Un estado
+ *   creado en este teléfono (actualizadoEn 0) nunca pisa al remoto.
+ * - Nada se sube hasta haber leído el remoto: si la lectura falla (sin red), se
+ *   reintenta antes de la siguiente subida.
  * - Después, cada cambio local se sube con un pequeño retraso (agrupa ráfagas).
  *
  * El documento no es un perfil financiero: son números de juego (racha, XP,
@@ -13,13 +16,15 @@ import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/a
 import { FIRESTORE_COLLECTIONS } from '@shared/lib/firebase/paths';
 import { recordError } from '@shared/lib/analytics/crashlytics';
 import { useOrbitaStore } from '@features/orbita/store/useOrbitaStore';
-import { esEstadoOrbita, type EstadoOrbita } from '@features/orbita/domain/orbita';
+import { elegirEstado, type EstadoOrbita } from '@features/orbita/domain/orbita';
 
 export const JUEGO_COLECCION = 'juego';
 export const JUEGO_DOC_ID = 'orbita';
 const RETRASO_SUBIDA_MS = 1500;
 
 let uidActivo = '';
+/** Ya se leyó el remoto de `uidActivo` (antes de eso no se sube nada). */
+let leido = false;
 let cancelarSuscripcion: (() => void) | null = null;
 let temporizador: ReturnType<typeof setTimeout> | null = null;
 
@@ -34,7 +39,28 @@ function serializable(e: EstadoOrbita): EstadoOrbita {
   return JSON.parse(JSON.stringify(e)) as EstadoOrbita;
 }
 
+/** Lee el remoto y se queda con el estado que corresponde. Devuelve si pudo leer. */
+async function leerYElegir(uid: string): Promise<boolean> {
+  const ref = refJuego(uid);
+  if (!ref) return false;
+  try {
+    const snap = await getDoc(ref);
+    if (uid !== uidActivo) return false;
+    const remoto = snap.exists() ? snap.data() : null;
+    if (elegirEstado(useOrbitaStore.getState().porUid[uid], remoto) === 'remoto') {
+      useOrbitaStore.getState().reemplazar(uid, remoto as EstadoOrbita);
+    }
+    leido = true;
+    return true;
+  } catch (err) {
+    void recordError(err, 'orbita_leer');
+    return false;
+  }
+}
+
 async function subir(uid: string): Promise<void> {
+  if (uid !== uidActivo) return;
+  if (!leido && !(await leerYElegir(uid))) return;
   const ref = refJuego(uid);
   const estado = useOrbitaStore.getState().porUid[uid];
   if (!ref || !estado || uid !== uidActivo) return;
@@ -47,6 +73,7 @@ async function subir(uid: string): Promise<void> {
 
 export function detenerOrbitaSync(): void {
   uidActivo = '';
+  leido = false;
   cancelarSuscripcion?.();
   cancelarSuscripcion = null;
   if (temporizador) clearTimeout(temporizador);
@@ -60,19 +87,12 @@ export async function iniciarOrbitaSync(uid: string): Promise<void> {
   if (!ref) return;
   uidActivo = uid;
 
-  try {
-    const snap = await getDoc(ref);
-    if (uid !== uidActivo) return;
-    const remoto = snap.exists() ? snap.data() : null;
+  if (await leerYElegir(uid)) {
     const local = useOrbitaStore.getState().porUid[uid];
-    if (esEstadoOrbita(remoto) && (!local || remoto.actualizadoEn > local.actualizadoEn)) {
-      useOrbitaStore.getState().reemplazar(uid, remoto);
-    } else if (local) {
-      void subir(uid);
-    }
-  } catch (err) {
-    void recordError(err, 'orbita_leer');
+    // Si el local ganó (tiene actividad más nueva), se sube de una vez.
+    if (local && local.actualizadoEn > 0) void subir(uid);
   }
+  if (uid !== uidActivo) return;
 
   let anterior = useOrbitaStore.getState().porUid[uid];
   cancelarSuscripcion = useOrbitaStore.subscribe((s) => {

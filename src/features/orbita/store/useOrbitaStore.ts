@@ -59,7 +59,9 @@ export const useOrbitaStore = create<OrbitaState>()(
         const actual = get().porUid[uid];
         if (actual) return actual;
         const previos = useQuizStreakStore.getState().daysByUid[uid] ?? [];
-        const nuevo = estadoInicial(now, previos);
+        // actualizadoEn 0: un estado recién creado aquí nunca le gana al remoto
+        // (otro teléfono); solo una acción real lo marca como nuevo.
+        const nuevo = { ...estadoInicial(now, previos), actualizadoEn: 0 };
         guardar(uid, nuevo);
         return nuevo;
       };

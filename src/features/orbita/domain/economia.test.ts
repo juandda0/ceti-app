@@ -149,3 +149,37 @@ describe('avisos', () => {
     expect(plan).toHaveLength(4);
   });
 });
+
+describe('sincronización: qué estado gana', () => {
+  const { elegirEstado } = jest.requireActual('./orbita');
+  const conActividad = (actualizadoEn: number) =>
+    completarPractica(
+      estadoInicial(NOW),
+      { tipo: 'leccion', worldId: 'world_1', nivel: 0, xpRespuestas: 8, perfecta: false },
+      '2026-10-22',
+      actualizadoEn
+    ).estado;
+
+  it('un estado recién creado en otro teléfono nunca pisa al remoto', () => {
+    const fresco = { ...estadoInicial(NOW + 1000), actualizadoEn: 0 };
+    expect(elegirEstado(fresco, conActividad(NOW))).toBe('remoto');
+    // Aunque traiga un actualizadoEn nuevo, sin actividad tampoco gana.
+    expect(elegirEstado(estadoInicial(NOW + 1000), conActividad(NOW))).toBe('remoto');
+  });
+
+  it('gana el más nuevo cuando los dos tienen actividad', () => {
+    expect(elegirEstado(conActividad(NOW + 5), conActividad(NOW))).toBe('local');
+    expect(elegirEstado(conActividad(NOW), conActividad(NOW + 5))).toBe('remoto');
+  });
+
+  it('ignora un remoto inválido', () => {
+    expect(elegirEstado(conActividad(NOW), { version: 2 })).toBe('local');
+    expect(elegirEstado(undefined, null)).toBe('ninguno');
+  });
+
+  it('abrir la app sin eventos no marca el estado como nuevo', () => {
+    const fresco = { ...estadoInicial(NOW), actualizadoEn: 0 };
+    const { estado } = alAbrir(fresco, '2026-10-22', NOW + 99);
+    expect(estado.actualizadoEn).toBe(0);
+  });
+});
