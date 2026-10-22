@@ -119,3 +119,57 @@ test('encolarCorreo escribe en mail con el formato de Trigger Email', async () =
   expect(doc.to).toBe('p@x.co');
   expect(Object.keys(doc.message).sort()).toEqual(['html', 'subject', 'text']);
 });
+
+describe('invitacion_clase', () => {
+  const datos = {
+    clase: 'Finanzas 9A',
+    profe: 'Profe Marta',
+    enlace: 'https://ceti-d3769.web.app',
+    correoInvitado: 'ana@colegio.edu.co',
+  };
+
+  it('le habla al estudiante con la clase, el profe, el enlace y el correo con el que entra', () => {
+    const m = construirCorreo('invitacion_clase', datos);
+    expect(m.subject).toBe('Profe Marta te invitó a Finanzas 9A en Ceti');
+    expect(m.text).toContain('¡Hola!');
+    expect(m.text).toContain('https://ceti-d3769.web.app');
+    expect(m.text).toContain('inicia sesión con este mismo correo (ana@colegio.edu.co)');
+    expect(m.html.startsWith('<div')).toBe(true);
+  });
+
+  it('no pide datos, no apura y no habla del plan del profe', () => {
+    const m = construirCorreo('invitacion_clase', datos);
+    expect(m.text).not.toMatch(/última oportunidad|urgente|perderás|ya mismo|hoy mismo/i);
+    expect(m.text).not.toMatch(/contraseña|teléfono|celular|dirección|documento|edad|tarjeta|cédula/i);
+    expect(m.text).not.toContain(DONDE_GESTIONAR);
+    expect(m.text).toContain('No tienes que llenar nada más ni pagar nada.');
+  });
+
+  it('sin datos opcionales sigue siendo un correo completo', () => {
+    const m = construirCorreo('invitacion_clase', {});
+    expect(m.subject).toBe('Tu profe te invitó a su clase en Ceti');
+    expect(m.text).toContain('inicia sesión con este mismo correo.');
+  });
+
+  it('escapa el HTML del nombre de la clase', () => {
+    const m = construirCorreo('invitacion_clase', { ...datos, clase: '<9A>' });
+    expect(m.html).toContain('&lt;9A&gt;');
+    expect(m.html).not.toContain('<9A>');
+  });
+});
+
+test('nave_cupo_ops lleva lo necesario para renovar o ampliar', () => {
+  const m = construirCorreo('nave_cupo_ops', {
+    colegioId: 'col1',
+    colegio: 'Colegio Sol',
+    licenciados: 300,
+    ocupados: 301,
+    tope: 330,
+    fecha: FECHA,
+    padrino: 'Banco',
+  });
+  expect(m.subject).toBe('Nave: Colegio Sol llegó a su cupo (301 de 300)');
+  for (const t of ['col1', 'Tope con margen: 330', '3 de noviembre de 2026', 'Banco', 'activarLicenciaNave'])
+    expect(m.text).toContain(t);
+  expect(m.text).not.toContain(DONDE_GESTIONAR);
+});

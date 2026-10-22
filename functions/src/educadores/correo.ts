@@ -23,7 +23,13 @@ export const COL_MAIL = 'mail';
 
 export const DONDE_GESTIONAR = 'Perfil → Tu plan';
 
-export type PlantillaCorreo = PlantillaAviso | 'recibo' | 'reembolso_ops' | 'bitacora';
+export type PlantillaCorreo =
+  | PlantillaAviso
+  | 'recibo'
+  | 'reembolso_ops'
+  | 'bitacora'
+  | 'invitacion_clase'
+  | 'nave_cupo_ops';
 
 export interface DatosCorreo {
   nombre?: string | null;
@@ -43,6 +49,22 @@ export interface DatosCorreo {
   pagoId?: string | null;
   /** Solo para 'bitacora'. */
   bitacora?: Bitacora | null;
+  /**
+   * Solo para 'invitacion_clase': nombre de la clase, del profe, enlace de la app
+   * y el correo con el que debe entrar (el mismo al que llega). Nada más del
+   * estudiante: su nombre no viaja en el correo.
+   */
+  clase?: string | null;
+  profe?: string | null;
+  enlace?: string | null;
+  correoInvitado?: string | null;
+  /** Solo para 'nave_cupo_ops' (con `fecha` = fin de la licencia). */
+  colegioId?: string | null;
+  colegio?: string | null;
+  licenciados?: number | null;
+  ocupados?: number | null;
+  tope?: number | null;
+  padrino?: string | null;
 }
 
 export interface MensajeCorreo {
@@ -197,6 +219,28 @@ function borradorBitacora(d: DatosCorreo): Borrador {
   return { subject: subject[b.tono], parrafos };
 }
 
+/**
+ * Invitación del profe a su clase. Va al estudiante, que casi siempre es menor:
+ * le habla a él, no le pide ningún dato y no lleva su nombre (solo el correo al
+ * que ya le llegó, para que entre con ese).
+ */
+function borradorInvitacion(d: DatosCorreo): Borrador {
+  const clase = d.clase?.trim() || 'su clase';
+  const profe = d.profe?.trim() || 'Tu profe';
+  const correo = d.correoInvitado?.trim();
+  const enlace = d.enlace?.trim() || 'la app de Ceti';
+  return {
+    subject: `${profe} te invitó a ${clase} en Ceti`,
+    parrafos: [
+      '¡Hola!',
+      `${profe} te invitó a ${clase} en Ceti, la app donde se aprende de plata jugando: mundos cortos, quices y retos a tu ritmo.`,
+      `Para entrar, abre ${enlace} e inicia sesión con este mismo correo${correo ? ` (${correo})` : ''}. Así quedas en tu clase sin escribir ningún código.`,
+      'No tienes que llenar nada más ni pagar nada. Entra cuando quieras: tu clase te espera.',
+    ],
+    pie: 'Si no conoces a quien te invitó, ignora este correo y no pasa nada.',
+  };
+}
+
 function borrador(plantilla: PlantillaCorreo, d: DatosCorreo): Borrador {
   switch (plantilla) {
     case 'fin_prueba_pronto':
@@ -292,6 +336,27 @@ function borrador(plantilla: PlantillaCorreo, d: DatosCorreo): Borrador {
       };
     case 'bitacora':
       return borradorBitacora(d);
+    case 'invitacion_clase':
+      return borradorInvitacion(d);
+    case 'nave_cupo_ops':
+      return {
+        subject: `Nave: ${d.colegio || d.colegioId || 'un colegio'} llegó a su cupo (${d.ocupados ?? '—'} de ${d.licenciados ?? '—'})`,
+        parrafos: [
+          'Un colegio con licencia Nave pasó el número de estudiantes de su contrato. Nadie quedó por fuera: seguimos dejando entrar hasta el margen del 10 %.',
+          [
+            `Colegio: ${d.colegio || '—'} (${d.colegioId ?? '—'})`,
+            `Estudiantes en la licencia: ${d.licenciados ?? '—'}`,
+            `Ocupados ahora: ${d.ocupados ?? '—'}`,
+            `Tope con margen: ${d.tope ?? '—'}`,
+            d.fecha ? `Licencia vigente hasta el ${fechaLarga(d.fecha)}` : null,
+            d.padrino ? `Padrino: ${d.padrino}` : null,
+          ]
+            .filter(Boolean)
+            .join('\n'),
+          'Pasos: habla con el colegio para ampliar o renovar la licencia y después corre activarLicenciaNave con el nuevo número (docs/educadores/operacion.md). Pasado el tope, los estudiantes nuevos ven un aviso amable y no entran.',
+        ],
+        pie: 'Este aviso llega una sola vez por licencia; si la amplías y se vuelve a llenar, llega otro.',
+      };
   }
 }
 

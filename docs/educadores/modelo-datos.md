@@ -18,6 +18,9 @@ Fechas en **ms epoch** (`number`) y montos en **COP entero**, con IVA incluido. 
 | `mail/{auto}` | `{to, message: {subject, text, html}}`, la cola de la extensión Trigger Email (que añade `delivery`) | `correo.ts` (`encolarCorreo`) | Nadie |
 | `bitacoras/{uid}/semanas/{YYYY-Www}` | `Bitacora` del dominio | `bitacoraSemanal.ts` | El dueño |
 | `colegios/{cid}.licencia` | `LicenciaColegio` (Nave: `{plan:'nave', hasta, estudiantes, padrino?}`) | `activarLicenciaNave` (admin) | Miembros del colegio (regla existente de `colegios`) |
+| `colegios/{cid}.avisoCupoNave` | `{clave: "{hasta}_{estudiantes}", ocupados, avisadoAt}`: ya se avisó a operaciones que esta licencia pasó su número de estudiantes | `limites.ts` (`avisarCupoNave`, en una transacción con el correo) | Miembros del colegio (regla existente de `colegios`) |
+| `colegios/{cid}/cursos/{cursoId}/invitados/{correo}` | `{correo, nombre, estado: 'pendiente' \| 'unido', invitadoPor, creadoAt, correoEnviadoAt?, uid?, unidoAt?}`. `correoEnviadoAt` (ms) marca que salió el correo `invitacion_clase`; nunca se manda otro mientras exista | `invitaciones.ts` (`invitarLista`, `enviarInvitacion`, `cerrarInvitacion`) | Profes de la clase |
+| `invitacionesPorCorreo/{correo}` | `{colegioId, cursoId, creadoAt}`, para unir al estudiante al iniciar sesión | `invitaciones.ts` | Nadie |
 
 La catch-all `match /{document=**}` niega todo lo demás.
 
@@ -78,4 +81,6 @@ Los primeros diez campos son el `PagoDoc` que lee la app (`src/features/educador
   - `cobrar`: un pago `ren_…` con `cobrarConFuente`. No se cobra si ya hay un cobro recurrente `pendiente` de los últimos 3 días.
   - `aviso`: envía el correo de la plantilla.
 - **Rechazos.** Solo cambia un pago que está `pendiente`, así que es idempotente. Si era una renovación y la suscripción sigue `activa` o `en_mora` con el mismo plan, se aplica `aplicarPagoRechazado` (mora y reintentos) y se envía el correo `pago_rechazado`. Si Wompi no responde, el pago cuenta como rechazado sin enviar correo. Si el cobro sí ocurrió, el `APPROVED` posterior lo aplica, porque un pago `rechazado` todavía puede aprobarse.
+- **Invitación por correo.** `invitarLista` crea los invitados en un batch y después, por cada uno, una transacción que lee el invitado y, si está `pendiente` sin `correoEnviadoAt` (`debeEnviarInvitacion`, puro), escribe `mail/{auto}` con `invitacion_clase` y marca `correoEnviadoAt`. Devuelve `correosEnviados`.
+- **Cupo Nave del colegio.** Con licencia vigente, `asegurarCupoEstudiante` (joinByCode y unión por invitación) e `invitarLista` cuentan los estudiantes del colegio (`contarEstudiantesColegio`; `invitarLista` suma las invitaciones pendientes) y deciden con `cupoNave(licenciados, ocupados)`: tope = licenciados + 10 % (mínimo 1). Al pasar del número de la licencia se escribe `nave_cupo_ops` y `avisoCupoNave` en la misma transacción; pasado el tope, `limite_estudiantes`.
 - **Retracto.** Si `gestionarSuscripcion` cancela dentro de los 5 días hábiles, se crea `pagos/dev_…` en `reembolso_pendiente` y se encola un correo a operaciones. La devolución se hace a mano (ver `operacion.md`).

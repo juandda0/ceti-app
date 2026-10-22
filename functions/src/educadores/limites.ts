@@ -9,6 +9,7 @@
  * ella aunque el plan baje; solo se frena la entrada de uno nuevo.
  */
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
+import { defineString } from 'firebase-functions/params';
 import {
   FieldValue,
   getFirestore,
@@ -30,6 +31,15 @@ import {
   refSuscripcion,
   type LicenciaColegio,
 } from './plan';
+import { COL_MAIL, construirCorreo } from './correo';
+
+/**
+ * Buzón de operaciones. Es el mismo parámetro que declara suscripciones.ts
+ * (firebase-functions registra un parámetro una vez por nombre); se repite
+ * aquí para no cargar el módulo de cobros en cada unión de un estudiante.
+ */
+const OPS_POR_DEFECTO = 'juandiegodiazave@gmail.com';
+const CETI_OPS_EMAIL = defineString('CETI_OPS_EMAIL', { default: OPS_POR_DEFECTO });
 
 export type CodigoLimite = 'limite_clases' | 'limite_estudiantes' | 'requiere_plan' | 'limite_ia';
 
@@ -48,6 +58,10 @@ export const MENSAJES: Record<CodigoLimite, string> = {
   requiere_plan: 'Crear con IA viene con el plan Piloto.',
   limite_ia: 'Ya usaste las generaciones con IA de este mes. Se renuevan el primer día del mes.',
 };
+
+/** Lo ve el estudiante cuando su colegio (licencia Nave) pasó el tope con margen. */
+export const MENSAJE_COLEGIO_LLENO =
+  'Tu colegio ya llenó sus cupos en Ceti por ahora. Avísale a tu profe y vuelve a intentarlo pronto: no pierdes nada.';
 
 // ---------------------------------------------------------------------------
 // Decisiones puras.
@@ -181,17 +195,26 @@ export async function planDeCurso(
   return { plan: licencia && Date.now() < licencia.hasta ? 'nave' : 'cadete', duenoUid: null };
 }
 
-/** Lanza `limite_estudiantes` si a la clase no le cabe un estudiante nuevo. */
+/**
+ * Lanza `limite_estudiantes` si a la clase no le cabe un estudiante nuevo, o si
+ * el colegio tiene Nave vigente y ya pasó el tope con margen. Si la entrada lo
+ * deja dentro del margen, entra igual y se avisa a operaciones (una vez).
+ */
 export async function asegurarCupoEstudiante(
   colegioId: string,
   cursoId: string,
   db: Firestore = getFirestore()
 ): Promise<void> {
-  const [{ plan }, roster] = await Promise.all([
+  const [{ plan }, roster, nave] = await Promise.all([
     planDeCurso(colegioId, cursoId, db),
     contarRoster(colegioId, cursoId, db),
+    naveDeColegio(colegioId, Date.now(), db),
   ]);
   lanzarSi(bloqueoEstudiantes(plan, roster));
+  if (!nave) return;
+  const cupo = cupoNave(nave.estudiantes, await contarEstudiantesColegio(colegioId, db));
+  lanzarSi(bloqueoNave(cupo));
+  if (pasaLicencia(cupo, 1)) await avisarCupoNave(colegioId, nave, cupo, 1, db);
 }
 
 // ---------------------------------------------------------------------------
@@ -251,6 +274,137 @@ export async function registrarGeneracionIa(
 // ---------------------------------------------------------------------------
 // Licencia Nave del colegio (la activa un admin de Ceti tras firmar el contrato).
 // ---------------------------------------------------------------------------
+
+/** La licencia Nave si está vigente en `ahora`. Puro. */
+export function naveVigente(
+  licencia: LicenciaColegio | null | undefined,
+  ahora: number
+): LicenciaColegio | null {
+  return licencia && licencia.plan === 'nave' && ahora < licencia.hasta ? licencia : null;
+}
+
+/** Cuántos estudiantes por encima de la licencia se dejan entrar: 10 %, al menos 1. */
+export function margenNave(licenciados: number): number {
+  return Math.max(1, Math.ceil(licenciados / 10));
+}
+
+export interface CupoNave {
+  /** Estudiantes del contrato (`licencia.estudiantes`). */
+  licenciados: number;
+  /** Licenciados + margen: pasado esto, nadie nuevo entra. */
+  tope: number;
+  /** Lo que ya ocupa cupo en todo el colegio. */
+  ocupados: number;
+  /** Cuántos más caben antes del tope. */
+  libres: number;
+}
+
+/** Conteo del cupo de la licencia frente a lo ocupado en todo el colegio. Puro. */
+export function cupoNave(licenciados: number, ocupados: number): CupoNave {
+  const tope = licenciados + margenNave(licenciados);
+  return { licenciados, tope, ocupados, libres: Math.max(0, tope - ocupados) };
+}
+
+/** Si al admitir `nuevos` el colegio queda por encima de su licencia (hay que avisar). Puro. */
+export function pasaLicencia(cupo: CupoNave, nuevos: number): boolean {
+  return nuevos > 0 && cupo.ocupados + nuevos > cupo.licenciados;
+}
+
+/** `limite_estudiantes` del colegio, con el mensaje para el estudiante. Puro. */
+export function bloqueoNave(cupo: CupoNave): Bloqueo | null {
+  if (cupo.libres > 0) return null;
+  return {
+    tipo: 'resource-exhausted',
+    codigo: 'limite_estudiantes',
+    mensaje: MENSAJE_COLEGIO_LLENO,
+    plan: 'nave',
+    limite: cupo.licenciados,
+  };
+}
+
+export async function naveDeColegio(
+  colegioId: string,
+  ahora = Date.now(),
+  db: Firestore = getFirestore()
+): Promise<LicenciaColegio | null> {
+  return naveVigente(await licenciaDeColegio(colegioId, db), ahora);
+}
+
+/**
+ * Estudiantes que ocupan cupo en todo el colegio: el roster sin suprimidos de
+ * cada clase y, con `conPendientes`, también las invitaciones pendientes (así
+ * invitarLista no reparte más cupos de los que hay).
+ */
+export async function contarEstudiantesColegio(
+  colegioId: string,
+  db: Firestore = getFirestore(),
+  { conPendientes = false }: { conPendientes?: boolean } = {}
+): Promise<number> {
+  const cursos = await db.collection(`colegios/${colegioId}/cursos`).select().get();
+  const porCurso = await Promise.all(
+    cursos.docs.map(async (c) => {
+      const [roster, pendientes] = await Promise.all([
+        contarRoster(colegioId, c.id, db),
+        conPendientes
+          ? c.ref
+              .collection('invitados')
+              .where('estado', '==', 'pendiente')
+              .count()
+              .get()
+              .then((s) => s.data().count)
+          : 0,
+      ]);
+      return roster + pendientes;
+    })
+  );
+  return porCurso.reduce((a, b) => a + b, 0);
+}
+
+/**
+ * Encola 'nave_cupo_ops' una sola vez por licencia: la marca
+ * `colegios/{cid}.avisoCupoNave.clave` = `{hasta}_{estudiantes}`, así que una
+ * renovación o ampliación vuelve a armar el aviso. Nunca lanza: el estudiante
+ * entra aunque el correo falle.
+ */
+export async function avisarCupoNave(
+  colegioId: string,
+  licencia: LicenciaColegio,
+  cupo: CupoNave,
+  nuevos: number,
+  db: Firestore = getFirestore()
+): Promise<boolean> {
+  try {
+    const ref = db.doc(`colegios/${colegioId}`);
+    const clave = `${licencia.hasta}_${licencia.estudiantes}`;
+    const ocupados = cupo.ocupados + nuevos;
+    return await db.runTransaction(async (tx) => {
+      const snap = await tx.get(ref);
+      if (snap.get('avisoCupoNave.clave') === clave) return false;
+      const nombre = snap.get('nombre');
+      // Marca y correo en la misma transacción: o salen los dos o ninguno.
+      tx.set(db.collection(COL_MAIL).doc(), {
+        to: CETI_OPS_EMAIL.value() || OPS_POR_DEFECTO,
+        message: construirCorreo('nave_cupo_ops', {
+          colegioId,
+          colegio: typeof nombre === 'string' ? nombre : null,
+          licenciados: cupo.licenciados,
+          ocupados,
+          tope: cupo.tope,
+          fecha: licencia.hasta,
+          padrino: licencia.padrino ?? null,
+        }),
+      });
+      tx.set(ref, { avisoCupoNave: { clave, ocupados, avisadoAt: Date.now() } }, { merge: true });
+      return true;
+    });
+  } catch (e) {
+    console.error('avisarCupoNave: no se pudo avisar a operaciones', {
+      colegioId,
+      error: String(e),
+    });
+    return false;
+  }
+}
 
 /** Valida la entrada de activarLicenciaNave. Puro: lanza `invalid-argument`. */
 export function leerLicenciaNave(

@@ -11,18 +11,38 @@
  *   clase, así que la invitación más reciente reemplaza a la anterior.
  *
  * Las invitaciones pendientes ocupan cupo: no se invita a más estudiantes de los
- * que caben en el plan de la clase (el del dueño, igual que en joinByCode).
+ * que caben en el plan de la clase (el del dueño, igual que en joinByCode) ni,
+ * si el colegio tiene Nave vigente, de los que caben en su licencia con margen.
+ *
+ * Cada invitación nueva le manda al estudiante un correo ('invitacion_clase')
+ * una sola vez: `correoEnviadoAt` en el doc del invitado se escribe en la misma
+ * transacción que el correo.
  */
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
+import { defineString } from 'firebase-functions/params';
 import { getFirestore, type Firestore } from 'firebase-admin/firestore';
 import { leerLista, type InvitadoLista, type ResultadoLista } from './dominio';
-import { contarRoster, cuposLibres, planDeCurso } from './limites';
+import { COL_MAIL, construirCorreo } from './correo';
+import {
+  avisarCupoNave,
+  contarEstudiantesColegio,
+  contarRoster,
+  cupoNave,
+  cuposLibres,
+  naveDeColegio,
+  pasaLicencia,
+  planDeCurso,
+} from './limites';
 
 export const COL_INVITACIONES_POR_CORREO = 'invitacionesPorCorreo';
 /** Tope del texto pegado (200 filas holgadas). */
 export const TEXTO_LISTA_MAX = 100_000;
 
 export type EstadoInvitado = 'pendiente' | 'unido';
+
+const URL_APP_POR_DEFECTO = 'https://ceti-d3769.web.app';
+/** Enlace de la app que lleva el correo de invitación. */
+export const URL_APP = defineString('URL_APP', { default: URL_APP_POR_DEFECTO });
 
 export interface ResultadoInvitarLista {
   /** Los que quedaron invitados en esta llamada. */
@@ -33,6 +53,13 @@ export interface ResultadoInvitarLista {
   duplicados: number;
   /** Los que no se invitaron porque la clase no tiene más cupo en el plan. */
   sinCupo: InvitadoLista[];
+  /**
+   * Qué tope dejó a alguien en `sinCupo`: el plan de la clase o la licencia Nave
+   * del colegio (con su margen). Solo cuando `sinCupo` no está vacío.
+   */
+  sinCupoPor?: 'clase' | 'colegio';
+  /** Correos de invitación encolados en esta llamada. */
+  correosEnviados?: number;
 }
 
 export function refInvitado(db: Firestore, colegioId: string, cursoId: string, correo: string) {
@@ -99,7 +126,7 @@ export const invitarLista = onCall(async (request): Promise<ResultadoInvitarList
   }
 
   const leida = leerLista(lista);
-  const [{ plan }, roster, pendientes, correosRoster, yaInvitados] = await Promise.all([
+  const [{ plan }, roster, pendientes, correosRoster, yaInvitados, nave] = await Promise.all([
     planDeCurso(colegioId, cursoId, db),
     contarRoster(colegioId, cursoId, db),
     cursoRef
@@ -123,11 +150,25 @@ export const invitarLista = onCall(async (request): Promise<ResultadoInvitarList
       ? Promise.resolve([])
       : db
           .getAll(...leida.invitados.map((i) => refInvitado(db, colegioId, cursoId, i.correo)))
-          .then((snaps) => snaps.filter((s) => s.exists).map((s) => s.id)),
+          .then((snaps) => snaps.filter((s) => s.exists)),
+    naveDeColegio(colegioId, Date.now(), db),
   ]);
 
-  const yaEnClase = new Set([...correosRoster, ...yaInvitados]);
-  const resultado = repartirInvitados(leida, yaEnClase, cuposLibres(plan, roster + pendientes));
+  const libresClase = cuposLibres(plan, roster + pendientes);
+  // Con Nave, las invitaciones pendientes de todo el colegio también reservan cupo.
+  const cupoColegio = nave
+    ? cupoNave(
+        nave.estudiantes,
+        await contarEstudiantesColegio(colegioId, db, { conPendientes: true })
+      )
+    : null;
+  const cupos = cupoColegio ? Math.min(libresClase, cupoColegio.libres) : libresClase;
+
+  const yaEnClase = new Set([...correosRoster, ...yaInvitados.map((s) => s.id)]);
+  const resultado = repartirInvitados(leida, yaEnClase, cupos);
+  if (resultado.sinCupo.length > 0) {
+    resultado.sinCupoPor = cupoColegio && cupoColegio.libres < libresClase ? 'colegio' : 'clase';
+  }
 
   if (resultado.invitados.length > 0) {
     // ≤ MAX_INVITADOS (200) × 2 escrituras: cabe en un batch de 500.
@@ -146,8 +187,71 @@ export const invitarLista = onCall(async (request): Promise<ResultadoInvitarList
     await batch.commit();
   }
 
+  if (nave && cupoColegio && pasaLicencia(cupoColegio, resultado.invitados.length)) {
+    await avisarCupoNave(colegioId, nave, cupoColegio, resultado.invitados.length, db);
+  }
+
+  // Correo a los nuevos y a los pendientes que repitieron en la lista sin haberlo
+  // recibido (invitados antes de que existiera el correo, o un envío fallido).
+  const porCorreo = [
+    ...resultado.invitados.map((i) => i.correo),
+    ...yaInvitados.filter((s) => debeEnviarInvitacion(s.data())).map((s) => s.id),
+  ];
+  if (porCorreo.length > 0) {
+    const datos = {
+      clase: typeof curso.get('nombre') === 'string' ? (curso.get('nombre') as string) : null,
+      profe: typeof caller.token.name === 'string' ? caller.token.name : null,
+      enlace: URL_APP.value() || URL_APP_POR_DEFECTO,
+    };
+    const enviados = await Promise.all(
+      porCorreo.map((correo) => enviarInvitacion(db, colegioId, cursoId, correo, datos))
+    );
+    resultado.correosEnviados = enviados.filter(Boolean).length;
+  } else {
+    resultado.correosEnviados = 0;
+  }
+
   return resultado;
 });
+
+/** Si a este invitado le falta el correo de invitación. Puro. */
+export function debeEnviarInvitacion(invitado: Record<string, unknown> | undefined): boolean {
+  return !!invitado && invitado.estado === 'pendiente' && invitado.correoEnviadoAt == null;
+}
+
+/**
+ * Encola 'invitacion_clase' para un invitado pendiente que aún no lo recibió y
+ * marca `correoEnviadoAt` en la misma transacción, así nunca sale dos veces.
+ * Nunca lanza: la invitación ya quedó hecha aunque el correo falle.
+ */
+export async function enviarInvitacion(
+  db: Firestore,
+  colegioId: string,
+  cursoId: string,
+  correo: string,
+  datos: { clase: string | null; profe: string | null; enlace: string }
+): Promise<boolean> {
+  const ref = refInvitado(db, colegioId, cursoId, correo);
+  try {
+    return await db.runTransaction(async (tx) => {
+      const snap = await tx.get(ref);
+      if (!debeEnviarInvitacion(snap.data())) return false;
+      tx.set(db.collection(COL_MAIL).doc(), {
+        to: correo,
+        message: construirCorreo('invitacion_clase', { ...datos, correoInvitado: correo }),
+      });
+      tx.set(ref, { correoEnviadoAt: Date.now() }, { merge: true });
+      return true;
+    });
+  } catch (e) {
+    console.error('invitarLista: no se pudo encolar la invitación', {
+      colegioId,
+      cursoId,
+      error: String(e),
+    });
+    return false;
+  }
+}
 
 function texto(value: unknown, field: string): string {
   if (typeof value !== 'string' || value.trim().length === 0) {

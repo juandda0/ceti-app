@@ -33,10 +33,17 @@ import {
   bloqueoClases,
   bloqueoEstudiantes,
   bloqueoIa,
+  bloqueoNave,
+  contarEstudiantesColegio,
   contarRoster,
+  cupoNave,
   cuposLibres,
   duenoDeCurso,
   leerLicenciaNave,
+  margenNave,
+  MENSAJE_COLEGIO_LLENO,
+  naveVigente,
+  pasaLicencia,
   planDeCurso,
   registrarGeneracionIa,
   usoIaDelMes,
@@ -138,6 +145,49 @@ describe('decisiones puras', () => {
   });
 });
 
+describe('cupo de la licencia Nave (puro)', () => {
+  it('el margen es el 10 %, al menos 1', () => {
+    expect(margenNave(100)).toBe(10);
+    expect(margenNave(45)).toBe(5);
+    expect(margenNave(5)).toBe(1);
+    expect(margenNave(1)).toBe(1);
+    expect(cupoNave(100, 0).tope).toBe(110);
+  });
+
+  it('cuenta lo libre hasta el tope con margen', () => {
+    expect(cupoNave(100, 80)).toEqual({ licenciados: 100, tope: 110, ocupados: 80, libres: 30 });
+    expect(cupoNave(100, 109).libres).toBe(1);
+    expect(cupoNave(100, 110).libres).toBe(0);
+    expect(cupoNave(100, 130).libres).toBe(0);
+  });
+
+  it('avisa a operaciones solo al pasar el número de la licencia', () => {
+    expect(pasaLicencia(cupoNave(100, 99), 1)).toBe(false); // llega justo a 100
+    expect(pasaLicencia(cupoNave(100, 100), 1)).toBe(true); // el 101 entra al margen
+    expect(pasaLicencia(cupoNave(100, 95), 10)).toBe(true);
+    expect(pasaLicencia(cupoNave(100, 105), 0)).toBe(false);
+  });
+
+  it('pasado el tope: limite_estudiantes con mensaje para el estudiante', () => {
+    expect(bloqueoNave(cupoNave(100, 109))).toBeNull();
+    expect(bloqueoNave(cupoNave(100, 110))).toEqual({
+      tipo: 'resource-exhausted',
+      codigo: 'limite_estudiantes',
+      mensaje: MENSAJE_COLEGIO_LLENO,
+      plan: 'nave',
+      limite: 100,
+    });
+    expect(MENSAJE_COLEGIO_LLENO).not.toMatch(/plan|pagar|licencia/i);
+  });
+
+  it('solo vale una licencia Nave vigente', () => {
+    const l = { plan: 'nave' as const, hasta: AHORA + DIA_MS, estudiantes: 10 };
+    expect(naveVigente(l, AHORA)).toBe(l);
+    expect(naveVigente(l, AHORA + 2 * DIA_MS)).toBeNull();
+    expect(naveVigente(null, AHORA)).toBeNull();
+  });
+});
+
 describe('con Firestore', () => {
   it('cuenta las clases del profe y frena la segunda en Cadete', async () => {
     const base = {
@@ -224,5 +274,95 @@ describe('con Firestore', () => {
     await falso.doc(`suscripciones/p1/uso/${mesBogota()}`).delete();
     await falso.doc('suscripciones/p1/uso/2000-01').set({ iaGeneraciones: 999 });
     expect(await codigoDe(asegurarIaDisponible('p1', 'col', d))).toBeNull();
+  });
+});
+
+describe('cupo Nave con Firestore', () => {
+  const LIC = { plan: 'nave', hasta: AHORA + 30 * DIA_MS, estudiantes: 10, padrino: 'Banco' };
+
+  /** Colegio con licencia de 10 y `n` estudiantes repartidos en dos clases sin dueño. */
+  function colegio(n: number, extra: Record<string, Record<string, unknown>> = {}) {
+    const inicial: Record<string, Record<string, unknown>> = {
+      'colegios/col': { nombre: 'Colegio Sol', licencia: LIC },
+      'colegios/col/cursos/c1': { profesorUids: [] },
+      'colegios/col/cursos/c2': { profesorUids: [] },
+      ...extra,
+    };
+    for (let i = 0; i < n; i++)
+      inicial[`colegios/col/cursos/c${(i % 2) + 1}/estudiantes/e${i}`] = { estado: 'activo' };
+    return new FirestoreFalso(inicial);
+  }
+  const correos = (f: FirestoreFalso) =>
+    [...f.docs.entries()].filter(([p]) => p.startsWith('mail/')).map(([, d]) => d);
+  const comoDb = (f: FirestoreFalso) => f as unknown as FirebaseFirestore.Firestore;
+
+  it('cuenta todo el colegio, sin suprimidos; con pendientes si se pide', async () => {
+    const f = colegio(6, {
+      'colegios/col/cursos/c2/estudiantes/x': { estado: 'suprimido' },
+      'colegios/col/cursos/c1/invitados/a@x.co': { estado: 'pendiente' },
+      'colegios/col/cursos/c2/invitados/b@x.co': { estado: 'unido' },
+      'colegios/otro/cursos/c9/estudiantes/z': { estado: 'activo' },
+    });
+    expect(await contarEstudiantesColegio('col', comoDb(f))).toBe(6);
+    expect(await contarEstudiantesColegio('col', comoDb(f), { conPendientes: true })).toBe(7);
+  });
+
+  it('dentro de la licencia entra sin avisar', async () => {
+    const f = colegio(9);
+    expect(await codigoDe(asegurarCupoEstudiante('col', 'c1', comoDb(f)))).toBeNull();
+    expect(correos(f)).toHaveLength(0);
+  });
+
+  it('en el margen entra y avisa a operaciones una sola vez', async () => {
+    const f = colegio(10);
+    expect(await codigoDe(asegurarCupoEstudiante('col', 'c1', comoDb(f)))).toBeNull();
+    const [m] = correos(f) as { to: string; message: { subject: string; text: string } }[];
+    expect(correos(f)).toHaveLength(1);
+    expect(m.to).toBe('juandiegodiazave@gmail.com');
+    expect(m.message.subject).toContain('Colegio Sol');
+    for (const t of [
+      'col',
+      'Estudiantes en la licencia: 10',
+      'Ocupados ahora: 11',
+      'Tope con margen: 11',
+      'Banco',
+    ])
+      expect(m.message.text).toContain(t);
+    expect(f.datos('colegios/col')?.avisoCupoNave).toMatchObject({
+      clave: `${LIC.hasta}_10`,
+      ocupados: 11,
+    });
+    // Otro estudiante en el margen: no se repite el aviso.
+    await asegurarCupoEstudiante('col', 'c2', comoDb(f));
+    expect(correos(f)).toHaveLength(1);
+  });
+
+  it('pasado el margen no entra, con un mensaje amable', async () => {
+    const f = colegio(11);
+    await expect(asegurarCupoEstudiante('col', 'c1', comoDb(f))).rejects.toMatchObject({
+      code: 'resource-exhausted',
+      message: MENSAJE_COLEGIO_LLENO,
+      details: { codigo: 'limite_estudiantes', plan: 'nave', limite: 10 },
+    });
+  });
+
+  it('una licencia ampliada vuelve a armar el aviso', async () => {
+    const f = colegio(12, {
+      'colegios/col': {
+        nombre: 'Colegio Sol',
+        licencia: { ...LIC, estudiantes: 11 },
+        avisoCupoNave: { clave: `${LIC.hasta}_10`, ocupados: 11 },
+      },
+    });
+    expect(await codigoDe(asegurarCupoEstudiante('col', 'c1', comoDb(f)))).toBeNull();
+    expect(correos(f)).toHaveLength(1);
+  });
+
+  it('una licencia vencida no limita el colegio', async () => {
+    const f = colegio(20, {
+      'colegios/col': { licencia: { ...LIC, hasta: AHORA - DIA_MS } },
+    });
+    expect(await codigoDe(asegurarCupoEstudiante('col', 'c1', comoDb(f)))).toBeNull();
+    expect(correos(f)).toHaveLength(0);
   });
 });

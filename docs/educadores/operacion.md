@@ -109,9 +109,19 @@ Plantillas (`correo.ts`):
 
 - Avisos del ciclo: `fin_prueba_pronto`, `renovacion_anual_pronto`, `renovacion_manual_pronto`, `pausa_termina_pronto` y `bajo_a_cadete`.
 - Cobros: `recibo` y `pago_rechazado`.
-- Operaciones y retención: `reembolso_ops` (va a `CETI_OPS_EMAIL`) y `bitacora`.
+- Operaciones y retención: `reembolso_ops` y `nave_cupo_ops` (van a `CETI_OPS_EMAIL`) y `bitacora`.
+- Estudiantes: `invitacion_clase` (ver abajo).
 
-Todas dicen dónde gestionar el plan: **Perfil → Tu plan**.
+Las del profe dicen dónde gestionar el plan: **Perfil → Tu plan**. Las de operaciones y la del estudiante llevan su propio pie.
+
+### Invitación a la clase (`invitacion_clase`)
+
+Cuando `invitarLista` invita a un estudiante, le encola un correo con el nombre de la clase, el del profe (`token.name`), el enlace de la app (`URL_APP`) y la instrucción de iniciar sesión con **ese mismo correo**. Así queda unido a la clase sin código.
+
+- **Una sola vez por invitación.** La misma transacción escribe el correo y `correoEnviadoAt` en `colegios/{cid}/cursos/{cursoId}/invitados/{correo}`. Si el profe vuelve a pegar la lista, no sale otro. Un invitado `pendiente` sin `correoEnviadoAt` (invitado antes de que existiera el correo, o con un envío fallido) lo recibe al volver a aparecer en una lista.
+- **Escrito para un menor.** Le habla al estudiante, no le pide ningún dato ni pago y no lleva su nombre ni el de nadie más: solo su propio correo, la clase y el profe.
+- **Reenviar a mano** (por ejemplo, si el correo rebotó y el profe corrigió la dirección): borra `correoEnviadoAt` del invitado y pide al profe que pegue esa fila otra vez.
+- Si el envío falla, la invitación igual queda hecha y se ve en el log como `invitarLista: no se pudo encolar la invitación`.
 
 ## 6. Retractos y devoluciones
 
@@ -149,6 +159,18 @@ Nave se contrata como colegio: se cotiza con `cotizarNave` (dominio) y se cobra 
 
 Escribe `colegios/{cid}.licencia = {plan:'nave', hasta, estudiantes, padrino}`. Todos los profes de ese colegio quedan con Nave hasta `hasta` (lo calcula `planDeProfe` con `mejorPlan`). Para renovar, se vuelve a llamar con un `hastaMs` nuevo. Al vencer, cada profe vuelve a su plan individual sin que se borre nada.
 
+### Cupo de estudiantes de la licencia
+
+Mientras la licencia está vigente, el servidor cuenta los estudiantes de **todo el colegio** frente a `licencia.estudiantes` (`limites.ts`: `cupoNave`, puro). Cuenta el roster de cada clase sin los `suprimido` (los `pendiente_atestacion` sí ocupan cupo). Aplica en `joinByCode`, en la unión por invitación de `resolveMyAccess` (ambas pasan por `asegurarCupoEstudiante`) y en `invitarLista`, que además cuenta las invitaciones pendientes del colegio.
+
+- **Hasta el número de la licencia:** todo normal.
+- **Margen del 10 %** (al menos 1; con 320 licenciados, hasta 352): nadie queda por fuera. Al entrar el primero por encima del número de la licencia se encola el correo `nave_cupo_ops` a `CETI_OPS_EMAIL` ("Nave: <colegio> llegó a su cupo"), con el colegio, los números, el fin de la licencia y el padrino. Sale **una vez por licencia**: la marca es `colegios/{cid}.avisoCupoNave.clave = "{hasta}_{estudiantes}"`.
+- **Pasado el margen:** un estudiante nuevo recibe `limite_estudiantes` (`resource-exhausted`, `details = {codigo, plan: 'nave', limite: <licenciados>}`) con un mensaje amable: "Tu colegio ya llenó sus cupos en Ceti por ahora…". En `invitarLista` los que no caben vuelven en `sinCupo` con `sinCupoPor: 'colegio'`. Nadie que ya esté en una clase pierde su lugar.
+
+Qué hacer al recibir el aviso: habla con el colegio para ampliar o renovar y vuelve a llamar `activarLicenciaNave` con el nuevo `estudiantes` (y `hastaMs`). La nueva licencia cambia la clave, así que si se vuelve a llenar llega otro aviso.
+
+El tope por clase de cada plan (60 en Nave) sigue aplicando aparte.
+
 ## 8. Parámetros, en resumen
 
 | Nombre | Tipo | Por defecto |
@@ -160,3 +182,4 @@ Escribe `colegios/{cid}.licencia = {plan:'nave', hasta, estudiantes, padrino}`. 
 | `ALEGRA_CLIENTE_ID`, `ALEGRA_ITEM_ID`, `ALEGRA_IVA_ID` | string | vacío |
 | `CETI_OPS_EMAIL` | string | correo del admin raíz |
 | `URL_RETORNO_PAGO` | string | `https://ceti-d3769.web.app/pago` |
+| `URL_APP` | string | `https://ceti-d3769.web.app` (enlace del correo de invitación) |
