@@ -1,8 +1,8 @@
 /**
- * Ítems del avatar ganados, por usuario y en el dispositivo (igual que la racha
- * de quizzes de la que salen). No se suben a Firestore: dirían cuántos días
- * seguidos estudió la persona (R5). Lo que sí viaja con el perfil es el avatar
- * elegido (useUserStore.avatar).
+ * Ítems del avatar ganados, por usuario y en el dispositivo. Se recalculan a
+ * partir de la racha de Órbita (que sí se sincroniza), así que perderlos al
+ * cambiar de teléfono no importa: vuelven solos. Lo que viaja con el perfil es
+ * el avatar elegido (useUserStore.avatar).
  */
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';

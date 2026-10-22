@@ -16,6 +16,8 @@ import { performLogoutAndGo } from '@features/auth/performLogout';
 import CetiButton from '@shared/components/CetiButton';
 import AvatarView from '@features/avatar/components/AvatarView';
 import { AVATAR_POR_DEFECTO } from '@features/avatar/domain/catalogo';
+import TarjetaOrbita from '@features/orbita/components/perfil/TarjetaOrbita';
+import AjustesOrbitaPerfil from '@features/orbita/components/perfil/AjustesOrbitaPerfil';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -65,6 +67,14 @@ export default function ProfileScreen() {
         </Animated.View>
 
         <Animated.View entering={motion.enterFadeUp(2)}>
+          <TarjetaOrbita />
+        </Animated.View>
+
+        <Animated.View entering={motion.enterFadeUp(3)}>
+          <AjustesOrbitaPerfil />
+        </Animated.View>
+
+        <Animated.View entering={motion.enterFadeUp(4)}>
           <TouchableOpacity
             style={styles.logoutBtn}
             onPress={() => void performLogoutAndGo(router, '/(auth)/welcome')}

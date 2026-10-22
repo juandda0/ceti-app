@@ -13,6 +13,7 @@ import { getFirebaseClients } from '@shared/lib/firebase/app';
 import { bancoDocRef, contenidoDocId, cursoContenidoDocRef } from '@shared/lib/firebase/paths';
 import { hashStr, stableShuffle } from '@shared/lib/quizUtils';
 import type { CourseContentRef } from '@shared/types/tenancy';
+import type { PoolMundo } from '@features/orbita/domain/niveles';
 import {
   SEEDED_GRADOS,
   type QuizItem,
@@ -83,46 +84,54 @@ async function fetchBancoDoc(
  *   - Takes the first REQUIRED_N items from the shuffled list.
  *   - Returns [] if any banco is missing or has fewer items than required.
  */
+/**
+ * Todo el banco de un mundo, por tipo (para armar los niveles del mapa). null si
+ * falta algún banco o no alcanza para el jefe (4 + 3 + 3).
+ */
+async function fetchPool(
+  grado: Grado,
+  worldId: WorldId,
+  courseContent?: CourseContentRef | null
+): Promise<PoolMundo | null> {
+  // Per-piece override flags (RQ-PR11): a course may override only some types.
+  const pin = courseContent
+    ? { colegioId: courseContent.colegioId, cursoId: courseContent.cursoId }
+    : null;
+  const ov = courseContent?.overrides;
+  const [mcDoc, vfDoc, ordDoc] = await Promise.all([
+    fetchBancoDoc(grado, worldId, 'multiple_choice', ov?.mc ? pin : null),
+    fetchBancoDoc(grado, worldId, 'true_false', ov?.vf ? pin : null),
+    fetchBancoDoc(grado, worldId, 'ordenar', ov?.ordenar ? pin : null),
+  ]);
+
+  // Stamp the discriminator `tipo` onto each item — it lives on the banco doc,
+  // not on the items (S5 schema), but the UI renders by item.tipo.
+  const pool: PoolMundo = {
+    mc: (mcDoc?.items ?? []).map((it) => ({ ...it, tipo: 'multiple_choice' })) as MultipleChoiceItem[],
+    vf: (vfDoc?.items ?? []).map((it) => ({ ...it, tipo: 'true_false' })) as TrueFalseItem[],
+    ordenar: (ordDoc?.items ?? []).map((it) => ({ ...it, tipo: 'ordenar' })) as OrdenarItem[],
+  };
+  if (
+    pool.mc.length < REQUIRED_MC ||
+    pool.vf.length < REQUIRED_VF ||
+    pool.ordenar.length < REQUIRED_ORDENAR
+  ) {
+    return null;
+  }
+  return pool;
+}
+
 export const questionBankRepository = {
+  fetchPool,
+
   async fetchAssembledQuiz(
     grado: Grado,
     worldId: WorldId,
     seedKey: string,
     courseContent?: CourseContentRef | null
   ): Promise<QuizItem[]> {
-    // Per-piece override flags (RQ-PR11): a course may override only some types.
-    const pin = courseContent
-      ? { colegioId: courseContent.colegioId, cursoId: courseContent.cursoId }
-      : null;
-    const ov = courseContent?.overrides;
-    const [mcDoc, vfDoc, ordDoc] = await Promise.all([
-      fetchBancoDoc(grado, worldId, 'multiple_choice', ov?.mc ? pin : null),
-      fetchBancoDoc(grado, worldId, 'true_false', ov?.vf ? pin : null),
-      fetchBancoDoc(grado, worldId, 'ordenar', ov?.ordenar ? pin : null),
-    ]);
-
-    // Stamp the discriminator `tipo` onto each item — it lives on the banco doc,
-    // not on the items (S5 schema), but the UI renders by item.tipo.
-    const mcItems = (mcDoc?.items ?? []).map((it) => ({
-      ...it,
-      tipo: 'multiple_choice',
-    })) as MultipleChoiceItem[];
-    const vfItems = (vfDoc?.items ?? []).map((it) => ({
-      ...it,
-      tipo: 'true_false',
-    })) as TrueFalseItem[];
-    const ordItems = (ordDoc?.items ?? []).map((it) => ({
-      ...it,
-      tipo: 'ordenar',
-    })) as OrdenarItem[];
-
-    if (
-      mcItems.length < REQUIRED_MC ||
-      vfItems.length < REQUIRED_VF ||
-      ordItems.length < REQUIRED_ORDENAR
-    ) {
-      return [];
-    }
+    const pool = await fetchPool(grado, worldId, courseContent);
+    if (!pool) return [];
 
     // Deterministic per-type seeds (no Math.random)
     const mcSeed = hashStr(`${seedKey}:multiple_choice`);
@@ -130,9 +139,9 @@ export const questionBankRepository = {
     const ordSeed = hashStr(`${seedKey}:ordenar`);
 
     const selected: QuizItem[] = [
-      ...stableShuffle(mcItems, mcSeed).slice(0, REQUIRED_MC),
-      ...stableShuffle(vfItems, vfSeed).slice(0, REQUIRED_VF),
-      ...stableShuffle(ordItems, ordSeed).slice(0, REQUIRED_ORDENAR),
+      ...stableShuffle(pool.mc, mcSeed).slice(0, REQUIRED_MC),
+      ...stableShuffle(pool.vf, vfSeed).slice(0, REQUIRED_VF),
+      ...stableShuffle(pool.ordenar, ordSeed).slice(0, REQUIRED_ORDENAR),
     ];
 
     return selected;

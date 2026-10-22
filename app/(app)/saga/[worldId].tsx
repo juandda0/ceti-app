@@ -1,32 +1,18 @@
 /**
- * WorldSagaScreen — thin consumer of useWorldFlow (three-phase saga orchestrator).
+ * WorldSagaScreen — un planeta: despegue, (la primera vez) Elige tu camino y
+ * micro-teoría, y después el mapa de niveles en zigzag.
  *
- *   Phase 1 (EligeCamino, 30% probability):
- *     Shows ONE situational scenario before the quiz. The trigger is
- *     DETERMINISTIC — uses hashStr(`${uid}:eligecamino:${worldId}`) % 100 < 30
- *     so the same student always gets the same trigger for the same world (R7).
- *     The situation selected is also deterministic (hashStr for index pick).
- *     No correct/wrong answer; just reflection on the consequence (R5, R10).
- *     The choice is NOT persisted per-student (R5).
+ *   - Lecciones (5 preguntas, sin vidas, errores explicados) en orden.
+ *   - Jefe final (10 preguntas 4+3+3, 3 vidas): es lo único que da la maestría
+ *     del mundo, con el puntaje real (acertadas a la primera) — R9.
  *
- *   Phase 2 (Micro-teoría):
- *     Shows the world's theory cards ONLY on the first entry for this student
- *     (tracked in useLearningFlowStore by uid+worldId key, persisted to MMKV).
- *     Subsequent entries skip this phase and go straight to the quiz.
- *     Decision rationale: showing it every time would block quiz retries; first-
- *     time-only ensures the student reads it before tackling questions.
+ * Cada práctica pasa por Órbita (XP, Cetis, racha, meta) y termina en el cierre
+ * con recompensas; la primera del día celebra la racha.
  *
- *   Phase 3 (Quiz):
- *     The existing WorldQuizScreen, unchanged.
- *
- * The grado is resolved once via useStudentGrado; while null a spinner shows.
- * Both content fetches fire in parallel. Graceful degradation: if either repo
- * returns null or throws, the flow skips that phase and proceeds to quiz.
- *
- * RQ-ES02, RQ-FN09, RQ-ES06.
+ * Contenido determinista por estudiante (R7). RQ-ES02, RQ-FN09, RQ-ES06.
  */
 import { useEffect, useRef, useState } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { ActivityIndicator, Text, View, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
@@ -41,7 +27,20 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { Typography } from '@shared/constants/typography';
 import MicroteoriaView from '@features/learning/components/MicroteoriaView';
 import EligeCaminoView from '@features/learning/components/EligeCaminoView';
-import WorldQuizScreen from '@features/learning/screens/WorldQuizScreen';
+import LeccionScreen, { type ResultadoLeccion } from '@features/learning/screens/LeccionScreen';
+import MapaPlaneta from '@features/learning/components/galaxia/MapaPlaneta';
+import StreakCelebration from '@features/learning/components/StreakCelebration';
+import FinLeccion from '@features/orbita/components/FinLeccion';
+import { useNivelesStore } from '@features/learning/store/useNivelesStore';
+import { useQuestionBankStore } from '@features/learning/store/useQuestionBankStore';
+import { buildWorldProgress } from '@features/learning/data/worldProgress';
+import { worldProgressRepository } from '@features/dashboard/data/worldProgressRepository';
+import { nodosMapa, type NodoMapa, type TipoNivel } from '@features/orbita/domain/niveles';
+import type { RecompensaPractica } from '@features/orbita/domain/orbita';
+import { useOrbitaStore } from '@features/orbita/store/useOrbitaStore';
+import { refrescarAvisos } from '@features/orbita/hooks/useOrbita';
+import { eventos } from '@features/orbita/data/eventos';
+import type { WorldId } from '@features/learning/data/quiz.types';
 import Despegue from '@features/learning/components/galaxia/Despegue';
 import { planetaDeMundo } from '@features/learning/data/planetas';
 
@@ -130,6 +129,103 @@ export default function WorldSagaScreen() {
     return () => clearTimeout(id);
   }, [worldId]);
 
+  // ── Niveles del planeta ───────────────────────────────────────────────────
+  const role = useAuthStore((s) => s.role);
+  const cargarNiveles = useNivelesStore((s) => s.cargar);
+  const carga = useNivelesStore((s) => (worldId ? s.porMundo[worldId] : undefined));
+  useEffect(() => {
+    if (!grado || !worldId) return;
+    void cargarNiveles(grado, worldId, uid, courseContent);
+    // courseContent es un objeto nuevo en cada render; su versión es la clave.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [grado, worldId, uid, classConfig?.version, cargarNiveles]);
+  const niveles = carga?.estado === 'listo' ? carga.niveles : undefined;
+  const hechas = useOrbitaStore((s) => s.porUid[uid]?.niveles[worldId ?? ''] ?? 0);
+  // Suscripción a respuestas y progreso remoto para que "conquistado" se recalcule.
+  useQuestionBankStore((s) => s.answers);
+  useQuestionBankStore((s) => s.remoteProgress);
+  const isWorldComplete = useQuestionBankStore((s) => s.isWorldComplete);
+  const conquistado = !!worldId && isWorldComplete(uid, worldId as WorldId);
+  const totalLecciones = niveles?.lecciones.length ?? 0;
+  const nodos = niveles ? nodosMapa(totalLecciones, hechas, conquistado) : [];
+
+  const [jugando, setJugando] = useState<{ tipo: TipoNivel; nivel: number } | null>(null);
+  const [fin, setFin] = useState<{
+    recompensa: RecompensaPractica;
+    resultado: ResultadoLeccion;
+    tipo: TipoNivel;
+    conquistado: boolean;
+  } | null>(null);
+  const [celebracion, setCelebracion] = useState<RecompensaPractica | null>(null);
+
+  const salirDelMundo = () => {
+    if (router.canGoBack()) router.back();
+    else router.replace('/(app)/saga');
+  };
+
+  const abrirNodo = (n: NodoMapa) => {
+    if (n.estado === 'bloqueado') return;
+    setJugando({ tipo: n.tipo, nivel: n.indice });
+  };
+
+  const alTerminar = (resultado: ResultadoLeccion) => {
+    if (!jugando || !worldId || !niveles) return;
+    const { tipo, nivel } = jugando;
+    let ganoPlaneta = false;
+
+    if (tipo === 'jefe') {
+      // La maestría sale del jefe, con lo acertado a la primera (antes siempre era 10/10).
+      const { recordAnswer, getWorldProgress } = useQuestionBankStore.getState();
+      const acertadas = new Set(resultado.idsAcertadas);
+      for (const q of niveles.jefe) recordAnswer(uid, q.id, worldId as WorldId, acertadas.has(q.id));
+      ganoPlaneta = useQuestionBankStore.getState().isWorldComplete(uid, worldId as WorldId);
+      if (role === 'estudiante' && colegioId && cursoId && firebaseUid) {
+        const { done, total } = getWorldProgress(uid, worldId as WorldId);
+        const progress = buildWorldProgress({
+          colegioId,
+          cursoId,
+          uid: firebaseUid,
+          worldId: worldId as WorldId,
+          correct: done,
+          total,
+          competencia: configEntry?.competencia,
+          now: Date.now(),
+        });
+        void worldProgressRepository.upsert(colegioId, cursoId, firebaseUid, worldId, progress);
+      }
+    }
+
+    const r = useOrbitaStore.getState().completar(uid, {
+      tipo,
+      worldId,
+      nivel: tipo === 'leccion' ? nivel : undefined,
+      xpRespuestas: resultado.xpRespuestas,
+      perfecta: resultado.perfecta,
+    });
+    eventos.leccionFin({
+      mundo: worldId,
+      tipo,
+      nivel,
+      perfecta: resultado.perfecta,
+      xp: r.xp,
+      errores: resultado.errores,
+    });
+    eventos.cetisGanados({ cantidad: r.cetis + r.cetisHito + r.cetisMeta, origen: tipo });
+    if (r.primeroHoy) eventos.rachaExtendida({ racha: r.racha, reparada: r.reparada });
+    if (r.metaCumplida) eventos.metaCumplida({ meta: r.estado.ajustes.meta, lecciones: r.leccionesHoy });
+    if (r.hito) eventos.hitoRacha({ hito: r.hito });
+    refrescarAvisos(r.estado);
+
+    setJugando(null);
+    setFin({ recompensa: r, resultado, tipo, conquistado: ganoPlaneta });
+  };
+
+  const alContinuar = () => {
+    const r = fin?.recompensa;
+    setFin(null);
+    if (r && (r.primeroHoy || r.reparada || r.hito)) setCelebracion(r);
+  };
+
   let content: React.ReactElement;
   if (phase === 'loading' || !grado || !despegueListo) {
     // ── Despegue (carga) ──────────────────────────────────────────────────────
@@ -142,7 +238,7 @@ export default function WorldSagaScreen() {
       />
     );
   } else if (phase === 'eligecamino' && situacion !== null) {
-    // ── EligeCamino phase ────────────────────────────────────────────────────
+    // ── EligeCamino (solo la primera vez) ────────────────────────────────────
     content = (
       <EligeCaminoView
         situacion={situacion}
@@ -152,7 +248,7 @@ export default function WorldSagaScreen() {
       />
     );
   } else if (phase === 'microteoria' && microteoriaBank !== null) {
-    // ── Micro-teoría phase ───────────────────────────────────────────────────
+    // ── Micro-teoría (solo la primera vez) ───────────────────────────────────
     content = (
       <MicroteoriaView
         cards={microteoriaBank.cards}
@@ -161,9 +257,68 @@ export default function WorldSagaScreen() {
         onFinish={handleMTFinish}
       />
     );
+  } else if (fin) {
+    // ── Cierre con recompensas ───────────────────────────────────────────────
+    content = (
+      <FinLeccion
+        recompensa={fin.recompensa}
+        modo={fin.tipo}
+        titulo={meta.name}
+        color={planeta.acento}
+        aciertos={fin.resultado.acertadasALaPrimera}
+        total={fin.resultado.total}
+        conquistado={fin.conquistado}
+        onContinuar={alContinuar}
+      />
+    );
+  } else if (jugando && niveles) {
+    // ── Lección o jefe ───────────────────────────────────────────────────────
+    const items =
+      jugando.tipo === 'jefe' ? niveles.jefe : (niveles.lecciones[jugando.nivel] ?? []);
+    content = (
+      <LeccionScreen
+        key={`${jugando.tipo}-${jugando.nivel}`}
+        items={items}
+        modo={jugando.tipo}
+        titulo={
+          jugando.tipo === 'jefe'
+            ? t('orbita.mapa.jefeDe', { mundo: meta.name })
+            : t('orbita.mapa.leccion', { n: jugando.nivel + 1, total: totalLecciones })
+        }
+        color={meta.color}
+        mundo={worldId ?? ''}
+        nivel={jugando.nivel}
+        onSalir={() => setJugando(null)}
+        onTerminar={alTerminar}
+      />
+    );
+  } else if (carga?.estado === 'error') {
+    content = (
+      <View style={[styles.centro, { backgroundColor: colors.background.base }]}>
+        <Ionicons name="cloud-offline" size={48} color={colors.text.quaternary} />
+        <Text style={[styles.centroTitulo, { color: colors.text.secondary }]}>{t('quiz.offline')}</Text>
+        <Text style={[styles.centroTexto, { color: colors.text.tertiary }]}>{t('quiz.offlineHint')}</Text>
+      </View>
+    );
+  } else if (!niveles) {
+    content = (
+      <View style={[styles.centro, { backgroundColor: colors.background.base }]}>
+        <ActivityIndicator size="large" color={meta.color} />
+      </View>
+    );
   } else {
-    // ── Quiz phase (default / graceful fallback) ─────────────────────────────
-    content = <WorldQuizScreen />;
+    // ── Mapa de niveles ──────────────────────────────────────────────────────
+    content = (
+      <MapaPlaneta
+        nombre={meta.name}
+        planeta={planeta}
+        nodos={nodos}
+        totalLecciones={totalLecciones}
+        onNodo={abrirNodo}
+        onVolver={salirDelMundo}
+        onGuia={() => router.push(`/saga/guia/${worldId}` as never)}
+      />
+    );
   }
 
   return (
@@ -183,11 +338,21 @@ export default function WorldSagaScreen() {
         </View>
       )}
       {content}
+      <StreakCelebration
+        racha={celebracion?.racha ?? 0}
+        hito={celebracion?.hito}
+        reparada={celebracion?.reparada}
+        visible={celebracion !== null}
+        onClose={() => setCelebracion(null)}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  centro: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 },
+  centroTitulo: { ...Typography.headline, textAlign: 'center' },
+  centroTexto: { ...Typography.footnote, textAlign: 'center' },
   classUpdatedBanner: {
     flexDirection: 'row',
     alignItems: 'center',

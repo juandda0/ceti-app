@@ -11,6 +11,7 @@ import {
 import { performLogoutAndGo } from '@features/auth/performLogout';
 import FloatingVoiceButton from '@features/savings/components/FloatingVoiceButton';
 import { useVigilarDesbloqueos } from '@features/avatar/hooks/useProgresoAvatar';
+import { useAperturaOrbita } from '@features/orbita/hooks/useOrbita';
 
 const TAB_ICON_SIZE = 24;
 const TAB_HEIGHT = 90;
@@ -42,6 +43,7 @@ export default function AppTabLayout() {
   );
 
   useVigilarDesbloqueos();
+  useAperturaOrbita();
 
   const mode = useThemeStore((s) => s.mode);
   const isLight = mode === 'light';
@@ -120,6 +122,7 @@ export default function AppTabLayout() {
           }}
         />
         <Tabs.Screen name="vestidor" options={{ href: null }} />
+        <Tabs.Screen name="boveda" options={{ href: null }} />
         <Tabs.Screen name="dinero" options={{ href: null }} />
         <Tabs.Screen name="savings" options={{ href: null }} />
         <Tabs.Screen name="movimientos" options={{ href: null }} />

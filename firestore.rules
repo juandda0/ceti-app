@@ -287,6 +287,35 @@ service cloud.firestore {
       allow update: if isSelf(userId);
       allow delete: if false;
 
+      // ── ORBITA (inicio) ──
+      // Estado de juego (racha, XP, meta, Cetis virtuales, Bóveda). Un solo doc
+      // `orbita`, self-only: ni profe ni admin lo leen (los agregados de flota,
+      // si existen, van aparte). No es un perfil financiero: nunca lleva montos
+      // reales. Se valida la forma y el tamaño; los números de juego son del
+      // cliente (Cetis no valen plata, no hay nada que robar).
+      match /juego/{docId} {
+        allow read: if isSelf(userId);
+        allow create, update: if isSelf(userId)
+          && docId == 'orbita'
+          && request.resource.data.keys().hasOnly(['version', 'racha', 'progreso', 'boveda', 'niveles', 'ajustes', 'actualizadoEn'])
+          && request.resource.data.keys().hasAll(['version', 'racha', 'progreso', 'boveda', 'niveles', 'ajustes', 'actualizadoEn'])
+          && request.resource.data.version == 1
+          && request.resource.data.racha is map
+          && request.resource.data.racha.dias is list && request.resource.data.racha.dias.size() <= 400
+          && request.resource.data.racha.cubiertos is list && request.resource.data.racha.cubiertos.size() <= 400
+          && request.resource.data.racha.escudos is int
+          && request.resource.data.racha.escudos >= 0 && request.resource.data.racha.escudos <= 2
+          && request.resource.data.progreso is map
+          && request.resource.data.boveda is map
+          && request.resource.data.boveda.cdts is list && request.resource.data.boveda.cdts.size() <= 3
+          && request.resource.data.niveles is map
+          && request.resource.data.ajustes is map
+          && request.resource.data.ajustes.meta in ['crucero', 'orbita', 'hiper']
+          && request.resource.data.actualizadoEn is int;
+        allow delete: if false;
+      }
+      // ── ORBITA (fin) ──
+
       // Simulated savings (virtual money).
       match /goals/{goalId} {
         allow read: if isSelf(userId);

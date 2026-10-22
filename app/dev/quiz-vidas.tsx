@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Redirect } from 'expo-router';
-import WorldQuizScreen from '@features/learning/screens/WorldQuizScreen';
-import { useQuestionBankStore } from '@features/learning/store/useQuestionBankStore';
+import { Redirect, useLocalSearchParams } from 'expo-router';
+import LeccionScreen, { type ResultadoLeccion } from '@features/learning/screens/LeccionScreen';
+import FinLeccion from '@features/orbita/components/FinLeccion';
+import { useOrbitaStore } from '@features/orbita/store/useOrbitaStore';
+import type { RecompensaPractica } from '@features/orbita/domain/orbita';
 import { useUserStore } from '@features/auth/store/useUserStore';
 import type { QuizItem } from '@features/learning/data/quiz.types';
 
-// Herramienta interna: el quiz con vidas sin iniciar sesión, con tres preguntas de ejemplo
-// (/dev/quiz-vidas?worldId=world_1). En builds de producción la ruta no lleva a ningún sitio.
+// Herramienta interna: una lección (o el jefe con vidas: ?modo=jefe) sin iniciar sesión, con tres
+// preguntas de ejemplo y el cierre con recompensas. En producción la ruta no lleva a ningún sitio.
+const UID_DEV = 'dev-quiz-vidas';
 const PREGUNTAS: QuizItem[] = [
   {
     id: 'dev-mc',
@@ -40,18 +43,51 @@ const PREGUNTAS: QuizItem[] = [
 ];
 
 export default function QuizVidasRoute() {
-  const [listo, setListo] = useState(false);
+  const { modo } = useLocalSearchParams<{ modo?: string }>();
+  const tipo = modo === 'jefe' ? 'jefe' : 'leccion';
+  const [ronda, setRonda] = useState(0);
+  const [fin, setFin] = useState<{ r: RecompensaPractica; res: ResultadoLeccion } | null>(null);
   useEffect(() => {
     if (!__DEV__) return;
-    useQuestionBankStore.setState((s) => ({
-      questionsByWorld: { ...s.questionsByWorld, world_1: PREGUNTAS },
-      fetchStatus: { ...s.fetchStatus, world_1: 'success' },
-      // Sin sesión no hay banco remoto: que la pantalla use las preguntas de ejemplo.
-      fetchWorldQuestions: async () => {},
-    }));
-    if (!useUserStore.getState().id) useUserStore.setState({ id: 'dev-quiz-vidas' });
-    setListo(true);
+    if (!useUserStore.getState().id) useUserStore.setState({ id: UID_DEV });
   }, []);
   if (!__DEV__) return <Redirect href="/" />;
-  return listo ? <WorldQuizScreen /> : null;
+  const uid = useUserStore.getState().id || UID_DEV;
+  if (fin) {
+    return (
+      <FinLeccion
+        recompensa={fin.r}
+        modo={tipo}
+        titulo="Planeta Origen"
+        color="#FF9F45"
+        aciertos={fin.res.acertadasALaPrimera}
+        total={fin.res.total}
+        onContinuar={() => {
+          setFin(null);
+          setRonda((n) => n + 1);
+        }}
+      />
+    );
+  }
+  return (
+    <LeccionScreen
+      key={ronda}
+      items={PREGUNTAS}
+      modo={tipo}
+      titulo={tipo === 'jefe' ? 'Jefe de Planeta Origen' : 'Lección 1 de 4'}
+      color="#FF8A1F"
+      mundo="dev"
+      onSalir={() => setRonda((n) => n + 1)}
+      onTerminar={(res) => {
+        const r = useOrbitaStore.getState().completar(uid, {
+          tipo,
+          worldId: 'dev',
+          nivel: 0,
+          xpRespuestas: res.xpRespuestas,
+          perfecta: res.perfecta,
+        });
+        setFin({ r, res });
+      }}
+    />
+  );
 }

@@ -1,15 +1,16 @@
 /**
- * WorldQuizScreen — static quiz (R7, R9, R11).
+ * LeccionScreen — juega una lección, el jefe de un planeta o el primer vuelo.
  *
- * Traverses the 10 assembled items in order. No adaptive selection (R7). No
- * certificate generation (R11). Vidas (quizVidas): 3 por intento; una respuesta
- * incorrecta cuesta una vida y la pregunta vuelve al final, sin revelar la
- * respuesta ni la explicación. Hay que contestar bien todas; sin vidas, el mundo
- * se empieza desde cero. Supports three item types:
- *   - multiple_choice: tap one of opciones[]
- *   - true_false: tap Verdadero / Falso
- *   - ordenar: tap items in sequence to build an order; submit and compare to
- *     ordenCanonico (never shown before submission — R9)
+ * Recorre las preguntas en orden (R7: nada adaptativo). Una respuesta incorrecta
+ * muestra la correcta y por qué, y la pregunta vuelve al final de la cola: hay
+ * que contestar bien todas. Las lecciones no tienen vidas; el jefe tiene 3 y sin
+ * vidas se empieza de nuevo. Cada acierto suma XP, con combo desde 5 seguidos.
+ * Al terminar entrega el resultado a quien la abrió (el cierre y las
+ * recompensas viven afuera). Tipos de pregunta:
+ *   - multiple_choice: tocar una de opciones[]
+ *   - true_false: Verdadero / Falso
+ *   - ordenar: tocar los elementos en orden y comprobar contra ordenCanonico
+ *     (que nunca se muestra antes de responder — R9)
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -19,7 +20,6 @@ import {
   ScrollView,
   TouchableOpacity,
   Platform,
-  ActivityIndicator,
   useWindowDimensions,
   type LayoutChangeEvent,
 } from 'react-native';
@@ -35,47 +35,30 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { scheduleOnRN } from 'react-native-worklets';
-import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import {
-  useQuestionBankStore,
-  QUESTIONS_PER_WORLD,
-} from '@features/learning/store/useQuestionBankStore';
 import { CetiAnimation } from '@features/animations';
-import { useStudentGrado } from '@features/learning/hooks/useStudentGrado';
-import { isMastered } from '@features/learning/data/mastery';
-import { useQuizStreakStore } from '@features/learning/store/useQuizStreakStore';
-import StreakCelebration from '@features/learning/components/StreakCelebration';
 import QuizSinVidas from '@features/learning/components/QuizSinVidas';
 import {
+  SIN_LIMITE,
   VIDAS_POR_MUNDO,
+  acertadasALaPrimera,
   estadoIntento,
   nuevoIntento,
-  precision,
   preguntaActual,
   registrarRespuesta,
   siguiente,
   type IntentoQuiz,
 } from '@features/learning/data/quizVidas';
 import { hashStr, stableShuffle } from '@shared/lib/quizUtils';
-import { useClassConfig } from '@features/learning/hooks/useClassConfig';
-import { displayWorldDef } from '@features/learning/data/worldMeta';
-import { useUserStore } from '@features/auth/store/useUserStore';
-import { useAuthStore } from '@features/auth/store/useAuthStore';
-import { buildWorldProgress } from '@features/learning/data/worldProgress';
-import { worldProgressRepository } from '@features/dashboard/data/worldProgressRepository';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
 import { Typography } from '@shared/constants/typography';
 import { Spacing, BorderRadius } from '@shared/constants/theme';
 import {
-  enterFadeUp,
   enterSlideUp,
-  enterSoftFade,
-  enterSoftScale,
   pageTiming,
   pressInTiming,
   pressOutTiming,
@@ -83,24 +66,15 @@ import {
   softEasing,
 } from '@shared/constants/motion';
 import AnimatedProgressFill from '@shared/components/motion/AnimatedProgressFill';
+import { COMBO_DESDE, xpRespuesta } from '@features/orbita/domain/progreso';
+import { eventos } from '@features/orbita/data/eventos';
 import type {
   QuizItem,
   MultipleChoiceItem,
   TrueFalseItem,
   OrdenarItem,
-  WorldId,
 } from '@features/learning/data/quiz.types';
 import type { ThemeColors } from '@shared/constants/colors';
-
-// ─── World metadata ───────────────────────────────────────────────────────────
-
-const WORLD_META: Record<string, { name: string; color: string }> = {
-  world_1: { name: 'Planeta Origen', color: '#FF8A1F' },
-  world_2: { name: 'Luna del Presupuesto', color: '#F7C95F' },
-  world_3: { name: 'Estrella del Ahorro', color: '#58C88C' },
-  world_4: { name: 'Nebulosa del Crédito', color: '#A884FF' },
-  world_5: { name: 'Agujero Negro de las Deudas', color: '#5B9EF5' },
-};
 
 /** Rojo de las vidas (el mismo del corazón de lives.corazon). */
 const HEART_RED = '#FF4B4B';
@@ -179,29 +153,37 @@ const CORAZON_LOTTIE = 40;
 const CORAZON_SLOT = 22;
 
 function QuizHeader({
-  worldName,
+  titulo,
   accentColor,
   aciertos,
   total,
   vidas,
+  xp,
+  combo,
   onBack,
   colors,
   insetTop,
   backLabel,
   livesLabel,
+  xpLabel,
 }: {
-  worldName: string;
+  titulo: string;
   accentColor: string;
   aciertos: number;
   total: number;
   vidas: number;
+  xp: number;
+  combo: number;
   onBack: () => void;
   colors: ThemeColors;
   insetTop: number;
   backLabel: string;
   livesLabel: string;
+  xpLabel: string;
 }) {
   const pct = total > 0 ? (aciertos / total) * 100 : 0;
+  const conVidas = Number.isFinite(vidas);
+  const enCombo = combo >= COMBO_DESDE;
   return (
     <View
       style={[
@@ -221,33 +203,53 @@ function QuizHeader({
           accessibilityRole="button"
           accessibilityLabel={backLabel}
         >
-          <Ionicons name="chevron-back" size={22} color={colors.text.primary} />
+          <Ionicons name="close" size={24} color={colors.text.primary} />
         </TouchableOpacity>
         <View style={headerSt.center}>
-          <Text style={[headerSt.worldLabel, { color: accentColor }]}>{worldName}</Text>
+          <Text style={[headerSt.worldLabel, { color: accentColor }]} numberOfLines={1}>
+            {titulo}
+          </Text>
           <Text style={[headerSt.counter, { color: colors.text.tertiary }]}>
             {aciertos}/{total}
           </Text>
         </View>
-        <View style={headerSt.vidas} accessible accessibilityLabel={livesLabel}>
-          {Array.from({ length: VIDAS_POR_MUNDO }, (_, i) => (
-            <Corazon key={i} lleno={i < vidas} />
-          ))}
+        <View style={headerSt.lado}>
+          {/* XP siempre visible; el combo lo enciende en naranja. */}
+          <View
+            style={[
+              headerSt.xp,
+              { backgroundColor: enCombo ? colors.fill.brandSubtle : colors.materials.highlight },
+            ]}
+            accessible
+            accessibilityLabel={xpLabel}
+          >
+            <Ionicons name="flash" size={13} color={enCombo ? colors.brand.primary : colors.system.purple} />
+            <Text style={[headerSt.xpText, { color: enCombo ? colors.brand.primary : colors.text.primary }]}>
+              {enCombo ? `x${combo}` : xp}
+            </Text>
+          </View>
+          {conVidas && (
+            <View style={headerSt.vidas} accessible accessibilityLabel={livesLabel}>
+              {Array.from({ length: VIDAS_POR_MUNDO }, (_, i) => (
+                <Corazon key={i} lleno={i < vidas} />
+              ))}
+            </View>
+          )}
         </View>
       </View>
       <View style={[headerSt.track, { backgroundColor: colors.materials.highlight }]}>
         <AnimatedProgressFill
           pct={pct}
           duration={320}
-          style={[headerSt.fill, { backgroundColor: accentColor }]}
+          style={[headerSt.fill, { backgroundColor: enCombo ? colors.brand.primary : accentColor }]}
         />
       </View>
     </View>
   );
 }
 
-/** `muted`: opción no elegida después de comprobar (no se resalta la correcta). */
-type OptionState = 'idle' | 'selected' | 'correct' | 'wrong' | 'muted';
+/** `muted`: opción no elegida después de comprobar. `reveal`: la correcta, mostrada tras fallar. */
+type OptionState = 'idle' | 'selected' | 'correct' | 'wrong' | 'muted' | 'reveal';
 
 function OptionButton({
   label,
@@ -269,7 +271,7 @@ function OptionButton({
           ? colors.materials.highlight
           : colors.background.elevated;
   const border =
-    state === 'correct'
+    state === 'correct' || state === 'reveal'
       ? colors.system.green
       : state === 'wrong'
         ? colors.system.red
@@ -277,7 +279,7 @@ function OptionButton({
           ? colors.materials.borderFocus
           : colors.materials.border;
   const textColor =
-    state === 'correct'
+    state === 'correct' || state === 'reveal'
       ? colors.system.green
       : state === 'wrong'
         ? colors.system.red
@@ -327,6 +329,9 @@ function OptionButton({
           <Ionicons name="checkmark-circle" size={20} color={colors.system.green} />
         )}
         {state === 'wrong' && <Ionicons name="close-circle" size={20} color={colors.system.red} />}
+        {state === 'reveal' && (
+          <Ionicons name="checkmark-circle-outline" size={20} color={colors.system.green} />
+        )}
       </TouchableOpacity>
     </Animated.View>
   );
@@ -335,20 +340,23 @@ function OptionButton({
 function FeedbackBanner({
   isCorrect,
   explanation,
+  ordenCorrecto,
   colors,
   t,
 }: {
   isCorrect: boolean;
   explanation: string;
+  /** Solo en ordenar, al fallar: el orden correcto. */
+  ordenCorrecto?: string[];
   colors: ThemeColors;
   t: (key: string, options?: Record<string, unknown>) => string;
 }) {
   const bgColor = isCorrect
     ? (colors.fill?.greenSubtle ?? '#1A3B2B')
     : (colors.fill?.redSubtle ?? '#3B1A1A');
-  const iconName = isCorrect ? 'checkmark-circle' : 'close-circle';
+  const iconName = isCorrect ? 'checkmark-circle' : 'bulb';
   const iconColor = isCorrect ? colors.system.green : colors.system.red;
-  const label = isCorrect ? t('quiz.correct') : t('quiz.incorrect');
+  const label = isCorrect ? t('quiz.correct') : t('quiz.incorrectCeti');
 
   return (
     <Animated.View
@@ -359,9 +367,25 @@ function FeedbackBanner({
         <Ionicons name={iconName} size={20} color={iconColor} />
         <Text style={[feedbackSt.title, { color: iconColor }]}>{label}</Text>
       </View>
-      {/* Al fallar no se da la respuesta ni la explicación: la pregunta vuelve al final. */}
-      {isCorrect && explanation ? (
+      {!isCorrect && ordenCorrecto ? (
+        <View style={feedbackSt.orden}>
+          <Text style={[feedbackSt.text, feedbackSt.ordenTitulo, { color: colors.text.primary }]}>
+            {t('quiz.ordenCorrecto')}
+          </Text>
+          {ordenCorrecto.map((el, i) => (
+            <Text key={i} style={[feedbackSt.text, { color: colors.text.primary }]}>
+              {i + 1}. {el}
+            </Text>
+          ))}
+        </View>
+      ) : null}
+      {explanation ? (
         <Text style={[feedbackSt.text, { color: colors.text.secondary }]}>{explanation}</Text>
+      ) : null}
+      {!isCorrect ? (
+        <Text style={[feedbackSt.text, { color: colors.text.tertiary }]}>
+          {t('quiz.vuelveAlFinal')}
+        </Text>
       ) : null}
     </Animated.View>
   );
@@ -533,9 +557,18 @@ function QuestionPage({
 }) {
   const { selectedOption, chosenOrder, hasSubmitted } = answer;
   const isCorrect = hasSubmitted && isAnswerCorrect(question, answer);
-  // Tras comprobar solo se marca la opción elegida; la correcta nunca se revela al fallar.
+  // Tras fallar se muestra cuál era la correcta: el error es el mejor momento para aprender.
+  const correctValue =
+    question.tipo === 'multiple_choice'
+      ? String(question.correctIndex)
+      : question.tipo === 'true_false'
+        ? String(question.respuesta)
+        : null;
   const optionState = (value: string): OptionState => {
-    if (value !== selectedOption) return hasSubmitted ? 'muted' : 'idle';
+    if (value !== selectedOption) {
+      if (!hasSubmitted) return 'idle';
+      return !isCorrect && value === correctValue ? 'reveal' : 'muted';
+    }
     if (!hasSubmitted) return 'selected';
     return isCorrect ? 'correct' : 'wrong';
   };
@@ -608,6 +641,11 @@ function QuestionPage({
         <FeedbackBanner
           isCorrect={isCorrect}
           explanation={question.explicacion ?? ''}
+          ordenCorrecto={
+            question.tipo === 'ordenar'
+              ? question.ordenCanonico.map((i) => question.elementos[i])
+              : undefined
+          }
           colors={colors}
           t={t}
         />
@@ -649,220 +687,85 @@ function PageSlot({
   );
 }
 
-// ─── CompletionScreen ─────────────────────────────────────────────────────────
-
-function CompletionScreen({
-  worldName,
-  accentColor,
-  correct,
-  total,
-  pct,
-  mastered,
-  onBack,
-  colors,
-  insetTop,
-  insetBottom,
-  t,
-}: {
-  worldName: string;
-  accentColor: string;
-  correct: number;
-  total: number;
-  /** Precisión del intento: aciertos sobre respuestas enviadas. */
-  pct: number;
-  mastered: boolean;
-  onBack: () => void;
-  colors: ThemeColors;
-  insetTop: number;
-  insetBottom: number;
-  t: (key: string, options?: Record<string, unknown>) => string;
-}) {
-  return (
-    <ScreenWrapper style={{ flex: 1, backgroundColor: colors.background.base }}>
-      <View
-        style={[
-          completeSt.wrap,
-          {
-            paddingTop: Math.max(insetTop, 20) + 32,
-            paddingBottom: Math.max(insetBottom, 24) + 24,
-          },
-        ]}
-      >
-        <Animated.View entering={enterSoftFade()} style={completeSt.center}>
-          <Animated.View
-            entering={enterSoftScale(60)}
-            style={[completeSt.iconCircle, { backgroundColor: accentColor + '22' }]}
-          >
-            <Ionicons name={mastered ? 'trophy' : 'refresh'} size={52} color={accentColor} />
-          </Animated.View>
-          <Text style={[completeSt.title, { color: colors.text.primary }]}>
-            {mastered ? t('quiz.worldComplete') : t('quiz.tryAgainTitle')}
-          </Text>
-          <Text style={[completeSt.subtitle, { color: colors.text.secondary }]}>
-            {mastered ? worldName : t('quiz.needToUnlock')}
-          </Text>
-          <Animated.View
-            entering={enterFadeUp(2, 40)}
-            style={[
-              completeSt.scoreCard,
-              { backgroundColor: colors.background.elevated, borderColor: colors.materials.border },
-            ]}
-          >
-            <Animated.Text
-              entering={enterSoftScale(180)}
-              style={[completeSt.scoreNum, { color: accentColor }]}
-            >
-              {correct}/{total}
-            </Animated.Text>
-            <Text style={[completeSt.scoreLabel, { color: colors.text.tertiary }]}>
-              {t('quiz.score', { pct })}
-            </Text>
-          </Animated.View>
-        </Animated.View>
-
-        <Animated.View entering={enterFadeUp(3, 40)} style={completeSt.actions}>
-          <TouchableOpacity
-            onPress={onBack}
-            activeOpacity={0.85}
-            style={[completeSt.btn, { backgroundColor: accentColor }]}
-            accessibilityRole="button"
-            accessibilityLabel={t('quiz.backToWorlds')}
-          >
-            <Text style={[completeSt.btnText, { color: '#fff' }]}>{t('quiz.backToWorlds')}</Text>
-          </TouchableOpacity>
-        </Animated.View>
-      </View>
-    </ScreenWrapper>
-  );
-}
-
 // ─── Main screen ──────────────────────────────────────────────────────────────
 
-const EMPTY_QUESTIONS: QuizItem[] = [];
+export type ModoLeccion = 'leccion' | 'jefe' | 'primer_vuelo';
+
+export interface ResultadoLeccion {
+  total: number;
+  acertadasALaPrimera: number;
+  errores: number;
+  /** XP de las respuestas (con combo), sin el bono de cierre. */
+  xpRespuestas: number;
+  perfecta: boolean;
+  /** Ids de las preguntas acertadas a la primera (maestría del jefe). */
+  idsAcertadas: string[];
+}
 
 /** Velocidad (px/s) a partir de la cual un deslizamiento corto ya cambia de pregunta. */
 const SWIPE_VELOCITY = 500;
 
-export default function WorldQuizScreen() {
-  const { worldId } = useLocalSearchParams<{ worldId: string }>();
-  const router = useRouter();
+export default function LeccionScreen({
+  items,
+  modo,
+  titulo,
+  color,
+  mundo,
+  nivel = 0,
+  onSalir,
+  onTerminar,
+}: {
+  items: QuizItem[];
+  modo: ModoLeccion;
+  titulo: string;
+  color: string;
+  /** Id del mundo (o 'onboarding'), solo para analítica. */
+  mundo: string;
+  nivel?: number;
+  onSalir: () => void;
+  onTerminar: (resultado: ResultadoLeccion) => void;
+}) {
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
-
-  // Per-account key (Firebase uid); fallback to local profile id in offline/demo mode.
-  const firebaseUid = useAuthStore((s) => s.firebaseUid);
-  const localProfileId = useUserStore((s) => s.id);
-  const userId = firebaseUid ?? localProfileId;
-
-  // Tenant identity (set only for provisioned students). Used to mirror progress
-  // to the school tree for the teacher dashboard; no-op when not provisioned.
-  const role = useAuthStore((s) => s.role);
-  const colegioId = useAuthStore((s) => s.colegioId);
-  const cursoId = useAuthStore((s) => s.cursoId);
-
-  const fetchWorldQuestions = useQuestionBankStore((s) => s.fetchWorldQuestions);
-  const getWorldProgress = useQuestionBankStore((s) => s.getWorldProgress);
-  const recordAnswer = useQuestionBankStore((s) => s.recordAnswer);
   const { t } = useTranslation();
+  const questions = items;
+  const vidasIniciales = modo === 'jefe' ? VIDAS_POR_MUNDO : SIN_LIMITE;
 
-  const questions = useQuestionBankStore(
-    (s) => s.questionsByWorld[worldId as WorldId] ?? EMPTY_QUESTIONS
+  // Intento: las falladas vuelven al final de la cola (R7: nada adaptativo).
+  const [intentoState, setIntento] = useState<IntentoQuiz>(() =>
+    nuevoIntento(questions.length, vidasIniciales)
   );
-  const fetchStatus = useQuestionBankStore((s) => s.fetchStatus[worldId as WorldId] ?? 'idle');
-
-  // Class config (RQ-PR10/PR11/PR12): custom display name/color + overrides.
-  const { config: classConfig } = useClassConfig();
-  const configEntry = classConfig?.mundos?.find((m) => m.worldId === worldId);
-  const disp = displayWorldDef(worldId ?? '', configEntry);
-  const fallback = WORLD_META[worldId ?? ''] ?? { name: 'Mundo', color: '#FF8A1F' };
-  const meta = { name: disp?.name ?? fallback.name, color: disp?.color ?? fallback.color };
-
-  // Intento con vidas (R7: sin selección adaptativa; las falladas vuelven al final de la cola).
-  // Se crea al tener las preguntas y se reinicia si cambia el banco cargado.
-  const [intentoState, setIntento] = useState<IntentoQuiz | null>(null);
   const intento =
-    intentoState && intentoState.total === questions.length
+    intentoState.total === questions.length
       ? intentoState
-      : nuevoIntento(questions.length);
+      : nuevoIntento(questions.length, vidasIniciales);
   const estado = estadoIntento(intento);
   const currentIndex = intento.pos;
-  const [isComplete, setIsComplete] = useState(false);
-  const [celebracion, setCelebracion] = useState<number | null>(null);
-  const registrarQuiz = useQuizStreakStore((s) => s.registrarQuiz);
-  // Al perder la última vida se deja ver el corazón romperse en la esquina y luego sale la pantalla de sin vidas.
+  const [xp, setXp] = useState(0);
+  const [combo, setCombo] = useState(0);
+  // Al perder la última vida se deja ver el corazón romperse y luego sale la pantalla de sin vidas.
   const [sinVidas, setSinVidas] = useState(false);
   const sinVidasTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const terminado = useRef(false);
   useEffect(
     () => () => {
       if (sinVidasTimer.current) clearTimeout(sinVidasTimer.current);
     },
     []
   );
+  useEffect(() => {
+    eventos.leccionInicio({ mundo, tipo: modo, nivel });
+    // Solo al montar: un intento nuevo del jefe no es una lección nueva.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // Per-question answer state (reset on each new question)
-  // For multiple_choice/true_false: selectedOption (string representation)
-  // For ordenar: chosenOrder (array of element indices)
+  // Respuesta de la pregunta actual (se reinicia en cada pregunta).
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [chosenOrder, setChosenOrder] = useState<number[]>([]);
   const [hasSubmitted, setHasSubmitted] = useState(false);
 
-  // Grado resolved from the student's course (R4 — never stored on the minor).
-  // null while resolving so we never fetch the wrong grade's banco (works for
-  // direct deep-link navigation too, not just via WorldsScreen).
-  const grado = useStudentGrado();
-
-  // Fetch once the grade is known. The store guard keys on (grado, seedKey,
-  // config version), so this assembles the correct grade's 10 items for this
-  // student and picks up the course's custom copies when flagged (RQ-PR11).
-  useEffect(() => {
-    if (!worldId || !grado) return;
-    const courseContent =
-      colegioId && cursoId
-        ? {
-            colegioId,
-            cursoId,
-            overrides: classConfig?.overrides?.[worldId],
-            version: classConfig?.version ?? 0,
-          }
-        : null;
-    void fetchWorldQuestions(grado, worldId as WorldId, userId ?? 'demo', courseContent);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [worldId, grado, userId, colegioId, cursoId, classConfig?.version]);
-
-  // On completion, mirror progress to the tenant tree for the teacher dashboard.
-  useEffect(() => {
-    if (!isComplete) return;
-    if (role !== 'estudiante' || !colegioId || !cursoId || !firebaseUid || !worldId) return;
-    const { done, total } = getWorldProgress(userId ?? '', worldId as WorldId);
-    if (total <= 0) return;
-    const progress = buildWorldProgress({
-      colegioId,
-      cursoId,
-      uid: firebaseUid,
-      worldId: worldId as WorldId,
-      correct: done,
-      total,
-      // Custom worlds (RQ-PR12 CA2): the professor-assigned competency (or
-      // 'personalizada' via the builder's fallback). Default worlds ignore it.
-      competencia: configEntry?.competencia,
-      now: Date.now(),
-    });
-    void worldProgressRepository.upsert(colegioId, cursoId, firebaseUid, worldId, progress);
-  }, [
-    isComplete,
-    role,
-    colegioId,
-    cursoId,
-    firebaseUid,
-    worldId,
-    userId,
-    getWorldProgress,
-    configEntry?.competencia,
-  ]);
-
   const currentQuestion = questions[preguntaActual(intento) ?? -1] ?? null;
 
-  // Derived: has the student provided a full answer for the current item?
   const hasAnswer = useMemo(() => {
     if (!currentQuestion) return false;
     if (currentQuestion.tipo === 'ordenar') {
@@ -938,21 +841,31 @@ export default function WorldQuizScreen() {
   );
 
   const handleSubmit = () => {
-    if (!hasAnswer || !currentQuestion || !userId || hasSubmitted) return;
+    if (!hasAnswer || !currentQuestion || hasSubmitted) return;
 
     const correct = isAnswerCorrect(currentQuestion, {
       selectedOption,
       chosenOrder,
       hasSubmitted,
     });
+    const nuevoCombo = correct ? combo + 1 : 0;
+    setXp((x) => x + xpRespuesta(correct, combo));
+    setCombo(nuevoCombo);
+    eventos.respuesta({ mundo, tipo: modo, correcta: correct, combo: nuevoCombo });
 
-    void Haptics.impactAsync(
-      correct ? Haptics.ImpactFeedbackStyle.Light : Haptics.ImpactFeedbackStyle.Heavy
-    );
+    if (correct && nuevoCombo === COMBO_DESDE) {
+      // Micro-celebración: el combo se enciende.
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } else {
+      void Haptics.impactAsync(
+        correct ? Haptics.ImpactFeedbackStyle.Light : Haptics.ImpactFeedbackStyle.Heavy
+      );
+    }
     const despues = registrarRespuesta(intento, correct);
     setIntento(despues);
     setHasSubmitted(true);
     if (estadoIntento(despues) === 'perdido') {
+      eventos.jefePerdido({ mundo });
       sinVidasTimer.current = setTimeout(() => setSinVidas(true), SIN_VIDAS_DELAY_MS);
     }
   };
@@ -964,13 +877,17 @@ export default function WorldQuizScreen() {
       return;
     }
     if (estado === 'completado') {
-      // El progreso solo cuenta al terminar el mundo: un intento perdido empieza de cero.
-      if (userId) {
-        for (const q of questions) recordAnswer(userId, q.id, worldId as WorldId, true);
-        const { primeroHoy, racha } = registrarQuiz(userId);
-        if (primeroHoy) setCelebracion(racha);
-      }
-      setIsComplete(true);
+      if (terminado.current) return;
+      terminado.current = true;
+      const falladas = new Set(intento.falladas);
+      onTerminar({
+        total: questions.length,
+        acertadasALaPrimera: acertadasALaPrimera(intento),
+        errores: intento.errores,
+        xpRespuestas: xp,
+        perfecta: intento.errores === 0,
+        idsAcertadas: questions.filter((_, i) => !falladas.has(i)).map((q) => q.id),
+      });
       return;
     }
     const nextIndex = currentIndex + 1;
@@ -986,10 +903,12 @@ export default function WorldQuizScreen() {
     goTo(nextIndex);
   };
 
-  /** Sin vidas: el mundo empieza otra vez desde la primera pregunta, con 3 vidas. */
+  /** Sin vidas: el jefe empieza otra vez desde la primera pregunta, con 3 vidas. */
   const handleRestart = () => {
     setSinVidas(false);
-    setIntento(nuevoIntento(questions.length));
+    setIntento(nuevoIntento(questions.length, vidasIniciales));
+    setXp(0);
+    setCombo(0);
     setHistory([]);
     setSelectedOption(null);
     setChosenOrder([]);
@@ -998,110 +917,16 @@ export default function WorldQuizScreen() {
     pos.set(0);
   };
 
-  const handleBack = () => {
-    if (router.canGoBack()) router.back();
-    else router.replace('/(app)/saga');
-  };
-
-  // ── Loading ────────────────────────────────────────────────────────────────
-  if (fetchStatus === 'loading' || (fetchStatus === 'idle' && questions.length === 0)) {
-    return (
-      <ScreenWrapper
-        style={{
-          flex: 1,
-          backgroundColor: colors.background.base,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <ActivityIndicator size="large" color={meta.color} />
-        <Text style={[{ color: colors.text.tertiary, marginTop: 16 }, Typography.footnote]}>
-          {t('quiz.loading')}
-        </Text>
-      </ScreenWrapper>
-    );
-  }
-
-  if (fetchStatus === 'error') {
-    return (
-      <ScreenWrapper
-        style={{
-          flex: 1,
-          backgroundColor: colors.background.base,
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: 32,
-        }}
-      >
-        <Ionicons name="cloud-offline" size={48} color={colors.text.quaternary} />
-        <Text
-          style={[
-            { color: colors.text.secondary, marginTop: 16, textAlign: 'center' },
-            Typography.headline,
-          ]}
-        >
-          {t('quiz.offline')}
-        </Text>
-        <Text
-          style={[
-            { color: colors.text.tertiary, marginTop: 8, textAlign: 'center' },
-            Typography.footnote,
-          ]}
-        >
-          {t('quiz.offlineHint')}
-        </Text>
-        <TouchableOpacity
-          onPress={handleBack}
-          style={{ marginTop: 24 }}
-          accessibilityRole="button"
-          accessibilityLabel={t('quiz.back')}
-        >
-          <Text style={[{ color: meta.color }, Typography.headline]}>{t('quiz.back')}</Text>
-        </TouchableOpacity>
-      </ScreenWrapper>
-    );
-  }
-
-  // ── Completion ─────────────────────────────────────────────────────────────
-  if (isComplete) {
-    const { done: worldDone, total: worldTotal } = getWorldProgress(
-      userId ?? '',
-      worldId as WorldId
-    );
-    return (
-      <>
-        <CompletionScreen
-          worldName={meta.name}
-          accentColor={meta.color}
-          correct={intento.aciertos}
-          total={questions.length > 0 ? questions.length : QUESTIONS_PER_WORLD}
-          pct={precision(intento)}
-          mastered={isMastered(worldDone, worldTotal > 0 ? worldTotal : QUESTIONS_PER_WORLD)}
-          onBack={handleBack}
-          colors={colors}
-          insetTop={insets.top}
-          insetBottom={insets.bottom}
-          t={t}
-        />
-        <StreakCelebration
-          racha={celebracion ?? 0}
-          visible={celebracion !== null}
-          onClose={() => setCelebracion(null)}
-        />
-      </>
-    );
-  }
-
   // ── Sin vidas (después de ver el corazón romperse) ────────────────────────
   if (estado === 'perdido' && sinVidas) {
     return (
       <QuizSinVidas
-        worldName={meta.name}
-        accentColor={meta.color}
+        worldName={titulo}
+        accentColor={color}
         insetTop={insets.top}
         insetBottom={insets.bottom}
         onRetry={handleRestart}
-        onBack={handleBack}
+        onBack={onSalir}
       />
     );
   }
@@ -1115,16 +940,19 @@ export default function WorldQuizScreen() {
   return (
     <ScreenWrapper style={{ flex: 1, backgroundColor: colors.background.base }}>
       <QuizHeader
-        worldName={meta.name}
-        accentColor={meta.color}
+        titulo={titulo}
+        accentColor={color}
         aciertos={intento.aciertos}
         total={questions.length}
         vidas={intento.vidas}
-        onBack={handleBack}
+        xp={xp}
+        combo={combo}
+        onBack={onSalir}
         colors={colors}
         insetTop={insets.top}
-        backLabel={t('quiz.back')}
+        backLabel={t('quiz.salir')}
         livesLabel={t('quiz.livesA11y', { count: intento.vidas })}
+        xpLabel={t('quiz.xpA11y', { xp, combo })}
       />
 
       {/* Preguntas: pager horizontal. Se montan la visible y sus vecinas; al
@@ -1170,12 +998,10 @@ export default function WorldQuizScreen() {
             onPress={() => goTo(currentIndex)}
             accessibilityRole="button"
             accessibilityLabel={t('quiz.backToCurrent')}
-            style={[styles.actionBtn, styles.reviewBtn, { borderColor: meta.color }]}
+            style={[styles.actionBtn, styles.reviewBtn, { borderColor: color }]}
           >
-            <Text style={[styles.actionBtnText, { color: meta.color }]}>
-              {t('quiz.backToCurrent')}
-            </Text>
-            <Ionicons name="arrow-forward" size={18} color={meta.color} />
+            <Text style={[styles.actionBtnText, { color }]}>{t('quiz.backToCurrent')}</Text>
+            <Ionicons name="arrow-forward" size={18} color={color} />
           </TouchableOpacity>
         ) : !hasSubmitted ? (
           <TouchableOpacity
@@ -1187,14 +1013,12 @@ export default function WorldQuizScreen() {
             style={[
               styles.actionBtn,
               {
-                backgroundColor: hasAnswer ? meta.color : colors.materials.highlight,
+                backgroundColor: hasAnswer ? color : colors.materials.highlight,
                 opacity: hasAnswer ? 1 : 0.6,
               },
             ]}
           >
-            <Text
-              style={[styles.actionBtnText, { color: hasAnswer ? '#fff' : colors.text.tertiary }]}
-            >
+            <Text style={[styles.actionBtnText, { color: hasAnswer ? '#fff' : colors.text.tertiary }]}>
               {t('quiz.check')}
             </Text>
           </TouchableOpacity>
@@ -1204,19 +1028,19 @@ export default function WorldQuizScreen() {
             onPress={handleNext}
             accessibilityRole="button"
             accessibilityLabel={isLastQuestion ? t('quiz.result') : t('quiz.next')}
-            style={[styles.actionBtn, { backgroundColor: meta.color }]}
+            style={[styles.actionBtn, { backgroundColor: color }]}
           >
             <Text style={[styles.actionBtnText, { color: '#fff' }]}>
-              {isLastQuestion ? t('quiz.result') : t('quiz.next')}
+              {isLastQuestion ? t('quiz.terminar') : t('quiz.next')}
             </Text>
             <Ionicons name="arrow-forward" size={18} color="#fff" />
           </TouchableOpacity>
         )}
       </View>
-
     </ScreenWrapper>
   );
 }
+
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
@@ -1298,6 +1122,26 @@ const headerSt = StyleSheet.create({
     alignItems: 'center',
     gap: 2,
   },
+  lado: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    minWidth: 34,
+    justifyContent: 'flex-end',
+  },
+  xp: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 999,
+  },
+  xpText: {
+    fontSize: 13,
+    fontWeight: '900',
+    fontVariant: ['tabular-nums'],
+  },
   corazon: {
     width: CORAZON_SLOT,
     height: CORAZON_SLOT,
@@ -1319,8 +1163,10 @@ const headerSt = StyleSheet.create({
     justifyContent: 'center',
   },
   center: {
+    flex: 1,
     alignItems: 'center',
     gap: 2,
+    paddingHorizontal: 8,
   },
   worldLabel: {
     fontSize: 13,
@@ -1380,67 +1226,8 @@ const feedbackSt = StyleSheet.create({
     ...Typography.footnote,
     lineHeight: 20,
   },
-});
-
-const completeSt = StyleSheet.create({
-  wrap: {
-    flex: 1,
-    paddingHorizontal: Spacing.base,
-    justifyContent: 'space-between',
-  },
-  center: {
-    alignItems: 'center',
-    gap: 16,
-  },
-  iconCircle: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 8,
-  },
-  title: {
-    ...Typography.title1,
-    fontWeight: '900',
-    textAlign: 'center',
-  },
-  subtitle: {
-    ...Typography.headline,
-    textAlign: 'center',
-  },
-  scoreCard: {
-    borderWidth: 1,
-    borderRadius: BorderRadius.lg,
-    paddingVertical: 20,
-    paddingHorizontal: 32,
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 8,
-    width: '100%',
-  },
-  scoreNum: {
-    fontSize: 42,
-    fontWeight: '900',
-    letterSpacing: -1,
-  },
-  scoreLabel: {
-    ...Typography.footnote,
-    textAlign: 'center',
-  },
-  actions: {
-    gap: 10,
-  },
-  btn: {
-    height: 54,
-    borderRadius: BorderRadius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  btnText: {
-    ...Typography.headline,
-    fontWeight: '800',
-  },
+  orden: { gap: 2 },
+  ordenTitulo: { fontWeight: '700' },
 });
 
 const ordenarSt = StyleSheet.create({

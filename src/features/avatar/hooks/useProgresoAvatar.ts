@@ -2,7 +2,9 @@ import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { useUserStore } from '@features/auth/store/useUserStore';
-import { computeQuizRacha, useQuizStreakStore } from '@features/learning/store/useQuizStreakStore';
+import { useOrbitaStore } from '@features/orbita/store/useOrbitaStore';
+import { calcularRacha, diasAprendiendo } from '@features/orbita/domain/racha';
+import { dayKey } from '@features/orbita/domain/tiempo';
 import { useSavingsStore } from '@features/savings/store/useSavingsStore';
 import { useAvatarStore } from '@features/avatar/store/useAvatarStore';
 import { itemsCumplidos, type ProgresoAvatar } from '@features/avatar/domain/desbloqueos';
@@ -16,7 +18,7 @@ import { useCetiOverlayStore } from '@shared/store/useCetiOverlayStore';
 
 const SIN_GANADOS: string[] = [];
 
-/** Mismo id que usa la racha de quizzes: uid de Firebase o id local en demo. */
+/** Mismo id que usa Órbita: uid de Firebase o id local en demo. */
 export function useAvatarUid(): string {
   const firebaseUid = useAuthStore((s) => s.firebaseUid);
   const localId = useUserStore((s) => s.id);
@@ -25,16 +27,18 @@ export function useAvatarUid(): string {
 
 export function useProgresoAvatar(): { uid: string; progreso: ProgresoAvatar; ganados: string[] } {
   const uid = useAvatarUid();
-  const dias = useQuizStreakStore((s) => s.daysByUid[uid]);
+  // La racha y los días salen de Órbita (la racha única de la app, sincronizada).
+  const racha = useOrbitaStore((s) => s.porUid[uid]?.racha);
   const goals = useSavingsStore((s) => s.goals);
   const ganados = useAvatarStore((s) => s.ganadosByUid[uid]) ?? SIN_GANADOS;
   const progreso = useMemo<ProgresoAvatar>(
     () => ({
-      rachaQuiz: computeQuizRacha(dias ?? []),
-      diasAprendiendo: (dias ?? []).length,
+      // La mejor racha (sincronizada) cuenta: lo ganado no se pierde al cambiar de teléfono.
+      rachaQuiz: racha ? Math.max(calcularRacha(racha, dayKey(Date.now())), racha.mejor) : 0,
+      diasAprendiendo: racha ? diasAprendiendo(racha) : 0,
       metasCumplidas: goals.filter((g) => g.completedAt != null && g.deletedAt == null).length,
     }),
-    [dias, goals]
+    [racha, goals]
   );
   return { uid, progreso, ganados };
 }

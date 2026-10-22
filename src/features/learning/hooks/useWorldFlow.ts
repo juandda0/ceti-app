@@ -12,7 +12,7 @@
  *   'loading'      — waiting for repos or grado to resolve
  *   'eligecamino'  — show EligeCaminoView (only when trigger+bank+situaciones present)
  *   'microteoria'  — show MicroteoriaView (only first-time-per-uid+worldId)
- *   'quiz'         — show WorldQuizScreen (default / graceful fallback)
+ *   'quiz'         — show the level map (default / graceful fallback)
  *
  * Graceful degradation (R12, RQ-ES02):
  *   - If both repos return null → goes to 'quiz' (no infinite spinner).
@@ -99,11 +99,15 @@ export function useWorldFlow(
         return;
       }
 
-      // Resolve which phases to show.
-      const showEC =
-        shouldShowEligeCamino(uid, worldId) && ecBank !== null && ecBank.situaciones.length > 0;
-
+      // Resolve which phases to show. Both are first-visit only: after that the
+      // world opens straight on its level map (the student comes back often).
       const alreadySeenMT = hasMicroteoriaSeen(uid, worldId);
+      const showEC =
+        !alreadySeenMT &&
+        shouldShowEligeCamino(uid, worldId) &&
+        ecBank !== null &&
+        ecBank.situaciones.length > 0;
+
       const showMT = !alreadySeenMT && mtBank !== null && mtBank.cards.length > 0;
 
       if (showEC && ecBank) {

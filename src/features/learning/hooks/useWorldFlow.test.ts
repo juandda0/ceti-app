@@ -17,7 +17,8 @@
  *  Case 4  — EC trigger=true but bank null → skips to micro-teoría/quiz (no hang).
  *  Case 4b — EC trigger=true, bank present but situaciones=[] → skips EC.
  *  Case 5a — MT bank present, first visit → phase 'microteoria'.
- *  Case 5b — MT bank present, already seen → phase 'quiz' (skips MT).
+ *  Case 5b — MT bank present, already seen → phase 'quiz' (skips MT and EC: both
+ *             pre-phases are first-visit only since the level map, Órbita).
  *  Case 6  — reset() clears seenMicroteoriaKeys; hasMicroteoriaSeen returns false
  *             after reset; logout invokes reset.
  *
@@ -356,18 +357,11 @@ describe('Case 5b: MT bank present, already seen (repeat visit)', () => {
 
     await waitForAsync();
 
-    // EC still shows (trigger=true, bank present)
-    expect(result.current.phase).toBe('eligecamino');
-
-    // After EC → MT already seen → go directly to quiz
-    act(() => {
-      result.current.handleECFinish();
-    });
-
-    // microteoriaBank should be null because showMT=false (already seen)
-    expect(result.current.microteoriaBank).toBeNull();
-    // phase = quiz because handleECFinish checks microteoriaBank !== null
+    // Órbita: both pre-phases are first-visit only, so a repeat visit opens the
+    // level map directly even when EC would trigger.
     expect(result.current.phase).toBe('quiz');
+    expect(result.current.situacion).toBeNull();
+    expect(result.current.microteoriaBank).toBeNull();
   });
 });
 

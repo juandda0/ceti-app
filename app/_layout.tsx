@@ -23,6 +23,7 @@ import { initFirebaseAuthSession } from '@shared/lib/firebase/authSession';
 import { seedLocalDataToRemoteIfNeeded } from '@shared/session/syncRemote';
 import { isNativeFirebaseAppAvailable } from '@shared/lib/analytics/crashlytics';
 import { startUserRemoteSync, stopUserRemoteSync } from '@shared/session/userRemoteSync';
+import { detenerOrbitaSync, iniciarOrbitaSync } from '@features/orbita/data/orbitaSync';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/app';
 
@@ -108,8 +109,10 @@ export default function RootLayout() {
         const { isAuthenticated, firebaseUid } = useAuthStore.getState();
         if (isAuthenticated && firebaseUid?.trim()) {
           startUserRemoteSync(firebaseUid.trim());
+          void iniciarOrbitaSync(firebaseUid.trim());
         } else {
           stopUserRemoteSync();
+          detenerOrbitaSync();
         }
       }
 
@@ -138,6 +141,7 @@ export default function RootLayout() {
       cancelled = true;
       cleanups.forEach((fn) => fn());
       stopUserRemoteSync();
+      detenerOrbitaSync();
     };
   }, []);
 

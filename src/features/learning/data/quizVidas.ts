@@ -1,11 +1,13 @@
 /**
- * Vidas del quiz de un mundo. Cada intento empieza con VIDAS_POR_MUNDO vidas y hay que
- * contestar bien todas las preguntas: una respuesta incorrecta cuesta una vida y la pregunta
- * vuelve al final de la cola (sin revelar la respuesta). Sin vidas, el intento se pierde y
- * el mundo se empieza desde cero. Puro: la pantalla solo guarda el intento en su estado.
+ * Intento de una lección o del jefe de un planeta. Hay que contestar bien todas las
+ * preguntas: una respuesta incorrecta vuelve al final de la cola (después de explicarla).
+ * Las lecciones no tienen vidas (SIN_LIMITE); el jefe empieza con VIDAS_POR_MUNDO y sin
+ * vidas el intento se pierde. Puro: la pantalla solo guarda el intento en su estado.
  */
 
 export const VIDAS_POR_MUNDO = 3;
+/** Vidas de una lección normal: equivocarse nunca la termina. */
+export const SIN_LIMITE = Number.POSITIVE_INFINITY;
 
 export type EstadoIntento = 'jugando' | 'completado' | 'perdido';
 
@@ -20,17 +22,25 @@ export interface IntentoQuiz {
   readonly errores: number;
   /** Número de preguntas del mundo. */
   readonly total: number;
+  /** Preguntas (índices) falladas al menos una vez: la maestría cuenta solo las acertadas a la primera. */
+  readonly falladas: readonly number[];
 }
 
-export function nuevoIntento(total: number): IntentoQuiz {
+export function nuevoIntento(total: number, vidas: number = VIDAS_POR_MUNDO): IntentoQuiz {
   return {
     cola: Array.from({ length: total }, (_, i) => i),
     pos: 0,
-    vidas: VIDAS_POR_MUNDO,
+    vidas,
     aciertos: 0,
     errores: 0,
     total,
+    falladas: [],
   };
+}
+
+/** Preguntas contestadas bien en el primer intento. */
+export function acertadasALaPrimera(intento: IntentoQuiz): number {
+  return intento.total - intento.falladas.length;
 }
 
 /** Índice (en las preguntas del mundo) de la pregunta actual. */
@@ -48,6 +58,10 @@ export function registrarRespuesta(intento: IntentoQuiz, correcta: boolean): Int
     ...intento,
     vidas,
     errores: intento.errores + 1,
+    falladas:
+      actual !== undefined && !intento.falladas.includes(actual)
+        ? [...intento.falladas, actual]
+        : intento.falladas,
     // Sin vidas ya no hay que repetirla: el intento terminó.
     cola: vidas > 0 && actual !== undefined ? [...intento.cola, actual] : intento.cola,
   };

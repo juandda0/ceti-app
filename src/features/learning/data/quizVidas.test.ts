@@ -74,3 +74,21 @@ describe('quizVidas', () => {
     expect(preguntaActual(i)).toBe(0);
   });
 });
+
+describe('lecciones sin vidas', () => {
+  it('equivocarse nunca termina la lección y cuenta las acertadas a la primera', () => {
+    const { nuevoIntento: nuevo, registrarRespuesta: responder, siguiente: sig, estadoIntento: estado, acertadasALaPrimera, SIN_LIMITE } =
+      jest.requireActual('./quizVidas');
+    let i = nuevo(2, SIN_LIMITE);
+    for (let k = 0; k < 5; k++) {
+      i = responder(i, false);
+      expect(estado(i)).toBe('jugando');
+      i = sig(i);
+    }
+    i = responder(i, true);
+    i = sig(i);
+    i = responder(i, true);
+    expect(estado(i)).toBe('completado');
+    expect(acertadasALaPrimera(i)).toBe(0);
+  });
+});

@@ -1,7 +1,8 @@
 /**
- * Racha de aprendizaje: días calendario (Bogotá) seguidos en los que la persona
- * termina al menos un quiz, con gracia de 1 día (la racha sigue viva hoy si
- * terminó uno ayer). Vive solo en el dispositivo, por usuario.
+ * LEGADO: la racha de quizzes anterior a Órbita (solo en el dispositivo). Ya no
+ * se escribe; Órbita lee sus días una vez para migrarlos a la racha única
+ * (useOrbitaStore.asegurar). Se puede borrar cuando ya no queden instalaciones
+ * con datos viejos.
  */
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';

@@ -19,22 +19,20 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUserStore } from '@features/auth/store/useUserStore';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
-import {
-  useQuestionBankStore,
-  QUESTIONS_PER_WORLD,
-} from '@features/learning/store/useQuestionBankStore';
+import { useQuestionBankStore } from '@features/learning/store/useQuestionBankStore';
+import { useNivelesStore } from '@features/learning/store/useNivelesStore';
+import { useOrbitaStore } from '@features/orbita/store/useOrbitaStore';
+import PuenteDeMando from '@features/orbita/components/PuenteDeMando';
 import type { WorldId } from '@features/learning/data/quiz.types';
 import { worldProgressRepository } from '@features/dashboard/data/worldProgressRepository';
 import { useStudentGrado } from '@features/learning/hooks/useStudentGrado';
 import { useClassConfig } from '@features/learning/hooks/useClassConfig';
 import { resolveClassWorlds } from '@features/learning/data/classConfig';
 import { worldStatus } from '@features/learning/data/worldStatus';
-import { computeQuizRacha, useQuizStreakStore } from '@features/learning/store/useQuizStreakStore';
 import { hasClassAccess } from '@features/learning/data/classAccess';
 import { displayWorldDef } from '@features/learning/data/worldMeta';
 import { planetaDeMundo } from '@features/learning/data/planetas';
-import { dayKey } from '@features/savings/data/periodos';
-import { ChipRacha, ESPACIO, FondoEstrellas } from '@features/learning/components/galaxia/espacio';
+import { ESPACIO, FondoEstrellas } from '@features/learning/components/galaxia/espacio';
 import CarruselPlanetas, {
   PuntosCarrusel,
 } from '@features/learning/components/galaxia/CarruselPlanetas';
@@ -60,8 +58,8 @@ export default function WorldsScreen() {
   const colegioId = useAuthStore((s) => s.colegioId);
   const cursoId = useAuthStore((s) => s.cursoId);
   const hasAccess = hasClassAccess(colegioId, cursoId);
-  const fetchWorldQuestions = useQuestionBankStore((s) => s.fetchWorldQuestions);
-  const getWorldProgress = useQuestionBankStore((s) => s.getWorldProgress);
+  const cargarNiveles = useNivelesStore((s) => s.cargar);
+  const nivelesPorMundo = useNivelesStore((s) => s.porMundo);
   const isWorldComplete = useQuestionBankStore((s) => s.isWorldComplete);
   const setRemoteProgress = useQuestionBankStore((s) => s.setRemoteProgress);
   // Subscribe to answers so progress/unlock recompute right after a quiz, without
@@ -77,9 +75,7 @@ export default function WorldsScreen() {
   // seedKey = Firebase uid (stable per-account); fallback to local id in demo/offline.
   const seedKey = userId ?? 'demo';
   const uid = userId ?? '';
-  const diasQuiz = useQuizStreakStore((s) => s.daysByUid[uid]);
-  const rachaQuiz = useMemo(() => computeQuizRacha(diasQuiz ?? []), [diasQuiz]);
-  const rachaHoy = (diasQuiz ?? []).includes(dayKey(Date.now()));
+  const leccionesHechas = useOrbitaStore((s) => s.porUid[uid]?.niveles);
 
   // Class config (D-ORQ, RQ-PR10): which worlds this class sees and in which
   // order. Live via onSnapshot; null → defaults.
@@ -109,17 +105,22 @@ export default function WorldsScreen() {
         const entry = classConfig?.mundos?.find((m) => m.worldId === cw.worldId);
         const disp = displayWorldDef(cw.worldId, entry);
         if (!disp) return null;
-        const { done, total } = getWorldProgress(uid, cw.worldId as WorldId);
-        const ratio = total > 0 ? done / total : 0;
+        // Progreso por niveles del mapa: lecciones hechas + el jefe (que conquista el mundo).
+        const conquistado = isWorldComplete(uid, cw.worldId as WorldId);
+        const lecciones = nivelesPorMundo[cw.worldId]?.niveles?.lecciones.length ?? 4;
+        const total = lecciones + 1;
+        const hechas = conquistado
+          ? total
+          : Math.min(leccionesHechas?.[cw.worldId] ?? 0, lecciones);
         return {
           id: cw.worldId,
           numero: index + 1,
           nombre: disp.name,
           descripcion: disp.description,
           planeta: planetaDeMundo(cw.worldId, index),
-          estado: worldStatus(cw.unlocked, ratio),
-          hechas: Math.min(Math.round(ratio * QUESTIONS_PER_WORLD), QUESTIONS_PER_WORLD),
-          total: QUESTIONS_PER_WORLD,
+          estado: worldStatus(cw.unlocked, conquistado ? 1 : hechas / total),
+          hechas,
+          total,
         };
       })
       .filter((x): x is NonNullable<typeof x> => x !== null);
@@ -130,7 +131,7 @@ export default function WorldsScreen() {
       siguiente: i < base.length - 1 ? base[i + 1].nombre : undefined,
     }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [classWorlds, classConfig, uid, answers, remoteProgress, getWorldProgress]);
+  }, [classWorlds, classConfig, uid, answers, remoteProgress, isWorldComplete, nivelesPorMundo, leccionesHechas]);
 
   // Prefetch the class's worlds once the real grado AND the class config are
   // known (avoids fetching worlds the class doesn't serve). The store guard
@@ -138,7 +139,7 @@ export default function WorldsScreen() {
   useEffect(() => {
     if (!grado || !classConfigLoaded) return;
     for (const m of mundos) {
-      void fetchWorldQuestions(grado, m.id as WorldId, seedKey, courseContentFor(m.id));
+      void cargarNiveles(grado, m.id as WorldId, seedKey, courseContentFor(m.id));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasAccess, grado, seedKey, classConfigLoaded, mundos.length]);
@@ -208,7 +209,9 @@ export default function WorldsScreen() {
             </Text>
             <Text style={estilos.subtitulo}>{t('galaxia.desliza')}</Text>
           </View>
-          <ChipRacha dias={rachaQuiz} encendidaHoy={rachaHoy} />
+        </View>
+        <View style={estilos.puente}>
+          <PuenteDeMando />
         </View>
 
         {!classConfigLoaded ? (
@@ -279,6 +282,7 @@ const estilos = StyleSheet.create({
   titulo: { fontSize: 36, lineHeight: 40, fontWeight: '900', color: ESPACIO.texto },
   subtitulo: { fontSize: 16, fontWeight: '700', color: ESPACIO.textoSuave },
   tarjetaZona: { paddingHorizontal: 20, marginTop: 8 },
+  puente: { paddingHorizontal: 20 },
   vacio: { alignItems: 'center', gap: 12, paddingVertical: 64, paddingHorizontal: 32 },
   vacioTexto: { fontSize: 15, fontWeight: '700', textAlign: 'center', color: ESPACIO.textoSuave },
 });
