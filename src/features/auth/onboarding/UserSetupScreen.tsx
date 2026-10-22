@@ -28,6 +28,7 @@ import {
 } from '@features/avatar/domain/catalogo';
 import LeccionScreen, { type ResultadoLeccion } from '@features/learning/screens/LeccionScreen';
 import FinLeccion from '@features/orbita/components/FinLeccion';
+import StreakCelebration from '@features/learning/components/StreakCelebration';
 import { SelectorMeta } from '@features/orbita/components/PuenteDeMando';
 import { useOrbitaStore } from '@features/orbita/store/useOrbitaStore';
 import { refrescarAvisos } from '@features/orbita/hooks/useOrbita';
@@ -66,6 +67,7 @@ export default function UserSetupScreen() {
   const [hora, setHora] = useState(HORA_POR_DEFECTO);
   const [avisos, setAvisos] = useState<'pendiente' | 'pidiendo' | 'activos' | 'no'>('pendiente');
   const [fin, setFin] = useState<{ r: RecompensaPractica; res: ResultadoLeccion } | null>(null);
+  const [celebrando, setCelebrando] = useState(false);
 
   const canAdvance = useCallback(() => {
     if (step === PASO.nombre) return name.trim().length >= 2;
@@ -122,6 +124,8 @@ export default function UserSetupScreen() {
       perfecta: res.perfecta,
     });
     setFin({ r, res });
+    // El primer vuelo prende la racha: primero se celebra y después el resumen.
+    if (r.primeroHoy || r.reparada || r.hito) setCelebrando(true);
   };
 
   const saltarPrimerVuelo = () => {
@@ -179,6 +183,19 @@ export default function UserSetupScreen() {
   };
 
   if (step === PASO.vuelo) {
+    if (fin && celebrando) {
+      return (
+        <View style={styles.esperaRacha}>
+          <StreakCelebration
+            racha={fin.r.racha}
+            hito={fin.r.hito}
+            reparada={fin.r.reparada}
+            visible
+            onClose={() => setCelebrando(false)}
+          />
+        </View>
+      );
+    }
     if (fin) {
       return (
         <FinLeccion
@@ -443,6 +460,7 @@ export default function UserSetupScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingTop: 80 },
+  esperaRacha: { flex: 1, backgroundColor: '#0E0F13' },
   progressContainer: { flexDirection: 'row', justifyContent: 'center', gap: 8, marginBottom: 20 },
   progressDot: { width: 10, height: 10, borderRadius: 5 },
   progressDotActive: { width: 24 },

@@ -4,7 +4,13 @@ const mockReplace = jest.fn();
 const mockSetProfile = jest.fn();
 const mockLogin = jest.fn();
 const mockConfigurar = jest.fn();
-const mockCompletar = jest.fn(() => ({ xp: 16, cetis: 20 }));
+const mockCompletar = jest.fn(() => ({
+  xp: 16,
+  cetis: 20,
+  racha: 1,
+  primeroHoy: true,
+  reparada: false,
+}));
 const mockRefrescarAvisos = jest.fn();
 const mockPedirPermiso = jest.fn(async () => true);
 const mockEventos = { metaElegida: jest.fn(), avisosConfigurados: jest.fn() };
@@ -155,6 +161,22 @@ jest.mock('@features/orbita/components/FinLeccion', () => {
     );
   };
 });
+jest.mock('@features/learning/components/StreakCelebration', () => {
+  const { Pressable, Text } = require('react-native');
+  return function MockStreakCelebration({
+    racha,
+    onClose,
+  }: {
+    racha: number;
+    onClose: () => void;
+  }) {
+    return (
+      <Pressable accessibilityRole="button" onPress={onClose}>
+        <Text>{`Racha ${racha}`}</Text>
+      </Pressable>
+    );
+  };
+});
 jest.mock('@expo/vector-icons', () => ({ Ionicons: () => null }));
 jest.mock('@features/auth/store/useAuthStore', () => ({
   useAuthStore: { getState: () => ({ login: mockLogin }) },
@@ -255,6 +277,9 @@ test('nombre, tripulante, meta, hora y avisos, primer vuelo con recompensa y bie
     perfecta: true,
   });
 
+  // La racha se celebra primero; el resumen espera a que se cierre.
+  expect(screen.queryByText('Fin primer_vuelo')).toBeNull();
+  fireEvent.press(screen.getByRole('button', { name: 'Racha 1' }));
   fireEvent.press(screen.getByRole('button', { name: 'Fin primer_vuelo' }));
   fireEvent.press(screen.getByRole('button', { name: 'Comenzar' }));
 
