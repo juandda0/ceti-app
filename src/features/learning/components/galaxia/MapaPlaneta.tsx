@@ -20,9 +20,10 @@ import Animated, {
   useSharedValue,
   withRepeat,
   withTiming,
+  type SharedValue,
 } from 'react-native-reanimated';
 import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
-import Svg, { Circle, Path, Rect } from 'react-native-svg';
+import Svg, { Circle, Path } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
 import { FontAwesome6, Ionicons } from '@expo/vector-icons';
 import { ICONOS_NODO, type IconoNodo } from '@features/learning/components/galaxia/iconosNodo';
@@ -37,7 +38,7 @@ import { useReducedMotionSafe } from '@shared/constants/motion';
 import NodoPlaneta, {
   CRATER_BANDERA,
   alcanceNodo,
-  mezclar,
+  avivar,
   type FormaNodo,
 } from '@features/learning/components/galaxia/NodoPlaneta';
 import { useOrbita } from '@features/orbita/hooks/useOrbita';
@@ -54,7 +55,6 @@ const MARGEN_ARRIBA = 52;
 // El mapa va sobre casi negro (el fondo base de la app; el negro puro cansa la vista) y sin
 // estrellas: los niveles son lo único que resalta.
 const FONDO = '#0E0E11';
-const NARANJA_CETI = ESPACIO.naranja;
 const BLOQUEADO_ICONO = '#4A4A52';
 const PUNTO_PENDIENTE = '#3A3A42';
 
@@ -95,9 +95,10 @@ const BAJO_JEFE = NODO_JEFE * 0.62;
 const ESTRELLA = '#6A7194';
 const PUNTITO = '#535873';
 const POR_NIVEL = 3;
-// Titileo: tres grupos desfasados que se apagan y se vuelven a iluminar.
-const TITILEO_MS = [2600, 3400, 4200];
-const TITILEO_MIN = 0.35;
+// Titileo: tres grupos desfasados que se desvanecen y se vuelven a iluminar en una transición
+// larga y suave (curva seno, sin saltos).
+const TITILEO_MS = [3200, 4200, 5200];
+const TITILEO_MIN = 0.15;
 
 interface Hueco {
   x: number;
@@ -192,7 +193,7 @@ function CapaEstrellas({
   useEffect(() => {
     if (reducido) return;
     brillo.value = withRepeat(
-      withTiming(TITILEO_MIN, { duration: ms, easing: Easing.inOut(Easing.sin) }),
+      withTiming(TITILEO_MIN, { duration: ms, easing: Easing.inOut(Easing.cubic) }),
       -1,
       true
     );
@@ -214,21 +215,74 @@ function CapaEstrellas({
   );
 }
 
-const ANCHO_BANDERA = 36;
-const ALTO_BANDERA = 46;
-const ASTA = 4;
+const ANCHO_BANDERA = 30;
+const ALTO_BANDERA = 38;
+const ASTA = 3.5;
+/** Tela de la bandera: franjas verticales que suben y bajan en onda, como ondeando. */
+const TELA = { x: 3.5, y: 2.5, ancho: 24.5, alto: 15 };
+const FRANJAS = 24;
+// Lenta y amplia, como con menos gravedad que en la Tierra.
+const ONDEO_MS = 2800;
+const ONDEO_PX = 2.2;
 
-/** Bandera grande con el asta derecha; (x, y) es el pie del asta, clavado en el cráter. */
-function Bandera({ x, y }: { x: number; y: number }) {
+function Franja({ k, ondeo, color }: { k: number; ondeo: SharedValue<number>; color: string }) {
+  const ancho = TELA.ancho / FRANJAS;
+  // Junto al asta casi no se mueve; la punta, más.
+  const suelta = (k + 1) / FRANJAS;
+  const estilo = useAnimatedStyle(() => ({
+    transform: [
+      { translateY: Math.sin(ondeo.value * Math.PI * 2 - k * 0.55) * ONDEO_PX * suelta },
+    ],
+  }));
+  return (
+    <Animated.View
+      style={[
+        {
+          position: 'absolute',
+          left: TELA.x + k * ancho - 0.3,
+          top: TELA.y,
+          width: ancho + 0.6,
+          height: TELA.alto,
+          backgroundColor: color,
+          borderTopRightRadius: k === FRANJAS - 1 ? 2 : 0,
+          borderBottomRightRadius: k === FRANJAS - 1 ? 2 : 0,
+        },
+        estilo,
+      ]}
+    />
+  );
+}
+
+/**
+ * Bandera con el asta derecha; (x, y) es el pie del asta, clavado en el cráter. `alReves` la
+ * voltea para que la tela ondee hacia la izquierda.
+ */
+function Bandera({ x, y, color, alReves }: { x: number; y: number; color: string; alReves: boolean }) {
+  const reducido = useReducedMotionSafe();
+  const ondeo = useSharedValue(0);
+  useEffect(() => {
+    if (reducido) return;
+    ondeo.value = withRepeat(withTiming(1, { duration: ONDEO_MS, easing: Easing.linear }), -1, false);
+    return () => cancelAnimation(ondeo);
+  }, [reducido, ondeo]);
   return (
     <View
       pointerEvents="none"
-      style={{ position: 'absolute', left: x - ASTA / 2, top: y - ALTO_BANDERA + 1 }}
+      style={{
+        position: 'absolute',
+        left: alReves ? x - ANCHO_BANDERA + ASTA / 2 : x - ASTA / 2,
+        top: y - ALTO_BANDERA + 1,
+        width: ANCHO_BANDERA,
+        height: ALTO_BANDERA,
+        transform: alReves ? [{ scaleX: -1 }] : undefined,
+      }}
     >
-      <Svg width={ANCHO_BANDERA} height={ALTO_BANDERA}>
-        <Rect x={0} y={0} width={ASTA} height={ALTO_BANDERA} rx={ASTA / 2} fill="#ECEAF4" />
-        <Path d="M4 3 C12 0 20 7 34 3 L34 21 C20 25 12 18 4 21 Z" fill={NARANJA_CETI} />
-      </Svg>
+      {Array.from({ length: FRANJAS }, (_, k) => (
+        <Franja key={k} k={k} ondeo={ondeo} color={color} />
+      ))}
+      <View
+        style={{ position: 'absolute', left: 0, top: 0, width: ASTA, height: ALTO_BANDERA, borderRadius: ASTA / 2, backgroundColor: '#ECEAF4' }}
+      />
     </View>
   );
 }
@@ -256,15 +310,16 @@ export default function MapaPlaneta({
   const hechos = nodos.filter((n) => n.estado === 'hecho').length;
   const conquistado = nodos.some((n) => n.tipo === 'jefe' && n.estado === 'hecho');
   const iconos = useMemo(() => barajar(ICONOS, planeta.animacion), [planeta.animacion]);
-  // Lo conquistado va en el color del planeta, un poco más hondo que el nivel actual.
-  const colorHecho = mezclar(planeta.acento, planeta.acentoOscuro, 0.3);
+  // Lo conquistado va en el color del planeta, más vivo que el nivel actual.
+  const colorHecho = avivar(planeta.acento);
   const anillos = useMemo(() => barajar(ANILLOS, `${planeta.animacion}:anillos`), [planeta.animacion]);
   const formaDe = (n: NodoMapa): FormaNodo =>
     n.tipo === 'jefe' ? 'jefe' : n.estado !== 'actual' && anillos[n.indice % anillos.length] ? 'anillo' : 'liso';
   /** Media anchura del dibujo del nivel (anillo, halo u órbita se salen del círculo). */
   const alcanceDe = (n: NodoMapa) => tamDe(n) * alcanceNodo(formaDe(n));
-  // La bandera va clavada arriba, corrida al lado contrario del siguiente nivel (no tapa los puntos).
-  const ladoBandera = (n: NodoMapa) => (onda(n.indice + 1) > onda(n.indice) ? -1 : 1);
+  // La bandera va clavada arriba al centro y ondea hacia el lado contrario del siguiente nivel
+  // (así la tela no tapa los puntos del camino).
+  const banderaAlReves = (n: NodoMapa) => onda(n.indice + 1) > onda(n.indice);
   const { resumen } = useOrbita();
   const actual = nodos.find((n) => n.estado === 'actual');
   // La meta del día se cumple en el nivel que hace la lección que falta (si cae en este planeta).
@@ -442,7 +497,7 @@ export default function MapaPlaneta({
                   forma={formaDe(n)}
                   color={bola}
                   bloqueado={bloqueado}
-                  bandera={n.estado === 'actual' ? ladoBandera(n) : undefined}
+                  bandera={n.estado === 'actual'}
                   calavera={jefe && !hecho}
                 />
                 {/* El jefe lleva su calavera dibujada en el nodo; vencido, el trofeo. */}
@@ -525,12 +580,13 @@ export default function MapaPlaneta({
           {enOrden.map((n, k) => {
             if (n.estado !== 'actual') return null;
             const tam = tamDe(n);
-            const lado = ladoBandera(n);
             return (
               <Bandera
                 key="bandera"
-                x={cx(n.indice) + (lado * CRATER_BANDERA.x * tam) / 100}
+                x={cx(n.indice) + (CRATER_BANDERA.x * tam) / 100}
                 y={centros[k] + (CRATER_BANDERA.y * tam) / 100}
+                alReves={banderaAlReves(n)}
+                color={colorHecho}
               />
             );
           })}

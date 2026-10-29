@@ -8,7 +8,7 @@
  *   giran en bucle (por delante y por detrás del planeta) y un par de puntitos dorados cerca. Mientras no se vence lleva su calavera dibujada
  *   (no el ícono), calcada de la propuesta.
  *
- * El nivel por el que vas (`actual`) va sin anillo y con un cráter arriba donde se clava la
+ * El nivel por el que vas (`bandera`) va sin anillo y con un cráter arriba donde se clava la
  * bandera (`nodo-02-bandera.png`, opción 4); la bandera la pone el mapa encima.
  *
  * Se dibuja en una caja de 160 unidades centrada en el planeta (radio 50 = la mitad del nodo),
@@ -37,8 +37,8 @@ export function alcanceNodo(forma: FormaNodo): number {
   return forma === 'liso' ? 0.52 : 0.72;
 }
 
-/** Cráter de la bandera: sobre la cara de arriba, corrido a un lado (`lado` −1 o 1). */
-export const CRATER_BANDERA = { x: 17.5, y: -42 };
+/** Cráter de la bandera: arriba al centro, un poco hacia dentro del borde. */
+export const CRATER_BANDERA = { x: 0, y: -38 };
 
 const APAGADO = { bola: '#2B2A30', sombra: '#1A191E', anillo: '#3A3B40', picos: '#323138', crater: '#25242A' };
 const ORO = '#E9B44F';
@@ -54,6 +54,31 @@ export function mezclar(a: string, b: string, t: number) {
   const cb = canales(b);
   const c = ca.map((v, i) => Math.round(v + (cb[i] - v) * t));
   return `#${c.map((v) => v.toString(16).padStart(2, '0')).join('')}`;
+}
+
+/** El mismo tono más vivo: más saturado y un poco más oscuro (para lo conquistado). */
+export function avivar(hex: string, mas = 22, oscurecer = 8) {
+  const [r, g, b] = canales(hex).map((v) => v / 255);
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+  const d = max - min;
+  const s0 = d === 0 ? 0 : d / (1 - Math.abs(2 * l - 1));
+  let h = 0;
+  if (d !== 0) {
+    if (max === r) h = ((g - b) / d) % 6;
+    else if (max === g) h = (b - r) / d + 2;
+    else h = (r - g) / d + 4;
+  }
+  h = (h * 60 + 360) % 360;
+  const s1 = Math.min(1, s0 + mas / 100);
+  const l1 = Math.max(0, l - oscurecer / 100);
+  const c = (1 - Math.abs(2 * l1 - 1)) * s1;
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+  const m = l1 - c / 2;
+  const [r1, g1, b1] =
+    h < 60 ? [c, x, 0] : h < 120 ? [x, c, 0] : h < 180 ? [0, c, x] : h < 240 ? [0, x, c] : h < 300 ? [x, 0, c] : [c, 0, x];
+  return `#${[r1, g1, b1].map((v) => Math.round((v + m) * 255).toString(16).padStart(2, '0')).join('')}`;
 }
 
 // Sombra plana: la parte de la bola que queda por debajo de la misma bola subida 13 unidades.
@@ -175,8 +200,8 @@ export default function NodoPlaneta({
 }: {
   tam: number;
   forma: FormaNodo;
-  /** Nivel actual: lado (−1 o 1) del cráter donde va clavada la bandera. */
-  bandera?: number;
+  /** Nivel actual: lleva el cráter donde va clavada la bandera. */
+  bandera?: boolean;
   /** Jefe sin vencer: su calavera va dibujada aquí (el ícono de encima se omite). */
   calavera?: boolean;
   /** Color de la bola (naranja si está hecho, el acento del planeta si es el actual). */
@@ -241,9 +266,9 @@ export default function NodoPlaneta({
             fill={bloqueado ? APAGADO.crater : mezclar(color, '#000000', 0.2)}
           />
         ))}
-      {bandera !== undefined && (
+      {bandera && (
         <Ellipse
-          cx={bandera * CRATER_BANDERA.x}
+          cx={CRATER_BANDERA.x}
           cy={CRATER_BANDERA.y}
           rx={9}
           ry={3.6}
