@@ -2,15 +2,15 @@
  * Mapa de un planeta: ya estamos en él, y cada nivel conquista una zona. Los
  * niveles van en zigzag de abajo hacia arriba, lecciones primero y el jefe al
  * final: vencerlo deja el planeta conquistado. Estilo minimalista: planetitas
- * planos con su anillo (NodoPlaneta) unidos por puntos (naranjas en lo conquistado) y una banderita en el
- * nivel por el que vas. Los hechos se pueden repetir.
+ * planos (NodoPlaneta) unidos por puntos, con lo conquistado en el color del
+ * planeta y una banderita en el nivel por el que vas. Los hechos se pueden repetir.
  *
- * Alrededor de los niveles hay algunos puntitos y estrellas de 4 puntas, grises, en los huecos
- * que dejan el camino, los cofres y los avisos; titilan muy poco (suben y bajan de brillo).
+ * Alrededor de los niveles hay algunos puntitos y estrellas de 4 puntas, grises, en los
+ * huecos que dejan el camino, los cofres y los avisos; titilan despacio.
  *
- * La primera lección y el jefe llevan su cofre al lado libre: cerrado hasta ganarlo y
- * abierto (reclamado) después. También se marcan el nivel que cumple la meta del día y,
- * si hoy no ha practicado, que el siguiente nivel suma un día de racha.
+ * La primera lección y el jefe llevan su cofre al lado libre: cerrado y en blanco y negro
+ * hasta ganarlo, abierto (reclamado) y a color después. También se marcan el nivel que
+ * cumple la meta del día y, si hoy no ha practicado, que el siguiente nivel suma racha.
  */
 import { useEffect, useMemo } from 'react';
 import Animated, {
@@ -25,6 +25,7 @@ import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View, useWind
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
 import { FontAwesome6, Ionicons } from '@expo/vector-icons';
+import { ICONOS_NODO, type IconoNodo } from '@features/learning/components/galaxia/iconosNodo';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { ESPACIO } from '@features/learning/components/galaxia/espacio';
@@ -33,7 +34,12 @@ import { tieneCofre, type NodoMapa } from '@features/orbita/domain/niveles';
 import PuenteDeMando from '@features/orbita/components/PuenteDeMando';
 import Cofre from '@features/orbita/components/cofre/Cofre';
 import { useReducedMotionSafe } from '@shared/constants/motion';
-import NodoPlaneta, { alcanceNodo, type FormaNodo } from '@features/learning/components/galaxia/NodoPlaneta';
+import NodoPlaneta, {
+  CRATER_BANDERA,
+  alcanceNodo,
+  mezclar,
+  type FormaNodo,
+} from '@features/learning/components/galaxia/NodoPlaneta';
 import { useOrbita } from '@features/orbita/hooks/useOrbita';
 
 const NODO = 72;
@@ -42,7 +48,8 @@ const PASO = 132;
 /** Alto extra bajo el jefe para su etiqueta. */
 const ETIQUETA_JEFE = 30;
 const AMPLITUD = 72;
-const MARGEN_ARRIBA = 32;
+/** Arriba cabe la bandera del jefe cuando es el nivel actual. */
+const MARGEN_ARRIBA = 52;
 
 // El mapa va sobre casi negro (el fondo base de la app; el negro puro cansa la vista) y sin
 // estrellas: los niveles son lo único que resalta.
@@ -59,12 +66,10 @@ const PILDORA = '#1A1A22';
 // Puntos entre dos niveles: el del medio un poco más grande.
 const PUNTOS = [6, 9, 6];
 
-// Íconos de aventura espacial (FontAwesome sólido, todos del mismo grosor): el profe elige el
-// contenido, así que el ícono no dice el tema del nivel. Cada planeta baraja la lista con su semilla.
-const ICONOS: readonly (keyof typeof FontAwesome6.glyphMap)[] = [
-  'user-astronaut', 'rocket', 'shuttle-space', 'satellite', 'satellite-dish',
-  'meteor', 'moon', 'star', 'earth-americas', 'sun',
-];
+// Íconos de aventura espacial, gorditos y tiernos (calcados de Gemini en iconosNodo.ts): el profe
+// elige el contenido, así que el ícono no dice el tema del nivel. Cada planeta los baraja con su semilla.
+const ICONOS = Object.keys(ICONOS_NODO) as IconoNodo[];
+const ICONO = 40;
 
 function barajar<T>(items: readonly T[], semilla: string) {
   let h = 2166136261;
@@ -87,12 +92,12 @@ const ANILLOS = [true, false, true, true, false, true];
 const BAJO_JEFE = NODO_JEFE * 0.62;
 
 // Estrellitas del fondo: pocas, grises y planas.
-const ESTRELLA = '#3C4157';
-const PUNTITO = '#34374A';
+const ESTRELLA = '#6A7194';
+const PUNTITO = '#535873';
 const POR_NIVEL = 3;
-// Titileo: tres grupos desfasados que van de un poco apagados a su brillo normal.
+// Titileo: tres grupos desfasados que se apagan y se vuelven a iluminar.
 const TITILEO_MS = [2600, 3400, 4200];
-const TITILEO_MIN = 0.6;
+const TITILEO_MIN = 0.35;
 
 interface Hueco {
   x: number;
@@ -209,25 +214,20 @@ function CapaEstrellas({
   );
 }
 
-const ANCHO_BANDERA = 30;
-const ALTO_BANDERA = 40;
-const ASTA_X = 3.5;
+const ANCHO_BANDERA = 36;
+const ALTO_BANDERA = 46;
+const ASTA = 4;
 
-/** Banderita clavada en el borde del nivel actual; `espejo` la voltea hacia la izquierda. */
-function Bandera({ x, y, espejo }: { x: number; y: number; espejo: boolean }) {
+/** Bandera grande con el asta derecha; (x, y) es el pie del asta, clavado en el cráter. */
+function Bandera({ x, y }: { x: number; y: number }) {
   return (
     <View
       pointerEvents="none"
-      style={{
-        position: 'absolute',
-        left: espejo ? x - (ANCHO_BANDERA - ASTA_X) : x - ASTA_X,
-        top: y - ALTO_BANDERA + 4,
-        transform: espejo ? [{ scaleX: -1 }] : undefined,
-      }}
+      style={{ position: 'absolute', left: x - ASTA / 2, top: y - ALTO_BANDERA + 1 }}
     >
       <Svg width={ANCHO_BANDERA} height={ALTO_BANDERA}>
-        <Rect x={2} y={2} width={3} height={ALTO_BANDERA - 2} rx={1.5} fill="#ECEAF4" />
-        <Path d="M5 4 C12 1 18 7 27 4 L27 18 C18 21 12 15 5 18 Z" fill={NARANJA_CETI} />
+        <Rect x={0} y={0} width={ASTA} height={ALTO_BANDERA} rx={ASTA / 2} fill="#ECEAF4" />
+        <Path d="M4 3 C12 0 20 7 34 3 L34 21 C20 25 12 18 4 21 Z" fill={NARANJA_CETI} />
       </Svg>
     </View>
   );
@@ -256,11 +256,15 @@ export default function MapaPlaneta({
   const hechos = nodos.filter((n) => n.estado === 'hecho').length;
   const conquistado = nodos.some((n) => n.tipo === 'jefe' && n.estado === 'hecho');
   const iconos = useMemo(() => barajar(ICONOS, planeta.animacion), [planeta.animacion]);
+  // Lo conquistado va en el color del planeta, un poco más hondo que el nivel actual.
+  const colorHecho = mezclar(planeta.acento, planeta.acentoOscuro, 0.3);
   const anillos = useMemo(() => barajar(ANILLOS, `${planeta.animacion}:anillos`), [planeta.animacion]);
   const formaDe = (n: NodoMapa): FormaNodo =>
     n.tipo === 'jefe' ? 'jefe' : n.estado !== 'actual' && anillos[n.indice % anillos.length] ? 'anillo' : 'liso';
   /** Media anchura del dibujo del nivel (anillo, halo u órbita se salen del círculo). */
-  const alcanceDe = (n: NodoMapa) => tamDe(n) * alcanceNodo(formaDe(n), n.estado === 'actual');
+  const alcanceDe = (n: NodoMapa) => tamDe(n) * alcanceNodo(formaDe(n));
+  // La bandera va clavada arriba, corrida al lado contrario del siguiente nivel (no tapa los puntos).
+  const ladoBandera = (n: NodoMapa) => (onda(n.indice + 1) > onda(n.indice) ? -1 : 1);
   const { resumen } = useOrbita();
   const actual = nodos.find((n) => n.estado === 'actual');
   // La meta del día se cumple en el nivel que hace la lección que falta (si cae en este planeta).
@@ -393,7 +397,7 @@ export default function MapaPlaneta({
             const yArriba = centros[k - 1];
             const desde = yAbajo - (tamDe(n) / 2 + 14);
             const hasta = yArriba + tamDe(arriba) / 2 + (arriba.tipo === 'jefe' ? ETIQUETA_JEFE : 0) + 14;
-            const color = n.estado === 'hecho' ? NARANJA_CETI : PUNTO_PENDIENTE;
+            const color = n.estado === 'hecho' ? colorHecho : PUNTO_PENDIENTE;
             return PUNTOS.map((tam, i) => {
               const y = desde + ((hasta - desde) * i) / (PUNTOS.length - 1);
               const x = cx(n.indice + (yAbajo - y) / (yAbajo - yArriba));
@@ -414,8 +418,8 @@ export default function MapaPlaneta({
             const jefe = n.tipo === 'jefe';
             const hecho = n.estado === 'hecho';
             const bloqueado = n.estado === 'bloqueado';
-            const bola = hecho ? NARANJA_CETI : planeta.acento;
-            const icono = jefe ? 'trophy' : iconos[n.indice % iconos.length];
+            const bola = hecho ? colorHecho : planeta.acento;
+            const icono = iconos[n.indice % iconos.length];
             return (
               <TouchableOpacity
                 key={`${n.tipo}-${n.indice}`}
@@ -438,11 +442,18 @@ export default function MapaPlaneta({
                   forma={formaDe(n)}
                   color={bola}
                   bloqueado={bloqueado}
-                  actual={n.estado === 'actual'}
+                  bandera={n.estado === 'actual' ? ladoBandera(n) : undefined}
                   calavera={jefe && !hecho}
                 />
-                {!(jefe && !hecho) && (
-                  <FontAwesome6 name={icono} solid size={jefe ? 40 : 30} color={bloqueado ? BLOQUEADO_ICONO : '#FFFFFF'} />
+                {/* El jefe lleva su calavera dibujada en el nodo; vencido, el trofeo. */}
+                {jefe && hecho && <FontAwesome6 name="trophy" solid size={42} color="#FFFFFF" />}
+                {!jefe && (
+                  // En un View para que quede encima del planeta (en web un <svg> suelto queda debajo).
+                  <View pointerEvents="none">
+                    <Svg width={ICONO} height={ICONO} viewBox="0 0 100 100">
+                      <Path d={ICONOS_NODO[icono]} fill={bloqueado ? BLOQUEADO_ICONO : '#FFFFFF'} fillRule="evenodd" />
+                    </Svg>
+                  </View>
                 )}
               </TouchableOpacity>
             );
@@ -458,7 +469,7 @@ export default function MapaPlaneta({
                   {
                     left: cx(n.indice) - 60,
                     top: centros[k] + BAJO_JEFE + 2,
-                    color: n.estado === 'bloqueado' ? BLOQUEADO_ICONO : NARANJA_CETI,
+                    color: n.estado === 'bloqueado' ? BLOQUEADO_ICONO : colorHecho,
                   },
                 ]}
               >
@@ -487,7 +498,11 @@ export default function MapaPlaneta({
                 ]}
               >
                 {conCofre && (
-                  <Cofre estado={n.estado === 'hecho' ? 'reclamado' : 'cerrado'} size={cofre} />
+                  <Cofre
+                    estado={n.estado === 'hecho' ? 'reclamado' : 'cerrado'}
+                    gris={n.estado !== 'hecho'}
+                    size={cofre}
+                  />
                 )}
                 {meta && (
                   <View style={st.pildora}>
@@ -509,15 +524,13 @@ export default function MapaPlaneta({
 
           {enOrden.map((n, k) => {
             if (n.estado !== 'actual') return null;
-            // La bandera va en el hombro del nivel que no mira hacia el siguiente, para no tapar los puntos.
-            const espejo = onda(n.indice + 1) > onda(n.indice);
-            const r = (tamDe(n) / 2) * 0.72;
+            const tam = tamDe(n);
+            const lado = ladoBandera(n);
             return (
               <Bandera
                 key="bandera"
-                x={cx(n.indice) + (espejo ? -r : r)}
-                y={centros[k] - r}
-                espejo={espejo}
+                x={cx(n.indice) + (lado * CRATER_BANDERA.x * tam) / 100}
+                y={centros[k] + (CRATER_BANDERA.y * tam) / 100}
               />
             );
           })}
