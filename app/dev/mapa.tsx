@@ -9,11 +9,17 @@ import { estadoInicial } from '@features/orbita/domain/orbita';
 import { dayKey, sumarDias } from '@features/orbita/domain/tiempo';
 
 // Herramienta interna: el mapa de un planeta y el Puente de mando sin iniciar sesión
-// (/dev/mapa?hechas=2). Siembra una racha de 12 días, 1 escudo y Cetis de ejemplo.
+// (/dev/mapa?hechas=2&mundo=world_3; mundo=cw_x&pos=1 para los planetas de reserva). Siembra
+// una racha de 12 días, 1 escudo y Cetis de ejemplo.
 const UID_DEV = 'dev-mapa';
 
 export default function MapaDevRoute() {
-  const { hechas } = useLocalSearchParams<{ hechas?: string }>();
+  const { hechas, mundo, pos, nombre } = useLocalSearchParams<{
+    hechas?: string;
+    mundo?: string;
+    pos?: string;
+    nombre?: string;
+  }>();
   const [listo, setListo] = useState(false);
   useEffect(() => {
     if (!__DEV__) return;
@@ -37,8 +43,8 @@ export default function MapaDevRoute() {
   if (!listo) return null;
   return (
     <MapaPlaneta
-      nombre="Planeta Origen"
-      planeta={planetaDeMundo('world_1', 0)}
+      nombre={nombre ?? 'Planeta Origen'}
+      planeta={planetaDeMundo(mundo ?? 'world_1', Number(pos ?? 0))}
       nodos={nodosMapa(4, Number(hechas ?? 1), false)}
       totalLecciones={4}
       onNodo={() => {}}

@@ -24,7 +24,7 @@ import Animated, {
 import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
-import { Ionicons } from '@expo/vector-icons';
+import { FontAwesome6, Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { ESPACIO } from '@features/learning/components/galaxia/espacio';
@@ -59,11 +59,11 @@ const PILDORA = '#1A1A22';
 // Puntos entre dos niveles: el del medio un poco más grande.
 const PUNTOS = [6, 9, 6];
 
-// Íconos gruesos y sin tema: el profe elige el contenido, así que no se puede adivinar el
-// emoji del nivel como en Duolingo. Cada planeta baraja esta lista con su propia semilla.
-const ICONOS: readonly (keyof typeof Ionicons.glyphMap)[] = [
-  'star', 'heart', 'diamond', 'rocket', 'flash', 'gift', 'bulb', 'wallet',
-  'paw', 'moon', 'game-controller', 'musical-notes', 'shield', 'flame', 'leaf', 'sparkles',
+// Íconos de aventura espacial (FontAwesome sólido, todos del mismo grosor): el profe elige el
+// contenido, así que el ícono no dice el tema del nivel. Cada planeta baraja la lista con su semilla.
+const ICONOS: readonly (keyof typeof FontAwesome6.glyphMap)[] = [
+  'user-astronaut', 'rocket', 'shuttle-space', 'satellite', 'satellite-dish',
+  'meteor', 'moon', 'star', 'earth-americas', 'sun',
 ];
 
 function barajar<T>(items: readonly T[], semilla: string) {
@@ -415,7 +415,7 @@ export default function MapaPlaneta({
             const hecho = n.estado === 'hecho';
             const bloqueado = n.estado === 'bloqueado';
             const bola = hecho ? NARANJA_CETI : planeta.acento;
-            const icono = jefe ? (hecho ? 'trophy' : 'skull') : iconos[n.indice % iconos.length];
+            const icono = jefe ? 'trophy' : iconos[n.indice % iconos.length];
             return (
               <TouchableOpacity
                 key={`${n.tipo}-${n.indice}`}
@@ -442,7 +442,7 @@ export default function MapaPlaneta({
                   calavera={jefe && !hecho}
                 />
                 {!(jefe && !hecho) && (
-                  <Ionicons name={icono} size={jefe ? 48 : 34} color={bloqueado ? BLOQUEADO_ICONO : '#FFFFFF'} />
+                  <FontAwesome6 name={icono} solid size={jefe ? 40 : 30} color={bloqueado ? BLOQUEADO_ICONO : '#FFFFFF'} />
                 )}
               </TouchableOpacity>
             );
