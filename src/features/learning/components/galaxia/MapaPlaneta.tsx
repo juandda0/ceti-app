@@ -1,111 +1,234 @@
 /**
- * Mapa de un planeta: los niveles en zigzag, de abajo hacia arriba como un
- * camino de despegue. Lecciones primero y el jefe al final. El nodo actual
- * late y lleva el globo "EMPEZAR"; los hechos se pueden repetir.
+ * Mapa de un planeta: ya estamos en él, y cada nivel conquista una zona. Los
+ * niveles van en zigzag de abajo hacia arriba, lecciones primero y el jefe al
+ * final: vencerlo deja el planeta conquistado. Estilo minimalista: planetitas
+ * planos con su anillo (NodoPlaneta) unidos por puntos (naranjas en lo conquistado) y una banderita en el
+ * nivel por el que vas. Los hechos se pueden repetir.
+ *
+ * Alrededor de los niveles hay algunos puntitos y estrellas de 4 puntas, grises, en los huecos
+ * que dejan el camino, los cofres y los avisos; titilan muy poco (suben y bajan de brillo).
+ *
+ * La primera lección y el jefe llevan su cofre al lado libre: cerrado hasta ganarlo y
+ * abierto (reclamado) después. También se marcan el nivel que cumple la meta del día y,
+ * si hoy no ha practicado, que el siguiente nivel suma un día de racha.
  */
-import { useEffect } from 'react';
-import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import { useEffect, useMemo } from 'react';
 import Animated, {
-  ReduceMotion,
+  Easing,
+  cancelAnimation,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
-  withSequence,
   withTiming,
 } from 'react-native-reanimated';
+import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import Svg, { Circle, Path, Rect } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import { CetiAnimation } from '@features/animations';
-import { ESPACIO, FondoEstrellas } from '@features/learning/components/galaxia/espacio';
+import { ESPACIO } from '@features/learning/components/galaxia/espacio';
 import type { Planeta } from '@features/learning/data/planetas';
-import type { NodoMapa } from '@features/orbita/domain/niveles';
+import { tieneCofre, type NodoMapa } from '@features/orbita/domain/niveles';
 import PuenteDeMando from '@features/orbita/components/PuenteDeMando';
+import Cofre from '@features/orbita/components/cofre/Cofre';
+import { useReducedMotionSafe } from '@shared/constants/motion';
+import NodoPlaneta, { alcanceNodo, type FormaNodo } from '@features/learning/components/galaxia/NodoPlaneta';
+import { useOrbita } from '@features/orbita/hooks/useOrbita';
 
-const NODO = 74;
-const NODO_JEFE = 96;
-const PASO = 104;
+const NODO = 72;
+const NODO_JEFE = 92;
+const PASO = 132;
+/** Alto extra bajo el jefe para su etiqueta. */
+const ETIQUETA_JEFE = 30;
 const AMPLITUD = 72;
+const MARGEN_ARRIBA = 32;
 
-function Nodo({
-  nodo,
-  planeta,
-  onPress,
-  etiqueta,
-}: {
-  nodo: NodoMapa;
-  planeta: Planeta;
-  onPress: () => void;
-  etiqueta: string;
-}) {
-  const jefe = nodo.tipo === 'jefe';
-  const tam = jefe ? NODO_JEFE : NODO;
-  const actual = nodo.estado === 'actual';
-  const hecho = nodo.estado === 'hecho';
-  const bloqueado = nodo.estado === 'bloqueado';
+// El mapa va sobre casi negro (el fondo base de la app; el negro puro cansa la vista) y sin
+// estrellas: los niveles son lo único que resalta.
+const FONDO = '#0E0E11';
+const NARANJA_CETI = ESPACIO.naranja;
+const BLOQUEADO_ICONO = '#4A4A52';
+const PUNTO_PENDIENTE = '#3A3A42';
 
-  const pulso = useSharedValue(1);
-  useEffect(() => {
-    if (!actual) return;
-    pulso.value = withRepeat(
-      withSequence(
-        withTiming(1.12, { duration: 900, reduceMotion: ReduceMotion.System }),
-        withTiming(1, { duration: 900, reduceMotion: ReduceMotion.System })
-      ),
-      -1
-    );
-  }, [actual, pulso]);
-  const anillo = useAnimatedStyle(() => ({ transform: [{ scale: pulso.value }] }));
+const COFRE = 64;
+const COFRE_JEFE = 74;
+const SEPARACION = 6;
+const PILDORA = '#1A1A22';
 
-  const fondo = bloqueado ? ESPACIO.boton : hecho ? ESPACIO.oro : planeta.acento;
-  const sombra = bloqueado ? ESPACIO.sombra : hecho ? '#B8892A' : planeta.acentoOscuro;
-  const icono: keyof typeof Ionicons.glyphMap = bloqueado
-    ? 'lock-closed'
-    : jefe
-      ? hecho
-        ? 'trophy'
-        : 'skull'
-      : hecho
-        ? 'checkmark'
-        : 'star';
+// Puntos entre dos niveles: el del medio un poco más grande.
+const PUNTOS = [6, 9, 6];
 
+// Íconos gruesos y sin tema: el profe elige el contenido, así que no se puede adivinar el
+// emoji del nivel como en Duolingo. Cada planeta baraja esta lista con su propia semilla.
+const ICONOS: readonly (keyof typeof Ionicons.glyphMap)[] = [
+  'star', 'heart', 'diamond', 'rocket', 'flash', 'gift', 'bulb', 'wallet',
+  'paw', 'moon', 'game-controller', 'musical-notes', 'shield', 'flame', 'leaf', 'sparkles',
+];
+
+function barajar<T>(items: readonly T[], semilla: string) {
+  let h = 2166136261;
+  for (const c of semilla) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
+  const lista = [...items];
+  for (let i = lista.length - 1; i > 0; i--) {
+    h = Math.imul(h ^ (h >>> 15), 2246822507) >>> 0;
+    const j = h % (i + 1);
+    [lista[i], lista[j]] = [lista[j], lista[i]];
+  }
+  return lista;
+}
+
+/** Zigzag suave: el camino sigue una onda; vale también entre niveles (índice fraccionario). */
+const onda = (indice: number) => Math.sin(indice * 1.1) * AMPLITUD;
+const tamDe = (n: NodoMapa) => (n.tipo === 'jefe' ? NODO_JEFE : NODO);
+// Unas lecciones llevan anillo y otras no, barajado por planeta (el nivel actual nunca: va iluminado).
+const ANILLOS = [true, false, true, true, false, true];
+/** La corona del jefe baja más que el círculo: su etiqueta va debajo de los picos. */
+const BAJO_JEFE = NODO_JEFE * 0.62;
+
+// Estrellitas del fondo: pocas, grises y planas.
+const ESTRELLA = '#3C4157';
+const PUNTITO = '#34374A';
+const POR_NIVEL = 3;
+// Titileo: tres grupos desfasados que van de un poco apagados a su brillo normal.
+const TITILEO_MS = [2600, 3400, 4200];
+const TITILEO_MIN = 0.6;
+
+interface Hueco {
+  x: number;
+  y: number;
+  /** Radio libre alrededor del dibujo del nivel. */
+  r: number;
+}
+interface Caja {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+}
+interface Estrella {
+  x: number;
+  y: number;
+  tam: number;
+  punta: boolean;
+}
+
+/** Estrella de 4 puntas con los lados curvos hacia dentro. */
+function puntas(x: number, y: number, s: number) {
+  const k = s * 0.18;
   return (
-    <View style={{ width: tam + 24, alignItems: 'center' }}>
-      {actual && (
-        <Animated.View
-          pointerEvents="none"
-          style={[
-            st.anillo,
-            { width: tam + 18, height: tam + 18, borderRadius: (tam + 18) / 2, borderColor: planeta.acento },
-            anillo,
-          ]}
-        />
-      )}
-      <TouchableOpacity
-        onPress={onPress}
-        disabled={bloqueado}
-        activeOpacity={0.8}
-        accessibilityRole="button"
-        accessibilityLabel={etiqueta}
-        accessibilityState={{ disabled: bloqueado }}
-        style={[
-          st.nodo,
-          {
-            width: tam,
-            height: tam,
-            borderRadius: tam / 2,
-            backgroundColor: fondo,
-            borderBottomColor: sombra,
-          },
-        ]}
-      >
-        <Ionicons
-          name={icono}
-          size={jefe ? 40 : 32}
-          color={bloqueado ? ESPACIO.textoApagado : ESPACIO.textoSobreNaranja}
-        />
-      </TouchableOpacity>
+    `M${x} ${y - s} C${x + k} ${y - k} ${x + k} ${y - k} ${x + s} ${y} ` +
+    `C${x + k} ${y + k} ${x + k} ${y + k} ${x} ${y + s} ` +
+    `C${x - k} ${y + k} ${x - k} ${y + k} ${x - s} ${y} ` +
+    `C${x - k} ${y - k} ${x - k} ${y - k} ${x} ${y - s} Z`
+  );
+}
+
+/**
+ * Reparte unas estrellitas cerca de cada nivel (deterministas por planeta) sin pisar los
+ * niveles, el camino de puntos ni las cajas de cofres, avisos y bandera.
+ */
+function sembrarEstrellas(
+  semilla: string,
+  ancho: number,
+  alto: number,
+  niveles: readonly Hueco[],
+  camino: readonly { x: number; y: number }[],
+  cajas: readonly Caja[]
+): Estrella[] {
+  let h = 2166136261;
+  for (const c of semilla) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
+  const azar = () => {
+    h = Math.imul(h ^ (h >>> 15), 2246822507) >>> 0;
+    h = Math.imul(h ^ (h >>> 13), 3266489909) >>> 0;
+    return (h >>> 0) / 4294967296;
+  };
+  const libre = (x: number, y: number, holgura: number, puestas: readonly Estrella[]) =>
+    x > 10 &&
+    x < ancho - 10 &&
+    y > 6 &&
+    y < alto - 6 &&
+    niveles.every((n) => Math.hypot(x - n.x, y - n.y) > n.r + holgura) &&
+    camino.every((p) => Math.hypot(x - p.x, y - p.y) > 16 + holgura) &&
+    cajas.every((c) => x < c.x1 - holgura || x > c.x2 + holgura || y < c.y1 - holgura || y > c.y2 + holgura) &&
+    puestas.every((e) => Math.hypot(x - e.x, y - e.y) > 34);
+  const out: Estrella[] = [];
+  for (const n of niveles) {
+    let puestas = 0;
+    for (let intento = 0; intento < 30 && puestas < POR_NIVEL; intento++) {
+      const a = azar() * Math.PI * 2;
+      const d = n.r + 14 + azar() * 52;
+      const x = n.x + Math.cos(a) * d;
+      const y = n.y + Math.sin(a) * d;
+      const punta = azar() < 0.4;
+      const tam = punta ? 5 + azar() * 3 : 1.6 + azar() * 1.2;
+      if (!libre(x, y, tam + 4, out)) continue;
+      out.push({ x, y, tam, punta });
+      puestas++;
+    }
+  }
+  return out;
+}
+
+/** Un grupo de estrellitas que titila junto (opacidad de la capa, así anda igual en web). */
+function CapaEstrellas({
+  estrellas,
+  ancho,
+  alto,
+  ms,
+}: {
+  estrellas: readonly Estrella[];
+  ancho: number;
+  alto: number;
+  ms: number;
+}) {
+  const reducido = useReducedMotionSafe();
+  const brillo = useSharedValue(1);
+  useEffect(() => {
+    if (reducido) return;
+    brillo.value = withRepeat(
+      withTiming(TITILEO_MIN, { duration: ms, easing: Easing.inOut(Easing.sin) }),
+      -1,
+      true
+    );
+    return () => cancelAnimation(brillo);
+  }, [reducido, ms, brillo]);
+  const estilo = useAnimatedStyle(() => ({ opacity: brillo.value }));
+  return (
+    <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, estilo]}>
+      <Svg width={ancho} height={alto}>
+        {estrellas.map((e, i) =>
+          e.punta ? (
+            <Path key={i} d={puntas(e.x, e.y, e.tam)} fill={ESTRELLA} />
+          ) : (
+            <Circle key={i} cx={e.x} cy={e.y} r={e.tam} fill={PUNTITO} />
+          )
+        )}
+      </Svg>
+    </Animated.View>
+  );
+}
+
+const ANCHO_BANDERA = 30;
+const ALTO_BANDERA = 40;
+const ASTA_X = 3.5;
+
+/** Banderita clavada en el borde del nivel actual; `espejo` la voltea hacia la izquierda. */
+function Bandera({ x, y, espejo }: { x: number; y: number; espejo: boolean }) {
+  return (
+    <View
+      pointerEvents="none"
+      style={{
+        position: 'absolute',
+        left: espejo ? x - (ANCHO_BANDERA - ASTA_X) : x - ASTA_X,
+        top: y - ALTO_BANDERA + 4,
+        transform: espejo ? [{ scaleX: -1 }] : undefined,
+      }}
+    >
+      <Svg width={ANCHO_BANDERA} height={ALTO_BANDERA}>
+        <Rect x={2} y={2} width={3} height={ALTO_BANDERA - 2} rx={1.5} fill="#ECEAF4" />
+        <Path d="M5 4 C12 1 18 7 27 4 L27 18 C18 21 12 15 5 18 Z" fill={NARANJA_CETI} />
+      </Svg>
     </View>
   );
 }
@@ -129,11 +252,83 @@ export default function MapaPlaneta({
 }) {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
-  const { width, height } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const hechos = nodos.filter((n) => n.estado === 'hecho').length;
-  // De abajo hacia arriba: el primer nivel queda al fondo, cerca del pulgar.
-  const enOrden = [...nodos].reverse();
-  const actualIdx = nodos.findIndex((n) => n.estado === 'actual');
+  const conquistado = nodos.some((n) => n.tipo === 'jefe' && n.estado === 'hecho');
+  const iconos = useMemo(() => barajar(ICONOS, planeta.animacion), [planeta.animacion]);
+  const anillos = useMemo(() => barajar(ANILLOS, `${planeta.animacion}:anillos`), [planeta.animacion]);
+  const formaDe = (n: NodoMapa): FormaNodo =>
+    n.tipo === 'jefe' ? 'jefe' : n.estado !== 'actual' && anillos[n.indice % anillos.length] ? 'anillo' : 'liso';
+  /** Media anchura del dibujo del nivel (anillo, halo u órbita se salen del círculo). */
+  const alcanceDe = (n: NodoMapa) => tamDe(n) * alcanceNodo(formaDe(n), n.estado === 'actual');
+  const { resumen } = useOrbita();
+  const actual = nodos.find((n) => n.estado === 'actual');
+  // La meta del día se cumple en el nivel que hace la lección que falta (si cae en este planeta).
+  const faltanMeta = resumen ? resumen.metaLecciones - resumen.leccionesHoy : 0;
+  const metaEn = actual && faltanMeta > 0 ? actual.indice + faltanMeta - 1 : -1;
+  const sumaRacha = !!resumen && !resumen.practicoHoy;
+
+  // De abajo hacia arriba: el primer nivel queda al fondo, cerca del pulgar. Se calcula el
+  // centro de cada nivel de arriba hacia abajo para ubicar nodos, puntos y bandera.
+  const enOrden = useMemo(() => [...nodos].reverse(), [nodos]);
+  const centros = useMemo(() => {
+    const ys: number[] = [];
+    enOrden.forEach((n, k) => {
+      const previo = enOrden[k - 1];
+      ys.push(
+        previo
+          ? ys[k - 1] + PASO + (previo.tipo === 'jefe' ? ETIQUETA_JEFE : 0)
+          : MARGEN_ARRIBA + tamDe(n) / 2
+      );
+    });
+    return ys;
+  }, [enOrden]);
+  const ultimo = enOrden[enOrden.length - 1];
+  const altoCamino = (centros[centros.length - 1] ?? 0) + (ultimo ? tamDe(ultimo) / 2 : 0);
+  const cx = (indice: number) => width / 2 + onda(indice);
+
+  // Dónde van los cofres y avisos de cada nivel (lo usan el dibujo y las estrellitas).
+  const lados = enOrden.map((n, k) => {
+    const x = cx(n.indice);
+    const tam = tamDe(n);
+    const izq = x > width / 2 + 1;
+    const alcance = alcanceDe(n);
+    const left = izq ? 16 : x + alcance + SEPARACION;
+    const ancho = izq ? x - alcance - SEPARACION - 16 : width - 16 - left;
+    const jefe = n.tipo === 'jefe';
+    const meta = n.indice === metaEn;
+    const racha = n.estado === 'actual' && sumaRacha;
+    const conCofre = tieneCofre(n.tipo, n.indice);
+    const cofre = jefe ? COFRE_JEFE : COFRE;
+    return { n, k, x, tam, izq, left, ancho, jefe, meta, racha, conCofre, cofre };
+  });
+
+  const estrellas = useMemo(() => {
+    const niveles = lados.map((l) => ({ x: l.x, y: centros[l.k], r: alcanceDe(l.n) }));
+    const camino: { x: number; y: number }[] = [];
+    enOrden.forEach((n, k) => {
+      const arriba = enOrden[k - 1];
+      if (!arriba) return;
+      for (let i = 0; i <= 8; i++) {
+        const y = centros[k] + ((centros[k - 1] - centros[k]) * i) / 8;
+        camino.push({ x: cx(n.indice + i / 8), y });
+      }
+    });
+    const cajas: Caja[] = [];
+    for (const l of lados) {
+      const y = centros[l.k];
+      if (l.conCofre || l.meta || l.racha) {
+        const avisos = (l.meta ? 30 : 0) + (l.racha ? 30 : 0);
+        const arriba = l.conCofre ? y - l.cofre / 2 : y - 30;
+        cajas.push({ x1: l.left, y1: arriba, x2: l.left + l.ancho, y2: arriba + (l.conCofre ? l.cofre : 0) + avisos + 6 });
+      }
+      if (l.jefe) cajas.push({ x1: l.x - 60, y1: y, x2: l.x + 60, y2: y + BAJO_JEFE + 20 });
+      if (l.n.estado === 'actual') cajas.push({ x1: l.x - 70, y1: y - l.tam / 2 - 44, x2: l.x + 70, y2: y - l.tam / 2 });
+    }
+    return sembrarEstrellas(planeta.animacion, width, altoCamino, niveles, camino, cajas);
+    // lados y formaDe se recalculan en cada render, pero dependen solo de estas entradas.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [planeta.animacion, width, altoCamino, enOrden, centros, metaEn, sumaRacha, anillos]);
 
   const etiquetaDe = (n: NodoMapa) =>
     n.tipo === 'jefe'
@@ -142,7 +337,6 @@ export default function MapaPlaneta({
 
   return (
     <View style={[st.raiz, { width }]}>
-      <FondoEstrellas ancho={width} alto={height} />
       <View
         style={[st.cabecera, { paddingTop: Math.max(insets.top, Platform.OS === 'ios' ? 12 : 8) + 8 }]}
       >
@@ -160,7 +354,7 @@ export default function MapaPlaneta({
             {nombre}
           </Text>
           <Text style={[st.sub, { color: planeta.acento }]}>
-            {t('orbita.mapa.progreso', { hechos, total: nodos.length })}
+            {conquistado ? t('orbita.fin.conquistado') : t('orbita.mapa.progreso', { hechos, total: nodos.length })}
           </Text>
         </View>
         <TouchableOpacity
@@ -178,72 +372,180 @@ export default function MapaPlaneta({
       </View>
 
       <ScrollView
-        contentContainerStyle={[st.camino, { paddingBottom: Math.max(insets.bottom, 24) + 120 }]}
+        contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 24) + 96 }}
         showsVerticalScrollIndicator={false}
       >
-        <View style={st.planeta}>
-          <CetiAnimation id={planeta.animacion} size={120} />
-        </View>
-        {enOrden.map((n) => {
-          // Zigzag suave: cada nivel se corre a un lado siguiendo una onda.
-          const x = Math.sin(n.indice * 1.1) * AMPLITUD;
-          const actual = n.estado === 'actual';
-          return (
-            <View key={`${n.tipo}-${n.indice}`} style={[st.fila, { height: PASO, transform: [{ translateX: x }] }]}>
-              {actual && (
-                <View style={[st.globo, { backgroundColor: ESPACIO.superficie, borderColor: planeta.acento }]}>
-                  <Text style={[st.globoTexto, { color: planeta.acento }]}>
-                    {n.indice === 0 && actualIdx === 0 ? t('galaxia.empezar') : t('galaxia.continuar')}
-                  </Text>
-                </View>
-              )}
-              <Nodo
-                nodo={n}
-                planeta={planeta}
-                etiqueta={etiquetaDe(n)}
+        <View style={{ width, height: altoCamino }}>
+          {TITILEO_MS.map((ms, g) => (
+            <CapaEstrellas
+              key={g}
+              estrellas={estrellas.filter((_, i) => i % TITILEO_MS.length === g)}
+              ancho={width}
+              alto={altoCamino}
+              ms={ms}
+            />
+          ))}
+          {/* Puntos entre cada nivel y el de arriba, en el hueco libre entre los dos. */}
+          {enOrden.map((n, k) => {
+            const arriba = enOrden[k - 1];
+            if (!arriba) return null;
+            const yAbajo = centros[k];
+            const yArriba = centros[k - 1];
+            const desde = yAbajo - (tamDe(n) / 2 + 14);
+            const hasta = yArriba + tamDe(arriba) / 2 + (arriba.tipo === 'jefe' ? ETIQUETA_JEFE : 0) + 14;
+            const color = n.estado === 'hecho' ? NARANJA_CETI : PUNTO_PENDIENTE;
+            return PUNTOS.map((tam, i) => {
+              const y = desde + ((hasta - desde) * i) / (PUNTOS.length - 1);
+              const x = cx(n.indice + (yAbajo - y) / (yAbajo - yArriba));
+              return (
+                <View
+                  key={`p-${n.tipo}-${n.indice}-${i}`}
+                  pointerEvents="none"
+                  style={[st.punto, { left: x - tam / 2, top: y - tam / 2, width: tam, height: tam, backgroundColor: color }]}
+                />
+              );
+            });
+          })}
+
+          {enOrden.map((n, k) => {
+            const tam = tamDe(n);
+            const x = cx(n.indice);
+            const y = centros[k];
+            const jefe = n.tipo === 'jefe';
+            const hecho = n.estado === 'hecho';
+            const bloqueado = n.estado === 'bloqueado';
+            const bola = hecho ? NARANJA_CETI : planeta.acento;
+            const icono = jefe ? (hecho ? 'trophy' : 'skull') : iconos[n.indice % iconos.length];
+            return (
+              <TouchableOpacity
+                key={`${n.tipo}-${n.indice}`}
                 onPress={() => {
                   void Haptics.selectionAsync();
                   onNodo(n);
                 }}
+                disabled={bloqueado}
+                activeOpacity={0.8}
+                accessibilityRole="button"
+                accessibilityLabel={etiquetaDe(n)}
+                accessibilityState={{ disabled: bloqueado, selected: n.estado === 'actual' }}
+                style={[
+                  st.nodo,
+                  { left: x - tam / 2, top: y - tam / 2, width: tam, height: tam, borderRadius: tam / 2 },
+                ]}
+              >
+                <NodoPlaneta
+                  tam={tam}
+                  forma={formaDe(n)}
+                  color={bola}
+                  bloqueado={bloqueado}
+                  actual={n.estado === 'actual'}
+                  calavera={jefe && !hecho}
+                />
+                {!(jefe && !hecho) && (
+                  <Ionicons name={icono} size={jefe ? 48 : 34} color={bloqueado ? BLOQUEADO_ICONO : '#FFFFFF'} />
+                )}
+              </TouchableOpacity>
+            );
+          })}
+
+          {enOrden.map((n, k) => {
+            if (n.tipo !== 'jefe') return null;
+            return (
+              <Text
+                key="etiqueta-jefe"
+                style={[
+                  st.jefeTexto,
+                  {
+                    left: cx(n.indice) - 60,
+                    top: centros[k] + BAJO_JEFE + 2,
+                    color: n.estado === 'bloqueado' ? BLOQUEADO_ICONO : NARANJA_CETI,
+                  },
+                ]}
+              >
+                {t('orbita.mapa.jefeCorto')}
+              </Text>
+            );
+          })}
+
+          {/* Cofre y avisos al lado libre del nivel (el contrario al que mira la onda). */}
+          {lados.map(({ n, k, tam, izq, left, ancho, meta, racha, conCofre, cofre }) => {
+            if (!conCofre && !meta && !racha) return null;
+            return (
+              <View
+                key={`lado-${n.tipo}-${n.indice}`}
+                pointerEvents="none"
+                accessibilityElementsHidden
+                importantForAccessibility="no-hide-descendants"
+                style={[
+                  st.lado,
+                  { left, width: ancho, alignItems: izq ? 'flex-end' : 'flex-start' },
+                  // El cofre queda a la altura del nivel y los avisos debajo; sin cofre, los
+                  // avisos se centran en el nivel.
+                  conCofre
+                    ? { top: centros[k] - cofre / 2 }
+                    : { top: centros[k] - tam / 2, height: tam, justifyContent: 'center' },
+                ]}
+              >
+                {conCofre && (
+                  <Cofre estado={n.estado === 'hecho' ? 'reclamado' : 'cerrado'} size={cofre} />
+                )}
+                {meta && (
+                  <View style={st.pildora}>
+                    <Svg width={14} height={14}>
+                      <Circle cx={7} cy={7} r={5} stroke={ESPACIO.oro} strokeWidth={3} fill="none" />
+                    </Svg>
+                    <Text style={st.pildoraTexto}>{t('orbita.mapa.metaDia')}</Text>
+                  </View>
+                )}
+                {racha && (
+                  <View style={st.pildora}>
+                    <Ionicons name="flame" size={13} color="#FF9F45" />
+                    <Text style={[st.pildoraTexto, { color: '#FF9F45' }]}>{t('orbita.mapa.racha')}</Text>
+                  </View>
+                )}
+              </View>
+            );
+          })}
+
+          {enOrden.map((n, k) => {
+            if (n.estado !== 'actual') return null;
+            // La bandera va en el hombro del nivel que no mira hacia el siguiente, para no tapar los puntos.
+            const espejo = onda(n.indice + 1) > onda(n.indice);
+            const r = (tamDe(n) / 2) * 0.72;
+            return (
+              <Bandera
+                key="bandera"
+                x={cx(n.indice) + (espejo ? -r : r)}
+                y={centros[k] - r}
+                espejo={espejo}
               />
-              {n.tipo === 'jefe' && (
-                <Text style={[st.jefeTexto, { color: n.estado === 'bloqueado' ? ESPACIO.textoApagado : ESPACIO.oro }]}>
-                  {t('orbita.mapa.jefeCorto')}
-                </Text>
-              )}
-            </View>
-          );
-        })}
+            );
+          })}
+        </View>
       </ScrollView>
     </View>
   );
 }
 
 const st = StyleSheet.create({
-  raiz: { flex: 1, backgroundColor: ESPACIO.fondo, overflow: 'hidden' },
+  raiz: { flex: 1, backgroundColor: FONDO, overflow: 'hidden' },
   cabecera: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 12, paddingBottom: 6 },
   icono: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   titulo: { fontSize: 22, fontWeight: '900', color: ESPACIO.texto },
   sub: { fontSize: 13, fontWeight: '800', letterSpacing: 0.3 },
   puente: { paddingHorizontal: 16, paddingBottom: 4 },
-  camino: { alignItems: 'center', paddingTop: 8 },
-  planeta: { alignItems: 'center', marginBottom: 4, opacity: 0.95 },
-  fila: { alignItems: 'center', justifyContent: 'center' },
-  nodo: {
+  nodo: { position: 'absolute', alignItems: 'center', justifyContent: 'center' },
+  punto: { position: 'absolute', borderRadius: 999 },
+  lado: { position: 'absolute', gap: 4 },
+  pildora: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    borderBottomWidth: 6,
+    gap: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 999,
+    backgroundColor: PILDORA,
   },
-  anillo: { position: 'absolute', borderWidth: 3, top: -9, left: 3 },
-  globo: {
-    position: 'absolute',
-    top: -22,
-    zIndex: 2,
-    borderWidth: 2,
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-  },
-  globoTexto: { fontSize: 13, fontWeight: '900', letterSpacing: 0.6 },
-  jefeTexto: { fontSize: 12, fontWeight: '900', letterSpacing: 1, marginTop: 4 },
+  pildoraTexto: { fontSize: 12, fontWeight: '800', color: ESPACIO.texto },
+  jefeTexto: { position: 'absolute', width: 120, textAlign: 'center', fontSize: 12, fontWeight: '900', letterSpacing: 1 },
 });

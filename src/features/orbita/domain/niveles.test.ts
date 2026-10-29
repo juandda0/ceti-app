@@ -1,4 +1,4 @@
-import { armarNiveles, maestriaJefe, nodosMapa, type PoolMundo } from './niveles';
+import { armarNiveles, ganaCofre, maestriaJefe, tieneCofre, nodosMapa, type PoolMundo } from './niveles';
 import type { MultipleChoiceItem, OrdenarItem, TrueFalseItem } from '@features/learning/data/quiz.types';
 
 const mc = (n: number): MultipleChoiceItem[] =>
@@ -72,5 +72,22 @@ describe('niveles', () => {
 
   it('la maestría del jefe es el puntaje real', () => {
     expect(maestriaJefe(10, 8)).toBe(0.8);
+  });
+
+  it('solo la primera lección y el jefe tienen cofre', () => {
+    expect(tieneCofre('leccion', 0)).toBe(true);
+    expect(tieneCofre('leccion', 1)).toBe(false);
+    expect(tieneCofre('leccion', 3)).toBe(false);
+    expect(tieneCofre('jefe', 4)).toBe(true);
+  });
+
+  it('el cofre se entrega solo la primera vez que se gana', () => {
+    expect(ganaCofre('leccion', 0, 0, false, false)).toBe(true);
+    expect(ganaCofre('leccion', 0, 2, false, false)).toBe(false);
+    expect(ganaCofre('leccion', 2, 2, false, false)).toBe(false);
+    expect(ganaCofre('jefe', 4, 4, false, true)).toBe(true);
+    expect(ganaCofre('jefe', 4, 4, false, false)).toBe(false);
+    expect(ganaCofre('jefe', 4, 4, true, true)).toBe(false);
+    expect(ganaCofre('leccion', 1, 1, true, true)).toBe(false);
   });
 });

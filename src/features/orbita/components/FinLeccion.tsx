@@ -30,6 +30,7 @@ export default function FinLeccion({
   aciertos,
   total,
   conquistado,
+  cetisEnCofre = 0,
   onContinuar,
 }: {
   recompensa: RecompensaPractica;
@@ -41,6 +42,8 @@ export default function FinLeccion({
   total: number;
   /** El jefe se ganó y el planeta quedó conquistado. */
   conquistado?: boolean;
+  /** Cetis que se entregan después en el cofre de la zona: no se cuentan aquí. */
+  cetisEnCofre?: number;
   onContinuar: () => void;
 }) {
   const { t } = useTranslation();
@@ -85,7 +88,7 @@ export default function FinLeccion({
   }
 
   const metaPct = Math.min(100, (r.leccionesHoy / r.metaLecciones) * 100);
-  const cetisTotal = r.cetis + r.cetisHito + r.cetisMeta;
+  const cetisTotal = r.cetis + r.cetisHito + r.cetisMeta - cetisEnCofre;
 
   return (
     <ScreenWrapper style={{ flex: 1, backgroundColor: colors.background.base }}>
@@ -115,7 +118,9 @@ export default function FinLeccion({
             icono={<Ionicons name="flash" size={16} color={colors.system.purple} />}
             texto={t('orbita.fin.xp', { xp: r.xp })}
           />
-          <Chip icono={<MonedaCeti size={17} />} texto={t('orbita.fin.cetis', { cetis: cetisTotal })} />
+          {cetisTotal > 0 && (
+            <Chip icono={<MonedaCeti size={17} />} texto={t('orbita.fin.cetis', { cetis: cetisTotal })} />
+          )}
           <Chip
             icono={<Ionicons name="flame" size={16} color={colors.brand.primary} />}
             texto={t('orbita.fin.racha', { count: r.racha })}
@@ -160,7 +165,8 @@ export default function FinLeccion({
             style={[st.btn, { backgroundColor: colors.brand.primary }]}
             accessibilityRole="button"
           >
-            <Text style={[st.btnTexto, { color: colors.text.onBrand }]}>{t('orbita.fin.continuar')}</Text>
+            <Text style={[st.btnTexto, { color: colors.text.onBrand }]}>{cetisEnCofre > 0 ? t('orbita.fin.abrirCofre') : t('orbita.fin.continuar')}
+            </Text>
           </TouchableOpacity>
         </Animated.View>
       </ScrollView>

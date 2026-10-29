@@ -104,6 +104,26 @@ export function nodosMapa(totalLecciones: number, hechas: number, conquistado: b
   return nodos;
 }
 
+/**
+ * Los cofres son premios ocasionales: solo hay uno en la primera lección del planeta y
+ * otro en el jefe. Se entregan la primera vez que se ganan; repetir no da otro. Las demás
+ * lecciones pagan sus Cetis igual, sin cofre.
+ */
+export function tieneCofre(tipo: TipoNivel, nivel: number): boolean {
+  return tipo === 'jefe' || nivel === 0;
+}
+
+export function ganaCofre(
+  tipo: TipoNivel,
+  nivel: number,
+  hechasAntes: number,
+  conquistadoAntes: boolean,
+  conquistadoAhora: boolean
+): boolean {
+  if (conquistadoAntes || !tieneCofre(tipo, nivel)) return false;
+  return tipo === 'jefe' ? conquistadoAhora : nivel === hechasAntes;
+}
+
 /** Maestría del jefe: preguntas acertadas a la primera sobre el total. */
 export function maestriaJefe(total: number, acertadasALaPrimera: number): number {
   return total > 0 ? Math.max(0, Math.min(1, acertadasALaPrimera / total)) : 0;

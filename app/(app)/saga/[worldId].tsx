@@ -31,11 +31,12 @@ import LeccionScreen, { type ResultadoLeccion } from '@features/learning/screens
 import MapaPlaneta from '@features/learning/components/galaxia/MapaPlaneta';
 import StreakCelebration from '@features/learning/components/StreakCelebration';
 import FinLeccion from '@features/orbita/components/FinLeccion';
+import AbrirCofre from '@features/orbita/components/cofre/AbrirCofre';
 import { useNivelesStore } from '@features/learning/store/useNivelesStore';
 import { useQuestionBankStore } from '@features/learning/store/useQuestionBankStore';
 import { buildWorldProgress } from '@features/learning/data/worldProgress';
 import { worldProgressRepository } from '@features/dashboard/data/worldProgressRepository';
-import { nodosMapa, type NodoMapa, type TipoNivel } from '@features/orbita/domain/niveles';
+import { ganaCofre, nodosMapa, type NodoMapa, type TipoNivel } from '@features/orbita/domain/niveles';
 import type { RecompensaPractica } from '@features/orbita/domain/orbita';
 import { useOrbitaStore } from '@features/orbita/store/useOrbitaStore';
 import { refrescarAvisos } from '@features/orbita/hooks/useOrbita';
@@ -53,6 +54,13 @@ const WORLD_META: Record<string, { name: string; color: string }> = {
   world_4: { name: 'Nebulosa del Crédito', color: '#A884FF' },
   world_5: { name: 'Agujero Negro de las Deudas', color: '#5B9EF5' },
 };
+
+/** Cofre recién ganado (primera lección o jefe): guarda los Cetis del nivel. */
+interface Cofre {
+  tipo: TipoNivel;
+  nivel: number;
+  cetis: number;
+}
 
 /** Duración mínima del despegue (ms). */
 const DESPEGUE_MS = 2000;
@@ -166,7 +174,10 @@ export default function WorldSagaScreen() {
     resultado: ResultadoLeccion;
     tipo: TipoNivel;
     conquistado: boolean;
+    cofre: Cofre | null;
   } | null>(null);
+  // El cofre (primera lección o jefe), que se entrega después del cierre la primera vez que se gana.
+  const [cofre, setCofre] = useState<Cofre | null>(null);
   const [celebracion, setCelebracion] = useState<RecompensaPractica | null>(null);
 
   const salirDelMundo = () => {
@@ -233,16 +244,26 @@ export default function WorldSagaScreen() {
     if (r.hito) eventos.hitoRacha({ hito: r.hito });
     refrescarAvisos(r.estado);
 
+    const primera = ganaCofre(tipo, nivel, hechas, conquistado, ganoPlaneta);
     setJugando(null);
-    setFin({ recompensa: r, resultado, tipo, conquistado: ganoPlaneta });
+    setFin({
+      recompensa: r,
+      resultado,
+      tipo,
+      conquistado: ganoPlaneta,
+      cofre: primera && r.cetis > 0 ? { tipo, nivel, cetis: r.cetis } : null,
+    });
     // Si la lección tocó la racha (primer día, reparación o hito), la racha va
     // primero y el resumen del nivel después.
     if (r.primeroHoy || r.reparada || r.hito) setCelebracion(r);
   };
 
-  const alContinuar = () => setFin(null);
+  const alContinuar = () => {
+    if (fin?.cofre) setCofre(fin.cofre);
+    setFin(null);
+  };
 
-  if (jugando || fin || (niveles && phase === 'quiz' && grado && despegueListo)) {
+  if (jugando || fin || cofre || (niveles && phase === 'quiz' && grado && despegueListo)) {
     yaEntro.current = true;
   }
   const entrando = !yaEntro.current;
@@ -281,6 +302,21 @@ export default function WorldSagaScreen() {
   } else if (fin && celebracion) {
     // ── La racha se celebra primero (modal encima); el cierre espera ─────────
     content = <View style={styles.esperaRacha} />;
+  } else if (cofre) {
+    // ── Entrega del cofre de la zona ─────────────────────────────────────────
+    content = (
+      <AbrirCofre
+        titulo={t('orbita.cofre.titulo')}
+        subtitulo={
+          cofre.tipo === 'jefe'
+            ? t('orbita.cofre.jefe', { mundo: meta.name })
+            : t('orbita.cofre.zona', { n: cofre.nivel + 1, mundo: meta.name })
+        }
+        color={planeta.acento}
+        cetis={cofre.cetis}
+        onReclamar={() => setCofre(null)}
+      />
+    );
   } else if (fin) {
     // ── Cierre con recompensas ───────────────────────────────────────────────
     content = (
@@ -292,6 +328,7 @@ export default function WorldSagaScreen() {
         aciertos={fin.resultado.acertadasALaPrimera}
         total={fin.resultado.total}
         conquistado={fin.conquistado}
+        cetisEnCofre={fin.cofre?.cetis}
         onContinuar={alContinuar}
       />
     );

@@ -926,7 +926,21 @@
       "jefe": "Jefe del planeta",
       "jefeCorto": "JEFE",
       "jefeDe": "Jefe de {{mundo}}",
-      "progreso": "{{hechos}} de {{total}} niveles"
+      "progreso": "{{hechos}} de {{total}} zonas conquistadas",
+      "metaDia": "Meta del día",
+      "racha": "+1 racha"
+    },
+    "cofre": {
+      "titulo": "¡Ganaste un cofre!",
+      "zona": "Cofre de la zona {{n}} · {{mundo}}",
+      "jefe": "Cofre del jefe · {{mundo}}",
+      "toca": "Toca el cofre para abrirlo",
+      "otraVez": "¡Otra vez!",
+      "unaMas": "¡Una más!",
+      "cetis": "+{{cetis}} Cetis",
+      "reclamar": "Reclamar",
+      "cerradoA11y": "Cofre cerrado. Tócalo para abrirlo.",
+      "abiertoA11y": "Cofre abierto: {{cetis}} Cetis."
     },
     "fin": {
       "perfecta": "¡Lección perfecta!",
@@ -952,7 +966,8 @@
       "meta": "Cumpliste tu meta: +{{cetis}} Cetis.",
       "escudoRegalo": "Te regalamos tu primer escudo de racha.",
       "rendimiento": "Ya pasaste el doble de tu meta: desde aquí todo rinde la mitad. Mañana vuelve completo.",
-      "continuar": "Continuar"
+      "continuar": "Continuar",
+      "abrirCofre": "Abrir mi cofre"
     },
     "apertura": {
       "escudoTitulo_one": "Tu escudo salvó tu racha",
