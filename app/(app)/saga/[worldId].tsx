@@ -244,7 +244,7 @@ export default function WorldSagaScreen() {
     if (r.hito) eventos.hitoRacha({ hito: r.hito });
     refrescarAvisos(r.estado);
 
-    const primera = ganaCofre(tipo, nivel, hechas, conquistado, ganoPlaneta);
+    const primera = ganaCofre(tipo, nivel, totalLecciones, hechas, conquistado, ganoPlaneta);
     setJugando(null);
     setFin({
       recompensa: r,

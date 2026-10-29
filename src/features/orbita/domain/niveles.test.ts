@@ -75,19 +75,22 @@ describe('niveles', () => {
   });
 
   it('solo la primera lección y el jefe tienen cofre', () => {
-    expect(tieneCofre('leccion', 0)).toBe(true);
-    expect(tieneCofre('leccion', 1)).toBe(false);
-    expect(tieneCofre('leccion', 3)).toBe(false);
-    expect(tieneCofre('jefe', 4)).toBe(true);
+    expect(tieneCofre('leccion', 1, 4)).toBe(true);
+    expect(tieneCofre('leccion', 0, 4)).toBe(false);
+    expect(tieneCofre('leccion', 3, 4)).toBe(false);
+    expect(tieneCofre('leccion', 2, 5)).toBe(true);
+    expect(tieneCofre('leccion', 2, 6)).toBe(true);
+    expect(tieneCofre('leccion', 0, 1)).toBe(true);
+    expect(tieneCofre('jefe', 4, 4)).toBe(true);
   });
 
   it('el cofre se entrega solo la primera vez que se gana', () => {
-    expect(ganaCofre('leccion', 0, 0, false, false)).toBe(true);
-    expect(ganaCofre('leccion', 0, 2, false, false)).toBe(false);
-    expect(ganaCofre('leccion', 2, 2, false, false)).toBe(false);
-    expect(ganaCofre('jefe', 4, 4, false, true)).toBe(true);
-    expect(ganaCofre('jefe', 4, 4, false, false)).toBe(false);
-    expect(ganaCofre('jefe', 4, 4, true, true)).toBe(false);
-    expect(ganaCofre('leccion', 1, 1, true, true)).toBe(false);
+    expect(ganaCofre('leccion', 1, 4, 1, false, false)).toBe(true);
+    expect(ganaCofre('leccion', 1, 4, 3, false, false)).toBe(false);
+    expect(ganaCofre('leccion', 0, 4, 0, false, false)).toBe(false);
+    expect(ganaCofre('jefe', 4, 4, 4, false, true)).toBe(true);
+    expect(ganaCofre('jefe', 4, 4, 4, false, false)).toBe(false);
+    expect(ganaCofre('jefe', 4, 4, 4, true, true)).toBe(false);
+    expect(ganaCofre('leccion', 1, 4, 1, true, true)).toBe(false);
   });
 });

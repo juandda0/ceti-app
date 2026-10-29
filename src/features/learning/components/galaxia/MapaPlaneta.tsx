@@ -1,16 +1,16 @@
 /**
  * Mapa de un planeta: ya estamos en él, y cada nivel conquista una zona. Los
- * niveles van en zigzag de abajo hacia arriba, lecciones primero y el jefe al
- * final: vencerlo deja el planeta conquistado. Estilo minimalista: planetitas
+ * niveles van en zigzag de arriba hacia abajo, lecciones primero y el jefe al
+ * final, abajo: vencerlo deja el planeta conquistado. Estilo minimalista: planetitas
  * planos (NodoPlaneta) unidos por puntos, con lo conquistado en el color del
  * planeta y una banderita en el nivel por el que vas. Los hechos se pueden repetir.
  *
  * Alrededor de los niveles hay algunos puntitos y estrellas de 4 puntas, grises, en los
  * huecos que dejan el camino, los cofres y los avisos; titilan despacio.
  *
- * La primera lección y el jefe llevan su cofre al lado libre: cerrado y en blanco y negro
- * hasta ganarlo, abierto (reclamado) y a color después. También se marcan el nivel que
- * cumple la meta del día y, si hoy no ha practicado, que el siguiente nivel suma racha.
+ * La lección de la mitad del camino y el jefe llevan su cofre al lado libre: cerrado y en
+ * blanco y negro hasta ganarlo, abierto (reclamado) y a color después. También se marcan el
+ * nivel que cumple la meta del día y, si hoy no ha practicado, que el siguiente suma racha.
  */
 import { useEffect, useMemo } from 'react';
 import Animated, {
@@ -317,9 +317,10 @@ export default function MapaPlaneta({
     n.tipo === 'jefe' ? 'jefe' : n.estado !== 'actual' && anillos[n.indice % anillos.length] ? 'anillo' : 'liso';
   /** Media anchura del dibujo del nivel (anillo, halo u órbita se salen del círculo). */
   const alcanceDe = (n: NodoMapa) => tamDe(n) * alcanceNodo(formaDe(n));
-  // La bandera va clavada arriba al centro y ondea hacia el lado contrario del siguiente nivel
-  // (así la tela no tapa los puntos del camino).
-  const banderaAlReves = (n: NodoMapa) => onda(n.indice + 1) > onda(n.indice);
+  // La bandera va clavada arriba al centro y ondea hacia el lado contrario del nivel anterior,
+  // de donde llegan los puntos (así la tela no los tapa). El primer nivel mira al siguiente.
+  const banderaAlReves = (n: NodoMapa) =>
+    n.indice > 0 ? onda(n.indice - 1) > onda(n.indice) : onda(n.indice + 1) > onda(n.indice);
   const { resumen } = useOrbita();
   const actual = nodos.find((n) => n.estado === 'actual');
   // La meta del día se cumple en el nivel que hace la lección que falta (si cae en este planeta).
@@ -327,9 +328,9 @@ export default function MapaPlaneta({
   const metaEn = actual && faltanMeta > 0 ? actual.indice + faltanMeta - 1 : -1;
   const sumaRacha = !!resumen && !resumen.practicoHoy;
 
-  // De abajo hacia arriba: el primer nivel queda al fondo, cerca del pulgar. Se calcula el
-  // centro de cada nivel de arriba hacia abajo para ubicar nodos, puntos y bandera.
-  const enOrden = useMemo(() => [...nodos].reverse(), [nodos]);
+  // De arriba hacia abajo: el primer nivel arriba y el jefe al final, abajo. Se calcula el
+  // centro de cada nivel para ubicar nodos, puntos y bandera.
+  const enOrden = nodos;
   const centros = useMemo(() => {
     const ys: number[] = [];
     enOrden.forEach((n, k) => {
@@ -343,7 +344,10 @@ export default function MapaPlaneta({
     return ys;
   }, [enOrden]);
   const ultimo = enOrden[enOrden.length - 1];
-  const altoCamino = (centros[centros.length - 1] ?? 0) + (ultimo ? tamDe(ultimo) / 2 : 0);
+  // Debajo del jefe va su etiqueta.
+  const altoCamino =
+    (centros[centros.length - 1] ?? 0) +
+    (ultimo ? (ultimo.tipo === 'jefe' ? BAJO_JEFE + ETIQUETA_JEFE : tamDe(ultimo) / 2) : 0);
   const cx = (indice: number) => width / 2 + onda(indice);
 
   // Dónde van los cofres y avisos de cada nivel (lo usan el dibujo y las estrellitas).
@@ -357,7 +361,7 @@ export default function MapaPlaneta({
     const jefe = n.tipo === 'jefe';
     const meta = n.indice === metaEn;
     const racha = n.estado === 'actual' && sumaRacha;
-    const conCofre = tieneCofre(n.tipo, n.indice);
+    const conCofre = tieneCofre(n.tipo, n.indice, totalLecciones);
     const cofre = jefe ? COFRE_JEFE : COFRE;
     return { n, k, x, tam, izq, left, ancho, jefe, meta, racha, conCofre, cofre };
   });
@@ -369,8 +373,8 @@ export default function MapaPlaneta({
       const arriba = enOrden[k - 1];
       if (!arriba) return;
       for (let i = 0; i <= 8; i++) {
-        const y = centros[k] + ((centros[k - 1] - centros[k]) * i) / 8;
-        camino.push({ x: cx(n.indice + i / 8), y });
+        const y = centros[k - 1] + ((centros[k] - centros[k - 1]) * i) / 8;
+        camino.push({ x: cx(arriba.indice + ((n.indice - arriba.indice) * i) / 8), y });
       }
     });
     const cajas: Caja[] = [];
@@ -444,18 +448,33 @@ export default function MapaPlaneta({
               ms={ms}
             />
           ))}
-          {/* Puntos entre cada nivel y el de arriba, en el hueco libre entre los dos. */}
+          {/* Puntos de cada nivel al siguiente (abajo), en el hueco libre entre los dos; del color
+              del planeta si el de arriba ya está hecho. Sobre el nivel actual no pisan la bandera. */}
           {enOrden.map((n, k) => {
             const arriba = enOrden[k - 1];
             if (!arriba) return null;
             const yAbajo = centros[k];
             const yArriba = centros[k - 1];
-            const desde = yAbajo - (tamDe(n) / 2 + 14);
-            const hasta = yArriba + tamDe(arriba) / 2 + (arriba.tipo === 'jefe' ? ETIQUETA_JEFE : 0) + 14;
-            const color = n.estado === 'hecho' ? colorHecho : PUNTO_PENDIENTE;
+            const desde = yArriba + tamDe(arriba) / 2 + 14;
+            const hasta = yAbajo - (tamDe(n) / 2 + 14);
+            const color = arriba.estado === 'hecho' ? colorHecho : PUNTO_PENDIENTE;
+            const bandera =
+              n.estado === 'actual'
+                ? {
+                    x: cx(n.indice),
+                    lado: banderaAlReves(n) ? -1 : 1,
+                    arriba: yAbajo + (CRATER_BANDERA.y * tamDe(n)) / 100 - ALTO_BANDERA,
+                  }
+                : null;
             return PUNTOS.map((tam, i) => {
               const y = desde + ((hasta - desde) * i) / (PUNTOS.length - 1);
-              const x = cx(n.indice + (yAbajo - y) / (yAbajo - yArriba));
+              const x = cx(arriba.indice + (y - yArriba) / (yAbajo - yArriba));
+              if (bandera) {
+                const dx = (x - bandera.x) * bandera.lado;
+                const enAsta = Math.abs(x - bandera.x) < ASTA + tam;
+                const enTela = dx > 0 && dx < ANCHO_BANDERA + tam && y < bandera.arriba + 22 + tam;
+                if (y > bandera.arriba - tam && (enAsta || enTela)) return null;
+              }
               return (
                 <View
                   key={`p-${n.tipo}-${n.indice}-${i}`}
