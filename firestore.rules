@@ -318,6 +318,14 @@ service cloud.firestore {
             allow create, delete: if false;
           }
 
+          // Fase 5 — enlace y correo del acudiente (callable gestionarAcudiente).
+          // Lo ve solo el profe de la clase: ni el estudiante ni nadie más. El
+          // token se resuelve en el servidor (`enlacesAcudiente`, sin acceso).
+          match /acudiente/{docId} {
+            allow read: if isProfesorDe(cid, cursoId);
+            allow write: if false;
+          }
+
         }
 
         // Fase 5 — lo que el profe le mandó a la clase (callable enviarComunicado).

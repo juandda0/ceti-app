@@ -3,7 +3,8 @@
  * clase y ve lo que mandó: anuncios (con cuántos los vieron), mensajes a grupos
  * y comentarios. Los estudiantes no pueden responder (son menores). Los anuncios
  * son de todos los planes; los mensajes y comentarios, de Piloto. En Alertas
- * elige qué avisos de la clase le llegan.
+ * elige qué avisos de la clase le llegan y en Acudientes enciende el resumen
+ * semanal para las familias (Comandante).
  */
 import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -20,6 +21,7 @@ import Segmented from '@features/savings/components/Segmented';
 import { useNombreCurso } from '@features/dashboard/hooks/useNombreCurso';
 import RedactarMensaje from '@features/dashboard/components/RedactarMensaje';
 import AjustesAlertas from '@features/dashboard/components/AjustesAlertas';
+import AjustesAcudientes from '@features/dashboard/components/AjustesAcudientes';
 import { comunicacionRepository } from '@features/dashboard/data/comunicacionRepository';
 import { resumenDestinatarios, type Comunicado } from '@features/dashboard/data/comunicacion';
 import {
@@ -35,8 +37,8 @@ import {
   type Tono,
 } from '@features/dashboard/components/profe/kit';
 
-type Vista = 'anuncios' | 'alertas';
-const VISTAS: readonly Vista[] = ['anuncios', 'alertas'];
+type Vista = 'anuncios' | 'alertas' | 'acudientes';
+const VISTAS: readonly Vista[] = ['anuncios', 'alertas', 'acudientes'];
 
 const TONO_TIPO: Record<Comunicado['tipo'], Tono> = {
   anuncio: 'azul',
@@ -115,6 +117,7 @@ export default function ComunicacionClaseScreen() {
   const vistas = [
     { key: 'anuncios' as const, label: t('comunicacion.vistaAnuncios') },
     { key: 'alertas' as const, label: t('comunicacion.vistaAlertas') },
+    { key: 'acudientes' as const, label: t('comunicacion.vistaAcudientes') },
   ];
 
   const anuncios =
@@ -218,6 +221,9 @@ export default function ComunicacionClaseScreen() {
           {vista === 'anuncios' ? anuncios : null}
           {vista === 'alertas' && colegioId && cursoId ? (
             <AjustesAlertas colegioId={colegioId} cursoId={cursoId} />
+          ) : null}
+          {vista === 'acudientes' && colegioId && cursoId ? (
+            <AjustesAcudientes colegioId={colegioId} cursoId={cursoId} />
           ) : null}
         </FadeIn>
       </ContextScrollView>

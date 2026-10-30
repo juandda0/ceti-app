@@ -23,6 +23,7 @@
     "salon:sembrar": "node ./scripts/salon/correr.cjs sembrar",
     "salon:simular": "node ./scripts/salon/correr.cjs simular",
     "salon:alertas": "node ./scripts/salon/correr.cjs alertas",
+    "salon:acudientes": "node ./scripts/salon/correr.cjs acudientes",
     "salon:web": "node ./scripts/salon/web.mjs"
   },
   "dependencies": {

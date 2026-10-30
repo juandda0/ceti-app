@@ -1,14 +1,16 @@
 /**
- * Adelanto de una herramienta de Piloto para quien está en Cadete: qué ganaría,
- * en una línea, y "Ver Piloto" con el motivo para que la pantalla de planes
- * abra en la comparación correcta. Nunca reemplaza el avance básico de la clase.
+ * Adelanto de una herramienta de pago para quien no la tiene: qué ganaría, en
+ * una línea, y "Ver <plan>" (el plan más barato que la incluye: Piloto casi
+ * siempre, Comandante para el resumen de acudientes) con el motivo para que la
+ * pantalla de planes abra en la comparación correcta. Nunca reemplaza el avance
+ * básico de la clase.
  */
 import { StyleSheet, Text, View } from 'react-native';
 import { useRouter, type Href } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
-import type { Funcion } from '@/functions/src/educadores/dominio';
+import { planMinimoPara, type Funcion } from '@/functions/src/educadores/dominio';
 import { BotonChunky, Pill, Tarjeta } from '@features/dashboard/components/profe/kit';
 
 type IconName = keyof typeof Ionicons.glyphMap;
@@ -32,6 +34,7 @@ export default function TarjetaBloqueada({
   const { t } = useTranslation();
   const router = useRouter();
   const colors = useThemeColors();
+  const plan = t(`educadores.planes.nombre.${planMinimoPara(motivo)}`);
   return (
     <Tarjeta style={styles.tarjeta}>
       <View style={styles.cabeza}>
@@ -41,11 +44,11 @@ export default function TarjetaBloqueada({
         <Text style={[styles.titulo, { color: colors.text.primary }]} numberOfLines={2}>
           {titulo}
         </Text>
-        <Pill texto={t('educadores.teaser.piloto')} icono="lock-closed" tono="morado" />
+        <Pill texto={plan} icono="lock-closed" tono="morado" />
       </View>
       <Text style={[styles.valor, { color: colors.text.secondary }]}>{valor}</Text>
       <BotonChunky
-        texto={t('educadores.teaser.verPiloto')}
+        texto={t('educadores.teaser.verPlan', { plan })}
         icono="rocket-outline"
         variante="secundario"
         color={colors.system.purple}

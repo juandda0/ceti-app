@@ -23,6 +23,7 @@ const mockFirestore = {
     collection: jest.fn((name: string) => ({ path: `${path}/${name}` })),
     set: jest.fn().mockResolvedValue(undefined),
     delete: jest.fn().mockResolvedValue(undefined),
+    get: jest.fn().mockResolvedValue({ get: () => (path.endsWith('/acudiente/datos') ? 'tok' : undefined) }),
   })),
   collection: jest.fn(() => mockUsageQuery),
   recursiveDelete: mockRecursiveDelete,
@@ -71,4 +72,22 @@ test('la supresión elimina solo todos los contadores IA del UID exacto en un ba
   expect(mockBatchDelete).toHaveBeenCalledTimes(1);
   expect(mockBatchDelete).toHaveBeenCalledWith(mockUsageDocs[0].ref);
   expect(mockBatchCommit).toHaveBeenCalledTimes(1);
+});
+
+test('la supresión también borra lo de la Fase 5: buzón, acudiente, su enlace y los avisos', async () => {
+  mockRecursiveDelete.mockClear();
+  mockFirestore.doc.mockClear();
+  await (suppressStudentData as unknown as (request: unknown) => Promise<unknown>)({
+    auth: { uid: 'admin', token: { role: 'admin' } },
+    data: { colegioId: 'school', cursoId: 'course', uid: 'student_1' },
+  });
+  const borrados = mockRecursiveDelete.mock.calls.map(([ref]) => (ref as { path: string }).path);
+  const est = 'colegios/school/cursos/course/estudiantes/student_1';
+  expect(borrados).toEqual(
+    expect.arrayContaining([`${est}/buzon`, `${est}/acudiente`, 'notificaciones/student_1'])
+  );
+  const enlace = mockFirestore.doc.mock.results.find(
+    (r) => (r.value as { path: string }).path === 'enlacesAcudiente/tok'
+  );
+  expect((enlace?.value as { delete: jest.Mock }).delete).toHaveBeenCalled();
 });

@@ -1,7 +1,7 @@
 /**
  * Lanzador de los scripts del Salón demo (TypeScript sin compilar): registra
  * ts-node (solo transpilar) y los alias @features/@shared de
- * tsconfig.scripts.json. Uso: node scripts/salon/correr.cjs <sembrar|simular|alertas> [args]
+ * tsconfig.scripts.json. Uso: node scripts/salon/correr.cjs <sembrar|simular|alertas|acudientes> [args]
  */
 const path = require('path');
 
@@ -21,7 +21,7 @@ require('tsconfig-paths').register({
 });
 
 const [, , comando, ...resto] = process.argv;
-const permitidos = ['sembrar', 'simular', 'alertas'];
+const permitidos = ['sembrar', 'simular', 'alertas', 'acudientes'];
 if (!permitidos.includes(comando)) {
   console.error(`Uso: node scripts/salon/correr.cjs <${permitidos.join('|')}> [args]`);
   process.exit(1);

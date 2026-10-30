@@ -545,6 +545,15 @@ export const suppressStudentData = onCall(async (request) => {
   await db.recursiveDelete(estRef.collection('intentos'));
   await db.recursiveDelete(estRef.collection('visitas'));
   await db.recursiveDelete(estRef.collection('resumen'));
+  // Fase 5: mensajes del profe, enlace y correo del acudiente, y sus avisos.
+  await db.recursiveDelete(estRef.collection('buzon'));
+  const acudiente = await db.doc(`${estRef.path}/acudiente/datos`).get();
+  const tokenAcudiente = acudiente.get('token');
+  if (typeof tokenAcudiente === 'string' && tokenAcudiente) {
+    await db.doc(`enlacesAcudiente/${tokenAcudiente}`).delete();
+  }
+  await db.recursiveDelete(estRef.collection('acudiente'));
+  await db.recursiveDelete(db.doc(`notificaciones/${uid}`));
   // Account-scoped data under users/{uid}: the pocket-money diary (RQ-ES10 CA7),
   // the budgets config (RQ-ES11 CA10), and the simulated savings goals/deposits
   // that the prior suppression left behind (goals/deposits also derive the diary
@@ -1327,6 +1336,12 @@ export { onIntentoClase } from './educadores/registroClase';
 // Ceti Educadores · Fase 5: comunicación del profe con su clase.
 export { enviarComunicado } from './educadores/comunicacion';
 export { alertasProfe } from './educadores/alertasProfe';
+export {
+  gestionarAcudiente,
+  verResumenAcudiente,
+  bajaAcudiente,
+  resumenAcudientesSemanal,
+} from './educadores/acudientes';
 
 // Ceti Educadores · cobros (Wompi, ciclo diario de suscripciones).
 export {

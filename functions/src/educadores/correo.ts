@@ -17,6 +17,7 @@ import {
   type Ciclo,
   type PlanId,
   type PlantillaAviso,
+  type ResumenAcudiente,
 } from './dominio';
 
 export const COL_MAIL = 'mail';
@@ -29,7 +30,8 @@ export type PlantillaCorreo =
   | 'reembolso_ops'
   | 'bitacora'
   | 'invitacion_clase'
-  | 'nave_cupo_ops';
+  | 'nave_cupo_ops'
+  | 'resumen_acudiente';
 
 export interface DatosCorreo {
   nombre?: string | null;
@@ -58,6 +60,12 @@ export interface DatosCorreo {
   profe?: string | null;
   enlace?: string | null;
   correoInvitado?: string | null;
+  /**
+   * Solo para 'resumen_acudiente': el resumen (sin notas), el enlace para verlo
+   * completo y el de "dejar de recibir" (`enlace` + `enlaceBaja`).
+   */
+  resumen?: ResumenAcudiente | null;
+  enlaceBaja?: string | null;
   /** Solo para 'nave_cupo_ops' (con `fecha` = fin de la licencia). */
   colegioId?: string | null;
   colegio?: string | null;
@@ -241,6 +249,43 @@ function borradorInvitacion(d: DatosCorreo): Borrador {
   };
 }
 
+/**
+ * Resumen semanal para el acudiente (Fase 5). Sin notas ni aciertos: avance y
+ * constancia. Lleva solo el primer nombre del estudiante. Siempre dice por qué
+ * le llega y cómo dejar de recibirlo (Ley 1581).
+ */
+function borradorResumenAcudiente(d: DatosCorreo): Borrador {
+  const r = d.resumen;
+  const nombre = r?.nombre ?? 'tu estudiante';
+  const conProfe = r?.profe ? ` con ${r.profe}` : '';
+  const baja = d.enlaceBaja?.trim();
+  const pie = `Te llega porque el profe de ${nombre} activó este resumen y nos confirmó que lo autorizaste.${
+    baja ? ` Para no recibirlo más: ${baja}` : ''
+  }`;
+  if (!r) {
+    return { subject: `Así va ${nombre} en Ceti`, parrafos: ['¡Hola!', 'Esta semana no hay datos para mostrar.'], pie };
+  }
+  const s = r.semana;
+  const parrafos = [
+    '¡Hola!',
+    s.diasActivos > 0
+      ? `Esta semana ${nombre} entró ${s.diasActivos} ${s.diasActivos === 1 ? 'día' : 'días'} a ${r.clase}${conProfe}${
+          s.minutos > 0
+            ? ` y aprendió ${s.minutos} ${s.minutos === 1 ? 'minuto' : 'minutos'} de finanzas personales`
+            : ''
+        }.`
+      : `Esta semana ${nombre} no entró a ${r.clase}${conProfe}. Un "¿cómo vas en Ceti?" en la casa suele ayudar.`,
+    [
+      `Lecciones terminadas: ${s.lecciones}`,
+      `Mundos conquistados: ${r.conquistados} de ${r.mundos.length}`,
+      `Días activos en las últimas ${r.constancia.length} semanas: ${r.constancia.map((c) => c.dias).join(' · ')}`,
+    ].join('\n'),
+    'Aquí no van notas: solo cuánto y con qué constancia practica. Las notas las da el profe.',
+  ];
+  if (d.enlace) parrafos.push(`Míralo completo: ${d.enlace}`);
+  return { subject: `Así va ${nombre} en Ceti esta semana`, parrafos, pie };
+}
+
 function borrador(plantilla: PlantillaCorreo, d: DatosCorreo): Borrador {
   switch (plantilla) {
     case 'fin_prueba_pronto':
@@ -338,6 +383,8 @@ function borrador(plantilla: PlantillaCorreo, d: DatosCorreo): Borrador {
       return borradorBitacora(d);
     case 'invitacion_clase':
       return borradorInvitacion(d);
+    case 'resumen_acudiente':
+      return borradorResumenAcudiente(d);
     case 'nave_cupo_ops':
       return {
         subject: `Nave: ${d.colegio || d.colegioId || 'un colegio'} llegó a su cupo (${d.ocupados ?? '—'} de ${d.licenciados ?? '—'})`,

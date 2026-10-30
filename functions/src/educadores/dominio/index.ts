@@ -13,3 +13,4 @@ export * from './listaCsv';
 export * from './adopcion';
 export * from './comunicacion';
 export * from './alertas';
+export * from './acudientes';

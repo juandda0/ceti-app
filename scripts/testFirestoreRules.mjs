@@ -125,6 +125,8 @@ await env.withSecurityRulesDisabled(async (ctx) => {
     leidoAt: null,
   });
   await setDoc(doc(db, 'notificaciones/eAct/items/n1'), { tipo: 'anuncio', titulo: 't', leidaAt: null });
+  await setDoc(doc(db, `${K1}/estudiantes/eAct/acudiente/datos`), { token: 'tok', correo: 'p@c.co' });
+  await setDoc(doc(db, 'enlacesAcudiente/tok'), { colegioId: 'A', cursoId: 'k1', uid: 'eAct' });
 });
 
 // ── Quién llama ────────────────────────────────────────────────────────────
@@ -545,6 +547,16 @@ await no(
   'nadie lee el estado de las alertas',
   getDoc(doc(pA, 'notificaciones/pA/estadoAlertas/k1'))
 );
+
+await si('el profe ve el enlace y el correo del acudiente', getDoc(doc(pA, `${K1}/estudiantes/eAct/acudiente/datos`)));
+await no('el estudiante no', getDoc(doc(eAct, `${K1}/estudiantes/eAct/acudiente/datos`)));
+await no('otro profe no', getDoc(doc(pA2, `${K1}/estudiantes/eAct/acudiente/datos`)));
+await no(
+  'nadie lo escribe desde el cliente',
+  setDoc(doc(pA, `${K1}/estudiantes/eAct/acudiente/datos`), { correo: 'x@y.co' })
+);
+await no('nadie lee los enlaces', getDoc(doc(pA, 'enlacesAcudiente/tok')));
+await no('ni anónimo', getDoc(doc(anon, 'enlacesAcudiente/tok')));
 
 console.log('\nAgregados y otros');
 await si('profe del colegio lee el agregado', getDoc(doc(pA, `${K1}/agregados/resumen`)));

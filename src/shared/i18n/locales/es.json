@@ -1389,15 +1389,14 @@
       "verMenos": "Ver menos"
     },
     "teaser": {
-      "piloto": "Piloto",
-      "verPiloto": "Ver Piloto",
       "alertasTitulo": "Alertas tempranas",
       "alertasValor_one": "Ceti ya detectó a {{count}} estudiante que se está quedando. Con Piloto ves quién es y por qué, antes de que sea tarde.",
       "alertasValor_other": "Ceti ya detectó a {{count}} estudiantes que se están quedando. Con Piloto ves quiénes son y por qué, antes de que sea tarde.",
       "debilTitulo": "Competencia más débil",
       "debilValor": "Ceti ya sabe en qué competencia flaquea esta clase. Con Piloto te lo dice y te muestra quiénes necesitan refuerzo.",
       "csvTitulo": "Exportar a Excel",
-      "csvValor": "Descarga el avance de la clase en CSV para la plataforma del colegio o tus planillas."
+      "csvValor": "Descarga el avance de la clase en CSV para la plataforma del colegio o tus planillas.",
+      "verPlan": "Ver {{plan}}"
     },
     "planes": {
       "titulo": "Planes",
@@ -1976,7 +1975,8 @@
       "restaurar": "Volver a lo recomendado",
       "bloqueadoTitulo": "Alertas de tu clase",
       "bloqueadoValor": "Con Piloto te avisamos cada mañana quién no entra, quién no hizo la tarea y a quién le bajó el promedio."
-    }
+    },
+    "vistaAcudientes": "Acudientes"
   },
   "avisos": {
     "sobre": "Para ti",
@@ -1998,5 +1998,66 @@
     "escribirle": "Escribirle",
     "escribirles_one": "Escribirle",
     "escribirles_other": "Escribirles a los {{count}}"
+  },
+  "acudientes": {
+    "bloqueadoTitulo": "Resumen semanal para acudientes",
+    "bloqueadoValor": "Con Comandante las familias ven cada semana cuánto practica su hijo: el gancho de un buen tutor.",
+    "fichaBloqueado": "Con Comandante el acudiente de {{nombre}} recibe cada semana su avance por enlace o correo.",
+    "queVe": "El acudiente ve, sin cuenta: días que entró, minutos, lecciones terminadas y cómo va en cada mundo. Nunca notas ni aciertos.",
+    "ley": "Solo sale para estudiantes con la autorización de datos ya confirmada (Ley 1581). El correo del acudiente se guarda solo si confirmas que te lo autorizó, y cada correo trae cómo dejar de recibirlo.",
+    "activar": "Resumen semanal para acudientes",
+    "activarAyuda": "Un enlace privado por estudiante y, si quieres, un correo cada domingo.",
+    "listaAyuda": "Toca un estudiante para compartir su enlace o guardar el correo de su acudiente.",
+    "pendientes_one": "{{count}} estudiante no aparece porque aún falta su autorización.",
+    "pendientes_other": "{{count}} estudiantes no aparecen porque aún falta su autorización.",
+    "conCorreo": "Correo",
+    "conEnlace": "Enlace",
+    "sinEnlace": "Sin enlace",
+    "fichaTitulo": "Acudiente",
+    "fichaAyuda": "Comparte el resumen semanal de {{nombre}} con su acudiente. No lleva notas: solo avance y constancia.",
+    "claseApagada": "El resumen para acudientes está apagado en esta clase.",
+    "irActivar": "Activarlo en Acudientes",
+    "faltaAutorizacion": "Cuando confirmes la autorización de datos de este estudiante podrás compartir su resumen.",
+    "crearCompartir": "Crear y compartir el enlace",
+    "compartir": "Compartir el enlace",
+    "mensajeCompartir": "Así va {{nombre}} en Ceti esta semana: {{enlace}}",
+    "copiado": "Enlace copiado",
+    "verComoAcudiente": "Ver como el acudiente",
+    "cortar": "Cortar enlace",
+    "cortarTitulo": "¿Cortar el enlace?",
+    "cortarTexto": "El enlace de {{nombre}} deja de funcionar y se borra el correo del acudiente. Puedes crear uno nuevo cuando quieras.",
+    "llegaA": "Le llega cada domingo a {{correo}}.",
+    "quitarCorreo": "Dejar de enviarlo por correo",
+    "correoEtiqueta": "Correo del acudiente (opcional)",
+    "autorizo": "El acudiente me autorizó a enviarle este resumen semanal a este correo.",
+    "guardarCorreo": "Guardar correo",
+    "correoGuardado": "Listo: le llegará cada domingo",
+    "publico": {
+      "marca": "Ceti · Resumen semanal",
+      "titulo": "Así va {{nombre}}",
+      "claseConProfe": "{{clase}} con {{profe}}",
+      "semana": "del {{desde}} al {{hasta}}",
+      "dias": "Días que entró",
+      "minutos": "Minutos aprendiendo",
+      "lecciones": "Lecciones terminadas",
+      "mundos": "Mundos conquistados",
+      "constancia": "Constancia",
+      "constanciaA11y": "Días que entró en cada una de las últimas cuatro semanas",
+      "constanciaAyuda": "Días que entró a su clase en cada semana (de 7).",
+      "estaSemana": "Esta",
+      "mundosTitulo": "Sus mundos",
+      "estado": {
+        "conquistado": "Conquistado",
+        "en_curso": "En curso",
+        "sin_empezar": "Sin empezar"
+      },
+      "sinNotas": "Aquí no van notas: solo cuánto y con qué constancia practica. Las notas las da el profe.",
+      "baja": "Dejar de recibir el correo",
+      "bajaTexto": "¿No quieres recibir este resumen por correo? El profe puede volver a activarlo si se lo pides.",
+      "bajaHecha": "Listo: ya no te llegará por correo.",
+      "privacidad": "Este enlace es privado: solo lo tiene quien el profe lo compartió. Muestra el primer nombre del estudiante y nada más de su cuenta.",
+      "errorTitulo": "Este enlace ya no está activo",
+      "error": "Pídele al profe un enlace nuevo."
+    }
   }
 }
