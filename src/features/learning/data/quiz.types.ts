@@ -6,7 +6,7 @@
  */
 
 /** The closed set of DEFAULT (Ceti) worlds — use where exhaustiveness matters. */
-export type DefaultWorldId = 'world_1' | 'world_2' | 'world_3' | 'world_4' | 'world_5';
+export type DefaultWorldId = 'world_1' | 'world_2' | 'world_3' | 'world_4' | 'world_5' | 'world_6';
 
 /**
  * D-ORQ (RQ-PR12): professors create custom worlds (`cw_*` ids), so a WorldId
@@ -18,10 +18,24 @@ export type WorldId = string;
 export type Grado = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11';
 
 /**
- * Grados con banco default sembrado (E12: grado×mundo×tipo). Un curso de grado
- * menor reutiliza el banco de 9° hasta que el profesor autore contenido propio.
+ * Grados con banco default (content/bancos, `bancos/{grado}_{mundo}_{tipo}`).
+ * Desde la Fase 7 hay contenido por grupo de grados de las orientaciones del
+ * MEN: 1° (para 1°–3°), 4° (4°–5°), 6° (6°–7°), 8°, 9°, 10° y 11°.
  */
-export const SEEDED_GRADOS: readonly Grado[] = ['9', '10', '11'];
+export const SEEDED_GRADOS: readonly Grado[] = ['1', '4', '6', '8', '9', '10', '11'];
+
+/**
+ * El grado cuyo banco juega una clase: el de su grupo de grados (2° y 3° juegan
+ * el de 1°, 5° el de 4°, 7° el de 6°). Un grado desconocido cae a 9°.
+ */
+export function gradoDeBanco(grado: string | null | undefined): Grado {
+  const g = Number(grado);
+  if (!Number.isInteger(g) || g < 1 || g > 11) return '9';
+  if (g <= 3) return '1';
+  if (g <= 5) return '4';
+  if (g <= 7) return '6';
+  return String(g) as Grado;
+}
 
 export type QuizTipo = 'multiple_choice' | 'true_false' | 'ordenar';
 /** Tipos que solo escribe el profe (Fase 4); van en las lecciones, nunca en el jefe. */

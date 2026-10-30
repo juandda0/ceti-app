@@ -18,7 +18,7 @@ import {
   eligeCaminoDocRef,
 } from '@shared/lib/firebase/paths';
 import type { EligeCaminoBank } from './content.types';
-import type { Grado, WorldId } from './quiz.types';
+import { gradoDeBanco, type Grado, type WorldId } from './quiz.types';
 
 export const eligeCaminoRepository = {
   /**
@@ -44,7 +44,7 @@ export const eligeCaminoRepository = {
         );
         if (customSnap.exists()) return customSnap.data() as EligeCaminoBank;
       }
-      const snap = await getDoc(eligeCaminoDocRef(clients.firestore, grado, worldId));
+      const snap = await getDoc(eligeCaminoDocRef(clients.firestore, gradoDeBanco(grado), worldId));
       if (!snap.exists()) return null;
       return snap.data() as EligeCaminoBank;
     } catch {

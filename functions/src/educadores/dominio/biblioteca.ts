@@ -5,7 +5,7 @@
  * las otras. No lleva nada de estudiantes. Puro.
  */
 
-export const MUNDOS_POR_DEFECTO = ['world_1', 'world_2', 'world_3', 'world_4', 'world_5'] as const;
+export const MUNDOS_POR_DEFECTO = ['world_1', 'world_2', 'world_3', 'world_4', 'world_5', 'world_6'] as const;
 export const MAX_MUNDOS_CLASE = 30;
 /** Firestore admite 1 MiB por documento; se deja margen. */
 export const MAX_BYTES_PUBLICACION = 900_000;

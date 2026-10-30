@@ -26,6 +26,18 @@ function fecha(ms: number): string {
   return `${d}/${m}/${a}`;
 }
 
+/**
+ * Qué evidencia trae el plan. A la universidad se le vende con el CONPES 4005 y
+ * el bienestar universitario, no con las orientaciones del MEN, que son para la
+ * básica y la media (decisión del 30-10-2026).
+ */
+export function textoIncluye(plan: Cotizacion['plan']): string {
+  if (plan === 'universidad') {
+    return 'Incluye el panel de la entidad y el informe de cobertura de educación económica y financiera por programa o facultad, como evidencia del programa de bienestar universitario y del aporte de la institución a la Política Nacional de Inclusión y Educación Económica y Financiera (CONPES 4005 de 2020).';
+  }
+  return 'Incluye el panel de la entidad y el informe de cobertura de educación económica y financiera por grado o programa, alineado con los ámbitos y competencias del Documento 26 del MEN, como evidencia para el PEI (Ley 1450 de 2011, art. 145; CONPES 4005 de 2020).';
+}
+
 export function cotizacionHtml(c: Cotizacion, entidad: string, datos: DatosFacturacion | null): string {
   const cliente = datos
     ? `${esc(datos.razonSocial)}<br>NIT ${esc(datos.nit)}-${esc(datos.dv)}<br>${esc(datos.direccion)}, ${esc(datos.ciudad)}<br>${esc(datos.correoFactura)}`
@@ -43,7 +55,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}.total td{font-weig
 <tr class="total"><td colspan="3">Total</td><td class="n">${formatoCop(c.total)}</td></tr></tbody></table>
 ${c.solicitada < c.cantidad ? `<p>Incluye el mínimo del plan (${c.cantidad}); pidieron ${c.solicitada}.</p>` : ''}
 ${c.ordenCompra ? `<p><b>Orden de compra:</b> ${esc(c.ordenCompra)}</p>` : ''}
-<p>Incluye el panel de la entidad y el informe de cobertura de educación económica y financiera por grado o programa, alineado con los ámbitos y competencias del Documento 26 del MEN, como evidencia para el PEI (Ley 1450 de 2011, art. 145; CONPES 4005 de 2020).</p>
+<p>${esc(textoIncluye(c.plan))}</p>
 <p class="nota">Pago por transferencia o PSE. Cuando confirmemos el pago activamos la licencia por ${c.meses} meses y emitimos la factura electrónica a nombre de la entidad. El IVA del 19 % está pendiente de confirmar con un tributarista.</p>
 </body></html>`;
 }

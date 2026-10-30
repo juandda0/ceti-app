@@ -20,7 +20,7 @@ const none = () => false;
 const completedSet = (ids: string[]) => (worldId: string) => ids.includes(worldId);
 
 describe('resolveClassWorlds', () => {
-  it('sin config → 5 mundos default en orden canónico, solo el primero desbloqueado', () => {
+  it('sin config → 6 mundos default en orden canónico, solo el primero desbloqueado', () => {
     const { worlds } = resolveClassWorlds(null, none);
     expect(worlds.map((w) => w.worldId)).toEqual([
       'world_1',
@@ -28,13 +28,14 @@ describe('resolveClassWorlds', () => {
       'world_3',
       'world_4',
       'world_5',
+      'world_6',
     ]);
-    expect(worlds.map((w) => w.unlocked)).toEqual([true, false, false, false, false]);
+    expect(worlds.map((w) => w.unlocked)).toEqual([true, false, false, false, false, false]);
   });
 
   it('config malformada (mundos vacío, cache viejo) → defaults', () => {
     const { worlds } = resolveClassWorlds(config({ mundos: [] }), none);
-    expect(worlds).toHaveLength(5);
+    expect(worlds).toHaveLength(6);
   });
 
   it('respeta orden custom y el desbloqueo sigue ese orden', () => {

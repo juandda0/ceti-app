@@ -14,6 +14,8 @@ import { showMessage } from '@shared/lib/dialogs';
 import { ChartCard, GrowBar } from '@features/savings/charts/ChartParts';
 import AdopcionColegio from '@features/educadores/retencion/components/AdopcionColegio';
 import EntidadTarjeta from '@features/educadores/entidad/components/EntidadTarjeta';
+import { useMiEntidad } from '@features/educadores/entidad/hooks/useMiEntidad';
+import { competenciaAmbitosMen } from '@features/learning/data/competencias';
 import {
   Aviso,
   BotonChunky,
@@ -35,6 +37,8 @@ function pct(m: number): number {
  * Pestaña Colegio: adopción (profes y estudiantes activos frente a la meta, lo
  * que el colegio mira para renovar), dominio promedio de todo el colegio, por
  * curso y por competencia (solo agregados no nominales, D-PIVOT), y exportación.
+ * Si el colegio ya es una entidad (Fase 6), solo se muestra el bloque de la
+ * entidad: su panel dice lo mismo y más (decisión del 30-10-2026).
  */
 export default function SchoolReportScreen() {
   const { t } = useTranslation();
@@ -42,6 +46,9 @@ export default function SchoolReportScreen() {
   const insets = useSafeAreaInsets();
   const colegioId = useAuthStore((s) => s.colegioId);
   const uid = useAuthStore((s) => s.firebaseUid);
+  const mi = useMiEntidad();
+  const conEntidad = !!mi.vista?.entidad;
+  const verViejo = !mi.cargando && !conEntidad;
   // Built purely from per-course aggregates (nominal progress outside the
   // profesor's own courses is denied by rules). Sedes are dormant (RQ-FN01).
 
@@ -55,6 +62,7 @@ export default function SchoolReportScreen() {
       setStatus('error');
       return;
     }
+    if (!verViejo) return;
     setStatus('loading');
     void rosterRepository.getColegioNombre(colegioId).then((n) => {
       if (!cancelled) setColegioNombre(n);
@@ -72,7 +80,7 @@ export default function SchoolReportScreen() {
     return () => {
       cancelled = true;
     };
-  }, [colegioId, uid]);
+  }, [colegioId, uid, verViejo]);
 
   const onExportCsv = useCallback(() => {
     if (!report) return;
@@ -103,15 +111,15 @@ export default function SchoolReportScreen() {
           subtitulo={colegioNombre ?? t('school.title')}
         />
 
-        <EntidadTarjeta />
+        <EntidadTarjeta mi={mi} />
 
-        <AdopcionColegio />
+        {verViejo ? <AdopcionColegio /> : null}
 
-        {status === 'ready' ? <Seccion texto={t('educadores.adopcion.dominioTitulo')} /> : null}
+        {verViejo && status === 'ready' ? <Seccion texto={t('educadores.adopcion.dominioTitulo')} /> : null}
 
-        {status === 'loading' ? <Esqueleto filas={3} alto={110} /> : null}
+        {verViejo && status === 'loading' ? <Esqueleto filas={3} alto={110} /> : null}
 
-        {status === 'error' ? (
+        {verViejo && status === 'error' ? (
           <Vacio
             icono="cloud-offline-outline"
             tono="rojo"
@@ -120,7 +128,7 @@ export default function SchoolReportScreen() {
           />
         ) : null}
 
-        {status === 'ready' && report && sinDatos ? (
+        {verViejo && status === 'ready' && report && sinDatos ? (
           <Vacio
             icono="bar-chart"
             titulo={t('profe.colegioVacioTitulo')}
@@ -128,7 +136,7 @@ export default function SchoolReportScreen() {
           />
         ) : null}
 
-        {status === 'ready' && report && !sinDatos ? (
+        {verViejo && status === 'ready' && report && !sinDatos ? (
           <Tarjeta style={styles.hero}>
             <Text style={[styles.heroEtiqueta, { color: colors.text.tertiary }]}>
               {t('school.overall').toUpperCase()}
@@ -155,7 +163,7 @@ export default function SchoolReportScreen() {
           </Tarjeta>
         ) : null}
 
-        {status === 'ready' && report?.weakestCompetencia && !sinDatos ? (
+        {verViejo && status === 'ready' && report?.weakestCompetencia && !sinDatos ? (
           <Aviso
             icono="alert-circle"
             tono="naranja"
@@ -166,7 +174,7 @@ export default function SchoolReportScreen() {
           />
         ) : null}
 
-        {status === 'ready' && report && !sinDatos ? (
+        {verViejo && status === 'ready' && report && !sinDatos ? (
           <ChartCard title={t('school.byCourse')} subtitle={t('profe.porCursoSub')}>
             <View style={styles.lista}>
               {report.courseSummaries.map((c) => {
@@ -200,7 +208,7 @@ export default function SchoolReportScreen() {
           </ChartCard>
         ) : null}
 
-        {status === 'ready' && report && !sinDatos ? (
+        {verViejo && status === 'ready' && report && !sinDatos ? (
           <ChartCard title={t('school.byCompetency')} subtitle={t('profe.porCompetenciaSub')}>
             <View style={styles.lista}>
               {report.competencyAverages.map((c) => {
@@ -209,12 +217,19 @@ export default function SchoolReportScreen() {
                 return (
                   <View key={c.competenciaId} style={styles.filaBarra}>
                     <View style={styles.filaCabeza}>
-                      <Text
-                        style={[styles.filaNombre, { color: colors.text.primary }]}
-                        numberOfLines={2}
-                      >
-                        {c.label}
-                      </Text>
+                      <View style={{ flex: 1 }}>
+                        <Text
+                          style={[styles.filaNombre, { color: colors.text.primary }]}
+                          numberOfLines={2}
+                        >
+                          {c.label}
+                        </Text>
+                        {competenciaAmbitosMen(c.competenciaId) ? (
+                          <Text style={[styles.filaSub, { color: colors.text.tertiary }]} numberOfLines={2}>
+                            {t('createWorld.ambitoMen', { ambitos: competenciaAmbitosMen(c.competenciaId) })}
+                          </Text>
+                        ) : null}
+                      </View>
                       <Text style={[styles.filaValor, { color: colors.text.primary }]}>{p}%</Text>
                     </View>
                     <GrowBar
@@ -230,7 +245,7 @@ export default function SchoolReportScreen() {
           </ChartCard>
         ) : null}
 
-        {status === 'ready' && report ? (
+        {verViejo && status === 'ready' && report ? (
           <View style={styles.exportar}>
             <BotonChunky
               texto={t('dashboard.exportCsv')}

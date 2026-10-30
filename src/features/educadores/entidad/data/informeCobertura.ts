@@ -12,15 +12,19 @@ import {
   MIN_GRUPO,
   NOMBRE_COMPETENCIA_MEN,
   NOMBRE_EJE_MEN,
-  NORMAS_EEF,
   fechaBogota,
+  normasPara,
+  type Norma,
   type CeldaCobertura,
   type PanelEntidad,
 } from '@/functions/src/educadores/dominio';
 
 export interface ContextoInforme {
   entidad: string;
+  /** Nombre para mostrar ("Colegio", "Universidad"…). */
   tipo: string;
+  /** Tipo de entidad ('colegio' | 'universidad' | 'academia'…): decide qué normas se citan. */
+  tipoId?: string | null;
   /** "Segundo trimestre 2026" o "Todo el historial". */
   periodo: string;
   generado: number;
@@ -41,6 +45,11 @@ function celda(c: CeldaCobertura): string {
 
 export const NOTA_ALINEACION =
   'La relación entre los mundos de Ceti y los ámbitos y competencias es una alineación hecha por Ceti a partir del contenido de cada mundo; no es un concepto del Ministerio de Educación.';
+
+/** "Nombre: alcance (vigencia)", para el PDF y el Excel. */
+export function textoNorma(n: Norma): string {
+  return n.vigencia ? `${n.alcance} ${n.vigencia}` : n.alcance;
+}
 
 export function nombrePeriodo(p: { nombre: string; desde: string; hasta: string } | null): string {
   if (!p) return 'Todo el historial';
@@ -67,7 +76,7 @@ export function hojasInformeCobertura(panel: PanelEntidad, ctx: ContextoInforme)
         ['Ámbitos de las orientaciones del MEN trabajados', `${panel.ambitosCubiertos.length} de ${AMBITOS_MEN.length}`],
         [],
         ['Marco normativo'],
-        ...NORMAS_EEF.map((n) => [n.nombre, n.alcance]),
+        ...normasPara(ctx.tipoId).map((n) => [n.nombre, textoNorma(n)]),
         [],
         [NOTA_ALINEACION],
         [`Cifras de grupo: un grupo con menos de ${MIN_GRUPO} estudiantes con datos no muestra su dominio.`],
@@ -115,7 +124,7 @@ export function informeCoberturaHtml(panel: PanelEntidad, ctx: ContextoInforme):
         ).join('')}</tr>`
     )
     .join('');
-  const normas = NORMAS_EEF.map((n) => `<li><b>${esc(n.nombre)}.</b> ${esc(n.alcance)}</li>`).join('');
+  const normas = normasPara(ctx.tipoId).map((n) => `<li><b>${esc(n.nombre)}.</b> ${esc(textoNorma(n))}</li>`).join('');
   return `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Cobertura EEF · ${esc(ctx.entidad)}</title>
 <style>body{font-family:-apple-system,Segoe UI,sans-serif;color:#16161a;margin:32px;font-size:12px}h1{font-size:20px;margin:0 0 4px}h2{font-size:14px;margin:22px 0 6px}
 .meta{color:#555;margin:0 0 14px}table{border-collapse:collapse;width:100%;margin:6px 0}th,td{border:1px solid #ccc;padding:5px;text-align:left;vertical-align:top}
@@ -126,7 +135,7 @@ th{background:#f3f0ec;font-size:10px}td.si{background:#e4f4ea}td.no{color:#999}s
 <div class="cifras"><div><b>${panel.ambitosCubiertos.length} de ${AMBITOS_MEN.length}</b>ámbitos trabajados</div><div><b>${r.clases}</b>clases</div><div><b>${r.estudiantes}</b>estudiantes</div><div><b>${pct(r.adopcion)}</b>activos en 30 días</div></div>
 <h2>Marco normativo</h2><ul>${normas}</ul>
 <h2>Ámbitos conceptuales por grado o programa</h2>
-<p class="nota">Orientaciones pedagógicas para la educación económica y financiera del MEN (Documento 26, versión 2022): ejes Economía, Finanzas y Gestión del riesgo. Cada celda: estudiantes con avance y dominio promedio.</p>
+<p class="nota">${ctx.tipoId === 'universidad' ? 'Como marco de referencia se usan los ámbitos de las orientaciones del MEN para la educación económica y financiera (pensadas para la básica y la media)' : 'Orientaciones pedagógicas para la educación económica y financiera del MEN (Documento 26, versión 2022)'}: ejes Economía, Finanzas y Gestión del riesgo. Cada celda: estudiantes con avance y dominio promedio.</p>
 <table><thead><tr><th>Grado o programa</th>${cab}</tr></thead><tbody>${filas}</tbody></table>
 <h2>Competencias de la educación económica y financiera</h2>
 <table><thead><tr><th>Grado o programa</th>${COMPETENCIAS_MEN.map((c) => `<th>${esc(NOMBRE_COMPETENCIA_MEN[c])}</th>`).join('')}</tr></thead><tbody>${comp}</tbody></table>

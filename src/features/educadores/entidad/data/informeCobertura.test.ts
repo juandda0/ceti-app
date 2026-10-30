@@ -30,12 +30,18 @@ describe('informe de cobertura', () => {
 
   it('cita las normas, el periodo y los ámbitos, sin nombres de estudiantes', () => {
     const html = informeCoberturaHtml(panel(), ctx);
-    for (const t of ['Ley 1450 de 2011', 'Documento 26', 'Decreto 457 de 2014', 'CONPES 4005 de 2020', 'Presupuesto', 'Planear', 'Todo el historial', 'Grados 10-11']) {
+    for (const t of ['Ley 1450 de 2011', 'Documento 26', 'Decreto 457 de 2014 (antecedente)', 'Derogado por el artículo 19 del Decreto 1517 de 2021', 'Decreto 1517 de 2021', 'CONPES 4005 de 2020', 'Presupuesto', 'Planear', 'Todo el historial', 'Grados 10-11']) {
       expect(html).toContain(t);
     }
     expect(html).toContain('Colegio &lt;San&gt; Mateo');
     expect(html).toContain('6 est. · 80 %');
     expect(html).not.toMatch(/e[0-5]\b/);
+  });
+
+  it('a una universidad no le cita las orientaciones de la básica', () => {
+    const html = informeCoberturaHtml(panel(), { ...ctx, tipo: 'Universidad', tipoId: 'universidad' });
+    expect(html).not.toContain('Ley 1450');
+    expect(html).toContain('<b>CONPES 4005 de 2020.</b>');
   });
 
   it('el xlsx trae resumen, ámbitos y competencias por grado', () => {

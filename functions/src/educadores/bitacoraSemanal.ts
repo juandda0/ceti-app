@@ -45,6 +45,7 @@ export const NOMBRES_MUNDOS_POR_DEFECTO: Record<string, string> = {
   world_3: 'Estrella del Ahorro',
   world_4: 'Nebulosa del Crédito',
   world_5: 'Agujero Negro de las Deudas',
+  world_6: 'Constelación del País',
 };
 
 // ---------------------------------------------------------------------------

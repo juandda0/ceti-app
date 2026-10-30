@@ -5,6 +5,7 @@ import {
   ALINEACION_MEN,
   AMBITOS_MEN,
   NORMAS_EEF,
+  normasPara,
   armarPublicacion,
   dominioPor,
   grupoGradoMen,
@@ -357,8 +358,8 @@ describe('biblioteca de la entidad', () => {
       { id: 'banco_cw_z_multiple_choice', data: { worldId: 'cw_z', items: [{ id: 'cw_a_mc_1' }] } },
     ]);
     const sinConfig = configConMundo(null, pub, 'cw_z', 'beto', AHORA);
-    expect(sinConfig?.mundos).toHaveLength(6);
-    expect(sinConfig?.mundos[5]).toEqual({
+    expect(sinConfig?.mundos).toHaveLength(7);
+    expect(sinConfig?.mundos[6]).toEqual({
       worldId: 'cw_z',
       activo: false,
       nombre: 'La tienda',
@@ -384,11 +385,18 @@ describe('marco normativo y alineación con el MEN', () => {
       'Sistema financiero',
       'Análisis de riesgos',
     ]);
-    expect(NORMAS_EEF.map((n) => n.id)).toEqual(['ley1450', 'doc26', 'decreto457', 'conpes4005']);
+    expect(NORMAS_EEF.map((n) => n.id)).toEqual(['ley1450', 'doc26', 'decreto457', 'decreto1517', 'conpes4005']);
+  });
+
+  it('el Decreto 457 va como antecedente y la universidad no cita las normas de la básica', () => {
+    const d457 = NORMAS_EEF.find((n) => n.id === 'decreto457');
+    expect(d457?.vigencia).toMatch(/Decreto 1517 de 2021/);
+    expect(normasPara('universidad').map((n) => n.id)).toEqual(['decreto457', 'decreto1517', 'conpes4005']);
+    expect(normasPara('colegio')).toBe(NORMAS_EEF);
   });
 
   it('cada competencia de Ceti (id estable) tiene alineación', () => {
-    expect(Object.keys(ALINEACION_MEN).sort()).toEqual(['ahorro', 'credito', 'deuda', 'ingreso', 'presupuesto']);
+    expect(Object.keys(ALINEACION_MEN).sort()).toEqual(['ahorro', 'credito', 'deuda', 'economia', 'ingreso', 'presupuesto']);
   });
 
   it('grupos de grados de los Estándares Básicos', () => {

@@ -69,6 +69,16 @@ export const WORLD_DEFS: readonly WorldDef[] = [
     iconName: 'warning',
     color: '#5B9EF5',
   },
+  {
+    // Fase 7: el eje Economía de las orientaciones del MEN (Desarrollo y Política económica).
+    id: 'world_6',
+    number: 6,
+    name: 'Constelación del País',
+    subtitle: 'La economía de todos',
+    description: 'Cómo crece una comunidad, para qué sirven los impuestos, qué es la inflación y quién decide.',
+    iconName: 'planet',
+    color: '#4FCBC5',
+  },
 ] as const;
 
 export function worldDefById(worldId: string): WorldDef | undefined {

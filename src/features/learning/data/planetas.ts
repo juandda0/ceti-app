@@ -1,6 +1,6 @@
 /**
  * Planeta de cada mundo en Tu Galaxia. Los planetas son genéricos (espacio + plata, sin tema), así que
- * cualquier planeta sirve para cualquier mundo: los 5 por defecto tienen el suyo y los mundos del
+ * cualquier planeta sirve para cualquier mundo: los 6 por defecto tienen el suyo y los mundos del
  * profesor (`cw_*`) toman los de reserva por turno, según su posición en la clase.
  */
 import type { AnimationId } from '@features/animations';
@@ -31,9 +31,10 @@ const POR_MUNDO: Record<string, Planeta> = {
   world_3: PLANETAS.menta,
   world_4: PLANETAS.morado,
   world_5: PLANETAS.azul,
+  world_6: PLANETAS.turquesa,
 };
 
-const RESERVA: readonly Planeta[] = [PLANETAS.turquesa, PLANETAS.rosado, PLANETAS.coral];
+const RESERVA: readonly Planeta[] = [PLANETAS.rosado, PLANETAS.coral, PLANETAS.turquesa];
 
 /** `posicion`: índice del mundo en la clase (0..n-1); reparte la reserva entre los mundos del profesor. */
 export function planetaDeMundo(worldId: string, posicion: number): Planeta {

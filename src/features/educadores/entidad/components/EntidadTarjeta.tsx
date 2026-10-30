@@ -14,7 +14,7 @@ import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { licenciaVigente, planEntidadDe } from '@/functions/src/educadores/dominio';
 import { BotonChunky, Esqueleto, Pill, Tarjeta, paletaTono, type Tono } from '@features/dashboard/components/profe/kit';
 import { entidadRepository } from '../data/entidadRepository';
-import { refrescarClaimsProfe, useMiEntidad } from '../hooks/useMiEntidad';
+import { refrescarClaimsProfe, type MiEntidad } from '../hooks/useMiEntidad';
 
 type IconName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -50,12 +50,13 @@ function Acceso({ icono, titulo, texto, tono, ruta }: { icono: IconName; titulo:
   );
 }
 
-export default function EntidadTarjeta() {
+/** `mi` viene de la pestaña, que también decide qué mostrar con o sin entidad. */
+export default function EntidadTarjeta({ mi }: { mi: MiEntidad }) {
   const { t } = useTranslation();
   const colors = useThemeColors();
   const router = useRouter();
   const uid = useAuthStore((s) => s.firebaseUid);
-  const { vista, cargando, soyAdmin, conLicencia } = useMiEntidad();
+  const { vista, cargando, soyAdmin, conLicencia } = mi;
 
   if (cargando) return <Esqueleto filas={1} alto={120} />;
   if (!vista) return null;

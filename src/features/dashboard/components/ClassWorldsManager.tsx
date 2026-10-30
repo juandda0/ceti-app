@@ -73,7 +73,15 @@ export default function ClassWorldsManager({
   const entries: CursoConfigMundoEntry[] = useMemo(
     () =>
       config?.mundos?.length
-        ? config.mundos
+        ? [
+            ...config.mundos,
+            // Un mundo de Ceti que llegó después de armar la clase (el 6 en la
+            // Fase 7) aparece apagado al final, para que el profe lo encienda.
+            ...WORLD_DEFS.filter((d) => !config.mundos.some((e) => e.worldId === d.id)).map((d) => ({
+              worldId: d.id as string,
+              activo: false,
+            })),
+          ]
         : WORLD_DEFS.map((d) => ({ worldId: d.id as string, activo: true })),
     [config]
   );

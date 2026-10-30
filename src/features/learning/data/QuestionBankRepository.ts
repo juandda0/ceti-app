@@ -15,7 +15,7 @@ import { hashStr, stableShuffle } from '@shared/lib/quizUtils';
 import type { CourseContentRef } from '@shared/types/tenancy';
 import type { MapaMundo, PoolMundo } from '@features/orbita/domain/niveles';
 import {
-  SEEDED_GRADOS,
+  gradoDeBanco,
   type QuizItem,
   type MultipleChoiceItem,
   type TrueFalseItem,
@@ -24,13 +24,6 @@ import {
   type Grado,
   type WorldId,
 } from './quiz.types';
-
-// ponytail: el banco default solo se sembró para 9–11 (E12). Un curso de grado
-// menor cae a 9° para no ver mundos vacíos; upgrade path: sembrar 1–8 o que el
-// profesor autore su contenido (copy-on-write por curso).
-function seededGrado(grado: Grado): Grado {
-  return SEEDED_GRADOS.includes(grado) ? grado : '9';
-}
 
 // Required counts per type (R9: 4 + 3 + 3 = 10)
 const REQUIRED_MC = 4;
@@ -66,7 +59,7 @@ async function fetchBancoDoc(
     }
     // Custom (`cw_*`) worlds have no global default to fall back to.
     if (worldId.startsWith('cw_')) return null;
-    const snap = await getDoc(bancoDocRef(clients.firestore, seededGrado(grado), worldId, tipo));
+    const snap = await getDoc(bancoDocRef(clients.firestore, gradoDeBanco(grado), worldId, tipo));
     if (!snap.exists()) return null;
     return snap.data() as BancoDoc;
   } catch {

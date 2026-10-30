@@ -80,6 +80,7 @@ export default function PanelEntidadScreen() {
       const ctx = {
         entidad: vista?.entidad?.nombre ?? '',
         tipo: t(`entidad.tipo.${vista?.entidad?.tipo ?? 'colegio'}`),
+        tipoId: vista?.entidad?.tipo ?? null,
         periodo: nombrePeriodo(p),
         generado: Date.now(),
       };
@@ -298,7 +299,7 @@ export default function PanelEntidadScreen() {
 
               <Seccion texto={t('entidad.cobertura.informe')} />
               <Tarjeta style={{ gap: 10 }}>
-                <Text style={[st.sub, { color: colors.text.secondary }]}>{t('entidad.cobertura.informeTexto')}</Text>
+                <Text style={[st.sub, { color: colors.text.secondary }]}>{t(vista?.entidad?.tipo === 'universidad' ? 'entidad.cobertura.informeTexto_universidad' : 'entidad.cobertura.informeTexto')}</Text>
                 <View style={st.chipsFila}>
                   {periodos.map((p) => (
                     <Chip key={p.numero} texto={p.nombre} seleccionado={periodoInforme === p.numero} onPress={() => setPeriodoInforme(p.numero)} />

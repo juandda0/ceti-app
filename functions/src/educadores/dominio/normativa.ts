@@ -14,7 +14,9 @@
  * cada mundo, no un aval del MEN: el informe lo dice así.
  *
  * CONPES 4005 de 2020 es política pública (inclusión y EEF), no un listado de
- * competencias: por eso aquí no hay "códigos CONPES". Ninguna de estas normas
+ * competencias: por eso aquí no hay "códigos CONPES". El Decreto 457 de 2014
+ * está derogado (Decreto 1517 de 2021, art. 19; verificado en el gestor
+ * normativo de Función Pública el 30-10-2026). Ninguna de estas normas
  * crea una asignatura obligatoria con sanción: los textos de venta no deben
  * decir que la hay.
  */
@@ -24,8 +26,16 @@ export interface Norma {
   nombre: string;
   /** Qué dice o qué hizo, en una línea y sin exagerar su alcance. */
   alcance: string;
-  /** Nota de vigencia por confirmar (null = sin observaciones). */
+  /** Nota de vigencia (null = vigente, sin observaciones). */
   vigencia: string | null;
+  /** Fuente oficial donde se verificó el texto o la vigencia (null = no se reverificó). */
+  fuente: string | null;
+  /**
+   * A quién se le cita: 'basica' = colegios (básica y media); 'todas' = también
+   * universidades. Las orientaciones del MEN son para la básica y la media, así
+   * que a una universidad no se le venden con ellas (decisión del 30-10-2026).
+   */
+  para: 'basica' | 'todas';
 }
 
 export const NORMAS_EEF: readonly Norma[] = [
@@ -35,6 +45,8 @@ export const NORMAS_EEF: readonly Norma[] = [
     alcance:
       'Plan Nacional de Desarrollo 2010-2014: el MEN incluirá la educación económica y financiera en el diseño de programas para el desarrollo de competencias básicas.',
     vigencia: null,
+    fuente: null,
+    para: 'basica',
   },
   {
     id: 'doc26',
@@ -42,22 +54,42 @@ export const NORMAS_EEF: readonly Norma[] = [
     alcance:
       'Orientaciones pedagógicas para la educación económica y financiera: competencias, ejes y ámbitos conceptuales por grupos de grados, como proyecto pedagógico transversal del PEI.',
     vigencia: null,
+    fuente: 'mineducacion.gov.co',
+    para: 'basica',
   },
   {
     id: 'decreto457',
-    nombre: 'Decreto 457 de 2014',
+    nombre: 'Decreto 457 de 2014 (antecedente)',
     alcance:
       'Organizó el Sistema Administrativo Nacional para la Educación Económica y Financiera y creó su comisión intersectorial.',
     vigencia:
-      'Fuentes secundarias indican que fue derogado por el Decreto 1517 de 2021; confirmar en el normograma oficial antes de citarlo como vigente.',
+      'Derogado por el artículo 19 del Decreto 1517 de 2021, que suprimió ese sistema y esa comisión (artículo 3). Se cita solo como antecedente.',
+    fuente: 'funcionpublica.gov.co/eva/gestornormativo/norma.php?i=66298',
+    para: 'todas',
+  },
+  {
+    id: 'decreto1517',
+    nombre: 'Decreto 1517 de 2021',
+    alcance:
+      'Creó la Comisión Intersectorial para la Inclusión y Educación Económica y Financiera (Banca de las Oportunidades), presidida por MinHacienda y con MinEducación como miembro; quedó en el artículo 10.4.2.1.3 del Decreto 2555 de 2010. Es la norma vigente sobre la coordinación nacional de la EEF.',
+    vigencia: null,
+    fuente: 'funcionpublica.gov.co/eva/gestornormativo/norma.php?i=173786',
+    para: 'todas',
   },
   {
     id: 'conpes4005',
     nombre: 'CONPES 4005 de 2020',
     alcance: 'Política Nacional de Inclusión y Educación Económica y Financiera.',
     vigencia: null,
+    fuente: null,
+    para: 'todas',
   },
 ];
+
+/** Las normas que se citan a una entidad según su tipo (universidad: sin las del MEN para la básica). */
+export function normasPara(tipoEntidad: string | null | undefined): readonly Norma[] {
+  return tipoEntidad === 'universidad' ? NORMAS_EEF.filter((n) => n.para === 'todas') : NORMAS_EEF;
+}
 
 /** Las cuatro competencias de la EEF (Orientaciones MEN, v4 2022, §3.1.1). */
 export const COMPETENCIAS_MEN = ['decidir', 'administrar', 'planear', 'gestionar'] as const;
@@ -135,6 +167,13 @@ export const ALINEACION_MEN: Readonly<Record<string, AlineacionMen>> = {
   credito: { ambitos: ['manejoDeudas', 'sistemaFinanciero'], competencias: ['decidir'] },
   // Mundo 5: deuda manejable o riesgosa, sobreendeudamiento, riesgo, cómo salir.
   deuda: { ambitos: ['manejoDeudas', 'analisisRiesgos'], competencias: ['gestionar', 'administrar'] },
+  // Mundo 6 (Fase 7): cómo crece una comunidad, bienes públicos, impuestos,
+  // inflación y quién decide la política económica (Banco de la República,
+  // Gobierno). Cierra los dos ámbitos del eje Economía que faltaban.
+  economia: {
+    ambitos: ['desarrolloEconomico', 'politicaEconomica', 'contextoEconomico'],
+    competencias: ['decidir', 'planear'],
+  },
 };
 
 export function alineacionDe(competenciaId: string): AlineacionMen | null {

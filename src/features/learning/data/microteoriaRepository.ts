@@ -17,7 +17,7 @@ import {
   microteoriaDocRef,
 } from '@shared/lib/firebase/paths';
 import type { MicroteoriaBank } from './content.types';
-import type { Grado, WorldId } from './quiz.types';
+import { gradoDeBanco, type Grado, type WorldId } from './quiz.types';
 
 export const microteoriaRepository = {
   /**
@@ -43,7 +43,7 @@ export const microteoriaRepository = {
         );
         if (customSnap.exists()) return customSnap.data() as MicroteoriaBank;
       }
-      const snap = await getDoc(microteoriaDocRef(clients.firestore, grado, worldId));
+      const snap = await getDoc(microteoriaDocRef(clients.firestore, gradoDeBanco(grado), worldId));
       if (!snap.exists()) return null;
       return snap.data() as MicroteoriaBank;
     } catch {

@@ -15,7 +15,7 @@
  *   que `conpesCodigo` queda vacío a propósito: no inventarlo.
  */
 import type { DefaultWorldId } from '@features/learning/data/quiz.types';
-import { ALINEACION_MEN, type AlineacionMen } from '@/functions/src/educadores/dominio';
+import { ALINEACION_MEN, nombreAmbitoMen, type AlineacionMen } from '@/functions/src/educadores/dominio';
 
 export interface Competencia {
   /** Stable id stored on WorldProgress.competencia and in reports. Do not rename. */
@@ -64,6 +64,12 @@ export const WORLD_COMPETENCIAS: Record<DefaultWorldId, Competencia> = {
     label: 'Deuda y riesgo',
     conpesDominio: 'Manejo de deudas y riesgo',
   },
+  world_6: {
+    id: 'economia',
+    men: ALINEACION_MEN.economia,
+    label: 'Economía del país',
+    conpesDominio: 'Contexto económico',
+  },
 };
 
 /** undefined for custom (`cw_*`) worlds — callers decide their fallback. */
@@ -78,6 +84,7 @@ export const WORLD_ORDER: DefaultWorldId[] = [
   'world_3',
   'world_4',
   'world_5',
+  'world_6',
 ];
 
 /** Competencies in world order — the stable column set for reports/CSV. */
@@ -85,4 +92,10 @@ export const ALL_COMPETENCIAS: Competencia[] = WORLD_ORDER.map((w) => WORLD_COMP
 
 export function competenciaLabel(id: string): string {
   return ALL_COMPETENCIAS.find((c) => c.id === id)?.label ?? id;
+}
+
+/** "Presupuesto" o "Manejo de deudas, Sistema financiero": los ámbitos del MEN de una competencia de Ceti. */
+export function competenciaAmbitosMen(id: string): string | null {
+  const c = ALL_COMPETENCIAS.find((x) => x.id === id);
+  return c ? c.men.ambitos.map(nombreAmbitoMen).join(', ') : null;
 }
