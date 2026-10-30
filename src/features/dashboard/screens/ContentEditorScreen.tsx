@@ -428,6 +428,40 @@ export default function ContentEditorScreen() {
     }
   };
 
+  const [sugiriendoEn, setSugiriendoEn] = useState<string | null>(null);
+  /** Pide a la IA opciones incorrectas más plausibles; la correcta no se toca. */
+  const sugerirErradas = async (index: number) => {
+    const item = items.mc?.[index] as MultipleChoiceItem | undefined;
+    if (!item || !grado || !muro.exigir('iaAuthoring')) return;
+    const correcta = item.opciones[item.correctIndex]?.trim();
+    if (!item.enunciado.trim() || !correcta) {
+      showMessage(t('contentEditor.sugerirFalta'));
+      return;
+    }
+    setSugiriendoEn(item.id);
+    try {
+      const { distractores } = await adminService.sugerirOpcionesErradas({
+        colegioId,
+        cursoId,
+        enunciado: item.enunciado.trim(),
+        correcta,
+        grado,
+        cantidad: item.opciones.length - 1,
+      });
+      let k = 0;
+      const opciones = item.opciones.map((o, j) =>
+        j === item.correctIndex ? o : (distractores[k++] ?? o)
+      );
+      updateItem('mc', index, { opciones });
+    } catch (e) {
+      const motivo = motivoDeError(e, 'iaAuthoring');
+      if (motivo) muro.abrir(motivo);
+      else showMessage(t('contentEditor.generateError'), undefined, 'error');
+    } finally {
+      setSugiriendoEn(null);
+    }
+  };
+
   const agregarDesdeBanco = (item: QuizItem) => {
     if (!esPreguntas(tab)) return;
     const nuevo: EditingItem =
@@ -757,6 +791,8 @@ export default function ContentEditorScreen() {
                     accent={accent}
                     t={t}
                     onChange={(patch) => updateItem(tab, i, patch)}
+                    onSugerir={() => void sugerirErradas(i)}
+                    sugiriendo={sugiriendoEn === item.id}
                   />
                 )}
                 {item.tipo === 'true_false' && (
@@ -1045,12 +1081,17 @@ function McFields({
   accent,
   t,
   onChange,
+  onSugerir,
+  sugiriendo = false,
 }: {
   item: MultipleChoiceItem;
   colors: ThemeColors;
   accent: string;
   t: (key: string, options?: Record<string, unknown>) => string;
   onChange: (patch: Partial<MultipleChoiceItem>) => void;
+  /** IA (Fase 4): reemplaza las opciones incorrectas por otras más plausibles. */
+  onSugerir?: () => void;
+  sugiriendo?: boolean;
 }) {
   return (
     <View style={{ gap: 8 }}>
@@ -1087,6 +1128,17 @@ function McFields({
           </View>
         );
       })}
+      {onSugerir ? (
+        <View style={{ alignSelf: 'flex-start' }}>
+          <Chip
+            texto={sugiriendo ? t('contentEditor.sugiriendo') : t('contentEditor.sugerirErradas')}
+            icono="sparkles-outline"
+            color={accent}
+            seleccionado={false}
+            onPress={() => !sugiriendo && onSugerir()}
+          />
+        </View>
+      ) : null}
     </View>
   );
 }

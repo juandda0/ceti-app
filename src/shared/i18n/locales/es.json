@@ -117,7 +117,10 @@
     "tab_emparejar": "Emparejar",
     "tab_completar": "Completar",
     "tab_numerica": "Numérica",
-    "extraHint": "Opcional. Estas preguntas aparecen en las lecciones del mapa; el jefe sigue siendo de opción múltiple, verdadero/falso y ordenar."
+    "extraHint": "Opcional. Estas preguntas aparecen en las lecciones del mapa; el jefe sigue siendo de opción múltiple, verdadero/falso y ordenar.",
+    "sugerirErradas": "Sugerir mejores opciones erradas",
+    "sugiriendo": "Pensando…",
+    "sugerirFalta": "Escribe la pregunta y la opción correcta primero"
   },
   "classWorlds": {
     "title": "Mundos de la clase",
@@ -165,7 +168,14 @@
     "createEmpty": "Crear mundo",
     "createEmptyDiscard": "Crear sin el borrador",
     "saved": "Mundo creado como borrador. Actívalo cuando el contenido esté listo.",
-    "nombreRequired": "El nombre del mundo es obligatorio."
+    "nombreRequired": "El nombre del mundo es obligatorio.",
+    "fuente": "Material (opcional)",
+    "fuentePlaceholder": "Pega aquí tu guía, una lectura o tus notas. La IA arma el mundo a partir de esto.",
+    "fuenteAyuda": "{{n}} de 12.000 caracteres",
+    "subirPdf": "Subir un PDF",
+    "pdfListo": "Leímos {{nombre}} ({{paginas}} páginas)",
+    "pdfRecortado": "Era largo: tomamos los primeros 12.000 caracteres.",
+    "pdfError": "No pudimos leer ese PDF"
   },
   "assignments": {
     "title": "Asignaciones",
@@ -1789,7 +1799,9 @@
     "copiarNombres": "Copiar nombres",
     "nombresCopiados": "Nombres copiados",
     "respondieron_one": "{{count}} estudiante · {{respuestas}} respuestas",
-    "respondieron_other": "{{count}} estudiantes · {{respuestas}} respuestas"
+    "respondieron_other": "{{count}} estudiantes · {{respuestas}} respuestas",
+    "crearRepaso": "Crear un repaso con IA de lo que más cuesta",
+    "editarPregunta": "Editar en el mundo"
   },
   "editorMapa": {
     "ayuda": "Elige qué preguntas van en cada lección del mapa, en qué orden, y cuáles en el jefe. Si no lo cambias, el mapa se arma solo.",

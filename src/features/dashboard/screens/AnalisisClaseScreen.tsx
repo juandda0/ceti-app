@@ -34,7 +34,7 @@ import {
   type AnalisisCargado,
 } from '@features/dashboard/data/cargarAnalisisClase';
 import { hojasDelAnalisis, informeHtml } from '@features/dashboard/data/exportarAnalisis';
-import type { CeldaMapa } from '@features/dashboard/data/analisisClase';
+import { materialDeRepaso, type CeldaMapa } from '@features/dashboard/data/analisisClase';
 import AccionGrupo from '@features/dashboard/components/AccionGrupo';
 import { useNombreCurso } from '@features/dashboard/hooks/useNombreCurso';
 import {
@@ -140,6 +140,7 @@ export default function AnalisisClaseScreen() {
   );
 
   const a = datos?.analisis;
+  const repaso = a ? materialDeRepaso(a.preguntas) : null;
   const nombreArchivo = `${(datos?.cursoNombre || 'clase').replace(/[^\p{L}\p{N}]+/gu, '-')}-${elegido.clave}`;
 
   const exportarXlsx = async () => {
@@ -271,6 +272,17 @@ export default function AnalisisClaseScreen() {
   const preguntas = a ? (
     <View style={st.vista}>
       <Aviso icono="help-circle" tono="azul" texto={t('analisis.preguntasAyuda')} />
+      {repaso ? (
+        <BotonChunky
+          texto={t('analisis.crearRepaso')}
+          icono="sparkles"
+          onPress={() =>
+            router.push(
+              `/(staff)/crear-mundo/${cursoId}?nombre=${encodeURIComponent(repaso.nombre)}&tema=${encodeURIComponent(repaso.tema)}&fuente=${encodeURIComponent(repaso.fuente)}` as Href
+            )
+          }
+        />
+      ) : null}
       {a.preguntas.length === 0 ? (
         <Text style={[st.sub, { color: colors.text.secondary }]}>
           {t('analisis.sinRespuestas')}
@@ -319,6 +331,18 @@ export default function AnalisisClaseScreen() {
                     texto: p.erradaMasElegida.texto,
                   })}
                 </Text>
+              ) : null}
+              {p.revisar || p.dificil ? (
+                <View style={{ alignSelf: 'flex-start' }}>
+                  <Chip
+                    texto={t('analisis.editarPregunta')}
+                    icono="create-outline"
+                    seleccionado={false}
+                    onPress={() =>
+                      router.push(`/(staff)/contenido/${cursoId}/${p.worldId}` as Href)
+                    }
+                  />
+                </View>
               ) : null}
             </Tarjeta>
           );

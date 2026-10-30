@@ -353,3 +353,33 @@ export function construirAnalisis(e: EntradaAnalisis): AnalisisClase {
     },
   };
 }
+
+/**
+ * Material para que la IA arme un mundo de repaso (Fase 4) con lo que más le
+ * cuesta a la clase: las preguntas más difíciles (hasta 8), cuánto las acierta
+ * la clase y la respuesta errada más elegida. Sin nombres de estudiantes.
+ */
+export function materialDeRepaso(
+  preguntas: AnalisisPregunta[]
+): { nombre: string; tema: string; fuente: string } | null {
+  const dificiles = preguntas
+    .filter((p) => p.respuestas >= 2 && p.facilidad < 0.7)
+    .sort((a, b) => a.facilidad - b.facilidad)
+    .slice(0, 8);
+  if (dificiles.length === 0) return null;
+  const mundos = [...new Set(dificiles.map((p) => p.mundo))];
+  const fuente = [
+    'Estas son las preguntas que más le cuestan a la clase. Arma un repaso que explique y practique esos conceptos, con preguntas nuevas (no copies estas) y atacando las confusiones de las respuestas erradas.',
+    '',
+    ...dificiles.map(
+      (p, i) =>
+        `${i + 1}. ${p.enunciado}\n   La clase la acierta el ${Math.round(p.facilidad * 100)} %.` +
+        (p.erradaMasElegida ? `\n   Respuesta errada más elegida: ${p.erradaMasElegida.texto}` : '')
+    ),
+  ].join('\n');
+  return {
+    nombre: `Repaso: ${mundos.slice(0, 2).join(' y ')}`.slice(0, 60),
+    tema: `Repasar lo que más le cuesta a la clase en ${mundos.join(', ')}`.slice(0, 200),
+    fuente,
+  };
+}

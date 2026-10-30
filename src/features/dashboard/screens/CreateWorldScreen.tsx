@@ -11,6 +11,7 @@
  * "Generar preguntas" (the model is an implementation detail).
  */
 import { useState } from 'react';
+import { elegirPdfBase64 } from '@shared/lib/export/leerArchivo';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -48,13 +49,21 @@ export default function CreateWorldScreen() {
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const params = useLocalSearchParams<{ cursoId: string }>();
+  // Desde el análisis (repaso de lo que falla la clase) llegan nombre, tema y material.
+  const params = useLocalSearchParams<{
+    cursoId: string;
+    nombre?: string;
+    tema?: string;
+    fuente?: string;
+  }>();
   const cursoId = params.cursoId ?? '';
   const colegioId = useAuthStore((s) => s.colegioId) ?? '';
   const firebaseUid = useAuthStore((s) => s.firebaseUid) ?? '';
 
-  const [nombre, setNombre] = useState('');
-  const [tema, setTema] = useState('');
+  const [nombre, setNombre] = useState(params.nombre ?? '');
+  const [tema, setTema] = useState(params.tema ?? '');
+  const [fuente, setFuente] = useState(params.fuente ?? '');
+  const [leyendoPdf, setLeyendoPdf] = useState(false);
   const [competencia, setCompetencia] = useState<string | null>(null);
   const [draft, setDraft] = useState<MundoBorrador | null>(null);
   const [generating, setGenerating] = useState(false);
@@ -78,6 +87,7 @@ export default function CreateWorldScreen() {
         nombre: nombre.trim(),
         tema: tema.trim() || nombre.trim(),
         grado,
+        fuente: fuente.trim() || undefined,
       });
       setDraft(result);
     } catch (e) {
@@ -90,6 +100,31 @@ export default function CreateWorldScreen() {
       showMessage(t('createWorld.generateError'), undefined, 'error');
     } finally {
       setGenerating(false);
+    }
+  };
+
+  const subirPdf = async () => {
+    if (!muro.exigir('iaAuthoring')) return;
+    setLeyendoPdf(true);
+    try {
+      const pdf = await elegirPdfBase64();
+      if (!pdf) return;
+      const r = await adminService.extraerTextoPdf(pdf.base64);
+      setFuente(r.texto);
+      showMessage(
+        t('createWorld.pdfListo', { nombre: pdf.nombre, paginas: r.paginas }),
+        r.recortado ? t('createWorld.pdfRecortado') : undefined,
+        'success'
+      );
+    } catch (e) {
+      const motivo = motivoDeError(e, 'iaAuthoring');
+      if (motivo) {
+        muro.abrir(motivo);
+        return;
+      }
+      showMessage(t('createWorld.pdfError'), e instanceof Error ? e.message : undefined, 'error');
+    } finally {
+      setLeyendoPdf(false);
     }
   };
 
@@ -198,6 +233,25 @@ export default function CreateWorldScreen() {
           multiline
           maxLength={200}
           acento={accent}
+        />
+        <Campo
+          etiqueta={t('createWorld.fuente')}
+          value={fuente}
+          onChangeText={setFuente}
+          placeholder={t('createWorld.fuentePlaceholder')}
+          ayuda={t('createWorld.fuenteAyuda', { n: fuente.length.toLocaleString('es-CO') })}
+          multiline
+          maxLength={12000}
+          acento={accent}
+        />
+        <BotonChunky
+          texto={t('createWorld.subirPdf')}
+          icono="document-attach-outline"
+          variante="secundario"
+          compacto
+          color={accent}
+          cargando={leyendoPdf}
+          onPress={() => void subirPdf()}
         />
 
         <View style={{ gap: 10 }}>

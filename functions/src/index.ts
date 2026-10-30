@@ -31,6 +31,8 @@ import { parseProfessorAssignment } from './assignRolePolicy';
 import {
   generarBorrador,
   generarItem,
+  sugerirDistractores,
+  FUENTE_MAX,
   ITEM_TIPOS,
   DETALLE_MAX,
   CONTEXTO_ITEMS_MAX,
@@ -47,6 +49,7 @@ import {
 } from './educadores/limites';
 import { cerrarInvitacion, invitacionDeCorreo } from './educadores/invitaciones';
 import { recalcularAdopcionSiToca } from './educadores/adopcionColegio';
+import { bytesDePdf, extraerTexto } from './educadores/textoPdf';
 import {
   clasesActuales,
   clasesDeClaims,
@@ -938,6 +941,9 @@ export const generarBorradorMundo = onCall({ secrets: [GROQ_API_KEY] }, async (r
   if (nombre.length > NOMBRE_MAX || tema.length > TEMA_MAX || !isGradoValido(grado)) {
     throw new HttpsError('invalid-argument', 'Parámetros fuera de rango.');
   }
+  // Fase 4: material del profe (texto pegado, PDF o el repaso de lo que falla la clase).
+  const fuente =
+    typeof request.data?.fuente === 'string' ? request.data.fuente.slice(0, FUENTE_MAX) : undefined;
   await assertStaffOfCurso(caller, colegioId, cursoId);
   // Ceti Educadores: IA con Piloto o superior y cupo mensual del plan
   // (details.codigo = 'requiere_plan' | 'limite_ia').
@@ -953,7 +959,7 @@ export const generarBorradorMundo = onCall({ secrets: [GROQ_API_KEY] }, async (r
   let borrador;
   try {
     borrador = await generarBorrador(
-      { nombre, tema, grado },
+      { nombre, tema, grado, fuente },
       groqCaller(GROQ_API_KEY.value(), { maxTokens: 4000, timeoutMs: 45_000 })
     );
   } catch (e) {
@@ -972,6 +978,64 @@ export const generarBorradorMundo = onCall({ secrets: [GROQ_API_KEY] }, async (r
     registrarGeneracionIa(caller.uid),
   ]);
   return borrador;
+});
+
+/**
+ * Fase 4: el texto de un PDF del profe, para crear un mundo con IA. Solo lo
+ * extrae y lo devuelve (el profe lo revisa antes de generar); no gasta cupo de
+ * IA ni guarda nada.
+ */
+export const extraerTextoPdf = onCall({ memory: '512MiB', timeoutSeconds: 60 }, async (request) => {
+  const caller = request.auth;
+  requireAuth(caller);
+  if (caller.token.role !== 'profesor') {
+    throw new HttpsError('permission-denied', 'Solo profesores suben material.');
+  }
+  await asegurarIaDisponible(caller.uid, caller.token.colegioId as string | undefined);
+  return extraerTexto(bytesDePdf(request.data?.base64));
+});
+
+/**
+ * Fase 4: opciones incorrectas plausibles para una pregunta de opción múltiple.
+ * Gasta una generación del cupo del plan y del tope diario por pregunta.
+ */
+export const sugerirOpcionesErradas = onCall({ secrets: [GROQ_API_KEY] }, async (request) => {
+  const caller = request.auth;
+  requireAuth(caller);
+  if (caller.token.role !== 'profesor') {
+    throw new HttpsError('permission-denied', 'Solo profesores generan contenido.');
+  }
+  const colegioId = requireString(request.data?.colegioId, 'colegioId');
+  const cursoId = requireString(request.data?.cursoId, 'cursoId');
+  const enunciado = requireString(request.data?.enunciado, 'enunciado').slice(0, 400);
+  const correcta = requireString(request.data?.correcta, 'correcta').slice(0, 160);
+  const grado = requireString(request.data?.grado, 'grado');
+  const cantidad = Math.min(4, Math.max(1, Number(request.data?.cantidad) || 3));
+  if (!isGradoValido(grado)) throw new HttpsError('invalid-argument', 'Grado fuera de rango.');
+  await assertStaffOfCurso(caller, colegioId, cursoId);
+  await asegurarIaDisponible(caller.uid, colegioId);
+  const uso = await iaItemUsoRef(caller.uid).get();
+  if (((uso.data()?.count as number | undefined) ?? 0) >= IA_ITEM_CAP_DIARIO) {
+    throw new HttpsError('resource-exhausted', 'Límite diario de generación con IA alcanzado.');
+  }
+  let distractores: string[];
+  try {
+    distractores = await sugerirDistractores(
+      { enunciado, correcta, grado, cantidad },
+      groqCaller(GROQ_API_KEY.value(), { maxTokens: 400, timeoutMs: 20_000 })
+    );
+  } catch (e) {
+    console.error('sugerirOpcionesErradas: fallo', e);
+    throw new HttpsError('unavailable', 'El generador no está disponible, intenta de nuevo.');
+  }
+  await Promise.all([
+    iaItemUsoRef(caller.uid).set(
+      { count: FieldValue.increment(1), updatedAt: FieldValue.serverTimestamp() },
+      { merge: true }
+    ),
+    registrarGeneracionIa(caller.uid),
+  ]);
+  return { distractores };
 });
 
 // Single-item generation from the editor (RQ-CN06). Its own daily budget, more

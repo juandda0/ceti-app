@@ -179,3 +179,44 @@ describe('generarItem', () => {
     expect(item).toEqual({ enunciado: 'Ahorrar siempre conviene', respuesta: true });
   });
 });
+
+describe('Fase 4: material del profe y opciones erradas', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const m = require('./mundoBorrador') as typeof import('./mundoBorrador');
+
+  it('el pedido lleva el material del profe, recortado', () => {
+    const sin = m.textoBorradorMundo({ nombre: 'Ahorro', tema: 'ahorrar', grado: '9' });
+    expect(sin).not.toContain('MATERIAL');
+    const con = m.textoBorradorMundo({
+      nombre: 'Ahorro',
+      tema: 'ahorrar',
+      grado: '9',
+      fuente: 'x'.repeat(m.FUENTE_MAX + 50),
+    });
+    expect(con).toContain('MATERIAL DEL PROFESOR');
+    expect(con.length).toBeLessThan(m.FUENTE_MAX + 400);
+  });
+
+  it('las opciones erradas no repiten la correcta ni entre sí', () => {
+    expect(
+      m.parseDistractores(
+        { distractores: ['Gastar', 'Ahorrar', 'gastar', 'Prestar', ''] },
+        'Ahorrar'
+      )
+    ).toEqual(['Gastar', 'Prestar']);
+    expect(() => m.parseDistractores({ distractores: ['Ahorrar'] }, 'Ahorrar')).toThrow();
+    expect(() => m.parseDistractores({}, 'x')).toThrow();
+  });
+
+  it('sugerirDistractores pide la cantidad y la respeta', async () => {
+    const call = jest.fn(async () => JSON.stringify({ distractores: ['A', 'B', 'C', 'D'] }));
+    const r = await m.sugerirDistractores(
+      { enunciado: '¿?', correcta: 'Z', grado: '9', cantidad: 2 },
+      call
+    );
+    expect(r).toEqual(['A', 'B']);
+    expect((call.mock.calls[0] as unknown as string[])[1]).toContain(
+      'CANTIDAD DE OPCIONES INCORRECTAS: 2'
+    );
+  });
+});

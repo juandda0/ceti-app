@@ -1,4 +1,9 @@
-import { construirAnalisis, type EntradaAnalisis, type EstudianteDeLaClase } from './analisisClase';
+import {
+  construirAnalisis,
+  materialDeRepaso,
+  type EntradaAnalisis,
+  type EstudianteDeLaClase,
+} from './analisisClase';
 import type { IntentoGuardado } from './registroClaseRepository';
 import type { AsignacionWithId } from './asignacionRepository';
 
@@ -203,5 +208,35 @@ describe('construirAnalisis', () => {
       sinHacer: [{ uid: 'sol', nombre: 'SOL' }],
     });
     expect(a.grupos.bajoTres).toEqual(['sol']);
+  });
+});
+
+describe('materialDeRepaso', () => {
+  const q = (id: string, facilidad: number, respuestas = 4) => ({
+    id,
+    worldId: 'world_2',
+    mundo: 'Luna del Presupuesto',
+    enunciado: `Pregunta ${id}`,
+    respuestas,
+    estudiantes: 4,
+    facilidad,
+    discriminacion: null,
+    erradaMasElegida: { texto: 'Gastar todo', veces: 2 },
+    dificil: facilidad <= 0.35,
+    revisar: false,
+  });
+
+  it('toma las más difíciles, sin nombres de estudiantes', () => {
+    const m = materialDeRepaso([q('a', 0.9), q('b', 0.2), q('c', 0.5), q('d', 0.1, 1)]);
+    expect(m?.nombre).toBe('Repaso: Luna del Presupuesto');
+    expect(m?.fuente).toContain('1. Pregunta b');
+    expect(m?.fuente).toContain('2. Pregunta c');
+    expect(m?.fuente).not.toContain('Pregunta a');
+    expect(m?.fuente).not.toContain('Pregunta d'); // una sola respuesta no alcanza
+    expect(m?.fuente).toContain('Respuesta errada más elegida: Gastar todo');
+  });
+
+  it('sin preguntas difíciles no hay repaso', () => {
+    expect(materialDeRepaso([q('a', 0.95)])).toBeNull();
   });
 });

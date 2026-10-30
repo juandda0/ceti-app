@@ -44,6 +44,8 @@ const MIN = { teoria: 1, mc: 4, vf: 3, ordenar: 3, eligeCamino: 0 } as const;
 
 export const NOMBRE_MAX = 120;
 export const TEMA_MAX = 300;
+/** Material del profe (texto pegado, PDF o el repaso de lo que falla la clase). */
+export const FUENTE_MAX = 12_000;
 
 export const SYSTEM_PROMPT_MUNDO = `Eres un diseñador de contenido de educación financiera para estudiantes colombianos de colegio. Un profesor te da el NOMBRE y el TEMA de un "mundo" (unidad de clase) y el GRADO (1 a 11). Produces exactamente un JSON con el borrador completo del mundo.
 
@@ -198,12 +200,71 @@ export function parseBorradorMundo(raw: unknown): MundoBorrador {
   };
 }
 
+/**
+ * El pedido al modelo. Con material del profe, el contenido sale de ese
+ * material: no se inventan datos que lo contradigan y no se copian frases
+ * enteras sin adaptarlas al grado.
+ */
+export function textoBorradorMundo(input: {
+  nombre: string;
+  tema: string;
+  grado: string;
+  fuente?: string;
+}): string {
+  const base = `NOMBRE: ${input.nombre}\nTEMA: ${input.tema}\nGRADO: ${input.grado}`;
+  const fuente = input.fuente?.trim().slice(0, FUENTE_MAX);
+  if (!fuente) return base;
+  return `${base}\n\nMATERIAL DEL PROFESOR (basa TODO el contenido en este material; no inventes datos que lo contradigan; adapta el lenguaje al grado; las reglas 3 y 4 siguen valiendo):\n"""\n${fuente}\n"""`;
+}
+
+// ---------------------------------------------------------------------------
+// Mejores opciones erradas (Fase 4): para una pregunta de opción múltiple,
+// distractores plausibles que reflejen errores típicos, no absurdos.
+// ---------------------------------------------------------------------------
+
+export const SYSTEM_PROMPT_DISTRACTORES = `Eres un diseñador de evaluaciones de educación financiera para estudiantes colombianos de colegio. Te dan una pregunta de opción múltiple, su respuesta CORRECTA y el GRADO. Propones opciones INCORRECTAS que sean plausibles: cada una refleja un error o confusión común de un estudiante de esa edad, no algo absurdo ni un chiste.
+
+Formato de salida (JSON estricto): { "distractores": [string, string, string] }
+
+Reglas: 1) ninguna puede ser correcta ni un sinónimo de la correcta; 2) parecidas en largo y estilo a la correcta; 3) sin "todas las anteriores" ni "ninguna"; 4) sin nombres de personas, marcas ni cifras que caducan; 5) lenguaje neutro y claro.`;
+
+export function parseDistractores(raw: unknown, correcta: string): string[] {
+  const lista = (raw as { distractores?: unknown })?.distractores;
+  if (!Array.isArray(lista)) throw new ModelApiError('Respuesta sin distractores.');
+  const limpia = correcta.trim().toLowerCase();
+  const vistos = new Set<string>();
+  const out: string[] = [];
+  for (const d of lista) {
+    const s = str(d, 160);
+    if (!s || s.toLowerCase() === limpia || vistos.has(s.toLowerCase())) continue;
+    vistos.add(s.toLowerCase());
+    out.push(s);
+  }
+  if (out.length < 2) throw new ModelApiError('Muy pocos distractores válidos.');
+  return out.slice(0, 4);
+}
+
+export async function sugerirDistractores(
+  input: { enunciado: string; correcta: string; grado: string; cantidad: number },
+  call: ModelCaller
+): Promise<string[]> {
+  const userText = `GRADO: ${input.grado}\nPREGUNTA: ${input.enunciado}\nRESPUESTA CORRECTA: ${input.correcta}\nCANTIDAD DE OPCIONES INCORRECTAS: ${input.cantidad}`;
+  const raw = await call(SYSTEM_PROMPT_DISTRACTORES, userText);
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    throw new ModelApiError('El modelo no devolvió JSON válido.');
+  }
+  return parseDistractores(parsed, input.correcta).slice(0, input.cantidad);
+}
+
 /** Calls the model and returns the validated draft. */
 export async function generarBorrador(
-  input: { nombre: string; tema: string; grado: string },
+  input: { nombre: string; tema: string; grado: string; fuente?: string },
   call: ModelCaller
 ): Promise<MundoBorrador> {
-  const userText = `NOMBRE: ${input.nombre}\nTEMA: ${input.tema}\nGRADO: ${input.grado}`;
+  const userText = textoBorradorMundo(input);
   const raw = await call(SYSTEM_PROMPT_MUNDO, userText);
   let parsed: unknown;
   try {

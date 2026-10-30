@@ -132,8 +132,29 @@ export const adminService = {
     nombre: string;
     tema: string;
     grado: string;
+    /** Material del profe (texto, PDF o el repaso de lo que falla la clase). */
+    fuente?: string;
   }): Promise<import('./courseContentSchemas').MundoBorrador> {
     return callFunction('generarBorradorMundo', input);
+  },
+
+  /** Texto de un PDF del profe (Fase 4); no gasta cupo de IA. */
+  async extraerTextoPdf(
+    base64: string
+  ): Promise<{ texto: string; paginas: number; recortado: boolean }> {
+    return callFunction('extraerTextoPdf', { base64 });
+  },
+
+  /** Opciones incorrectas plausibles para una pregunta de opción múltiple (Fase 4). */
+  async sugerirOpcionesErradas(input: {
+    colegioId: string;
+    cursoId: string;
+    enunciado: string;
+    correcta: string;
+    grado: string;
+    cantidad: number;
+  }): Promise<{ distractores: string[] }> {
+    return callFunction('sugerirOpcionesErradas', input);
   },
 
   /**
