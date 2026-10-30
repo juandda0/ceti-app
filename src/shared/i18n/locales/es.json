@@ -2328,6 +2328,8 @@
       "guardarDatos": "Guardar datos",
       "datosGuardados": "Datos de facturación guardados",
       "comoPagar": "La entidad paga por transferencia o PSE contra la orden de compra. Cuando confirmamos el pago, activamos la licencia y emitimos la factura electrónica a nombre del NIT. Aquí no se cobra con tarjeta."
-    }
+    },
+    "programa": "Programa o facultad",
+    "programaEjemplo": "Contaduría Pública"
   }
 }

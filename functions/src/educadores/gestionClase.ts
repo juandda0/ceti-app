@@ -22,6 +22,7 @@ export function sigueEnClase(estado: unknown): boolean {
 }
 
 export const NOMBRE_CLASE_MAX = 60;
+export const PROGRAMA_MAX = 60;
 
 // Grados válidos para un curso: 1° a 11°. (El contenido default sembrado solo
 // cubre 9–11; los grados menores reutilizan el banco de 9° hasta que el profesor
@@ -69,6 +70,8 @@ export function estadoAlVolver(atestado: unknown): 'activo' | 'pendiente_atestac
 export interface CambiosClase {
   nombre?: string;
   grado?: string;
+  /** Fase 6: programa o facultad (universidades); '' lo quita. Agrupa el panel de la entidad. */
+  programa?: string;
   archivada?: boolean;
   codigoActivo?: boolean;
 }
@@ -92,6 +95,13 @@ export function leerCambiosClase(data: unknown): CambiosClase {
       throw new HttpsError('invalid-argument', 'El grado debe ir de 1 a 11.');
     }
     cambios.grado = d.grado;
+  }
+  if (d.programa !== undefined) {
+    const programa = typeof d.programa === 'string' ? d.programa.replace(/\s+/g, ' ').trim() : null;
+    if (programa === null || programa.length > PROGRAMA_MAX) {
+      throw new HttpsError('invalid-argument', `El programa tiene hasta ${PROGRAMA_MAX} caracteres.`);
+    }
+    cambios.programa = programa;
   }
   for (const k of ['archivada', 'codigoActivo'] as const) {
     if (d[k] === undefined) continue;
@@ -130,6 +140,7 @@ export async function editarClase(
   const update: Record<string, unknown> = { actualizadaAt: ahora };
   if (cambios.nombre !== undefined) update.nombre = cambios.nombre;
   if (cambios.grado !== undefined) update.grado = cambios.grado;
+  if (cambios.programa !== undefined) update.programa = cambios.programa || null;
   if (cambios.archivada !== undefined) {
     update.archivada = cambios.archivada;
     update.archivadaAt = cambios.archivada ? ahora : null;

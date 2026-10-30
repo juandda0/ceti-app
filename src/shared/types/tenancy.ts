@@ -66,6 +66,8 @@ export type Curso = {
   /** Archived classes take no students and don't count toward the plan limit. */
   archivada?: boolean;
   archivadaAt?: number | null;
+  /** Fase 6: programa o facultad (universidades); agrupa el panel de la entidad. */
+  programa?: string | null;
   createdAt?: number;
   createdByUid?: string;
 };

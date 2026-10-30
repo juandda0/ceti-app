@@ -63,7 +63,7 @@ export const adminService = {
   async editarMiCurso(input: {
     colegioId: string;
     cursoId: string;
-    cambios: { nombre?: string; grado?: string; archivada?: boolean; codigoActivo?: boolean };
+    cambios: { nombre?: string; grado?: string; programa?: string; archivada?: boolean; codigoActivo?: boolean };
   }): Promise<{ ok: boolean; codigo: string | null }> {
     return callFunction('editarMiCurso', input);
   },

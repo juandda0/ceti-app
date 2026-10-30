@@ -113,6 +113,13 @@ describe('leerCambiosClase', () => {
     expect(() => leerCambiosClase({ archivada: 'sí' })).toThrow();
     expect(() => leerCambiosClase({})).toThrow();
   });
+
+  it('el programa (Fase 6) se limpia, se puede quitar y tiene tope', () => {
+    expect(leerCambiosClase({ programa: '  Contaduría   Pública ' })).toEqual({ programa: 'Contaduría Pública' });
+    expect(leerCambiosClase({ programa: '' })).toEqual({ programa: '' });
+    expect(() => leerCambiosClase({ programa: 'x'.repeat(61) })).toThrow();
+    expect(() => leerCambiosClase({ programa: 3 })).toThrow();
+  });
 });
 
 describe('editarClase', () => {
@@ -121,8 +128,8 @@ describe('editarClase', () => {
 
   it('renombra y cambia el grado sin tocar el código', async () => {
     const db = base();
-    await editarClase(comoDb(db), 'c1', 'k1', { nombre: '9B', grado: '10' }, nuevo, 5);
-    expect(db.docs.get(CURSO)).toMatchObject({ nombre: '9B', grado: '10', codigo: 'ABC234' });
+    await editarClase(comoDb(db), 'c1', 'k1', { nombre: '9B', grado: '10', programa: 'Economía' }, nuevo, 5);
+    expect(db.docs.get(CURSO)).toMatchObject({ nombre: '9B', grado: '10', programa: 'Economía', codigo: 'ABC234' });
     expect(db.docs.has('classCodes/ABC234')).toBe(true);
     expect(nuevo).not.toHaveBeenCalled();
   });

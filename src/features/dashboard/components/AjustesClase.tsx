@@ -12,6 +12,7 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { confirmAction, showMessage } from '@shared/lib/dialogs';
 import { adminService } from '@features/dashboard/data/adminService';
 import type { CursoWithId } from '@features/dashboard/data/rosterRepository';
+import { useMiEntidad } from '@features/educadores/entidad/hooks/useMiEntidad';
 import {
   Aviso,
   BotonChunky,
@@ -44,16 +45,21 @@ export default function AjustesClase({
   const router = useRouter();
   const [nombre, setNombre] = useState(curso.nombre);
   const [grado, setGrado] = useState<string>(curso.grado);
+  const [programa, setPrograma] = useState(curso.programa ?? '');
+  // Fase 6: en una universidad cada clase dice su programa (agrupa el panel de la entidad).
+  const esUniversidad = useMiEntidad().vista?.entidad?.tipo === 'universidad';
   const [ocupado, setOcupado] = useState<string | null>(null);
 
   useEffect(() => {
     setNombre(curso.nombre);
     setGrado(curso.grado);
-  }, [curso.nombre, curso.grado]);
+    setPrograma(curso.programa ?? '');
+  }, [curso.nombre, curso.grado, curso.programa]);
 
   const archivada = curso.archivada === true;
   const codigoActivo = curso.codigoActivo !== false;
-  const cambioDatos = nombre.trim() !== curso.nombre || grado !== curso.grado;
+  const cambioDatos =
+    nombre.trim() !== curso.nombre || grado !== curso.grado || programa.trim() !== (curso.programa ?? '');
   const bloqueado = soloLectura || archivada;
 
   const correr = async (clave: string, fn: () => Promise<void>, ok?: string) => {
@@ -88,7 +94,11 @@ export default function AjustesClase({
       showMessage(t('profe.clase.nombreVacio'), undefined, 'error');
       return;
     }
-    void editar('datos', { nombre: limpio, grado }, t('profe.clase.guardado'));
+    void editar(
+      'datos',
+      esUniversidad || curso.programa ? { nombre: limpio, grado, programa: programa.trim() } : { nombre: limpio, grado },
+      t('profe.clase.guardado')
+    );
   };
 
   const nuevoCodigo = () =>
@@ -169,6 +179,16 @@ export default function AjustesClase({
             />
           ))}
         </View>
+        {esUniversidad || curso.programa ? (
+          <Campo
+            etiqueta={t('entidad.programa')}
+            placeholder={t('entidad.programaEjemplo')}
+            value={programa}
+            onChangeText={setPrograma}
+            maxLength={60}
+            editable={!bloqueado}
+          />
+        ) : null}
         <BotonChunky
           texto={t('profe.clase.guardar')}
           icono="checkmark"
