@@ -28,6 +28,9 @@ import { worldProgressRepository } from '@features/dashboard/data/worldProgressR
 import { useStudentGrado } from '@features/learning/hooks/useStudentGrado';
 import { useClassConfig } from '@features/learning/hooks/useClassConfig';
 import { resolveClassWorlds } from '@features/learning/data/classConfig';
+import AtajosClase from '@features/educadores/clase/AtajosClase';
+import type { FaltaRequisito } from '@/functions/src/educadores/dominio/requisitosMundo';
+import type { TFunction } from 'i18next';
 import { worldStatus } from '@features/learning/data/worldStatus';
 import { hasClassAccess } from '@features/learning/data/classAccess';
 import { displayWorldDef } from '@features/learning/data/worldMeta';
@@ -51,6 +54,24 @@ import {
 } from '@features/learning/components/galaxia/TarjetaMundo';
 
 const ANCHO_MAX = 680;
+
+/** Fase 9: lo que falta para abrir un mundo, en una frase (sin regañar). */
+function textoFaltantes(faltan: FaltaRequisito[], nombreDe: (id: string) => string, t: TFunction): string {
+  return faltan
+    .map((f) =>
+      f.tipo === 'fecha'
+        ? t('galaxia.requisitoFecha', {
+            fecha: new Date(`${f.desde}T12:00:00`).toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'short' }),
+          })
+        : f.tipo === 'mundo'
+          ? t('galaxia.requisitoMundo', { nombre: nombreDe(f.worldId) })
+          : t('galaxia.requisitoNota', {
+              nombre: nombreDe(f.worldId),
+              minima: f.minima.toLocaleString('es-CO', { minimumFractionDigits: 1 }),
+            })
+    )
+    .join(' · ');
+}
 
 export default function WorldsScreen() {
   const router = useRouter();
@@ -104,9 +125,17 @@ export default function WorldsScreen() {
   // order. Live via onSnapshot; null → defaults.
   const { config: classConfig, loaded: classConfigLoaded } = useClassConfig();
   const { worlds: classWorlds } = useMemo(
-    () => resolveClassWorlds(classConfig, (w) => isWorldComplete(uid, w as WorldId)),
+    () =>
+      resolveClassWorlds(
+        classConfig,
+        (w) => isWorldComplete(uid, w as WorldId),
+        // Fase 9: requisitos del profe (fecha, mundo anterior, nota), solo en una clase.
+        hasAccess
+          ? { ahora: Date.now(), maestria: (w) => remoteProgress[w as WorldId] ?? null }
+          : undefined
+      ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [classConfig, uid, answers, remoteProgress, isWorldComplete]
+    [classConfig, uid, answers, remoteProgress, isWorldComplete, hasAccess]
   );
 
   // Per-world pointer to the course's custom content (RQ-PR11); null without a
@@ -142,19 +171,22 @@ export default function WorldsScreen() {
           descripcion: disp.description,
           planeta: planetaDeMundo(cw.worldId, index),
           estado: worldStatus(cw.unlocked, conquistado ? 1 : hechas / total),
+          faltan: cw.faltan,
           hechas,
           total,
         };
       })
       .filter((x): x is NonNullable<typeof x> => x !== null);
+    const nombreDe = (id: string) => base.find((b) => b.id === id)?.nombre ?? id;
     return base.map((m, i) => ({
       ...m,
+      notaRequisitos: m.faltan?.length ? textoFaltantes(m.faltan, nombreDe, t) : undefined,
       numero: i + 1,
       anterior: i > 0 ? base[i - 1].nombre : undefined,
       siguiente: i < base.length - 1 ? base[i + 1].nombre : undefined,
     }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [classWorlds, classConfig, uid, answers, remoteProgress, isWorldComplete, nivelesPorMundo, leccionesHechas]);
+  }, [classWorlds, classConfig, uid, answers, remoteProgress, isWorldComplete, nivelesPorMundo, leccionesHechas, t]);
 
   // Prefetch the class's worlds once the real grado AND the class config are
   // known (avoids fetching worlds the class doesn't serve). The store guard
@@ -248,6 +280,7 @@ export default function WorldsScreen() {
         <View style={estilos.avisos}>
           <AuthorizationPendingBanner />
           <TableroClase />
+          <AtajosClase />
           <VivoAbierta />
           <PruebaPendiente />
           <StudentAssignmentsBanner

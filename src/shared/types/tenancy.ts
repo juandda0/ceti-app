@@ -6,6 +6,7 @@
  * the only PII stored is `email` + `nombre`. There is NO pseudonym key
  * and NO active sede claim.
  */
+import type { RequisitosMundo } from '@/functions/src/educadores/dominio/requisitosMundo';
 
 // D-PIVOT/D-ADMIN: three roles. Admin provisions through an in-app panel backed
 // by Cloud Functions; rector/coordinador are removed.
@@ -173,6 +174,8 @@ export type CursoConfigMundoEntry = {
    * clase y de la entidad (si faltan, se usan los de `competencia`).
    */
   ambitosMen?: string[];
+  /** Fase 9: cuándo se abre (fecha, mundo anterior, nota mínima en ese mundo). */
+  requisitos?: RequisitosMundo;
 };
 
 /**

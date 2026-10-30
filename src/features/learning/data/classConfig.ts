@@ -8,10 +8,26 @@
  */
 import type { CursoConfigMundos } from '@shared/types/tenancy';
 import { WORLD_ORDER } from '@features/learning/data/competencias';
+import {
+  faltantesRequisitos,
+  leerRequisitos,
+  type FaltaRequisito,
+} from '@/functions/src/educadores/dominio/requisitosMundo';
+import type { EscalaSiee } from '@/functions/src/educadores/dominio/notas1290';
 
 export interface ClassWorldView {
   worldId: string;
   unlocked: boolean;
+  /** Fase 9: requisitos del profe que aún no cumple (vacío o ausente = ninguno). */
+  faltan?: FaltaRequisito[];
+}
+
+/** Fase 9: lo que hace falta para evaluar los requisitos de cada mundo. */
+export interface ContextoClase {
+  ahora: number;
+  /** Maestría 0..1 del mundo en esta clase, o null sin datos. */
+  maestria: (worldId: string) => number | null;
+  escala?: EscalaSiee;
 }
 
 export interface ResolvedClassWorlds {
@@ -26,7 +42,7 @@ function defaultEntries(): { worldId: string; activo: boolean }[] {
 /** Active entries in teaching order. */
 function resolveActive(
   config: CursoConfigMundos | null | undefined
-): { worldId: string; activo: boolean }[] {
+): { worldId: string; activo: boolean; requisitos?: unknown }[] {
   const entries = config?.mundos?.length ? config.mundos : defaultEntries();
   return entries.filter((e) => e && e.activo && typeof e.worldId === 'string');
 }
@@ -35,18 +51,30 @@ function resolveActive(
  * Resolves what a student sees. Unlock rule (RQ-PR10 CA5): an active world is
  * unlocked if it was already completed OR every active world before it in the
  * order is completed — completion is never re-locked by reordering.
+ * Fase 9: with `clase`, the teacher's `requisitos` (date, prior world,
+ * minimum grade) also have to be met; a completed world still never re-locks.
  */
 export function resolveClassWorlds(
   config: CursoConfigMundos | null | undefined,
-  isCompleted: (worldId: string) => boolean
+  isCompleted: (worldId: string) => boolean,
+  clase?: ContextoClase
 ): ResolvedClassWorlds {
   const active = resolveActive(config);
+  const visibles = new Set(active.map((e) => e.worldId));
 
   let allPreviousCompleted = true;
   const worlds: ClassWorldView[] = active.map((entry) => {
-    const unlocked = isCompleted(entry.worldId) || allPreviousCompleted;
-    allPreviousCompleted = allPreviousCompleted && isCompleted(entry.worldId);
-    return { worldId: entry.worldId, unlocked };
+    const completed = isCompleted(entry.worldId);
+    const faltan = clase
+      ? faltantesRequisitos(leerRequisitos(entry.requisitos, clase.escala), {
+          ...clase,
+          visibles,
+          conquistado: isCompleted,
+        })
+      : [];
+    const unlocked = completed || (allPreviousCompleted && faltan.length === 0);
+    allPreviousCompleted = allPreviousCompleted && completed;
+    return { worldId: entry.worldId, unlocked, ...(faltan.length && !completed ? { faltan } : {}) };
   });
 
   return { worlds };

@@ -24,6 +24,8 @@ export interface MundoGalaxia {
   /** Mundo anterior en la clase (nota de bloqueo) y siguiente (lo que abre al conquistarlo). */
   anterior?: string;
   siguiente?: string;
+  /** Fase 9: qué le falta según los requisitos del profe (fecha, mundo, nota), ya en texto. */
+  notaRequisitos?: string;
 }
 
 function useTextos(m: MundoGalaxia) {
@@ -40,9 +42,11 @@ function useTextos(m: MundoGalaxia) {
     en_progreso: t('galaxia.continuar'),
     dominado: t('galaxia.repasar'),
   }[m.estado];
-  const notaBloqueo = m.anterior
-    ? t('galaxia.bloqueadoNombre', { nombre: m.anterior })
-    : t('galaxia.bloqueado');
+  const notaBloqueo = m.notaRequisitos
+    ? m.notaRequisitos
+    : m.anterior
+      ? t('galaxia.bloqueadoNombre', { nombre: m.anterior })
+      : t('galaxia.bloqueado');
   return { t, estado, boton, notaBloqueo };
 }
 

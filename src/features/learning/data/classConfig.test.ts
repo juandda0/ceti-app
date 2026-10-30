@@ -149,3 +149,34 @@ describe('isWorldAccessible (guard de saga / salida suave)', () => {
     expect(isWorldAccessible(null, 'world_3', completedSet(['world_3']))).toBe(true);
   });
 });
+
+describe('requisitos del profe (Fase 9)', () => {
+  const cfg = (requisitos: Record<string, unknown>) =>
+    ({
+      mundos: [
+        { worldId: 'world_1', activo: true },
+        { worldId: 'world_2', activo: true, requisitos },
+      ],
+      version: 1,
+      updatedAt: 1,
+      updatedByUid: 'p',
+    }) as unknown as Parameters<typeof resolveClassWorlds>[0];
+  const clase = (maestria: number | null) => ({ ahora: Date.parse('2026-11-05T15:00:00Z'), maestria: () => maestria });
+
+  it('una fecha futura cierra el mundo aunque el anterior esté conquistado', () => {
+    const r = resolveClassWorlds(cfg({ desde: '2026-11-10' }), completedSet(['world_1']), clase(1));
+    expect(r.worlds[1]).toEqual({ worldId: 'world_2', unlocked: false, faltan: [{ tipo: 'fecha', desde: '2026-11-10' }] });
+  });
+
+  it('la nota mínima en el mundo anterior', () => {
+    const req = { despuesDe: 'world_1', notaMinima: 4 };
+    expect(resolveClassWorlds(cfg(req), completedSet(['world_1']), clase(0.5)).worlds[1].unlocked).toBe(false);
+    expect(resolveClassWorlds(cfg(req), completedSet(['world_1']), clase(0.8)).worlds[1].unlocked).toBe(true);
+  });
+
+  it('sin contexto de clase (Mi galaxia) no hay requisitos, y un mundo conquistado no se cierra', () => {
+    expect(resolveClassWorlds(cfg({ desde: '2099-01-01' }), completedSet(['world_1'])).worlds[1].unlocked).toBe(true);
+    const conquistado = resolveClassWorlds(cfg({ desde: '2099-01-01' }), completedSet(['world_1', 'world_2']), clase(1));
+    expect(conquistado.worlds[1]).toEqual({ worldId: 'world_2', unlocked: true });
+  });
+});

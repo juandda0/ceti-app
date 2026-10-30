@@ -458,6 +458,16 @@ export default function CourseDashboardScreen() {
             style={{ flex: 1 }}
           />
         </View>
+        {/* Fase 9: calendario de la clase. */}
+        <BotonChunky
+          texto={t('calendario.entrada')}
+          icono="calendar"
+          variante="secundario"
+          compacto
+          onPress={() =>
+            router.push(`/(staff)/calendario/${cursoId}?nombre=${encodeURIComponent(cursoNombre)}` as Href)
+          }
+        />
         <BotonChunky
           texto={t('analisis.entrada')}
           icono={!planCargando && puede('analisisClase') ? 'analytics' : 'lock-closed-outline'}

@@ -28,3 +28,5 @@ export * from './claseVivo';
 export * from './certificados';
 export * from './bibliotecaPublica';
 export * from './permisosClase';
+export * from './requisitosMundo';
+export * from './calendarioClase';

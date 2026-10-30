@@ -32,6 +32,8 @@ import { classConfigRepository } from '@features/dashboard/data/classConfigRepos
 import { courseContentRepository } from '@features/dashboard/data/courseContentRepository';
 import { rosterRepository } from '@features/dashboard/data/rosterRepository';
 import { buildCuratedConfig } from '@features/learning/data/classConfig';
+import RequisitosMundoHoja from '@features/educadores/requisitos/RequisitosMundoHoja';
+import type { RequisitosMundo } from '@/functions/src/educadores/dominio';
 import { WORLD_DEFS, displayWorldDef, isCustomWorldId } from '@features/learning/data/worldMeta';
 import { planetaDeMundo } from '@features/learning/data/planetas';
 import { Chip, Esqueleto, Pill } from '@features/dashboard/components/profe/kit';
@@ -60,6 +62,8 @@ export default function ClassWorldsManager({
   // para que las filas regresen a su lugar.
   const [listaKey, setListaKey] = useState(0);
   const puedeConfigurar = () => !soloLectura && muro.exigir('configurarMundos');
+  // Fase 9: requisitos para abrir un mundo (fecha, mundo anterior, nota mínima).
+  const [requisitosDe, setRequisitosDe] = useState<CursoConfigMundoEntry | null>(null);
 
   useEffect(
     () =>
@@ -94,6 +98,19 @@ export default function ClassWorldsManager({
       cursoId,
       buildCuratedConfig(config, mundos, firebaseUid, Date.now())
     );
+  };
+
+  const guardarRequisitos = (worldId: string, requisitos: RequisitosMundo | null) => {
+    setRequisitosDe(null);
+    if (!puedeConfigurar()) return;
+    save(
+      entries.map((e) => {
+        if (e.worldId !== worldId) return e;
+        const { requisitos: _viejos, ...resto } = e;
+        return requisitos ? { ...resto, requisitos } : resto;
+      })
+    );
+    showMessage(t(requisitos ? 'requisitos.guardados' : 'requisitos.quitados'), undefined, 'success');
   };
 
   const onToggle = async (worldId: string) => {
@@ -248,7 +265,9 @@ export default function ClassWorldsManager({
               >
                 {def.name}
               </Text>
-              {entry.activo ? (
+              {entry.activo && entry.requisitos ? (
+                <Pill texto={t('requisitos.conRequisitos')} icono="lock-closed" tono="naranja" />
+              ) : entry.activo ? (
                 <Text style={[styles.rowSub, { color: colors.text.tertiary }]} numberOfLines={1}>
                   {esCustom ? t('profe.mundoPropio') : def.subtitle}
                 </Text>
@@ -258,6 +277,21 @@ export default function ClassWorldsManager({
             </View>
             <Ionicons name="chevron-forward" size={16} color={colors.text.quaternary} />
           </Pressable>
+          {entry.activo && !soloLectura ? (
+            <Bounceable
+              onPress={() => setRequisitosDe(entry)}
+              activeScale={0.9}
+              accessibilityRole="button"
+              accessibilityLabel={t('requisitos.abrir', { nombre: def.name })}
+              style={[styles.iconBtn, { backgroundColor: colors.materials.highlight }]}
+            >
+              <Ionicons
+                name={entry.requisitos ? 'lock-closed' : 'lock-open-outline'}
+                size={17}
+                color={entry.requisitos ? colors.brand.primary : colors.text.secondary}
+              />
+            </Bounceable>
+          ) : null}
           {esCustom && !soloLectura ? (
             <Bounceable
               onPress={() => setMenuFor({ worldId: entry.worldId, name: def.name })}
@@ -424,6 +458,22 @@ export default function ClassWorldsManager({
           </View>
         )}
       </CetiBottomSheet>
+      <RequisitosMundoHoja
+        mundo={
+          requisitosDe
+            ? {
+                worldId: requisitosDe.worldId,
+                nombre: displayWorldDef(requisitosDe.worldId, requisitosDe)?.name ?? requisitosDe.worldId,
+                requisitos: requisitosDe.requisitos,
+              }
+            : null
+        }
+        otros={entries
+          .filter((e) => e.activo && e.worldId !== requisitosDe?.worldId)
+          .map((e) => ({ worldId: e.worldId, nombre: displayWorldDef(e.worldId, e)?.name ?? e.worldId }))}
+        onGuardar={(r) => requisitosDe && guardarRequisitos(requisitosDe.worldId, r)}
+        onCerrar={() => setRequisitosDe(null)}
+      />
       {muro.hoja}
     </View>
   );

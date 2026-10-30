@@ -766,7 +766,10 @@
     "despegandoHacia": "DESPEGANDO HACIA",
     "enEsteMundo": "EN ESTE MUNDO",
     "guiaVacia": "Este mundo todavía no tiene guía. Entra al mundo y aprende jugando.",
-    "volver": "VOLVER"
+    "volver": "VOLVER",
+    "requisitoFecha": "Se abre el {{fecha}}",
+    "requisitoMundo": "Conquista {{nombre}} primero",
+    "requisitoNota": "Necesitas {{minima}} en {{nombre}}"
   },
   "profe": {
     "tabClases": "Clases",
@@ -2687,5 +2690,62 @@
     "mostrado": "Volvió a la biblioteca",
     "retirado": "Retirado de la biblioteca",
     "error": "No se pudo moderar"
+  },
+  "requisitos": {
+    "titulo": "¿Cuándo se abre {{nombre}}?",
+    "subtitulo": "Puedes combinar las tres. Un mundo ya conquistado nunca se vuelve a cerrar.",
+    "abrir": "Requisitos para abrir {{nombre}}",
+    "conRequisitos": "Con requisitos",
+    "fecha": "Desde una fecha",
+    "sinFecha": "Sin fecha",
+    "manana": "Mañana",
+    "semana": "En una semana",
+    "dosSemanas": "En dos semanas",
+    "fechaCampo": "Fecha (año-mes-día)",
+    "fechaAyuda": "Se abre ese día a las 12:00 a. m., hora de Colombia.",
+    "fechaMal": "Escribe la fecha así: 2026-11-10.",
+    "despues": "Después de otro mundo",
+    "ninguno": "Ninguno",
+    "nota": "Con nota mínima en ese mundo",
+    "sinNota": "Sin nota",
+    "ayuda": "El estudiante ve qué le falta, sin regaños. En Mi galaxia no hay requisitos.",
+    "guardar": "Guardar requisitos",
+    "quitar": "Quitar requisitos",
+    "guardados": "Requisitos guardados",
+    "quitados": "Ese mundo ya no tiene requisitos"
+  },
+  "calendario": {
+    "entrada": "Calendario de la clase",
+    "atajo": "Calendario",
+    "sobre": "Calendario",
+    "titulo": "Calendario de la clase",
+    "subProfe": "Tareas, mundos que se abren, pruebas, clases en vivo y periodos.",
+    "subEstudiante": "Lo que viene en tu clase.",
+    "vacio": "Nada con fecha por ahora",
+    "vacioTexto": "Las tareas, los mundos con fecha y los periodos aparecen aquí.",
+    "error": "No pudimos cargar el calendario",
+    "errorTexto": "Revisa tu conexión e inténtalo otra vez.",
+    "ics": "Agregar a mi calendario (.ics)",
+    "icsAyuda": "El archivo .ics se abre en Google Calendar, Outlook o el calendario del celular. Trae lo que viene, no lo que ya pasó.",
+    "errorIcs": "No se pudo guardar el archivo",
+    "grupo": {
+      "pasado": "Ya pasó",
+      "estaSemana": "Esta semana",
+      "proximaSemana": "Próxima semana",
+      "despues": "Más adelante"
+    },
+    "tipo": {
+      "tarea": "Vence la tarea: {{titulo}}",
+      "tareaAbierta": "Vence la tarea abierta: {{titulo}}",
+      "mundo": "Se abre {{titulo}}",
+      "vivo": "Clase en vivo: {{titulo}}",
+      "periodo": "Cierre del {{titulo}}"
+    },
+    "prueba": {
+      "pre_abre": "Se abre la prueba de entrada",
+      "pre_cierra": "Se cierra la prueba de entrada",
+      "post_abre": "Se abre la prueba de salida",
+      "post_cierra": "Se cierra la prueba de salida"
+    }
   }
 }
