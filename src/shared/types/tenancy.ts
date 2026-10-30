@@ -160,11 +160,17 @@ export type CursoConfigMundoEntry = {
   subtitle?: string;
   descripcion?: string;
   /**
-   * Custom worlds only (RQ-PR12 CA2): assigned CONPES competency id (one of
-   * the 5) → counts in diagnosis/compliance; absent → 'personalizada'
+   * Custom worlds only (RQ-PR12 CA2): assigned Ceti competency id (one of
+   * the 6) → counts in diagnosis/compliance; absent → 'personalizada'
    * (progress-only, outside the compliance report).
    */
   competencia?: string;
+  /**
+   * Custom worlds only (Fase 7): ámbitos de las orientaciones del MEN que el
+   * profe dice que trabaja el mundo. Cuentan en la cobertura curricular de la
+   * clase y de la entidad (si faltan, se usan los de `competencia`).
+   */
+  ambitosMen?: string[];
 };
 
 /**

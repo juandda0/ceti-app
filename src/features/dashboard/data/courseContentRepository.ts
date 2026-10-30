@@ -223,7 +223,7 @@ export const courseContentRepository = {
     config: CursoConfigMundos | null;
     /** Caller-minted `cw_*` id (it is embedded in the piece docs too). */
     worldId: string;
-    meta: { nombre: string; subtitle?: string; descripcion?: string; competencia?: string };
+    meta: { nombre: string; subtitle?: string; descripcion?: string; competencia?: string; ambitosMen?: string[] };
     /** Content docs keyed by piece (already validated by the caller). */
     pieces?: Partial<Record<ContentPiece, Record<string, unknown>>>;
   }): Promise<string | null> {
@@ -252,6 +252,7 @@ export const courseContentRepository = {
           subtitle: meta.subtitle?.trim() || undefined,
           descripcion: meta.descripcion?.trim() || undefined,
           competencia: meta.competencia || undefined,
+          ambitosMen: meta.ambitosMen?.length ? meta.ambitosMen : undefined,
         }) as CursoConfigMundos['mundos'][number],
       ];
       for (const piece of Object.keys(pieces ?? {})) {

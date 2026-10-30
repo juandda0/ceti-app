@@ -22,6 +22,8 @@ export interface EntradaMundo {
   subtitle?: string;
   descripcion?: string;
   competencia?: string;
+  /** Ámbitos del MEN de un mundo propio (Fase 7). */
+  ambitosMen?: string[];
   [k: string]: unknown;
 }
 
@@ -38,6 +40,8 @@ export interface PublicacionBiblioteca {
   subtitulo: string | null;
   descripcion: string | null;
   competencia: string | null;
+  /** Fase 7: viajan con la copia para que siga sumando en la cobertura. */
+  ambitosMen?: string[];
   grado: string | null;
   autorUid: string;
   autorNombre: string;
@@ -90,6 +94,7 @@ export function armarPublicacion(params: {
     subtitulo: entrada.subtitle?.trim() || null,
     descripcion: entrada.descripcion?.trim() || null,
     competencia: entrada.competencia ?? null,
+    ...(Array.isArray(entrada.ambitosMen) && entrada.ambitosMen.length ? { ambitosMen: [...entrada.ambitosMen] } : {}),
     grado: params.grado,
     autorUid: params.autorUid,
     autorNombre: params.autorNombre,
@@ -118,7 +123,7 @@ export function piezasParaMundoNuevo(pub: Pick<PublicacionBiblioteca, 'piezas' |
  */
 export function configConMundo(
   actual: Partial<ConfigMundosDoc> | null | undefined,
-  pub: Pick<PublicacionBiblioteca, 'titulo' | 'subtitulo' | 'descripcion' | 'competencia' | 'overrides'>,
+  pub: Pick<PublicacionBiblioteca, 'titulo' | 'subtitulo' | 'descripcion' | 'competencia' | 'overrides' | 'ambitosMen'>,
   nuevo: string,
   uid: string,
   ahora: number
@@ -132,6 +137,7 @@ export function configConMundo(
   if (pub.subtitulo) entrada.subtitle = pub.subtitulo;
   if (pub.descripcion) entrada.descripcion = pub.descripcion;
   if (pub.competencia) entrada.competencia = pub.competencia;
+  if (pub.ambitosMen?.length) entrada.ambitosMen = [...pub.ambitosMen];
   return {
     mundos: [...mundos, entrada],
     overrides: { ...(actual?.overrides ?? {}), [nuevo]: { ...pub.overrides } },

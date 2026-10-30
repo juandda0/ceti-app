@@ -30,7 +30,12 @@ import {
   type MundoBorrador,
 } from '@features/dashboard/data/courseContentSchemas';
 import { rosterRepository } from '@features/dashboard/data/rosterRepository';
-import { ALL_COMPETENCIAS, COMPETENCIA_PERSONALIZADA } from '@features/learning/data/competencias';
+import {
+  ALL_COMPETENCIAS,
+  COMPETENCIA_PERSONALIZADA,
+  competenciaAmbitosMen,
+} from '@features/learning/data/competencias';
+import { AMBITOS_MEN, ALINEACION_MEN, type AmbitoMen } from '@/functions/src/educadores/dominio';
 import { CUSTOM_WORLD_COLOR } from '@features/learning/data/worldMeta';
 import { FadeIn } from '@features/savings/charts/ChartParts';
 import { useMuro } from '@features/educadores/components/MuroPlan';
@@ -65,6 +70,14 @@ export default function CreateWorldScreen() {
   const [fuente, setFuente] = useState(params.fuente ?? '');
   const [leyendoPdf, setLeyendoPdf] = useState(false);
   const [competencia, setCompetencia] = useState<string | null>(null);
+  // Ámbitos del MEN del mundo (Fase 7): arrancan con los de la competencia y el profe los ajusta.
+  const [ambitos, setAmbitos] = useState<AmbitoMen[]>([]);
+  const elegirCompetencia = (id: string | null) => {
+    setCompetencia(id);
+    setAmbitos(id ? [...(ALINEACION_MEN[id]?.ambitos ?? [])] : []);
+  };
+  const alternarAmbito = (id: AmbitoMen) =>
+    setAmbitos((a) => (a.includes(id) ? a.filter((x) => x !== id) : [...a, id]));
   const [draft, setDraft] = useState<MundoBorrador | null>(null);
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -171,6 +184,7 @@ export default function CreateWorldScreen() {
           subtitle: draft?.subtitle,
           descripcion: draft?.descripcion || tema.trim() || undefined,
           competencia: competencia ?? undefined,
+          ambitosMen: ambitos,
         },
         pieces,
       });
@@ -263,7 +277,7 @@ export default function CreateWorldScreen() {
               texto={t('createWorld.competenciaNinguna')}
               seleccionado={competencia === null}
               color={accent}
-              onPress={() => setCompetencia(null)}
+              onPress={() => elegirCompetencia(null)}
             />
             {ALL_COMPETENCIAS.map((c) => (
               <Chip
@@ -271,12 +285,34 @@ export default function CreateWorldScreen() {
                 texto={c.label}
                 seleccionado={competencia === c.id}
                 color={accent}
-                onPress={() => setCompetencia(c.id)}
+                onPress={() => elegirCompetencia(c.id)}
               />
             ))}
           </View>
           <Text style={[styles.ayuda, { color: colors.text.tertiary }]}>
-            {t('createWorld.competenciaHint')}
+            {competencia
+              ? t('createWorld.ambitoMen', { ambitos: competenciaAmbitosMen(competencia) })
+              : t('createWorld.competenciaHint')}
+          </Text>
+        </View>
+
+        <View style={{ gap: 10 }}>
+          <Text style={[styles.etiqueta, { color: colors.text.secondary }]}>
+            {t('createWorld.ambitos')}
+          </Text>
+          <View style={styles.chips}>
+            {AMBITOS_MEN.map((a) => (
+              <Chip
+                key={a.id}
+                texto={a.nombre}
+                seleccionado={ambitos.includes(a.id)}
+                color={accent}
+                onPress={() => alternarAmbito(a.id)}
+              />
+            ))}
+          </View>
+          <Text style={[styles.ayuda, { color: colors.text.tertiary }]}>
+            {t('createWorld.ambitosHint')}
           </Text>
         </View>
 
