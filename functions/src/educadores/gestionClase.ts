@@ -13,6 +13,7 @@
  */
 import { HttpsError } from 'firebase-functions/v2/https';
 import type { DocumentReference, Firestore } from 'firebase-admin/firestore';
+import { sinEstudiante, type Grupo } from './dominio/grupos';
 
 /** Estados del roster que siguen en la clase y ocupan cupo. */
 export const ESTADOS_EN_CLASE = ['activo', 'pendiente_atestacion'] as const;
@@ -56,7 +57,23 @@ export async function retirarDeClase(
     { estado: 'retirado', retiradoAt: ahora, retiradoPor: por.quien, retiradoPorUid: por.uid },
     { merge: true }
   );
+  await sacarDeGrupos(db, colegioId, cursoId, uid, ahora);
   return true;
+}
+
+/** Fase 8: quien sale de la clase (o se suprimen sus datos) sale también de su grupo. */
+export async function sacarDeGrupos(
+  db: Firestore,
+  colegioId: string,
+  cursoId: string,
+  uid: string,
+  ahora = Date.now()
+): Promise<void> {
+  const ref = db.doc(`colegios/${colegioId}/cursos/${cursoId}/config/grupos`);
+  const snap = await ref.get();
+  const grupos = snap.exists ? (snap.get('grupos') as Grupo[] | undefined) : undefined;
+  if (!Array.isArray(grupos) || !grupos.some((g) => Array.isArray(g?.uids) && g.uids.includes(uid))) return;
+  await ref.update({ grupos: sinEstudiante(grupos, uid), actualizadoAt: ahora });
 }
 
 /**

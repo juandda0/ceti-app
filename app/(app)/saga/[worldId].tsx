@@ -21,6 +21,7 @@ import { useUserStore } from '@features/auth/store/useUserStore';
 import { useStudentGrado } from '@features/learning/hooks/useStudentGrado';
 import { claveNivel, claveProgreso } from '@features/learning/data/espacio';
 import { useClassConfig } from '@features/learning/hooks/useClassConfig';
+import { useMisAdaptaciones } from '@features/educadores/adaptaciones/hooks/useMisAdaptaciones';
 import { isWorldVisible } from '@features/learning/data/classConfig';
 import { displayWorldDef } from '@features/learning/data/worldMeta';
 import { useWorldFlow } from '@features/learning/hooks/useWorldFlow';
@@ -102,6 +103,8 @@ export default function WorldSagaScreen() {
   // student may finish the activity already on screen (never kicked mid-
   // question) but cannot re-enter; a fresh entry into a hidden world bounces.
   const { config: classConfig, loaded: classConfigLoaded } = useClassConfig();
+  // Fase 8: más tiempo, menos opciones, voz y letra grande (solo en la clase).
+  const adaptaciones = useMisAdaptaciones();
   const visible = !classConfigLoaded || isWorldVisible(classConfig, worldId ?? '');
   const wasVisibleRef = useRef(false);
   useEffect(() => {
@@ -403,6 +406,7 @@ export default function WorldSagaScreen() {
         mundo={worldId ?? ''}
         nivel={jugando.nivel}
         onRegistro={(registro) => registrarEnClase(jugando.tipo, jugando.nivel, registro)}
+        adaptaciones={adaptaciones}
         onSalir={() => setJugando(null)}
         onTerminar={alTerminar}
       />

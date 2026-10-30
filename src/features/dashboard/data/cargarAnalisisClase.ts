@@ -31,7 +31,20 @@ export interface AnalisisCargado {
 export async function cargarAnalisisClase(
   colegioId: string,
   cursoId: string,
-  { desde, hasta, ahora, escala }: { desde: number; hasta: number; ahora: number; escala?: EscalaSiee }
+  {
+    desde,
+    hasta,
+    ahora,
+    escala,
+    soloUids,
+  }: {
+    desde: number;
+    hasta: number;
+    ahora: number;
+    escala?: EscalaSiee;
+    /** Fase 8: solo los de un grupo de la clase. */
+    soloUids?: readonly string[] | null;
+  }
 ): Promise<AnalisisCargado> {
   const [roster, curso, config, tareas] = await Promise.all([
     rosterRepository.getRoster(colegioId, cursoId),
@@ -39,7 +52,7 @@ export async function cargarAnalisisClase(
     classConfigRepository.get(colegioId, cursoId).catch(() => null),
     asignacionRepository.listByCurso(colegioId, cursoId).catch(() => []),
   ]);
-  const enClase = roster.filter((e) => sigueEnClase(e.estado));
+  const enClase = roster.filter((e) => sigueEnClase(e.estado) && (!soloUids || soloUids.includes(e.uid)));
   // La actividad muestra 8 semanas aunque el periodo sea más corto.
   const desdeCarga = Math.min(desde, ahora - SEMANAS_ACTIVIDAD * 7 * DIA_MS);
 

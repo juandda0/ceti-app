@@ -55,6 +55,8 @@ export interface LimitesPlan {
   estudiantesPorClase: number;
   /** Generaciones de IA al mes (borradores de mundo + ítems sueltos). */
   iaGeneracionesMes: number;
+  /** Clases en vivo que puede abrir al mes (Fase 8). */
+  clasesVivoMes: number;
 }
 
 export interface DefinicionPlan {
@@ -92,26 +94,26 @@ export const PLANES: Record<PlanId, DefinicionPlan> = {
   cadete: {
     id: 'cadete',
     rango: 0,
-    limites: { clases: 1, estudiantesPorClase: 45, iaGeneracionesMes: 0 },
+    limites: { clases: 1, estudiantesPorClase: 45, iaGeneracionesMes: 0, clasesVivoMes: 3 },
     funciones: [],
   },
   piloto: {
     id: 'piloto',
     rango: 1,
-    limites: { clases: ILIMITADO, estudiantesPorClase: 60, iaGeneracionesMes: 60 },
+    limites: { clases: ILIMITADO, estudiantesPorClase: 60, iaGeneracionesMes: 60, clasesVivoMes: ILIMITADO },
     funciones: FUNCIONES_PILOTO,
   },
   comandante: {
     id: 'comandante',
     rango: 2,
-    limites: { clases: ILIMITADO, estudiantesPorClase: 60, iaGeneracionesMes: 300 },
+    limites: { clases: ILIMITADO, estudiantesPorClase: 60, iaGeneracionesMes: 300, clasesVivoMes: ILIMITADO },
     // El resumen para acudientes es el gancho del tutor (Fase 5).
     funciones: [...FUNCIONES_PILOTO, 'bibliotecaPublicar', 'aulasConMarca', 'resumenAcudientes'],
   },
   nave: {
     id: 'nave',
     rango: 3,
-    limites: { clases: ILIMITADO, estudiantesPorClase: 60, iaGeneracionesMes: 120 },
+    limites: { clases: ILIMITADO, estudiantesPorClase: 60, iaGeneracionesMes: 120, clasesVivoMes: ILIMITADO },
     funciones: [...FUNCIONES_PILOTO, 'panelCapitan', 'prePostTest', 'resumenAcudientes'],
   },
 };

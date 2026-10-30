@@ -18,6 +18,7 @@ import {
 import { sigueEnClase } from '@features/dashboard/data/estadoRoster';
 import AjustesClase from '@features/dashboard/components/AjustesClase';
 import CoDocentesClase from '@features/educadores/entidad/components/CoDocentesClase';
+import AccesibilidadClase from '@features/educadores/adaptaciones/components/AccesibilidadClase';
 import { adminService } from '@features/dashboard/data/adminService';
 import ClassWorldsManager from '@features/dashboard/components/ClassWorldsManager';
 import { useClaseSoloLectura } from '@features/educadores/components/useClaseSoloLectura';
@@ -433,6 +434,7 @@ export default function CourseManageScreen() {
                 soloLectura={soloLecturaPlan}
                 onCambio={reload}
               />
+              <AccesibilidadClase colegioId={colegioId} cursoId={curso.id} grado={curso.grado} />
               <CoDocentesClase
                 cursoId={curso.id}
                 profesorUids={curso.profesorUids ?? []}

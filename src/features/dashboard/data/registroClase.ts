@@ -37,7 +37,8 @@ export interface RespuestaIntento {
 
 export interface IntentoClase {
   worldId: string;
-  tipo: 'leccion' | 'jefe';
+  /** `vivo`: lo escribe el servidor al terminar una clase en vivo (Fase 8). */
+  tipo: 'leccion' | 'jefe' | 'vivo';
   /** Lección del mapa (0..); null en el jefe. */
   nivel: number | null;
   resultado: 'completado' | 'perdido';

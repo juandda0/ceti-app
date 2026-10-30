@@ -99,6 +99,20 @@ service cloud.firestore {
         && d.respuestas is list && d.respuestas.size() == d.total
         && d.creadoAt == request.time;
     }
+    // Fase 8a — una respuesta de la clase en vivo: la pregunta `n` está abierta
+    // en ESTA sesión, una opción que existe y el id `{n}_{uid}`.
+    function respuestaVivoValida(cid, cursoId, vivoId, respuestaId, d) {
+      let s = get(/databases/$(database)/documents/colegios/$(cid)/cursos/$(cursoId)/vivo/$(vivoId)).data;
+      return d.keys().hasOnly(['uid', 'n', 'r', 'sesion', 'creadoAt'])
+        && d.uid == request.auth.uid
+        && d.n is int && d.r is int && d.r >= 0
+        && s.estado == 'pregunta'
+        && s.pregunta.n == d.n
+        && d.r < s.pregunta.opciones.size()
+        && d.sesion == s.id
+        && respuestaId == string(d.n) + '_' + request.auth.uid
+        && d.creadoAt == request.time;
+    }
     // Una visita más del día `dia` (el contador solo sube de a uno).
     function visitaValida(dia, visitas) {
       return request.resource.data.keys().hasOnly(['dia', 'visitas', 'ultimaAt'])
@@ -197,8 +211,24 @@ service cloud.firestore {
             && (!('acudientes' in request.resource.data) || request.resource.data.acudientes is map)
             && request.resource.data.actualizadoAt is number
             && request.resource.data.actualizadoPor == request.auth.uid;
+          // Fase 8 — `grupos` (hasta 12; un estudiante en uno) y `accesibilidad`
+          // (leer en voz alta para toda la clase). Cualquier profe de la clase,
+          // en todos los planes.
+          allow create, update: if configId == 'grupos'
+            && isProfesorDe(cid, cursoId)
+            && request.resource.data.keys().hasOnly(['grupos', 'actualizadoAt', 'actualizadoPor'])
+            && request.resource.data.grupos is list
+            && request.resource.data.grupos.size() <= 12
+            && request.resource.data.actualizadoAt is number
+            && request.resource.data.actualizadoPor == request.auth.uid;
+          allow create, update: if configId == 'accesibilidad'
+            && isProfesorDe(cid, cursoId)
+            && request.resource.data.keys().hasOnly(['leerEnVozAlta', 'actualizadoAt', 'actualizadoPor'])
+            && request.resource.data.leerEnVozAlta is bool
+            && request.resource.data.actualizadoAt is number
+            && request.resource.data.actualizadoPor == request.auth.uid;
           // `prueba` (Fase 7) solo la escribe el callable gestionarPrueba.
-          allow delete: if isProfesorDe(cid, cursoId) && configId in ['mundos', 'comunicacion'];
+          allow delete: if isProfesorDe(cid, cursoId) && configId in ['mundos', 'comunicacion', 'grupos', 'accesibilidad'];
         }
 
         // Course-custom content (D-ORQ, RQ-PR11/PR12): copy-on-write copies of
@@ -333,6 +363,24 @@ service cloud.firestore {
             allow create, delete: if false;
           }
 
+          // Fase 8 — adaptaciones del estudiante (más tiempo, menos opciones, voz,
+          // letra grande). Las pone cualquier profe de la clase; las lee el
+          // estudiante activo. No tocan su nota ni los informes.
+          match /adaptaciones/{docId} {
+            allow read: if isProfesorDe(cid, cursoId)
+              || isEstudianteActivoEnCurso(cid, cursoId, uid);
+            allow create, update: if docId == 'actual'
+              && isProfesorDe(cid, cursoId)
+              && request.resource.data.keys().hasOnly(['masTiempo', 'menosOpciones', 'leerEnVozAlta', 'letraGrande', 'actualizadoAt', 'actualizadoPor'])
+              && request.resource.data.masTiempo is bool
+              && request.resource.data.menosOpciones is bool
+              && request.resource.data.leerEnVozAlta is bool
+              && request.resource.data.letraGrande is bool
+              && request.resource.data.actualizadoAt is number
+              && request.resource.data.actualizadoPor == request.auth.uid;
+            allow delete: if isProfesorDe(cid, cursoId);
+          }
+
           // Fase 5 — enlace y correo del acudiente (callable gestionarAcudiente).
           // Lo ve solo el profe de la clase: ni el estudiante ni nadie más. El
           // token se resuelve en el servidor (`enlacesAcudiente`, sin acceso).
@@ -341,6 +389,40 @@ service cloud.firestore {
             allow write: if false;
           }
 
+        }
+
+        // Fase 8a — clase en vivo (callable operarClaseVivo). La sesión la leen el
+        // profe y los estudiantes activos; la clave de respuestas y el registro
+        // (`privado`) son solo del servidor. El estudiante marca que entró y
+        // responde UNA vez la pregunta abierta; el servidor mide el tiempo
+        // con `creadoAt` y puntúa al revelar.
+        match /vivo/{vivoId} {
+          allow read: if isProfesorDe(cid, cursoId)
+            || isEstudianteActivoEnCurso(cid, cursoId, request.auth.uid);
+          allow write: if false;
+
+          match /privado/{docId} {
+            allow read, write: if false;
+          }
+          match /presentes/{uid} {
+            allow read: if isProfesorDe(cid, cursoId);
+            allow create, update: if isEstudianteActivoEnCurso(cid, cursoId, uid)
+              && request.resource.data.keys().hasOnly(['sesion', 'entradaAt'])
+              && request.resource.data.sesion == get(/databases/$(database)/documents/colegios/$(cid)/cursos/$(cursoId)/vivo/$(vivoId)).data.id
+              && request.resource.data.entradaAt is number;
+            allow delete: if false;
+          }
+          match /respuestas/{respuestaId} {
+            allow read: if isProfesorDe(cid, cursoId);
+            allow create: if isEstudianteActivoEnCurso(cid, cursoId, request.auth.uid)
+              && respuestaVivoValida(cid, cursoId, vivoId, respuestaId, request.resource.data);
+            allow update, delete: if false;
+          }
+        }
+        // Historial de clases en vivo: cifras de grupo, sin nombres (servidor).
+        match /sesionesVivo/{sesionId} {
+          allow read: if isProfesorDe(cid, cursoId);
+          allow write: if false;
         }
 
         // Fase 5 — lo que el profe le mandó a la clase (callable enviarComunicado).

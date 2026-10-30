@@ -64,7 +64,9 @@ import {
   isGradoValido,
   leerCambiosClase,
   retirarDeClase,
+  sacarDeGrupos,
 } from './educadores/gestionClase';
+import { rutaVivo } from './educadores/claseVivo';
 
 initializeApp();
 
@@ -554,6 +556,17 @@ export const suppressStudentData = onCall(async (request) => {
   }
   await db.recursiveDelete(estRef.collection('acudiente'));
   await db.recursiveDelete(db.doc(`notificaciones/${uid}`));
+  // Fase 8: adaptaciones, su grupo y su puntaje de una clase en vivo abierta.
+  await db.recursiveDelete(estRef.collection('adaptaciones'));
+  await sacarDeGrupos(db, colegioId, cursoId, uid);
+  const vivo = db.doc(rutaVivo(colegioId, cursoId));
+  if ((await vivo.get()).exists) {
+    await vivo.update({ [`puntajes.${uid}`]: FieldValue.delete() });
+    const clave = vivo.collection('privado').doc('clave');
+    if ((await clave.get()).exists) await clave.update({ [`registro.${uid}`]: FieldValue.delete() });
+    const suyas = await vivo.collection('respuestas').where('uid', '==', uid).get();
+    await Promise.all([...suyas.docs.map((d) => d.ref.delete()), vivo.collection('presentes').doc(uid).delete()]);
+  }
   // Account-scoped data under users/{uid}: the pocket-money diary (RQ-ES10 CA7),
   // the budgets config (RQ-ES11 CA10), and the simulated savings goals/deposits
   // that the prior suppression left behind (goals/deposits also derive the diary
@@ -1367,6 +1380,7 @@ export {
 export { verPanelEntidad, guardarEvaluacionEntidad } from './educadores/entidadPanel';
 export { gestionarPrueba, verCoberturaClase, cerrarPeriodoEntidad } from './educadores/cumplimiento';
 export { publicarEnBiblioteca, usarDeBiblioteca, retirarDeBiblioteca } from './educadores/bibliotecaEntidad';
+export { operarClaseVivo } from './educadores/claseVivo';
 export {
   guardarDatosFacturacion,
   cotizarPlanEntidad,

@@ -30,7 +30,8 @@ export interface RespuestaIntento {
 
 export interface IntentoLeido {
   worldId: string;
-  tipo: 'leccion' | 'jefe';
+  /** `vivo` = una clase en vivo (Fase 8): suma respuestas, no lecciones ni jefes. */
+  tipo: 'leccion' | 'jefe' | 'vivo';
   resultado: 'completado' | 'perdido';
   finAt: number;
   duracionMs: number;
@@ -88,7 +89,7 @@ const num = (v: unknown, max: number): number =>
 /** Lee y recorta un intento tal como llegó. null si no sirve. */
 export function leerIntento(d: Record<string, unknown> | undefined): IntentoLeido | null {
   if (!d || typeof d.worldId !== 'string' || !d.worldId) return null;
-  if (d.tipo !== 'leccion' && d.tipo !== 'jefe') return null;
+  if (d.tipo !== 'leccion' && d.tipo !== 'jefe' && d.tipo !== 'vivo') return null;
   const respuestas = (Array.isArray(d.respuestas) ? d.respuestas : [])
     .slice(0, MAX_RESPUESTAS)
     .filter((r): r is Record<string, unknown> => !!r && typeof r === 'object')

@@ -37,6 +37,7 @@ import AuthorizationPendingBanner from '@features/dashboard/components/Authoriza
 import StudentAssignmentsBanner from '@features/dashboard/components/StudentAssignmentsBanner';
 import TableroClase from '@features/dashboard/components/TableroClase';
 import PruebaPendiente from '@features/educadores/cumplimiento/components/PruebaPendiente';
+import VivoAbierta from '@features/educadores/vivo/components/VivoAbierta';
 import SelectorEspacio from '@features/learning/components/galaxia/SelectorEspacio';
 import { claveProgreso } from '@features/learning/data/espacio';
 import { useVisitaClase } from '@features/dashboard/hooks/useVisitaClase';
@@ -247,6 +248,7 @@ export default function WorldsScreen() {
         <View style={estilos.avisos}>
           <AuthorizationPendingBanner />
           <TableroClase />
+          <VivoAbierta />
           <PruebaPendiente />
           <StudentAssignmentsBanner
             nombreDeMundo={(id) => mundos.find((m) => m.id === id)?.nombre ?? null}

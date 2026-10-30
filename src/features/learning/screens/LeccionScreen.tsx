@@ -86,6 +86,13 @@ import {
   ordenDerecha,
 } from '@features/learning/data/tiposExtra';
 import type { ThemeColors } from '@shared/constants/colors';
+import BotonEscuchar from '@features/educadores/adaptaciones/components/BotonEscuchar';
+import { textoPregunta } from '@features/educadores/adaptaciones/data/voz';
+import {
+  SIN_ADAPTACIONES,
+  erradaAEsconder,
+  type MapaAdaptaciones,
+} from '@/functions/src/educadores/dominio';
 
 /** Rojo de las vidas (el mismo del corazón de lives.corazon). */
 const HEART_RED = '#FF4B4B';
@@ -715,6 +722,7 @@ function QuestionPage({
   onChosen,
   colors,
   t,
+  adapt = SIN_ADAPTACIONES,
 }: {
   question: QuizItem;
   answer: AnswerState;
@@ -722,8 +730,27 @@ function QuestionPage({
   onChosen: (indices: number[]) => void;
   colors: ThemeColors;
   t: (key: string, options?: Record<string, unknown>) => string;
+  /** Adaptaciones del estudiante en el espacio de la clase (Fase 8). */
+  adapt?: MapaAdaptaciones;
 }) {
   const { selectedOption, chosenOrder, hasSubmitted } = answer;
+  // «Menos opciones»: una errada no se muestra; los índices no cambian.
+  const escondida =
+    adapt.menosOpciones && (question.tipo === 'multiple_choice' || question.tipo === 'completar')
+      ? erradaAEsconder(question.id, question.opciones.length, question.correctIndex)
+      : null;
+  // Lo que lee la voz, en el orden en que se ven las opciones.
+  const conOpciones =
+    question.tipo === 'multiple_choice' || question.tipo === 'completar'
+      ? stableShuffle(
+          question.opciones.map((opt, idx) => ({ opt, idx })),
+          hashStr(question.id)
+        )
+          .filter(({ idx }) => idx !== escondida)
+          .map(({ opt }) => opt)
+      : question.tipo === 'true_false'
+        ? [t('quiz.verdadero'), t('quiz.falso')]
+        : [];
   const isCorrect = hasSubmitted && isAnswerCorrect(question, answer);
   // Tras fallar se muestra cuál era la correcta: el error es el mejor momento para aprender.
   const correctValue =
@@ -765,11 +792,16 @@ function QuestionPage({
       </View>
 
       {/* Question text */}
-      <Text style={[styles.questionText, { color: colors.text.primary }]}>
+      <Text style={[styles.questionText, adapt.letraGrande && styles.questionTextGrande, { color: colors.text.primary }]}>
         {question.tipo === 'completar'
           ? fraseCompletada(question, selectedOption === null ? null : Number(selectedOption))
           : question.enunciado}
       </Text>
+      {adapt.leerEnVozAlta ? (
+        <View style={styles.badgeRow}>
+          <BotonEscuchar texto={textoPregunta(question.enunciado, conOpciones)} />
+        </View>
+      ) : null}
 
       {/* ── Answer area per tipo ── */}
       <View style={styles.options}>
@@ -777,7 +809,9 @@ function QuestionPage({
           stableShuffle(
             question.opciones.map((opt, idx) => ({ opt, idx })),
             hashStr(question.id)
-          ).map(({ opt, idx }) => (
+          )
+            .filter(({ idx }) => idx !== escondida)
+            .map(({ opt, idx }) => (
             <OptionButton
               key={idx}
               label={opt}
@@ -791,7 +825,9 @@ function QuestionPage({
           stableShuffle(
             question.opciones.map((opt, idx) => ({ opt, idx })),
             hashStr(question.id)
-          ).map(({ opt, idx }) => (
+          )
+            .filter(({ idx }) => idx !== escondida)
+            .map(({ opt, idx }) => (
             <OptionButton
               key={idx}
               label={opt}
@@ -978,6 +1014,7 @@ export default function LeccionScreen({
   onSalir,
   onTerminar,
   onRegistro,
+  adaptaciones,
 }: {
   items: QuizItem[];
   modo: ModoLeccion;
@@ -990,6 +1027,8 @@ export default function LeccionScreen({
   onTerminar: (resultado: ResultadoLeccion) => void;
   /** Cada intento terminado o perdido, respuesta por respuesta (para la clase). */
   onRegistro?: (registro: RegistroLeccion) => void;
+  /** Adaptaciones del estudiante en el espacio de la clase (Fase 8). */
+  adaptaciones?: MapaAdaptaciones;
 }) {
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
@@ -1276,6 +1315,7 @@ export default function LeccionScreen({
                     onChosen={isCurrent ? setChosenOrder : () => {}}
                     colors={colors}
                     t={t}
+                    adapt={adaptaciones}
                   />
                 </PageSlot>
               );
@@ -1390,6 +1430,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     lineHeight: 28,
   },
+  questionTextGrande: { fontSize: 27, lineHeight: 35 },
   options: {
     gap: 10,
   },

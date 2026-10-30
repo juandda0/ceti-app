@@ -31,6 +31,7 @@ import type { EstadoMundo } from '@features/dashboard/data/fichaEstudiante';
 import { asignacionRepository } from '@features/dashboard/data/asignacionRepository';
 import MensajesFicha from '@features/dashboard/components/MensajesFicha';
 import AcudienteFicha from '@features/dashboard/components/AcudienteFicha';
+import AdaptacionesFicha from '@features/educadores/adaptaciones/components/AdaptacionesFicha';
 import {
   Aviso,
   BotonChunky,
@@ -444,6 +445,9 @@ export default function FichaEstudianteScreen() {
                   nombre={nombreVisible}
                   mundos={datos?.mundos ?? []}
                 />
+              ) : null}
+              {colegioId && cursoId && uid && datos?.estudiante?.estado === 'activo' ? (
+                <AdaptacionesFicha colegioId={colegioId} cursoId={cursoId} uid={uid} nombre={nombreVisible} />
               ) : null}
               {colegioId && cursoId && uid ? (
                 <AcudienteFicha

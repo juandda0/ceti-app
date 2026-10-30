@@ -625,6 +625,63 @@ await si('el admin lee los cierres de periodo', getDoc(doc(pA, 'colegios/A/cierr
 await no('un profe que no es admin no', getDoc(doc(pA2, 'colegios/A/cierres/2026-p1')));
 await no('nadie reescribe un cierre', setDoc(doc(pA, 'colegios/A/cierres/2026-p1'), { anio: 2026, huella: 'otra' }));
 
+console.log('\nFase 8 · grupos y adaptaciones');
+const grupos = (autor, over = {}) => ({ grupos: [{ id: 'g1', nombre: 'Cóndores', color: '#2F7BE5', uids: ['eAct'] }], actualizadoAt: 1, actualizadoPor: autor, ...over });
+const adapt = (autor, over = {}) => ({ masTiempo: true, menosOpciones: false, leerEnVozAlta: true, letraGrande: false, actualizadoAt: 1, actualizadoPor: autor, ...over });
+await si('el profe arma grupos (sin plan también)', setDoc(doc(pA2, 'colegios/A/cursos/k2/config/grupos'), grupos('pA2')));
+await si('el profe de k1 arma grupos', setDoc(doc(pA, `${K1}/config/grupos`), grupos('pA')));
+await no('otro profe no', setDoc(doc(pA2, `${K1}/config/grupos`), grupos('pA2')));
+await no('a nombre de otro no', setDoc(doc(pA, `${K1}/config/grupos`), grupos('pA2')));
+await no('más de 12 no', setDoc(doc(pA, `${K1}/config/grupos`), grupos('pA', { grupos: Array.from({ length: 13 }, (_, i) => ({ id: `g${i}` })) })));
+await no('el estudiante no los edita', setDoc(doc(eAct, `${K1}/config/grupos`), grupos('eAct')));
+await si('el estudiante ve su grupo', getDoc(doc(eAct, `${K1}/config/grupos`)));
+await si('el profe borra los grupos', deleteDoc(doc(pA2, 'colegios/A/cursos/k2/config/grupos')));
+await si('el profe enciende la voz de la clase', setDoc(doc(pA, `${K1}/config/accesibilidad`), { leerEnVozAlta: true, actualizadoAt: 1, actualizadoPor: 'pA' }));
+await no('la voz es sí o no', setDoc(doc(pA, `${K1}/config/accesibilidad`), { leerEnVozAlta: 'sí', actualizadoAt: 1, actualizadoPor: 'pA' }));
+await si('el profe pone adaptaciones', setDoc(doc(pA, `${K1}/estudiantes/eAct/adaptaciones/actual`), adapt('pA')));
+await no('otro profe no', setDoc(doc(pA2, `${K1}/estudiantes/eAct/adaptaciones/actual`), adapt('pA2')));
+await no('el estudiante no se las pone', setDoc(doc(eAct, `${K1}/estudiantes/eAct/adaptaciones/actual`), adapt('eAct')));
+await no('campos de más no', setDoc(doc(pA, `${K1}/estudiantes/eAct/adaptaciones/actual`), adapt('pA', { nota: 5 })));
+await no('solo el doc actual', setDoc(doc(pA, `${K1}/estudiantes/eAct/adaptaciones/otro`), adapt('pA')));
+await si('el estudiante ve las suyas', getDoc(doc(eAct, `${K1}/estudiantes/eAct/adaptaciones/actual`)));
+await no('no las de otro', getDoc(doc(eMulti, `${K1}/estudiantes/eAct/adaptaciones/actual`)));
+
+console.log('\nFase 8a · clase en vivo');
+const VIVO = `${K1}/vivo/actual`;
+const resp = (uid, n, over = {}) => ({ uid, n, r: 1, sesion: 's1', creadoAt: serverTimestamp(), ...over });
+await env.withSecurityRulesDisabled(async (ctx) => {
+  const db = ctx.firestore();
+  await setDoc(doc(db, VIVO), { id: 's1', estado: 'pregunta', actual: 0, pregunta: { n: 0, opciones: ['a', 'b', 'c', 'd'] } });
+  await setDoc(doc(db, `${VIVO}/privado/clave`), { preguntas: [] });
+  await setDoc(doc(db, `${K1}/sesionesVivo/s0`), { participantes: 3 });
+});
+await si('el estudiante activo ve la sesión', getDoc(doc(eAct, VIVO)));
+await no('un pendiente no', getDoc(doc(ePend, VIVO)));
+await si('el profe la ve', getDoc(doc(pA, VIVO)));
+await no('otro profe no', getDoc(doc(pA2, VIVO)));
+await no('nadie lee la clave', getDoc(doc(pA, `${VIVO}/privado/clave`)));
+await no('ni el estudiante', getDoc(doc(eAct, `${VIVO}/privado/clave`)));
+await no('el profe no la escribe (es del callable)', updateDoc(doc(pA, VIVO), { estado: 'revelada' }));
+await si('el estudiante marca que entró', setDoc(doc(eAct, `${VIVO}/presentes/eAct`), { sesion: 's1', entradaAt: 1 }));
+await no('no por otro', setDoc(doc(eAct, `${VIVO}/presentes/eMulti`), { sesion: 's1', entradaAt: 1 }));
+await no('ni en otra sesión', setDoc(doc(eMulti, `${VIVO}/presentes/eMulti`), { sesion: 'vieja', entradaAt: 1 }));
+await si('el estudiante responde la pregunta abierta', setDoc(doc(eAct, `${VIVO}/respuestas/0_eAct`), resp('eAct', 0)));
+await no('una sola vez', setDoc(doc(eAct, `${VIVO}/respuestas/0_eAct`), resp('eAct', 0, { r: 2 })));
+await no('no otra pregunta', setDoc(doc(eMulti, `${VIVO}/respuestas/1_eMulti`), resp('eMulti', 1)));
+await no('no una opción que no existe', setDoc(doc(eMulti, `${VIVO}/respuestas/0_eMulti`), resp('eMulti', 0, { r: 4 })));
+await no('no con otra sesión', setDoc(doc(eMulti, `${VIVO}/respuestas/0_eMulti`), resp('eMulti', 0, { sesion: 'vieja' })));
+await no('no con la hora del celular', setDoc(doc(eMulti, `${VIVO}/respuestas/0_eMulti`), resp('eMulti', 0, { creadoAt: 5 })));
+await no('no a nombre de otro', setDoc(doc(eMulti, `${VIVO}/respuestas/0_eAct`), resp('eAct', 0)));
+await no('un pendiente no responde', setDoc(doc(ePend, `${VIVO}/respuestas/0_ePend`), resp('ePend', 0)));
+await si('el profe ve las respuestas', getDocs(collection(pA, `${VIVO}/respuestas`)));
+await no('el estudiante no ve las de otros', getDocs(collection(eAct, `${VIVO}/respuestas`)));
+await env.withSecurityRulesDisabled(async (ctx) => {
+  await updateDoc(doc(ctx.firestore(), VIVO), { estado: 'revelada' });
+});
+await no('revelada: ya no se responde', setDoc(doc(eMulti, `${VIVO}/respuestas/0_eMulti`), resp('eMulti', 0)));
+await si('el profe ve el historial', getDoc(doc(pA, `${K1}/sesionesVivo/s0`)));
+await no('el estudiante no', getDoc(doc(eAct, `${K1}/sesionesVivo/s0`)));
+
 console.log('\nAgregados y otros');
 await si('profe del colegio lee el agregado', getDoc(doc(pA, `${K1}/agregados/resumen`)));
 await no('estudiante no', getDoc(doc(eAct, `${K1}/agregados/resumen`)));

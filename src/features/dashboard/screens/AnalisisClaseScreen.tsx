@@ -38,6 +38,8 @@ import {
 import { hojasDelAnalisis, informeHtml } from '@features/dashboard/data/exportarAnalisis';
 import { materialDeRepaso, type CeldaMapa } from '@features/dashboard/data/analisisClase';
 import AccionGrupo from '@features/dashboard/components/AccionGrupo';
+import { gruposRepository } from '@features/educadores/grupos/data/gruposRepository';
+import type { Grupo } from '@/functions/src/educadores/dominio';
 import { useNombreCurso } from '@features/dashboard/hooks/useNombreCurso';
 import {
   Aviso,
@@ -118,6 +120,18 @@ export default function AnalisisClaseScreen() {
   }, [evaluacion.cargando, configEvaluacion, ahora]);
   const elegido = opciones.find((o) => o.clave === periodo) ?? opciones[opciones.length - 1];
 
+  // Fase 8: filtrar por un grupo de la clase.
+  const [grupos, setGrupos] = useState<Grupo[]>([]);
+  const [grupoId, setGrupoId] = useState<string | null>(null);
+  useEffect(() => {
+    if (!colegioId || !cursoId) return;
+    void gruposRepository
+      .get(colegioId, cursoId)
+      .then(setGrupos)
+      .catch(() => setGrupos([]));
+  }, [colegioId, cursoId]);
+  const soloUids = grupos.find((g) => g.id === grupoId)?.uids ?? null;
+
   const [vista, setVista] = useState<Vista>('mapa');
   const [datos, setDatos] = useState<AnalisisCargado | null>(null);
   const [estado, setEstado] = useState<'cargando' | 'listo' | 'error'>('cargando');
@@ -133,13 +147,14 @@ export default function AnalisisClaseScreen() {
           hasta: elegido.hasta,
           ahora,
           escala,
+          soloUids,
         })
       );
       setEstado('listo');
     } catch {
       setEstado('error');
     }
-  }, [colegioId, cursoId, conAnalisis, elegido.desde, elegido.hasta, ahora, escala]);
+  }, [colegioId, cursoId, conAnalisis, elegido.desde, elegido.hasta, ahora, escala, soloUids]);
 
   useEffect(() => {
     void cargar();
@@ -549,6 +564,19 @@ export default function AnalisisClaseScreen() {
                 />
               ))}
             </ScrollView>
+            {grupos.length ? (
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={st.chips}>
+                <Chip
+                  texto={t('diferenciales.grupos.todaLaClase')}
+                  icono="people-outline"
+                  seleccionado={grupoId === null}
+                  onPress={() => setGrupoId(null)}
+                />
+                {grupos.map((g) => (
+                  <Chip key={g.id} texto={g.nombre} color={g.color} seleccionado={grupoId === g.id} onPress={() => setGrupoId(g.id)} />
+                ))}
+              </ScrollView>
+            ) : null}
 
             {conExportar && estado === 'listo' ? (
               <View style={st.exportar}>

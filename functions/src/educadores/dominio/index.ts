@@ -22,3 +22,6 @@ export * from './biblioteca';
 export * from './normativa';
 export * from './desempenosMen';
 export * from './pruebaEntradaSalida';
+export * from './adaptaciones';
+export * from './grupos';
+export * from './claseVivo';

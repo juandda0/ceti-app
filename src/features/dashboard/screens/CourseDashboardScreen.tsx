@@ -454,6 +454,28 @@ export default function CourseDashboardScreen() {
           icono={!planCargando && puede('analisisClase') ? 'analytics' : 'lock-closed-outline'}
           onPress={() => router.push(`/(staff)/analisis/${cursoId}` as Href)}
         />
+        {/* Fase 8: clase en vivo y grupos. */}
+        <View style={styles.tiles}>
+          <BotonChunky
+            texto={t('diferenciales.vivo.entrada')}
+            icono="radio"
+            compacto
+            onPress={() =>
+              router.push(`/(staff)/vivo/${cursoId}?nombre=${encodeURIComponent(cursoNombre)}` as Href)
+            }
+            style={{ flex: 1 }}
+          />
+          <BotonChunky
+            texto={t('diferenciales.grupos.entrada')}
+            icono="people"
+            variante="secundario"
+            compacto
+            onPress={() =>
+              router.push(`/(staff)/grupos/${cursoId}?nombre=${encodeURIComponent(cursoNombre)}` as Href)
+            }
+            style={{ flex: 1 }}
+          />
+        </View>
         <BotonChunky
           texto={t('comunicacion.entrada')}
           icono="megaphone"
