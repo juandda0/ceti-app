@@ -587,6 +587,18 @@ service cloud.firestore {
         || (licencia.get('plan', '') == 'nave'
           && request.time.toMillis() < licencia.get('hasta', 0));
     }
+    // Mi banco de preguntas (Fase 4): preguntas que el profe reutiliza entre
+    // clases y mundos. Solo su dueño, y solo con forma válida.
+    match /bancosProfe/{uid}/preguntas/{preguntaId} {
+      allow read, delete: if isSelf(uid) && isStaff();
+      allow create, update: if isSelf(uid) && isStaff()
+        && request.resource.data.keys().hasOnly(['item', 'tipo', 'temas', 'origen', 'creadoAt'])
+        && request.resource.data.item is map
+        && request.resource.data.tipo in ['multiple_choice', 'true_false', 'ordenar', 'emparejar', 'completar', 'numerica']
+        && request.resource.data.temas is list
+        && request.resource.data.temas.size() <= 10
+        && request.resource.data.creadoAt is number;
+    }
     // ── EDUCADORES (fin) ──
 
     match /{document=**} {

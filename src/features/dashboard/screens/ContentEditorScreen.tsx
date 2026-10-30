@@ -52,6 +52,8 @@ import {
   type BorradorVfItem,
 } from '@features/dashboard/data/courseContentSchemas';
 import CamposItemExtra from '@features/dashboard/components/CamposItemExtra';
+import HojaMiBanco from '@features/dashboard/components/HojaMiBanco';
+import { bancoProfeRepository } from '@features/dashboard/data/bancoProfeRepository';
 import EditorMapa from '@features/dashboard/components/EditorMapa';
 import EditorEligeCamino from '@features/dashboard/components/EditorEligeCamino';
 import GenerateContentSheet from '@features/dashboard/components/GenerateContentSheet';
@@ -64,6 +66,7 @@ import { CetiAnimation } from '@features/animations';
 import {
   COMPETENCIA_PERSONALIZADA,
   competenciaForWorld,
+  competenciaLabel,
 } from '@features/learning/data/competencias';
 import type {
   MultipleChoiceItem,
@@ -395,6 +398,42 @@ export default function ContentEditorScreen() {
 
   // ── Generar una pieza (RQ-CN06) ──────────────────────────────────────────────
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [bancoAbierto, setBancoAbierto] = useState(false);
+
+  /** Guarda una copia en "Mi banco", etiquetada con el mundo y su competencia. */
+  const guardarEnBanco = async (item: EditingItem) => {
+    if (!muro.exigir('editarContenido')) return;
+    let limpio = { ...item };
+    if (limpio.tipo === 'ordenar') {
+      const canon = (limpio.elementosCanonicos ?? []).map((e) => e.trim()).filter(Boolean);
+      const built = buildOrdenarElements(limpio.id, limpio.enunciado, canon);
+      limpio = { ...limpio, elementos: built.elementos, ordenCanonico: built.ordenCanonico };
+    }
+    delete limpio.elementosCanonicos;
+    const error = validateQuizItem(limpio as QuizItem);
+    if (error) {
+      showMessage(t('miBanco.incompleta'), error, 'error');
+      return;
+    }
+    try {
+      await bancoProfeRepository.guardar(
+        firebaseUid,
+        limpio as QuizItem,
+        [entry?.nombre ?? def?.name ?? worldId, competenciaLabel(competenciaId)],
+        { cursoId, worldId }
+      );
+      showMessage(t('miBanco.guardada'), undefined, 'success');
+    } catch (e) {
+      showMessage(t('admin.error'), e instanceof Error ? e.message : String(e), 'error');
+    }
+  };
+
+  const agregarDesdeBanco = (item: QuizItem) => {
+    if (!esPreguntas(tab)) return;
+    const nuevo: EditingItem =
+      item.tipo === 'ordenar' ? { ...item, elementosCanonicos: canonicalElements(item) } : item;
+    setItems((prev) => ({ ...prev, [tab]: [...(prev[tab] ?? []), nuevo] }));
+  };
   const [genBusy, setGenBusy] = useState(false);
 
   const runGenerate = async (detalle: string) => {
@@ -770,6 +809,15 @@ export default function ContentEditorScreen() {
                   maxLength={400}
                   acento={accent}
                 />
+                <View style={{ alignSelf: 'flex-start' }}>
+                  <Chip
+                    texto={t('miBanco.guardarAqui')}
+                    icono="bookmark-outline"
+                    color={accent}
+                    seleccionado={false}
+                    onPress={() => void guardarEnBanco(item)}
+                  />
+                </View>
               </Tarjeta>
             </FadeIn>
           </Animated.View>
@@ -783,6 +831,13 @@ export default function ContentEditorScreen() {
           label={t('contentEditor.addItem')}
           colors={colors}
           onPress={() => addItem(tab)}
+        />
+        <BotonChunky
+          texto={t('miBanco.agregarDesde')}
+          icono="library-outline"
+          variante="secundario"
+          color={accent}
+          onPress={() => setBancoAbierto(true)}
         />
         {esClasica(tab) ? (
           <BotonChunky
@@ -887,6 +942,16 @@ export default function ContentEditorScreen() {
         </View>
       )}
 
+      {esPreguntas(tab) ? (
+        <HojaMiBanco
+          visible={bancoAbierto}
+          uid={firebaseUid}
+          tipo={PIECE_TO_TIPO[tab]}
+          acento={accent}
+          onElegir={agregarDesdeBanco}
+          onCerrar={() => setBancoAbierto(false)}
+        />
+      ) : null}
       {tab !== 'info' && !esAutonoma(tab) && (
         <GenerateContentSheet
           visible={sheetOpen}

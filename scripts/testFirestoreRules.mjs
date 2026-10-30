@@ -350,6 +350,28 @@ await si(
   getDoc(doc(eAct, `${K1}/contenido/mapa_world_1`))
 );
 
+console.log('\nMi banco de preguntas');
+const guardada = {
+  item: { id: 'q', enunciado: 'x' },
+  tipo: 'emparejar',
+  temas: ['Ahorro'],
+  origen: null,
+  creadoAt: 1,
+};
+await si('el profe guarda en su banco', setDoc(doc(pA, 'bancosProfe/pA/preguntas/q1'), guardada));
+await si('y lo lee', getDocs(collection(pA, 'bancosProfe/pA/preguntas')));
+await no('otro profe no lo lee', getDocs(collection(pA2, 'bancosProfe/pA/preguntas')));
+await no('ni escribe en él', setDoc(doc(pA2, 'bancosProfe/pA/preguntas/q2'), guardada));
+await no(
+  'un estudiante no tiene banco',
+  setDoc(doc(eAct, 'bancosProfe/eAct/preguntas/q'), guardada)
+);
+await no(
+  'tipo inventado',
+  setDoc(doc(pA, 'bancosProfe/pA/preguntas/q3'), { ...guardada, tipo: 'ensayo' })
+);
+await si('el profe borra de su banco', deleteDoc(doc(pA, 'bancosProfe/pA/preguntas/q1')));
+
 console.log('\nTareas');
 const tarea = (target, extra = {}) => ({
   worldId: 'world_2',

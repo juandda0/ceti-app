@@ -1855,5 +1855,20 @@
     "unidadEjemplo": "pesos, %, meses…",
     "tolerancia": "Diferencia aceptada",
     "toleranciaAyuda": "0 = debe ser exacta. Por ejemplo, 50 acepta de 1.450 a 1.550 si la respuesta es 1.500."
+  },
+  "miBanco": {
+    "titulo": "Mi banco de preguntas",
+    "subtitulo": "Tus preguntas guardadas, para usarlas en cualquier clase o mundo.",
+    "buscar": "Buscar por texto o tema",
+    "todos": "Todos",
+    "vacio": "Todavía no guardas preguntas de este tipo. Usa \"Guardar en mi banco\" en cualquier pregunta.",
+    "sinResultados": "Ninguna pregunta coincide.",
+    "agregar": "Agregar a este mundo",
+    "agregada": "Pregunta agregada. Guarda los cambios para que la vean tus estudiantes.",
+    "borrar": "Borrar de mi banco",
+    "guardarAqui": "Guardar en mi banco",
+    "guardada": "Guardada en tu banco",
+    "incompleta": "Completa la pregunta antes de guardarla",
+    "agregarDesde": "Agregar desde mi banco"
   }
 }
