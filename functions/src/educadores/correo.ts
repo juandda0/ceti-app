@@ -31,7 +31,9 @@ export type PlantillaCorreo =
   | 'bitacora'
   | 'invitacion_clase'
   | 'nave_cupo_ops'
-  | 'resumen_acudiente';
+  | 'resumen_acudiente'
+  | 'invitacion_entidad'
+  | 'orden_compra_ops';
 
 export interface DatosCorreo {
   nombre?: string | null;
@@ -73,6 +75,15 @@ export interface DatosCorreo {
   ocupados?: number | null;
   tope?: number | null;
   padrino?: string | null;
+  /**
+   * Fase 6. 'invitacion_entidad': `colegio` (nombre de la entidad), `profe`
+   * (quien invita), `enlace` y `correoInvitado`. 'orden_compra_ops': `colegio`,
+   * `colegioId`, `referencia` (n.º de cotización), `montoCop`, `ordenCompra`,
+   * `nit` y `detalle` (el ítem).
+   */
+  ordenCompra?: string | null;
+  nit?: string | null;
+  detalle?: string | null;
 }
 
 export interface MensajeCorreo {
@@ -388,6 +399,32 @@ function borrador(plantilla: PlantillaCorreo, d: DatosCorreo): Borrador {
       return borradorInvitacion(d);
     case 'resumen_acudiente':
       return borradorResumenAcudiente(d);
+    case 'invitacion_entidad':
+      return {
+        subject: `${d.profe || 'Tu colegio'} te invita a ${d.colegio || 'su entidad'} en Ceti`,
+        parrafos: [
+          'Hola, profe.',
+          `${d.profe || 'Un admin'} te invitó a unirte a ${d.colegio || 'su entidad'} en Ceti Educadores. Con la entidad tienes el plan que ella paga, la biblioteca de mundos de tus colegas y la escala de notas de la institución.`,
+          `Abre ${d.enlace || 'la app de Ceti'}, entra como profe con este correo (${d.correoInvitado || 'el mismo al que te llegó esta invitación'}) y acepta la invitación en la pestaña Clases. Si ya tienes clases en Ceti, pasan a la entidad con sus estudiantes y su avance.`,
+        ],
+        pie: 'Si no esperabas esta invitación, ignórala: no pasa nada.',
+      };
+    case 'orden_compra_ops':
+      return {
+        subject: `Orden de compra de ${d.colegio || d.colegioId || 'una entidad'} (${d.referencia ?? 'sin cotización'})`,
+        parrafos: [
+          'Una entidad registró su orden de compra. Falta que pague y que actives la licencia.',
+          [
+            `Entidad: ${d.colegio || '—'} (${d.colegioId ?? '—'})`,
+            `NIT: ${d.nit || 'sin datos de facturación todavía'}`,
+            `Cotización: ${d.referencia ?? '—'}`,
+            `Ítem: ${d.detalle ?? '—'}`,
+            `Total con IVA: ${d.montoCop ? formatoCop(d.montoCop) : '—'}`,
+            `Orden de compra: ${d.ordenCompra ?? '—'}`,
+          ].join('\n'),
+          'Pasos: confirma el pago en el banco y corre activarLicenciaEntidad con el colegioId y la cotización (docs/educadores/operacion.md). Eso activa la licencia y emite la factura electrónica.',
+        ],
+      };
     case 'nave_cupo_ops':
       return {
         subject: `Nave: ${d.colegio || d.colegioId || 'un colegio'} llegó a su cupo (${d.ocupados ?? '—'} de ${d.licenciados ?? '—'})`,

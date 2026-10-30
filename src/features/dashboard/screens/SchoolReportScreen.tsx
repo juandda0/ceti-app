@@ -13,6 +13,7 @@ import { downloadTextFile, printPage } from '@shared/lib/export/downloadFile';
 import { showMessage } from '@shared/lib/dialogs';
 import { ChartCard, GrowBar } from '@features/savings/charts/ChartParts';
 import AdopcionColegio from '@features/educadores/retencion/components/AdopcionColegio';
+import EntidadTarjeta from '@features/educadores/entidad/components/EntidadTarjeta';
 import {
   Aviso,
   BotonChunky,
@@ -101,6 +102,8 @@ export default function SchoolReportScreen() {
           titulo={t('profe.colegioTitulo')}
           subtitulo={colegioNombre ?? t('school.title')}
         />
+
+        <EntidadTarjeta />
 
         <AdopcionColegio />
 

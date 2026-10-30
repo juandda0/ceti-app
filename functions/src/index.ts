@@ -1352,3 +1352,16 @@ export {
   wompiEventos,
   cicloSuscripciones,
 } from './educadores/suscripciones';
+
+// Ceti Educadores · Fase 6: entidades (colegios, universidades y academias).
+export {
+  crearEntidad,
+  invitarProfeEntidad,
+  cancelarInvitacionProfe,
+  misInvitacionesEntidad,
+  responderInvitacionEntidad,
+  sacarProfeEntidad,
+  cambiarRolProfeEntidad,
+  gestionarCoDocente,
+} from './educadores/entidades';
+export { verPanelEntidad, guardarEvaluacionEntidad } from './educadores/entidadPanel';

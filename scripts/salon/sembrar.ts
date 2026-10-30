@@ -106,7 +106,11 @@ function claimsDe(c: Cuenta): Record<string, string> {
   return { role: 'estudiante', colegioId: k.colegioId, cursoId: k.cursoId };
 }
 
+/** Profes de la entidad San Mateo que no son dueños de una clase (Fase 6). */
+const PROFES_SIN_CLASE: Record<string, string> = { 'admin-entidad': 'san-mateo', 'profe-sm': 'san-mateo' };
+
 function colegioDeProfe(uid: string): string {
+  if (PROFES_SIN_CLASE[uid]) return PROFES_SIN_CLASE[uid];
   const k = Object.values(CURSOS).find((x) => x.profe === uid);
   if (!k) throw new Error(`Profe sin curso: ${uid}`);
   return k.colegioId;
@@ -182,12 +186,19 @@ function sembrarContenidoGlobal(): number {
 
 const COLEGIOS: Record<
   string,
-  { nombre: string; profe: string; licencia?: Record<string, unknown> }
+  {
+    nombre: string;
+    profe: string;
+    licencia?: Record<string, unknown>;
+    entidad?: Record<string, unknown>;
+  }
 > = {
   'san-mateo': {
     nombre: 'Colegio San Mateo',
     profe: 'profe-piloto',
+    // Licencia Nave de antes de la Fase 6 (= plan Colegio): prueba la compatibilidad.
     licencia: { plan: 'nave', hasta: AHORA + 240 * DIA, estudiantes: 150, padrino: null },
+    entidad: { nombre: 'Colegio San Mateo', tipo: 'colegio', creadaAt: AHORA - 60 * DIA, creadaPor: 'profe-piloto' },
   },
   'los-andes': { nombre: 'Colegio Los Andes', profe: 'profe-cadete' },
   'nuevo-horizonte': { nombre: 'Colegio Nuevo Horizonte', profe: 'profe-prueba' },
@@ -201,6 +212,7 @@ function sembrarColegiosYCursos(): void {
       createdAt: Timestamp.fromMillis(AHORA - (id === 'nuevo-horizonte' ? 6 : 90) * DIA),
       createdByUid: c.profe,
       ...(c.licencia ? { licencia: c.licencia } : {}),
+      ...(c.entidad ? { entidad: c.entidad } : {}),
     });
   }
   for (const k of Object.values(CURSOS)) {
@@ -214,7 +226,8 @@ function sembrarColegiosYCursos(): void {
     poner(`colegios/${k.colegioId}/cursos/${k.cursoId}`, {
       nombre: k.nombre,
       grado: k.grado,
-      profesorUids: [k.profe],
+      // 9°A tiene co-docente (Fase 6): Jorge acompaña a Andrés.
+      profesorUids: k.cursoId === '9a' ? [k.profe, 'profe-sm'] : [k.profe],
       codigo: k.codigo,
       createdAt: creado,
       createdByUid: k.profe,
@@ -703,6 +716,63 @@ function sembrarClaseDelProfe(): void {
 }
 
 // ---------------------------------------------------------------------------
+// 6b. Entidad San Mateo (Fase 6): admins, profes, invitación pendiente y SIEE
+// ---------------------------------------------------------------------------
+
+function sembrarEntidad(): void {
+  const cid = 'san-mateo';
+  const miembros: [string, 'admin' | 'profe', number][] = [
+    ['profe-piloto', 'admin', 60],
+    ['admin-entidad', 'admin', 45],
+    ['profe-sm', 'profe', 30],
+  ];
+  for (const [uid, rol, hace] of miembros) {
+    const c = CUENTAS.find((x) => x.id === uid);
+    poner(`colegios/${cid}/profes/${uid}`, {
+      uid,
+      nombre: c?.nombre ?? uid,
+      correo: c?.email ?? null,
+      rol,
+      unidoAt: AHORA - hace * DIA,
+    });
+  }
+  // Lucía (Los Andes, 8°A) tiene una invitación: al aceptarla su clase se muda.
+  const lucia = CUENTAS.find((x) => x.id === 'profe-cadete');
+  if (lucia) {
+    const inv = {
+      correo: lucia.email,
+      rol: 'profe',
+      invitadoPor: 'admin-entidad',
+      invitadoPorNombre: 'Diana Castro',
+      creadaAt: AHORA - 1 * DIA,
+    };
+    poner(`colegios/${cid}/invitacionesProfe/${lucia.email}`, inv);
+    poner(`invitacionesProfe/${cid}:${lucia.email}`, { ...inv, colegioId: cid });
+  }
+  // SIEE propio: escala 1,0–5,0 con Básico desde 3,5 y tres trimestres.
+  poner(`colegios/${cid}/config/evaluacion`, {
+    calendario: 'periodos',
+    escala: {
+      notaMin: 1,
+      notaMax: 5,
+      rangos: [
+        { desempeno: 'bajo', min: 1 },
+        { desempeno: 'basico', min: 3.5 },
+        { desempeno: 'alto', min: 4.2 },
+        { desempeno: 'superior', min: 4.7 },
+      ],
+    },
+    periodos: [
+      { nombre: 'Primer trimestre', desde: '01-26', hasta: '04-24' },
+      { nombre: 'Segundo trimestre', desde: '04-27', hasta: '08-28' },
+      { nombre: 'Tercer trimestre', desde: '08-31', hasta: '11-27' },
+    ],
+    actualizadoAt: AHORA - 20 * DIA,
+    actualizadoPor: 'admin-entidad',
+  });
+}
+
+// ---------------------------------------------------------------------------
 // 7. Suscripciones y pagos (dominio puro de cobros + aDoc de plan.ts)
 // ---------------------------------------------------------------------------
 
@@ -854,9 +924,10 @@ async function main(): Promise<void> {
   sembrarCobros();
   sembrarJoven();
   sembrarClaseDelProfe();
+  sembrarEntidad();
   await confirmar();
   console.log(
-    `· Contenido global (${n} docs), 3 colegios, 4 clases, cobros, joven B2C y la clase del profe`
+    `· Contenido global (${n} docs), 3 colegios (San Mateo es entidad), 4 clases, cobros, joven B2C y la clase del profe`
   );
 
   const resumen = sembrarEstudiantes();

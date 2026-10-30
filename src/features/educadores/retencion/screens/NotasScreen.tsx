@@ -20,13 +20,13 @@ import {
   construirNotas,
   notasCsv,
   ETIQUETA_DESEMPENO,
-  ESCALA_POR_DEFECTO,
-  periodosCalendarioA,
-  periodoActual,
   type Periodo,
   type FilaNota,
   type Desempeno,
+  periodoActualDe,
+  periodosDelAnio,
 } from '@/functions/src/educadores/dominio';
+import { useEvaluacion } from '@features/educadores/entidad/hooks/useEvaluacion';
 import { useMiPlan } from '@features/educadores/hooks/useMiPlan';
 import { cargarCursoDetalle, type CursoDetalle } from '../data/cursoDetalle';
 import { entradasNotaDesdeReporte } from '../data/notasEntradas';
@@ -87,12 +87,18 @@ export default function NotasScreen() {
   const { puede, cargando: cargandoPlan } = useMiPlan();
   const habilitado = !cargandoPlan && puede('notasPeriodo');
 
-  // Periodos del año del periodo en curso (en enero, el del año anterior).
+  // Periodos del año del periodo en curso (en enero, el del año anterior): los
+  // de la entidad (SIEE o semestres, Fase 6) o los 4 del calendario A.
+  const evaluacion = useEvaluacion();
+  const { config: configEvaluacion, escala } = evaluacion;
   const { periodos, actual } = useMemo(() => {
-    const p = periodoActual(Date.now());
-    return { periodos: periodosCalendarioA(Number(p.desde.slice(0, 4))), actual: p };
-  }, []);
+    const p = periodoActualDe(configEvaluacion, Date.now());
+    return { periodos: periodosDelAnio(configEvaluacion, Number(p.desde.slice(0, 4))), actual: p };
+  }, [configEvaluacion]);
   const [numero, setNumero] = useState(actual.numero);
+  useEffect(() => {
+    if (!evaluacion.cargando) setNumero(actual.numero);
+  }, [evaluacion.cargando, actual.numero]);
   const periodo: Periodo = periodos.find((p) => p.numero === numero) ?? actual;
 
   const [detalle, setDetalle] = useState<CursoDetalle | null>(null);
@@ -128,12 +134,12 @@ export default function NotasScreen() {
         ? construirNotas(
             entradasNotaDesdeReporte(detalle.report.students, detalle.progreso, periodo),
             {
-              escala: ESCALA_POR_DEFECTO,
+              escala,
               etiquetaCompetencia: competenciaLabel,
             }
           )
         : [],
-    [detalle, periodo]
+    [detalle, periodo, escala]
   );
 
   const resumen = useMemo(() => {
@@ -181,7 +187,7 @@ export default function NotasScreen() {
         {periodos.map((p) => (
           <Chip
             key={p.numero}
-            texto={t('educadores.notas.periodo', { numero: p.numero })}
+            texto={p.nombre || t('educadores.notas.periodo', { numero: p.numero })}
             seleccionado={p.numero === periodo.numero}
             onPress={() => setNumero(p.numero)}
           />
@@ -293,7 +299,18 @@ export default function NotasScreen() {
           ))}
         </Tarjeta>
 
-        <Aviso icono="information-circle" tono="azul" texto={t('educadores.notas.escalaAviso')} />
+        <Aviso
+          icono="information-circle"
+          tono="azul"
+          texto={
+            configEvaluacion
+              ? t('educadores.notas.escalaEntidad', {
+                  min: escala.notaMin.toFixed(1).replace('.', ','),
+                  max: escala.notaMax.toFixed(1).replace('.', ','),
+                })
+              : t('educadores.notas.escalaAviso')
+          }
+        />
       </View>
     );
 

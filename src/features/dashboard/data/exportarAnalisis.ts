@@ -3,7 +3,7 @@
  * (Estudiantes, Preguntas, Actividad, Tareas) y un informe HTML que se imprime
  * como PDF. Puro.
  */
-import { ETIQUETA_DESEMPENO, desempenoDeNota } from '@/functions/src/educadores/dominio';
+import { ETIQUETA_DESEMPENO, desempenoDeNota, type EscalaSiee } from '@/functions/src/educadores/dominio';
 import type { Hoja } from '@shared/lib/export/xlsx';
 import type { AnalisisClase } from '@features/dashboard/data/analisisClase';
 import type { EstadoMundo, MundoDeLaClase } from '@features/dashboard/data/fichaEstudiante';
@@ -17,7 +17,7 @@ const pct = (v: number | null) => (v == null ? null : Math.round(v * 100));
 const fecha = (t: number | null) => (t == null ? '' : new Date(t).toLocaleDateString('es-CO'));
 const nota = (n: number | null) => (n == null ? null : Math.round(n * 10) / 10);
 
-export function hojasDelAnalisis(a: AnalisisClase, mundos: MundoDeLaClase[]): Hoja[] {
+export function hojasDelAnalisis(a: AnalisisClase, mundos: MundoDeLaClase[], escala?: EscalaSiee): Hoja[] {
   return [
     {
       nombre: 'Estudiantes',
@@ -34,7 +34,7 @@ export function hojasDelAnalisis(a: AnalisisClase, mundos: MundoDeLaClase[]): Ho
         ...a.mapa.map((f) => [
           f.nombre,
           nota(f.nota),
-          f.nota == null ? '' : ETIQUETA_DESEMPENO[desempenoDeNota(f.nota)],
+          f.nota == null ? '' : ETIQUETA_DESEMPENO[desempenoDeNota(f.nota, escala)],
           pct(f.acierto),
           f.respuestas,
           fecha(f.ultimaActividad),

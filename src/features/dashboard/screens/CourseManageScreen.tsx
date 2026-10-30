@@ -17,6 +17,7 @@ import {
 } from '@features/dashboard/data/rosterRepository';
 import { sigueEnClase } from '@features/dashboard/data/estadoRoster';
 import AjustesClase from '@features/dashboard/components/AjustesClase';
+import CoDocentesClase from '@features/educadores/entidad/components/CoDocentesClase';
 import { adminService } from '@features/dashboard/data/adminService';
 import ClassWorldsManager from '@features/dashboard/components/ClassWorldsManager';
 import { useClaseSoloLectura } from '@features/educadores/components/useClaseSoloLectura';
@@ -424,13 +425,21 @@ export default function CourseManageScreen() {
           ) : vista === 'estudiantes' ? (
             estudiantes
           ) : colegioId && curso ? (
-            <AjustesClase
-              colegioId={colegioId}
-              curso={curso}
-              estudiantesEnClase={enClase.length}
-              soloLectura={soloLecturaPlan}
-              onCambio={reload}
-            />
+            <View style={styles.vista}>
+              <AjustesClase
+                colegioId={colegioId}
+                curso={curso}
+                estudiantesEnClase={enClase.length}
+                soloLectura={soloLecturaPlan}
+                onCambio={reload}
+              />
+              <CoDocentesClase
+                cursoId={curso.id}
+                profesorUids={curso.profesorUids ?? []}
+                creador={curso.createdByUid}
+                onCambio={reload}
+              />
+            </View>
           ) : (
             <Esqueleto filas={3} alto={64} />
           )}

@@ -18,6 +18,7 @@ import {
 } from '@features/dashboard/data/analisisClase';
 import type { MundoDeLaClase } from '@features/dashboard/data/fichaEstudiante';
 import type { Grado } from '@features/learning/data/quiz.types';
+import type { EscalaSiee } from '@/functions/src/educadores/dominio';
 
 const DIA_MS = 24 * 60 * 60 * 1000;
 
@@ -30,7 +31,7 @@ export interface AnalisisCargado {
 export async function cargarAnalisisClase(
   colegioId: string,
   cursoId: string,
-  { desde, hasta, ahora }: { desde: number; hasta: number; ahora: number }
+  { desde, hasta, ahora, escala }: { desde: number; hasta: number; ahora: number; escala?: EscalaSiee }
 ): Promise<AnalisisCargado> {
   const [roster, curso, config, tareas] = await Promise.all([
     rosterRepository.getRoster(colegioId, cursoId),
@@ -78,6 +79,6 @@ export async function cargarAnalisisClase(
   return {
     cursoNombre: curso?.nombre ?? '',
     mundos,
-    analisis: construirAnalisis({ ahora, desde, hasta, estudiantes, mundos, textos, tareas }),
+    analisis: construirAnalisis({ ahora, desde, hasta, estudiantes, mundos, textos, tareas, escala }),
   };
 }

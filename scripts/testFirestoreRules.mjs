@@ -558,6 +558,49 @@ await no(
 await no('nadie lee los enlaces', getDoc(doc(pA, 'enlacesAcudiente/tok')));
 await no('ni anónimo', getDoc(doc(anon, 'enlacesAcudiente/tok')));
 
+console.log('\nFase 6 · entidades');
+await env.withSecurityRulesDisabled(async (ctx) => {
+  const db = ctx.firestore();
+  await setDoc(doc(db, 'colegios/A/profes/pA'), { uid: 'pA', nombre: 'Admin', rol: 'admin' });
+  await setDoc(doc(db, 'colegios/A/profes/pA2'), { uid: 'pA2', nombre: 'Profe', rol: 'profe' });
+  await setDoc(doc(db, 'colegios/A/invitacionesProfe/nuevo@x.co'), { correo: 'nuevo@x.co', rol: 'profe' });
+  await setDoc(doc(db, 'colegios/A/config/evaluacion'), { calendario: 'periodos' });
+  await setDoc(doc(db, 'colegios/A/biblioteca/m1'), { titulo: 'Mundo', autorUid: 'pA' });
+  await setDoc(doc(db, 'colegios/A/agregados/entidad'), { resumen: { profes: 2 } });
+  await setDoc(doc(db, 'colegios/A/facturacion/datos'), { nit: '890903938' });
+  await setDoc(doc(db, 'colegios/A/cotizaciones/q1'), { numero: 'COT-2026-0001' });
+  await setDoc(doc(db, 'invitacionesProfe/A:nuevo@x.co'), { correo: 'nuevo@x.co', colegioId: 'A' });
+  // Colegio C con licencia Equipo: su profe edita contenido sin plan propio.
+  await setDoc(doc(db, 'colegios/C'), { nombre: 'Academia C', licencia: { plan: 'equipo', hasta: LEJOS, cupo: 3 } });
+  await setDoc(doc(db, 'colegios/C/cursos/kc'), { nombre: 'Grupo', grado: '11', profesorUids: ['pC'] });
+  await setDoc(doc(db, 'colegios/D'), { nombre: 'U. D', licencia: { plan: 'universidad', hasta: 1, cupo: 300 } });
+  await setDoc(doc(db, 'colegios/D/cursos/kd'), { nombre: 'Cátedra', grado: '11', profesorUids: ['pD'] });
+});
+const pC = como('pC', { role: 'profesor', colegioId: 'C' });
+const pD = como('pD', { role: 'profesor', colegioId: 'D' });
+await si('los profes de la entidad ven a sus colegas', getDocs(collection(pA2, 'colegios/A/profes')));
+await no('un profe de otro colegio no', getDoc(doc(pB, 'colegios/A/profes/pA')));
+await no('un estudiante no', getDoc(doc(eAct, 'colegios/A/profes/pA')));
+await no('nadie se vuelve admin desde el cliente', updateDoc(doc(pA2, 'colegios/A/profes/pA2'), { rol: 'admin' }));
+await si('el admin ve las invitaciones', getDocs(collection(pA, 'colegios/A/invitacionesProfe')));
+await no('un profe que no es admin no', getDocs(collection(pA2, 'colegios/A/invitacionesProfe')));
+await no('nadie lee la búsqueda de invitaciones por correo', getDoc(doc(pA, 'invitacionesProfe/A:nuevo@x.co')));
+await si('los profes leen la escala y los periodos', getDoc(doc(pA2, 'colegios/A/config/evaluacion')));
+await no('ni el admin la escribe directo', setDoc(doc(pA, 'colegios/A/config/evaluacion'), { calendario: 'semestres' }));
+await no('un estudiante no la lee', getDoc(doc(eAct, 'colegios/A/config/evaluacion')));
+await si('los profes ven la biblioteca', getDoc(doc(pA2, 'colegios/A/biblioteca/m1')));
+await no('otro colegio no', getDoc(doc(pB, 'colegios/A/biblioteca/m1')));
+await no('nadie publica desde el cliente', setDoc(doc(pA, 'colegios/A/biblioteca/m2'), { titulo: 'x' }));
+await si('el admin ve el panel de la entidad', getDoc(doc(pA, 'colegios/A/agregados/entidad')));
+await no('un profe que no es admin no', getDoc(doc(pA2, 'colegios/A/agregados/entidad')));
+await si('el admin ve los datos de factura', getDoc(doc(pA, 'colegios/A/facturacion/datos')));
+await no('un profe que no es admin no', getDoc(doc(pA2, 'colegios/A/facturacion/datos')));
+await si('el admin ve las cotizaciones', getDoc(doc(pA, 'colegios/A/cotizaciones/q1')));
+await no('nadie las escribe desde el cliente', updateDoc(doc(pA, 'colegios/A/cotizaciones/q1'), { estado: 'pagada' }));
+await no('nadie toca la licencia', updateDoc(doc(pA, 'colegios/A'), { licencia: { plan: 'colegio', hasta: LEJOS } }));
+await si('licencia Equipo: su profe configura mundos', setDoc(doc(pC, 'colegios/C/cursos/kc/config/mundos'), config('pC')));
+await no('licencia vencida: no', setDoc(doc(pD, 'colegios/D/cursos/kd/config/mundos'), config('pD')));
+
 console.log('\nAgregados y otros');
 await si('profe del colegio lee el agregado', getDoc(doc(pA, `${K1}/agregados/resumen`)));
 await no('estudiante no', getDoc(doc(eAct, `${K1}/agregados/resumen`)));

@@ -13,7 +13,7 @@
  *
  * Todo viene del espacio de la clase (Fase 1), nunca de la galaxia propia.
  */
-import { notaDesdeMaestria } from '@/functions/src/educadores/dominio';
+import { notaDesdeMaestria, type EscalaSiee } from '@/functions/src/educadores/dominio';
 import {
   inicioDeSemana,
   respuestaEnTexto,
@@ -60,6 +60,8 @@ export interface EntradaAnalisis {
   mundos: MundoDeLaClase[];
   textos: Map<string, TextoPregunta>;
   tareas: AsignacionWithId[];
+  /** Escala SIEE de la entidad (Fase 6); sin ella, 1,0–5,0. */
+  escala?: EscalaSiee;
 }
 
 export interface CeldaMapa {
@@ -180,7 +182,7 @@ export function construirAnalisis(e: EntradaAnalisis): AnalisisClase {
     }
     const maestrias = est.progreso.filter((p) => p.completed).map((p) => p.mastery);
     const nota = maestrias.length
-      ? notaDesdeMaestria(maestrias.reduce((a, b) => a + b, 0) / maestrias.length)
+      ? notaDesdeMaestria(maestrias.reduce((a, b) => a + b, 0) / maestrias.length, e.escala)
       : null;
     const fechas = [
       ...est.intentos.map((i) => i.finAt),

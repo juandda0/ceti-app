@@ -18,6 +18,7 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { showMessage } from '@shared/lib/dialogs';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { useMiPlan } from '@features/educadores/hooks/useMiPlan';
+import { useEvaluacion } from '@features/educadores/entidad/hooks/useEvaluacion';
 import TarjetaBloqueada from '@features/educadores/retencion/components/TarjetaBloqueada';
 import { FadeIn, GrowBar } from '@features/savings/charts/ChartParts';
 import { ETIQUETA_DESEMPENO } from '@/functions/src/educadores/dominio';
@@ -71,6 +72,7 @@ export default function FichaEstudianteScreen() {
   }>();
   const { puede, cargando: planCargando } = useMiPlan();
   const completa = !planCargando && puede('fichaCompleta');
+  const { escala, cargando: escalaCargando } = useEvaluacion();
 
   const [datos, setDatos] = useState<FichaCargada | null>(null);
   const [estado, setEstado] = useState<'cargando' | 'listo' | 'error'>('cargando');
@@ -78,17 +80,17 @@ export default function FichaEstudianteScreen() {
   const [asignando, setAsignando] = useState(false);
 
   const cargar = useCallback(async () => {
-    if (!colegioId || !cursoId || !uid || planCargando) return;
+    if (!colegioId || !cursoId || !uid || planCargando || escalaCargando) return;
     setEstado('cargando');
     try {
       const ahora = Date.now();
       const desde = completa ? 0 : ahora - 7 * DIA_MS;
-      setDatos(await cargarFichaEstudiante(colegioId, cursoId, uid, { desde, ahora }));
+      setDatos(await cargarFichaEstudiante(colegioId, cursoId, uid, { desde, ahora, escala }));
       setEstado('listo');
     } catch {
       setEstado('error');
     }
-  }, [colegioId, cursoId, uid, completa, planCargando]);
+  }, [colegioId, cursoId, uid, completa, planCargando, escalaCargando, escala]);
 
   useEffect(() => {
     void cargar();

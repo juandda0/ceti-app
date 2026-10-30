@@ -27,8 +27,10 @@ import {
   fechaBogota,
   inicioDiaBogota,
   periodoActual,
-  periodosCalendarioA,
+  periodoActualDe,
+  periodosDelAnio,
 } from '@/functions/src/educadores/dominio';
+import { useEvaluacion, type Evaluacion } from '@features/educadores/entidad/hooks/useEvaluacion';
 import {
   cargarAnalisisClase,
   type AnalisisCargado,
@@ -67,12 +69,15 @@ interface OpcionPeriodo {
   hasta: number;
 }
 
-/** Los 4 periodos del año en curso y "todo el año". Escalas y periodos propios: Fase 6. */
-function periodos(ahora: number, t: TFunction): OpcionPeriodo[] {
+/**
+ * Los periodos del año en curso y "todo el año". Con entidad, los de su SIEE o
+ * su calendario semestral (Fase 6); si no, los 4 del calendario A.
+ */
+function periodos(ahora: number, t: TFunction, periodosDe: Evaluacion['periodosDe']): OpcionPeriodo[] {
   const anio = Number(fechaBogota(ahora).slice(0, 4));
-  const lista = periodosCalendarioA(anio).map((p) => ({
+  const lista = periodosDe(anio).map((p) => ({
     clave: `p${p.numero}`,
-    etiqueta: t('analisis.periodoN', { n: p.numero }),
+    etiqueta: p.nombre || t('analisis.periodoN', { n: p.numero }),
     desde: inicioDiaBogota(p.desde),
     hasta: inicioDiaBogota(p.hasta) + DIA_MS - 1,
   }));
@@ -100,8 +105,17 @@ export default function AnalisisClaseScreen() {
   const conExportar = !planCargando && puede('exportarCsv');
 
   const ahora = useMemo(() => Date.now(), []);
-  const opciones = useMemo(() => periodos(ahora, t), [ahora, t]);
+  const evaluacion = useEvaluacion();
+  const { config: configEvaluacion, escala } = evaluacion;
+  const opciones = useMemo(
+    () => periodos(ahora, t, (anio) => periodosDelAnio(configEvaluacion, anio)),
+    [ahora, t, configEvaluacion]
+  );
   const [periodo, setPeriodo] = useState(() => `p${periodoActual(ahora).numero}`);
+  // La escala de la entidad llega después del primer render: el periodo en curso es el suyo.
+  useEffect(() => {
+    if (!evaluacion.cargando) setPeriodo(`p${periodoActualDe(configEvaluacion, ahora).numero}`);
+  }, [evaluacion.cargando, configEvaluacion, ahora]);
   const elegido = opciones.find((o) => o.clave === periodo) ?? opciones[opciones.length - 1];
 
   const [vista, setVista] = useState<Vista>('mapa');
@@ -118,13 +132,14 @@ export default function AnalisisClaseScreen() {
           desde: elegido.desde,
           hasta: elegido.hasta,
           ahora,
+          escala,
         })
       );
       setEstado('listo');
     } catch {
       setEstado('error');
     }
-  }, [colegioId, cursoId, conAnalisis, elegido.desde, elegido.hasta, ahora]);
+  }, [colegioId, cursoId, conAnalisis, elegido.desde, elegido.hasta, ahora, escala]);
 
   useEffect(() => {
     void cargar();
@@ -148,7 +163,7 @@ export default function AnalisisClaseScreen() {
     setExportando('xlsx');
     const ok = await guardarArchivo(
       `${nombreArchivo}.xlsx`,
-      construirXlsx(hojasDelAnalisis(a, datos.mundos)),
+      construirXlsx(hojasDelAnalisis(a, datos.mundos, escala)),
       MIME_XLSX
     );
     setExportando(null);

@@ -36,6 +36,23 @@
       "descripcion": "Recién registrado: prueba de Piloto con 9 días restantes, 1 clase (7°C)."
     },
     {
+      "id": "admin-entidad",
+      "rol": "profesor",
+      "nombre": "Diana Castro",
+      "email": "diana.castro@salon.ceti.test",
+      "colegio": "San Mateo",
+      "descripcion": "Coordinadora académica: admin de la entidad Colegio San Mateo, sin clases. Panel de la entidad, profes, escala SIEE y facturación.",
+      "ir": "/colegio"
+    },
+    {
+      "id": "profe-sm",
+      "rol": "profesor",
+      "nombre": "Jorge Mena",
+      "email": "jorge.mena@salon.ceti.test",
+      "colegio": "San Mateo",
+      "descripcion": "Profe de la entidad San Mateo y co-docente de 9°A con Andrés."
+    },
+    {
       "id": "est-1",
       "rol": "estudiante",
       "nombre": "Mariana López",

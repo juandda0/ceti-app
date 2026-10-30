@@ -2,9 +2,11 @@ import {
   DIA_MS,
   ahorroCiclo,
   aplicarPagoAprobado,
+  armarPublicacion,
   calcularPanelEntidad,
   cambiarCoDocente,
   cicloDiario,
+  configConMundo,
   cotizarEntidad,
   cupoProfes,
   digitoVerificacionNit,
@@ -21,6 +23,8 @@ import {
   pausar,
   periodoActualDe,
   periodosDelAnio,
+  piezasDeMundo,
+  piezasParaMundoNuevo,
   planDeLicencia,
   precioPlan,
   profesTrasSalida,
@@ -306,5 +310,58 @@ describe('facturación a la entidad', () => {
     const renovada = licenciaDesdePago(c, { plan: 'nave', hasta: T('2027-01-31') }, AHORA);
     expect(renovada.hasta).toBe(T('2028-01-31'));
     expect(itemFacturaEntidad(c)).toBe('Ceti Colegio anual · 450 estudiantes');
+  });
+});
+
+describe('biblioteca de la entidad', () => {
+  const piezas = [
+    { id: 'banco_cw_a_multiple_choice', data: { worldId: 'cw_a', items: [{ id: 'cw_a_mc_1' }, { id: 'cw_a_mc_2' }] } },
+    { id: 'microteoria_cw_a', data: { worldId: 'cw_a', cards: [{}] } },
+    { id: 'mapa_cw_a', data: { worldId: 'cw_a', lecciones: [{}, {}, {}], jefe: [] } },
+    { id: 'banco_world_1_true_false', data: { worldId: 'world_1', items: [{}] } },
+    { id: 'banco_cw_ab_true_false', data: { worldId: 'cw_ab', items: [{}] } },
+  ];
+
+  it('publica solo las piezas del mundo y cuenta lecciones y preguntas', () => {
+    const delMundo = piezasDeMundo(piezas, 'cw_a');
+    expect(delMundo.map((p) => p.id)).toEqual(['banco_cw_a_multiple_choice', 'microteoria_cw_a', 'mapa_cw_a']);
+    const pub = armarPublicacion({
+      entrada: { worldId: 'cw_a', activo: true, nombre: ' La tienda ', competencia: 'presupuesto' },
+      piezas: delMundo,
+      overrides: { mc: true, teoria: true },
+      grado: '10',
+      cursoId: 'k1',
+      autorUid: 'ana',
+      autorNombre: 'Ana',
+      ahora: AHORA,
+    });
+    expect(pub).toMatchObject({ titulo: 'La tienda', lecciones: 3, preguntas: 2, usos: 0, origen: { worldId: 'cw_a' } });
+  });
+
+  it('la copia es un mundo nuevo en borrador, con las preguntas intactas', () => {
+    const pub = {
+      titulo: 'La tienda',
+      subtitulo: null,
+      descripcion: 'Casos',
+      competencia: 'presupuesto',
+      overrides: { mc: true },
+      origen: { cursoId: 'k1', worldId: 'cw_a' },
+      piezas: { banco_cw_a_multiple_choice: { worldId: 'cw_a', items: [{ id: 'cw_a_mc_1' }] } },
+    };
+    expect(piezasParaMundoNuevo(pub, 'cw_z')).toEqual([
+      { id: 'banco_cw_z_multiple_choice', data: { worldId: 'cw_z', items: [{ id: 'cw_a_mc_1' }] } },
+    ]);
+    const sinConfig = configConMundo(null, pub, 'cw_z', 'beto', AHORA);
+    expect(sinConfig?.mundos).toHaveLength(6);
+    expect(sinConfig?.mundos[5]).toEqual({
+      worldId: 'cw_z',
+      activo: false,
+      nombre: 'La tienda',
+      descripcion: 'Casos',
+      competencia: 'presupuesto',
+    });
+    expect(sinConfig).toMatchObject({ overrides: { cw_z: { mc: true } }, version: 1, updatedByUid: 'beto' });
+    const llena = { mundos: Array.from({ length: 30 }, (_, i) => ({ worldId: `w${i}`, activo: true })), version: 3 };
+    expect(configConMundo(llena, pub, 'cw_z', 'beto', AHORA)).toBeNull();
   });
 });

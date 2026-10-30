@@ -18,3 +18,4 @@ export * from './entidad';
 export * from './evaluacion';
 export * from './panelEntidad';
 export * from './facturaEntidad';
+export * from './biblioteca';

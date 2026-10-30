@@ -22,6 +22,7 @@ import {
 import { questionBankRepository } from '@features/learning/data/QuestionBankRepository';
 import type { Grado } from '@features/learning/data/quiz.types';
 import type { CursoConfigMundos } from '@shared/types/tenancy';
+import type { EscalaSiee } from '@/functions/src/educadores/dominio';
 
 export interface FichaCargada {
   estudiante: EstudianteWithId | null;
@@ -100,7 +101,7 @@ export async function cargarFichaEstudiante(
   colegioId: string,
   cursoId: string,
   uid: string,
-  { desde, ahora }: { desde: number; ahora: number }
+  { desde, ahora, escala }: { desde: number; ahora: number; escala?: EscalaSiee }
 ): Promise<FichaCargada> {
   const [estudiante, curso, config, progreso, intentos, visitas, orbita] = await Promise.all([
     rosterRepository.getEstudiante(colegioId, cursoId, uid),
@@ -156,6 +157,7 @@ export async function cargarFichaEstudiante(
     mundos,
     textos,
     aciertoClase: vistas > 0 ? aciertos / vistas : null,
+    escala,
   });
   return { estudiante, cursoNombre: curso?.nombre ?? '', mundos, ficha };
 }

@@ -138,7 +138,7 @@ export function tocaRecalcular(actualizadoAt: unknown, ahora: number): boolean {
 // Lectura y escritura.
 // ---------------------------------------------------------------------------
 
-async function datosDeCurso(
+export async function datosDeCurso(
   db: Firestore,
   colegioId: string,
   cursoId: string,

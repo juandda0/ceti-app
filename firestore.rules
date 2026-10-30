@@ -627,6 +627,53 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // ---- Fase 6 — entidades (functions/src/educadores/entidades.ts) ----
+    // El admin de la entidad es un permiso de un profesor guardado en su ficha
+    // de miembro (no un claim ni un rol): se revisa en cada lectura, así quien
+    // sale de la entidad pierde el acceso al instante. Todo lo escribe el
+    // servidor; el cliente solo lee.
+    function esAdminEntidad(cid) {
+      return isStaff() && sameColegio(cid)
+        && get(/databases/$(database)/documents/colegios/$(cid)/profes/$(request.auth.uid)).data.rol == 'admin';
+    }
+    // Miembros de la entidad: los ven sus profes (para co-docentes y la biblioteca).
+    match /colegios/{cid}/profes/{uid} {
+      allow read: if isStaff() && sameColegio(cid);
+      allow write: if false;
+    }
+    match /colegios/{cid}/invitacionesProfe/{correo} {
+      allow read: if esAdminEntidad(cid);
+      allow write: if false;
+    }
+    // Escala SIEE y periodos: la aplican todas las clases de la entidad.
+    match /colegios/{cid}/config/{docId} {
+      allow read: if isStaff() && sameColegio(cid);
+      allow write: if false;
+    }
+    match /colegios/{cid}/biblioteca/{id} {
+      allow read: if isStaff() && sameColegio(cid);
+      allow write: if false;
+    }
+    // Panel (solo cifras de grupo), datos de factura y cotizaciones: solo admins.
+    match /colegios/{cid}/agregados/entidad {
+      allow read: if esAdminEntidad(cid);
+      allow write: if false;
+    }
+    match /colegios/{cid}/facturacion/{docId} {
+      allow read: if esAdminEntidad(cid);
+      allow write: if false;
+    }
+    match /colegios/{cid}/cotizaciones/{id} {
+      allow read: if esAdminEntidad(cid);
+      allow write: if false;
+    }
+    match /invitacionesProfe/{id} {
+      allow read, write: if false;
+    }
+    match /contadores/{id} {
+      allow read, write: if false;
+    }
+
     // ¿El profe puede editar contenido y la configuración de mundos? Piloto o
     // superior vigente (suscripciones/{uid}.planVigente + vigenteHasta, que
     // escribe el servidor), o la licencia Nave vigente del colegio. Al bajar de

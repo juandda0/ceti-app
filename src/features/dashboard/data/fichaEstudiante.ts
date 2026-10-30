@@ -11,6 +11,7 @@ import {
   desempenoDeNota,
   notaDesdeMaestria,
   type Desempeno,
+  type EscalaSiee,
 } from '@/functions/src/educadores/dominio';
 import type { IntentoGuardado, VisitaDia } from '@features/dashboard/data/registroClaseRepository';
 import type { ResumenOrbitaClase } from '@features/dashboard/data/registroClase';
@@ -50,6 +51,8 @@ export interface EntradaFicha {
   textos: Map<string, TextoPregunta>;
   /** Acierto de toda la clase (0..1) en las mismas preguntas, si se conoce. */
   aciertoClase: number | null;
+  /** Escala SIEE de la entidad (Fase 6); sin ella, 1,0–5,0. */
+  escala?: EscalaSiee;
 }
 
 export interface CompetenciaFicha {
@@ -99,7 +102,7 @@ export interface MundoFicha {
 }
 
 export interface Ficha {
-  /** Nota del periodo (escala SIEE por defecto) con la maestría de los mundos ganados. */
+  /** Nota del periodo (escala SIEE de la entidad o la de por defecto) con la maestría de los mundos ganados. */
   nota: number | null;
   desempeno: Desempeno | null;
   /** Aciertos sobre todas sus respuestas en la clase (0..1). */
@@ -277,7 +280,7 @@ export function construirFicha(e: EntradaFicha): Ficha {
   const maestria = maestrias.length
     ? maestrias.reduce((a, b) => a + b, 0) / maestrias.length
     : null;
-  const nota = maestria == null ? null : notaDesdeMaestria(maestria);
+  const nota = maestria == null ? null : notaDesdeMaestria(maestria, e.escala);
 
   const porCompetencia = [...comp.entries()]
     .filter(([, v]) => v.n > 0)
@@ -341,7 +344,7 @@ export function construirFicha(e: EntradaFicha): Ficha {
   const acierto = proporcion(aciertos, respuestas);
   return {
     nota,
-    desempeno: nota == null ? null : desempenoDeNota(nota),
+    desempeno: nota == null ? null : desempenoDeNota(nota, e.escala),
     acierto,
     respuestas,
     intentos: e.intentos.length,
