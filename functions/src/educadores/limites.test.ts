@@ -182,9 +182,12 @@ describe('cupo de la licencia Nave (puro)', () => {
 
   it('solo vale una licencia Nave vigente', () => {
     const l = { plan: 'nave' as const, hasta: AHORA + DIA_MS, estudiantes: 10 };
-    expect(naveVigente(l, AHORA)).toBe(l);
+    expect(naveVigente(l, AHORA)).toEqual(l);
     expect(naveVigente(l, AHORA + 2 * DIA_MS)).toBeNull();
     expect(naveVigente(null, AHORA)).toBeNull();
+    // Fase 6: Colegio y Universidad ponen tope con su cupo; Equipo no.
+    expect(naveVigente({ plan: 'universidad', hasta: AHORA + DIA_MS, cupo: 300 }, AHORA)?.estudiantes).toBe(300);
+    expect(naveVigente({ plan: 'equipo', hasta: AHORA + DIA_MS, cupo: 5 }, AHORA)).toBeNull();
   });
 });
 

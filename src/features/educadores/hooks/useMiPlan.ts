@@ -13,6 +13,7 @@ import {
   diasDePrueba,
   limites as limitesDe,
   mejorPlan,
+  planDeLicencia,
   planEfectivo,
   puede as puedePlan,
   type Funcion,
@@ -92,9 +93,7 @@ export function calcularPlan(
   licencia: LicenciaColegio | null,
   ahora: number
 ): PlanId {
-  const individual = planEfectivo(sub, ahora);
-  const colegio: PlanId = licencia && ahora < licencia.hasta ? 'nave' : 'cadete';
-  return mejorPlan(individual, colegio);
+  return mejorPlan(planEfectivo(sub, ahora), planDeLicencia(licencia, ahora));
 }
 
 export interface MiPlan {
@@ -104,7 +103,7 @@ export interface MiPlan {
   cargando: boolean;
   /** Días de prueba que quedan (0 si no está en prueba). */
   diasPrueba: number;
-  /** El plan viene del colegio (Nave), no de un pago individual. */
+  /** El plan viene de la licencia del colegio o la entidad, no de un pago individual. */
   porColegio: boolean;
   limites: LimitesPlan;
   puede: (f: Funcion) => boolean;
@@ -135,7 +134,7 @@ export function useMiPlan(): MiPlan {
     licencia,
     cargando,
     diasPrueba: diasDePrueba(sub, t),
-    porColegio: plan === 'nave',
+    porColegio: planDeLicencia(licencia, t) !== 'cadete' && planDeLicencia(licencia, t) === plan,
     limites: limitesDe(plan),
     puede: (f) => puedePlan(plan, f),
   };

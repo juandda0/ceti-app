@@ -19,9 +19,12 @@ import {
 import {
   cabeEstudiante,
   iaRestante,
+  licenciaVigente,
   limites,
+  planDeLicencia,
   puede,
   puedeCrearClase,
+  topeEstudiantesDe,
   type PlanId,
 } from './dominio';
 import {
@@ -191,7 +194,7 @@ export async function planDeCurso(
   const duenoUid = duenoDeCurso(snap.data());
   if (duenoUid) return { plan: await planDeProfe(duenoUid, colegioId, Date.now(), db), duenoUid };
   const licencia = await licenciaDeColegio(colegioId, db);
-  return { plan: licencia && Date.now() < licencia.hasta ? 'nave' : 'cadete', duenoUid: null };
+  return { plan: planDeLicencia(licencia, Date.now()), duenoUid: null };
 }
 
 /**
@@ -274,12 +277,18 @@ export async function registrarGeneracionIa(
 // Licencia Nave del colegio (la activa un admin de Ceti tras firmar el contrato).
 // ---------------------------------------------------------------------------
 
-/** La licencia Nave si está vigente en `ahora`. Puro. */
+/**
+ * La licencia con tope de estudiantes (Nave de antes, Colegio o Universidad) si
+ * está vigente en `ahora`, con `estudiantes` = el cupo del contrato. Equipo cobra
+ * por profe y no pone tope de estudiantes. Puro.
+ */
 export function naveVigente(
   licencia: LicenciaColegio | null | undefined,
   ahora: number
-): LicenciaColegio | null {
-  return licencia && licencia.plan === 'nave' && ahora < licencia.hasta ? licencia : null;
+): (LicenciaColegio & { estudiantes: number }) | null {
+  const vigente = licenciaVigente(licencia, ahora);
+  const tope = topeEstudiantesDe(vigente);
+  return vigente && tope !== null ? { ...vigente, estudiantes: tope } : null;
 }
 
 /** Cuántos estudiantes por encima de la licencia se dejan entrar: 10 %, al menos 1. */
@@ -325,7 +334,7 @@ export async function naveDeColegio(
   colegioId: string,
   ahora = Date.now(),
   db: Firestore = getFirestore()
-): Promise<LicenciaColegio | null> {
+): Promise<(LicenciaColegio & { estudiantes: number }) | null> {
   return naveVigente(await licenciaDeColegio(colegioId, db), ahora);
 }
 

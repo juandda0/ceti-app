@@ -308,7 +308,7 @@ export function pausar(sub: Suscripcion, hasta: number, ahora: number): Suscripc
   if (sub.estado !== 'activa' || sub.ciclo !== 'mensual' || !esPlanIndividual(sub.plan)) {
     throw new ErrorSuscripcion(
       'pausa_no_permitida',
-      'Solo se pausa un plan mensual activo. El Año escolar ya cubre las vacaciones.'
+      'Solo se pausa un plan mensual activo. El semestral y el Año escolar ya cubren las vacaciones.'
     );
   }
   if (hasta <= ahora || hasta - ahora > PAUSA_MAX_DIAS * DIA_MS) {
@@ -427,7 +427,8 @@ export function cicloDiario(
           sub = conAviso(sub, acciones, `manual:${fin}`, 'renovacion_manual_pronto', fin);
         }
       } else if (fin - ahora <= AVISO_RENOVACION_DIAS * DIA_MS) {
-        if (sub.ciclo === 'anioEscolar') {
+        // Semestral y Año escolar avisan 7 días antes aunque se cobren solos.
+        if (sub.ciclo === 'anioEscolar' || sub.ciclo === 'semestral') {
           sub = conAviso(sub, acciones, `renov:${fin}`, 'renovacion_anual_pronto', fin);
         } else if (!sub.fuentePagoId) {
           sub = conAviso(sub, acciones, `manual:${fin}`, 'renovacion_manual_pronto', fin);

@@ -1,6 +1,7 @@
 /**
- * Año escolar o Mensual: dos opciones con relieve (como los chips del kit), el
- * Año escolar primero y con lo que se ahorra frente a 12 mensualidades.
+ * Año escolar, Semestral o Mensual: opciones con relieve (como los chips del
+ * kit), de la más larga a la más corta y con lo que se ahorra frente a pagar
+ * mes a mes.
  */
 import { Platform, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -8,10 +9,10 @@ import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import Bounceable from '@shared/components/Bounceable';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
-import { ahorroAnioEscolar, type Ciclo } from '@/functions/src/educadores/dominio';
+import { ahorroCiclo, type Ciclo } from '@/functions/src/educadores/dominio';
 import { Pill } from '@features/dashboard/components/profe/kit';
 
-const CICLOS_EN_ORDEN: readonly Ciclo[] = ['anioEscolar', 'mensual'];
+const CICLOS_EN_ORDEN: readonly Ciclo[] = ['anioEscolar', 'semestral', 'mensual'];
 
 export default function PlanesSelectorCiclo({
   ciclo,
@@ -27,11 +28,8 @@ export default function PlanesSelectorCiclo({
     <View style={styles.fila} accessibilityRole="radiogroup">
       {CICLOS_EN_ORDEN.map((c) => {
         const elegido = c === ciclo;
-        const anio = c === 'anioEscolar';
         const nombre = t(`educadores.planes.ciclo.${c}`);
-        const nota = t(
-          anio ? 'educadores.planes.ciclo.anioNota' : 'educadores.planes.ciclo.mensualNota'
-        );
+        const nota = t(`educadores.planes.ciclo.${c}Nota`);
         return (
           <Bounceable
             key={c}
@@ -71,9 +69,9 @@ export default function PlanesSelectorCiclo({
             <Text style={[styles.nota, { color: colors.text.tertiary }]} numberOfLines={2}>
               {nota}
             </Text>
-            {anio ? (
+            {c !== 'mensual' ? (
               <Pill
-                texto={t('educadores.planes.ciclo.ahorras', { pct: ahorroAnioEscolar('piloto') })}
+                texto={t('educadores.planes.ciclo.ahorras', { pct: ahorroCiclo('piloto', c) })}
                 tono="verde"
                 style={{ marginTop: 2 }}
               />
@@ -86,9 +84,10 @@ export default function PlanesSelectorCiclo({
 }
 
 const styles = StyleSheet.create({
-  fila: { flexDirection: 'row', gap: 10 },
+  fila: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   opcion: {
-    flex: 1,
+    flexGrow: 1,
+    flexBasis: 100,
     minWidth: 0,
     borderWidth: 2,
     borderBottomWidth: 4,

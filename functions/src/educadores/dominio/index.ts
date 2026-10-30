@@ -14,3 +14,7 @@ export * from './adopcion';
 export * from './comunicacion';
 export * from './alertas';
 export * from './acudientes';
+export * from './entidad';
+export * from './evaluacion';
+export * from './panelEntidad';
+export * from './facturaEntidad';

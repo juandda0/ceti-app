@@ -637,7 +637,8 @@ service cloud.firestore {
       return (exists(subRef)
           && get(subRef).data.get('planVigente', '') in ['piloto', 'comandante', 'nave']
           && request.time.toMillis() < get(subRef).data.get('vigenteHasta', 0))
-        || (licencia.get('plan', '') == 'nave'
+        // Fase 6: la Nave de antes o un plan de entidad (Equipo, Colegio, Universidad).
+        || (licencia.get('plan', '') in ['nave', 'equipo', 'colegio', 'universidad']
           && request.time.toMillis() < licencia.get('hasta', 0));
     }
     // Fase 5 — avisos de la app (functions/src/educadores/notificaciones.ts).

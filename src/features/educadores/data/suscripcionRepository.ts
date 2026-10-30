@@ -21,6 +21,7 @@ import {
   where,
   type Unsubscribe,
 } from 'firebase/firestore';
+import { planEntidadDe, type LicenciaEntidad } from '@/functions/src/educadores/dominio';
 import { getFirebaseClients } from '@shared/lib/firebase/app';
 import { callFunction } from '@shared/lib/firebase/functions';
 import type {
@@ -39,14 +40,11 @@ export type SuscripcionDoc = Suscripcion & {
   vigenteHasta: number;
 };
 
-export interface LicenciaColegio {
-  plan: 'nave';
-  /** ms */
-  hasta: number;
-  estudiantes: number;
-  /** Nombre del padrino, si un aliado paga la licencia. */
-  padrino?: string | null;
-}
+/**
+ * Licencia de su colegio o entidad: la Nave de antes ({plan: 'nave',
+ * estudiantes}) o un plan de entidad de la Fase 6 (Equipo, Colegio, Universidad).
+ */
+export type LicenciaColegio = LicenciaEntidad;
 
 export type EstadoPago =
   | 'pendiente'
@@ -111,7 +109,7 @@ export const suscripcionRepository = {
       doc(clients.firestore, 'colegios', colegioId),
       (snap) => {
         const l = snap.exists() ? (snap.data().licencia as LicenciaColegio | undefined) : undefined;
-        cb(l && l.plan === 'nave' ? l : null);
+        cb(l && planEntidadDe(l) !== null ? l : null);
       },
       () => cb(null)
     );

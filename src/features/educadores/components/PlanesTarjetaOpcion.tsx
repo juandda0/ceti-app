@@ -11,6 +11,7 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import {
   esPlanIndividual,
   formatoCop,
+  MESES_POR_CICLO,
   PLANES,
   type Ciclo,
   type Funcion,
@@ -189,7 +190,7 @@ function Precio({
     );
   }
 
-  const anio = ciclo === 'anioEscolar';
+  const meses = MESES_POR_CICLO[ciclo];
   const { montoCop, listaCop, fundador, cuposFundador, cargando } = cotizacion;
   return (
     <View style={{ gap: 6 }}>
@@ -204,7 +205,7 @@ function Precio({
           {formatoCop(montoCop)}
         </Text>
         <Text style={[styles.porCiclo, { color: colors.text.secondary }]}>
-          {p(anio ? 'ciclo.porAnio' : 'ciclo.porMes')}
+          {p(meses === 12 ? 'ciclo.porAnio' : meses === 6 ? 'ciclo.porSemestre' : 'ciclo.porMes')}
         </Text>
       </View>
       {fundador && listaCop > montoCop ? (
@@ -213,8 +214,8 @@ function Precio({
         </Text>
       ) : null}
       <Text style={[styles.nota, { color: colors.text.tertiary }]}>
-        {anio
-          ? `${p('ciclo.equivale', { monto: formatoCop(Math.round(montoCop / 12)) })} · ${p('ivaIncluido')}`
+        {meses > 1
+          ? `${p('ciclo.equivale', { monto: formatoCop(Math.round(montoCop / meses)) })} · ${p('ivaIncluido')}`
           : p('ivaIncluido')}
       </Text>
       {fundador ? (

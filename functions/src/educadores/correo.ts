@@ -115,6 +115,7 @@ export function nombrePlan(plan: PlanId | null | undefined): string {
 
 export function nombreCiclo(ciclo: Ciclo | null | undefined): string {
   if (ciclo === 'anioEscolar') return 'Año escolar';
+  if (ciclo === 'semestral') return 'semestral';
   if (ciclo === 'mensual') return 'mensual';
   return '';
 }
@@ -297,15 +298,17 @@ function borrador(plantilla: PlantillaCorreo, d: DatosCorreo): Borrador {
           'Si Piloto te ahorró tiempo, puedes seguir con él desde el mismo lugar donde lo probaste. Si no, todo bien: Cadete sigue siendo tuyo.',
         ],
       };
-    case 'renovacion_anual_pronto':
+    case 'renovacion_anual_pronto': {
+      const semestral = d.ciclo === 'semestral';
       return {
-        subject: `Tu Año escolar se renueva el ${fecha(d)}`,
+        subject: `Tu ${semestral ? 'plan semestral' : 'Año escolar'} se renueva el ${fecha(d)}`,
         parrafos: [
           saludo(d.nombre),
-          `El ${fecha(d)} renovamos tu plan ${nombrePlan(d.plan)} por 12 meses más${monto(d) ? `, por ${monto(d)} con IVA incluido` : ''}.`,
+          `El ${fecha(d)} renovamos tu plan ${nombrePlan(d.plan)} por ${semestral ? '6' : '12'} meses más${monto(d) ? `, por ${monto(d)} con IVA incluido` : ''}.`,
           'Si quieres seguir, no tienes que hacer nada. Si no, cancela antes de esa fecha en un toque y no te cobramos. Lo que tienes no se borra.',
         ],
       };
+    }
     case 'renovacion_manual_pronto':
       return {
         subject: `Tu plan ${nombrePlan(d.plan)} vence el ${fecha(d)}`,

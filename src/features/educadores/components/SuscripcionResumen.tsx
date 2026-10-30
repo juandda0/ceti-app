@@ -84,7 +84,9 @@ export default function SuscripcionResumen({
           por: t(
             sub.ciclo === 'mensual'
               ? 'educadores.planes.ciclo.porMes'
-              : 'educadores.planes.ciclo.porAnio'
+              : sub.ciclo === 'semestral'
+                ? 'educadores.planes.ciclo.porSemestre'
+                : 'educadores.planes.ciclo.porAnio'
           ),
           ciclo: t(`educadores.planes.ciclo.${sub.ciclo}`),
         }

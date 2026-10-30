@@ -1451,11 +1451,14 @@
       },
       "ciclo": {
         "anioEscolar": "Año escolar",
+        "semestral": "Semestral",
         "mensual": "Mensual",
         "ahorras": "Ahorras {{pct}} %",
-        "anioNota": "12 meses, vacaciones incluidas",
+        "anioEscolarNota": "12 meses, vacaciones incluidas",
+        "semestralNota": "6 meses, un semestre completo",
         "mensualNota": "Lo pausas gratis en vacaciones",
         "porMes": "al mes",
+        "porSemestre": "por 6 meses",
         "porAnio": "por 12 meses",
         "equivale": "Equivale a {{monto}} al mes"
       },

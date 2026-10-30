@@ -11,20 +11,23 @@ import { getFirestore, type DocumentReference, type Firestore, type Transaction 
 import {
   mejorPlan,
   nuevaSuscripcion,
+  planDeLicencia,
   planEfectivo,
+  planEntidadDe,
   vigencia,
+  type LicenciaEntidad,
   type PlanId,
   type Suscripcion,
 } from './dominio';
 
 export const COL_SUSCRIPCIONES = 'suscripciones';
 
-export interface LicenciaColegio {
-  plan: 'nave';
-  hasta: number;
-  estudiantes: number;
-  padrino?: string | null;
-}
+/**
+ * Licencia en `colegios/{cid}.licencia`: la Nave de antes ({plan: 'nave',
+ * estudiantes}) o un plan de entidad de la Fase 6 (Equipo, Colegio,
+ * Universidad).
+ */
+export type LicenciaColegio = LicenciaEntidad;
 
 export function refSuscripcion(uid: string, db: Firestore = getFirestore()): DocumentReference {
   return db.collection(COL_SUSCRIPCIONES).doc(uid);
@@ -76,10 +79,13 @@ export async function licenciaDeColegio(
   if (!colegioId) return null;
   const snap = await db.doc(`colegios/${colegioId}`).get();
   const l = snap.exists ? (snap.data()?.licencia as LicenciaColegio | undefined) : undefined;
-  return l && l.plan === 'nave' ? l : null;
+  return l && planEntidadDe(l) !== null ? l : null;
 }
 
-/** Plan que vale hoy: el mejor entre la suscripción individual y la licencia Nave del colegio. */
+/**
+ * Plan que vale hoy: el mejor entre la suscripción individual y la licencia de
+ * su colegio o entidad (Equipo → Comandante; Colegio, Universidad y Nave → Nave).
+ */
 export async function planDeProfe(
   uid: string,
   colegioId: string | null | undefined,
@@ -87,8 +93,7 @@ export async function planDeProfe(
   db: Firestore = getFirestore()
 ): Promise<PlanId> {
   const [sub, licencia] = await Promise.all([leerSuscripcion(uid, undefined, db), licenciaDeColegio(colegioId, db)]);
-  const colegio: PlanId = licencia && ahora < licencia.hasta ? 'nave' : 'cadete';
-  return mejorPlan(planEfectivo(sub, ahora), colegio);
+  return mejorPlan(planEfectivo(sub, ahora), planDeLicencia(licencia, ahora));
 }
 
 /** 'YYYY-MM' del mes en curso en Bogotá, para el contador de IA. */

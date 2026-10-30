@@ -224,7 +224,7 @@ export function leerPlanCiclo(data: unknown): { plan: PlanIndividual; ciclo: Cic
   if (!esPlanIndividual(d.plan)) {
     throw new HttpsError('invalid-argument', "El plan debe ser 'piloto' o 'comandante'.");
   }
-  if (!esCiclo(d.ciclo)) throw new HttpsError('invalid-argument', "El ciclo debe ser 'mensual' o 'anioEscolar'.");
+  if (!esCiclo(d.ciclo)) throw new HttpsError('invalid-argument', "El ciclo debe ser 'mensual', 'semestral' o 'anioEscolar'.");
   return { plan: d.plan, ciclo: d.ciclo };
 }
 
