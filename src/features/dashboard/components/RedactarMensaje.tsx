@@ -31,6 +31,7 @@ export default function RedactarMensaje({
   etiqueta,
   placeholder,
   textoBoton,
+  listo = true,
   onEnviado,
 }: {
   colegioId: string;
@@ -41,6 +42,8 @@ export default function RedactarMensaje({
   etiqueta?: string;
   placeholder?: string;
   textoBoton: string;
+  /** false mientras falte algo fuera de la caja (p. ej. elegir el mundo). */
+  listo?: boolean;
   onEnviado?: (r: ResultadoEnvio) => void;
 }) {
   const { t } = useTranslation();
@@ -50,7 +53,7 @@ export default function RedactarMensaje({
   const [ocupado, setOcupado] = useState(false);
 
   const enviar = async () => {
-    if (!texto.trim()) return;
+    if (!texto.trim() || !listo) return;
     if (tipo !== 'anuncio' && !muro.exigir('mensajesProfe')) return;
     setOcupado(true);
     try {
@@ -97,7 +100,7 @@ export default function RedactarMensaje({
         texto={textoBoton}
         icono="paper-plane"
         cargando={ocupado}
-        deshabilitado={!texto.trim()}
+        deshabilitado={!texto.trim() || !listo}
         onPress={() => void enviar()}
       />
       {muro.hoja}

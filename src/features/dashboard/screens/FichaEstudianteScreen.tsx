@@ -5,6 +5,7 @@
  * preguntas que más falla), cómo le fue en cada mundo y su evolución semana a
  * semana. Todo sale de lo que hizo en el espacio de esta clase desde que se unió.
  * Con Cadete se ven los últimos 7 días; el historial completo es de Piloto.
+ * Desde la Fase 5 el profe también le escribe y le deja comentarios aquí.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -27,6 +28,7 @@ import {
 } from '@features/dashboard/data/cargarFichaEstudiante';
 import type { EstadoMundo } from '@features/dashboard/data/fichaEstudiante';
 import { asignacionRepository } from '@features/dashboard/data/asignacionRepository';
+import MensajesFicha from '@features/dashboard/components/MensajesFicha';
 import {
   Aviso,
   BotonChunky,
@@ -429,6 +431,17 @@ export default function FichaEstudianteScreen() {
                   </View>
                 ))}
               </Tarjeta>
+
+              {/* ── Mensajes y comentarios (Fase 5) ────────────────── */}
+              {colegioId && cursoId && uid ? (
+                <MensajesFicha
+                  colegioId={colegioId}
+                  cursoId={cursoId}
+                  uid={uid}
+                  nombre={nombreVisible}
+                  mundos={datos?.mundos ?? []}
+                />
+              ) : null}
 
               {/* ── Acciones ───────────────────────────────────────── */}
               <Seccion texto={t('ficha.acciones')} />

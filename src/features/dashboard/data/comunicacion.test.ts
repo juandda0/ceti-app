@@ -1,6 +1,7 @@
 import {
   agregarToken,
   mensajesDeClase,
+  opcionesDeComentario,
   profeDeLaClase,
   resumenDestinatarios,
   sinLeer,
@@ -78,5 +79,41 @@ describe('avisos', () => {
   test('agregarToken deja el nuevo primero, sin repetir, máximo 5', () => {
     expect(agregarToken(['a', 'b'], 'b')).toEqual(['b', 'a']);
     expect(agregarToken(['1', '2', '3', '4', '5'], 'x')).toEqual(['x', '1', '2', '3', '4']);
+  });
+});
+
+describe('opcionesDeComentario', () => {
+  const mundos = [
+    { id: 'w1', nombre: 'Origen' },
+    { id: 'w2', nombre: 'Luna' },
+    { id: 'w3', nombre: 'Estrella' },
+  ];
+  const tarea = (id: string, worldId: string, deadline: number, uid?: string) => ({
+    id,
+    worldId,
+    deadline,
+    target: uid
+      ? { tipo: 'estudiante' as const, cursoId: 'k', uid }
+      : { tipo: 'curso' as const, cursoId: 'k' },
+  });
+
+  test('tareas suyas primero (la más reciente por mundo) y luego los demás mundos', () => {
+    const r = opcionesDeComentario(
+      mundos,
+      [
+        tarea('t1', 'w2', 10),
+        tarea('t2', 'w2', 30),
+        tarea('t3', 'w3', 20, 'otro'),
+        tarea('t4', 'w1', 5, 'ana'),
+        { id: 'r', kind: 'reto', deadline: 99, target: { tipo: 'curso' as const, cursoId: 'k' } },
+        tarea('t5', 'borrado', 50),
+      ],
+      'ana'
+    );
+    expect(r).toEqual([
+      { worldId: 'w2', nombre: 'Luna', asignacionId: 't2', deadline: 30 },
+      { worldId: 'w1', nombre: 'Origen', asignacionId: 't4', deadline: 5 },
+      { worldId: 'w3', nombre: 'Estrella' },
+    ]);
   });
 });

@@ -114,3 +114,55 @@ export function sinLeer(avisos: readonly Aviso[], cursoId?: string | null): Avis
 export function agregarToken(actuales: readonly string[], nuevo: string): string[] {
   return [nuevo, ...actuales.filter((t) => t !== nuevo)].slice(0, MAX_TOKENS);
 }
+
+// ── Comentarios en la ficha ────────────────────────────────────────────────
+
+/** Sobre qué puede comentar el profe: un mundo de la clase o una tarea de ese mundo. */
+export interface OpcionComentario {
+  worldId: string;
+  nombre: string;
+  asignacionId?: string;
+  /** Fecha límite de la tarea, si es una tarea. */
+  deadline?: number;
+}
+
+interface TareaParaComentar {
+  id: string;
+  kind?: string;
+  worldId?: string;
+  deadline: number;
+  target: { tipo: 'curso' | 'estudiante'; cursoId: string; uid?: string };
+}
+
+/**
+ * Primero las tareas de mundo que le tocan al estudiante (de toda la clase o
+ * suyas), de la más reciente a la más vieja, y después los mundos de la clase
+ * que no tienen tarea. Puro.
+ */
+export function opcionesDeComentario(
+  mundos: readonly { id: string; nombre: string }[],
+  tareas: readonly TareaParaComentar[],
+  uid: string
+): OpcionComentario[] {
+  const nombre = new Map(mundos.map((m) => [m.id, m.nombre]));
+  const suyas = tareas
+    .filter((t) => t.kind !== 'reto' && typeof t.worldId === 'string' && nombre.has(t.worldId))
+    .filter((t) => t.target.tipo === 'curso' || t.target.uid === uid)
+    .sort((a, b) => b.deadline - a.deadline);
+  const conTarea = new Set<string>();
+  const deTareas: OpcionComentario[] = [];
+  for (const t of suyas) {
+    if (conTarea.has(t.worldId!)) continue;
+    conTarea.add(t.worldId!);
+    deTareas.push({
+      worldId: t.worldId!,
+      nombre: nombre.get(t.worldId!)!,
+      asignacionId: t.id,
+      deadline: t.deadline,
+    });
+  }
+  return [
+    ...deTareas,
+    ...mundos.filter((m) => !conTarea.has(m.id)).map((m) => ({ worldId: m.id, nombre: m.nombre })),
+  ];
+}

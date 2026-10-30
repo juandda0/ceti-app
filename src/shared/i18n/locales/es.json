@@ -1750,7 +1750,22 @@
     "tareaCreada": "Le asignaste el mundo a {{nombre}}",
     "todoConquistado": "Ya conquistó todos los mundos de la clase.",
     "verNotas": "Ver notas del periodo",
-    "sinDetalle": "sin detalle de respuestas (antes del registro de la clase)"
+    "sinDetalle": "sin detalle de respuestas (antes del registro de la clase)",
+    "mensajes": {
+      "titulo": "Mensajes y comentarios",
+      "modoRetro": "Comentario",
+      "modoMensaje": "Mensaje",
+      "sobreQue": "¿Sobre qué mundo o tarea? Las tareas llevan la bandera y su fecha.",
+      "tarea": "{{nombre}} · {{fecha}}",
+      "placeholderRetro": "Ej.: ¡Qué jefe! Repasa el interés compuesto antes del siguiente mundo.",
+      "placeholderMensaje": "Ej.: Vas muy bien esta semana. ¡Sigue así!",
+      "enviar": "Enviar a {{nombre}}",
+      "comentarioSobre": "Comentario sobre {{nombre}}",
+      "visto": "Visto el {{fecha}}",
+      "sinVer": "Sin ver",
+      "bloqueadoTitulo": "Escríbele y coméntale su avance",
+      "bloqueadoValor": "Con Piloto le dejas a {{nombre}} comentarios sobre cada mundo y ves si los leyó."
+    }
   },
   "analisis": {
     "entrada": "Análisis de la clase",
