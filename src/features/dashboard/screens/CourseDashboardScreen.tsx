@@ -449,6 +449,11 @@ export default function CourseDashboardScreen() {
             style={{ flex: 1 }}
           />
         </View>
+        <BotonChunky
+          texto={t('analisis.entrada')}
+          icono={!planCargando && puede('analisisClase') ? 'analytics' : 'lock-closed-outline'}
+          onPress={() => router.push(`/(staff)/analisis/${cursoId}` as Href)}
+        />
 
         {status === 'ready' && report ? (
           <Segmented options={vistas} value={vista} onChange={setVista} />

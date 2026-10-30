@@ -44,7 +44,7 @@ export function mundosDeLaClase(config: CursoConfigMundos | null): MundoDeLaClas
   });
 }
 
-async function textosDeMundos(
+export async function textosDeMundos(
   grado: Grado | null,
   worldIds: string[],
   colegioId: string,
