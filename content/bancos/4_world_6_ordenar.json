@@ -1,0 +1,133 @@
+{
+  "bancoId": "4_world_6_ordenar",
+  "grado": "4",
+  "worldId": "world_6",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "4_world_6_ordenar_1",
+      "enunciado": "Ordena el camino de un impuesto.",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Los impuestos son ingresos del Estado que vuelven a la comunidad en obras y servicios.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-45-2",
+      "elementos": [
+        "Los niños estudian en el colegio nuevo",
+        "El dinero llega al Estado",
+        "El Gobierno lo usa para construir un colegio",
+        "Las personas y las empresas pagan impuestos"
+      ],
+      "ordenCanonico": [
+        3,
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "4_world_6_ordenar_2",
+      "enunciado": "Ordena cómo se decide y se usa el presupuesto de la nación.",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "El Gobierno propone, el Congreso aprueba y el Gobierno ejecuta.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-45-1",
+      "elementos": [
+        "El Congreso lo discute y lo aprueba",
+        "El Gobierno lo usa en obras y servicios",
+        "El Gobierno propone el presupuesto"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "4_world_6_ordenar_3",
+      "enunciado": "Ordena lo que pasó en la vereda cuando llegó el agua potable.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Un nuevo recurso, el agua limpia, mejoró la salud y la educación de la comunidad.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-45-1",
+      "elementos": [
+        "Los niños se enfermaron menos",
+        "Construyeron el acueducto de la vereda",
+        "Faltaron menos al colegio",
+        "Las familias tuvieron agua limpia en casa"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "4_world_6_ordenar_4",
+      "enunciado": "Ordena lo que pasa cuando cortan muchos árboles de una montaña.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Sin árboles la tierra se lava con la lluvia y el agua del pueblo se ensucia.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-45-2",
+      "elementos": [
+        "La lluvia arrastra la tierra",
+        "Al pueblo le llega menos agua limpia",
+        "Cortan los árboles de la montaña",
+        "El agua de los ríos baja con barro"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        3,
+        1
+      ]
+    },
+    {
+      "id": "4_world_6_ordenar_5",
+      "enunciado": "Ordena los pasos para que tu curso decida cómo cuidar la huerta del colegio.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Se mira la necesidad, se proponen ideas, se elige entre todos y se reparten las tareas.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-45-2",
+      "elementos": [
+        "Repartir las tareas",
+        "Proponer ideas en grupo",
+        "Elegir juntos la mejor idea",
+        "Ver qué necesita la huerta"
+      ],
+      "ordenCanonico": [
+        3,
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "4_world_6_ordenar_6",
+      "enunciado": "Ordena de lo que es de una sola persona a lo que es de toda la comunidad.",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "El cepillo es tuyo, la nevera es de tu familia y el parque es de toda la comunidad.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-45-1",
+      "elementos": [
+        "El parque del barrio",
+        "La nevera de tu casa",
+        "Tu cepillo de dientes"
+      ],
+      "ordenCanonico": [
+        2,
+        1,
+        0
+      ]
+    }
+  ]
+}

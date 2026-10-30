@@ -1,0 +1,173 @@
+{
+  "bancoId": "6_world_6_multiple_choice",
+  "grado": "6",
+  "worldId": "world_6",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "6_world_6_multiple_choice_1",
+      "enunciado": "¿Qué es una cooperativa?",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "En una cooperativa los socios se unen, deciden juntos y comparten los beneficios.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-67-1",
+      "opciones": [
+        "Una empresa de una sola persona que se queda con toda la ganancia",
+        "Una oficina del Gobierno que cobra impuestos",
+        "Una organización de personas que se unen para un fin común y comparten los beneficios",
+        "Un banco que solo les presta a empresas grandes"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "6_world_6_multiple_choice_2",
+      "enunciado": "En tu barrio, varios vecinos se unen para comprar el mercado al por mayor y repartirlo entre ellos. ¿Qué están practicando?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Unirse para comprar juntos y repartir el beneficio es una práctica de economía solidaria.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-67-1",
+      "opciones": [
+        "Economía solidaria",
+        "Un monopolio",
+        "Una venta por catálogo",
+        "Un negocio de un solo dueño"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "6_world_6_multiple_choice_3",
+      "enunciado": "Los campesinos de una vereda venden juntos su cosecha a través de una asociación. ¿Qué beneficio obtienen?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Al vender juntos tienen más fuerza para negociar y reparten los costos entre todos.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-67-2",
+      "opciones": [
+        "Ya no tienen que trabajar la tierra",
+        "Cada uno paga más por el transporte",
+        "Cada uno tiene que vender más barato que los demás",
+        "Negocian mejores precios y bajan costos al compartir el transporte"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "6_world_6_multiple_choice_4",
+      "enunciado": "¿Por qué comprarle a una asociación de productores de tu región puede beneficiar a la comunidad?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Cuando compras a productores locales organizados, más plata llega a las familias de tu región.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-67-2",
+      "opciones": [
+        "Porque siempre es lo más barato del mercado",
+        "Porque la plata se queda en la región y ayuda a las familias que producen",
+        "Porque así no se pagan impuestos",
+        "Porque esos productos no necesitan transporte"
+      ],
+      "correctIndex": 1,
+      "prueba": true
+    },
+    {
+      "id": "6_world_6_multiple_choice_5",
+      "enunciado": "El Gobierno decide dar un apoyo a los productores de arroz para comprar semillas y abono. ¿Qué efecto se espera?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Si producir cuesta menos, los agricultores pueden sembrar y cosechar más.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-67-1",
+      "opciones": [
+        "Que el Banco de la República imprima más billetes",
+        "Que se produzca menos arroz",
+        "Que el arroz suba de precio de inmediato",
+        "Que bajen sus costos y puedan producir más"
+      ],
+      "correctIndex": 3,
+      "prueba": true
+    },
+    {
+      "id": "6_world_6_multiple_choice_6",
+      "enunciado": "El Gobierno arregla la vía que conecta una vereda con el pueblo. ¿Cómo afecta eso la producción y el consumo?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Una buena vía baja el costo y el tiempo del transporte, y eso ayuda a producir y a vender más.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-67-1",
+      "opciones": [
+        "Los productos de la vereda se vuelven más caros",
+        "La gente deja de comprar en el pueblo",
+        "Los productores sacan sus cosechas más rápido y barato, y al pueblo llegan más alimentos",
+        "No cambia nada porque es solo una carretera"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "6_world_6_multiple_choice_7",
+      "enunciado": "Los precios del mercado subieron este año. ¿Cuál es un buen plan para la familia?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Revisar juntos el presupuesto y comparar ayuda a que la plata alcance sin endeudarse.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-67-2",
+      "opciones": [
+        "Revisar el presupuesto, comparar precios y preferir productos de temporada",
+        "Comprar lo mismo de siempre sin mirar los precios",
+        "Pedir préstamos para mantener el mismo mercado",
+        "Gastar todos los ahorros de una vez antes de que todo suba más"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "6_world_6_multiple_choice_8",
+      "enunciado": "Se aprueba un impuesto más alto a las bebidas azucaradas y la gaseosa sube de precio. ¿Qué plan familiar ayuda a enfrentar ese cambio?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Cambiar a una opción más barata y sana le permite a la familia cuidar su presupuesto.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-67-2",
+      "opciones": [
+        "Comprar más gaseosa ahora, antes de que suba más",
+        "Cambiarla por jugo natural o agua y usar esa plata en otras cosas",
+        "Comprar la misma cantidad y recortar la fruta",
+        "Dejar de pagar un servicio para seguir comprándola"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "6_world_6_multiple_choice_9",
+      "enunciado": "El café de una finca colombiana vale más cuando se vende tostado, empacado y con sello de origen. ¿Por qué?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Tostar, empacar y certificar el origen le suman trabajo y confianza, y eso sube su valor.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-67-1",
+      "opciones": [
+        "Porque pesa más",
+        "Porque el café sin tostar no sirve para nada",
+        "Porque los impuestos lo hacen más caro",
+        "Porque el procesamiento y el sello de origen le agregan valor"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "6_world_6_multiple_choice_10",
+      "enunciado": "El río del que sale el agua de tu municipio se está llenando de basura. ¿Qué propuesta protege mejor ese recurso?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Limpiar y evitar que llegue más basura ataca la causa del daño al río.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-67-2",
+      "opciones": [
+        "Comprar agua en botella y olvidarse del río",
+        "Organizar jornadas de limpieza y pedirle a la alcaldía puntos de recolección",
+        "Esperar a que llueva para que el río se limpie solo",
+        "Subir el precio del agua para que se use menos"
+      ],
+      "correctIndex": 1
+    }
+  ]
+}

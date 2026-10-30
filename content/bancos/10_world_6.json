@@ -1,0 +1,44 @@
+{
+  "bancoId": "10_world_6",
+  "grado": "10",
+  "worldId": "world_6",
+  "situaciones": [
+    {
+      "id": "10_world_6_sit_1",
+      "enunciado": "Eres parte del Consejo Municipal de Juventud y el alcalde les pide una recomendación: este año hay recursos para una sola obra grande. Las opciones son arreglar las vías que conectan las veredas con el pueblo o construir un centro de formación técnica para jóvenes.",
+      "opcionA": {
+        "texto": "Recomendar el arreglo de las vías veredales.",
+        "consecuencia": "Sacar las cosechas cuesta menos y llegar al pueblo es más fácil, así que los ingresos del campo pueden mejorar pronto. La formación técnica de los jóvenes tendrá que esperar otro año, y algunos seguirán yéndose a estudiar a otra ciudad. Aprendes que una obra puede dar resultados rápidos y dejar pendiente otra necesidad."
+      },
+      "opcionB": {
+        "texto": "Recomendar el centro de formación técnica.",
+        "consecuencia": "Los jóvenes pueden estudiar sin irse del municipio y, con los años, aparecen nuevos oficios y emprendimientos. Mientras tanto, los productores siguen con vías difíciles y costos altos para vender. Aprendes que invertir en las personas suele dar frutos más lentos pero duraderos."
+      }
+    },
+    {
+      "id": "10_world_6_sit_2",
+      "enunciado": "Tu familia hace parte de una asociación de productores de cacao. Hoy venden el grano a un intermediario que paga de inmediato. Algunos socios proponen procesar juntos el cacao y vender chocolate de la región.",
+      "opcionA": {
+        "texto": "Seguir vendiendo el grano al intermediario.",
+        "consecuencia": "Reciben la plata enseguida, sin invertir en máquinas ni correr el riesgo de no vender. Pero se quedan con la parte más pequeña del valor y dependen del precio que les ofrezcan. Aprendes que lo seguro de hoy puede limitar lo que la región gana mañana."
+      },
+      "opcionB": {
+        "texto": "Invertir juntos para procesar el cacao y vender chocolate.",
+        "consecuencia": "Tienen que reunir plata, aprender a producir y conseguir compradores, y los primeros meses pueden ser difíciles. Si funciona, el valor agregado se queda en la región y se crean empleos. Aprendes que agregar valor a lo que produces es una estrategia de desarrollo que exige trabajo en equipo y asumir riesgos."
+      }
+    },
+    {
+      "id": "10_world_6_sit_3",
+      "enunciado": "Hace meses las lámparas del parque de tu cuadra están dañadas y la zona se volvió insegura de noche. Con tus vecinos quieren que la alcaldía las arregle.",
+      "opcionA": {
+        "texto": "Enviar a la alcaldía un derecho de petición por escrito.",
+        "consecuencia": "Es un trámite sencillo y la alcaldía está obligada a responder en un plazo, así que queda constancia de la solicitud. Pero lo firma poca gente y puede que la respuesta no resuelva el problema de inmediato. Aprendes que los mecanismos formales dejan registro, aunque a veces avanzan despacio."
+      },
+      "opcionB": {
+        "texto": "Organizarse con la junta de acción comunal y llevar el tema a un cabildo abierto.",
+        "consecuencia": "Requiere reunir a muchos vecinos, preparar la intervención y esperar a que se convoque la sesión. A cambio, el tema se discute en público ante el concejo y gana visibilidad. Aprendes que participar en grupo tiene más fuerza, pero exige más tiempo y organización."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

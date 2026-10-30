@@ -1,0 +1,71 @@
+{
+  "bancoId": "6_world_6_true_false",
+  "grado": "6",
+  "worldId": "world_6",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "6_world_6_true_false_1",
+      "enunciado": "En una cooperativa, las decisiones y los beneficios se comparten entre los socios.",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Verdadero: los socios deciden juntos y reparten los beneficios.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-67-1",
+      "respuesta": true
+    },
+    {
+      "id": "6_world_6_true_false_2",
+      "enunciado": "Comprarles a asociaciones de productores locales no ayuda en nada a las familias que producen.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Falso: una parte mayor de lo que pagas llega a las familias productoras de tu región.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-67-2",
+      "respuesta": false
+    },
+    {
+      "id": "6_world_6_true_false_3",
+      "enunciado": "En Colombia, el Gobierno puede subir un impuesto por su cuenta, sin que lo apruebe el Congreso.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Falso: el Gobierno puede proponer impuestos, pero el Congreso es quien los aprueba.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-67-1",
+      "respuesta": false
+    },
+    {
+      "id": "6_world_6_true_false_4",
+      "enunciado": "Cuando el Banco de la República sube las tasas de interés para frenar la inflación, los préstamos se encarecen y la gente tiende a comprar menos a crédito.",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Verdadero: con préstamos más caros se compra menos a crédito, y eso ayuda a que los precios no suban tanto.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-67-1",
+      "respuesta": true
+    },
+    {
+      "id": "6_world_6_true_false_5",
+      "enunciado": "Si los precios suben, una buena idea es que la familia revise junta el presupuesto y decida qué gastos ajustar.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Verdadero: revisar en familia ayuda a que la plata alcance para lo importante.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-67-2",
+      "respuesta": true
+    },
+    {
+      "id": "6_world_6_true_false_6",
+      "enunciado": "Si un recurso como el agua parece abundante, no hace falta cuidarlo.",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Falso: un recurso abundante también se puede contaminar o agotar si no se cuida.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-67-2",
+      "respuesta": false
+    }
+  ]
+}

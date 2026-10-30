@@ -1,0 +1,23 @@
+{
+  "grado": "6",
+  "worldId": "world_2",
+  "cards": [
+    {
+      "titulo": "El presupuesto, tu mapa del dinero",
+      "cuerpo": "Un presupuesto es un plan de lo que va a entrar (ingresos) y de lo que va a salir (gastos) en un tiempo, como una semana o un mes. Si lo haces antes de gastar, decides tú y no el antojo del momento.",
+      "ejemplo": "Si recibes 20.000 pesos a la semana, puedes planear: 8.000 para el bus, 5.000 para onces, 4.000 para ahorrar y 3.000 para un gusto."
+    },
+    {
+      "titulo": "Necesidades y deseos en la familia",
+      "cuerpo": "Las necesidades son lo que la familia requiere para vivir bien: comida, vivienda, servicios, transporte, salud y estudio. Los deseos son gustos que hacen la vida más agradable, pero que se pueden aplazar. En un buen presupuesto familiar, primero se cubren las necesidades y luego se deja una parte para ahorro y deseos.",
+      "ejemplo": "Pagar el recibo de la luz es una necesidad; pedir un domicilio el viernes es un deseo."
+    },
+    {
+      "titulo": "Consumir con responsabilidad",
+      "cuerpo": "Con un presupuesto sabes cuánto puedes gastar en cada cosa. Así evitas quedarte sin plata para lo importante, comparas antes de comprar y no gastas más de lo que entra. Si te pasas, el presupuesto te muestra dónde ajustar.",
+      "ejemplo": "Andrés tiene 10.000 pesos para gustos esta semana. Ve una camiseta de 35.000 y, en vez de comprarla de una vez, decide ahorrar para ella unas semanas."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

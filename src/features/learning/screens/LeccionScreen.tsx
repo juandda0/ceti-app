@@ -953,6 +953,8 @@ export interface RespuestaRegistrada {
   respuesta: string;
   /** Tiempo desde que vio la pregunta hasta que comprobó. */
   ms: number;
+  /** Desempeño del MEN de la pregunta, si lo trae (Fase 7). */
+  desempeno?: string;
 }
 
 /** Todo lo que pasó en una lección o un intento de jefe, ganado o perdido. */
@@ -1141,6 +1143,7 @@ export default function LeccionScreen({
             ? chosenOrder.join('-')
             : String(selectedOption ?? '').slice(0, 80),
         ms: Math.max(0, Date.now() - inicioPregunta.current),
+        ...(currentQuestion.desempeno ? { desempeno: currentQuestion.desempeno } : {}),
       },
     ];
     const nuevoCombo = correct ? combo + 1 : 0;

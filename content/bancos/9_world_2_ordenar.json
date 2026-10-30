@@ -10,6 +10,8 @@
       "competencia": "presupuesto",
       "dificultad": 1,
       "explicacion": "Primero calculas lo que entra, luego anotas lo que gastas y al final comparas para ajustar.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
       "elementos": [
         "Calcular tus ingresos",
         "Anotar tus gastos",
@@ -23,6 +25,8 @@
       "competencia": "presupuesto",
       "dificultad": 2,
       "explicacion": "Primero las necesidades básicas, luego los compromisos y al final los gustos opcionales.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
       "elementos": ["Alimentación diaria", "Útiles para estudiar", "Salida con amigos al cine"],
       "ordenCanonico": [0, 1, 2]
     },
@@ -32,6 +36,8 @@
       "competencia": "presupuesto",
       "dificultad": 1,
       "explicacion": "Realizas la compra, guardas el comprobante y luego lo anotas en tu registro.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
       "elementos": [
         "Realizar la compra",
         "Guardar el comprobante",
@@ -45,6 +51,8 @@
       "competencia": "presupuesto",
       "dificultad": 2,
       "explicacion": "Reúnes los registros, los agrupas por tipo y luego revisas qué categoría pesa más.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
       "elementos": [
         "Reunir todos tus gastos registrados",
         "Agrupar cada gasto por categoría",
@@ -58,6 +66,8 @@
       "competencia": "presupuesto",
       "dificultad": 2,
       "explicacion": "Identificas el déficit, revisas qué gastos puedes reducir y aplicas el recorte para equilibrarlo.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
       "elementos": [
         "Detectar que gastas más de lo que recibes",
         "Identificar gastos que puedes reducir",
@@ -71,6 +81,8 @@
       "competencia": "presupuesto",
       "dificultad": 1,
       "explicacion": "Primero el transporte para estudiar, luego ahorrar una parte y al final un antojo.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
       "elementos": [
         "Pagar el transporte para ir a estudiar",
         "Guardar una parte como ahorro",

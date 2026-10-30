@@ -1,0 +1,135 @@
+{
+  "bancoId": "4_world_3_ordenar",
+  "grado": "4",
+  "worldId": "world_3",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "4_world_3_ordenar_1",
+      "enunciado": "Ordena los pasos para ahorrar para una meta.",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Primero eliges la meta, sabes cuánto cuesta, ahorras con constancia y al final la cumples.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-45-1",
+      "elementos": [
+        "Guardar un poco cada semana",
+        "Comprarlo cuando completes el dinero",
+        "Averiguar cuánto cuesta",
+        "Elegir qué quieres lograr"
+      ],
+      "ordenCanonico": [
+        3,
+        2,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "4_world_3_ordenar_2",
+      "enunciado": "Martina invirtió en una venta de limonada. Ordena lo que hizo.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Invertir es poner dinero primero, producir, vender y al final ver si ganaste o perdiste.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-45-1",
+      "elementos": [
+        "La vendió en el bazar del colegio",
+        "Compró limones, azúcar y vasos",
+        "Contó si ganó más de lo que gastó",
+        "Preparó la limonada"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "4_world_3_ordenar_3",
+      "enunciado": "Ordena los pasos para abrir una cuenta de ahorros con un adulto.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Se elige la entidad, se llevan los requisitos, se abre la cuenta y se empieza a ahorrar.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-45-2",
+      "elementos": [
+        "Llevar los documentos que piden",
+        "Guardar en ella tu primer ahorro",
+        "Elegir con tu familia un banco o una cooperativa",
+        "Abrir la cuenta"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        3,
+        1
+      ]
+    },
+    {
+      "id": "4_world_3_ordenar_4",
+      "enunciado": "Ordena del lugar menos seguro al más seguro para guardar tus ahorros.",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "En el bolsillo se pierde fácil, la alcancía está algo más guardada y la cuenta es lo más protegido.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-45-2",
+      "elementos": [
+        "En una cuenta de ahorros",
+        "En el bolsillo del pantalón",
+        "En una alcancía en tu cuarto"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "4_world_3_ordenar_5",
+      "enunciado": "Simón primero ahorró y después invirtió. Ordena lo que hizo.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Simón ahorró, luego invirtió en el horno, produjo y vendió, y guardó otra vez lo ganado.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-45-1",
+      "elementos": [
+        "Hizo galletas y las vendió",
+        "Con lo que ganó volvió a ahorrar",
+        "Usó el ahorro para comprar un horno pequeño",
+        "Guardó parte de su mesada durante meses"
+      ],
+      "ordenCanonico": [
+        3,
+        2,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "4_world_3_ordenar_6",
+      "enunciado": "Ordena lo que pasa cuando ahorras en una cuenta de ahorros.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "El banco guarda tu dinero, a veces te paga un poco por eso (el interés) y lo sacas cuando lo necesitas.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-45-2",
+      "elementos": [
+        "El banco te paga un poco por guardarlo",
+        "Llevas tu dinero al banco con un adulto",
+        "Sacas tu dinero cuando lo necesitas",
+        "El banco lo guarda en tu cuenta"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        0,
+        2
+      ]
+    }
+  ]
+}

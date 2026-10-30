@@ -1,0 +1,44 @@
+{
+  "bancoId": "9_world_6",
+  "grado": "9",
+  "worldId": "world_6",
+  "situaciones": [
+    {
+      "id": "9_world_6_sit_1",
+      "enunciado": "Tu curso va a vender empanadas en la feria del colegio para recoger plata para la salida de fin de año. Pueden comprar los ingredientes en un almacén grande, que los vende más baratos, o a los productores y la tienda del barrio, que cobran un poco más.",
+      "opcionA": {
+        "texto": "Comprar los ingredientes en el almacén grande, donde salen más baratos.",
+        "consecuencia": "Ganan más por cada empanada y llegan más rápido a la meta de la salida. La plata de la compra se va fuera del barrio y es probable que traiga más empaques. Aprendes que el precio más bajo no siempre cuenta toda la historia de una compra."
+      },
+      "opcionB": {
+        "texto": "Comprarle a los productores y a la tienda del barrio, aunque cobren un poco más.",
+        "consecuencia": "La ganancia por empanada es menor y tal vez necesiten vender más para llegar a la meta. A cambio, la plata se queda circulando en el barrio y los ingredientes llegan frescos y con menos empaque. Aprendes que consumir de forma responsable puede tener un costo que decides asumir."
+      }
+    },
+    {
+      "id": "9_world_6_sit_2",
+      "enunciado": "Tu tía tiene un puesto de arepas que va bien y te pide ayuda para decidir si se formaliza: registrar el negocio, sacar el RUT, dar factura y pagar los impuestos que le correspondan.",
+      "opcionA": {
+        "texto": "Formalizar el negocio ahora.",
+        "consecuencia": "Tiene que hacer trámites, llevar cuentas en orden y destinar una parte de lo que gana a impuestos y aportes. Con el tiempo puede venderle a empresas y colegios que piden factura, pedir crédito en una entidad formal y aportar a lo público. Aprendes que formalizarse cuesta al principio y abre puertas después."
+      },
+      "opcionB": {
+        "texto": "Seguir unos meses como está y organizar primero las cuentas.",
+        "consecuencia": "Por ahora se ahorra trámites y costos, y gana tiempo para entender cuánto gana de verdad. Pero sigue sin poder venderle a quien pide factura, sin crédito formal y con el riesgo de una sanción si le correspondía cumplir. Aprendes que aplazar una decisión también tiene costos."
+      }
+    },
+    {
+      "id": "9_world_6_sit_3",
+      "enunciado": "En el último año los precios del mercado subieron y la plata de tu familia rinde menos. Están pensando cómo cambiar la forma de hacer el mercado.",
+      "opcionA": {
+        "texto": "Hacer un mercado grande una vez al mes en una central mayorista.",
+        "consecuencia": "Cada producto sale más barato y hacen menos viajes, pero necesitan tener toda la plata junta a principio de mes y espacio para guardar. Si no planean bien, algo se puede dañar antes de usarlo. Aprendes que comprar al por mayor ahorra si se compra justo lo que se usa."
+      },
+      "opcionB": {
+        "texto": "Comprar poco a poco en la tienda del barrio según lo que se necesite.",
+        "consecuencia": "Cada producto sale un poco más caro, pero no necesitan tanta plata de golpe y casi nada se pierde. Además pueden comparar precios cada semana y cambiar de producto si uno sube mucho. Aprendes que la flexibilidad también ayuda a enfrentar la subida de precios."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

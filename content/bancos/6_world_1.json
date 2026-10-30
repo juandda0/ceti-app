@@ -1,0 +1,44 @@
+{
+  "bancoId": "6_world_1",
+  "grado": "6",
+  "worldId": "world_1",
+  "situaciones": [
+    {
+      "id": "6_world_1_sit_1",
+      "enunciado": "Tu tía te regala 50.000 pesos de cumpleaños. Un amigo te ofrece su patineta usada, en buen estado, justo por esa plata. También podrías guardar el dinero mientras decides.",
+      "opcionA": {
+        "texto": "Comprar la patineta usada de una vez.",
+        "consecuencia": "Tienes la patineta enseguida y sales a montar con tus amigos, pero se te va todo el regalo y, si después necesitas algo, no tendrás con qué. Algo usado puede salir más barato, aunque toca revisar bien su estado."
+      },
+      "opcionB": {
+        "texto": "Guardar la plata y pensar con calma en qué usarla.",
+        "consecuencia": "Conservas tu dinero y puedes decidir mejor, pero quizá tu amigo le venda la patineta a otra persona. Esperar te da tiempo para pensar, aunque a veces cuesta una oportunidad."
+      }
+    },
+    {
+      "id": "6_world_1_sit_2",
+      "enunciado": "A tu casa llega una factura del agua más alta que de costumbre. En la familia salen dos ideas: que todos se bañen más rápido, o pagarle a un plomero para arreglar una llave que gotea.",
+      "opcionA": {
+        "texto": "Que todos se bañen más rápido desde hoy.",
+        "consecuencia": "No cuesta nada empezar y el consumo baja pronto, pero exige que todos se acuerden cada día, y la llave sigue goteando."
+      },
+      "opcionB": {
+        "texto": "Pagar para arreglar la llave que gotea.",
+        "consecuencia": "Toca gastar una plata este mes, pero la fuga se acaba y las próximas facturas bajan sin que nadie tenga que cambiar sus costumbres."
+      }
+    },
+    {
+      "id": "6_world_1_sit_3",
+      "enunciado": "Cada día en el recreo compras un paquete de papas y una gaseosa en la tienda del colegio. Al final del mes te das cuenta de que casi toda tu mesada se fue en eso.",
+      "opcionA": {
+        "texto": "Seguir comprando, porque es tu gusto del día.",
+        "consecuencia": "Disfrutas tu recreo como siempre, pero no te queda plata para otras cosas que quieres. Al menos ya sabes exactamente a dónde se va tu mesada."
+      },
+      "opcionB": {
+        "texto": "Llevar algo de la casa tres días por semana y comprar solo dos.",
+        "consecuencia": "Te toca preparar la lonchera y a veces vas a extrañar tu paquete, pero al mes te sobra una parte de la mesada para ahorrar o para otro gusto."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

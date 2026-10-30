@@ -1,0 +1,71 @@
+{
+  "bancoId": "4_world_5_true_false",
+  "grado": "4",
+  "worldId": "world_5",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "4_world_5_true_false_1",
+      "enunciado": "Si en tu casa dejan la llave abierta, ponen en riesgo un recurso que todos necesitan.",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "Verdadero: el agua desperdiciada hace falta para las personas y la naturaleza.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-45-1",
+      "respuesta": true
+    },
+    {
+      "id": "4_world_5_true_false_2",
+      "enunciado": "Un riesgo es algo que siempre va a pasar, sí o sí.",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "Falso: un riesgo es algo que puede pasar o no; por eso se puede prevenir.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-45-1",
+      "respuesta": false
+    },
+    {
+      "id": "4_world_5_true_false_3",
+      "enunciado": "Pedir ayuda a un adulto de confianza es una habilidad para enfrentar un problema.",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "Verdadero: pedir ayuda a tiempo te protege y te ayuda a encontrar soluciones.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-45-2",
+      "respuesta": true
+    },
+    {
+      "id": "4_world_5_true_false_4",
+      "enunciado": "Si un amigo te presiona para hacer algo peligroso, lo mejor es aceptar para no quedar mal.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Falso: decir que no con seguridad te protege a ti y a tu amigo.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-45-2",
+      "respuesta": false
+    },
+    {
+      "id": "4_world_5_true_false_5",
+      "enunciado": "Si debes mucho dinero, una parte de lo que recibes se va en pagar y te queda menos para lo demás.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Verdadero: las deudas se pagan con lo que recibes, y eso deja menos para otros gastos.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-45-1",
+      "respuesta": true
+    },
+    {
+      "id": "4_world_5_true_false_6",
+      "enunciado": "Pedir un préstamo nuevo para pagar otra deuda siempre soluciona el problema.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Falso: así se cambia una deuda por otra y, muchas veces, se termina debiendo más.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-45-2",
+      "respuesta": false
+    }
+  ]
+}

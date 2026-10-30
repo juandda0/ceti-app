@@ -1,0 +1,23 @@
+{
+  "grado": "8",
+  "worldId": "world_2",
+  "cards": [
+    {
+      "titulo": "Tu presupuesto en una tabla",
+      "cuerpo": "De un lado anotas lo que entra (mesada, regalos, un trabajito) y del otro lo que sale (pasajes, onces, gustos). Restas: si sobra, tienes superávit; si falta, tienes déficit y toca ajustar.",
+      "ejemplo": "Recibes 40.000 pesos al mes y gastas 35.000: te sobran 5.000 que puedes ahorrar."
+    },
+    {
+      "titulo": "Gastos fijos y gastos variables",
+      "cuerpo": "Los gastos fijos se repiten con el mismo valor (arriendo, ruta escolar, plan del celular). Los variables cambian según lo que decides (onces, salidas, domicilios). Para mejorar un presupuesto, casi siempre se empieza por los variables.",
+      "ejemplo": "El arriendo de la casa es igual cada mes; lo que se gasta en domicilios cambia según cuántas veces se pidan."
+    },
+    {
+      "titulo": "El presupuesto de la familia",
+      "cuerpo": "La familia también tiene ingresos (sueldos, ventas de un negocio) y gastos (arriendo, servicios, mercado, transporte, estudio). Compararlos en familia permite proponer mejoras concretas.",
+      "ejemplo": "Si la factura de la luz sube, la familia revisa qué aparatos quedan conectados y acuerda apagarlos cuando no se usan."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

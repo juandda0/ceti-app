@@ -1,0 +1,137 @@
+{
+  "bancoId": "6_world_6_ordenar",
+  "grado": "6",
+  "worldId": "world_6",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "6_world_6_ordenar_1",
+      "enunciado": "Ordena los pasos para que el curso monte una tienda escolar solidaria.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "En una iniciativa solidaria todos acuerdan, aportan, trabajan y deciden juntos sobre los beneficios.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-67-1",
+      "elementos": [
+        "Decidir juntos cómo usar las ganancias",
+        "Aportar entre todos el dinero para empezar",
+        "Atender la tienda por turnos",
+        "Reunirse y acordar el propósito de la tienda"
+      ],
+      "ordenCanonico": [
+        3,
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "6_world_6_ordenar_2",
+      "enunciado": "Ordena cómo una asociación de productores de panela lleva su producto a la tienda.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Producir cada uno, juntar, transportar y vender en grupo baja los costos y mejora el precio.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-67-2",
+      "elementos": [
+        "Contratan un transporte compartido",
+        "Venden juntos a las tiendas del pueblo y reparten lo que ganan",
+        "Cada familia cultiva y muele su caña",
+        "Juntan la panela de todos en un solo lugar"
+      ],
+      "ordenCanonico": [
+        2,
+        3,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "6_world_6_ordenar_3",
+      "enunciado": "Ordena lo que pasa cuando se aprueba un impuesto más alto a un producto.",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "El impuesto lo propone el Gobierno y lo aprueba el Congreso; luego sube el precio y baja el consumo.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-67-1",
+      "elementos": [
+        "Las tiendas suben el precio del producto",
+        "El Gobierno propone el impuesto",
+        "El Congreso lo aprueba",
+        "Muchas personas compran menos de ese producto"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0,
+        3
+      ]
+    },
+    {
+      "id": "6_world_6_ordenar_4",
+      "enunciado": "Ordena los pasos para que tu familia enfrente una subida de precios en el mercado.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Primero ven qué subió, luego revisan el presupuesto, buscan alternativas y ajustan.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-67-2",
+      "elementos": [
+        "Notar qué productos subieron",
+        "Ajustar la lista del mercado y seguir comparando",
+        "Revisar juntos el presupuesto del mes",
+        "Buscar opciones más baratas o de temporada"
+      ],
+      "ordenCanonico": [
+        0,
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "id": "6_world_6_ordenar_5",
+      "enunciado": "Ordena cómo gana valor la leche de una finca hasta llegar a la tienda convertida en queso.",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Cada paso le agrega trabajo a la leche, y por eso el queso empacado vale más.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-67-1",
+      "elementos": [
+        "Ordeñar la vaca",
+        "Venderlo en la tienda del barrio",
+        "Empacar y etiquetar el queso",
+        "Cuajar la leche y prensar el queso"
+      ],
+      "ordenCanonico": [
+        0,
+        3,
+        2,
+        1
+      ]
+    },
+    {
+      "id": "6_world_6_ordenar_6",
+      "enunciado": "Ordena los pasos para proteger el bosque que le da agua a tu vereda.",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Para proteger un recurso hay que conocer la amenaza, acordar acciones, hacerlas y revisar.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-67-2",
+      "elementos": [
+        "Organizar jornadas de siembra con las familias",
+        "Proponer en la junta de acción comunal acciones como sembrar árboles",
+        "Identificar qué está dañando el bosque",
+        "Revisar cada año cómo está el bosque"
+      ],
+      "ordenCanonico": [
+        2,
+        1,
+        0,
+        3
+      ]
+    }
+  ]
+}

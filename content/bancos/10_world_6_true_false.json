@@ -1,0 +1,71 @@
+{
+  "bancoId": "10_world_6_true_false",
+  "grado": "10",
+  "worldId": "world_6",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "10_world_6_true_false_1",
+      "enunciado": "Una recesión es una etapa del ciclo económico en la que la producción del país cae durante un tiempo.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Verdadero: en la recesión baja la producción y suele subir el desempleo.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-1011-2",
+      "respuesta": true
+    },
+    {
+      "id": "10_world_6_true_false_2",
+      "enunciado": "Si el PIB de un país crece, la riqueza se reparte automáticamente de forma más igual entre sus habitantes.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Falso: el PIB puede crecer mientras la riqueza se concentra; el reparto se mide con otros indicadores, como el Gini.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-1011-1",
+      "respuesta": false
+    },
+    {
+      "id": "10_world_6_true_false_3",
+      "enunciado": "Usar bien los recursos de tu entorno significa solamente gastar menos dinero.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Falso: también es cuidar el agua, la tierra, el tiempo y los espacios, y aprovechar lo que se suele desperdiciar.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-1",
+      "respuesta": false
+    },
+    {
+      "id": "10_world_6_true_false_4",
+      "enunciado": "Una cooperativa de recicladores puede convertir los residuos del barrio en ingresos y en menos basura en el relleno sanitario.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Verdadero: organizarse para aprovechar residuos genera ingresos y reduce lo que llega al relleno.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-2",
+      "respuesta": true
+    },
+    {
+      "id": "10_world_6_true_false_5",
+      "enunciado": "La revocatoria del mandato permite que los ciudadanos le quiten el cargo a un alcalde o a un gobernador elegido.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Verdadero: es un mecanismo de participación para alcaldes y gobernadores, que exige firmas y una votación.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-1011-1",
+      "respuesta": true
+    },
+    {
+      "id": "10_world_6_true_false_6",
+      "enunciado": "Para controlar la inflación, el Congreso sube o baja la tasa de interés de política monetaria.",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Falso: esa tasa la decide la Junta Directiva del Banco de la República, que es la encargada de controlar la inflación.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-1011-2",
+      "respuesta": false
+    }
+  ]
+}

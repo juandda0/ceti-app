@@ -10,6 +10,8 @@
       "competencia": "credito",
       "dificultad": 3,
       "explicacion": "Primero se identifica la necesidad, luego se revisa la capacidad de pago, después se comparan las condiciones y al final se asume el crédito.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-1011-1",
       "elementos": [
         "Identificar la necesidad real de pedir prestado",
         "Revisar la propia capacidad de pago",
@@ -24,6 +26,8 @@
       "competencia": "credito",
       "dificultad": 3,
       "explicacion": "Un crédito empieza al recibir el dinero, continúa con el pago de las cuotas y termina cuando se salda toda la deuda.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "elementos": [
         "Recibir el dinero prestado",
         "Pagar las cuotas acordadas en cada periodo",
@@ -37,6 +41,8 @@
       "competencia": "credito",
       "dificultad": 4,
       "explicacion": "El impacto crece según el manejo: pagar a tiempo afecta poco, retrasarse afecta más y endeudarse sin capacidad de pago es lo más riesgoso.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "elementos": [
         "Pagar las cuotas a tiempo según lo planeado",
         "Atrasarse en algunos pagos de las cuotas",
@@ -50,6 +56,8 @@
       "competencia": "credito",
       "dificultad": 4,
       "explicacion": "Se parte del crédito como idea general, luego la deuda que genera, después el interés como su costo y al final la cuota concreta que se paga.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "elementos": [
         "Crédito como posibilidad de pedir prestado",
         "Deuda que se asume al pedir prestado",
@@ -64,6 +72,8 @@
       "competencia": "credito",
       "dificultad": 4,
       "explicacion": "Primero se conocen los ingresos, luego los gastos esenciales, después lo que sobra disponible y por último se decide si la cuota cabe.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-2",
       "elementos": [
         "Conocer los ingresos disponibles",
         "Restar los gastos esenciales del mes",
@@ -78,6 +88,8 @@
       "competencia": "credito",
       "dificultad": 3,
       "explicacion": "El uso responsable empieza por leer las condiciones, sigue con pedir solo lo necesario y termina con cumplir los pagos acordados.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-1011-1",
       "elementos": [
         "Leer y entender las condiciones del crédito",
         "Pedir solo el monto que se necesita",

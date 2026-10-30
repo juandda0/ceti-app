@@ -1,0 +1,71 @@
+{
+  "bancoId": "9_world_6_true_false",
+  "grado": "9",
+  "worldId": "world_6",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "9_world_6_true_false_1",
+      "enunciado": "Transformar la leche en queso en una fábrica es una actividad del sector secundario.",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Verdadero: el sector secundario transforma materias primas en otros productos.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-1",
+      "respuesta": true
+    },
+    {
+      "id": "9_world_6_true_false_2",
+      "enunciado": "Si sube el precio de un solo producto, como el tomate, eso ya es inflación.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Falso: la inflación es una subida generalizada y sostenida de los precios, no la de un solo producto.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-2",
+      "respuesta": false
+    },
+    {
+      "id": "9_world_6_true_false_3",
+      "enunciado": "En Colombia, el DANE mide la inflación con el Índice de Precios al Consumidor (IPC).",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Verdadero: el DANE calcula el IPC cada mes; el Banco de la República usa ese dato para controlar la inflación.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-89-1",
+      "respuesta": true
+    },
+    {
+      "id": "9_world_6_true_false_4",
+      "enunciado": "Un producto es de consumo responsable solo si es el más barato del mercado.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Falso: el consumo responsable mira también si lo necesitas, cuántos residuos deja y cómo se produjo, no solo el precio.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-89-2",
+      "respuesta": false
+    },
+    {
+      "id": "9_world_6_true_false_5",
+      "enunciado": "En Colombia, el Banco de la República es quien decide qué impuestos nacionales se cobran.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Falso: los impuestos nacionales los aprueba el Congreso por ley; el Banco de la República se encarga de la inflación y de emitir la moneda.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-89-1",
+      "respuesta": false
+    },
+    {
+      "id": "9_world_6_true_false_6",
+      "enunciado": "Un impuesto es equitativo cuando quienes están en situaciones parecidas pagan parecido y quien tiene más capacidad aporta más.",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Verdadero: la equidad busca que el esfuerzo de pagar sea justo según la capacidad de cada persona.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-89-2",
+      "respuesta": true
+    }
+  ]
+}

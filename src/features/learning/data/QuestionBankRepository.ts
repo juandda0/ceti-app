@@ -25,6 +25,18 @@ import {
   type WorldId,
 } from './quiz.types';
 
+function sinPrueba(items: QuizItem[] | undefined): QuizItem[] {
+  return (items ?? []).filter((it) => it.prueba !== true);
+}
+
+/** Las preguntas apartadas para la prueba de entrada y salida de un mundo (Fase 7). */
+async function fetchPrueba(grado: Grado, worldId: WorldId): Promise<MultipleChoiceItem[]> {
+  const doc = await fetchBancoDoc(grado, worldId, 'multiple_choice');
+  return (doc?.items ?? [])
+    .filter((it) => it.prueba === true)
+    .map((it) => ({ ...it, tipo: 'multiple_choice' }) as MultipleChoiceItem);
+}
+
 // Required counts per type (R9: 4 + 3 + 3 = 10)
 const REQUIRED_MC = 4;
 const REQUIRED_VF = 3;
@@ -101,16 +113,17 @@ async function fetchPool(
   ]);
 
   // Stamp the discriminator `tipo` onto each item — it lives on the banco doc,
-  // not on the items (S5 schema), but the UI renders by item.tipo.
+  // not on the items (S5 schema), but the UI renders by item.tipo. Las de la
+  // prueba de entrada y salida (Fase 7) nunca se juegan.
   const pool: PoolMundo = {
-    mc: (mcDoc?.items ?? []).map((it) => ({
+    mc: sinPrueba(mcDoc?.items).map((it) => ({
       ...it,
       tipo: 'multiple_choice',
     })) as MultipleChoiceItem[],
-    vf: (vfDoc?.items ?? []).map((it) => ({ ...it, tipo: 'true_false' })) as TrueFalseItem[],
-    ordenar: (ordDoc?.items ?? []).map((it) => ({ ...it, tipo: 'ordenar' })) as OrdenarItem[],
+    vf: sinPrueba(vfDoc?.items).map((it) => ({ ...it, tipo: 'true_false' })) as TrueFalseItem[],
+    ordenar: sinPrueba(ordDoc?.items).map((it) => ({ ...it, tipo: 'ordenar' })) as OrdenarItem[],
     otros: extraDocs.flatMap((d, k) =>
-      (d?.items ?? []).map((it) => ({ ...it, tipo: extras[k] }) as QuizItem)
+      sinPrueba(d?.items).map((it) => ({ ...it, tipo: extras[k] }) as QuizItem)
     ),
   };
   if (
@@ -154,6 +167,7 @@ async function fetchMapa(
 export const questionBankRepository = {
   fetchPool,
   fetchMapa,
+  fetchPrueba,
 
   async fetchAssembledQuiz(
     grado: Grado,

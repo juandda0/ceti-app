@@ -10,6 +10,8 @@
       "competencia": "ahorro",
       "dificultad": 2,
       "explicacion": "Primero se define la meta, luego se planea cuánto apartar, después se aparta de forma regular y por último se revisa el avance.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
       "elementos": [
         "Definir una meta de ahorro clara",
         "Planear cuánto apartar cada vez",
@@ -24,6 +26,8 @@
       "competencia": "ahorro",
       "dificultad": 2,
       "explicacion": "El orden va del corto al largo plazo: un regalo próximo, un viaje del próximo año y la educación superior futura.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
       "elementos": [
         "Comprar un regalo en pocas semanas",
         "Hacer un viaje el próximo año",
@@ -37,6 +41,8 @@
       "competencia": "ahorro",
       "dificultad": 2,
       "explicacion": "Lo ideal es reconocer el imprevisto, usar el fondo de emergencia, cubrir el gasto y luego volver a llenar el fondo.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
       "elementos": [
         "Reconocer que ocurrió un imprevisto",
         "Usar el fondo de emergencia disponible",
@@ -51,6 +57,8 @@
       "competencia": "ahorro",
       "dificultad": 2,
       "explicacion": "Primero se recibe el ingreso, luego se aparta el ahorro antes de gastar y por último se gasta el resto con lo planeado.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-1",
       "elementos": [
         "Recibir el ingreso",
         "Apartar el ahorro antes de gastar",
@@ -64,6 +72,8 @@
       "competencia": "ahorro",
       "dificultad": 2,
       "explicacion": "Se reconoce el deseo de comprar ya, se piensa en la meta mayor, se decide esperar y finalmente se obtiene el beneficio mayor.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-1",
       "elementos": [
         "Sentir el deseo de comprar algo de inmediato",
         "Pensar en la meta de ahorro más importante",
@@ -78,6 +88,8 @@
       "competencia": "ahorro",
       "dificultad": 2,
       "explicacion": "Conviene primero formar un fondo de emergencia, luego ahorrar para metas de corto plazo y después para metas de largo plazo.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
       "elementos": [
         "Formar un fondo de emergencia",
         "Ahorrar para metas de corto plazo",

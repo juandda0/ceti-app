@@ -10,6 +10,8 @@
       "competencia": "ingreso",
       "dificultad": 2,
       "explicacion": "Una fuente de ingreso es cualquier origen del que una persona recibe dinero de forma regular u ocasional.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-1011-1",
       "opciones": [
         "Un gasto que se hace cada mes de forma obligatoria",
         "Un origen del que una persona recibe dinero",
@@ -24,6 +26,8 @@
       "competencia": "ingreso",
       "dificultad": 2,
       "explicacion": "El ingreso laboral proviene de vender el propio trabajo o tiempo a cambio de una remuneración.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-1011-1",
       "opciones": [
         "Ingreso laboral, porque proviene del trabajo",
         "Ingreso pasivo, porque no requiere esfuerzo",
@@ -38,6 +42,8 @@
       "competencia": "ingreso",
       "dificultad": 2,
       "explicacion": "Las necesidades son indispensables para vivir, como la alimentación; los deseos mejoran el bienestar pero no son imprescindibles.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-1",
       "opciones": [
         "Un videojuego de última generación",
         "Una marca de ropa específica de moda",
@@ -52,6 +58,8 @@
       "competencia": "ingreso",
       "dificultad": 2,
       "explicacion": "La mesada es un ingreso que el estudiante administra, y sirve para practicar la toma de decisiones financieras.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-1011-1",
       "opciones": [
         "Un préstamo que deberá devolver con el tiempo",
         "Un ingreso que puede administrar y decidir cómo usar",
@@ -66,6 +74,8 @@
       "competencia": "ingreso",
       "dificultad": 2,
       "explicacion": "El dinero tiene valor porque las personas lo aceptan como medio de intercambio para obtener bienes y servicios.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-1",
       "opciones": [
         "Porque el papel y el metal con que se hace son costosos",
         "Porque se acepta para intercambiarlo por bienes y servicios",
@@ -80,6 +90,8 @@
       "competencia": "ingreso",
       "dificultad": 2,
       "explicacion": "El emprendimiento genera ingreso al ofrecer un producto o servicio propio a cambio de un pago.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-2",
       "opciones": [
         "Por emprendimiento, al ofrecer un producto propio",
         "Por herencia, al recibir bienes de un familiar",
@@ -94,6 +106,8 @@
       "competencia": "ingreso",
       "dificultad": 2,
       "explicacion": "El dinero disponible para gastar proviene de los ingresos que la familia obtiene por trabajo u otras fuentes; no aparece por sí solo.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-1011-1",
       "opciones": [
         "Aparece automáticamente en las cuentas cada mes",
         "Proviene de los ingresos que sus integrantes obtienen",
@@ -108,6 +122,8 @@
       "competencia": "ingreso",
       "dificultad": 2,
       "explicacion": "Preguntarse si realmente lo necesita para vivir o estudiar ayuda a priorizar el uso del ingreso de forma responsable.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-1011-1",
       "opciones": [
         "¿Es la opción más cara que puedo encontrar?",
         "¿Lo tienen también mis amistades?",
@@ -115,6 +131,40 @@
         "¿Está de moda esta temporada?"
       ],
       "correctIndex": 2
+    },
+    {
+      "id": "10_world_1_multiple_choice_9",
+      "enunciado": "En tu curso muchos gastan toda la mesada el mismo día en onces y paquetes. ¿Qué propuesta mejora más los hábitos financieros del grupo?",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Un reto con metas y registro semanal ayuda a todos a planear y ahorrar, que es cambiar el hábito y no solo el monto.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-1011-2",
+      "prueba": true,
+      "opciones": [
+        "Pedir a las familias que den más mesada",
+        "Prohibir llevar dinero al colegio sin explicar por qué",
+        "Hacer un reto de ahorro con metas y registro semanal de gastos",
+        "Que cada quien siga igual, porque la plata es personal"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "10_world_1_multiple_choice_10",
+      "enunciado": "En tu municipio se desperdicia el agua lluvia, mientras en verano hay racionamiento. ¿Cuál es el mejor uso de ese recurso?",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Recoger el agua lluvia para riego y aseo aprovecha un recurso que se perdía y deja el agua tratada para tomar y cocinar.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-1",
+      "prueba": true,
+      "opciones": [
+        "Recogerla para riego y aseo y dejar el agua del acueducto para consumo",
+        "Dejarla correr, porque el agua lluvia no tiene valor",
+        "Usar más agua del acueducto en invierno para gastarla antes del verano",
+        "Esperar a que el Gobierno lo resuelva sin cambiar ningún hábito"
+      ],
+      "correctIndex": 0
     }
   ],
   "pendiente_validacion_docente": true,

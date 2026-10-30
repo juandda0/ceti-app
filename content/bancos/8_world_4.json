@@ -1,0 +1,44 @@
+{
+  "bancoId": "8_world_4",
+  "grado": "8",
+  "worldId": "world_4",
+  "situaciones": [
+    {
+      "id": "8_world_4_sit_1",
+      "enunciado": "Te regalaron una bicicleta para ir al colegio. Tu familia propone pagar un seguro contra robo, con una cuota mensual que sale en parte de tu mesada.",
+      "opcionA": {
+        "texto": "Pagar el seguro de la bicicleta.",
+        "consecuencia": "Cada mes pones una parte de tu mesada y quizá nunca lo uses, pero si te la roban recibes ayuda para reponerla sin empezar de cero."
+      },
+      "opcionB": {
+        "texto": "No pagar el seguro y cuidarla con un buen candado.",
+        "consecuencia": "Te queda la mesada completa y cuidas la bici con más atención, pero si te la roban la pérdida es toda tuya."
+      }
+    },
+    {
+      "id": "8_world_4_sit_2",
+      "enunciado": "Tu tía te explica que, con su ayuda, podrías poner una parte de tus ahorros en un fondo que invierte en acciones de varias empresas. También puedes dejarlos en tu cuenta de ahorros.",
+      "opcionA": {
+        "texto": "Poner una parte en el fondo de acciones.",
+        "consecuencia": "Tu plata puede crecer más que en la cuenta y aprendes cómo funciona la bolsa, pero algunos meses puede valer menos de lo que pusiste y toca tener paciencia."
+      },
+      "opcionB": {
+        "texto": "Dejar todo en la cuenta de ahorros.",
+        "consecuencia": "Sabes exactamente cuánto tienes y no te preocupan las subidas y bajadas, pero tu plata crece muy poco."
+      }
+    },
+    {
+      "id": "8_world_4_sit_3",
+      "enunciado": "Tus amigos van a un concierto. No tienes toda la plata de la boleta, pero tu prima te puede prestar la mitad y tú le pagarías en dos meses con tu mesada.",
+      "opcionA": {
+        "texto": "Pedirle prestado a tu prima e ir al concierto.",
+        "consecuencia": "Vives el concierto con tus amigos, pero los dos meses siguientes tienes menos mesada porque una parte va para pagarle a tu prima."
+      },
+      "opcionB": {
+        "texto": "No ir y guardar para el próximo plan.",
+        "consecuencia": "No quedas debiendo y tu mesada sigue completa, pero te pierdes esa noche con tus amigos y toca esperar otra oportunidad."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

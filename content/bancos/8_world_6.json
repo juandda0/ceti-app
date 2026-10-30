@@ -1,0 +1,44 @@
+{
+  "bancoId": "8_world_6",
+  "grado": "8",
+  "worldId": "world_6",
+  "situaciones": [
+    {
+      "id": "8_world_6_sit_1",
+      "enunciado": "En tu barrio abrieron un supermercado grande con precios bajos. La tienda de don Efraín, donde tu familia compra hace años, es un poco más cara, pero fía y conoce a todos.",
+      "opcionA": {
+        "texto": "Hacer el mercado en el supermercado grande.",
+        "consecuencia": "La familia ahorra algo cada mes y encuentra más variedad, pero la tienda del barrio vende menos y se pierde parte de la cercanía con don Efraín."
+      },
+      "opcionB": {
+        "texto": "Seguir comprando en la tienda de don Efraín.",
+        "consecuencia": "Apoyan un negocio del barrio y mantienen la confianza y el fiado, pero pagan un poco más y el presupuesto de la casa queda más justo."
+      }
+    },
+    {
+      "id": "8_world_6_sit_2",
+      "enunciado": "El colegio hará una feria para recoger fondos. Tu curso debe decidir si vende comida empacada, fácil de conseguir, o prepara productos con frutas de una finca cercana.",
+      "opcionA": {
+        "texto": "Vender comida empacada.",
+        "consecuencia": "Es más fácil de organizar y hay menos riesgo de que algo se dañe, pero se generan más empaques para botar y se aprovecha poco lo que produce la región."
+      },
+      "opcionB": {
+        "texto": "Preparar productos con frutas de la finca cercana.",
+        "consecuencia": "Apoyan a productores de la zona y generan menos empaques, pero toca trabajar más en la preparación y la fruta se puede dañar si no se vende rápido."
+      }
+    },
+    {
+      "id": "8_world_6_sit_3",
+      "enunciado": "El concejo de tu municipio abre un espacio para que los jóvenes opinen en qué invertir parte de lo que se recoge con el impuesto predial. Las dos ideas con más apoyo son arreglar el parque o mejorar la iluminación de las calles.",
+      "opcionA": {
+        "texto": "Apoyar el arreglo del parque.",
+        "consecuencia": "Los niños y jóvenes ganan un lugar para hacer deporte y encontrarse, pero algunas calles siguen oscuras y hay quienes se sienten inseguros caminando de noche."
+      },
+      "opcionB": {
+        "texto": "Apoyar la iluminación de las calles.",
+        "consecuencia": "Muchas personas caminan más tranquilas de noche, pero el parque sigue deteriorado y los jóvenes tienen menos espacios para reunirse."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

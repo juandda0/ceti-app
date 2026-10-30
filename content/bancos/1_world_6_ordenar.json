@@ -1,0 +1,125 @@
+{
+  "bancoId": "1_world_6_ordenar",
+  "grado": "1",
+  "worldId": "world_6",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "1_world_6_ordenar_1",
+      "enunciado": "Ordena: así llega la arepa a tu mesa.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Un campesino cultiva el maíz, con el maíz hacen las arepas y tú las compras.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-13-1",
+      "elementos": [
+        "La compras en la tienda",
+        "Un campesino cultiva el maíz",
+        "Hacen las arepas con el maíz"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "1_world_6_ordenar_2",
+      "enunciado": "Ordena: llega el agua limpia al barrio.",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Arreglan el tubo, llega el agua limpia y la gente está más sana.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-13-2",
+      "elementos": [
+        "Llega agua limpia a las casas",
+        "La gente está más sana",
+        "Arreglan el tubo del agua"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "1_world_6_ordenar_3",
+      "enunciado": "Ordena: el barrio hace una regla para el río.",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Hacen la regla, todos la cumplen y el río se conserva limpio.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-13-3",
+      "elementos": [
+        "El río queda limpio",
+        "Prohíben botar basura",
+        "Todos cumplen la regla"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "1_world_6_ordenar_4",
+      "enunciado": "Ordena: separas la basura en el colegio.",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Miras qué es, la echas en su caneca y así el papel se puede reciclar.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-13-3",
+      "elementos": [
+        "Miras qué basura es",
+        "El papel se puede reciclar",
+        "La echas en su caneca"
+      ],
+      "ordenCanonico": [
+        0,
+        2,
+        1
+      ]
+    },
+    {
+      "id": "1_world_6_ordenar_5",
+      "enunciado": "Ordena: llovió muy poco este mes.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Si llueve poco, hay poca agua, y lo escaso hay que cuidarlo más.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-13-2",
+      "elementos": [
+        "Hay poca agua",
+        "Llueve poco",
+        "Toca cuidar el agua"
+      ],
+      "ordenCanonico": [
+        1,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "1_world_6_ordenar_6",
+      "enunciado": "Ordena: cuidas el parque del barrio.",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Cuidar el parque te da bienestar: ves la basura, la recoges y juegas en un lugar bonito.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-13-1",
+      "elementos": [
+        "Juegas en un parque bonito",
+        "Recoges la basura",
+        "Ves basura en el parque"
+      ],
+      "ordenCanonico": [
+        2,
+        1,
+        0
+      ]
+    }
+  ]
+}

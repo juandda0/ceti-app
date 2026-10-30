@@ -10,6 +10,8 @@
       "competencia": "ahorro",
       "dificultad": 4,
       "explicacion": "Un plazo definido permite medir el avance y ajustar el comportamiento, mientras que un deseo vago no ofrece referencia para evaluar el progreso.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "respuesta": true
     },
     {
@@ -18,6 +20,8 @@
       "competencia": "ahorro",
       "dificultad": 4,
       "explicacion": "El fondo de emergencia se reserva exclusivamente para imprevistos; las compras planeadas se cubren con otro tipo de ahorro orientado a esa meta.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "respuesta": false
     },
     {
@@ -26,6 +30,8 @@
       "competencia": "ahorro",
       "dificultad": 4,
       "explicacion": "Esa es la definición central de postergar la gratificación: priorizar un objetivo futuro sobre una satisfacción inmediata.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "respuesta": true
     },
     {
@@ -34,6 +40,8 @@
       "competencia": "ahorro",
       "dificultad": 4,
       "explicacion": "Lo que los diferencia es el horizonte de tiempo en que se usará el dinero, no la cantidad guardada.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "respuesta": false
     },
     {
@@ -42,6 +50,8 @@
       "competencia": "ahorro",
       "dificultad": 4,
       "explicacion": "Al automatizar el ahorro, la conducta deja de depender de la motivación del momento y se vuelve más constante y sostenible.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-2",
       "respuesta": true
     },
     {
@@ -50,6 +60,8 @@
       "competencia": "ahorro",
       "dificultad": 4,
       "explicacion": "Empezar temprano consolida el hábito y aprovecha el factor tiempo, lo que sí representa una ventaja frente a comenzar tarde.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-2",
       "respuesta": false
     }
   ],

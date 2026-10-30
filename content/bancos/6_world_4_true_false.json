@@ -1,0 +1,71 @@
+{
+  "bancoId": "6_world_4_true_false",
+  "grado": "6",
+  "worldId": "world_4",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "6_world_4_true_false_1",
+      "enunciado": "Un préstamo compromete parte de tus ingresos futuros.",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "Verdadero: la plata que recibes hoy la pagas después con lo que te entre, más los intereses.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-67-1",
+      "respuesta": true
+    },
+    {
+      "id": "6_world_4_true_false_2",
+      "enunciado": "Un préstamo «gota a gota» te protege igual que uno de una entidad vigilada.",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "Falso: el «gota a gota» no está vigilado por el Estado y no tienes a quién quejarte si te cobran de más.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-67-2",
+      "respuesta": false
+    },
+    {
+      "id": "6_world_4_true_false_3",
+      "enunciado": "Pedirle plata a un familiar también es un préstamo informal, y conviene acordar cuándo y cómo se va a devolver.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Verdadero: aunque sea alguien de confianza, un acuerdo claro evita problemas y cuida la relación.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-67-2",
+      "respuesta": true
+    },
+    {
+      "id": "6_world_4_true_false_4",
+      "enunciado": "Con una tarjeta de crédito gastas plata que es tuya y que ya tenías ahorrada.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Falso: con la tarjeta de crédito usas plata que te presta la entidad, y luego debes pagarla.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-67-1",
+      "respuesta": false
+    },
+    {
+      "id": "6_world_4_true_false_5",
+      "enunciado": "La página web, la línea telefónica y las oficinas son canales de atención de una entidad financiera.",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "Verdadero: son los canales oficiales para hacer trámites, preguntar o quejarte.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-67-2",
+      "respuesta": true
+    },
+    {
+      "id": "6_world_4_true_false_6",
+      "enunciado": "Es seguro dar la clave de tu cuenta a alguien que te llama diciendo que trabaja en el banco.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Falso: nadie de la entidad debe pedirte la clave; quien la pide puede estar intentando robarte.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-67-2",
+      "respuesta": false
+    }
+  ]
+}

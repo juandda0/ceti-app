@@ -1,0 +1,44 @@
+{
+  "bancoId": "4_world_3",
+  "grado": "4",
+  "worldId": "world_3",
+  "situaciones": [
+    {
+      "id": "4_world_3_sit_1",
+      "enunciado": "Llevas meses guardando en tu alcancía para unos patines. Un compañero vende una colección de cartas a buen precio y te dan ganas de abrirla.",
+      "opcionA": {
+        "texto": "Abrir la alcancía y comprar las cartas.",
+        "consecuencia": "Tienes las cartas hoy y juegas con tus amigos en el recreo. Pero tu ahorro para los patines vuelve casi a cero y la meta queda más lejos."
+      },
+      "opcionB": {
+        "texto": "Seguir guardando para los patines.",
+        "consecuencia": "Tu meta queda cada vez más cerca. Pero te quedas sin las cartas y ves a otros jugar con ellas."
+      }
+    },
+    {
+      "id": "4_world_3_sit_2",
+      "enunciado": "Tu abuela te propone abrir con ella una cuenta de ahorros para guardar el dinero de tu cumpleaños.",
+      "opcionA": {
+        "texto": "Abrir la cuenta y guardar ahí el dinero.",
+        "consecuencia": "Tu dinero queda más protegido y es más difícil gastarlo en un antojo. Pero para sacarlo tienes que ir con tu abuela y esperar."
+      },
+      "opcionB": {
+        "texto": "Guardarlo en tu alcancía en casa.",
+        "consecuencia": "Tienes tu dinero a la mano cuando lo quieras. Pero se te puede perder y es más fácil gastarlo sin pensar."
+      }
+    },
+    {
+      "id": "4_world_3_sit_3",
+      "enunciado": "Ahorraste algo de dinero. Tu prima te invita a usarlo para comprar materiales y vender manillas en la feria del colegio.",
+      "opcionA": {
+        "texto": "Invertir tu ahorro en las manillas.",
+        "consecuencia": "Si venden bien, recuperas tu dinero, ganas un poco más y aprendes a vender. Pero si no venden, puedes perder parte de lo que ahorraste."
+      },
+      "opcionB": {
+        "texto": "Dejar tu ahorro guardado.",
+        "consecuencia": "Tu dinero sigue completo y seguro. Pero no tienes la oportunidad de ganar más ni de aprender a vender con tu prima."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

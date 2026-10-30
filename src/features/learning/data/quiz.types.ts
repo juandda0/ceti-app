@@ -49,6 +49,12 @@ interface BaseItem {
   competencia: string;
   dificultad: number;
   explicacion?: string;
+  /** Ámbito de las orientaciones del MEN (Fase 7; los bancos por defecto lo traen). */
+  ambito?: string;
+  /** Desempeño del MEN que trabaja (id de dominio/desempenosMen.ts). */
+  desempeno?: string;
+  /** Apartada para la prueba de entrada y salida: no sale en lecciones ni en el jefe. */
+  prueba?: boolean;
 }
 
 export interface MultipleChoiceItem extends BaseItem {

@@ -1,0 +1,135 @@
+{
+  "bancoId": "6_world_3_ordenar",
+  "grado": "6",
+  "worldId": "world_3",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "6_world_3_ordenar_1",
+      "enunciado": "Ordena los pasos para armar tu plan de ahorro personal.",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Con la meta, el precio y el plazo, ya puedes calcular la cuota semanal.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-67-1",
+      "elementos": [
+        "Elegir qué quieres lograr",
+        "Calcular cuánto apartar cada semana",
+        "Decidir para cuándo lo quieres",
+        "Averiguar cuánto cuesta"
+      ],
+      "ordenCanonico": [
+        0,
+        3,
+        2,
+        1
+      ]
+    },
+    {
+      "id": "6_world_3_ordenar_2",
+      "enunciado": "Ordena lo que hace Nicolás cada semana para cumplir su plan de ahorro.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Apartar el ahorro apenas llega la plata y anotarlo lo ayuda a no fallar.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-67-1",
+      "elementos": [
+        "Anota en su tabla cuánto lleva",
+        "Recibe su mesada",
+        "La guarda en su alcancía o en su cuenta",
+        "Aparta primero su cuota de ahorro"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "6_world_3_ordenar_3",
+      "enunciado": "Ordena estas formas de guardar tus ahorros de la más segura a la menos segura.",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "La entidad vigilada protege tu plata; la alcancía depende de ti; la plata suelta se pierde o se gasta fácil.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-67-1",
+      "elementos": [
+        "Una alcancía cerrada en la casa",
+        "Una cuenta de ahorros en una entidad vigilada",
+        "Plata suelta en el bolsillo del pantalón"
+      ],
+      "ordenCanonico": [
+        1,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "6_world_3_ordenar_4",
+      "enunciado": "Ordena los pasos para que tu curso ahorre para una salida.",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Primero la meta, luego quién cuenta, después cómo se junta la plata y siempre cuentas claras.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-67-2",
+      "elementos": [
+        "Elegir quién lleva las cuentas",
+        "Mostrar el saldo a todos cada semana",
+        "Definir el aporte de cada uno y las actividades para recoger plata",
+        "Acordar entre todos la meta y la fecha"
+      ],
+      "ordenCanonico": [
+        3,
+        0,
+        2,
+        1
+      ]
+    },
+    {
+      "id": "6_world_3_ordenar_5",
+      "enunciado": "Ordena los pasos para que una venta de empanadas ayude al ahorro del curso.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Solo lo que queda después de pagar los ingredientes es ganancia para el ahorro.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-67-2",
+      "elementos": [
+        "Restar los costos y sumar la ganancia al ahorro",
+        "Calcular cuánto cuestan los ingredientes",
+        "Preparar y vender las empanadas en la feria",
+        "Fijar un precio que deje ganancia"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "6_world_3_ordenar_6",
+      "enunciado": "El curso ya completó su ahorro para la salida. Ordena qué hacer, del primero al último.",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Cerrar bien un ahorro colectivo es contar, pagar con recibo, rendir cuentas y decidir juntos.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-67-2",
+      "elementos": [
+        "Pagar la salida y pedir el recibo",
+        "Contarle al curso en qué se gastó cada peso",
+        "Contar el dinero frente a varios compañeros",
+        "Decidir entre todos qué hacer si sobró algo"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        1,
+        3
+      ]
+    }
+  ]
+}

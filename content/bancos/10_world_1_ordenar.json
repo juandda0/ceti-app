@@ -10,6 +10,8 @@
       "competencia": "ingreso",
       "dificultad": 2,
       "explicacion": "El ingreso laboral sigue una secuencia: se ofrece el trabajo, se realiza la labor y luego se recibe la remuneración.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-1011-1",
       "elementos": [
         "La persona realiza la labor acordada",
         "La persona ofrece su trabajo o tiempo",
@@ -23,6 +25,8 @@
       "competencia": "ingreso",
       "dificultad": 2,
       "explicacion": "Primero se identifica el deseo, luego se evalúa si es necesidad o deseo, y finalmente se decide el uso del ingreso.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-1011-1",
       "elementos": [
         "Decidir si usar el ingreso en esa compra",
         "Identificar lo que quieres comprar",
@@ -36,6 +40,8 @@
       "competencia": "ingreso",
       "dificultad": 2,
       "explicacion": "Para generar ingreso por emprendimiento se elabora el producto, se ofrece a otras personas y se recibe el pago.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-2",
       "elementos": [
         "Ofrecer el producto a posibles compradores",
         "Elaborar el producto que se va a vender",
@@ -49,6 +55,8 @@
       "competencia": "ingreso",
       "dificultad": 2,
       "explicacion": "Alimentarse es una necesidad básica; la ropa adecuada es necesaria; un videojuego es un deseo que mejora el bienestar.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-1",
       "elementos": [
         "Comprar un videojuego nuevo",
         "Alimentarse para mantenerse con salud",
@@ -62,6 +70,8 @@
       "competencia": "ingreso",
       "dificultad": 2,
       "explicacion": "Conviene recibir la mesada, planear en qué usarla y luego gastarla o reservarla según lo planeado.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-1011-1",
       "elementos": [
         "Gastar o reservar según lo planeado",
         "Recibir la mesada",
@@ -75,6 +85,8 @@
       "competencia": "ingreso",
       "dificultad": 2,
       "explicacion": "El dinero primero se obtiene como ingreso, luego está disponible en el hogar y finalmente se usa para cubrir gastos.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-1011-1",
       "elementos": [
         "El dinero queda disponible en el hogar",
         "Un integrante obtiene un ingreso",

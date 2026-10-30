@@ -1,0 +1,127 @@
+{
+  "bancoId": "8_world_5_ordenar",
+  "grado": "8",
+  "worldId": "world_5",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "8_world_5_ordenar_1",
+      "enunciado": "Ordena los pasos para decidir si vas en bicicleta al colegio por una ruta nueva.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Primero conoces el contexto, luego evalúas el riesgo y al final decides cómo protegerte.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-1",
+      "elementos": [
+        "Elegir el camino más seguro y ponerte el casco",
+        "Averiguar cómo es el tráfico y si hay ciclorruta",
+        "Pensar qué podría pasar y qué tan grave sería"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "8_world_5_ordenar_2",
+      "enunciado": "Ordena estos riesgos del más alto al más bajo.",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "El más alto junta probabilidad e impacto altos; el más bajo tiene los dos bajos.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-2",
+      "elementos": [
+        "Alta probabilidad e impacto bajo: mojarte con la lluvia por no llevar paraguas",
+        "Baja probabilidad e impacto bajo: que se te rompa un cordón en el recreo",
+        "Alta probabilidad e impacto alto: andar en moto sin casco"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "8_world_5_ordenar_3",
+      "enunciado": "Ordena lo que hace tu curso para cuidar la huerta del colegio durante las vacaciones.",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Se identifica qué amenaza la huerta, se actúa para protegerla y luego se revisa el resultado.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-1",
+      "elementos": [
+        "Turnarse para regarla durante las vacaciones",
+        "Pensar qué la amenaza: falta de agua, plagas o que nadie la cuide",
+        "Revisar cómo está la huerta al volver a clases"
+      ],
+      "ordenCanonico": [
+        1,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "8_world_5_ordenar_4",
+      "enunciado": "Ordena los pasos del plan de Felipe para pagar lo que debe en la tienda del barrio.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Primero sabe cuánto debe, luego acuerda cómo pagar y después cumple cada semana.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
+      "elementos": [
+        "Pagar la cuota acordada cada semana hasta terminar",
+        "Hablar con el tendero y acordar cuánto paga y cuándo",
+        "Sumar todo lo que debe en el cuaderno de fiados"
+      ],
+      "ordenCanonico": [
+        2,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "8_world_5_ordenar_5",
+      "enunciado": "Ordena a estas personas de la que más puede endeudarse a la que menos.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "La capacidad de endeudamiento depende de lo que sobra: Pilar 35.000, Rocío 20.000 y Hernán nada.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
+      "elementos": [
+        "Rocío: le sobran 20.000 pesos al mes",
+        "Hernán: no le sobra nada",
+        "Pilar: le sobran 35.000 pesos al mes"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "8_world_5_ordenar_6",
+      "enunciado": "Ordena los pasos para decidir con buen criterio frente a un riesgo.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Sabes qué cuidas, mides el riesgo, decides qué hacer y revisas para mejorar tu criterio la próxima vez.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-2",
+      "elementos": [
+        "Escoger qué hacer para prevenirlo o reducirlo",
+        "Identificar qué valoras y qué lo puede amenazar",
+        "Estimar qué tan probable y qué tan grave sería",
+        "Revisar después si tu decisión funcionó"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0,
+        3
+      ]
+    }
+  ]
+}

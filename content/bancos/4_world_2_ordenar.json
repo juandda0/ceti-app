@@ -1,0 +1,135 @@
+{
+  "bancoId": "4_world_2_ordenar",
+  "grado": "4",
+  "worldId": "world_2",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "4_world_2_ordenar_1",
+      "enunciado": "Ordena los pasos para hacer tu presupuesto de la semana.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Primero sabes cuánto entra, luego anotas los gastos, comparas y ajustas.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-45-1",
+      "elementos": [
+        "Ajustar si vas a gastar más de lo que entra",
+        "Anotar lo que vas a gastar",
+        "Comparar si te alcanza",
+        "Anotar cuánto dinero te entra"
+      ],
+      "ordenCanonico": [
+        3,
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "4_world_2_ordenar_2",
+      "enunciado": "Ordena los pasos para saber si una compra es necesidad o deseo.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Piensas para qué es, te preguntas si puedes vivir sin ella, decides y, si es deseo, va después de lo necesario.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-45-2",
+      "elementos": [
+        "Decidir si es necesidad o deseo",
+        "Si es deseo, ver si alcanza después de lo necesario",
+        "Preguntarte si puedes estar bien sin ella",
+        "Pensar para qué la quieres"
+      ],
+      "ordenCanonico": [
+        3,
+        2,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "4_world_2_ordenar_3",
+      "enunciado": "Ordena cómo reparte una familia el dinero del mes.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Primero se sabe cuánto entra, se cubren las necesidades y con lo que sobra se elige un deseo.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-45-2",
+      "elementos": [
+        "Ver cuánto sobra",
+        "Saber cuánto dinero entra",
+        "Decidir qué deseo se puede cumplir",
+        "Separar lo de las necesidades"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "4_world_2_ordenar_4",
+      "enunciado": "Pablo no hizo presupuesto. Ordena lo que le pasó.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Gastar todo de una vez dejó a Pablo sin dinero para el resto de la semana, y de ahí aprendió.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-45-1",
+      "elementos": [
+        "Se la gastó toda el mismo día",
+        "Aprendió a repartirla mejor",
+        "Recibió su mesada el lunes",
+        "El jueves no tenía para el bus"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        3,
+        1
+      ]
+    },
+    {
+      "id": "4_world_2_ordenar_5",
+      "enunciado": "Ordena los pasos para revisar al final del mes si tu presupuesto funcionó.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Sumas ingresos y gastos, los comparas y con eso decides qué mejorar.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-45-1",
+      "elementos": [
+        "Pensar qué cambiar el próximo mes",
+        "Sumar lo que gastaste",
+        "Ver si gastaste más o menos de lo que entró",
+        "Sumar lo que te entró"
+      ],
+      "ordenCanonico": [
+        3,
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "4_world_2_ordenar_6",
+      "enunciado": "Ordena de lo más necesario a lo menos necesario.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "El agua es lo más básico para vivir, el abrigo te protege y el videojuego es un deseo.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-45-2",
+      "elementos": [
+        "Un abrigo para el frío",
+        "Un videojuego",
+        "Agua para tomar"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        1
+      ]
+    }
+  ]
+}

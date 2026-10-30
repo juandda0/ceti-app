@@ -10,6 +10,8 @@
       "competencia": "deuda",
       "dificultad": 4,
       "explicacion": "Primero conoces lo que debes, luego priorizas, después diseñas el plan y finalmente lo ejecutas con disciplina.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-2",
       "elementos": [
         "Hacer un plan de pagos realista según tu presupuesto",
         "Listar todas tus deudas y a quién le debes",
@@ -24,6 +26,8 @@
       "competencia": "deuda",
       "dificultad": 4,
       "explicacion": "El riesgo crece a medida que la cuota ocupa más de tu ingreso y dependes de nuevas deudas para pagar.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-2",
       "elementos": [
         "Cuota cómoda que cabe sin afectar tus gastos esenciales",
         "Cuota que aprieta el presupuesto y limita el ahorro",
@@ -37,6 +41,8 @@
       "competencia": "deuda",
       "dificultad": 4,
       "explicacion": "Defines la necesidad, revisas tu capacidad de pago, comparas opciones y solo entonces decides.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-2",
       "elementos": [
         "Comparar varias opciones y su costo total",
         "Confirmar si la cuota cabe en tu presupuesto",
@@ -51,6 +57,8 @@
       "competencia": "deuda",
       "dificultad": 4,
       "explicacion": "El problema escala: primero te atrasas, luego se registra, después se acumula y finalmente pierdes acceso al crédito.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "elementos": [
         "Tu historial crediticio queda marcado negativamente",
         "Te atrasas en el pago de una cuota",
@@ -65,6 +73,8 @@
       "competencia": "deuda",
       "dificultad": 4,
       "explicacion": "Primero presupuestas, luego ahorras para imprevistos, después te endeudas con criterio y finalmente vigilas tus cuentas.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-1",
       "elementos": [
         "Construir un fondo de emergencia",
         "Llevar un presupuesto de ingresos y gastos",
@@ -79,6 +89,8 @@
       "competencia": "deuda",
       "dificultad": 4,
       "explicacion": "Cubres lo esencial para vivir, luego pagas tus deudas, después ahorras y al final destinas a gastos opcionales.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-2",
       "elementos": [
         "Ahorrar una parte para imprevistos",
         "Cubrir tus necesidades básicas",
@@ -86,6 +98,39 @@
         "Pagar las cuotas de tus deudas"
       ],
       "ordenCanonico": [1, 3, 0, 2]
+    },
+    {
+      "id": "10_world_5_ordenar_7",
+      "enunciado": "Ordena los pasos para gestionar el riesgo de que los chismes en el chat dañen la convivencia de tu curso.",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "La gestión del riesgo va de lo que valoras a la amenaza, su valoración, la medida y su revisión.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-1",
+      "elementos": [
+        "Valorar qué tan seguido pasa y cuánto daño hace",
+        "Reconocer que valoran la confianza entre compañeros",
+        "Revisar al mes si las normas funcionan",
+        "Identificar la amenaza: chismes y burlas en el chat",
+        "Acordar con el curso normas para el chat"
+      ],
+      "ordenCanonico": [1, 3, 0, 4, 2]
+    },
+    {
+      "id": "10_world_5_ordenar_8",
+      "enunciado": "Ordena los pasos para que el curso decida en grupo cómo cuidar la huerta del colegio en la temporada seca.",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Una decisión colectiva sobre un riesgo parte de informarse, luego se proponen y discuten opciones, se decide y se reparte el trabajo.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-3",
+      "elementos": [
+        "Proponer opciones, como riego por goteo o turnos",
+        "Repartir tareas y revisar los resultados",
+        "Informarse de cuánta agua necesita la huerta y cuánta hay",
+        "Votar la opción después de discutirla"
+      ],
+      "ordenCanonico": [2, 0, 3, 1]
     }
   ],
   "pendiente_validacion_docente": true,

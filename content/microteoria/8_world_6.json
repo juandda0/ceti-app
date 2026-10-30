@@ -1,0 +1,23 @@
+{
+  "grado": "8",
+  "worldId": "world_6",
+  "cards": [
+    {
+      "titulo": "Indicadores: los números de tu entorno",
+      "cuerpo": "Un indicador es un dato que muestra cómo va la economía. El desempleo dice qué parte de quienes buscan trabajo no lo consigue; la inflación, cuánto suben los precios en general; la cobertura, cuántos hogares tienen un servicio como agua o internet.",
+      "ejemplo": "Si en tu barrio, de cada 10 personas que quieren trabajar, 2 no consiguen empleo, el desempleo es del 20 %."
+    },
+    {
+      "titulo": "Impuestos: lo que aportamos entre todos",
+      "cuerpo": "Los impuestos son pagos obligatorios al Estado con los que se financian colegios públicos, hospitales, vías y seguridad. El Congreso los aprueba (en el municipio, el concejo) y el Gobierno los recauda y ejecuta el gasto. Un impuesto es equitativo si quien tiene más aporta más, y eficiente si recauda sin desperdicio y sin que la gente lo evada.",
+      "ejemplo": "El IVA se paga al comprar muchos productos; el impuesto predial lo pagan al municipio los dueños de casas y lotes."
+    },
+    {
+      "titulo": "Inflación y consumo responsable",
+      "cuerpo": "Cuando los precios suben en general hay inflación, y el dinero alcanza para menos. El Banco de la República trabaja para mantenerla baja y estable. Cada familia también aporta: comprar lo necesario, reparar, reutilizar y preferir lo que se produce cerca.",
+      "ejemplo": "Comprar frutas de cosecha en el mercado campesino apoya a los productores de la región y suele salir más barato."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

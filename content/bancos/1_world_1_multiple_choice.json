@@ -1,0 +1,173 @@
+{
+  "bancoId": "1_world_1_multiple_choice",
+  "grado": "1",
+  "worldId": "world_1",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "1_world_1_multiple_choice_1",
+      "enunciado": "¿Qué le das al tendero para llevarte un pan?",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "En la tienda pagamos con dinero para llevarnos lo que compramos.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-13-1",
+      "opciones": [
+        "Un dibujo",
+        "Dinero",
+        "Las gracias, nada más",
+        "Una hoja de papel"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "1_world_1_multiple_choice_2",
+      "enunciado": "Sofía tiene una manzana y Tomás un lápiz. Se los cambian. ¿Qué hicieron?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Dar una cosa para recibir otra es cambiar; el dinero hace más fácil esos cambios.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-13-1",
+      "opciones": [
+        "Un regalo",
+        "Un préstamo",
+        "Un cambio",
+        "Un ahorro"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "1_world_1_multiple_choice_3",
+      "enunciado": "¿De dónde sale casi siempre el dinero de una familia?",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Las familias reciben dinero por su trabajo; el cajero solo entrega dinero que ya ganaron.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-13-2",
+      "opciones": [
+        "Del trabajo",
+        "Del cajero, gratis",
+        "De la tienda",
+        "De la alcancía del colegio"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "1_world_1_multiple_choice_4",
+      "enunciado": "La tía de Ana arregla bicicletas. ¿Qué recibe por su trabajo?",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Quien trabaja recibe un pago en dinero por lo que hace.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-13-2",
+      "opciones": [
+        "Bicicletas nuevas",
+        "Juguetes",
+        "Un diploma",
+        "Un pago en dinero"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "1_world_1_multiple_choice_5",
+      "enunciado": "¿Cómo se llama el dinero de Colombia?",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "En Colombia usamos el peso colombiano.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-13-3",
+      "opciones": [
+        "El peso",
+        "El dólar",
+        "El euro",
+        "El bolívar"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "1_world_1_multiple_choice_6",
+      "enunciado": "¿Cuál de estos vale más?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Diez mil pesos es mucho más que 500, 100 o 50 pesos.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-13-3",
+      "opciones": [
+        "Una moneda de 500 pesos",
+        "Una moneda de 100 pesos",
+        "Un billete de 10.000 pesos",
+        "Una moneda de 50 pesos"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "1_world_1_multiple_choice_7",
+      "enunciado": "En el recreo hay un solo balón y muchos niños. ¿Cómo es el balón?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Escaso es cuando hay poquito y no alcanza para todos a la vez.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-13-1",
+      "opciones": [
+        "Abundante: sobra",
+        "Escaso: hay poquito",
+        "Gratis para cada uno",
+        "Hay uno para cada niño"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "1_world_1_multiple_choice_8",
+      "enunciado": "Hay pocos colores y muchos niños en la mesa. ¿Qué toca hacer?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Cuando algo es escaso no alcanza para todos a la vez, por eso se comparte o se hacen turnos.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-13-2",
+      "opciones": [
+        "Cada uno toma diez",
+        "Esconder los colores",
+        "Botar los que sobran",
+        "Turnarse los colores"
+      ],
+      "correctIndex": 3,
+      "prueba": true
+    },
+    {
+      "id": "1_world_1_multiple_choice_9",
+      "enunciado": "Te cepillas los dientes. ¿Cómo cuidas el agua?",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Cerrar la llave mientras te cepillas evita botar agua.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-13-3",
+      "opciones": [
+        "Dejo la llave abierta",
+        "Cierro la llave",
+        "Lleno el lavamanos",
+        "Juego con el chorro"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "1_world_1_multiple_choice_10",
+      "enunciado": "¿Por qué hay dinero en tu casa para comprar comida?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "El dinero de la casa llega porque una o varias personas de la familia trabajan.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-13-2",
+      "opciones": [
+        "Porque alguien trabaja",
+        "Porque llega solo",
+        "Porque la tienda lo regala",
+        "Porque crece en las matas"
+      ],
+      "correctIndex": 0,
+      "prueba": true
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "bancoId": "4_world_1",
+  "grado": "4",
+  "worldId": "world_1",
+  "situaciones": [
+    {
+      "id": "4_world_1_sit_1",
+      "enunciado": "Tu tía te regaló dinero de cumpleaños. Puedes comprar hoy un balón que te encanta o guardar una parte para la excursión del colegio.",
+      "opcionA": {
+        "texto": "Comprar el balón hoy.",
+        "consecuencia": "Juegas con tus amigos desde esta tarde y lo disfrutas mucho. Pero cuando llegue la excursión, tendrás que pedir ayuda en casa o buscar otra forma de reunir el dinero."
+      },
+      "opcionB": {
+        "texto": "Guardar una parte para la excursión.",
+        "consecuencia": "Llegas a la excursión con tu parte lista y sin afanes. Pero el balón tendrá que esperar unas semanas."
+      }
+    },
+    {
+      "id": "4_world_1_sit_2",
+      "enunciado": "Los sábados ayudas a tu vecina a regar sus matas y ella te paga un poco. Este sábado tus amigos te invitan a jugar fútbol a la misma hora.",
+      "opcionA": {
+        "texto": "Ir a regar las matas.",
+        "consecuencia": "Ganas tu dinero y tu vecina confía más en ti. Pero te pierdes el partido y la diversión con tus amigos esa tarde."
+      },
+      "opcionB": {
+        "texto": "Ir a jugar con tus amigos.",
+        "consecuencia": "Disfrutas el partido y descansas. Pero ese sábado no ganas dinero y tu vecina tiene que buscar otra ayuda."
+      }
+    },
+    {
+      "id": "4_world_1_sit_3",
+      "enunciado": "En tu casa se dañó la nevera y este mes el dinero no alcanza para todo. Tu familia te pide ideas.",
+      "opcionA": {
+        "texto": "Proponer que cancelen la salida a comer del domingo.",
+        "consecuencia": "Les alcanza para arreglar la nevera pronto y la comida no se daña. Pero el plan del domingo se cancela y a todos les da un poco de tristeza."
+      },
+      "opcionB": {
+        "texto": "Proponer que mantengan la salida y arreglen la nevera después.",
+        "consecuencia": "Disfrutan la salida del domingo en familia. Pero unas semanas compran comida cada día en poca cantidad y algunas cosas se dañan más rápido."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

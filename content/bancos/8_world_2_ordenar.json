@@ -1,0 +1,135 @@
+{
+  "bancoId": "8_world_2_ordenar",
+  "grado": "8",
+  "worldId": "world_2",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "8_world_2_ordenar_1",
+      "enunciado": "Ordena los pasos para hacer tu presupuesto de la semana.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Primero lo que entra, luego lo que sale, después la resta y al final la decisión.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
+      "elementos": [
+        "Restar los gastos a lo que vas a recibir",
+        "Anotar cuánto vas a recibir",
+        "Decidir qué hacer con lo que sobra o falta",
+        "Listar los gastos que vas a tener"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "8_world_2_ordenar_2",
+      "enunciado": "Ordena estos presupuestos del que tiene más déficit al que tiene más superávit.",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Los saldos son −15.000, −4.000, 0 y +10.000: de más faltante a más sobrante.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
+      "elementos": [
+        "Recibe 40.000 y gasta 30.000",
+        "Recibe 30.000 y gasta 45.000",
+        "Recibe 25.000 y gasta 25.000",
+        "Recibe 20.000 y gasta 24.000"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "8_world_2_ordenar_3",
+      "enunciado": "Ordena los pasos para recortar un gasto que se te sale de las manos.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Anotas, encuentras el gasto que más creció, le pones un tope y revisas el resultado.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
+      "elementos": [
+        "Ponerte un tope para ese gasto",
+        "Ver si el cambio te dejó plata al final del mes",
+        "Anotar tus gastos durante dos semanas",
+        "Descubrir cuál gasto creció más"
+      ],
+      "ordenCanonico": [
+        2,
+        3,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "8_world_2_ordenar_4",
+      "enunciado": "Ordena los pasos de una reunión familiar para revisar el presupuesto.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Se suman ingresos y gastos, se comparan y con eso la familia acuerda qué mejorar.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-2",
+      "elementos": [
+        "Acordar entre todos un cambio para el mes",
+        "Sumar lo que entra a la casa",
+        "Sumar lo que sale: arriendo, servicios, mercado y transporte",
+        "Comparar las dos sumas"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        3,
+        0
+      ]
+    },
+    {
+      "id": "8_world_2_ordenar_5",
+      "enunciado": "Ordena lo que hace una familia para bajar la factura del agua.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Primero se mira cuánto se gasta, luego se acuerdan cambios y al final se comprueba si funcionaron.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-2",
+      "elementos": [
+        "Revisar la siguiente factura para ver si bajó",
+        "Mirar en la factura cuánta agua gastaron",
+        "Acordar cambios, como baños más cortos y arreglar la llave que gotea"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "8_world_2_ordenar_6",
+      "enunciado": "Ordena los gastos mensuales de la familia de Daniel, del más grande al más pequeño.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Comparar los gastos muestra cuáles pesan más en el presupuesto: arriendo, mercado, servicios y transporte.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-2",
+      "elementos": [
+        "Servicios: 200.000 pesos",
+        "Arriendo: 800.000 pesos",
+        "Transporte: 150.000 pesos",
+        "Mercado: 600.000 pesos"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        0,
+        2
+      ]
+    }
+  ]
+}

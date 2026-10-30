@@ -1,0 +1,44 @@
+{
+  "bancoId": "4_world_2",
+  "grado": "4",
+  "worldId": "world_2",
+  "situaciones": [
+    {
+      "id": "4_world_2_sit_1",
+      "enunciado": "Te dieron tu mesada. Quieres un álbum de láminas, pero también necesitas dinero para el bus de toda la semana.",
+      "opcionA": {
+        "texto": "Comprar el álbum y gastar menos en otras cosas.",
+        "consecuencia": "Empiezas a llenar el álbum con tus amigos. Pero la semana queda justa y, si se te acaba lo del bus, te toca caminar o pedir ayuda."
+      },
+      "opcionB": {
+        "texto": "Separar primero lo del bus y comprar el álbum la otra semana.",
+        "consecuencia": "Tienes la semana tranquila y sin sustos. Pero tus amigos empiezan el álbum antes que tú y te toca esperar para cambiar láminas."
+      }
+    },
+    {
+      "id": "4_world_2_sit_2",
+      "enunciado": "Tu familia arma el presupuesto del mes. Después de pagar lo necesario sobra un poco, y hay dos ideas: un paseo o comprar una lavadora usada.",
+      "opcionA": {
+        "texto": "Hacer el paseo en familia.",
+        "consecuencia": "Pasan un día muy feliz juntos y lo recuerdan por mucho tiempo. Pero siguen lavando la ropa a mano, que les toma varias horas cada semana."
+      },
+      "opcionB": {
+        "texto": "Comprar la lavadora usada.",
+        "consecuencia": "Ahora lavan más rápido y les queda más tiempo libre cada semana. Pero ese mes no hay paseo y la diversión tiene que esperar."
+      }
+    },
+    {
+      "id": "4_world_2_sit_3",
+      "enunciado": "Vas a celebrar tu cumpleaños y tu familia tiene un presupuesto pequeño para la fiesta.",
+      "opcionA": {
+        "texto": "Invitar a muchos amigos con una fiesta sencilla.",
+        "consecuencia": "Celebras con mucha gente y hay mucha alegría. Pero la torta es pequeña y los adornos son sencillos."
+      },
+      "opcionB": {
+        "texto": "Invitar a pocos amigos con más detalles.",
+        "consecuencia": "Hay una torta grande y una decoración bonita. Pero algunos amigos no van y quizá se sientan tristes por no estar."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

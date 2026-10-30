@@ -1,0 +1,71 @@
+{
+  "bancoId": "4_world_1_true_false",
+  "grado": "4",
+  "worldId": "world_1",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "4_world_1_true_false_1",
+      "enunciado": "El tiempo y el trabajo de las personas de tu familia también son recursos valiosos.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Verdadero: el trabajo trae el ingreso de la casa y el tiempo no alcanza para todo; los dos son recursos.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-45-1",
+      "respuesta": true
+    },
+    {
+      "id": "4_world_1_true_false_2",
+      "enunciado": "Cuando llega la factura de la luz, se paga sin mirarla, porque nunca trae errores.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Falso: las facturas pueden traer errores o mostrar que se gastó de más; por eso conviene revisarlas.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-45-2",
+      "respuesta": false
+    },
+    {
+      "id": "4_world_1_true_false_3",
+      "enunciado": "Cuando hay poco dinero, la familia debe decidir primero lo más importante para estar bien.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Verdadero: si no alcanza para todo, se elige primero lo que da bienestar, como la comida y los servicios.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-45-2",
+      "respuesta": true
+    },
+    {
+      "id": "4_world_1_true_false_4",
+      "enunciado": "Gastar todo apenas lo recibes es un buen hábito, porque así lo disfrutas más.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Falso: si gastas todo de una vez, no te queda para lo que necesites después.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-45-1",
+      "respuesta": false
+    },
+    {
+      "id": "4_world_1_true_false_5",
+      "enunciado": "El agua es un recurso que nunca se acaba, así que no importa cuánta usemos.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Falso: el agua limpia puede escasear y cuesta llevarla a las casas; hay que cuidarla.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-45-1",
+      "respuesta": false
+    },
+    {
+      "id": "4_world_1_true_false_6",
+      "enunciado": "Guardar una parte de la mesada es un hábito que te ayuda a cumplir tus metas.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Verdadero: guardar un poco cada vez te permite reunir lo que necesitas para algo que quieres.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-45-1",
+      "respuesta": true
+    }
+  ]
+}

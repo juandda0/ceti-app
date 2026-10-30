@@ -1,0 +1,71 @@
+{
+  "bancoId": "4_world_3_true_false",
+  "grado": "4",
+  "worldId": "world_3",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "4_world_3_true_false_1",
+      "enunciado": "Ahorrar es guardar una parte de tu dinero hoy para usarla más adelante.",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Verdadero: eso es ahorrar.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-45-1",
+      "respuesta": true
+    },
+    {
+      "id": "4_world_3_true_false_2",
+      "enunciado": "Cuando inviertes, siempre ganas más dinero del que pusiste.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Falso: al invertir puedes ganar, pero también puedes perder una parte o todo.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-45-1",
+      "respuesta": false
+    },
+    {
+      "id": "4_world_3_true_false_3",
+      "enunciado": "Para abrir una cuenta de ahorros, el banco o la cooperativa piden requisitos, como un documento.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Verdadero: las entidades piden documentos y, para los niños, que vaya un adulto responsable.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-45-2",
+      "respuesta": true
+    },
+    {
+      "id": "4_world_3_true_false_4",
+      "enunciado": "El dinero guardado en una alcancía está tan protegido como en un banco.",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Falso: en la alcancía se puede perder o robar; en el banco está más protegido.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-45-2",
+      "respuesta": false
+    },
+    {
+      "id": "4_world_3_true_false_5",
+      "enunciado": "Comprar un helado para comértelo es una forma de invertir.",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Falso: es un gasto. Invertir es usar el dinero en algo que puede producir más dinero.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-45-1",
+      "respuesta": false
+    },
+    {
+      "id": "4_world_3_true_false_6",
+      "enunciado": "Una ventaja de la alcancía es que tienes el dinero a la mano cuando lo necesitas.",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Verdadero: la alcancía es fácil de usar, aunque está menos protegida.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-45-2",
+      "respuesta": true
+    }
+  ]
+}

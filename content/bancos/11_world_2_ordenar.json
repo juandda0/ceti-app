@@ -10,6 +10,8 @@
       "competencia": "presupuesto",
       "dificultad": 3,
       "explicacion": "Primero se estiman los ingresos, luego se listan y categorizan los egresos, se comparan ambos y finalmente se ajusta para lograr equilibrio.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-1",
       "elementos": [
         "Comparar el total de ingresos con el total de egresos",
         "Estimar los ingresos disponibles del periodo",
@@ -24,6 +26,8 @@
       "competencia": "presupuesto",
       "dificultad": 4,
       "explicacion": "Se cubren primero las necesidades básicas, luego los compromisos adquiridos, después el ahorro y por último los gastos de ocio.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
       "elementos": [
         "Gastos de ocio y entretenimiento",
         "Necesidades básicas como alimentación y transporte",
@@ -38,6 +42,8 @@
       "competencia": "presupuesto",
       "dificultad": 3,
       "explicacion": "Se planean los gastos, se registran a medida que ocurren, se comparan con lo planeado y se corrige para el siguiente periodo.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
       "elementos": [
         "Registrar cada gasto a medida que ocurre",
         "Planear los gastos del periodo",
@@ -52,6 +58,8 @@
       "competencia": "presupuesto",
       "dificultad": 4,
       "explicacion": "Primero se identifica el costo del compromiso, luego se revisa el margen disponible, se evalúa si genera déficit y al final se decide.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
       "elementos": [
         "Decidir si se asume o se descarta el gasto",
         "Identificar el costo recurrente del nuevo gasto",
@@ -66,6 +74,8 @@
       "competencia": "presupuesto",
       "dificultad": 4,
       "explicacion": "Se detecta el déficit, se revisan las categorías de gasto, se recortan los gastos discrecionales y se verifica que el plan quede equilibrado.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
       "elementos": [
         "Recortar o aplazar los gastos discrecionales",
         "Detectar que los egresos superan a los ingresos",
@@ -80,6 +90,8 @@
       "competencia": "presupuesto",
       "dificultad": 3,
       "explicacion": "Primero se separan los compromisos ineludibles, luego las necesidades básicas, después el ahorro planeado y por último el gasto libre.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
       "elementos": [
         "Destinar el gasto libre que sobre",
         "Separar los compromisos ineludibles del periodo",

@@ -1,0 +1,135 @@
+{
+  "bancoId": "6_world_1_ordenar",
+  "grado": "6",
+  "worldId": "world_1",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "6_world_1_ordenar_1",
+      "enunciado": "Ordena los pasos para que el cacao se convierta en una chocolatina, del primero al último.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Cada paso le agrega trabajo al cacao, y por eso la chocolatina vale más que el grano.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-67-1",
+      "elementos": [
+        "Moler el cacao y mezclarlo con azúcar",
+        "Secar y tostar los granos",
+        "Empacar la chocolatina y llevarla a la tienda",
+        "Cultivar y cosechar el cacao"
+      ],
+      "ordenCanonico": [
+        3,
+        1,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "6_world_1_ordenar_2",
+      "enunciado": "Ordena estas formas del agua de la que vale menos a la que vale más en dinero.",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Cada forma lleva más trabajo (tratar, transportar, envasar), y eso sube su valor económico.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-67-1",
+      "elementos": [
+        "Agua purificada en botella que se vende en la tienda",
+        "Agua tratada que llega por la tubería",
+        "Agua de lluvia que cae en el patio"
+      ],
+      "ordenCanonico": [
+        2,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "6_world_1_ordenar_3",
+      "enunciado": "Ordena los pasos para que tus útiles escolares te duren todo el año.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Primero los identificas, luego los guardas, después revisas y solo al final repones lo necesario.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-67-2",
+      "elementos": [
+        "Reparar o reponer solo lo que se dañó",
+        "Marcar cada útil con tu nombre",
+        "Guardarlos en el estuche después de usarlos",
+        "Revisar al final de la semana si falta algo"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        3,
+        0
+      ]
+    },
+    {
+      "id": "6_world_1_ordenar_4",
+      "enunciado": "Descubres una fuga de agua en el baño de tu casa. Ordena lo que pasa, del primero al último.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Primero detienes el desperdicio, luego se arregla el daño y al final compruebas el resultado.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-67-2",
+      "elementos": [
+        "Revisar si en la siguiente factura bajó el consumo",
+        "Notar que el agua sigue saliendo",
+        "Cerrar el registro y avisar a un adulto",
+        "Arreglar la fuga"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        3,
+        0
+      ]
+    },
+    {
+      "id": "6_world_1_ordenar_5",
+      "enunciado": "Ordena los pasos de una compra responsable, del primero al último.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Una compra responsable empieza por pensar si la necesitas y termina guardando el recibo.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-67-1",
+      "elementos": [
+        "Comprar en la opción que más te convenga",
+        "Preguntarte si de verdad lo necesitas",
+        "Comparar precio y calidad en varias tiendas",
+        "Guardar el recibo por si necesitas cambiarlo"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0,
+        3
+      ]
+    },
+    {
+      "id": "6_world_1_ordenar_6",
+      "enunciado": "Ordena los pasos para cambiar el hábito de comprar por impulso.",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Para cambiar un hábito, primero lo observas, luego entiendes cuándo pasa, te pones una regla y revisas.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-67-1",
+      "elementos": [
+        "Revisar al mes si gastaste menos",
+        "Ponerte una regla, como esperar un día antes de comprar",
+        "Identificar en qué momentos te pasa más",
+        "Anotar durante una semana lo que compras sin planear"
+      ],
+      "ordenCanonico": [
+        3,
+        2,
+        1,
+        0
+      ]
+    }
+  ]
+}

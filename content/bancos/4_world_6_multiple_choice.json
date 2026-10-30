@@ -1,0 +1,173 @@
+{
+  "bancoId": "4_world_6_multiple_choice",
+  "grado": "4",
+  "worldId": "world_6",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "4_world_6_multiple_choice_1",
+      "enunciado": "Un impuesto es un dinero que las personas y las empresas pagan al Estado. ¿Para qué se usa?",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Con los impuestos el Estado paga servicios y obras que usamos todos.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-45-2",
+      "opciones": [
+        "Para que lo guarde un banco sin usarlo",
+        "Para comprarles regalos a las familias",
+        "Para pagar las deudas de cada persona",
+        "Para pagar cosas de todos, como colegios, hospitales y vías"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "4_world_6_multiple_choice_2",
+      "enunciado": "¿De dónde sale la mayor parte del dinero que la nación usa para sus gastos?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Los impuestos son el principal ingreso del Estado; el Gobierno no imprime billetes para pagar sus gastos.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-45-2",
+      "opciones": [
+        "De las alcancías de los niños",
+        "De los impuestos que pagan personas y empresas",
+        "De imprimir todos los billetes que quiera",
+        "De lo que regalan otros países"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "4_world_6_multiple_choice_3",
+      "enunciado": "¿Quién aprueba los impuestos y el presupuesto de la nación en Colombia?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "En Colombia el Congreso aprueba los impuestos y el presupuesto de la nación.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-45-1",
+      "opciones": [
+        "El Banco de la República",
+        "Las empresas más grandes",
+        "El Congreso de la República",
+        "Cada alcalde por su cuenta"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "4_world_6_multiple_choice_4",
+      "enunciado": "¿Qué hace el Banco de la República?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "El Banco de la República es el único que emite el dinero de Colombia y cuida que conserve su valor.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-45-1",
+      "opciones": [
+        "Cobra los impuestos",
+        "Emite los billetes y las monedas del país",
+        "Hace las leyes",
+        "Construye las carreteras"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "4_world_6_multiple_choice_5",
+      "enunciado": "Ya aprobado el presupuesto de la nación, ¿quién lo usa para construir colegios y vías?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "El Congreso aprueba el presupuesto y el Gobierno lo ejecuta en obras y servicios.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-45-1",
+      "opciones": [
+        "El Congreso",
+        "El Gobierno",
+        "Los jueces",
+        "El Banco de la República"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "4_world_6_multiple_choice_6",
+      "enunciado": "Un pueblo estrenó una carretera hasta la ciudad. ¿Cómo puede ayudar a su desarrollo?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Una buena vía mejora el acceso a mercados, colegios y hospitales, y eso ayuda al desarrollo.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-45-1",
+      "opciones": [
+        "Ya nadie en el pueblo tiene que trabajar",
+        "Todas las familias se vuelven ricas de inmediato",
+        "Se acaban todos los problemas del pueblo",
+        "Los campesinos llevan y venden sus cosechas más fácil"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "4_world_6_multiple_choice_7",
+      "enunciado": "En una vereda se secó la quebrada porque dejó de llover. ¿Cómo afecta eso a la comunidad?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Si falta el agua, se pierden cultivos y las familias tienen más dificultades.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-45-1",
+      "opciones": [
+        "Hay menos agua para los cultivos y las familias",
+        "Las cosechas crecen más rápido",
+        "No pasa nada, el agua llega sola",
+        "Las familias ganan más dinero"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "4_world_6_multiple_choice_8",
+      "enunciado": "¿Qué pone en riesgo los árboles y el agua del parque del barrio?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "La basura y la tala dañan el parque; las otras acciones lo protegen.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-45-2",
+      "opciones": [
+        "Sembrar más plantas",
+        "Hacer jornadas de limpieza",
+        "Tirar basura y cortar los árboles",
+        "Poner canecas para la basura"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "4_world_6_multiple_choice_9",
+      "enunciado": "¿Cuál de estos recursos es de toda la comunidad y no de una sola familia?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "El parque y la biblioteca los usa y los cuida toda la comunidad.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-45-1",
+      "opciones": [
+        "El parque y la biblioteca del barrio",
+        "La bicicleta de tu vecino",
+        "El celular de tu tía",
+        "La nevera de tu casa"
+      ],
+      "correctIndex": 0,
+      "prueba": true
+    },
+    {
+      "id": "4_world_6_multiple_choice_10",
+      "enunciado": "El colegio tiene poco dinero y debe elegir en qué usarlo. ¿Qué ayuda más al bienestar de todos?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Los baños en buen estado cuidan la salud de todos los estudiantes todos los días.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-45-2",
+      "opciones": [
+        "Pintar más grande el escudo del colegio",
+        "Comprar trofeos nuevos",
+        "Arreglar los baños que están dañados",
+        "Hacer una fiesta de un día"
+      ],
+      "correctIndex": 2,
+      "prueba": true
+    }
+  ]
+}

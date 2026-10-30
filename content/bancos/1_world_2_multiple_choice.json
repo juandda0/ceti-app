@@ -1,0 +1,173 @@
+{
+  "bancoId": "1_world_2_multiple_choice",
+  "grado": "1",
+  "worldId": "world_2",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "1_world_2_multiple_choice_1",
+      "enunciado": "¿Cuál de estas es una necesidad?",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Comer es una necesidad: lo necesitamos para vivir y crecer.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-13-2",
+      "opciones": [
+        "Un juguete nuevo",
+        "Un dulce",
+        "Comer el almuerzo",
+        "Una gorra de moda"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "1_world_2_multiple_choice_2",
+      "enunciado": "¿Cuál de estos es un deseo?",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Un juguete es un deseo: es bonito tenerlo, pero podemos vivir sin él.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-13-2",
+      "opciones": [
+        "Un carro de juguete",
+        "Agua para tomar",
+        "Un techo para dormir",
+        "Ir al médico"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "1_world_2_multiple_choice_3",
+      "enunciado": "Tienes mucha sed después del recreo. ¿Qué necesitas?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "El agua quita la sed y cuida tu cuerpo; lo demás es un gusto.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-13-2",
+      "opciones": [
+        "Un helado",
+        "Una gaseosa",
+        "Un chicle",
+        "Agua"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "1_world_2_multiple_choice_4",
+      "enunciado": "¿En qué usa primero la familia su dinero?",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Primero va lo que la familia necesita: comida, agua, luz y casa.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-13-1",
+      "opciones": [
+        "En juguetes",
+        "En comida, agua y luz",
+        "En dulces",
+        "En adornos"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "1_world_2_multiple_choice_5",
+      "enunciado": "¿Quién paga la luz de tu casa?",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "La luz cuesta, y la familia la paga con el dinero que gana.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-13-1",
+      "opciones": [
+        "Nadie, es gratis",
+        "El colegio",
+        "La tienda del barrio",
+        "La familia, con su dinero"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "1_world_2_multiple_choice_6",
+      "enunciado": "A la familia de Luis le pagan el mes. ¿Qué hace con el dinero?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "La familia usa su dinero en lo que necesita, como comida y servicios.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-13-1",
+      "opciones": [
+        "Lo gasta todo en un día",
+        "Compra solo juguetes",
+        "Lo usa en lo que necesita",
+        "No lo usa nunca"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "1_world_2_multiple_choice_7",
+      "enunciado": "Esta semana hay poco dinero en casa. ¿Qué se compra primero?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Cuando hay poco, primero se cubren las necesidades, como la comida.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-13-3",
+      "opciones": [
+        "La comida",
+        "Un videojuego",
+        "Un pastel grande",
+        "Adornos para la sala"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "1_world_2_multiple_choice_8",
+      "enunciado": "Tienes 3 monedas. ¿Cómo las repartes mejor?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Repartir te deja cubrir lo que necesitas, guardar algo y darte un gusto.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-13-3",
+      "opciones": [
+        "Todas en dulces",
+        "Merienda, alcancía y un gusto",
+        "Todas en stickers",
+        "Las regalo todas"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "1_world_2_multiple_choice_9",
+      "enunciado": "Ana quiere un muñeco y necesita zapatos para el colegio. ¿Qué es lo necesario?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Los zapatos los necesita para ir al colegio; el muñeco es un deseo.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-13-2",
+      "opciones": [
+        "El muñeco",
+        "Los dos son deseos",
+        "Los zapatos",
+        "Ninguno de los dos"
+      ],
+      "correctIndex": 2,
+      "prueba": true
+    },
+    {
+      "id": "1_world_2_multiple_choice_10",
+      "enunciado": "Tu familia va al parque. ¿Qué ayuda a cuidar su dinero?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Llevar la merienda de casa suele costar menos que comprarla afuera.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-13-3",
+      "opciones": [
+        "Comprar todo en el parque",
+        "Comprar un juguete allá",
+        "Comprar dos almuerzos",
+        "Llevar la merienda de casa"
+      ],
+      "correctIndex": 3,
+      "prueba": true
+    }
+  ]
+}

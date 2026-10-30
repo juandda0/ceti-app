@@ -151,6 +151,32 @@ describe('QuestionBankRepository.fetchAssembledQuiz', () => {
     expect(result.filter((q) => q.tipo === 'ordenar')).toHaveLength(3);
   });
 
+  it('las preguntas de la prueba de entrada y salida no salen en el juego (Fase 7)', async () => {
+    const mc = makeMCItems(10).map((it, i) => (i < 6 ? { ...it, prueba: true } : it));
+    const repo = await setupAndImport(
+      makeBancoDoc('multiple_choice', mc),
+      makeBancoDoc('true_false', makeVFItems(8)),
+      makeBancoDoc('ordenar', makeOrdenarItems(6))
+    );
+    const pool = await repo.fetchPool('2', WORLD_ID);
+    expect(pool?.mc.map((q) => q.id)).toEqual(['mc-6', 'mc-7', 'mc-8', 'mc-9']);
+    const prueba = await repo.fetchPrueba('2', WORLD_ID);
+    expect(prueba.map((q) => [q.id, q.tipo])).toEqual(
+      ['mc-0', 'mc-1', 'mc-2', 'mc-3', 'mc-4', 'mc-5'].map((id) => [id, 'multiple_choice'])
+    );
+  });
+
+  it('una clase de 2° lee el banco de 1° (su grupo de grados)', async () => {
+    const repo = await setupAndImport(
+      makeBancoDoc('multiple_choice', makeMCItems(10)),
+      makeBancoDoc('true_false', makeVFItems(8)),
+      makeBancoDoc('ordenar', makeOrdenarItems(6))
+    );
+    await repo.fetchPool('2', WORLD_ID);
+    const { getDoc } = jest.requireMock('firebase/firestore') as { getDoc: jest.Mock };
+    expect(getDoc.mock.calls.map((c) => (c[0] as { __docId: string }).__docId)).toContain('1_world_1_multiple_choice');
+  });
+
   it('same seedKey → same set and order (determinism — anti R7)', async () => {
     const mcDoc = makeBancoDoc('multiple_choice', makeMCItems(10));
     const vfDoc = makeBancoDoc('true_false', makeVFItems(8));

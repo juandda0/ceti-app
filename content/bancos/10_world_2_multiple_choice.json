@@ -10,6 +10,8 @@
       "competencia": "presupuesto",
       "dificultad": 2,
       "explicacion": "Un presupuesto es un plan que organiza los ingresos y los gastos esperados durante un periodo.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-1",
       "opciones": [
         "Un plan que organiza los ingresos y gastos esperados de un periodo",
         "Una lista de deudas que ya están vencidas",
@@ -24,6 +26,8 @@
       "competencia": "presupuesto",
       "dificultad": 2,
       "explicacion": "Los egresos son las salidas de dinero, es decir, los gastos y pagos que se realizan.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-1",
       "opciones": [
         "El dinero que se recibe por trabajar o por una mesada",
         "Las salidas de dinero destinadas a gastos y pagos",
@@ -38,6 +42,8 @@
       "competencia": "presupuesto",
       "dificultad": 3,
       "explicacion": "Gastar más de lo que se ingresa de manera sostenida lleva a endeudarse o a agotar los ahorros.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
       "opciones": [
         "Aumente su capacidad de ahorro automáticamente",
         "Termine endeudándose o agotando sus ahorros",
@@ -52,6 +58,8 @@
       "competencia": "presupuesto",
       "dificultad": 3,
       "explicacion": "Agrupar los gastos por categorías ayuda a entender en qué se va el dinero y a tomar mejores decisiones.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-1",
       "opciones": [
         "Hacer que el presupuesto parezca más largo",
         "Ocultar los gastos que son innecesarios",
@@ -66,6 +74,8 @@
       "competencia": "presupuesto",
       "dificultad": 2,
       "explicacion": "Priorizar implica cubrir primero las necesidades básicas, como la alimentación, antes que los deseos.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
       "opciones": [
         "Un videojuego de moda",
         "La alimentación diaria",
@@ -80,6 +90,8 @@
       "competencia": "presupuesto",
       "dificultad": 3,
       "explicacion": "Vivir dentro de los medios es ajustar el nivel de gasto a los ingresos disponibles, sin gastar de más.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
       "opciones": [
         "Gastar más de lo que se gana para disfrutar más",
         "Ajustar los gastos al dinero que realmente se ingresa",
@@ -94,6 +106,8 @@
       "competencia": "presupuesto",
       "dificultad": 3,
       "explicacion": "Registrar los gastos a tiempo permite comparar lo planeado con lo real y corregir desvíos.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
       "opciones": [
         "Porque así se gastan más rápido los ingresos",
         "Porque permite comparar lo planeado con lo real y ajustar",
@@ -108,6 +122,8 @@
       "competencia": "presupuesto",
       "dificultad": 3,
       "explicacion": "Con recursos limitados se atienden primero las necesidades esenciales y luego, si queda margen, los deseos.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
       "opciones": [
         "Cubrir primero los deseos para no perder oportunidades",
         "Repartir el dinero en partes iguales sin importar la urgencia",
@@ -115,6 +131,40 @@
         "Posponer indefinidamente todo tipo de gasto"
       ],
       "correctIndex": 2
+    },
+    {
+      "id": "10_world_2_multiple_choice_9",
+      "enunciado": "En el Presupuesto General de la Nación, ¿de dónde sale la mayor parte de los ingresos del Estado?",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "La principal fuente de ingresos del presupuesto nacional son los impuestos que pagan las personas y las empresas.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-1",
+      "prueba": true,
+      "opciones": [
+        "De billetes que el Banco de la República imprime para el Gobierno",
+        "Únicamente de las multas de tránsito",
+        "De lo que donan otros países cada año",
+        "De los impuestos que pagan personas y empresas"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "10_world_2_multiple_choice_10",
+      "enunciado": "El presupuesto nacional muestra un déficit que se repite año tras año. ¿Cuál propuesta es más responsable pensando en el bienestar?",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "explicacion": "Revisar el gasto poco eficiente y proteger la inversión social ajusta el déficit sin quitarle a la población lo que más necesita.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
+      "prueba": true,
+      "opciones": [
+        "Recortar por igual todos los gastos sin mirar su efecto",
+        "Revisar los gastos poco eficientes y proteger la inversión en salud y educación",
+        "Pedir prestado cada año sin límite para cubrir la diferencia",
+        "Ocultar el déficit para no preocupar a la gente"
+      ],
+      "correctIndex": 1
     }
   ],
   "pendiente_validacion_docente": true,

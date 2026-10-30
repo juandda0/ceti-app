@@ -1,0 +1,44 @@
+{
+  "bancoId": "8_world_5",
+  "grado": "8",
+  "worldId": "world_5",
+  "situaciones": [
+    {
+      "id": "8_world_5_sit_1",
+      "enunciado": "Estás en semana de exámenes y llevas varias noches durmiendo poco. Tu equipo de microfútbol juega la final el sábado y el entrenador pide entrenar todas las tardes.",
+      "opcionA": {
+        "texto": "Entrenar todas las tardes para la final.",
+        "consecuencia": "Llegas mejor preparado a la final y apoyas a tu equipo, pero duermes y estudias menos en una semana clave, y sube la probabilidad de que te vaya mal en un examen."
+      },
+      "opcionB": {
+        "texto": "Entrenar solo dos tardes y usar las otras para estudiar y descansar.",
+        "consecuencia": "Llegas más descansado a los exámenes, pero quizá no juegues todo el partido y algunos compañeros pueden molestarse contigo."
+      }
+    },
+    {
+      "id": "8_world_5_sit_2",
+      "enunciado": "En tu casa se fue el agua varias veces este mes. Tu familia discute si comprar un tanque grande para guardar agua o cambiar hábitos para gastar menos.",
+      "opcionA": {
+        "texto": "Comprar el tanque grande.",
+        "consecuencia": "Tienen reserva cuando hay cortes, pero es un gasto grande este mes y hay que lavarlo y mantenerlo tapado para que no críe zancudos."
+      },
+      "opcionB": {
+        "texto": "Cambiar hábitos y guardar agua en unas pocas canecas tapadas.",
+        "consecuencia": "Casi no gastan plata y aprenden a ahorrar agua, pero la reserva alcanza para poco si el corte dura varios días."
+      }
+    },
+    {
+      "id": "8_world_5_sit_3",
+      "enunciado": "Tu mejor amigo te pide prestados 30.000 pesos para una salida y dice que te los paga en un mes. Una vez ya se demoró en pagarte, y esa plata es tu ahorro para el regalo de tu mamá.",
+      "opcionA": {
+        "texto": "Prestarle la plata.",
+        "consecuencia": "Tu amigo puede ir a la salida y siente tu apoyo, pero si se demora otra vez, el regalo de tu mamá queda en riesgo y puede haber tensión entre ustedes."
+      },
+      "opcionB": {
+        "texto": "Decirle que esta vez no puedes.",
+        "consecuencia": "Tu ahorro para el regalo queda seguro, pero tu amigo puede sentirse mal y tendrán que hablar para que la amistad no se afecte."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

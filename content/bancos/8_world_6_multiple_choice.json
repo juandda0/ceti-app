@@ -1,0 +1,173 @@
+{
+  "bancoId": "8_world_6_multiple_choice",
+  "grado": "8",
+  "worldId": "world_6",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "8_world_6_multiple_choice_1",
+      "enunciado": "¿Qué indicador muestra cuántas de las personas que quieren trabajar no consiguen empleo?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "La tasa de desempleo mide qué parte de quienes buscan trabajo no lo consigue.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-89-1",
+      "opciones": [
+        "La inflación",
+        "La tasa de desempleo",
+        "El precio del dólar",
+        "El número de impuestos"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "8_world_6_multiple_choice_2",
+      "enunciado": "En un barrio, de cada 10 personas que quieren trabajar, 3 no consiguen empleo. ¿Cuál es la tasa de desempleo?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "3 de cada 10 es lo mismo que 30 de cada 100, es decir, el 30 %.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-89-1",
+      "opciones": [
+        "3 %",
+        "7 %",
+        "30 %",
+        "70 %"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "8_world_6_multiple_choice_3",
+      "enunciado": "¿Para qué sirven principalmente los impuestos?",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Con los impuestos el Estado financia lo que usamos entre todos y que da bienestar a la comunidad.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-89-1",
+      "opciones": [
+        "Para pagar bienes y servicios de todos, como colegios públicos, hospitales y vías",
+        "Para que el Banco de la República pueda emitir más billetes",
+        "Para guardar el ahorro de cada familia",
+        "Para pagar las deudas personales de los ciudadanos"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "8_world_6_multiple_choice_4",
+      "enunciado": "Si muchas personas y empresas no pagan los impuestos que les corresponden, ¿qué es lo más probable?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "La evasión deja al Estado con menos recursos para servicios y hace más pesada la carga de quienes cumplen.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-89-1",
+      "opciones": [
+        "Que haya más plata para hospitales y colegios",
+        "Que bajen todos los precios",
+        "Que el Banco de la República suba los sueldos",
+        "Que haya menos plata para servicios públicos y la carga recaiga en quienes sí pagan"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "8_world_6_multiple_choice_5",
+      "enunciado": "¿Cuál de estas ideas hace que un impuesto sea más equitativo?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Un impuesto es más equitativo cuando cada quien aporta según su capacidad: quien tiene más, aporta más.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-89-2",
+      "opciones": [
+        "Que todos paguen la misma cantidad, sin importar cuánto ganan",
+        "Que quien tiene más ingresos o bienes aporte una parte mayor",
+        "Que se cobre más a los alimentos básicos de la canasta familiar",
+        "Que se cobre solo a quienes compran en las tiendas de barrio"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "8_world_6_multiple_choice_6",
+      "enunciado": "En un municipio mucha gente no paga el impuesto predial porque es complicado hacerlo. ¿Qué propuesta lo vuelve más eficiente?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Facilitar el pago y mostrar en qué se usa hace que más gente cumpla, y se recauda más sin subir el impuesto.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-89-2",
+      "opciones": [
+        "Permitir pagarlo de forma sencilla y explicar en qué se invierte",
+        "Subirlo al doble para todos",
+        "Cobrarlo solo una vez cada diez años",
+        "Dejar de cobrarlo y no volver a arreglar las vías"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "8_world_6_multiple_choice_7",
+      "enunciado": "¿Cuál de estas acciones es consumo responsable?",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Reparar alarga la vida de las cosas, ahorra plata y produce menos basura.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-89-2",
+      "opciones": [
+        "Comprar ropa nueva cada mes aunque tengas suficiente",
+        "Pedir una bolsa plástica nueva en cada compra",
+        "Reparar tus zapatos antes de comprar otros",
+        "Comprar en cantidad aunque se dañe la mitad"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "8_world_6_multiple_choice_8",
+      "enunciado": "Cuando los precios suben mucho, las familias pierden poder de compra. ¿Qué entidad trabaja para mantener la inflación baja y estable en Colombia?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "El Banco de la República tiene la tarea de controlar la inflación para proteger el poder de compra.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-2",
+      "opciones": [
+        "El Congreso de la República",
+        "Los bancos comerciales",
+        "El Banco de la República",
+        "Las alcaldías"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "8_world_6_multiple_choice_9",
+      "enunciado": "En un municipio, la mayoría de la gente trabaja en turismo, restaurantes y transporte. ¿Qué sector económico es el más importante allí?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Turismo, restaurantes y transporte son servicios, es decir, sector terciario.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-1",
+      "opciones": [
+        "El sector terciario o de servicios",
+        "El sector primario",
+        "El sector secundario",
+        "Ninguno, porque el turismo no es un sector"
+      ],
+      "correctIndex": 0,
+      "prueba": true
+    },
+    {
+      "id": "8_world_6_multiple_choice_10",
+      "enunciado": "¿Para qué sirve conocer la tasa de desempleo de tu ciudad?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Un indicador como el desempleo muestra cómo está la economía del entorno y ayuda a tomar decisiones.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-89-1",
+      "opciones": [
+        "Para saber el precio del pan",
+        "Para calcular cuántos impuestos paga cada persona",
+        "Para saber cuánta plata tiene ahorrada cada familia",
+        "Para saber si es fácil o difícil conseguir trabajo allí y orientar decisiones"
+      ],
+      "correctIndex": 3,
+      "prueba": true
+    }
+  ]
+}

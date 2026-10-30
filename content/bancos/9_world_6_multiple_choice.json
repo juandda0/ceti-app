@@ -1,0 +1,173 @@
+{
+  "bancoId": "9_world_6_multiple_choice",
+  "grado": "9",
+  "worldId": "world_6",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "9_world_6_multiple_choice_1",
+      "enunciado": "Don Efraín cultiva papa en una vereda de Boyacá y la vende en la plaza del pueblo. ¿A qué sector económico pertenece cultivar la papa?",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Cultivar, pescar o extraer minerales es sector primario: se obtiene el recurso directamente de la naturaleza.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-1",
+      "opciones": [
+        "Al sector primario, porque obtiene el producto directamente de la naturaleza",
+        "Al sector secundario, porque produce un alimento",
+        "Al sector terciario, porque después vende la papa",
+        "A ningún sector, porque es un trabajo en el campo"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "9_world_6_multiple_choice_2",
+      "enunciado": "¿Cuál de estas actividades pertenece al sector terciario o de servicios?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Transportar personas es un servicio; pescar y extraer carbón son del sector primario, y fabricar ladrillos es del secundario.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-1",
+      "opciones": [
+        "Pescar en el océano Pacífico",
+        "Fabricar ladrillos en una ladrillera",
+        "Llevar pasajeros en una ruta de bus",
+        "Extraer carbón de una mina"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "9_world_6_multiple_choice_3",
+      "enunciado": "Una helada daña buena parte de las cosechas de papa del altiplano, pero las familias siguen queriendo comprar la misma cantidad. ¿Qué es lo más probable que pase con el precio de la papa?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Cuando un bien se vuelve escaso y la gente lo sigue queriendo igual, su precio tiende a subir.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-1",
+      "opciones": [
+        "Que baje, porque la papa dañada se vende más barata",
+        "Que suba, porque hay menos papa para la misma demanda",
+        "Que se quede igual, porque los precios no dependen de las cosechas",
+        "Que suba solo en los supermercados y no en las plazas"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "9_world_6_multiple_choice_4",
+      "enunciado": "Tu mesada sigue siendo de 20.000 pesos al mes, pero en el último año subieron los precios de casi todo lo que compras. ¿Qué le pasó a tu poder de compra?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Si los precios suben y tu ingreso no, cada peso alcanza para menos: tu poder de compra baja.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-2",
+      "opciones": [
+        "Subió, porque sigues recibiendo la misma plata",
+        "Quedó igual, porque la mesada no cambió",
+        "No cambió, porque solo afecta a quien tiene un trabajo",
+        "Bajó, porque con la misma plata ahora compras menos cosas"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "9_world_6_multiple_choice_5",
+      "enunciado": "En tu municipio la tasa de desempleo subió en el último año. ¿Qué te dice ese indicador?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "La tasa de desempleo mide qué parte de las personas que quieren trabajar y buscan empleo no lo consigue.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-89-1",
+      "opciones": [
+        "Que una mayor parte de quienes buscan trabajo no lo encuentra",
+        "Que hay más personas trabajando que el año pasado",
+        "Que los precios de los alimentos subieron",
+        "Que ahora hay menos personas en edad de trabajar"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "9_world_6_multiple_choice_6",
+      "enunciado": "La tienda escolar quiere reducir la basura que se produce en el recreo. ¿Cuál propuesta es de producción y consumo responsables?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Reutilizar envases y separar residuos reduce la basura; las otras opciones aumentan el consumo o los desechos.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-89-2",
+      "opciones": [
+        "Entregar una bolsa plástica con cada compra",
+        "Vender más productos en paquetes individuales",
+        "Vender jugos en vasos retornables y poner puntos para separar residuos",
+        "Bajar los precios para que los estudiantes compren más"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "9_world_6_multiple_choice_7",
+      "enunciado": "Un negocio vende sin factura para no pagar el IVA que ya les cobró a sus clientes en el precio. ¿Qué efecto tiene esa evasión?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "La evasión es ilegal: deja menos plata para lo público y pone a competir en desventaja a quienes cumplen.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-89-1",
+      "opciones": [
+        "Ninguno, porque el IVA lo pagan los clientes y no el negocio",
+        "El Estado recibe menos recursos para servicios públicos y los negocios que sí pagan quedan en desventaja",
+        "Los precios de todo el barrio bajan, porque hay más competencia",
+        "Solo afecta al dueño del negocio si lo descubren"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "9_world_6_multiple_choice_8",
+      "enunciado": "Según la Constitución, el sistema de impuestos de Colombia se basa en la equidad, la eficiencia y la progresividad. ¿Qué significa que un impuesto sea progresivo?",
+      "competencia": "economia",
+      "dificultad": 4,
+      "explicacion": "Un impuesto progresivo cobra un porcentaje más alto a quien tiene más capacidad de pago.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-89-2",
+      "opciones": [
+        "Que todas las personas pagan exactamente la misma cantidad de pesos",
+        "Que el impuesto sube automáticamente cada año",
+        "Que solo lo pagan las empresas y no las personas",
+        "Que quien tiene más ingresos paga una proporción mayor de ellos"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "9_world_6_multiple_choice_9",
+      "enunciado": "¿Cuál de estas situaciones describe mejor la inflación?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "La inflación es un aumento generalizado y sostenido de los precios, no el cambio de precio de un solo producto.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-2",
+      "opciones": [
+        "El mango baja de precio en cosecha y sube cuando se acaba",
+        "Una tienda sube el precio de un solo producto",
+        "Durante un año suben, poco a poco, los precios de casi todo lo que compran las familias",
+        "Tu familia gana más plata este año que el anterior"
+      ],
+      "correctIndex": 2,
+      "prueba": true
+    },
+    {
+      "id": "9_world_6_multiple_choice_10",
+      "enunciado": "Las familias de tu barrio pagan el impuesto predial por sus casas. ¿Para qué debe usarse principalmente ese dinero?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "El predial es un impuesto municipal: financia lo público que usa la comunidad.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-89-1",
+      "opciones": [
+        "Para financiar obras y servicios públicos del municipio, como vías, parques y colegios",
+        "Para pagar las deudas personales de los dueños de las casas",
+        "Para que el Banco de la República emita más billetes",
+        "Para guardarlo en una cuenta sin usarlo nunca"
+      ],
+      "correctIndex": 0,
+      "prueba": true
+    }
+  ]
+}

@@ -10,6 +10,8 @@
       "competencia": "ahorro",
       "dificultad": 3,
       "explicacion": "El fondo de emergencia existe para cubrir gastos imprevistos sin recurrir a deudas.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "opciones": [
         "Cubrir gastos imprevistos sin tener que endeudarse",
         "Comprar bienes de lujo planificados",
@@ -24,6 +26,8 @@
       "competencia": "ahorro",
       "dificultad": 3,
       "explicacion": "Una meta clara es específica, medible y tiene un plazo definido, lo que facilita seguirla.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "opciones": [
         "Es vaga y se ajusta cada semana al estado de ánimo",
         "Es específica, medible y tiene un plazo definido",
@@ -38,6 +42,8 @@
       "competencia": "ahorro",
       "dificultad": 3,
       "explicacion": "Es renunciar a un gusto inmediato para alcanzar un beneficio mayor en el futuro.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "opciones": [
         "Gastar de inmediato para no perder la oportunidad",
         "Pedir prestado para satisfacer un deseo ahora",
@@ -52,6 +58,8 @@
       "competencia": "ahorro",
       "dificultad": 3,
       "explicacion": "El corto plazo busca metas cercanas y accesibles; el largo plazo, objetivos lejanos que requieren constancia.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "opciones": [
         "El corto plazo siempre rinde más que el largo plazo",
         "El largo plazo no necesita ninguna meta",
@@ -66,6 +74,8 @@
       "competencia": "ahorro",
       "dificultad": 3,
       "explicacion": "Ahorrar de forma constante y repetida fortalece la disciplina y produce resultados sostenidos.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-2",
       "opciones": [
         "Porque la constancia repetida produce resultados sostenidos",
         "Porque solo se ahorra una vez en la vida",
@@ -80,6 +90,8 @@
       "competencia": "ahorro",
       "dificultad": 3,
       "explicacion": "Separar el ahorro apenas se recibe el ingreso evita gastarlo antes de reservarlo.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-2",
       "opciones": [
         "Esperar a ver qué sobra al final para ahorrarlo",
         "Separar el ahorro tan pronto se recibe el ingreso",
@@ -94,6 +106,8 @@
       "competencia": "ahorro",
       "dificultad": 3,
       "explicacion": "Una meta cercana en el tiempo corresponde al ahorro a corto plazo.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "opciones": [
         "Ahorro a largo plazo para la jubilación",
         "Fondo de emergencia exclusivamente",
@@ -108,11 +122,47 @@
       "competencia": "ahorro",
       "dificultad": 3,
       "explicacion": "Resistir un impulso de gasto para seguir avanzando hacia una meta muestra autocontrol financiero.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "opciones": [
         "Compra todo lo que desea apenas lo ve",
         "Abandona sus metas ante el primer antojo",
         "Cambia de meta cada vez que aparece una promoción",
         "Resiste un impulso de gasto para seguir hacia su meta"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "10_world_3_multiple_choice_9",
+      "enunciado": "¿Cómo ayuda al país que muchas familias ahorren en entidades financieras vigiladas?",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Las entidades prestan ese ahorro a empresas y proyectos, lo que financia inversión y empleo en el país.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
+      "prueba": true,
+      "opciones": [
+        "El dinero queda quieto sin uso hasta que lo retiren",
+        "Ese ahorro se presta a empresas y proyectos que generan inversión y empleo",
+        "Hace que los precios suban siempre",
+        "Solo beneficia a las entidades y a nadie más"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "10_world_3_multiple_choice_10",
+      "enunciado": "¿Qué medida ayudaría más a subir el ahorro de los hogares de un país?",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "La educación financiera y el acceso a cuentas de bajo costo facilitan que más hogares ahorren de forma segura.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-2",
+      "prueba": true,
+      "opciones": [
+        "Aumentar la publicidad que invita a comprar a crédito",
+        "Cerrar las entidades financieras pequeñas",
+        "Que el Banco de la República regale dinero a cada familia",
+        "Enseñar educación financiera y facilitar cuentas de ahorro de bajo costo"
       ],
       "correctIndex": 3
     }

@@ -1,0 +1,173 @@
+{
+  "bancoId": "11_world_6_multiple_choice",
+  "grado": "11",
+  "worldId": "world_6",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "11_world_6_multiple_choice_1",
+      "enunciado": "En un año, el PIB nominal de un país creció 8 % y los precios subieron en promedio 6 %. ¿Cuánto creció, aproximadamente, la producción real?",
+      "competencia": "economia",
+      "dificultad": 4,
+      "explicacion": "El crecimiento real descuenta la subida de precios: 8 % de crecimiento nominal menos 6 % de precios deja cerca de 2 % de producción adicional.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-1011-2",
+      "opciones": [
+        "Cerca de 8 %",
+        "Cerca de 14 %",
+        "Cerca de 2 %",
+        "Cerca de 6 %"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "11_world_6_multiple_choice_2",
+      "enunciado": "¿Por qué se usa el PIB real, y no el nominal, para saber si una economía de verdad creció?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "El PIB nominal puede subir solo porque los precios subieron; el real mide la producción a precios constantes.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-1011-2",
+      "opciones": [
+        "Porque el real quita el efecto de la subida de precios y muestra si se produjo más",
+        "Porque el real incluye la economía informal y el nominal no",
+        "Porque el real se calcula en dólares y el nominal en pesos",
+        "Porque el nominal solo cuenta lo que produce el Estado"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "11_world_6_multiple_choice_3",
+      "enunciado": "Dos municipios tienen el mismo PIB per cápita. En el municipio A, el 10 % más rico recibe la mitad del ingreso; en el B, el ingreso se reparte de forma más pareja. ¿Qué esperas de sus coeficientes de Gini?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "El Gini mide la concentración del ingreso: donde pocos reciben mucho, el Gini es más alto, sin importar el promedio.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-1011-1",
+      "opciones": [
+        "Que sean iguales, porque el PIB per cápita es el mismo",
+        "Que el Gini de A sea más alto que el de B",
+        "Que el Gini de B sea más alto que el de A",
+        "Que no se pueda saber nada sin conocer la inflación"
+      ],
+      "correctIndex": 1,
+      "prueba": true
+    },
+    {
+      "id": "11_world_6_multiple_choice_4",
+      "enunciado": "En una recesión, ¿por qué suelen verse más afectados los hogares de menores ingresos?",
+      "competencia": "economia",
+      "dificultad": 4,
+      "explicacion": "Con poco colchón de ahorro y empleos menos estables, una caída de la economía golpea más fuerte a esos hogares.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-1011-1",
+      "opciones": [
+        "Porque pagan más impuesto de renta que los demás hogares",
+        "Porque en toda recesión la inflación se dispara",
+        "Porque el Banco de la República les cobra intereses más altos",
+        "Porque tienen menos ahorros y suelen depender de trabajos más inestables o informales"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "11_world_6_multiple_choice_5",
+      "enunciado": "Un municipio con buena agua y suelos fértiles vende su fruta sin procesar y compra afuera la pulpa empacada. ¿Qué análisis ayuda más a decidir cómo aprovechar mejor sus recursos?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Usar bien los recursos exige comparar beneficios y costos de las alternativas, como transformar la fruta en el mismo municipio.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-1",
+      "opciones": [
+        "Evaluar si procesar la fruta allí agregaría valor y empleo, y cuánto costaría hacerlo",
+        "Dejar de cultivar fruta porque se vende barata",
+        "Seguir comprando la pulpa afuera porque es más cómodo",
+        "Sembrar el doble de fruta sin estudiar si hay compradores"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "11_world_6_multiple_choice_6",
+      "enunciado": "La caseta comunal de tu barrio pasa vacía casi toda la semana. ¿Qué estrategia de la junta de acción comunal aprovecha mejor ese recurso para la comunidad?",
+      "competencia": "economia",
+      "dificultad": 4,
+      "explicacion": "Organizar usos variados con reglas y un aporte para mantenerla multiplica el beneficio para la comunidad y la conserva.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-2",
+      "opciones": [
+        "Alquilarla todo el año a una sola empresa sin consultar a los vecinos",
+        "Cerrarla con candado para que no se deteriore",
+        "Dejar que la use quien llegue primero, sin reglas",
+        "Programar horarios para un preuniversitario, emprendimientos del barrio y grupos de adultos mayores, con un aporte para mantenimiento"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "11_world_6_multiple_choice_7",
+      "enunciado": "Un grupo de ciudadanos escribió un proyecto de acuerdo municipal y quiere que el concejo lo debata. ¿Qué mecanismo de participación les permite presentarlo?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "La iniciativa popular permite a los ciudadanos presentar proyectos de ley, ordenanza o acuerdo ante la corporación que los debe debatir.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-1011-1",
+      "opciones": [
+        "La revocatoria del mandato",
+        "El derecho de petición",
+        "La iniciativa popular normativa, con las firmas de apoyo que exige la ley",
+        "La consulta popular"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "11_world_6_multiple_choice_8",
+      "enunciado": "¿Qué hace una veeduría ciudadana?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Las veedurías son grupos de ciudadanos que hacen control social a la gestión pública; no aprueban presupuestos ni juzgan.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-1011-1",
+      "opciones": [
+        "Aprueba el presupuesto del municipio",
+        "Vigila cómo se ejecutan los recursos y los proyectos públicos",
+        "Juzga y condena a los funcionarios que cometen delitos",
+        "Recauda los impuestos locales"
+      ],
+      "correctIndex": 1,
+      "prueba": true
+    },
+    {
+      "id": "11_world_6_multiple_choice_9",
+      "enunciado": "La economía entra en recesión y la inflación está baja y estable. ¿Qué medida suele considerar el Banco de la República para estimular la economía?",
+      "competencia": "economia",
+      "dificultad": 5,
+      "explicacion": "Una tasa más baja abarata el crédito y anima el consumo y la inversión; subir impuestos no es una herramienta del Banco de la República.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-1011-2",
+      "opciones": [
+        "Bajar su tasa de interés de política monetaria",
+        "Subir su tasa de interés de política monetaria",
+        "Subir el IVA para recaudar más",
+        "Imprimir billetes para pagar las deudas del Gobierno"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "11_world_6_multiple_choice_10",
+      "enunciado": "Una estudiante propone eliminar un impuesto municipal para ayudar a los comerciantes. ¿Qué pregunta debe responder para que su propuesta sea responsable?",
+      "competencia": "economia",
+      "dificultad": 4,
+      "explicacion": "Toda propuesta sobre impuestos debe explicar cómo se financiará lo público y quiénes ganan o pierden con el cambio.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-1011-2",
+      "opciones": [
+        "¿Cuántas personas le dan «me gusta» a la idea en redes sociales?",
+        "¿Qué impuestos se cobran en un país lejano?",
+        "¿Cómo se reemplazaría lo que ese impuesto financia y a quién afectaría el cambio?",
+        "¿En qué año se creó ese impuesto?"
+      ],
+      "correctIndex": 2
+    }
+  ]
+}

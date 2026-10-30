@@ -1,0 +1,44 @@
+{
+  "bancoId": "4_world_6",
+  "grado": "4",
+  "worldId": "world_6",
+  "situaciones": [
+    {
+      "id": "4_world_6_sit_1",
+      "enunciado": "La junta del barrio tiene dinero para una sola obra: arreglar el parque o poner luces en una calle oscura.",
+      "opcionA": {
+        "texto": "Arreglar el parque.",
+        "consecuencia": "Niños y familias tienen un lugar bonito para jugar y compartir. Pero la calle sigue oscura y de noche da miedo pasar por ahí."
+      },
+      "opcionB": {
+        "texto": "Poner luces en la calle.",
+        "consecuencia": "La gente camina más tranquila de noche. Pero el parque sigue dañado y los niños tienen menos dónde jugar."
+      }
+    },
+    {
+      "id": "4_world_6_sit_2",
+      "enunciado": "Tu curso ganó dinero vendiendo empanadas. Hay dos ideas: hacer un paseo del curso o comprar libros para la biblioteca.",
+      "opcionA": {
+        "texto": "Hacer el paseo.",
+        "consecuencia": "Pasan un día muy feliz y el grupo se une más. Pero la biblioteca sigue con pocos libros."
+      },
+      "opcionB": {
+        "texto": "Comprar los libros.",
+        "consecuencia": "Todos los cursos pueden leer libros nuevos por mucho tiempo. Pero no hay paseo y algunos se quedan con las ganas."
+      }
+    },
+    {
+      "id": "4_world_6_sit_3",
+      "enunciado": "Una fábrica quiere llegar a tu pueblo. Daría trabajo a muchas personas, pero usaría mucha agua del río.",
+      "opcionA": {
+        "texto": "Apoyar que llegue la fábrica.",
+        "consecuencia": "Muchas familias tendrían trabajo e ingresos. Pero podría quedar menos agua para los cultivos y la naturaleza."
+      },
+      "opcionB": {
+        "texto": "Pedir que no llegue por ahora.",
+        "consecuencia": "El río conserva su agua para todos. Pero se pierden esos trabajos y algunas familias siguen buscando empleo."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

@@ -1,0 +1,71 @@
+{
+  "bancoId": "8_world_1_true_false",
+  "grado": "8",
+  "worldId": "world_1",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "8_world_1_true_false_1",
+      "enunciado": "La pesca y la minería hacen parte del sector primario porque sacan recursos de la naturaleza.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Verdadero: el sector primario obtiene recursos directamente de la naturaleza.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-1",
+      "respuesta": true
+    },
+    {
+      "id": "8_world_1_true_false_2",
+      "enunciado": "Un peluquero trabaja en el sector secundario porque transforma el cabello.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Falso: cortar el cabello es un servicio, así que pertenece al sector terciario.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-1",
+      "respuesta": false
+    },
+    {
+      "id": "8_world_1_true_false_3",
+      "enunciado": "Si los precios suben y tu mesada sigue igual, con la misma plata puedes comprar más cosas.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Falso: si los precios suben y tu mesada no, compras menos cosas con la misma plata.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-2",
+      "respuesta": false
+    },
+    {
+      "id": "8_world_1_true_false_4",
+      "enunciado": "Cuando un bien escasea y mucha gente lo sigue buscando, su precio tiende a subir.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Verdadero: la escasez de algo que la gente quiere empuja su precio hacia arriba.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-1",
+      "respuesta": true
+    },
+    {
+      "id": "8_world_1_true_false_5",
+      "enunciado": "Revisar en familia en qué se gastó la plata del mes ayuda a encontrar gastos que se pueden recortar.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Verdadero: revisar juntos los gastos muestra qué hábitos se pueden mejorar.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-89-1",
+      "respuesta": true
+    },
+    {
+      "id": "8_world_1_true_false_6",
+      "enunciado": "Comprar por impulso cada vez que algo está en oferta es un hábito financiero responsable.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Falso: una oferta solo es buena si compras algo que de verdad necesitas y que cabe en tu plata.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-89-2",
+      "respuesta": false
+    }
+  ]
+}

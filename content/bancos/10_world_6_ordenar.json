@@ -1,0 +1,143 @@
+{
+  "bancoId": "10_world_6_ordenar",
+  "grado": "10",
+  "worldId": "world_6",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "10_world_6_ordenar_1",
+      "enunciado": "Ordena las fases del ciclo económico, empezando por la expansión.",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "La economía crece hasta un pico, luego se contrae hasta un punto bajo y después se recupera.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-1011-2",
+      "elementos": [
+        "Contracción: la producción y el empleo empiezan a caer",
+        "Recuperación: la producción vuelve a crecer",
+        "Expansión: la producción y el empleo crecen",
+        "Valle: la economía toca su punto más bajo",
+        "Auge: la economía llega a su punto más alto"
+      ],
+      "ordenCanonico": [
+        2,
+        4,
+        0,
+        3,
+        1
+      ]
+    },
+    {
+      "id": "10_world_6_ordenar_2",
+      "enunciado": "Ordena los pasos para analizar cómo se reparte el ingreso en tu municipio.",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Primero necesitas los datos, luego los ordenas, calculas cuánto recibe cada grupo y al final comparas.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-1011-1",
+      "elementos": [
+        "Calcular qué parte del ingreso total recibe cada grupo de hogares",
+        "Reunir datos de ingresos de los hogares de una fuente confiable",
+        "Comparar el resultado con otros municipios o con años anteriores",
+        "Ordenar los hogares de menor a mayor ingreso"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "10_world_6_ordenar_3",
+      "enunciado": "Ordena los pasos para analizar cómo se usa un recurso de tu colegio, como el agua.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Sin medir no sabes dónde está el desperdicio; después propones cambios y compruebas si funcionaron.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-1",
+      "elementos": [
+        "Identificar dónde se desperdicia",
+        "Volver a medir para ver si los cambios funcionaron",
+        "Medir cuánto se usa y en qué",
+        "Proponer cambios para usarlo mejor"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        3,
+        1
+      ]
+    },
+    {
+      "id": "10_world_6_ordenar_4",
+      "enunciado": "Ordena los pasos para montar una huerta comunitaria en un lote vacío del barrio.",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Una estrategia comunitaria parte de un diagnóstico, se organiza con acuerdos, se ejecuta y se evalúa.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-2",
+      "elementos": [
+        "Evaluar la cosecha y decidir cómo repartir o vender lo producido",
+        "Acordar con los vecinos metas, tareas y responsables",
+        "Hacer un diagnóstico de lo que hay: el lote, el agua y las personas dispuestas",
+        "Sembrar y cuidar la huerta según lo acordado"
+      ],
+      "ordenCanonico": [
+        2,
+        1,
+        3,
+        0
+      ]
+    },
+    {
+      "id": "10_world_6_ordenar_5",
+      "enunciado": "Ordena el proceso de un presupuesto participativo en tu comuna.",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Primero se conoce el monto, luego se proponen y votan proyectos, se ejecutan y la comunidad vigila.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-1011-1",
+      "elementos": [
+        "Los ciudadanos hacen seguimiento a la ejecución",
+        "La comunidad vota las propuestas prioritarias",
+        "La alcaldía informa cuánto dinero se puede decidir",
+        "La alcaldía ejecuta los proyectos elegidos",
+        "Los vecinos presentan propuestas en asambleas"
+      ],
+      "ordenCanonico": [
+        2,
+        4,
+        1,
+        3,
+        0
+      ]
+    },
+    {
+      "id": "10_world_6_ordenar_6",
+      "enunciado": "Ordena los pasos para que una propuesta ciudadana de política económica sea sólida.",
+      "competencia": "economia",
+      "dificultad": 4,
+      "explicacion": "Primero se entiende el problema, luego se comparan soluciones, se presenta a quien decide y se hace seguimiento.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-1011-2",
+      "elementos": [
+        "Presentar la mejor alternativa a la autoridad que puede decidirla",
+        "Describir el problema con datos",
+        "Hacer seguimiento a lo que se decida",
+        "Comparar alternativas según sus costos y beneficios",
+        "Identificar sus causas y a quiénes afecta"
+      ],
+      "ordenCanonico": [
+        1,
+        4,
+        3,
+        0,
+        2
+      ]
+    }
+  ]
+}

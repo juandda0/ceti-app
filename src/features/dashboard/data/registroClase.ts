@@ -31,6 +31,8 @@ export interface RespuestaIntento {
   /** Lo que eligió (texto de la opción, verdadero/falso, u orden "2-0-1"). */
   r: string;
   ms: number;
+  /** Desempeño del MEN de la pregunta (Fase 7), si la pregunta lo trae. */
+  d?: string;
 }
 
 export interface IntentoClase {
@@ -61,6 +63,7 @@ export function construirIntento(input: {
     ok: r.correcta,
     r: r.respuesta.slice(0, 80),
     ms: Math.min(MAX_MS_RESPUESTA, Math.max(0, Math.round(r.ms))),
+    ...(r.desempeno ? { d: r.desempeno.slice(0, 20) } : {}),
   }));
   const finAt = Math.max(registro.finAt, registro.inicioAt);
   return {

@@ -1,0 +1,71 @@
+{
+  "bancoId": "6_world_3_true_false",
+  "grado": "6",
+  "worldId": "world_3",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "6_world_3_true_false_1",
+      "enunciado": "Ahorrar lo que te sobra al final del mes funciona mejor que apartar el ahorro apenas recibes la plata.",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Falso: si esperas a ver qué sobra, muchas veces no sobra nada; es mejor apartarlo primero.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-67-1",
+      "respuesta": false
+    },
+    {
+      "id": "6_world_3_true_false_2",
+      "enunciado": "Una meta de ahorro clara dice qué quieres, cuánto cuesta y para cuándo lo quieres.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Verdadero: con esos tres datos puedes calcular cuánto apartar cada semana.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-67-1",
+      "respuesta": true
+    },
+    {
+      "id": "6_world_3_true_false_3",
+      "enunciado": "Guardar plata en una cuenta de ahorros es ahorro formal; guardarla en una alcancía es ahorro informal.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Verdadero: la cuenta está en una entidad vigilada; la alcancía depende solo de ti.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-67-1",
+      "respuesta": true
+    },
+    {
+      "id": "6_world_3_true_false_4",
+      "enunciado": "En un ahorro de curso, es mejor que solo una persona sepa cuánta plata hay.",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Falso: cuando todos pueden ver las cuentas, hay más confianza y menos problemas.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-67-2",
+      "respuesta": false
+    },
+    {
+      "id": "6_world_3_true_false_5",
+      "enunciado": "Una venta en la feria del colegio puede ayudar a un curso a llegar a su meta de ahorro.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Verdadero: la ganancia de la venta se suma a los aportes y acerca la meta.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-67-2",
+      "respuesta": true
+    },
+    {
+      "id": "6_world_3_true_false_6",
+      "enunciado": "Para ahorrar en grupo no hace falta ponerse de acuerdo en una meta.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Falso: sin una meta común, cada uno aporta distinto y no se sabe cuándo se termina.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-67-2",
+      "respuesta": false
+    }
+  ]
+}

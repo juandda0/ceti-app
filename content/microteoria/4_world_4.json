@@ -1,0 +1,23 @@
+{
+  "grado": "4",
+  "worldId": "world_4",
+  "cards": [
+    {
+      "titulo": "¿Qué es un préstamo?",
+      "cuerpo": "Un préstamo es recibir dinero o una cosa con el compromiso de devolverlo en un tiempo acordado. Cuando un banco o una cooperativa presta dinero, cobra un interés: un dinero extra por usar la plata de otro durante un tiempo.",
+      "ejemplo": "Felipe le pidió prestado a su hermana para un balón y le pagó todo el viernes, como lo prometió."
+    },
+    {
+      "titulo": "¿Cuándo pedir prestado?",
+      "cuerpo": "Pedir prestado tiene sentido para algo importante que no puede esperar, y solo si podrás devolverlo a tiempo. Para un antojo, casi siempre es mejor esperar y ahorrar.",
+      "ejemplo": "Arreglar la bicicleta con la que vas al colegio puede justificar un préstamo; unos dulces, no."
+    },
+    {
+      "titulo": "Bancos y cooperativas",
+      "cuerpo": "Los bancos y las cooperativas de ahorro y crédito guardan ahorros y hacen préstamos. Piden requisitos, como documentos y mostrar que podrás pagar. Ahorrar ahí protege tu dinero, pero puede tener cobros por algunos servicios. La tarjeta de crédito también es un préstamo.",
+      "ejemplo": "Antes de abrir su cuenta, Laura y su mamá compararon qué cobraba y qué pedía cada entidad."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

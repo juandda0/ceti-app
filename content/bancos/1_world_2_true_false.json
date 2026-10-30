@@ -1,0 +1,71 @@
+{
+  "bancoId": "1_world_2_true_false",
+  "grado": "1",
+  "worldId": "world_2",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "1_world_2_true_false_1",
+      "enunciado": "Un juguete nuevo es una necesidad.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Falso: un juguete es un deseo; podemos vivir sin él.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-13-2",
+      "respuesta": false
+    },
+    {
+      "id": "1_world_2_true_false_2",
+      "enunciado": "Tener un techo para dormir es una necesidad.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Verdadero: todos necesitamos una casa donde dormir.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-13-2",
+      "respuesta": true
+    },
+    {
+      "id": "1_world_2_true_false_3",
+      "enunciado": "La luz y el agua de la casa cuestan dinero.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Verdadero: la familia paga por la luz y el agua.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-13-1",
+      "respuesta": true
+    },
+    {
+      "id": "1_world_2_true_false_4",
+      "enunciado": "El dinero de la familia alcanza para comprar todo lo que queremos.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Falso: el dinero tiene un límite, por eso se escoge en qué usarlo.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-13-3",
+      "respuesta": false
+    },
+    {
+      "id": "1_world_2_true_false_5",
+      "enunciado": "Antes de comprar, es bueno pensar si es necesidad o deseo.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Verdadero: así el dinero alcanza para lo importante.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-13-3",
+      "respuesta": true
+    },
+    {
+      "id": "1_world_2_true_false_6",
+      "enunciado": "La comida de la casa llega gratis.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Falso: la familia compra la comida con el dinero de su trabajo.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-13-1",
+      "respuesta": false
+    }
+  ]
+}

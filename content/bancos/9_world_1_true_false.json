@@ -10,6 +10,8 @@
       "competencia": "ingreso",
       "dificultad": 1,
       "explicacion": "Por definición, el ingreso es el dinero que entra a una persona u hogar.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-89-1",
       "respuesta": true
     },
     {
@@ -18,6 +20,8 @@
       "competencia": "ingreso",
       "dificultad": 1,
       "explicacion": "Una necesidad es indispensable para vivir; un deseo es algo que quieres pero no es esencial.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-89-2",
       "respuesta": false
     },
     {
@@ -26,6 +30,8 @@
       "competencia": "ingreso",
       "dificultad": 1,
       "explicacion": "La mesada es dinero que el estudiante recibe de manera periódica, por lo que es una fuente de ingreso.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-89-1",
       "respuesta": true
     },
     {
@@ -34,6 +40,8 @@
       "competencia": "ingreso",
       "dificultad": 1,
       "explicacion": "El dinero proviene del trabajo y otras fuentes de ingreso; no se genera por sí mismo.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-89-1",
       "respuesta": false
     },
     {
@@ -42,6 +50,8 @@
       "competencia": "ingreso",
       "dificultad": 1,
       "explicacion": "El valor del dinero está en su capacidad de intercambiarse por lo que las personas necesitan o desean.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-1",
       "respuesta": true
     },
     {
@@ -50,6 +60,8 @@
       "competencia": "ingreso",
       "dificultad": 1,
       "explicacion": "El trabajo, ya sea un empleo o un servicio prestado, es una fuente habitual de ingresos.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-89-1",
       "respuesta": true
     }
   ],

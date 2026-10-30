@@ -10,6 +10,8 @@
       "competencia": "ahorro",
       "dificultad": 2,
       "explicacion": "El propósito del fondo de emergencia es responder ante imprevistos; usarlo para gustos lo deja desprotegido.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
       "respuesta": true
     },
     {
@@ -18,6 +20,8 @@
       "competencia": "ahorro",
       "dificultad": 2,
       "explicacion": "No es renunciar para siempre, sino esperar el momento adecuado para obtener un beneficio mayor.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-1",
       "respuesta": false
     },
     {
@@ -26,6 +30,8 @@
       "competencia": "ahorro",
       "dificultad": 2,
       "explicacion": "Una meta concreta da motivación y sentido al esfuerzo, lo que ayuda a sostener el hábito.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
       "respuesta": true
     },
     {
@@ -34,6 +40,8 @@
       "competencia": "ahorro",
       "dificultad": 2,
       "explicacion": "El ahorro a largo plazo es para metas distantes; las metas cercanas corresponden al corto plazo.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
       "respuesta": false
     },
     {
@@ -42,6 +50,8 @@
       "competencia": "ahorro",
       "dificultad": 2,
       "explicacion": "La constancia hace que la conducta se vuelva automática y más fácil de mantener en el tiempo.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
       "respuesta": true
     },
     {
@@ -50,6 +60,8 @@
       "competencia": "ahorro",
       "dificultad": 2,
       "explicacion": "Esperar a lo que sobra suele dejar poco o nada; es más efectivo apartar el ahorro primero, antes de gastar.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-1",
       "respuesta": false
     }
   ],

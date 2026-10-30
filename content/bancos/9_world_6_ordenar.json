@@ -1,0 +1,139 @@
+{
+  "bancoId": "9_world_6_ordenar",
+  "grado": "9",
+  "worldId": "world_6",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "9_world_6_ordenar_1",
+      "enunciado": "Ordena la cadena del chocolate, desde el sector primario hasta el terciario.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Primero se obtiene el cacao (primario), luego se transforma (secundario) y al final se transporta y se vende (terciario).",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-1",
+      "elementos": [
+        "Transportar las chocolatinas a las tiendas",
+        "Cultivar y cosechar el cacao",
+        "Vender la chocolatina en la tienda del barrio",
+        "Convertir el cacao en chocolatinas en una fábrica"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "9_world_6_ordenar_2",
+      "enunciado": "Ordena lo que pasa cuando una sequía afecta los cultivos de tomate.",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "La sequía reduce la cosecha, el tomate escasea, sube su precio y las familias ajustan lo que compran.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-2",
+      "elementos": [
+        "Sube el precio del tomate",
+        "Se cosecha menos tomate",
+        "Las familias compran menos tomate o lo reemplazan",
+        "Llueve muy poco durante varios meses",
+        "Llega menos tomate a las plazas de mercado"
+      ],
+      "ordenCanonico": [
+        3,
+        1,
+        4,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "9_world_6_ordenar_3",
+      "enunciado": "Ordena los pasos para analizar la economía de tu municipio con un indicador.",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Primero defines la pregunta, luego buscas el dato confiable, lo comparas y al final concluyes.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-89-1",
+      "elementos": [
+        "Buscar el dato en una fuente oficial como el DANE",
+        "Sacar una conclusión y explicarla con el dato",
+        "Elegir qué quieres saber, por ejemplo si hay más o menos empleo",
+        "Comparar el dato con años anteriores o con otros municipios"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        3,
+        1
+      ]
+    },
+    {
+      "id": "9_world_6_ordenar_4",
+      "enunciado": "Ordena estas acciones de consumo responsable, de la que más evita residuos a la que menos.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Lo que más evita residuos es no generarlos; luego reutilizar, después reciclar, y botar sin separar es lo último.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-89-2",
+      "elementos": [
+        "Reciclar el envase en el punto ecológico",
+        "Botar el envase en la basura sin separar",
+        "Reducir: no comprar lo que no necesitas",
+        "Reutilizar el envase para otra cosa"
+      ],
+      "ordenCanonico": [
+        2,
+        3,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "9_world_6_ordenar_5",
+      "enunciado": "Ordena el recorrido del IVA que pagas al comprar un cuaderno en la papelería.",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "El IVA lo pagas en el precio, el negocio lo entrega a la DIAN, entra al presupuesto y se gasta en lo público.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-89-1",
+      "elementos": [
+        "El Estado lo usa en servicios como educación pública o vías",
+        "Pagas el cuaderno con el IVA incluido en el precio",
+        "El dinero entra al presupuesto de la Nación",
+        "La papelería declara y paga ese IVA a la DIAN"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "9_world_6_ordenar_6",
+      "enunciado": "Ordena los pasos para proponer, en un debate de clase, un impuesto más justo y eficiente.",
+      "competencia": "economia",
+      "dificultad": 4,
+      "explicacion": "Una buena propuesta parte de datos, define el problema, plantea el cambio y después comprueba que sea eficiente.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-89-2",
+      "elementos": [
+        "Identificar el problema, por ejemplo que pesa más sobre quien gana menos",
+        "Reunir datos sobre quién paga hoy el impuesto y cuánto",
+        "Revisar si la propuesta recauda lo necesario y es fácil de cobrar",
+        "Proponer un cambio con argumentos de equidad"
+      ],
+      "ordenCanonico": [
+        1,
+        0,
+        3,
+        2
+      ]
+    }
+  ]
+}

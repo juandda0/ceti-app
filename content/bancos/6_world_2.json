@@ -1,0 +1,44 @@
+{
+  "bancoId": "6_world_2",
+  "grado": "6",
+  "worldId": "world_2",
+  "situaciones": [
+    {
+      "id": "6_world_2_sit_1",
+      "enunciado": "Tu presupuesto de la semana tiene 5.000 pesos para gustos. En la tienda del barrio ves un álbum de láminas de 8.000 pesos que tus amigos ya están llenando.",
+      "opcionA": {
+        "texto": "Completar con 3.000 pesos de la plata del bus.",
+        "consecuencia": "Tienes el álbum hoy y lo llenas con tus amigos, pero un día de la semana te toca caminar o pedir que te lleven. Mover plata de una necesidad a un gusto te deja sin margen."
+      },
+      "opcionB": {
+        "texto": "Esperar a la próxima semana y juntar los 8.000 con la plata de gustos.",
+        "consecuencia": "Te toca esperar y ver a tus amigos avanzar sin ti unos días, pero compras el álbum sin descuadrar lo demás. Tu plan aguanta, aunque cuesta paciencia."
+      }
+    },
+    {
+      "id": "6_world_2_sit_2",
+      "enunciado": "Tu familia arma el presupuesto de diciembre. Después de cubrir las necesidades sobra un poco. Unos quieren viajar a visitar a los abuelos; otros, arreglar la nevera que está fallando.",
+      "opcionA": {
+        "texto": "Viajar a visitar a los abuelos.",
+        "consecuencia": "La familia comparte con los abuelos y guarda buenos recuerdos, pero la nevera sigue fallando y, si se daña del todo, arreglarla puede salir más caro después."
+      },
+      "opcionB": {
+        "texto": "Arreglar la nevera.",
+        "consecuencia": "La comida se conserva bien y evitan un daño mayor, pero el viaje se aplaza y la visita a los abuelos queda para otra ocasión."
+      }
+    },
+    {
+      "id": "6_world_2_sit_3",
+      "enunciado": "Tu hermana mayor consiguió trabajo y ahora aporta plata a la casa. En la reunión familiar discuten qué hacer con ese ingreso extra.",
+      "opcionA": {
+        "texto": "Usarlo para vivir un poco mejor ya: un mercado más variado y algún paseo.",
+        "consecuencia": "La familia nota el cambio de inmediato y se siente más contenta, pero no se crea un respaldo por si algún mes falta ese ingreso."
+      },
+      "opcionB": {
+        "texto": "Ahorrar la mayor parte para un fondo de emergencias.",
+        "consecuencia": "Cuesta no ver grandes cambios en el día a día, pero si alguien se enferma o se daña algo, la familia tiene con qué responder sin endeudarse."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

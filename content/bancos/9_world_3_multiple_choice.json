@@ -10,6 +10,8 @@
       "competencia": "ahorro",
       "dificultad": 2,
       "explicacion": "El fondo de emergencia es dinero reservado para imprevistos, no para gastos planeados ni para inversión.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
       "opciones": [
         "Un dinero guardado para gastos divertidos del fin de semana",
         "Un dinero reservado para imprevistos como una reparación urgente",
@@ -24,6 +26,8 @@
       "competencia": "ahorro",
       "dificultad": 2,
       "explicacion": "Una buena meta de ahorro es concreta y tiene un propósito y un plazo claros, lo que facilita mantener el hábito.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
       "opciones": [
         "Es concreta, con un propósito y un plazo claros",
         "Es vaga y sin fecha para cumplirla",
@@ -38,6 +42,8 @@
       "competencia": "ahorro",
       "dificultad": 2,
       "explicacion": "El ahorro a corto plazo busca metas cercanas en el tiempo, como un objeto que se quiere comprar pronto.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
       "opciones": [
         "Ahorrar durante muchos años para estudiar una carrera",
         "Ahorrar para comprar un regalo en las próximas semanas",
@@ -52,6 +58,8 @@
       "competencia": "ahorro",
       "dificultad": 2,
       "explicacion": "Postergar la gratificación es esperar y resistir un gasto inmediato para alcanzar un beneficio mayor más adelante.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-1",
       "opciones": [
         "Gastar de inmediato apenas se recibe el dinero",
         "Renunciar para siempre a comprar cosas que gustan",
@@ -66,6 +74,8 @@
       "competencia": "ahorro",
       "dificultad": 2,
       "explicacion": "Ahorrar de forma regular y constante hace que la conducta sea automática y facilita alcanzar las metas sin depender solo de la voluntad.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
       "opciones": [
         "Porque obliga a ahorrar grandes cantidades de una sola vez",
         "Porque ahorrar de forma regular vuelve la conducta más automática",
@@ -80,6 +90,8 @@
       "competencia": "ahorro",
       "dificultad": 2,
       "explicacion": "Se diferencian por el horizonte de tiempo: el corto plazo es para metas cercanas y el largo plazo para metas distantes.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
       "opciones": [
         "El corto plazo es para metas cercanas y el largo plazo para metas distantes",
         "El corto plazo solo lo usan los adultos y el largo plazo los jóvenes",
@@ -94,6 +106,8 @@
       "competencia": "ahorro",
       "dificultad": 2,
       "explicacion": "Apartar primero una parte para el ahorro (ahorrar antes de gastar) ayuda a cumplir la meta con más constancia.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-1",
       "opciones": [
         "Gastar primero y ahorrar solo lo que sobre al final",
         "Apartar primero una parte para el ahorro antes de gastar",
@@ -108,6 +122,8 @@
       "competencia": "ahorro",
       "dificultad": 2,
       "explicacion": "El fondo de emergencia da un respaldo ante imprevistos y evita tener que endeudarse o abandonar otras metas de ahorro.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
       "opciones": [
         "Para gastarlo en compras de gusto cuando hay rebajas",
         "Para tener un respaldo ante imprevistos y no endeudarse",
@@ -115,6 +131,40 @@
         "Para reemplazar por completo cualquier otra meta de ahorro"
       ],
       "correctIndex": 1
+    },
+    {
+      "id": "9_world_3_multiple_choice_9",
+      "enunciado": "¿Cuál es la principal diferencia entre ahorrar e invertir?",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Ahorrar es guardar una parte del dinero; invertir es ponerlo a producir buscando una ganancia, y eso trae algún riesgo.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-1",
+      "prueba": true,
+      "opciones": [
+        "Ahorrar siempre da más ganancia que invertir",
+        "Invertir es gastar el dinero en cosas que te gustan",
+        "Ahorrar es guardar dinero; invertir es ponerlo a producir aceptando algún riesgo",
+        "No hay diferencia: las dos cosas son guardar plata en una alcancía"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "9_world_3_multiple_choice_10",
+      "enunciado": "Una familia quiere ahorrar para arreglar el techo antes de la temporada de lluvias. ¿Qué plan tiene más probabilidad de cumplirse?",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Un plan de ahorro familiar funciona cuando tiene monto, fecha, aportes fijos y seguimiento en conjunto.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
+      "prueba": true,
+      "opciones": [
+        "Fijar el monto y la fecha, acordar un aporte mensual y revisarlo juntos",
+        "Ahorrar lo que sobre cuando alguien se acuerde",
+        "Que una sola persona ahorre sin contarle al resto",
+        "Esperar a que empiecen las lluvias para ver cuánto cuesta"
+      ],
+      "correctIndex": 0
     }
   ],
   "pendiente_validacion_docente": true,

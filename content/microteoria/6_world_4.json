@@ -1,0 +1,23 @@
+{
+  "grado": "6",
+  "worldId": "world_4",
+  "cards": [
+    {
+      "titulo": "Un préstamo te adelanta, pero cuesta",
+      "cuerpo": "Un préstamo te da hoy una plata que vas a devolver después, casi siempre con intereses: un pago extra por usar dinero que no es tuyo. Sirve para cosas importantes que no puedes pagar de una vez, pero compromete tus ingresos futuros.",
+      "ejemplo": "Si te prestan 100.000 pesos y debes devolver 110.000, los 10.000 de diferencia son los intereses."
+    },
+    {
+      "titulo": "Formal o informal",
+      "cuerpo": "Un préstamo formal lo da una entidad vigilada por el Estado, como un banco o una cooperativa: hay contrato, costo conocido y reglas claras. Uno informal lo da un prestamista o un conocido. El llamado «gota a gota» es rápido, pero suele cobrar intereses muy altos, presionar para cobrar y no te protege si algo sale mal.",
+      "ejemplo": "Un préstamo «gota a gota» puede terminar costando mucho más de lo que pediste en pocas semanas, porque cobran todos los días."
+    },
+    {
+      "titulo": "Productos y medios de pago",
+      "cuerpo": "Una cuenta de ahorros guarda tu plata y la puedes sacar cuando quieras; un CDT la deja quieta un tiempo a cambio de un rendimiento; un crédito te presta plata que debes devolver. Para pagar puedes usar efectivo, tarjeta débito, tarjeta de crédito o transferencias. Si tienes una duda o un problema, usa los canales oficiales de la entidad: oficinas, línea telefónica, página web o app.",
+      "ejemplo": "Con la tarjeta débito pagas con tu propia plata; con la de crédito, la entidad paga por ti y luego tú le debes."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

@@ -1,0 +1,173 @@
+{
+  "bancoId": "6_world_3_multiple_choice",
+  "grado": "6",
+  "worldId": "world_3",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "6_world_3_multiple_choice_1",
+      "enunciado": "¿Qué necesita un plan de ahorro para funcionar?",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Con una meta, un plazo y una cuota sabes qué quieres, para cuándo y cuánto apartar cada vez.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-67-1",
+      "opciones": [
+        "Solo ganas de ahorrar",
+        "Mucha plata desde el principio",
+        "Una meta, un plazo y una cuota",
+        "Un préstamo para empezar"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "6_world_3_multiple_choice_2",
+      "enunciado": "Mariana quiere una chaqueta de 80.000 pesos y tiene 8 semanas para ahorrar. ¿Cuánto debe guardar cada semana?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "80.000 pesos divididos entre 8 semanas dan 10.000 pesos por semana.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-67-1",
+      "opciones": [
+        "10.000 pesos",
+        "8.000 pesos",
+        "16.000 pesos",
+        "88.000 pesos"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "6_world_3_multiple_choice_3",
+      "enunciado": "¿Cuál es la mejor forma de cumplir tu plan de ahorro cuando recibes la mesada?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Si apartas el ahorro primero, no depende de que sobre algo al final.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-67-1",
+      "opciones": [
+        "Ahorrar lo que te sobre al final de la semana",
+        "Ahorrar solo cuando te acuerdes",
+        "Gastar primero y ahorrar el mes siguiente",
+        "Apartar el ahorro apenas recibes la plata"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "6_world_3_multiple_choice_4",
+      "enunciado": "Felipe guarda sus ahorros en una alcancía, pero a veces la abre para comprar dulces. ¿Qué lo ayudaría a cumplir su meta?",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Si el ahorro no está tan a la mano, es más difícil gastarlo por antojo.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-67-1",
+      "opciones": [
+        "Comprar una alcancía más grande",
+        "Guardar el ahorro donde sea más difícil sacarlo, como una cuenta abierta con un adulto",
+        "Dejar de tener una meta para no sentirse mal",
+        "Ahorrar el doble una sola semana y luego descansar"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "6_world_3_multiple_choice_5",
+      "enunciado": "Pedro ahorra 5.000 pesos cada semana para un regalo de 45.000. Ya lleva 4 semanas. ¿Cuántas semanas le faltan?",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Lleva 20.000 pesos; le faltan 25.000, que son 5 semanas más de 5.000 pesos.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-67-1",
+      "opciones": [
+        "4 semanas",
+        "9 semanas",
+        "5 semanas",
+        "Ninguna, ya completó"
+      ],
+      "correctIndex": 2,
+      "prueba": true
+    },
+    {
+      "id": "6_world_3_multiple_choice_6",
+      "enunciado": "El 7°A quiere ahorrar para su salida de fin de año. ¿Qué deben acordar primero?",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Sin una meta clara no se sabe cuánto aportar ni cuándo se termina el ahorro.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-67-2",
+      "opciones": [
+        "Quién se queda con la plata sin contarle a nadie",
+        "La meta: cuánto necesitan y para cuándo",
+        "Qué compra cada uno con su parte",
+        "Que cada uno ahorre en su casa sin avisar"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "6_world_3_multiple_choice_7",
+      "enunciado": "Para que el ahorro del curso sea confiable, ¿qué conviene hacer con las cuentas?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Cuentas anotadas y visibles generan confianza y evitan malentendidos.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-67-2",
+      "opciones": [
+        "Que solo las sepa el tesorero",
+        "Llevarlas de memoria",
+        "Revisarlas solo al final del año",
+        "Anotar cada aporte y mostrar el saldo a todos con frecuencia"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "6_world_3_multiple_choice_8",
+      "enunciado": "El curso necesita 400.000 pesos para materiales de la huerta. Son 40 estudiantes. Si todos aportan lo mismo, ¿cuánto pone cada uno?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "400.000 pesos divididos entre 40 estudiantes dan 10.000 pesos por estudiante.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-67-2",
+      "opciones": [
+        "10.000 pesos",
+        "4.000 pesos",
+        "40.000 pesos",
+        "1.000 pesos"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "6_world_3_multiple_choice_9",
+      "enunciado": "El grupo de 6° va lento con su ahorro para un paseo. ¿Qué estrategia colectiva les puede ayudar más?",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Una actividad en grupo suma plata sin pedirle más a cada familia ni endeudarse.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-67-2",
+      "opciones": [
+        "Que cada uno ponga lo que quiera cuando quiera",
+        "Pedir un préstamo con intereses para completar",
+        "Organizar una venta de comida en la feria del colegio y sumar la ganancia",
+        "Cancelar el paseo de una vez"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "6_world_3_multiple_choice_10",
+      "enunciado": "En un ahorro de curso, un estudiante no ha podido aportar en varias semanas. ¿Qué es lo más justo y útil para el grupo?",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Buscar juntos otra forma de aportar mantiene la meta y la confianza del grupo.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-67-2",
+      "opciones": [
+        "Sacarlo del paseo sin hablar con él",
+        "Hablar con él y buscar otra forma de aportar, como ayudar en la venta",
+        "Que otro compañero pague por él sin decirle",
+        "Dejar de llevar las cuentas para que no se note"
+      ],
+      "correctIndex": 1,
+      "prueba": true
+    }
+  ]
+}

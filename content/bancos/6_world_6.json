@@ -1,0 +1,44 @@
+{
+  "bancoId": "6_world_6",
+  "grado": "6",
+  "worldId": "world_6",
+  "situaciones": [
+    {
+      "id": "6_world_6_sit_1",
+      "enunciado": "En tu barrio hay una tienda de una cooperativa de productores locales y un supermercado grande. En la cooperativa algunas cosas cuestan un poco más, pero la plata se queda en la región.",
+      "opcionA": {
+        "texto": "Comprar en la cooperativa.",
+        "consecuencia": "Apoyas a familias productoras de tu región y sabes de dónde viene lo que comes, pero a veces pagas un poco más o encuentras menos variedad."
+      },
+      "opcionB": {
+        "texto": "Comprar en el supermercado.",
+        "consecuencia": "Encuentras más variedad y a veces mejores precios, pero una parte menor de lo que pagas llega a los productores de tu región."
+      }
+    },
+    {
+      "id": "6_world_6_sit_2",
+      "enunciado": "Este año subieron los pasajes del bus. Tu familia gasta más en transporte y tiene que decidir cómo ajustarse.",
+      "opcionA": {
+        "texto": "Caminar o ir en bicicleta a los lugares cercanos.",
+        "consecuencia": "Ahorran en pasajes y hacen ejercicio, pero gastan más tiempo y les toca salir más temprano, sobre todo cuando llueve."
+      },
+      "opcionB": {
+        "texto": "Seguir en bus y recortar otro gasto, como los domicilios.",
+        "consecuencia": "Mantienen la comodidad y el tiempo de viaje, pero renuncian a otros gustos para que el presupuesto cuadre."
+      }
+    },
+    {
+      "id": "6_world_6_sit_3",
+      "enunciado": "Tu curso ganó un dinero en la feria. Unos proponen repartirlo entre todos; otros, invertirlo en semillas para que la huerta escolar produzca y se venda en el colegio.",
+      "opcionA": {
+        "texto": "Repartir el dinero.",
+        "consecuencia": "Cada uno recibe su parte de inmediato y decide qué hacer con ella, pero la plata se acaba pronto y no queda nada para el curso."
+      },
+      "opcionB": {
+        "texto": "Invertirlo en la huerta.",
+        "consecuencia": "La huerta puede producir y dejar ganancias para todos durante el año, pero nadie recibe plata ahora y hay que cuidarla en equipo."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

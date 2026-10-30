@@ -1,0 +1,71 @@
+{
+  "bancoId": "8_world_3_true_false",
+  "grado": "8",
+  "worldId": "world_3",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "8_world_3_true_false_1",
+      "enunciado": "Gastar la plata en algo que usas ahora, como un helado, es consumir.",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Verdadero: consumir es usar la plata en algo que disfrutas o necesitas en el presente.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-1",
+      "respuesta": true
+    },
+    {
+      "id": "8_world_3_true_false_2",
+      "enunciado": "Invertir siempre garantiza ganar más dinero, sin ningún riesgo.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Falso: toda inversión tiene riesgo; puede ganar, pero también perder.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-1",
+      "respuesta": false
+    },
+    {
+      "id": "8_world_3_true_false_3",
+      "enunciado": "Si consumes menos de lo que recibes, te queda una parte para ahorrar o invertir.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Verdadero: lo que no consumes es lo que puedes ahorrar o invertir.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-1",
+      "respuesta": true
+    },
+    {
+      "id": "8_world_3_true_false_4",
+      "enunciado": "Un plan de ahorro familiar funciona mejor si todos saben cuál es la meta y cuánto aporta cada uno.",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Verdadero: cuando todos conocen la meta y su parte, es más fácil cumplirla.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
+      "respuesta": true
+    },
+    {
+      "id": "8_world_3_true_false_5",
+      "enunciado": "Si un mes no se cumple el aporte del plan de ahorro familiar, lo mejor es abandonar la meta.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Falso: se revisa el plan y se ajusta el aporte o la fecha; lo ahorrado sigue sirviendo.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
+      "respuesta": false
+    },
+    {
+      "id": "8_world_3_true_false_6",
+      "enunciado": "Para ahorrar 120.000 pesos en 4 meses, una familia necesita apartar 20.000 pesos cada mes.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Falso: 120.000 entre 4 meses da 30.000 pesos al mes.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
+      "respuesta": false
+    }
+  ]
+}

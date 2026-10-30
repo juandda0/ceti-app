@@ -1,0 +1,173 @@
+{
+  "bancoId": "4_world_5_multiple_choice",
+  "grado": "4",
+  "worldId": "world_5",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "4_world_5_multiple_choice_1",
+      "enunciado": "Una deuda es lo que debes cuando alguien te prestó. ¿Cuándo una deuda se vuelve difícil?",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "Una deuda se vuelve un problema cuando no alcanzas a pagarla con lo que recibes.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-45-1",
+      "opciones": [
+        "Cuando se la debes a un familiar",
+        "Cuando la pagas antes de tiempo",
+        "Cuando debes más de lo que puedes pagar a tiempo",
+        "Cuando es muy pequeña"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "4_world_5_multiple_choice_2",
+      "enunciado": "Daniel ya les debe a dos amigos y quiere pedirle prestado a un tercero. ¿Qué le conviene más?",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Pedir más cuando ya debes hace que la deuda crezca; primero conviene ponerse al día.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-45-2",
+      "opciones": [
+        "Pedir más para pagarles a los otros",
+        "Olvidarse de las deudas viejas",
+        "Pedir más y pagar todo junto después",
+        "Pagar lo que debe antes de pedir más"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "4_world_5_multiple_choice_3",
+      "enunciado": "Si no pagas una deuda a tiempo, ¿qué puede pasar?",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "No cumplir daña la confianza y, si hay interés, la deuda puede aumentar.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-45-1",
+      "opciones": [
+        "La deuda desaparece sola",
+        "Pierdes la confianza de quien te prestó y la deuda puede crecer",
+        "La próxima vez te prestan más fácil",
+        "No pasa nada si es con un amigo"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "4_world_5_multiple_choice_4",
+      "enunciado": "¿Cuál de estas deudas tiene más sentido para una familia?",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Arreglar el techo protege la casa y a la familia; lo demás puede esperar o ahorrarse.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-45-2",
+      "opciones": [
+        "Una deuda para cambiar un celular que sirve",
+        "Una deuda para una fiesta muy grande",
+        "Un préstamo para arreglar el techo antes de las lluvias",
+        "Una deuda para comprar ropa de moda"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "4_world_5_multiple_choice_5",
+      "enunciado": "Un riesgo es la posibilidad de que algo que valoras se dañe. ¿Qué pone en riesgo tu salud?",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "Comer mucho dulce y dormir poco puede enfermarte; lo demás cuida tu salud.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-45-1",
+      "opciones": [
+        "Tomar agua durante el día",
+        "Comer muchos dulces y dormir poco",
+        "Jugar al aire libre",
+        "Lavarte las manos antes de comer"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "4_world_5_multiple_choice_6",
+      "enunciado": "En el barrio de Valeria algunas personas tiran basura al río. ¿Qué recurso valioso está en riesgo?",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "La basura ensucia el río y pone en riesgo el agua que necesitan las personas, los animales y las plantas.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-45-1",
+      "opciones": [
+        "El dinero de la tienda",
+        "El agua limpia que usa la comunidad",
+        "Los útiles del colegio",
+        "El internet de las casas"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "4_world_5_multiple_choice_7",
+      "enunciado": "Tu mejor amigo y tú se pelearon en el recreo y la amistad está en riesgo. ¿Qué habilidad te ayuda más?",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Hablar con calma y escuchar ayuda a resolver el problema y a cuidar la amistad.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-45-2",
+      "opciones": [
+        "No volverle a hablar nunca",
+        "Contarles el problema a todos",
+        "Esperar a que él pida perdón primero",
+        "Hablar con calma y escuchar lo que él siente"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "4_world_5_multiple_choice_8",
+      "enunciado": "Mañana tienes examen y te invitan a jugar toda la tarde. ¿Qué te protege de que te vaya mal?",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Organizar tu tiempo cuida lo que aprendes sin dejar de jugar.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-45-2",
+      "opciones": [
+        "Estudiar primero y jugar un rato después",
+        "Jugar toda la tarde y estudiar de noche sin dormir",
+        "No estudiar porque igual vas a pasar",
+        "Confiar en que el examen será fácil"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "4_world_5_multiple_choice_9",
+      "enunciado": "Un riesgo es más serio si es muy probable y si el daño sería grave. ¿Cuál es el riesgo más serio al montar bicicleta?",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Caerse puede pasar y, sin casco, el golpe en la cabeza sería muy grave.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-45-1",
+      "opciones": [
+        "Que se ensucie la bicicleta",
+        "Que la bicicleta pierda color con el sol",
+        "Caerte en la calle sin casco",
+        "Que se te desamarre un zapato en el parque"
+      ],
+      "correctIndex": 2,
+      "prueba": true
+    },
+    {
+      "id": "4_world_5_multiple_choice_10",
+      "enunciado": "Te sientes muy triste porque te va mal en matemáticas. ¿Qué puedes hacer para cuidar cómo te sientes?",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Pedir ayuda a alguien de confianza te apoya en lo que sientes y en lo que aprendes.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-45-2",
+      "opciones": [
+        "Contarle a alguien de confianza y pedir ayuda",
+        "Guardártelo y no decirle a nadie",
+        "Dejar de ir a la clase de matemáticas",
+        "Pensar que nunca vas a aprender"
+      ],
+      "correctIndex": 0,
+      "prueba": true
+    }
+  ]
+}

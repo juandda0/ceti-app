@@ -1,0 +1,133 @@
+{
+  "bancoId": "4_world_1_ordenar",
+  "grado": "4",
+  "worldId": "world_1",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "4_world_1_ordenar_1",
+      "enunciado": "Ordena los pasos para revisar la factura del agua de tu casa.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Primero miras lo gastado, lo comparas, aclaras cualquier duda y luego pagas a tiempo.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-45-2",
+      "elementos": [
+        "Compararla con la del mes pasado",
+        "Pagar la factura a tiempo",
+        "Mirar cuánta agua se gastó este mes",
+        "Si algo se ve raro, preguntar a la empresa"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        3,
+        1
+      ]
+    },
+    {
+      "id": "4_world_1_ordenar_2",
+      "enunciado": "Ordena de lo más importante a lo menos importante para el bienestar de una familia.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "La comida es lo más básico, los útiles son necesarios para estudiar y el paseo es un gusto.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-45-2",
+      "elementos": [
+        "Un paseo de fin de semana",
+        "Los útiles del colegio",
+        "La comida de cada día"
+      ],
+      "ordenCanonico": [
+        2,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "4_world_1_ordenar_3",
+      "enunciado": "La mamá de Camilo es panadera. Ordena cómo llega el dinero a su casa.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "El ingreso de la familia sale del trabajo: hacer el pan, venderlo y recibir el pago.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-45-1",
+      "elementos": [
+        "Recibe dinero de los clientes",
+        "Usa ese dinero en los gastos de la casa",
+        "Vende el pan en la panadería",
+        "Hornea el pan en la madrugada"
+      ],
+      "ordenCanonico": [
+        3,
+        2,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "4_world_1_ordenar_4",
+      "enunciado": "Ordena los pasos de un buen hábito antes de comprar algo.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Primero piensas si lo necesitas, miras lo que tienes, comparas y al final decides.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-45-1",
+      "elementos": [
+        "Comparar precios",
+        "Preguntarte si lo necesitas o solo lo quieres",
+        "Decidir si lo compras o esperas",
+        "Mirar cuánto dinero tienes"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "4_world_1_ordenar_5",
+      "enunciado": "Ordena los pasos para que el salón decida en qué usar el dinero de la rifa.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Se recogen las ideas, se piensa cuál da más bienestar, se vota y se cumple lo decidido.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-45-2",
+      "elementos": [
+        "Pensar cuál ayuda más al grupo",
+        "Usar el dinero en lo elegido",
+        "Escribir las ideas de todos",
+        "Votar"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        3,
+        1
+      ]
+    },
+    {
+      "id": "4_world_1_ordenar_6",
+      "enunciado": "Ordena qué hacer si en la tienda te cobran de más.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Primero revisas, luego explicas el error con respeto y por último recibes lo que te devuelven.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-45-2",
+      "elementos": [
+        "Recibir el dinero que te deben devolver",
+        "Revisar la cuenta o el recibo",
+        "Mostrarle el error al tendero con respeto"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "bancoId": "1_world_3",
+  "grado": "1",
+  "worldId": "world_3",
+  "situaciones": [
+    {
+      "id": "1_world_3_sit_1",
+      "enunciado": "Tu abuelo te da una moneda. Puedes comprar un chicle ya o guardarla para tu meta: un yoyo.",
+      "opcionA": {
+        "texto": "Comprar el chicle",
+        "consecuencia": "Lo disfrutas hoy, pero el yoyo tarda más en llegar."
+      },
+      "opcionB": {
+        "texto": "Guardarla en la alcancía",
+        "consecuencia": "Hoy no hay chicle, pero estás más cerca del yoyo."
+      }
+    },
+    {
+      "id": "1_world_3_sit_2",
+      "enunciado": "Ahorras para unos patines. Tu amigo te invita a comprar helado en el parque.",
+      "opcionA": {
+        "texto": "Comprar helado con él",
+        "consecuencia": "Compartes un rato rico, pero tu ahorro para los patines baja."
+      },
+      "opcionB": {
+        "texto": "Acompañarlo sin comprar",
+        "consecuencia": "Tu ahorro sigue igual, pero esta vez no comes helado."
+      }
+    },
+    {
+      "id": "1_world_3_sit_3",
+      "enunciado": "Tu familia quiere gastar menos luz. Tú ves tele un largo rato cada tarde.",
+      "opcionA": {
+        "texto": "Ver menos tele y jugar afuera",
+        "consecuencia": "Ayudas a ahorrar luz, pero te pierdes algunos programas."
+      },
+      "opcionB": {
+        "texto": "Seguir viendo igual",
+        "consecuencia": "Ves todos tus programas, pero la casa sigue gastando la misma luz."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

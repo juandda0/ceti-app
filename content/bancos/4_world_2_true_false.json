@@ -1,0 +1,71 @@
+{
+  "bancoId": "4_world_2_true_false",
+  "grado": "4",
+  "worldId": "world_2",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "4_world_2_true_false_1",
+      "enunciado": "En un presupuesto, lo que gastas debería ser igual o menor que lo que te entra.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Verdadero: si gastas más de lo que entra, el dinero no alcanza.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-45-1",
+      "respuesta": true
+    },
+    {
+      "id": "4_world_2_true_false_2",
+      "enunciado": "Unos tenis de marca son una necesidad, porque todos en el salón los tienen.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Falso: necesitas zapatos, pero que sean de marca es un deseo.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-45-2",
+      "respuesta": false
+    },
+    {
+      "id": "4_world_2_true_false_3",
+      "enunciado": "El presupuesto solo sirve para las personas adultas que tienen mucho dinero.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Falso: le sirve a cualquiera, también a un niño que quiere repartir su mesada.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-45-1",
+      "respuesta": false
+    },
+    {
+      "id": "4_world_2_true_false_4",
+      "enunciado": "Pagar el agua y la luz de la casa es una necesidad de la familia.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Verdadero: el agua y la luz son servicios que la familia necesita para vivir bien.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-45-2",
+      "respuesta": true
+    },
+    {
+      "id": "4_world_2_true_false_5",
+      "enunciado": "Si anotas lo que gastas, puedes ver en qué se te va el dinero.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Verdadero: anotar los gastos te muestra en qué se va el dinero y dónde puedes ajustar.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-45-1",
+      "respuesta": true
+    },
+    {
+      "id": "4_world_2_true_false_6",
+      "enunciado": "Los deseos son malos y nunca deberíamos gastar en ellos.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Falso: los deseos están bien si primero cubres las necesidades y el dinero te alcanza.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-45-2",
+      "respuesta": false
+    }
+  ]
+}

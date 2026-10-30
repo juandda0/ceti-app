@@ -1,0 +1,173 @@
+{
+  "bancoId": "1_world_5_multiple_choice",
+  "grado": "1",
+  "worldId": "world_5",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "1_world_5_multiple_choice_1",
+      "enunciado": "Tomás siempre abraza a su abuela y la ayuda. ¿Qué valora Tomás?",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "Tomás valora a su familia: le importa y la cuida.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-13-1",
+      "opciones": [
+        "Su balón",
+        "Un dulce",
+        "A su familia",
+        "La tele"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "1_world_5_multiple_choice_2",
+      "enunciado": "¿Cuál de estas cosas no se compra con dinero?",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Una amistad vale mucho y no se compra: se cuida.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-13-1",
+      "opciones": [
+        "Un balón",
+        "Una amistad",
+        "Un helado",
+        "Un cuaderno"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "1_world_5_multiple_choice_3",
+      "enunciado": "Te pegó un balón en la cabeza y te duele. ¿Qué haces primero?",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Tu salud va primero: avisar a un adulto te ayuda a cuidarte.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-13-2",
+      "opciones": [
+        "Seguir jugando",
+        "Ganar el partido",
+        "Esconder el dolor",
+        "Avisar a un adulto"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "1_world_5_multiple_choice_4",
+      "enunciado": "Si comes muchos dulces y no te cepillas, ¿qué puede pasar?",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "Lo que haces afecta tu salud: sin cepillarte, los dulces pican los dientes.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-13-3",
+      "opciones": [
+        "Se te pican los dientes",
+        "Te crecen los dientes",
+        "Nada, nunca pasa",
+        "Duermes mejor"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "1_world_5_multiple_choice_5",
+      "enunciado": "Si botan basura al río, ¿qué pasa?",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "La basura ensucia el agua y daña a los peces y a las personas.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-13-3",
+      "opciones": [
+        "El río se limpia solo",
+        "Llegan más peces",
+        "El agua se ensucia",
+        "No pasa nada"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "1_world_5_multiple_choice_6",
+      "enunciado": "Si le gritas a tu amigo, ¿qué puede pasar?",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "Lo que haces afecta tus amistades: un grito puede poner triste a tu amigo.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-13-3",
+      "opciones": [
+        "Se pone feliz",
+        "Se pone triste",
+        "Te da un premio",
+        "Nada cambia"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "1_world_5_multiple_choice_7",
+      "enunciado": "Tu amigo te prestó una moneda. ¿Qué te toca hacer?",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "Lo prestado es una deuda: te comprometes a devolverlo.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-13-3",
+      "opciones": [
+        "Olvidarlo",
+        "Pedirle otra",
+        "Quedártela",
+        "Devolvérsela"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "1_world_5_multiple_choice_8",
+      "enunciado": "Tu hermano quiere prestar tu bicicleta sin preguntarte. ¿Está bien?",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Solo se presta lo propio; lo de otro se presta con su permiso.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-13-2",
+      "opciones": [
+        "No, debe preguntarte",
+        "Sí, es de todos",
+        "Sí, si la cuida",
+        "Sí, si te avisa luego"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "1_world_5_multiple_choice_9",
+      "enunciado": "Tu amiga te da galletas y dice: «Me las devuelves mañana». ¿Qué hizo?",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Si hay que devolver, es prestar; si no, sería un regalo.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-13-1",
+      "opciones": [
+        "Te las prestó",
+        "Te las regaló",
+        "Las compartieron",
+        "Te las cambió"
+      ],
+      "correctIndex": 0,
+      "prueba": true
+    },
+    {
+      "id": "1_world_5_multiple_choice_10",
+      "enunciado": "Vas tarde al colegio y el semáforo está en rojo. ¿Qué haces?",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Tu vida y tu cuerpo valen más que llegar a tiempo.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-13-2",
+      "opciones": [
+        "Cruzo corriendo",
+        "Espero el verde",
+        "Cruzo sin mirar",
+        "Me devuelvo a casa"
+      ],
+      "correctIndex": 1,
+      "prueba": true
+    }
+  ]
+}

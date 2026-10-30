@@ -10,6 +10,8 @@
       "competencia": "credito",
       "dificultad": 3,
       "explicacion": "El crédito consiste en recibir un recurso ahora con el compromiso de devolverlo después, normalmente con un costo adicional.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "opciones": [
         "Recibir dinero ahora a cambio de devolverlo en el futuro",
         "Ahorrar una parte de tus ingresos cada mes",
@@ -24,6 +26,8 @@
       "competencia": "credito",
       "dificultad": 3,
       "explicacion": "Pedir prestado genera una deuda: la obligación de devolver lo recibido en las condiciones acordadas.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "opciones": [
         "Un ahorro disponible para emergencias",
         "Una deuda que debe pagar según lo acordado",
@@ -38,6 +42,8 @@
       "competencia": "credito",
       "dificultad": 4,
       "explicacion": "La tasa de interés es el costo de usar dinero prestado: lo que se paga de más por encima de lo que se pidió.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "opciones": [
         "El plazo total que dura el préstamo",
         "La cantidad exacta de dinero que se pidió prestada",
@@ -52,6 +58,8 @@
       "competencia": "credito",
       "dificultad": 4,
       "explicacion": "La capacidad de pago mide si los ingresos alcanzan para cubrir las cuotas de una deuda sin descuidar los gastos esenciales.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "opciones": [
         "Cuántos amigos pueden prestarle dinero",
         "Si sus ingresos alcanzan para pagar las cuotas sin afectar lo esencial",
@@ -66,6 +74,8 @@
       "competencia": "credito",
       "dificultad": 3,
       "explicacion": "Usar el crédito de forma responsable implica pedir solo lo que se puede devolver y cumplir los pagos a tiempo.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-2",
       "opciones": [
         "Pedir el máximo posible aunque no se necesite",
         "Endeudarse para pagar otras deudas continuamente",
@@ -80,6 +90,8 @@
       "competencia": "credito",
       "dificultad": 4,
       "explicacion": "Al devolver un crédito se paga el monto prestado más los intereses, que son el precio por usar ese dinero.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "opciones": [
         "Porque siempre se pierde parte del dinero por error",
         "Porque al monto prestado se suman los intereses",
@@ -94,6 +106,8 @@
       "competencia": "credito",
       "dificultad": 4,
       "explicacion": "Un manejo prudente compara el costo total del crédito con la propia capacidad de pago antes de comprometerse.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-1011-1",
       "opciones": [
         "Firmar rápido para no perder la oportunidad",
         "Comparar el costo total con la capacidad de pago propia",
@@ -108,11 +122,47 @@
       "competencia": "credito",
       "dificultad": 3,
       "explicacion": "Cuando las cuotas superan lo que se puede pagar, la deuda se vuelve difícil de manejar y puede crecer con el tiempo.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "opciones": [
         "Que el crédito desaparezca por sí solo",
         "Que los ingresos aumenten automáticamente",
         "Que la deuda se vuelva difícil de pagar y crezca",
         "Que las cuotas se eliminen sin costo"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "10_world_4_multiple_choice_9",
+      "enunciado": "Tu tía firmó un crédito sin que le explicaran el costo total. ¿Qué le puedes contar sobre sus derechos como consumidora financiera?",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "Todo consumidor financiero tiene derecho a información clara y a quejarse ante la entidad o su defensor del consumidor financiero.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-1011-2",
+      "prueba": true,
+      "opciones": [
+        "Que tiene derecho a información clara y a presentar una queja ante la entidad o su defensor del consumidor",
+        "Que al firmar perdió todo derecho a reclamar",
+        "Que solo puede reclamar si contrata un abogado",
+        "Que debe dejar de pagar para que la escuchen"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "10_world_4_multiple_choice_10",
+      "enunciado": "Si muchas familias de un país se endeudan más de lo que pueden pagar, ¿qué efecto puede tener en la economía?",
+      "competencia": "credito",
+      "dificultad": 4,
+      "explicacion": "Cuando muchos hogares no pueden pagar, aumentan los impagos, se reduce el consumo y la economía se desacelera.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
+      "prueba": true,
+      "opciones": [
+        "La economía siempre crece porque circula más dinero",
+        "Las deudas desaparecen porque son de muchas personas",
+        "Aumentan los impagos, las familias consumen menos y la economía se frena",
+        "Solo afecta a cada familia y nunca al resto del país"
       ],
       "correctIndex": 2
     }

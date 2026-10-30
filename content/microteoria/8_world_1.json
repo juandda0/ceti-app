@@ -1,0 +1,23 @@
+{
+  "grado": "8",
+  "worldId": "world_1",
+  "cards": [
+    {
+      "titulo": "Los tres sectores de la economía",
+      "cuerpo": "Todo lo que compras pasa por tres sectores. El primario saca recursos de la naturaleza (agricultura, pesca, minería). El secundario los transforma en productos (fábricas). El terciario presta servicios (transporte, comercio, salud, educación).",
+      "ejemplo": "El café lo cultiva un caficultor (primario), lo tuesta y empaca una fábrica (secundario) y lo vende la tienda del barrio (terciario)."
+    },
+    {
+      "titulo": "Escasez, precios y bienestar",
+      "cuerpo": "Cuando un bien escasea y mucha gente lo sigue queriendo, su precio tiende a subir. Si los precios suben y el ingreso no, con la misma plata se compra menos, y eso afecta el bienestar de la familia.",
+      "ejemplo": "Si una mala cosecha hace que la libra de tomate pase de 1.000 a 2.000 pesos, con 10.000 pesos compras la mitad de tomate que antes."
+    },
+    {
+      "titulo": "Hábitos financieros en casa",
+      "cuerpo": "Un hábito financiero es lo que hacemos con la plata una y otra vez: anotar gastos, comparar precios, guardar una parte de lo que entra o evitar compras por impulso. Mirar los hábitos de la familia es el primer paso para planear cómo mejorarlos.",
+      "ejemplo": "Tu familia nota que compra gaseosa todos los días en la tienda; acuerdan comprarla solo los fines de semana y usar esa plata en el mercado."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

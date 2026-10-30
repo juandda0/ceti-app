@@ -10,6 +10,8 @@
       "competencia": "deuda",
       "dificultad": 5,
       "explicacion": "Primero se revisa el ingreso disponible, luego se estima la cuota, se compara con los gastos fijos y finalmente se decide.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-2",
       "elementos": [
         "Decidir si la deuda es sostenible",
         "Revisar el ingreso disponible",
@@ -24,6 +26,8 @@
       "competencia": "deuda",
       "dificultad": 5,
       "explicacion": "El proceso avanza de una deuda controlada a sumar obligaciones, superar la capacidad de pago y caer en mora.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "elementos": [
         "Las obligaciones superan la capacidad de pago",
         "Se mantiene una deuda manejable",
@@ -38,6 +42,8 @@
       "competencia": "deuda",
       "dificultad": 5,
       "explicacion": "Se listan las deudas, se identifica la más costosa, se ajusta el presupuesto y se paga de forma priorizada.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-2",
       "elementos": [
         "Ajustar el presupuesto para liberar dinero",
         "Hacer la lista de todas las deudas",
@@ -52,6 +58,8 @@
       "competencia": "deuda",
       "dificultad": 5,
       "explicacion": "Tras el atraso llega la mora, luego el reporte negativo y finalmente la mayor dificultad para acceder a crédito.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "elementos": [
         "Reporte negativo en centrales de riesgo",
         "Atraso en el pago de la cuota",
@@ -66,6 +74,8 @@
       "competencia": "deuda",
       "dificultad": 5,
       "explicacion": "Se reconoce el problema, se contacta a la entidad, se acuerdan nuevas condiciones y se cumple el nuevo plan.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-2",
       "elementos": [
         "Acordar nuevas condiciones de pago",
         "Reconocer que la cuota es insostenible",
@@ -80,6 +90,8 @@
       "competencia": "deuda",
       "dificultad": 5,
       "explicacion": "El riesgo crece a medida que la cuota pesa más sobre el ingreso y el bien financiado pierde valor más rápido.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-2",
       "elementos": [
         "Cuota holgada sobre un bien que conserva valor",
         "Cuota ajustada sobre un bien que se deprecia poco",
@@ -87,6 +99,39 @@
         "Cuota moderada sobre un bien de valor estable"
       ],
       "ordenCanonico": [0, 3, 1, 2]
+    },
+    {
+      "id": "11_world_5_ordenar_7",
+      "enunciado": "Ordena cómo se encadenan los efectos de botar basura al río del pueblo, del primero al último.",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Una decisión individual que muchos repiten tapa y contamina el río, y el daño llega a las familias que usan esa agua.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-2",
+      "elementos": [
+        "La basura tapa el cauce y contamina el agua",
+        "Una persona bota basura al río",
+        "Las familias de abajo se enferman o se quedan sin agua limpia",
+        "Muchas personas repiten la misma decisión"
+      ],
+      "ordenCanonico": [1, 3, 0, 2]
+    },
+    {
+      "id": "11_world_5_ordenar_8",
+      "enunciado": "Ordena los pasos para gestionar el riesgo de agotarte en la época de exámenes.",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Primero reconoces lo que valoras y qué lo amenaza, luego valoras el riesgo, actúas con un plan y lo revisas.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-1",
+      "elementos": [
+        "Hacer un horario con estudio, descanso y comidas",
+        "Reconocer que valoras tu salud y tu descanso",
+        "Revisar cada semana si el plan funciona",
+        "Estimar qué tan probable y qué tan grave sería agotarte",
+        "Identificar las amenazas: trasnochar y no comer bien"
+      ],
+      "ordenCanonico": [1, 4, 3, 0, 2]
     }
   ],
   "pendiente_validacion_docente": true,

@@ -1,0 +1,129 @@
+{
+  "bancoId": "8_world_4_ordenar",
+  "grado": "8",
+  "worldId": "world_4",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "8_world_4_ordenar_1",
+      "enunciado": "Ordena a estos estudiantes de la mayor a la menor capacidad para pagar una cuota mensual.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "A Diego le sobran 30.000, a Sara 15.000 y a Lina 5.000: quien más le sobra, más capacidad tiene.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
+      "elementos": [
+        "Lina: recibe 50.000 y gasta 45.000",
+        "Diego: recibe 60.000 y gasta 30.000",
+        "Sara: recibe 40.000 y gasta 25.000"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "8_world_4_ordenar_2",
+      "enunciado": "Ordena los pasos del plan de Camilo para pagarle a su tío lo que le debe.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Primero sabe cuánto debe, luego cuánto puede pagar, lo acuerda y cumple cada mes.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
+      "elementos": [
+        "Pagar la cuota cada mes en la fecha acordada",
+        "Anotar cuánto debe exactamente",
+        "Acordar con su tío cuánto pagará y cuándo",
+        "Revisar cuánto puede apartar de su mesada"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "8_world_4_ordenar_3",
+      "enunciado": "Ordena lo que pasa con el SOAT de una moto, del primer paso al último.",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "El seguro se compra antes; si hay un accidente, cubre la atención médica de las víctimas.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-89-1",
+      "elementos": [
+        "El seguro paga la atención médica de los heridos",
+        "El dueño compra el SOAT",
+        "Ocurre un accidente de tránsito"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "8_world_4_ordenar_4",
+      "enunciado": "Ordena las etapas de una pensión en la vida de una persona.",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "La pensión se construye aportando muchos años; al cumplir los requisitos empieza a recibir el ingreso.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-89-1",
+      "elementos": [
+        "Recibe un ingreso mensual de su pensión",
+        "Empieza a trabajar y a aportar a un fondo",
+        "Cumple la edad y los requisitos para pensionarse",
+        "Sigue aportando durante muchos años de trabajo"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "8_world_4_ordenar_5",
+      "enunciado": "Ordena lo que le pasa a Elena con una acción, del inicio al final.",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "Compra, la acción sube porque a la empresa le va bien y, al venderla, gana la diferencia.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-89-2",
+      "elementos": [
+        "A la empresa le va bien y la acción sube de precio",
+        "Elena compra una acción de una empresa",
+        "Elena vende la acción más cara de lo que pagó"
+      ],
+      "ordenCanonico": [
+        1,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "8_world_4_ordenar_6",
+      "enunciado": "Ordena estas opciones de la que tiene menos riesgo a la que tiene más.",
+      "competencia": "credito",
+      "dificultad": 4,
+      "explicacion": "La cuenta de ahorros casi no varía; repartir entre varias empresas reduce el riesgo; todo en una empresa nueva es lo más riesgoso.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-89-2",
+      "elementos": [
+        "Repartir la plata entre acciones de varias empresas grandes",
+        "Poner toda la plata en acciones de una sola empresa nueva",
+        "Dejar la plata en una cuenta de ahorros"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        1
+      ]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "grado": "6",
+  "worldId": "world_3",
+  "cards": [
+    {
+      "titulo": "Tu plan de ahorro",
+      "cuerpo": "Un plan de ahorro tiene tres partes: una meta clara (qué quieres y cuánto cuesta), un plazo (para cuándo) y una cuota (cuánto apartas cada semana o cada mes). Si divides el precio entre las semanas que tienes, sabes cuánto guardar.",
+      "ejemplo": "Para unos audífonos de 60.000 pesos en 10 semanas, Laura aparta 6.000 pesos cada semana."
+    },
+    {
+      "titulo": "Cumplir el plan",
+      "cuerpo": "Lo difícil no es empezar, sino seguir. Ayuda apartar el ahorro apenas recibes la plata (y no esperar a ver qué sobra), llevar la cuenta de cuánto llevas y guardar el dinero en un lugar seguro: una alcancía es ahorro informal; una cuenta de ahorros, abierta con ayuda de un adulto, es ahorro formal.",
+      "ejemplo": "Martín guarda primero 3.000 pesos de su mesada y anota en una tabla cuánto lleva. Ver la tabla crecer lo anima a seguir."
+    },
+    {
+      "titulo": "Ahorrar en equipo",
+      "cuerpo": "Un curso o un grupo también puede ahorrar para una meta común, como una salida o materiales para la huerta. Funciona mejor si todos acuerdan la meta, la cuota y quién lleva las cuentas, y si las cuentas se muestran a todos con frecuencia.",
+      "ejemplo": "El 7°B quiere 600.000 pesos para su salida: venden empanadas en la feria, cada estudiante aporta 2.000 pesos a la semana y la tesorera muestra el saldo cada viernes."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

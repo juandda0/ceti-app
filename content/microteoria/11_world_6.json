@@ -1,0 +1,23 @@
+{
+  "grado": "11",
+  "worldId": "world_6",
+  "cards": [
+    {
+      "titulo": "PIB nominal, PIB real y crecimiento",
+      "cuerpo": "El PIB nominal se calcula con los precios de cada año, así que puede subir solo porque los precios subieron. El PIB real quita ese efecto y muestra si de verdad se produjo más; por eso el crecimiento se mide con el PIB real. Una forma rápida de aproximarlo es restar al crecimiento nominal la subida promedio de los precios.",
+      "ejemplo": "Si el PIB nominal crece 8 % y los precios suben 6 %, la producción real creció cerca de 2 %."
+    },
+    {
+      "titulo": "Desigualdad, crisis y política económica",
+      "cuerpo": "El Gini muestra qué tan concentrado está el ingreso. En una crisis, los hogares con menos ahorro y empleos inestables suelen sufrir más. Para suavizar los ciclos, el Banco de la República puede bajar o subir su tasa de interés (política monetaria), y el Gobierno y el Congreso pueden cambiar el gasto y los impuestos (política fiscal). Toda medida tiene costos y alguien que la financia.",
+      "ejemplo": "Con inflación alta, el Banco de la República puede subir su tasa para frenar el gasto; en una recesión con inflación baja, puede bajarla."
+    },
+    {
+      "titulo": "De la idea a la política",
+      "cuerpo": "Una propuesta sólida describe el problema con datos, identifica causas y afectados, compara alternativas con sus costos y dice cómo se financia. Luego se mueve por el canal correcto: iniciativa popular ante el Congreso, la asamblea o el concejo; consulta popular; mesas del Plan de Desarrollo; rendición de cuentas. Después, las veedurías ciudadanas vigilan cómo se ejecuta.",
+      "ejemplo": "Para un programa municipal de primer empleo, la propuesta muestra cuántos jóvenes están desempleados, cuánto costaría y de qué rubro saldría el dinero."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

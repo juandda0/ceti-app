@@ -1,0 +1,127 @@
+{
+  "bancoId": "8_world_6_ordenar",
+  "grado": "8",
+  "worldId": "world_6",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "8_world_6_ordenar_1",
+      "enunciado": "Ordena el camino de un impuesto, desde que se aprueba hasta que lo ves en tu comunidad.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "El Congreso aprueba, la gente paga, el Gobierno ejecuta el gasto y la obra llega a la comunidad.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-89-1",
+      "elementos": [
+        "El Gobierno usa lo recaudado para contratar la obra",
+        "El Congreso aprueba el impuesto",
+        "Se construye un colegio o se arregla una vía",
+        "Las personas y las empresas pagan el impuesto"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "8_world_6_ordenar_2",
+      "enunciado": "Ordena la cadena de las arepas empacadas, del sector primario al terciario.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Cultivar es primario, transformar es secundario y vender es terciario.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-1",
+      "elementos": [
+        "Una empresa muele el maíz y hace las arepas",
+        "Un campesino cultiva el maíz",
+        "La tienda del barrio vende el paquete de arepas"
+      ],
+      "ordenCanonico": [
+        1,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "8_world_6_ordenar_3",
+      "enunciado": "Ordena lo que pasa cuando hay mucha inflación y los ingresos no suben.",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Suben los precios, el dinero compra menos y las familias tienen que ajustar su consumo.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-2",
+      "elementos": [
+        "Las familias recortan gastos o eligen productos más baratos",
+        "Los precios de muchos productos suben",
+        "El dinero de cada familia alcanza para menos"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "8_world_6_ordenar_4",
+      "enunciado": "Ordena los pasos del proyecto de reciclaje de tu curso.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Primero se acuerda, luego se separa y al final se vende lo reciclado.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-89-2",
+      "elementos": [
+        "Vender el material reciclado y usar la plata en algo del curso",
+        "Separar en el salón el papel, el plástico y el cartón",
+        "Acordar entre todos qué se va a reciclar"
+      ],
+      "ordenCanonico": [
+        2,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "8_world_6_ordenar_5",
+      "enunciado": "Ordena estos barrios del que tiene más desempleo al que tiene menos.",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "El Prado tiene 40 %, San José 20 % y La Esperanza 10 % de desempleo.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-89-1",
+      "elementos": [
+        "Barrio San José: 2 de cada 10 personas que buscan trabajo no lo consiguen",
+        "Barrio La Esperanza: 1 de cada 10",
+        "Barrio El Prado: 4 de cada 10"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "8_world_6_ordenar_6",
+      "enunciado": "Ordena los pasos para proponer en tu municipio una mejora a un impuesto.",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Primero se entiende cómo funciona el impuesto, luego se arma la propuesta y al final se presenta a quien decide.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-89-2",
+      "elementos": [
+        "Pensar cómo hacerlo más justo o más fácil de pagar",
+        "Presentar la propuesta al concejo municipal, por ejemplo en un cabildo abierto",
+        "Averiguar quién lo paga y en qué se usa"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        1
+      ]
+    }
+  ]
+}

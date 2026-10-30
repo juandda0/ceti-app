@@ -10,6 +10,8 @@
       "competencia": "ingreso",
       "dificultad": 1,
       "explicacion": "Primero se ofrece el servicio, luego se realiza el trabajo y por último se recibe el pago.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-89-1",
       "elementos": [
         "Recibir el pago acordado",
         "Ofrecer tu ayuda o servicio a alguien",
@@ -23,6 +25,8 @@
       "competencia": "ingreso",
       "dificultad": 1,
       "explicacion": "Los alimentos son una necesidad básica, el transporte es útil y el videojuego es un deseo.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-89-2",
       "elementos": [
         "Un videojuego nuevo",
         "Alimentos para la semana",
@@ -36,6 +40,8 @@
       "competencia": "ingreso",
       "dificultad": 1,
       "explicacion": "Primero recibes la mesada, luego decides en qué usarla y finalmente la gastas o ahorras.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-89-2",
       "elementos": [
         "Decidir en qué usar el dinero",
         "Recibir la mesada",
@@ -49,6 +55,8 @@
       "competencia": "ingreso",
       "dificultad": 1,
       "explicacion": "Primero identificas si es necesidad o deseo, luego revisas tu dinero disponible y por último decides.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-89-2",
       "elementos": [
         "Revisar cuánto dinero tienes disponible",
         "Preguntarte si es una necesidad o un deseo",
@@ -62,6 +70,8 @@
       "competencia": "ingreso",
       "dificultad": 1,
       "explicacion": "Un regalo no exige trabajo, una mesada implica responsabilidades en casa y un empleo requiere mayor esfuerzo.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-89-1",
       "elementos": [
         "Recibir un regalo",
         "Tener un empleo",
@@ -75,6 +85,8 @@
       "competencia": "ingreso",
       "dificultad": 1,
       "explicacion": "Primero tienes el dinero, luego eliges el bien o servicio y por último realizas el intercambio.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-1",
       "elementos": [
         "Entregar el dinero y recibir el bien o servicio",
         "Tener dinero disponible",

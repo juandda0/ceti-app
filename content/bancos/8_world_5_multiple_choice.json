@@ -1,0 +1,173 @@
+{
+  "bancoId": "8_world_5_multiple_choice",
+  "grado": "8",
+  "worldId": "world_5",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "8_world_5_multiple_choice_1",
+      "enunciado": "Para saber qué tan alto es un riesgo, ¿qué dos cosas conviene mirar?",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "El riesgo combina la probabilidad de que algo pase con el impacto que tendría.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-2",
+      "opciones": [
+        "Qué tan probable es que pase y qué tan grave sería",
+        "Cuánto cuesta y quién lo causó",
+        "Si salió en las noticias y si es algo nuevo",
+        "Si le pasó a un amigo y cuándo"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "8_world_5_multiple_choice_2",
+      "enunciado": "Mañana tienes examen de matemáticas y tus amigos te invitan a jugar videojuegos hasta tarde. ¿Qué pones en riesgo si aceptas?",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Trasnochar antes de un examen afecta tu descanso y tu rendimiento: lo que pones en riesgo es tu estudio.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-1",
+      "opciones": [
+        "Solo tu mesada",
+        "Tu resultado en el examen y tu descanso",
+        "La relación con tus profesores de otras materias",
+        "Nada, porque una noche no cambia nada"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "8_world_5_multiple_choice_3",
+      "enunciado": "En esta época llueve fuerte y la quebrada de tu barrio se ha crecido otras veces. Tu familia quiere hacer un asado en la orilla. ¿Qué es lo más prudente antes de decidir?",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Mirar el contexto (lluvias y crecientes anteriores) lleva a bajar el riesgo alejándose de la quebrada.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-1",
+      "opciones": [
+        "Ir de todas formas, porque a ellos nunca les ha pasado nada",
+        "Ir solo si van muchas personas",
+        "Revisar el pronóstico y elegir un lugar lejos de la orilla",
+        "Llevar más comida por si se demoran"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "8_world_5_multiple_choice_4",
+      "enunciado": "¿Cuál de estos riesgos para tu salud es el más alto?",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "El riesgo más alto es el que junta alta probabilidad con un impacto grave.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-2",
+      "opciones": [
+        "Resbalar en el patio cuando está seco: poco probable y poco grave",
+        "Rasparte jugando ping-pong: poco probable y leve",
+        "Que se te riegue el jugo de la lonchera: probable pero leve",
+        "Andar en bicicleta por una avenida sin casco: probable y grave"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "8_world_5_multiple_choice_5",
+      "enunciado": "Te enteras de que alguien del grupo va a publicar una foto tuya para burlarse. ¿Qué criterio te ayuda más a decidir qué hacer?",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Medir el impacto y pedir apoyo protege tu bienestar emocional y tus relaciones mejor que reaccionar solo.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-2",
+      "opciones": [
+        "Responder con otra burla para que no se note que te afectó",
+        "Pensar qué puede pasar, qué tan grave sería y buscar apoyo de un adulto de confianza",
+        "No contarle a nadie y esperar que pase",
+        "Borrar todas tus redes sin hablarlo con nadie"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "8_world_5_multiple_choice_6",
+      "enunciado": "Tatiana debe pagar una cuota de 15.000 pesos al mes y, después de lo necesario, le sobran 10.000. ¿Cómo está su deuda?",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "La cuota de 15.000 no cabe en los 10.000 que le sobran: le faltan 5.000 al mes.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
+      "opciones": [
+        "Es manejable, porque todavía le sobra algo",
+        "Le sobran 25.000 pesos para gastar",
+        "No le alcanza: le faltan 5.000 pesos cada mes",
+        "Está bien, porque la cuota es pequeña"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "8_world_5_multiple_choice_7",
+      "enunciado": "Andrés le debe 60.000 pesos a su papá y le sobran 15.000 al mes. ¿Cuál es un plan realista?",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "El plan usa lo que de verdad le sobra (15.000 × 4 = 60.000) y no suma deudas nuevas.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
+      "opciones": [
+        "Pagar 15.000 pesos al mes durante cuatro meses, sin pedir nuevos préstamos",
+        "Pagar los 60.000 pesos el mes que viene",
+        "No pagar hasta que tenga un trabajo",
+        "Pedirle 60.000 a un amigo para pagarle al papá"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "8_world_5_multiple_choice_8",
+      "enunciado": "Paula tiene dos deudas: una con su prima, sin interés, y otra en una tienda que cobra interés cada mes. Si le sobra un poco de plata, ¿cuál le conviene abonar primero?",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "La deuda con interés crece cada mes; abonarle primero evita que cueste más, sin dejar de cumplir lo acordado con la prima.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
+      "opciones": [
+        "La de su prima, porque es familia",
+        "Ninguna, para tener plata disponible",
+        "Repartir y pagar solo los intereses de la tienda",
+        "La de la tienda, porque cobra interés y cada mes cuesta más"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "8_world_5_multiple_choice_9",
+      "enunciado": "Tu familia quiere guardar agua de lluvia en baldes en el patio, pero en tu barrio hay muchos zancudos. ¿Qué es lo más sensato?",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "El agua destapada cría zancudos que transmiten enfermedades; taparla permite ahorrar agua sin arriesgar la salud.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-1",
+      "opciones": [
+        "Guardar el agua en recipientes tapados y lavarlos seguido",
+        "Dejar los baldes destapados para que se llenen más",
+        "No volver a guardar agua de lluvia nunca",
+        "Guardar el agua dentro de la casa en baldes sin tapa"
+      ],
+      "correctIndex": 0,
+      "prueba": true
+    },
+    {
+      "id": "8_world_5_multiple_choice_10",
+      "enunciado": "Esteban vende jugos y algunos meses gana mucho menos que otros. ¿Qué debe tener en cuenta antes de comprometerse con una cuota?",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Si el ingreso cambia, la cuota debe caber aun en los meses malos para no quedar mal.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
+      "opciones": [
+        "Calcular la cuota con lo que gana en su mejor mes",
+        "Calcular la cuota con lo que gana en sus peores meses",
+        "Tomar la cuota más alta para terminar rápido",
+        "Pensar solo en lo que vende este mes"
+      ],
+      "correctIndex": 1,
+      "prueba": true
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "bancoId": "1_world_1",
+  "grado": "1",
+  "worldId": "world_1",
+  "situaciones": [
+    {
+      "id": "1_world_1_sit_1",
+      "enunciado": "Ayudas a tu vecino a regar las matas y te da una moneda.",
+      "opcionA": {
+        "texto": "Comprar un dulce hoy",
+        "consecuencia": "Disfrutas el dulce ya, pero mañana no te queda moneda para otra cosa."
+      },
+      "opcionB": {
+        "texto": "Guardarla en la alcancía",
+        "consecuencia": "Hoy no hay dulce, pero tu alcancía crece para algo que quieras después."
+      }
+    },
+    {
+      "id": "1_world_1_sit_2",
+      "enunciado": "En el recreo hay un solo balón y muchos quieren jugar.",
+      "opcionA": {
+        "texto": "Jugar todos un partido grande",
+        "consecuencia": "Juegan todos juntos, pero cada uno toca poco el balón."
+      },
+      "opcionB": {
+        "texto": "Hacer turnos por grupos",
+        "consecuencia": "Cada grupo juega con más espacio, pero te toca esperar tu turno."
+      }
+    },
+    {
+      "id": "1_world_1_sit_3",
+      "enunciado": "Tienes dos colores rojos y ningún azul. Tu amiga tiene dos azules.",
+      "opcionA": {
+        "texto": "Cambiarle un rojo por un azul",
+        "consecuencia": "Ahora tienes los dos colores, pero ya no tienes dos rojos."
+      },
+      "opcionB": {
+        "texto": "Quedarte con tus dos rojos",
+        "consecuencia": "Sigues con todos tus rojos, pero no puedes pintar el cielo azul."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

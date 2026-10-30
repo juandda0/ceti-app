@@ -10,6 +10,8 @@
       "competencia": "deuda",
       "dificultad": 4,
       "explicacion": "Si las cuotas caben en tu presupuesto sin afectar lo básico ni el ahorro, la deuda es manejable.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "respuesta": true
     },
     {
@@ -18,6 +20,8 @@
       "competencia": "deuda",
       "dificultad": 4,
       "explicacion": "Endeudarse para cubrir otras deudas es una señal de sobreendeudamiento, no de buena salud financiera.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "respuesta": false
     },
     {
@@ -26,6 +30,8 @@
       "competencia": "deuda",
       "dificultad": 4,
       "explicacion": "El incumplimiento queda registrado y reduce la confianza de los prestamistas en el futuro.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "respuesta": true
     },
     {
@@ -34,6 +40,8 @@
       "competencia": "deuda",
       "dificultad": 4,
       "explicacion": "Firmar no elimina el riesgo; al contrario, asumes el compromiso de pagar aun si tu situación cambia.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-2",
       "respuesta": false
     },
     {
@@ -42,6 +50,8 @@
       "competencia": "deuda",
       "dificultad": 4,
       "explicacion": "Conocer todas tus obligaciones y ordenarlas por prioridad es un primer paso clave para pagarlas.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-2",
       "respuesta": true
     },
     {
@@ -50,6 +60,28 @@
       "competencia": "deuda",
       "dificultad": 4,
       "explicacion": "Si lo comprado desaparece o pierde valor, quedas pagando una deuda sin respaldo, lo que es más riesgoso.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-2",
+      "respuesta": false
+    },
+    {
+      "id": "10_world_5_true_false_7",
+      "enunciado": "Cuando decides no usar casco al montar en cicla, el riesgo no te afecta solo a ti: también puede afectar a tu familia.",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Las decisiones sobre riesgos tienen efectos en otros: una lesión grave cambia la vida y los recursos de toda la familia.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-2",
+      "respuesta": true
+    },
+    {
+      "id": "10_world_5_true_false_8",
+      "enunciado": "Guardar una copia de tus trabajos en la nube evita que el computador se dañe.",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "La copia no evita el daño del computador; reduce su impacto, porque no pierdes tu trabajo si ocurre.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-1",
       "respuesta": false
     }
   ],

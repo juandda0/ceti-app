@@ -1,0 +1,133 @@
+{
+  "bancoId": "8_world_3_ordenar",
+  "grado": "8",
+  "worldId": "world_3",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "8_world_3_ordenar_1",
+      "enunciado": "Ordena los pasos para armar un plan de ahorro en familia.",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Se elige la meta, se averigua el costo y el plazo, se reparten los aportes y se revisa el avance.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
+      "elementos": [
+        "Revisar cada mes cuánto llevan",
+        "Elegir juntos la meta",
+        "Decidir cuánto aporta cada quien al mes",
+        "Averiguar cuánto cuesta y para cuándo la quieren"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "8_world_3_ordenar_2",
+      "enunciado": "Ordena lo que hace Pedro con su negocio de manillas, del primer paso al último.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Primero ahorra, luego invierte en material, vende y vuelve a invertir parte de lo que gana.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-1",
+      "elementos": [
+        "Vende las manillas en el recreo",
+        "Ahorra parte de su mesada",
+        "Compra hilos y chaquiras",
+        "Guarda parte de la ganancia para comprar más material"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0,
+        3
+      ]
+    },
+    {
+      "id": "8_world_3_ordenar_3",
+      "enunciado": "Ordena estas opciones de la menos riesgosa a la más riesgosa para tu plata.",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "La cuenta de ahorros casi no tiene riesgo, un negocio puede ganar o perder y una promesa de doblar la plata de un desconocido es muy riesgosa.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-1",
+      "elementos": [
+        "Prestarle a un desconocido que promete devolverte el doble",
+        "Guardarla en una cuenta de ahorros",
+        "Invertirla en un pequeño negocio de postres con tu prima"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "8_world_3_ordenar_4",
+      "enunciado": "Si una familia ahorra 50.000 pesos al mes, ordena estas metas de la que se cumple más rápido a la que tarda más.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Con 50.000 al mes tardan 3, 5, 8 y 20 meses: a mayor meta, más tiempo.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
+      "elementos": [
+        "Meta de 400.000 pesos",
+        "Meta de 150.000 pesos",
+        "Meta de 1.000.000 de pesos",
+        "Meta de 250.000 pesos"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "8_world_3_ordenar_5",
+      "enunciado": "Ordena el camino de la plata de Ana, desde que la recibe hasta que la pone a crecer.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Primero recibe un ingreso, luego ahorra y, con lo ahorrado, invierte en algo que le genere más.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-1",
+      "elementos": [
+        "Cuando junta suficiente, compra una crispetera para vender en las ferias del barrio",
+        "Recibe su pago por pasear los perros del vecino",
+        "Aparta una parte cada semana"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "8_world_3_ordenar_6",
+      "enunciado": "Ordena lo que hace la familia cuando el plan de ahorro se atrasa.",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Revisar muestra el atraso, entender la causa permite ajustar y luego se sigue con el plan nuevo.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
+      "elementos": [
+        "Ajustar el aporte o la fecha de la meta",
+        "Darse cuenta de que van atrasados al revisar",
+        "Seguir con el plan ajustado",
+        "Buscar por qué no se pudo ahorrar ese mes"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        0,
+        2
+      ]
+    }
+  ]
+}

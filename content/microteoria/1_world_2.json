@@ -1,0 +1,23 @@
+{
+  "grado": "1",
+  "worldId": "world_2",
+  "cards": [
+    {
+      "titulo": "Necesidades y deseos",
+      "cuerpo": "Las necesidades son lo que nos hace falta para vivir: comida, agua, casa. Los deseos son gustos que pueden esperar.",
+      "ejemplo": "El almuerzo es una necesidad; un juguete nuevo es un deseo."
+    },
+    {
+      "titulo": "El dinero de la casa",
+      "cuerpo": "La familia recibe dinero por su trabajo y lo usa en comida, agua, luz y casa. No alcanza para todo.",
+      "ejemplo": "Con el pago del mes la familia compra el mercado y paga la luz."
+    },
+    {
+      "titulo": "Repartir bien",
+      "cuerpo": "Primero lo que necesitas, después un poco para guardar y al final un gusto. Así el dinero rinde.",
+      "ejemplo": "Con tres monedas: una para la merienda, una para la alcancía y una para un gusto."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

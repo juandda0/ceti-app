@@ -1,0 +1,125 @@
+{
+  "bancoId": "1_world_1_ordenar",
+  "grado": "1",
+  "worldId": "world_1",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "1_world_1_ordenar_1",
+      "enunciado": "Ordena: compras un pan en la tienda.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Primero pides, luego pagas con dinero y al final te llevas el pan.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-13-1",
+      "elementos": [
+        "Te llevas el pan",
+        "Pides el pan",
+        "Pagas con dinero"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "1_world_1_ordenar_2",
+      "enunciado": "Ordena: así llega la comida a la casa.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Primero alguien trabaja, luego le pagan y con ese dinero compra la comida.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-13-2",
+      "elementos": [
+        "Compra la comida",
+        "Un adulto de la casa trabaja",
+        "Le pagan por su trabajo"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "1_world_1_ordenar_3",
+      "enunciado": "Ordena del que vale menos al que vale más.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "100 pesos es menos que 500, y 500 es menos que 2.000.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-13-3",
+      "elementos": [
+        "Billete de 2.000",
+        "Moneda de 100",
+        "Moneda de 500"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "1_world_1_ordenar_4",
+      "enunciado": "Ordena: te lavas las manos cuidando el agua.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Te mojas, cierras la llave mientras te enjabonas y la abres solo para enjuagar.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-13-3",
+      "elementos": [
+        "Cierras la llave y te enjabonas",
+        "Abres la llave y te mojas",
+        "Abres otra vez y te enjuagas"
+      ],
+      "ordenCanonico": [
+        1,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "1_world_1_ordenar_5",
+      "enunciado": "Ordena: hay un solo balón para todo el curso.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Primero ven que el balón es escaso, luego hacen turnos y así todos juegan.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-13-1",
+      "elementos": [
+        "Hacen turnos para jugar",
+        "Todos juegan un rato",
+        "Ven que hay un solo balón"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "1_world_1_ordenar_6",
+      "enunciado": "Ordena: llovió poco y el tanque tiene poca agua.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Cuando ven que hay poca agua, la cuidan y así alcanza para más días.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-13-2",
+      "elementos": [
+        "Usan solo la que necesitan",
+        "Ven que queda poca agua",
+        "El agua alcanza más días"
+      ],
+      "ordenCanonico": [
+        1,
+        0,
+        2
+      ]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "grado": "10",
+  "worldId": "world_6",
+  "cards": [
+    {
+      "titulo": "PIB, crecimiento y ciclos",
+      "cuerpo": "El Producto Interno Bruto (PIB) es el valor de los bienes y servicios finales que se producen en un país en un periodo. Cuando el PIB aumenta hay crecimiento económico, pero desarrollo es más: que mejoren la salud, la educación y la calidad de vida. La economía no crece siempre igual: pasa por ciclos de expansión, auge, contracción (si se prolonga, recesión), valle y recuperación.",
+      "ejemplo": "Si en tu región abren fábricas y se contrata más gente, la producción crece; si además mejoran los colegios y los puestos de salud, hay desarrollo."
+    },
+    {
+      "titulo": "Cómo se reparte la riqueza y cómo crece una región",
+      "cuerpo": "El PIB per cápita es un promedio y no dice cómo se reparte el ingreso. Para eso se usa, por ejemplo, el coeficiente de Gini: cerca de 0 el reparto es parejo y cerca de 1 está muy concentrado. Una región puede crecer aprovechando lo que sabe hacer, agregando valor a lo que produce, mejorando vías y educación, y organizándose en asociaciones o cooperativas.",
+      "ejemplo": "Una vereda que vende el cacao en grano gana menos que una que lo procesa y vende chocolate con su propia marca."
+    },
+    {
+      "titulo": "Participar en las decisiones económicas",
+      "cuerpo": "Los ciudadanos pueden participar con el voto, el cabildo abierto, la consulta popular, la iniciativa popular, la revocatoria del mandato de alcaldes y gobernadores, el presupuesto participativo, el derecho de petición y las veedurías. Para saber a quién dirigirse: el Congreso aprueba los impuestos nacionales y el presupuesto, el Gobierno los ejecuta y el Banco de la República controla la inflación.",
+      "ejemplo": "Si tu comuna tiene presupuesto participativo, puedes proponer en una asamblea que se arregle la cancha y luego votar por esa propuesta."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

@@ -10,6 +10,8 @@
       "competencia": "credito",
       "dificultad": 2,
       "explicacion": "El crédito es recibir dinero ahora con el compromiso de devolverlo después, normalmente con un costo adicional.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
       "opciones": [
         "Recibir dinero prestado ahora y comprometerse a devolverlo después",
         "Recibir dinero que nunca hay que devolver",
@@ -24,6 +26,8 @@
       "competencia": "credito",
       "dificultad": 2,
       "explicacion": "El dinero prestado es una deuda: una obligación de pago que debe devolverse a quien lo prestó.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
       "opciones": [
         "En un regalo",
         "En un ahorro propio",
@@ -38,6 +42,8 @@
       "competencia": "credito",
       "dificultad": 3,
       "explicacion": "La tasa de interés es el costo de pedir dinero prestado: lo que se paga de más por encima del monto recibido.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
       "opciones": [
         "Un descuento por pagar tarde",
         "El costo de pedir dinero prestado",
@@ -52,6 +58,8 @@
       "competencia": "credito",
       "dificultad": 3,
       "explicacion": "La capacidad de pago es cuánto puede destinar alguien a pagar una deuda sin descuidar sus gastos necesarios.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
       "opciones": [
         "El total de dinero que desearía tener",
         "Cuánto puede pagar de una deuda sin afectar sus gastos básicos",
@@ -66,6 +74,8 @@
       "competencia": "credito",
       "dificultad": 2,
       "explicacion": "Usar crédito de forma responsable implica pedir solo lo que se puede pagar y cumplir con las cuotas a tiempo.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
       "opciones": [
         "Pedir prestado todo lo que ofrezcan",
         "Pedir solo lo necesario y pagar las cuotas a tiempo",
@@ -80,6 +90,8 @@
       "competencia": "credito",
       "dificultad": 3,
       "explicacion": "Quien presta cobra un interés por el servicio y por el tiempo que cede su dinero, por eso se devuelve más de lo recibido.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
       "opciones": [
         "Porque el dinero pierde su valor al guardarlo",
         "Porque quien presta cobra un interés por el préstamo",
@@ -94,6 +106,8 @@
       "competencia": "credito",
       "dificultad": 3,
       "explicacion": "Endeudarse por encima de la capacidad de pago dificulta cumplir las cuotas y puede llevar a un sobreendeudamiento.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
       "opciones": [
         "El crédito se vuelve gratis automáticamente",
         "Se le perdona la deuda con el tiempo",
@@ -108,11 +122,47 @@
       "competencia": "credito",
       "dificultad": 2,
       "explicacion": "Conviene revisar si se necesita realmente y si se podrá pagar la cuota con los ingresos disponibles.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
       "opciones": [
         "Si los amigos también tienen créditos",
         "Si de verdad se necesita y si se podrá pagar la cuota",
         "Si el color del producto que se quiere comprar gusta",
         "Si es el último día de una promoción"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "9_world_4_multiple_choice_9",
+      "enunciado": "¿Para qué sirve un seguro?",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "Con un seguro pagas una cuota (prima) y, si ocurre un daño o una pérdida que cubre, la aseguradora responde por ella.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-89-1",
+      "prueba": true,
+      "opciones": [
+        "Para ganar intereses, como en una cuenta de ahorro",
+        "Para que nunca te pase nada malo",
+        "Para pedir dinero prestado sin pagar intereses",
+        "Para pagar una cuota y recibir protección si ocurre un daño que cubre"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "9_world_4_multiple_choice_10",
+      "enunciado": "Comprar acciones de una empresa en el mercado de valores tiene una ventaja y un riesgo. ¿Cuáles son?",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "Una acción es una parte de la empresa: si la empresa va bien puede valer más, pero si va mal su valor puede bajar.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-89-2",
+      "prueba": true,
+      "opciones": [
+        "Garantiza una ganancia fija cada mes y no tiene riesgo",
+        "Puedes ganar si la empresa crece, pero también perder si su valor baja",
+        "Es igual a un préstamo que la empresa siempre te devuelve con intereses",
+        "No tiene riesgo, porque las acciones siempre suben con el tiempo"
       ],
       "correctIndex": 1
     }

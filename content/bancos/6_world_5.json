@@ -1,0 +1,44 @@
+{
+  "bancoId": "6_world_5",
+  "grado": "6",
+  "worldId": "world_5",
+  "situaciones": [
+    {
+      "id": "6_world_5_sit_1",
+      "enunciado": "Llevas semanas durmiendo poco por quedarte en el celular. Un amigo te invita a un torneo de videojuegos en línea que termina tarde, justo la noche antes de un partido importante de tu equipo.",
+      "opcionA": {
+        "texto": "Jugar el torneo.",
+        "consecuencia": "Compartes con tu amigo y disfrutas el torneo, pero llegas cansado al partido y tu cuerpo, que ya venía con poco sueño, rinde menos."
+      },
+      "opcionB": {
+        "texto": "No jugar y dormir temprano.",
+        "consecuencia": "Llegas descansado al partido, pero te pierdes el torneo y quizá tu amigo se decepcione un poco."
+      }
+    },
+    {
+      "id": "6_world_5_sit_2",
+      "enunciado": "Te faltan 20.000 pesos para la camiseta del equipo de fútbol del colegio. Un compañero te ofrece prestártelos, pero quiere que le devuelvas 25.000 en dos semanas.",
+      "opcionA": {
+        "texto": "Aceptar el préstamo.",
+        "consecuencia": "Tienes la camiseta para el próximo partido, pero te comprometes a pagar 5.000 pesos más y, si no te alcanza la mesada, la amistad con tu compañero se puede afectar."
+      },
+      "opcionB": {
+        "texto": "Esperar y ahorrar.",
+        "consecuencia": "No le debes nada a nadie, pero juegas el próximo partido con otra camiseta y te toca esperar para estrenar la del equipo."
+      }
+    },
+    {
+      "id": "6_world_5_sit_3",
+      "enunciado": "En el colegio proponen dos usos para la plata de la feria: arreglar los tanques donde se guarda el agua, porque a veces se va el servicio, o comprar balones e implementos deportivos.",
+      "opcionA": {
+        "texto": "Arreglar los tanques del agua.",
+        "consecuencia": "Si se va el agua, el colegio puede seguir con clases y los baños funcionan, pero este año los estudiantes siguen con los balones viejos."
+      },
+      "opcionB": {
+        "texto": "Comprar implementos deportivos.",
+        "consecuencia": "Los recreos y las clases de educación física mejoran de inmediato, pero si se va el agua el colegio podría tener que mandar a los estudiantes a la casa."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

@@ -1,0 +1,44 @@
+{
+  "bancoId": "1_world_5",
+  "grado": "1",
+  "worldId": "world_5",
+  "situaciones": [
+    {
+      "id": "1_world_5_sit_1",
+      "enunciado": "Quieres un helado y no traes dinero. Tu amigo te ofrece prestarte una moneda.",
+      "opcionA": {
+        "texto": "Aceptar la moneda",
+        "consecuencia": "Comes helado hoy, pero mañana le debes una moneda a tu amigo."
+      },
+      "opcionB": {
+        "texto": "Esperar a otro día",
+        "consecuencia": "No le debes nada a nadie, pero hoy te quedas sin helado."
+      }
+    },
+    {
+      "id": "1_world_5_sit_2",
+      "enunciado": "Hace un sol muy fuerte en el paseo. Puedes seguir jugando o descansar en la sombra.",
+      "opcionA": {
+        "texto": "Seguir jugando al sol",
+        "consecuencia": "Juegas más rato, pero puedes terminar cansado y con dolor de cabeza."
+      },
+      "opcionB": {
+        "texto": "Descansar y tomar agua",
+        "consecuencia": "Cuidas tu cuerpo, pero juegas un poco menos."
+      }
+    },
+    {
+      "id": "1_world_5_sit_3",
+      "enunciado": "Tu amiga está triste en el recreo y tus amigos te llaman a jugar fútbol.",
+      "opcionA": {
+        "texto": "Ir a jugar fútbol",
+        "consecuencia": "Te diviertes con el grupo, pero tu amiga se queda sola."
+      },
+      "opcionB": {
+        "texto": "Quedarte con ella",
+        "consecuencia": "Tu amiga se siente acompañada, pero te pierdes el partido."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

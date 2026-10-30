@@ -1,0 +1,44 @@
+{
+  "bancoId": "8_world_3",
+  "grado": "8",
+  "worldId": "world_3",
+  "situaciones": [
+    {
+      "id": "8_world_3_sit_1",
+      "enunciado": "Juntaste 80.000 pesos en tu alcancía. Tu prima te propone poner esa plata en un pequeño negocio de postres para vender en el colegio y repartir las ganancias.",
+      "opcionA": {
+        "texto": "Invertir tus ahorros en el negocio de postres.",
+        "consecuencia": "Si los postres se venden, recuperas tu plata, ganas algo y aprendes a manejar un negocio; si no se venden, puedes perder parte de lo que habías juntado."
+      },
+      "opcionB": {
+        "texto": "Dejar tus ahorros guardados en la alcancía.",
+        "consecuencia": "Tu plata sigue completa y disponible cuando la necesites, pero no crece y te pierdes la experiencia de emprender con tu prima."
+      }
+    },
+    {
+      "id": "8_world_3_sit_2",
+      "enunciado": "En tu casa acuerdan ahorrar para un paseo de fin de año. Te proponen que aportes una parte de tu mesada cada mes.",
+      "opcionA": {
+        "texto": "Aportar una parte fija de tu mesada cada mes.",
+        "consecuencia": "Te sientes parte de la meta y el paseo queda más cerca, pero durante esos meses tienes menos plata para tus gustos."
+      },
+      "opcionB": {
+        "texto": "No aportar y dejar el ahorro en manos de los adultos.",
+        "consecuencia": "Mantienes tu mesada completa, pero la meta tarda más en cumplirse y te pierdes la experiencia de planear algo en familia."
+      }
+    },
+    {
+      "id": "8_world_3_sit_3",
+      "enunciado": "Te ganaste 100.000 pesos en un concurso del colegio. Puedes gastarlos en unos audífonos que querías o pagar un curso de programación los sábados.",
+      "opcionA": {
+        "texto": "Comprar los audífonos.",
+        "consecuencia": "Disfrutas tu premio de inmediato y lo usas todos los días, pero no lo conviertes en algo que te ayude a aprender o ganar más adelante."
+      },
+      "opcionB": {
+        "texto": "Pagar el curso de programación.",
+        "consecuencia": "Inviertes en algo que puede abrirte oportunidades, pero no ves el beneficio de inmediato y te toca dedicar tus sábados a estudiar."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

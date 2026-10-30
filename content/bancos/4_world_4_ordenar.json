@@ -1,0 +1,137 @@
+{
+  "bancoId": "4_world_4_ordenar",
+  "grado": "4",
+  "worldId": "world_4",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "4_world_4_ordenar_1",
+      "enunciado": "Ordena lo que pasa con un préstamo.",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "Pides, acuerdas el pago, usas el dinero y al final cumples devolviéndolo con el interés.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-45-1",
+      "elementos": [
+        "Usas el dinero",
+        "Pides dinero prestado",
+        "Devuelves lo prestado más el interés",
+        "Acuerdas cuándo lo vas a devolver"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "4_world_4_ordenar_2",
+      "enunciado": "Ordena los pasos para decidir si pides prestado.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Primero piensas para qué, luego si puedes ahorrar, después si puedes pagar, y al final decides.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-45-2",
+      "elementos": [
+        "Ver si puedes esperar y ahorrar",
+        "Decidir si pides el préstamo",
+        "Pensar para qué lo necesitas",
+        "Calcular si podrás devolverlo a tiempo"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        3,
+        1
+      ]
+    },
+    {
+      "id": "4_world_4_ordenar_3",
+      "enunciado": "Ordena los pasos para pedir un préstamo en una cooperativa.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Te asocias, presentas los requisitos, la cooperativa revisa y, si aprueba, recibes el préstamo y lo pagas.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-45-1",
+      "elementos": [
+        "Recibir el dinero y pagarlo por partes",
+        "Llevar los documentos que piden",
+        "Esperar a que revisen si puedes pagar",
+        "Hacerte asociado de la cooperativa"
+      ],
+      "ordenCanonico": [
+        3,
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "4_world_4_ordenar_4",
+      "enunciado": "Felipe le pidió prestado a su hermana. Ordena lo que hizo.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Felipe pidió, acordó la fecha, se organizó para pagar y cumplió su compromiso.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-45-1",
+      "elementos": [
+        "Guardó parte de su mesada cada día",
+        "El viernes le pagó todo",
+        "Acordaron que le pagaría el viernes",
+        "Le pidió dinero prestado para un balón"
+      ],
+      "ordenCanonico": [
+        3,
+        2,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "4_world_4_ordenar_5",
+      "enunciado": "Ordena los pasos para elegir con tu familia dónde ahorrar.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Se averigua, se pregunta por cobros y requisitos, se compara y luego se elige.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-45-1",
+      "elementos": [
+        "Comparar ventajas y desventajas",
+        "Averiguar qué ofrece cada banco o cooperativa",
+        "Elegir dónde abrir la cuenta",
+        "Preguntar qué cobran y qué requisitos piden"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "4_world_4_ordenar_6",
+      "enunciado": "Laura pasó su ahorro de la alcancía a una cuenta. Ordena lo que vivió.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "La cuenta le dio más protección (ventaja), pero sacar el dinero ya no es tan rápido (desventaja).",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-45-2",
+      "elementos": [
+        "Con su mamá abrió una cuenta de ahorros",
+        "Notó que para sacarlo debía hacer un trámite",
+        "Se le cayó la alcancía y casi pierde el dinero",
+        "Su dinero quedó más protegido"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        3,
+        1
+      ]
+    }
+  ]
+}

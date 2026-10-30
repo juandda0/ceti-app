@@ -1,0 +1,71 @@
+{
+  "bancoId": "4_world_6_true_false",
+  "grado": "4",
+  "worldId": "world_6",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "4_world_6_true_false_1",
+      "enunciado": "Con los impuestos se pagan cosas de todos, como los colegios públicos y los hospitales.",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Verdadero: los impuestos son el principal ingreso del Estado para pagar lo que es de todos.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-45-2",
+      "respuesta": true
+    },
+    {
+      "id": "4_world_6_true_false_2",
+      "enunciado": "El Banco de la República es quien aprueba los impuestos del país.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Falso: los impuestos los aprueba el Congreso; el Banco de la República emite el dinero.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-45-1",
+      "respuesta": false
+    },
+    {
+      "id": "4_world_6_true_false_3",
+      "enunciado": "Tirar basura a los ríos pone en riesgo el agua que necesita la comunidad.",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Verdadero: la basura ensucia el agua que usan las personas, los animales y las plantas.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-45-2",
+      "respuesta": true
+    },
+    {
+      "id": "4_world_6_true_false_4",
+      "enunciado": "El parque del barrio no hay que cuidarlo, porque no es de nadie.",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Falso: el parque es de toda la comunidad y todos debemos cuidarlo.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-45-1",
+      "respuesta": false
+    },
+    {
+      "id": "4_world_6_true_false_5",
+      "enunciado": "Cuando un pueblo tiene buenas vías y escuelas, sus habitantes pueden vivir mejor.",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Verdadero: más y mejores recursos ayudan a que una comunidad se desarrolle.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-45-1",
+      "respuesta": true
+    },
+    {
+      "id": "4_world_6_true_false_6",
+      "enunciado": "Si el dinero no alcanza, la escuela debe gastar primero en adornos y después en lo que necesita.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Falso: primero va lo que da bienestar a todos, como baños, agua y pupitres en buen estado.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-45-2",
+      "respuesta": false
+    }
+  ]
+}

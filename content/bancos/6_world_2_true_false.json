@@ -1,0 +1,71 @@
+{
+  "bancoId": "6_world_2_true_false",
+  "grado": "6",
+  "worldId": "world_2",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "6_world_2_true_false_1",
+      "enunciado": "Hacer un presupuesto antes de gastar te ayuda a evitar compras por impulso.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Verdadero: si ya decidiste cuánto gastar en cada cosa, es más fácil no dejarte llevar por el antojo.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-67-1",
+      "respuesta": true
+    },
+    {
+      "id": "6_world_2_true_false_2",
+      "enunciado": "Si tus gastos son mayores que tus ingresos, tu presupuesto está equilibrado.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Falso: gastar más de lo que entra es un desequilibrio; tienes que recortar gastos o conseguir más ingresos.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-67-1",
+      "respuesta": false
+    },
+    {
+      "id": "6_world_2_true_false_3",
+      "enunciado": "Un presupuesto solo les sirve a las personas que ganan mucha plata.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Falso: cuando hay poca plata, el presupuesto ayuda todavía más a que alcance para lo importante.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-67-1",
+      "respuesta": false
+    },
+    {
+      "id": "6_world_2_true_false_4",
+      "enunciado": "En un presupuesto familiar, servicios como el agua y la luz son necesidades.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Verdadero: son servicios básicos que la casa necesita para funcionar.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-67-2",
+      "respuesta": true
+    },
+    {
+      "id": "6_world_2_true_false_5",
+      "enunciado": "Un buen presupuesto familiar no deja ningún espacio para los deseos.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Falso: después de cubrir las necesidades se puede dejar una parte para gustos y otra para ahorrar.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-67-2",
+      "respuesta": false
+    },
+    {
+      "id": "6_world_2_true_false_6",
+      "enunciado": "Cuando toda la familia participa en el presupuesto, es más fácil cumplirlo.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Verdadero: si todos entienden el plan y lo acuerdan, todos ayudan a cumplirlo.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-67-2",
+      "respuesta": true
+    }
+  ]
+}

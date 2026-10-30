@@ -10,6 +10,8 @@
       "competencia": "deuda",
       "dificultad": 5,
       "explicacion": "Una deuda es manejable cuando las cuotas caben con holgura dentro del ingreso disponible sin sacrificar gastos esenciales.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "opciones": [
         "Que las cuotas se paguen sin comprometer los gastos básicos ni el ahorro",
         "Que la entidad que la otorga sea reconocida",
@@ -24,6 +26,8 @@
       "competencia": "deuda",
       "dificultad": 5,
       "explicacion": "El sobreendeudamiento se da cuando las obligaciones superan la capacidad real de pago del ingreso.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "opciones": [
         "Tiene una sola deuda con plazo definido",
         "Asume más obligaciones de las que su ingreso puede cubrir",
@@ -38,6 +42,8 @@
       "competencia": "deuda",
       "dificultad": 5,
       "explicacion": "El incumplimiento genera reportes negativos en centrales de riesgo que dificultan acceder a crédito futuro.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "opciones": [
         "La reducción automática del monto adeudado",
         "Un aumento del límite de crédito disponible",
@@ -52,6 +58,8 @@
       "competencia": "deuda",
       "dificultad": 5,
       "explicacion": "Priorizar el pago de la deuda más costosa o renegociar plazos ayuda a reducir la carga de manera ordenada.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-2",
       "opciones": [
         "Solicitar un nuevo préstamo grande para gastar más",
         "Ignorar las deudas hasta que prescriban",
@@ -66,6 +74,8 @@
       "competencia": "deuda",
       "dificultad": 5,
       "explicacion": "El riesgo financiero es la posibilidad de no poder cumplir las obligaciones ante imprevistos o caídas del ingreso.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-2",
       "opciones": [
         "La certeza de obtener ganancias con el préstamo",
         "La posibilidad de no poder cumplir los pagos ante un imprevisto",
@@ -80,6 +90,8 @@
       "competencia": "deuda",
       "dificultad": 5,
       "explicacion": "Si el bien se deprecia más rápido de lo que se paga, se sigue debiendo por algo que ya vale poco.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-2",
       "opciones": [
         "Porque el bien siempre aumenta de valor con el tiempo",
         "Porque la deuda desaparece al usar el bien",
@@ -94,6 +106,8 @@
       "competencia": "deuda",
       "dificultad": 5,
       "explicacion": "Comparar la cuota futura con el ingreso y los gastos fijos permite anticipar si la deuda será sostenible.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-2",
       "opciones": [
         "Si la cuota es sostenible frente al ingreso y los gastos fijos",
         "Si los amigos también tienen deudas similares",
@@ -108,6 +122,8 @@
       "competencia": "deuda",
       "dificultad": 5,
       "explicacion": "La reestructuración busca ajustar plazos o cuotas a la capacidad real de pago y evitar el incumplimiento.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-2",
       "opciones": [
         "Eliminar por completo la obligación sin pagar nada",
         "Ajustar las condiciones a la capacidad real de pago",
@@ -115,6 +131,72 @@
         "Evitar para siempre ser reportado a centrales de riesgo"
       ],
       "correctIndex": 1
+    },
+    {
+      "id": "11_world_5_multiple_choice_9",
+      "enunciado": "Vacunarte contra la influenza antes de la temporada de lluvias es una estrategia para:",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "La vacuna reduce el riesgo: baja la probabilidad de enfermarte y qué tan grave sería si te enfermas.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-1",
+      "prueba": true,
+      "opciones": [
+        "Transferir el riesgo a otra persona",
+        "Reducir la probabilidad de enfermarte o qué tan grave sería",
+        "Hacer que la influenza deje de existir",
+        "Aceptar el riesgo sin hacer nada"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "11_world_5_multiple_choice_10",
+      "enunciado": "La junta de acción comunal propone desviar una quebrada para construir canchas. ¿Qué haría una decisión colectiva responsable sobre ese riesgo?",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Una decisión colectiva sobre un riesgo ambiental se toma con información técnica, oyendo a los afectados y por los canales de participación.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-3",
+      "prueba": true,
+      "opciones": [
+        "Aprobarla rápido porque todos quieren canchas",
+        "Dejar que decida solo quien pone la plata",
+        "Consultar estudios ambientales, oír a los vecinos afectados y decidir en asamblea",
+        "Rechazarla sin averiguar qué riesgos tiene"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "11_world_5_multiple_choice_11",
+      "enunciado": "Sebastián comparte en un grupo una foto vergonzosa de una compañera \"como broma\". Además del daño a ella, ¿qué efecto de esa decisión debe considerar?",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Quien decide asumir un riesgo responde por sus efectos: la foto puede circular sin control y dañar la convivencia del grupo.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-2",
+      "opciones": [
+        "Ninguno, porque si es broma no tiene consecuencias",
+        "Que solo hay problema si la compañera se entera",
+        "Que borrarla después elimina cualquier efecto",
+        "Que la foto puede circular sin control y él responde por el daño a la convivencia"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "11_world_5_multiple_choice_12",
+      "enunciado": "Un equipo de estudio tiene dos riesgos: que alguien llegue tarde a una reunión (pasa seguido, afecta poco) y que se pierda el archivo del proyecto final (pasa poco, afectaría muchísimo). ¿Qué es más sensato?",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Un riesgo poco probable pero de impacto muy alto merece gestión: hacer copias reduce el impacto de perder el archivo.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-1",
+      "opciones": [
+        "Reducir el riesgo del archivo con copias de respaldo, porque su impacto sería muy grave",
+        "Ignorar el riesgo del archivo porque casi nunca pasa",
+        "Atender solo las llegadas tarde porque son lo más frecuente",
+        "Cambiar de equipo para que los riesgos desaparezcan"
+      ],
+      "correctIndex": 0
     }
   ],
   "pendiente_validacion_docente": true,

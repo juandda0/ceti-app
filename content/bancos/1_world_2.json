@@ -1,0 +1,44 @@
+{
+  "bancoId": "1_world_2",
+  "grado": "1",
+  "worldId": "world_2",
+  "situaciones": [
+    {
+      "id": "1_world_2_sit_1",
+      "enunciado": "Tienes una moneda. Puedes comprar un jugo para el recreo o guardarla para el paseo del viernes.",
+      "opcionA": {
+        "texto": "Comprar el jugo hoy",
+        "consecuencia": "Tomas algo rico en el recreo, pero llegas al paseo con menos dinero."
+      },
+      "opcionB": {
+        "texto": "Guardarla para el paseo",
+        "consecuencia": "Tienes más para el viernes, pero hoy en el recreo solo tomas agua."
+      }
+    },
+    {
+      "id": "1_world_2_sit_2",
+      "enunciado": "Tu familia tiene para un gusto este mes: pedir pizza o ir a la piscina.",
+      "opcionA": {
+        "texto": "Pedir pizza en casa",
+        "consecuencia": "Comen rico juntos en casa, pero este mes no salen a pasear."
+      },
+      "opcionB": {
+        "texto": "Ir a la piscina",
+        "consecuencia": "Se divierten afuera, pero este mes no hay pizza."
+      }
+    },
+    {
+      "id": "1_world_2_sit_3",
+      "enunciado": "Necesitas colores para clase. Hay unos sencillos y otros con brillo que cuestan más.",
+      "opcionA": {
+        "texto": "Comprar los sencillos",
+        "consecuencia": "Te alcanza y te sobra algo, pero los colores no tienen brillo."
+      },
+      "opcionB": {
+        "texto": "Comprar los de brillo",
+        "consecuencia": "Te encantan, pero esta semana no te queda dinero para otra cosa."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

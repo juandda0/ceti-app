@@ -1,0 +1,125 @@
+{
+  "bancoId": "1_world_3_ordenar",
+  "grado": "1",
+  "worldId": "world_3",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "1_world_3_ordenar_1",
+      "enunciado": "Ordena: quieres ahorrar para un balón.",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Primero pones tu meta, luego guardas poco a poco y al final compras el balón.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-13-3",
+      "elementos": [
+        "Guardas monedas cada semana",
+        "Compras el balón",
+        "Decides tu meta: un balón"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "1_world_3_ordenar_2",
+      "enunciado": "Ordena tu alcancía, del primer día al último.",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Empieza vacía, se llena a la mitad y, si no te rindes, se llena toda.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-13-3",
+      "elementos": [
+        "Está llena",
+        "Está a la mitad",
+        "Está vacía"
+      ],
+      "ordenCanonico": [
+        2,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "1_world_3_ordenar_3",
+      "enunciado": "Ordena: ahorras papel en clase.",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Usas los dos lados de la hoja y al final la llevas a reciclar.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-13-1",
+      "elementos": [
+        "Usas el otro lado de la hoja",
+        "Escribes en un lado de la hoja",
+        "Llevas la hoja a reciclar"
+      ],
+      "ordenCanonico": [
+        1,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "1_world_3_ordenar_4",
+      "enunciado": "Ordena: la familia ahorra para un paseo.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Primero escogen la meta, ahorran cada mes y luego se van de paseo.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-13-2",
+      "elementos": [
+        "Se van de paseo",
+        "Guardan un poco cada mes",
+        "Escogen a dónde ir"
+      ],
+      "ordenCanonico": [
+        2,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "1_world_3_ordenar_5",
+      "enunciado": "Ordena: guardas la comida que sobra.",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Sobra comida, la guardas y la comes después: así la ahorras.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-13-1",
+      "elementos": [
+        "La comes al otro día",
+        "Sobra arroz del almuerzo",
+        "La guardas en la nevera"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "1_world_3_ordenar_6",
+      "enunciado": "Ordena: se dañó la ducha de la casa.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Cuando algo se daña, el ahorro de la familia sirve para arreglarlo.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-13-2",
+      "elementos": [
+        "Se daña la ducha",
+        "Queda arreglada",
+        "Usan dinero que ahorraron"
+      ],
+      "ordenCanonico": [
+        0,
+        2,
+        1
+      ]
+    }
+  ]
+}

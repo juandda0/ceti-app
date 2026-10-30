@@ -10,6 +10,8 @@
       "competencia": "deuda",
       "dificultad": 5,
       "explicacion": "Esa holgura frente al ingreso es justamente lo que define a una deuda como manejable.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "respuesta": true
     },
     {
@@ -18,6 +20,8 @@
       "competencia": "deuda",
       "dificultad": 5,
       "explicacion": "Falso: pagar solo el mínimo alarga la deuda y aumenta el costo total acumulado.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "respuesta": false
     },
     {
@@ -26,6 +30,8 @@
       "competencia": "deuda",
       "dificultad": 5,
       "explicacion": "Verdadero: ese desbalance entre obligaciones e ingreso es la definición de sobreendeudamiento.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "respuesta": true
     },
     {
@@ -34,6 +40,8 @@
       "competencia": "deuda",
       "dificultad": 5,
       "explicacion": "Falso: el incumplimiento genera reportes negativos que dificultan obtener crédito más adelante.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "respuesta": false
     },
     {
@@ -42,6 +50,8 @@
       "competencia": "deuda",
       "dificultad": 5,
       "explicacion": "Verdadero: la reestructuración ajusta las condiciones a la capacidad real de pago.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-2",
       "respuesta": true
     },
     {
@@ -50,6 +60,28 @@
       "competencia": "deuda",
       "dificultad": 5,
       "explicacion": "Falso: aumenta el riesgo, porque se puede seguir debiendo por algo que ya perdió valor.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-2",
+      "respuesta": false
+    },
+    {
+      "id": "11_world_5_true_false_7",
+      "enunciado": "Aceptar un riesgo puede ser una estrategia válida cuando su probabilidad y su impacto son bajos, como mojarse un poco en una llovizna corta.",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Aceptar es una de las estrategias de gestión del riesgo y tiene sentido cuando el riesgo es pequeño y prevenirlo costaría más.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-1",
+      "respuesta": true
+    },
+    {
+      "id": "11_world_5_true_false_8",
+      "enunciado": "En una decisión colectiva sobre un riesgo, como el manejo de las basuras del barrio, basta con que decida una sola persona para que todos cumplan.",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Las decisiones colectivas sobre riesgos funcionan mejor con participación: quienes deciden juntos entienden y cumplen las medidas.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-3",
       "respuesta": false
     }
   ],

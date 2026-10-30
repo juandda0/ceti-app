@@ -1,0 +1,173 @@
+{
+  "bancoId": "6_world_2_multiple_choice",
+  "grado": "6",
+  "worldId": "world_2",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "6_world_2_multiple_choice_1",
+      "enunciado": "¿Qué es un presupuesto?",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "El presupuesto es un plan: se hace antes de gastar y organiza ingresos y gastos.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-67-1",
+      "opciones": [
+        "Un plan de lo que va a entrar y salir de dinero en un tiempo",
+        "La lista de lo que ya compraste el mes pasado",
+        "El dinero que te sobra al final del mes",
+        "Una cuenta en el banco para guardar plata"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "6_world_2_multiple_choice_2",
+      "enunciado": "Juliana hace su presupuesto antes de recibir la mesada. ¿Cómo la ayuda eso a consumir con responsabilidad?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Planear antes de gastar le permite repartir su plata con calma y no dejarse llevar por el antojo.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-67-1",
+      "opciones": [
+        "Hace que su mesada sea más grande",
+        "Le permite gastar sin pensar porque ya todo está anotado",
+        "Decide de antemano cuánto gastar en cada cosa y evita compras por antojo",
+        "Le prohíbe darse cualquier gusto"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "6_world_2_multiple_choice_3",
+      "enunciado": "Sebastián recibe 30.000 pesos al mes y gasta 36.000. ¿Qué le muestra su presupuesto?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Si los gastos (36.000) superan los ingresos (30.000), le faltan 6.000 pesos y debe ajustar.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-67-1",
+      "opciones": [
+        "Que le sobran 6.000 pesos",
+        "Que gasta 6.000 pesos más de lo que recibe",
+        "Que gasta justo lo que recibe",
+        "Que su presupuesto está equilibrado"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "6_world_2_multiple_choice_4",
+      "enunciado": "Al revisar su presupuesto, Isabela ve que casi toda su plata se le va en onces. ¿Cuál es el mejor ajuste para consumir con responsabilidad?",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Un tope para onces le deja plata para otras cosas sin dejar de darse ese gusto.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-67-1",
+      "opciones": [
+        "Dejar de anotar sus gastos para no preocuparse",
+        "Pedirle plata prestada a un amigo cada semana",
+        "Gastar todo el primer día para no tentarse después",
+        "Ponerse un tope semanal para onces y apartar el resto"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "6_world_2_multiple_choice_5",
+      "enunciado": "¿Para qué sirve comparar lo que planeaste gastar con lo que de verdad gastaste?",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Comparar lo planeado con lo real te muestra en qué te desviaste y cómo mejorar.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-67-1",
+      "opciones": [
+        "Para saber cuánta plata tienen tus amigos",
+        "Para descubrir en qué te pasaste y corregir el próximo mes",
+        "Para gastar más en lo que más te gusta",
+        "Para no tener que volver a hacer un presupuesto"
+      ],
+      "correctIndex": 1,
+      "prueba": true
+    },
+    {
+      "id": "6_world_2_multiple_choice_6",
+      "enunciado": "En el presupuesto de una familia, ¿cuál de estos gastos es una necesidad?",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "La luz es un servicio básico que la casa necesita; los otros son gustos que se pueden aplazar.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-67-2",
+      "opciones": [
+        "Ir a cine el sábado",
+        "Pedir un domicilio de pizza",
+        "Pagar el recibo de la luz",
+        "Cambiar de celular porque salió uno nuevo"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "6_world_2_multiple_choice_7",
+      "enunciado": "La familia de Tomás va a armar su presupuesto del mes. ¿Qué gastos deben anotar primero?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Primero se aseguran las necesidades; los deseos van después con lo que quede.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-67-2",
+      "opciones": [
+        "Arriendo, comida, servicios y transporte",
+        "Las vacaciones de fin de año",
+        "Ropa de moda para todos",
+        "Las salidas a comer de los fines de semana"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "6_world_2_multiple_choice_8",
+      "enunciado": "Este mes, en la casa de Valentina, la plata no alcanza para todo. ¿Qué gasto es más razonable aplazar?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Comer en un restaurante es un deseo; los otros gastos son necesidades de la familia.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-67-2",
+      "opciones": [
+        "El mercado de la semana",
+        "El transporte para ir al colegio",
+        "El recibo del agua",
+        "La salida a comer a un restaurante"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "6_world_2_multiple_choice_9",
+      "enunciado": "Una familia recibe 1.800.000 pesos al mes y sus necesidades suman 1.500.000. ¿Cuánto le queda para ahorro y deseos?",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "1.800.000 menos 1.500.000 deja 300.000 pesos para repartir entre ahorro y deseos.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-67-2",
+      "opciones": [
+        "3.300.000 pesos",
+        "300.000 pesos",
+        "1.500.000 pesos",
+        "Nada, porque las necesidades se llevan todo"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "6_world_2_multiple_choice_10",
+      "enunciado": "Al armar el presupuesto familiar, ¿cuál es la mejor forma de incluir los deseos?",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Los deseos caben en el presupuesto cuando ya están cubiertas las necesidades.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-67-2",
+      "opciones": [
+        "No incluirlos nunca, porque son gastos inútiles",
+        "Ponerlos primero para que la familia esté contenta",
+        "Dejarles una parte después de cubrir las necesidades",
+        "Pagarlos con préstamos para no tocar el resto"
+      ],
+      "correctIndex": 2,
+      "prueba": true
+    }
+  ]
+}

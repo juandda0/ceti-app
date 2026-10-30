@@ -1,0 +1,71 @@
+{
+  "bancoId": "8_world_6_true_false",
+  "grado": "8",
+  "worldId": "world_6",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "8_world_6_true_false_1",
+      "enunciado": "Con los impuestos se pagan cosas que usamos todos, como parques, vías y colegios públicos.",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Verdadero: los impuestos financian bienes y servicios públicos.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-89-1",
+      "respuesta": true
+    },
+    {
+      "id": "8_world_6_true_false_2",
+      "enunciado": "En Colombia, los impuestos los aprueba el Banco de la República.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Falso: los impuestos los aprueba el Congreso (y en el municipio, el concejo); el Banco de la República controla la inflación.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-89-1",
+      "respuesta": false
+    },
+    {
+      "id": "8_world_6_true_false_3",
+      "enunciado": "Cuando hay inflación, el mismo billete alcanza para comprar menos cosas que antes.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Verdadero: si los precios suben en general, el dinero pierde poder de compra.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-2",
+      "respuesta": true
+    },
+    {
+      "id": "8_world_6_true_false_4",
+      "enunciado": "Comprarles a productores de tu región y reutilizar lo que todavía sirve son formas de consumo responsable.",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Verdadero: apoya la economía local y reduce el desperdicio.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-89-2",
+      "respuesta": true
+    },
+    {
+      "id": "8_world_6_true_false_5",
+      "enunciado": "Una fábrica que convierte harina en pan empacado pertenece al sector primario.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Falso: transformar harina en pan es sector secundario; el primario saca recursos de la naturaleza.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-1",
+      "respuesta": false
+    },
+    {
+      "id": "8_world_6_true_false_6",
+      "enunciado": "Un impuesto es más equitativo si los que menos tienen pagan una parte mayor de sus ingresos que los que más tienen.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Falso: es más equitativo cuando quien tiene más capacidad aporta una parte mayor.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-89-2",
+      "respuesta": false
+    }
+  ]
+}

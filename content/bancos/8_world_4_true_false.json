@@ -1,0 +1,71 @@
+{
+  "bancoId": "8_world_4_true_false",
+  "grado": "8",
+  "worldId": "world_4",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "8_world_4_true_false_1",
+      "enunciado": "Antes de pedir prestado conviene restar tus gastos necesarios a tus ingresos para saber cuánto podrías pagar.",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "Verdadero: lo que sobra después de lo necesario muestra tu capacidad de endeudamiento.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
+      "respuesta": true
+    },
+    {
+      "id": "8_world_4_true_false_2",
+      "enunciado": "Si al mes te sobran 20.000 pesos, puedes tomar una cuota de 50.000 sin problema.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Falso: la cuota es mayor que lo que te sobra, así que tendrías que dejar de cubrir otras cosas.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
+      "respuesta": false
+    },
+    {
+      "id": "8_world_4_true_false_3",
+      "enunciado": "Un plan responsable para pagar una deuda dice cuánto vas a pagar y en qué fechas.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Verdadero: con montos y fechas claras puedes cumplir y quien te prestó sabe qué esperar.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
+      "respuesta": true
+    },
+    {
+      "id": "8_world_4_true_false_4",
+      "enunciado": "En un seguro común, si en el año no pasa nada malo, la aseguradora te devuelve todo lo que pagaste.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Falso: en la mayoría de los seguros la cuota paga la protección durante ese tiempo; no es un ahorro que se devuelve.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-89-1",
+      "respuesta": false
+    },
+    {
+      "id": "8_world_4_true_false_5",
+      "enunciado": "Los aportes a un fondo de pensiones sirven para tener un ingreso cuando la persona ya no trabaje por su edad.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Verdadero: eso es justamente una pensión de vejez.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-89-1",
+      "respuesta": true
+    },
+    {
+      "id": "8_world_4_true_false_6",
+      "enunciado": "Comprar acciones en la bolsa garantiza que siempre vas a ganar dinero.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Falso: las acciones pueden subir o bajar; se puede ganar, pero también perder.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-89-2",
+      "respuesta": false
+    }
+  ]
+}

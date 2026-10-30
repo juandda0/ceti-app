@@ -1,0 +1,173 @@
+{
+  "bancoId": "1_world_3_multiple_choice",
+  "grado": "1",
+  "worldId": "world_3",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "1_world_3_multiple_choice_1",
+      "enunciado": "Además del dinero, ¿qué más puedes ahorrar?",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "También ahorras agua y luz cuando no las desperdicias.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-13-1",
+      "opciones": [
+        "Solo dinero",
+        "Agua y luz",
+        "Nada más",
+        "Solo juguetes"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "1_world_3_multiple_choice_2",
+      "enunciado": "¿Qué es ahorrar?",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Ahorrar es guardar algo hoy para usarlo después.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-13-1",
+      "opciones": [
+        "Gastar todo ya",
+        "Pedir prestado",
+        "Guardar para después",
+        "Regalar todo"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "1_world_3_multiple_choice_3",
+      "enunciado": "Sobró arroz del almuerzo. ¿Cómo lo ahorras?",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Guardar la comida que sobra es ahorrar: la puedes comer después.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-13-1",
+      "opciones": [
+        "Lo guardas en la nevera",
+        "Lo botas a la caneca",
+        "Lo dejas destapado",
+        "Lo dejas en la mesa toda la noche"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "1_world_3_multiple_choice_4",
+      "enunciado": "¿Para qué sirve ahorrar?",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Ahorras para usar ese dinero después en algo que quieres o necesitas.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-13-2",
+      "opciones": [
+        "Para gastarlo todo hoy",
+        "Para pedir prestado",
+        "Para no usarlo nunca",
+        "Para cumplir algo que quieres"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "1_world_3_multiple_choice_5",
+      "enunciado": "Se dañó la nevera de la casa. ¿Qué ayuda a la familia?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Con lo ahorrado la familia puede arreglar la nevera.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-13-2",
+      "opciones": [
+        "Un juguete nuevo",
+        "El dinero que ahorraron",
+        "Gastar más en la tienda",
+        "Esperar que se arregle sola"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "1_world_3_multiple_choice_6",
+      "enunciado": "Luis guarda una moneda cada semana. ¿Qué pasa con su alcancía?",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Guardar un poco cada semana hace que la alcancía se vaya llenando.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-13-3",
+      "opciones": [
+        "Se queda vacía",
+        "Se rompe",
+        "Se va llenando",
+        "Se le pierde"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "1_world_3_multiple_choice_7",
+      "enunciado": "Quieres un balón. ¿Qué haces primero para ahorrar?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Primero decides tu meta; así sabes para qué estás guardando.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-13-3",
+      "opciones": [
+        "Decidir tu meta: el balón",
+        "Gastar tu moneda",
+        "Olvidar el balón",
+        "Pedirlo prestado"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "1_world_3_multiple_choice_8",
+      "enunciado": "Ya casi llegas a tu meta y ves unos dulces. ¿Qué te ayuda?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Recordar tu meta te ayuda a no gastar y a llegar hasta el final.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-13-3",
+      "opciones": [
+        "Gastar todo en dulces",
+        "Romper la alcancía",
+        "Dejar de ahorrar",
+        "Recordar tu meta"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "1_world_3_multiple_choice_9",
+      "enunciado": "Mateo ahorró y se le rompió la mochila. ¿Qué puede hacer?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "El ahorro sirve para cubrir lo que se necesita cuando algo se daña.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-13-2",
+      "opciones": [
+        "Ir sin mochila todo el año",
+        "Comprar otra con su ahorro",
+        "Comprar un helado",
+        "Esperar que se arregle sola"
+      ],
+      "correctIndex": 1,
+      "prueba": true
+    },
+    {
+      "id": "1_world_3_multiple_choice_10",
+      "enunciado": "¿Cuál de estas acciones es ahorrar?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Apagar la luz al salir ahorra energía.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-13-1",
+      "opciones": [
+        "Dejar el televisor prendido",
+        "Botar la comida",
+        "Apagar la luz al salir",
+        "Dejar la llave abierta"
+      ],
+      "correctIndex": 2,
+      "prueba": true
+    }
+  ]
+}

@@ -10,6 +10,8 @@
       "competencia": "credito",
       "dificultad": 4,
       "explicacion": "El crédito adelanta capacidad de gasto a cambio del compromiso de devolver lo recibido más su costo.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "respuesta": true
     },
     {
@@ -18,6 +20,8 @@
       "competencia": "credito",
       "dificultad": 4,
       "explicacion": "El interés expresa el precio del crédito: cuánto cuesta usar recursos ajenos por un periodo.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "respuesta": true
     },
     {
@@ -26,6 +30,8 @@
       "competencia": "credito",
       "dificultad": 5,
       "explicacion": "La capacidad de pago depende de los ingresos disponibles frente a las obligaciones, no del deseo de comprar.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "respuesta": false
     },
     {
@@ -34,6 +40,8 @@
       "competencia": "credito",
       "dificultad": 5,
       "explicacion": "El interés se acumula con el tiempo, así que plazos largos o tasas altas elevan el costo total del crédito.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-1011-1",
       "respuesta": true
     },
     {
@@ -42,6 +50,8 @@
       "competencia": "credito",
       "dificultad": 5,
       "explicacion": "Endeudarse para pagar deudas suele indicar sobreendeudamiento, no un manejo responsable del crédito.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-2",
       "respuesta": false
     },
     {
@@ -50,6 +60,8 @@
       "competencia": "credito",
       "dificultad": 4,
       "explicacion": "Tomar deuda solo hasta donde la capacidad de pago lo permite reduce el riesgo de no poder cumplir las obligaciones.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-2",
       "respuesta": true
     }
   ],

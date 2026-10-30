@@ -10,6 +10,8 @@
       "competencia": "deuda",
       "dificultad": 3,
       "explicacion": "Una deuda manejable se paga a tiempo sin afectar las necesidades básicas ni el ahorro.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
       "opciones": [
         "Las cuotas caben en el presupuesto sin sacrificar lo esencial",
         "Obliga a dejar de comer bien para poder pagarla",
@@ -24,6 +26,8 @@
       "competencia": "deuda",
       "dificultad": 3,
       "explicacion": "El sobreendeudamiento ocurre cuando las deudas superan la capacidad de pago de la persona.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
       "opciones": [
         "Pagar una deuda pequeña antes de la fecha límite",
         "Deber tanto que los ingresos no alcanzan para cubrir las cuotas",
@@ -38,6 +42,8 @@
       "competencia": "deuda",
       "dificultad": 3,
       "explicacion": "Si el bien pierde valor, se sigue debiendo aunque ya no valga lo que costó, lo que aumenta el riesgo.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-2",
       "opciones": [
         "Porque siempre tiene cuotas más bajas",
         "Porque el banco la regala después de un tiempo",
@@ -52,6 +58,8 @@
       "competencia": "deuda",
       "dificultad": 3,
       "explicacion": "El historial crediticio se ve afectado, lo que dificulta acceder a créditos en el futuro.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
       "opciones": [
         "La deuda desaparece automáticamente",
         "Se reduce el monto que se debía",
@@ -66,6 +74,8 @@
       "competencia": "deuda",
       "dificultad": 3,
       "explicacion": "Hacer una lista clara de todo lo que se debe permite organizar un plan de pago realista.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
       "opciones": [
         "Listar todas las deudas para saber cuánto y a quién se debe",
         "Pedir un nuevo préstamo para gastar más",
@@ -80,6 +90,8 @@
       "competencia": "deuda",
       "dificultad": 3,
       "explicacion": "El riesgo financiero es la posibilidad de no poder cumplir con el pago si cambian los ingresos o gastos.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-1",
       "opciones": [
         "Que la deuda nunca cambia de valor",
         "Que el préstamo siempre se paga solo",
@@ -94,6 +106,8 @@
       "competencia": "deuda",
       "dificultad": 3,
       "explicacion": "Preguntarse cómo y con qué se va a pagar ayuda a evitar el sobreendeudamiento.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-1",
       "opciones": [
         "¿Cuántos amigos tienen la misma deuda?",
         "¿Podré pagar las cuotas con mis ingresos sin descuidar lo necesario?",
@@ -108,6 +122,8 @@
       "competencia": "deuda",
       "dificultad": 3,
       "explicacion": "Evitar tomar nuevas deudas para pagar otras previene la bola de nieve de deudas.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
       "opciones": [
         "Pedir prestado para pagar otras deudas una y otra vez",
         "Gastar más de lo que se gana cada mes",
@@ -115,6 +131,72 @@
         "Evitar pedir nuevas deudas para pagar las que ya se tienen"
       ],
       "correctIndex": 3
+    },
+    {
+      "id": "9_world_5_multiple_choice_9",
+      "enunciado": "Una familia recibe 2.000.000 de pesos al mes y sus gastos básicos suman 1.700.000. ¿Cuál es la cuota máxima de una deuda que podría pagar sin descuidar lo básico?",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "La capacidad de endeudamiento es lo que queda después de cubrir lo básico: 2.000.000 − 1.700.000 = 300.000, y lo prudente es no usarla toda.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
+      "prueba": true,
+      "opciones": [
+        "1.700.000 pesos",
+        "2.000.000 pesos",
+        "300.000 pesos",
+        "3.700.000 pesos"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "9_world_5_multiple_choice_10",
+      "enunciado": "Tu curso planea un paseo a un río en la temporada de lluvias. Antes de decidir si ir, ¿qué información te sirve más para analizar el riesgo?",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Para analizar un riesgo miras tu contexto: qué tan probable es que el río crezca y qué tan grave sería.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-1",
+      "prueba": true,
+      "opciones": [
+        "Cuántos amigos van a ir al paseo",
+        "Cómo está el clima y si el río suele crecer en esa época",
+        "Qué ropa llevar para las fotos",
+        "Si el año pasado alguien no fue"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "9_world_5_multiple_choice_11",
+      "enunciado": "Te invitan a una fiesta lejos de tu casa donde casi no conoces a nadie. ¿Qué te conviene hacer primero para analizar el riesgo antes de decidir?",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Analizar el contexto (quién organiza, quién va, cómo vuelves) te deja ver qué tan probable y qué tan grave es que algo salga mal.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-1",
+      "opciones": [
+        "Decidir según lo que publiquen tus amigos en redes",
+        "Ir y pensar en cómo volver cuando ya estés allá",
+        "No preguntar nada para no parecer miedoso",
+        "Averiguar quién organiza, quién va y cómo volverías a casa"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "9_world_5_multiple_choice_12",
+      "enunciado": "Para tu examen final tienes dos riesgos: olvidar un tema que casi nunca sale, y dormir mal la noche anterior, algo que te pasa seguido y te quita la concentración. ¿Cuál conviene atender primero?",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Riesgo = probabilidad × impacto: dormir mal es más probable y afecta más tu desempeño, así que es el riesgo mayor.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-2",
+      "opciones": [
+        "Dormir mal, porque es más probable y te afecta más",
+        "El tema que casi no sale, porque es lo que menos estudiaste",
+        "Ninguno, porque los dos dependen de la suerte",
+        "Los dos por igual, porque todos los riesgos pesan lo mismo"
+      ],
+      "correctIndex": 0
     }
   ],
   "pendiente_validacion_docente": true,

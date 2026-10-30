@@ -1,0 +1,71 @@
+{
+  "bancoId": "1_world_3_true_false",
+  "grado": "1",
+  "worldId": "world_3",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "1_world_3_true_false_1",
+      "enunciado": "También podemos ahorrar agua y luz.",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Verdadero: si no las desperdicias, las estás ahorrando.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-13-1",
+      "respuesta": true
+    },
+    {
+      "id": "1_world_3_true_false_2",
+      "enunciado": "Ahorrar sirve para tener dinero cuando lo necesitas.",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Verdadero: lo que guardas te sirve después.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-13-2",
+      "respuesta": true
+    },
+    {
+      "id": "1_world_3_true_false_3",
+      "enunciado": "Para llegar a tu meta, basta con guardar un solo día.",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Falso: para llegar a la meta hay que guardar poco a poco, muchas veces.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-13-3",
+      "respuesta": false
+    },
+    {
+      "id": "1_world_3_true_false_4",
+      "enunciado": "Una meta te dice para qué estás ahorrando.",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Verdadero: la meta es lo que quieres lograr con tu ahorro.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-13-3",
+      "respuesta": true
+    },
+    {
+      "id": "1_world_3_true_false_5",
+      "enunciado": "Solo los adultos pueden ahorrar.",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Falso: los niños también pueden ahorrar y ayudar a su familia.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-13-2",
+      "respuesta": false
+    },
+    {
+      "id": "1_world_3_true_false_6",
+      "enunciado": "Botar la comida que sobra es ahorrar.",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Falso: ahorrar es guardar la comida para comerla después.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-13-1",
+      "respuesta": false
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "grado": "1",
+  "worldId": "world_6",
+  "cards": [
+    {
+      "titulo": "Lo que todos necesitamos",
+      "cuerpo": "Todas las personas necesitan comida, agua, casa, salud y estudio. Cuando las tienen, viven mejor.",
+      "ejemplo": "Un barrio con agua limpia y un puesto de salud es un barrio donde la gente está más sana."
+    },
+    {
+      "titulo": "No todos tienen lo básico",
+      "cuerpo": "A algunas personas no les llega el agua o no tienen trabajo. No es su culpa, y la comunidad puede ayudar.",
+      "ejemplo": "En la huerta del colegio sobran lechugas y las dan al comedor."
+    },
+    {
+      "titulo": "Las reglas cuidan lo de todos",
+      "cuerpo": "Las reglas nos ayudan a cuidar el agua, los árboles y los parques, para que duren y alcancen para todos.",
+      "ejemplo": "Por la regla de no botar basura, el río del barrio sigue limpio."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

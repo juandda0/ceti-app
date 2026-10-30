@@ -1,0 +1,125 @@
+{
+  "bancoId": "1_world_4_ordenar",
+  "grado": "1",
+  "worldId": "world_4",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "1_world_4_ordenar_1",
+      "enunciado": "Ordena cómo cambió el dinero, de antes a ahora.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Primero se cambiaba cosa por cosa, luego llegaron monedas y billetes, y hoy también tarjetas.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-13-1",
+      "elementos": [
+        "Monedas y billetes",
+        "Cambiar cosa por cosa",
+        "Pagar con tarjeta o celular"
+      ],
+      "ordenCanonico": [
+        1,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "1_world_4_ordenar_2",
+      "enunciado": "Ordena: te prestan un cuento.",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "Te lo prestan, lo cuidas mientras lo usas y lo devuelves bien.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-13-3",
+      "elementos": [
+        "Lo devuelves en buen estado",
+        "Lo lees con cuidado",
+        "Tu amigo te lo presta"
+      ],
+      "ordenCanonico": [
+        2,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "1_world_4_ordenar_3",
+      "enunciado": "Ordena: necesitas un color de tu compañero.",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "Primero pides permiso, lo usas con cuidado y lo devuelves.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-13-3",
+      "elementos": [
+        "Lo devuelves y das gracias",
+        "Pides permiso",
+        "Lo usas con cuidado"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "1_world_4_ordenar_4",
+      "enunciado": "Ordena: compras un cuaderno en la papelería.",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "Escoges, pagas con dinero y luego te lo llevas.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-13-2",
+      "elementos": [
+        "Pagas en la caja",
+        "Escoges el cuaderno",
+        "Sales con tu cuaderno"
+      ],
+      "ordenCanonico": [
+        1,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "1_world_4_ordenar_5",
+      "enunciado": "Ordena: usas bien tu dinero para una meta.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Escoges tu meta, guardas el dinero y al final compras lo que querías.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-13-3",
+      "elementos": [
+        "Compras lo que querías",
+        "Escoges qué quieres",
+        "Guardas sin gastar en otras cosas"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "1_world_4_ordenar_6",
+      "enunciado": "Ordena: prestas tu balón en el recreo.",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "Lo prestas, tu amigo juega y después te lo devuelve: eso es prestar.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-13-1",
+      "elementos": [
+        "Se lo prestas a tu amigo",
+        "Te lo devuelve al final",
+        "Juega con tu balón"
+      ],
+      "ordenCanonico": [
+        0,
+        2,
+        1
+      ]
+    }
+  ]
+}

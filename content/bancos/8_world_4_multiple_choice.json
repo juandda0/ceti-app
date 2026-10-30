@@ -1,0 +1,173 @@
+{
+  "bancoId": "8_world_4_multiple_choice",
+  "grado": "8",
+  "worldId": "world_4",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "8_world_4_multiple_choice_1",
+      "enunciado": "A Martín le entran 100.000 pesos al mes y sus gastos necesarios son 70.000. ¿Cuál es la cuota más alta que podría pagar sin dejar de cubrir lo necesario?",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Lo que sobra después de lo necesario (100.000 − 70.000 = 30.000) es el tope; lo prudente es comprometer menos para tener margen.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
+      "opciones": [
+        "30.000 pesos",
+        "70.000 pesos",
+        "100.000 pesos",
+        "170.000 pesos"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "8_world_4_multiple_choice_2",
+      "enunciado": "Después de sus gastos necesarios, a Ana le sobran 40.000 pesos al mes y a Rosa 10.000. Una compra a cuotas pide pagar 25.000 al mes. ¿Quién tiene capacidad para pagarla?",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "La cuota cabe en los 40.000 que le sobran a Ana, pero no en los 10.000 de Rosa.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
+      "opciones": [
+        "Rosa, porque gasta menos",
+        "Las dos por igual",
+        "Ana, porque le sobra más de lo que vale la cuota",
+        "Ninguna de las dos"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "8_world_4_multiple_choice_3",
+      "enunciado": "Le debes 30.000 pesos a tu hermana. ¿Cuál es un plan responsable para pagarle?",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Un plan responsable dice cuánto vas a pagar y cuándo, y lo acuerdas con quien te prestó.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
+      "opciones": [
+        "Esperar a que se le olvide",
+        "Acordar con ella pagarle 10.000 pesos cada mes durante tres meses",
+        "Pedirle prestado a otra persona para pagarle",
+        "Pagarle cuando te sobre algo, sin fijar fecha"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "8_world_4_multiple_choice_4",
+      "enunciado": "Juan les debe plata a dos personas y este mes no le alcanza para pagarles a ambas. ¿Qué es lo más responsable?",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "Avisar a tiempo y acordar nuevas fechas mantiene la confianza y evita que el problema crezca.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
+      "opciones": [
+        "Dejar de contestarles a los dos",
+        "Pedir otro préstamo más grande sin revisar sus gastos",
+        "Pagarle solo al que más lo presiona y olvidarse del otro",
+        "Hablar con los dos, contarles la situación y acordar nuevas fechas"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "8_world_4_multiple_choice_5",
+      "enunciado": "¿Para qué sirve un seguro?",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "Con un seguro pagas una cuota y, si ocurre lo que está asegurado, la aseguradora cubre el daño.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-89-1",
+      "opciones": [
+        "Para ganar dinero cada mes",
+        "Para que, a cambio de una cuota, una aseguradora cubra el daño si pasa algo grave",
+        "Para conseguir préstamos más fácil",
+        "Para no tener que ahorrar nunca"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "8_world_4_multiple_choice_6",
+      "enunciado": "¿Qué es una pensión?",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "La pensión se construye aportando a un fondo mientras se trabaja, para tener un ingreso en la vejez.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-89-1",
+      "opciones": [
+        "Un préstamo que se paga cuando uno es mayor",
+        "Un pago que se recibe solo mientras se trabaja",
+        "Un ingreso para la vejez que se arma con aportes durante la vida laboral",
+        "Un seguro que cubre los daños del celular"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "8_world_4_multiple_choice_7",
+      "enunciado": "¿Qué compras cuando compras una acción de una empresa?",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Una acción es una parte de la propiedad de la empresa; quien la compra se vuelve socio en esa parte.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-89-2",
+      "opciones": [
+        "Un préstamo que la empresa te hace",
+        "Una pequeña parte de la empresa",
+        "Un producto de la empresa con descuento",
+        "Un seguro contra pérdidas"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "8_world_4_multiple_choice_8",
+      "enunciado": "¿Cuál es un riesgo de invertir en el mercado de valores?",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "El precio de una acción sube y baja; si baja y vendes, pierdes parte de lo que pusiste.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-89-2",
+      "opciones": [
+        "Que la acción baje de precio y, si vendes, recibas menos de lo que pagaste",
+        "Que te cobren intereses como en un préstamo",
+        "Que la ganancia esté garantizada pero llegue tarde",
+        "Que solo puedas vendérsela a la misma empresa"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "8_world_4_multiple_choice_9",
+      "enunciado": "Una familia tiene ingresos de 1.000.000 de pesos y gastos necesarios de 900.000. Les ofrecen un electrodoméstico con cuotas de 150.000 al mes. ¿Qué pasa si lo toman?",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "Solo les sobran 100.000 pesos y la cuota es de 150.000: les faltarían 50.000 cada mes.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
+      "opciones": [
+        "Les sobran 250.000 pesos",
+        "Les faltan 50.000 pesos cada mes para cubrir todo",
+        "Quedan justos, sin sobrar ni faltar",
+        "No cambia nada en su presupuesto"
+      ],
+      "correctIndex": 1,
+      "prueba": true
+    },
+    {
+      "id": "8_world_4_multiple_choice_10",
+      "enunciado": "¿Por qué una familia pagaría un seguro para su casa aunque nunca le haya pasado nada malo?",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "El seguro sirve para lo que podría pasar: se paga poco para no cargar sola con una pérdida grande.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-89-1",
+      "opciones": [
+        "Porque con una cuota pequeña se protege de una pérdida grande que podría pasar",
+        "Porque el seguro le devuelve toda la plata si no pasa nada",
+        "Porque así la casa sube de precio",
+        "Porque es una forma de pedir prestado"
+      ],
+      "correctIndex": 0,
+      "prueba": true
+    }
+  ]
+}

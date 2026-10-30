@@ -1,0 +1,44 @@
+{
+  "bancoId": "1_world_4",
+  "grado": "1",
+  "worldId": "world_4",
+  "situaciones": [
+    {
+      "id": "1_world_4_sit_1",
+      "enunciado": "Tu amigo te pide prestado tu balón nuevo para llevarlo a su casa.",
+      "opcionA": {
+        "texto": "Prestárselo",
+        "consecuencia": "Tu amigo juega feliz, pero el balón puede volver sucio o tardar en llegar."
+      },
+      "opcionB": {
+        "texto": "Jugar juntos aquí",
+        "consecuencia": "Tu balón se queda contigo, pero tu amigo no lo lleva a su casa."
+      }
+    },
+    {
+      "id": "1_world_4_sit_2",
+      "enunciado": "Se te olvidaron los colores. Puedes pedirlos prestados o pintar con lápiz.",
+      "opcionA": {
+        "texto": "Pedirle colores a un compañero",
+        "consecuencia": "Pintas a color, pero debes cuidarlos y devolverlos."
+      },
+      "opcionB": {
+        "texto": "Pintar con lápiz",
+        "consecuencia": "No le debes nada a nadie, pero tu dibujo queda sin color."
+      }
+    },
+    {
+      "id": "1_world_4_sit_3",
+      "enunciado": "Quieres un libro de cuentos. Puedes pedirlo prestado en la biblioteca o ahorrar para comprarlo.",
+      "opcionA": {
+        "texto": "Pedirlo en la biblioteca",
+        "consecuencia": "Lo lees pronto y gratis, pero debes devolverlo en la fecha."
+      },
+      "opcionB": {
+        "texto": "Ahorrar para comprarlo",
+        "consecuencia": "Será tuyo para siempre, pero esperas varias semanas."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

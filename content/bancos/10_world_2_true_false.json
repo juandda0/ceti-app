@@ -10,6 +10,8 @@
       "competencia": "presupuesto",
       "dificultad": 2,
       "explicacion": "El presupuesto es útil con cualquier nivel de ingreso, porque ayuda a organizar el dinero disponible.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-1",
       "respuesta": false
     },
     {
@@ -18,6 +20,8 @@
       "competencia": "presupuesto",
       "dificultad": 2,
       "explicacion": "Por definición, los ingresos entran y los egresos salen; el presupuesto compara ambos.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-1",
       "respuesta": true
     },
     {
@@ -26,6 +30,8 @@
       "competencia": "presupuesto",
       "dificultad": 2,
       "explicacion": "Agrupar los gastos en categorías revela los patrones de consumo y dónde se concentra el gasto.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-1",
       "respuesta": true
     },
     {
@@ -34,6 +40,8 @@
       "competencia": "presupuesto",
       "dificultad": 3,
       "explicacion": "Vivir dentro de los medios exige que lo que sale no sea mayor que lo que entra de manera sostenida.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
       "respuesta": true
     },
     {
@@ -42,6 +50,8 @@
       "competencia": "presupuesto",
       "dificultad": 3,
       "explicacion": "El presupuesto debe revisarse periódicamente y ajustarse cuando cambian los ingresos o los gastos.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
       "respuesta": false
     },
     {
@@ -50,6 +60,8 @@
       "competencia": "presupuesto",
       "dificultad": 3,
       "explicacion": "Priorizar bien implica cubrir primero lo esencial y dejar los deseos para cuando haya margen.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
       "respuesta": true
     }
   ],

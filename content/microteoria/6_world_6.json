@@ -1,0 +1,23 @@
+{
+  "grado": "6",
+  "worldId": "world_6",
+  "cards": [
+    {
+      "titulo": "La economía solidaria",
+      "cuerpo": "En la economía solidaria las personas se unen para producir, comprar o ahorrar juntas, y los beneficios se reparten entre los socios o se usan para el bien de todos. Ejemplos son las cooperativas, los fondos de empleados y las asociaciones de productores. Lo central es cooperar, no solo ganar.",
+      "ejemplo": "Diez familias campesinas forman una asociación: compran juntas el abono más barato, venden su café a mejor precio y reparten lo que ganan."
+    },
+    {
+      "titulo": "Las decisiones públicas te tocan",
+      "cuerpo": "El Gobierno ejecuta el presupuesto público y puede proponer impuestos, pero es el Congreso el que los aprueba. Un impuesto más alto a un producto suele subir su precio y hacer que se compre menos; una vía nueva o un apoyo a los productores puede bajar sus costos. El Banco de la República, que es independiente del Gobierno, emite la moneda y trabaja para que los precios no suban demasiado.",
+      "ejemplo": "Cuando sube el impuesto a las bebidas azucaradas, la gaseosa cuesta más y muchas familias compran menos o la cambian por jugo o agua."
+    },
+    {
+      "titulo": "La inflación en la casa",
+      "cuerpo": "La inflación es la subida general y continua de los precios. Cuando hay inflación, con la misma plata compras menos cosas. Una familia puede enfrentarla revisando juntos el presupuesto, comparando precios, comprando productos de temporada y evitando deudas nuevas.",
+      "ejemplo": "Si el mercado que costaba 100.000 pesos ahora cuesta 110.000, la familia de Ana revisa la lista, cambia algunos productos por otros más baratos y compra fruta de cosecha."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

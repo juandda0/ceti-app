@@ -10,6 +10,8 @@
       "competencia": "credito",
       "dificultad": 4,
       "explicacion": "El crédito permite disponer hoy de recursos que se reintegrarán luego con un costo adicional por el servicio.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "opciones": [
         "Recibir dinero que nunca debe devolverse",
         "Usar hoy recursos ajenos a cambio de devolverlos en el futuro con un costo",
@@ -24,6 +26,8 @@
       "competencia": "credito",
       "dificultad": 5,
       "explicacion": "El interés es el precio de usar dinero prestado durante un tiempo; expresa el costo del crédito.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "opciones": [
         "El precio que se paga por usar dinero prestado durante un periodo",
         "El monto total que se pidió prestado al inicio",
@@ -38,6 +42,8 @@
       "competencia": "credito",
       "dificultad": 5,
       "explicacion": "La capacidad de pago compara los ingresos disponibles frente a las obligaciones para saber cuánta deuda puede asumir sin afectar su sostenibilidad.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "opciones": [
         "El total de bienes que posee actualmente",
         "El deseo que tiene de adquirir productos nuevos",
@@ -52,6 +58,8 @@
       "competencia": "credito",
       "dificultad": 4,
       "explicacion": "Usar el crédito de forma responsable implica endeudarse solo hasta donde la capacidad de pago lo permite y cumplir los pagos a tiempo.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-2",
       "opciones": [
         "Pedir prestado el máximo posible siempre que lo aprueben",
         "Tomar deuda solo cuando se puede pagar dentro de la capacidad propia",
@@ -66,6 +74,8 @@
       "competencia": "credito",
       "dificultad": 4,
       "explicacion": "Deber implica el compromiso de devolver el capital recibido más el costo del crédito en los plazos acordados.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "opciones": [
         "Devolver el dinero recibido más el costo pactado en los plazos acordados",
         "Devolver solo la mitad de lo recibido",
@@ -80,6 +90,8 @@
       "competencia": "credito",
       "dificultad": 5,
       "explicacion": "El costo total depende de la tasa de interés y del plazo: a mayor tasa o mayor tiempo, mayor costo acumulado por el crédito.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-1011-1",
       "opciones": [
         "Porque el dinero prestado cambia de color según el banco",
         "Porque la tasa de interés y el plazo afectan el costo total del crédito",
@@ -94,6 +106,8 @@
       "competencia": "credito",
       "dificultad": 5,
       "explicacion": "Evaluar si la cuota cabe dentro de la capacidad de pago y comparar el costo total evita el sobreendeudamiento.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-1011-1",
       "opciones": [
         "Aceptarlo de inmediato para no perder la oferta",
         "Fijarse solo en el valor de la cuota mensual",
@@ -108,6 +122,8 @@
       "competencia": "credito",
       "dificultad": 5,
       "explicacion": "El sobreendeudamiento aparece cuando las obligaciones superan la capacidad de pago, dificultando cumplir con todas las deudas.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "opciones": [
         "Asume deudas que superan su capacidad de pago",
         "Paga sus cuotas con anticipación cada mes",
@@ -115,6 +131,40 @@
         "Ahorra una parte de sus ingresos regularmente"
       ],
       "correctIndex": 0
+    },
+    {
+      "id": "11_world_4_multiple_choice_9",
+      "enunciado": "Tu curso hará una campaña en el barrio sobre los derechos del consumidor financiero. ¿Cuál mensaje es correcto?",
+      "competencia": "credito",
+      "dificultad": 4,
+      "explicacion": "El consumidor financiero tiene derecho a información clara sobre costos y condiciones y a presentar quejas ante la entidad.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-1011-2",
+      "prueba": true,
+      "opciones": [
+        "Si ya firmaste, no puedes reclamar nada",
+        "Tienes derecho a información clara sobre los costos y a presentar quejas ante la entidad",
+        "Las entidades pueden cobrarte lo que quieran sin avisarte",
+        "Solo las empresas grandes tienen derechos como consumidoras"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "11_world_4_multiple_choice_10",
+      "enunciado": "Cuando la deuda de los hogares de un país crece demasiado, ¿por qué también deben preocuparse las entidades financieras?",
+      "competencia": "credito",
+      "dificultad": 4,
+      "explicacion": "Si muchos hogares dejan de pagar, las entidades pierden recursos y prestan menos, lo que afecta a toda la economía.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
+      "prueba": true,
+      "opciones": [
+        "Porque ganan menos intereses cuando la gente debe más",
+        "Porque la ley les prohíbe prestar a los hogares",
+        "No deben preocuparse, porque las deudas siempre se pagan",
+        "Porque si muchos no pagan, pierden recursos y pueden prestar menos a todos"
+      ],
+      "correctIndex": 3
     }
   ],
   "pendiente_validacion_docente": true,

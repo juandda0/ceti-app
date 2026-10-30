@@ -1,0 +1,125 @@
+{
+  "bancoId": "1_world_5_ordenar",
+  "grado": "1",
+  "worldId": "world_5",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "1_world_5_ordenar_1",
+      "enunciado": "Ordena: ves basura en el parque.",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "Lo que haces cuida el parque: ves la basura, la recoges y queda limpio.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-13-3",
+      "elementos": [
+        "El parque queda limpio",
+        "Ves basura en el piso",
+        "La echas a la caneca"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "1_world_5_ordenar_2",
+      "enunciado": "Ordena: cuidas a tu mascota.",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "Valoras a tu mascota: ves lo que necesita, la cuidas y está sana.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-13-1",
+      "elementos": [
+        "Tu mascota está sana",
+        "Le das agua y comida",
+        "Ves que tiene hambre"
+      ],
+      "ordenCanonico": [
+        2,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "1_world_5_ordenar_3",
+      "enunciado": "Ordena: estás en el parque y llueve muy fuerte.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Primero cuidas tu cuerpo: buscas un techo y esperas a que pase.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-13-2",
+      "elementos": [
+        "Ves que llueve fuerte",
+        "Esperas que pase",
+        "Buscas un techo"
+      ],
+      "ordenCanonico": [
+        0,
+        2,
+        1
+      ]
+    },
+    {
+      "id": "1_world_5_ordenar_4",
+      "enunciado": "Ordena: te peleaste con tu amiga.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Te calmas, pides perdón y la amistad se arregla.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-13-3",
+      "elementos": [
+        "Le pides perdón",
+        "Te calmas",
+        "Vuelven a jugar"
+      ],
+      "ordenCanonico": [
+        1,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "1_world_5_ordenar_5",
+      "enunciado": "Ordena: te prestan una sombrilla.",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "Te la prestan, la cuidas y la devuelves: ese es el compromiso.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-13-3",
+      "elementos": [
+        "La devuelves",
+        "Te la prestan",
+        "La usas con cuidado"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "1_world_5_ordenar_6",
+      "enunciado": "Ordena: te piden el cuaderno de tu hermana.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Lo que no es tuyo solo se presta con permiso de su dueña.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-13-2",
+      "elementos": [
+        "Le preguntas a tu hermana",
+        "Te piden su cuaderno",
+        "Lo prestas si ella dice sí"
+      ],
+      "ordenCanonico": [
+        1,
+        0,
+        2
+      ]
+    }
+  ]
+}

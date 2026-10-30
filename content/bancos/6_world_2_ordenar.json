@@ -1,0 +1,133 @@
+{
+  "bancoId": "6_world_2_ordenar",
+  "grado": "6",
+  "worldId": "world_2",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "6_world_2_ordenar_1",
+      "enunciado": "Ordena los pasos para armar el presupuesto mensual de tu familia.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Primero se sabe cuánto entra, luego se cubren las necesidades, se ahorra y al final se reparten los deseos.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-67-2",
+      "elementos": [
+        "Anotar las necesidades: vivienda, comida, servicios",
+        "Sumar todos los ingresos del mes",
+        "Apartar una parte para el ahorro",
+        "Repartir lo que queda entre los deseos"
+      ],
+      "ordenCanonico": [
+        1,
+        0,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "6_world_2_ordenar_2",
+      "enunciado": "Ordena estos gastos de la familia del más prioritario al menos prioritario.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "La comida es la necesidad más básica, los uniformes son una necesidad para estudiar y la plataforma es un deseo.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-67-2",
+      "elementos": [
+        "Una suscripción a una plataforma de películas",
+        "Los uniformes del colegio",
+        "La comida de la semana"
+      ],
+      "ordenCanonico": [
+        2,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "6_world_2_ordenar_3",
+      "enunciado": "Este mes la familia de Camilo recibió menos plata. Ordena qué deberían hacer, del primero al último.",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Con menos ingresos, primero se sabe cuánto hay, se protegen las necesidades y se ajustan los deseos.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-67-2",
+      "elementos": [
+        "Asegurar primero las necesidades básicas",
+        "Recortar o aplazar los deseos",
+        "Revisar al final del mes cómo les fue",
+        "Calcular cuánto entró este mes"
+      ],
+      "ordenCanonico": [
+        3,
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "6_world_2_ordenar_4",
+      "enunciado": "Ordena cómo usar tu presupuesto semanal, del primero al último.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "El presupuesto se planea, se sigue anotando, se compara con la realidad y se ajusta.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-67-1",
+      "elementos": [
+        "Ajustar el plan de la semana siguiente",
+        "Anotar cada gasto que haces en la semana",
+        "Planear cuánto gastarás en cada cosa",
+        "Comparar lo que gastaste con lo que planeaste"
+      ],
+      "ordenCanonico": [
+        2,
+        1,
+        3,
+        0
+      ]
+    },
+    {
+      "id": "6_world_2_ordenar_5",
+      "enunciado": "Quieres un balón de 40.000 pesos. Ordena los pasos para comprarlo sin salirte de tu presupuesto.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Así compras el balón con plata que ya tenías planeada, sin quitarle a otras cosas.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-67-1",
+      "elementos": [
+        "Comprar el balón cuando completes el dinero",
+        "Apartar esa plata cada semana",
+        "Calcular cuántas semanas necesitas para juntar los 40.000",
+        "Revisar cuánto te sobra cada semana"
+      ],
+      "ordenCanonico": [
+        3,
+        2,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "6_world_2_ordenar_6",
+      "enunciado": "Ordena estas decisiones de la más responsable a la menos responsable con tu presupuesto.",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Usar la plata de gustos respeta el plan; tocar la del bus descuadra una necesidad; endeudarse sin plan es lo más riesgoso.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-67-1",
+      "elementos": [
+        "Comprar un gusto pidiendo prestado sin saber cómo vas a pagar",
+        "Comprar un gusto usando la plata del bus de la semana",
+        "Comprar un gusto con la plata que tenías apartada para gustos"
+      ],
+      "ordenCanonico": [
+        2,
+        1,
+        0
+      ]
+    }
+  ]
+}

@@ -10,6 +10,8 @@
       "competencia": "deuda",
       "dificultad": 4,
       "explicacion": "Una deuda es manejable cuando las cuotas caben dentro de tus ingresos sin sacrificar gastos esenciales ni el ahorro.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "opciones": [
         "Que las cuotas puedas pagarlas sin descuidar tus necesidades básicas",
         "Que el plazo sea lo más largo posible sin importar nada más",
@@ -24,6 +26,8 @@
       "competencia": "deuda",
       "dificultad": 4,
       "explicacion": "Pedir prestado para pagar otras deudas indica que los ingresos ya no alcanzan para cubrir las obligaciones.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "opciones": [
         "Pagar una deuda antes del plazo acordado",
         "Necesitar nuevos préstamos solo para pagar deudas anteriores",
@@ -38,6 +42,8 @@
       "competencia": "deuda",
       "dificultad": 4,
       "explicacion": "El incumplimiento se registra en tu historial crediticio, lo que dificulta acceder a futuros créditos.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-1",
       "opciones": [
         "El prestamista te perdona la deuda automáticamente",
         "Tu historial crediticio mejora con el tiempo",
@@ -52,6 +58,8 @@
       "competencia": "deuda",
       "dificultad": 4,
       "explicacion": "El riesgo financiero es la posibilidad de no poder cumplir con los pagos si cambian tus ingresos o gastos.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-2",
       "opciones": [
         "La certeza de que siempre podrás pagar sin problemas",
         "La posibilidad de no poder cumplir los pagos si tu situación cambia",
@@ -66,6 +74,8 @@
       "competencia": "deuda",
       "dificultad": 4,
       "explicacion": "Hacer un inventario de todas las deudas y priorizar su pago es el primer paso para organizar un plan realista.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-2",
       "opciones": [
         "Ignorar las deudas hasta que el prestamista las olvide",
         "Pedir un préstamo nuevo más grande para gastar en otras cosas",
@@ -80,6 +90,8 @@
       "competencia": "deuda",
       "dificultad": 4,
       "explicacion": "Si lo comprado pierde valor o desaparece, quedas pagando una deuda sin un respaldo que la justifique.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-2",
       "opciones": [
         "Porque seguirás pagando algo que ya no tiene valor ni te sirve",
         "Porque el consumo siempre genera ingresos futuros",
@@ -94,6 +106,8 @@
       "competencia": "deuda",
       "dificultad": 4,
       "explicacion": "Comparar la cuota con tu capacidad de pago y el costo total te permite decidir si puedes asumir la deuda con seguridad.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-2",
       "opciones": [
         "Solo si el producto que comprarás está de moda",
         "Únicamente la opinión de tus amigos",
@@ -108,11 +122,79 @@
       "competencia": "deuda",
       "dificultad": 4,
       "explicacion": "Mantener un presupuesto y un fondo de emergencia reduce la necesidad de endeudarse ante imprevistos.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-1",
       "opciones": [
         "Llevar un presupuesto y tener un fondo de emergencia",
         "Pedir el máximo crédito disponible aunque no lo necesites",
         "Pagar siempre solo el mínimo de cada obligación",
         "Tener varias deudas abiertas al mismo tiempo por costumbre"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "10_world_5_multiple_choice_9",
+      "enunciado": "En tu barrio muchas familias pagan préstamos \"gota a gota\" con intereses muy altos. ¿Qué estrategia ayudaría más a bajar ese endeudamiento?",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Aprender a presupuestar y acceder a crédito formal o fondos solidarios saca a las familias de préstamos informales muy costosos.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-1011-2",
+      "prueba": true,
+      "opciones": [
+        "Pedir otro gota a gota para pagar el primero",
+        "Organizar talleres de presupuesto y conectar a las familias con crédito formal o fondos solidarios",
+        "Esconderse de los cobradores hasta que se olviden",
+        "Fiar más en la tienda para no usar efectivo"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "10_world_5_multiple_choice_10",
+      "enunciado": "Frente al riesgo de perder matemáticas este año, ¿cuál acción es una estrategia para reducir ese riesgo?",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Reducir un riesgo es actuar para que sea menos probable o menos grave: estudiar con apoyo cada semana baja la probabilidad de perder.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-1",
+      "prueba": true,
+      "opciones": [
+        "No mirar las notas hasta el último periodo",
+        "Copiar en los exámenes para subir la nota",
+        "Pedir tutorías y estudiar un poco cada semana",
+        "Cambiar de tema cuando en casa pregunten"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "10_world_5_multiple_choice_11",
+      "enunciado": "En tu barrio a veces se va el agua varios días. Guardar agua en tanques limpios y tapados es una estrategia para:",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Guardar agua no evita el corte, pero reduce su impacto: si ocurre, la familia tiene con qué cocinar y asearse.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-1",
+      "opciones": [
+        "Evitar por completo que se vaya el agua",
+        "Transferir el riesgo a la empresa de acueducto",
+        "Aceptar el riesgo sin hacer nada",
+        "Reducir el impacto del riesgo cuando ocurra"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "10_world_5_multiple_choice_12",
+      "enunciado": "El consejo estudiantil debe decidir qué hacer con un muro del patio que tiene grietas. ¿Cuál es la forma más adecuada de tomar esa decisión colectiva?",
+      "competencia": "deuda",
+      "dificultad": 4,
+      "explicacion": "Una buena decisión colectiva sobre un riesgo combina información experta, la voz de la comunidad y acuerdos con quien puede actuar.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-1011-3",
+      "opciones": [
+        "Pedir el concepto de un experto, oír a la comunidad y acordar medidas con las directivas",
+        "Que decida solo el estudiante que más habla",
+        "No hacer nada, porque el muro todavía no se ha caído",
+        "Votar de inmediato sin saber qué tan grave es"
       ],
       "correctIndex": 0
     }

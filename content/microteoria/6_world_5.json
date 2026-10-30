@@ -1,0 +1,23 @@
+{
+  "grado": "6",
+  "worldId": "world_5",
+  "cards": [
+    {
+      "titulo": "Deudas que sí puedes pagar",
+      "cuerpo": "Una deuda se puede manejar cuando la cuota cabe en tu presupuesto después de cubrir lo básico. Si las cuotas se comen casi todo lo que entra, o pides prestado para pagar otra deuda, la deuda se vuelve un agujero negro que crece.",
+      "ejemplo": "Si recibes 40.000 pesos al mes, una cuota de 5.000 se puede pagar; una de 35.000 te deja casi sin nada."
+    },
+    {
+      "titulo": "Riesgo = probabilidad × impacto",
+      "cuerpo": "Un riesgo es algo que podría pasar y dañar lo que valoras: tu salud, tus amigos y tu familia, el agua y la naturaleza, tus estudios o tu plata. Para medirlo te preguntas qué tan probable es que pase y qué tan grave sería. Lo muy probable y muy grave se atiende primero.",
+      "ejemplo": "Montar en bicicleta sin casco: caerse es bastante probable y un golpe en la cabeza sería muy grave. Es un riesgo alto: ponte el casco."
+    },
+    {
+      "titulo": "Qué puedo hacer ante un riesgo",
+      "cuerpo": "Frente a un riesgo puedes evitarlo, reducirlo (cuidarte para que sea menos probable o menos grave), compartirlo con otros o prepararte para enfrentarlo. Muchos riesgos se manejan mejor en grupo: en la familia, en el curso o en el barrio.",
+      "ejemplo": "En el colegio acuerdan una ruta de evacuación y hacen simulacros: el temblor no se puede evitar, pero el daño puede ser menor."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

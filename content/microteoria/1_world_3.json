@@ -1,0 +1,23 @@
+{
+  "grado": "1",
+  "worldId": "world_3",
+  "cards": [
+    {
+      "titulo": "¿Qué es ahorrar?",
+      "cuerpo": "Ahorrar es guardar algo hoy para usarlo después. Puedes ahorrar dinero, agua, luz y comida.",
+      "ejemplo": "Guardas en la nevera el arroz que sobró y lo comes mañana."
+    },
+    {
+      "titulo": "¿Para qué ahorrar?",
+      "cuerpo": "Ahorrar te ayuda a comprar algo que quieres. A tu familia le ayuda cuando algo se daña.",
+      "ejemplo": "Con lo ahorrado, la familia arregla la ducha sin angustia."
+    },
+    {
+      "titulo": "Tu meta de ahorro",
+      "cuerpo": "Primero escoge tu meta. Luego guarda un poquito cada semana, sin rendirte, hasta llegar.",
+      "ejemplo": "Pegas un dibujo del balón en tu alcancía para recordar tu meta."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

@@ -10,6 +10,8 @@
       "competencia": "credito",
       "dificultad": 2,
       "explicacion": "El crédito siempre implica una obligación de devolver el dinero recibido.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
       "respuesta": true
     },
     {
@@ -18,6 +20,8 @@
       "competencia": "credito",
       "dificultad": 2,
       "explicacion": "El dinero prestado es una deuda; debe devolverse a quien lo prestó.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
       "respuesta": false
     },
     {
@@ -26,6 +30,8 @@
       "competencia": "credito",
       "dificultad": 3,
       "explicacion": "El interés es lo que se paga de más por usar el dinero de otra persona o entidad.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
       "respuesta": true
     },
     {
@@ -34,6 +40,8 @@
       "competencia": "credito",
       "dificultad": 3,
       "explicacion": "La capacidad de pago compara los ingresos con los gastos básicos para saber cuánto se puede destinar a una deuda.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
       "respuesta": true
     },
     {
@@ -42,6 +50,8 @@
       "competencia": "credito",
       "dificultad": 3,
       "explicacion": "Endeudarse para pagar deudas suele aumentar el problema; el uso responsable es pedir solo lo que se puede pagar.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
       "respuesta": false
     },
     {
@@ -50,6 +60,8 @@
       "competencia": "credito",
       "dificultad": 2,
       "explicacion": "Cumplir con los pagos acordados evita costos adicionales y mantiene una buena historia de crédito.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
       "respuesta": true
     }
   ],

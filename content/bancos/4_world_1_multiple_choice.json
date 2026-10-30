@@ -1,0 +1,173 @@
+{
+  "bancoId": "4_world_1_multiple_choice",
+  "grado": "4",
+  "worldId": "world_1",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "4_world_1_multiple_choice_1",
+      "enunciado": "En la casa de Valentina usan agua, luz, comida y el dinero que ganan trabajando. ¿Qué tienen en común todas estas cosas?",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Agua, luz, comida y dinero son recursos: cosas valiosas que la familia usa para estar bien.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-45-1",
+      "opciones": [
+        "Son cosas que nunca se acaban",
+        "Son cosas que solo usan los adultos",
+        "Son gastos que se pueden quitar sin problema",
+        "Son recursos que la familia necesita para vivir bien"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "4_world_1_multiple_choice_2",
+      "enunciado": "El dinero que entra a una casa se llama ingreso. ¿De dónde sale casi siempre el ingreso de una familia?",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "La mayor parte del ingreso de una familia viene del trabajo que hacen los adultos.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-45-1",
+      "opciones": [
+        "Del trabajo de las personas adultas de la casa",
+        "De la alcancía de los niños",
+        "Del banco, que lo regala",
+        "De las tiendas del barrio"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "4_world_1_multiple_choice_3",
+      "enunciado": "Tu salón recogió dinero en una rifa y debe decidir en qué usarlo. ¿Qué ayuda más al bienestar de todo el grupo?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "El filtro de agua le sirve a todo el salón por mucho tiempo y cuida la salud de todos.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-45-2",
+      "opciones": [
+        "Comprar dulces para un solo día",
+        "Darle el dinero a quien vendió más boletas",
+        "Arreglar el filtro de agua del salón",
+        "Guardarlo sin decidir nunca qué hacer"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "4_world_1_multiple_choice_4",
+      "enunciado": "Este mes la familia de Andrés tiene menos dinero que de costumbre. ¿Qué deberían pagar primero?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Cuando el dinero no alcanza, primero va lo que la familia necesita para estar bien: comida, agua y luz.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-45-2",
+      "opciones": [
+        "La comida y los servicios de la casa",
+        "Un juego nuevo para la consola",
+        "Una salida a cine",
+        "Ropa de moda para estrenar"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "4_world_1_multiple_choice_5",
+      "enunciado": "Lucía siempre apaga la luz cuando sale de su cuarto. ¿Por qué este hábito ayuda a su familia?",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Gastar menos luz hace que la factura cueste menos y queda dinero para otras cosas.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-45-1",
+      "opciones": [
+        "Porque así el bombillo no se gasta nunca",
+        "Porque la luz no cuesta nada",
+        "Porque la factura de la luz sale más baja",
+        "Porque así la casa se ve más ordenada"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "4_world_1_multiple_choice_6",
+      "enunciado": "Martín anota en un cuaderno en qué gasta su mesada. ¿Qué gana con ese hábito?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Anotar los gastos te muestra en qué se va tu dinero y te ayuda a usarlo mejor.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-45-1",
+      "opciones": [
+        "Le dan más mesada sin pedirla",
+        "El dinero le dura el doble sin hacer nada",
+        "Ya no necesita ahorrar nunca",
+        "Sabe en qué se le va el dinero y puede decidir mejor"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "4_world_1_multiple_choice_7",
+      "enunciado": "Una factura es el papel que dice cuánto debes pagar por algo. ¿Para qué sirve revisar la factura del agua?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Revisar la factura muestra cuánto se gastó y permite descubrir errores o gastos de más.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-45-2",
+      "opciones": [
+        "Para saber si el agua es limpia",
+        "Para ver cuánta agua se usó y si el cobro está bien",
+        "Para no tener que pagarla",
+        "Para que el agua llegue más rápido"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "4_world_1_multiple_choice_8",
+      "enunciado": "En la tienda, a Sara le cobraron dos veces el mismo pan. ¿Cómo se habría dado cuenta a tiempo?",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Revisar la cuenta antes de irte te permite ver un error y pedir que lo corrijan.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-45-2",
+      "opciones": [
+        "Esperando a que el tendero se dé cuenta solo",
+        "Guardando el recibo sin mirarlo",
+        "Revisando la cuenta o el recibo antes de irse",
+        "Pagando con un billete más grande"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "4_world_1_multiple_choice_9",
+      "enunciado": "El parque, el agua y el bus del barrio los usa mucha gente. ¿Por qué son recursos importantes para la comunidad?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Son recursos que comparten muchas personas y les ayudan a vivir mejor; por eso todos los cuidan.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-45-1",
+      "opciones": [
+        "Porque son de una sola familia",
+        "Porque muchas personas los usan y les dan bienestar",
+        "Porque no hay que cuidarlos",
+        "Porque solo sirven para ganar dinero"
+      ],
+      "correctIndex": 1,
+      "prueba": true
+    },
+    {
+      "id": "4_world_1_multiple_choice_10",
+      "enunciado": "¿Cuál de estos es un hábito responsable con el dinero?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Pensar antes de comprar evita gastos que luego lamentas y deja dinero para lo importante.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-45-1",
+      "opciones": [
+        "Gastar toda la mesada el mismo día",
+        "Pensar antes de comprar si de verdad lo necesitas",
+        "Comprar algo solo porque un amigo lo tiene",
+        "Pedir prestado para cada antojo"
+      ],
+      "correctIndex": 1,
+      "prueba": true
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "bancoId": "8_world_2_true_false",
+  "grado": "8",
+  "worldId": "world_2",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "8_world_2_true_false_1",
+      "enunciado": "Si recibes 20.000 pesos y gastas 15.000, tienes un superávit de 5.000 pesos.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Verdadero: te sobran 5.000 pesos, y lo que sobra se llama superávit.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
+      "respuesta": true
+    },
+    {
+      "id": "8_world_2_true_false_2",
+      "enunciado": "El arriendo de una casa es un gasto variable porque cambia todos los días.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Falso: el arriendo se paga igual cada mes, así que es un gasto fijo.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
+      "respuesta": false
+    },
+    {
+      "id": "8_world_2_true_false_3",
+      "enunciado": "Para mejorar tu presupuesto suele ser más fácil empezar por los gastos variables, como onces y salidas.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Verdadero: los gastos variables dependen de tus decisiones diarias y se ajustan más fácil que los fijos.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
+      "respuesta": true
+    },
+    {
+      "id": "8_world_2_true_false_4",
+      "enunciado": "Los servicios públicos, como el agua y la luz, hacen parte de los gastos del presupuesto familiar.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Verdadero: son gastos que la familia paga cada mes y deben estar en su presupuesto.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-2",
+      "respuesta": true
+    },
+    {
+      "id": "8_world_2_true_false_5",
+      "enunciado": "Un presupuesto familiar funciona mejor si lo hace una sola persona sin hablar con los demás.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Falso: si toda la familia conoce el presupuesto, es más fácil acordar y cumplir las mejoras.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-2",
+      "respuesta": false
+    },
+    {
+      "id": "8_world_2_true_false_6",
+      "enunciado": "Si en una familia los gastos son mayores que los ingresos, pedir prestado cada mes resuelve el problema.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Falso: el préstamo tapa el hueco un mes, pero la deuda crece; hay que subir ingresos o bajar gastos.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-2",
+      "respuesta": false
+    }
+  ]
+}

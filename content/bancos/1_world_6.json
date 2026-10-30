@@ -1,0 +1,44 @@
+{
+  "bancoId": "1_world_6",
+  "grado": "1",
+  "worldId": "world_6",
+  "situaciones": [
+    {
+      "id": "1_world_6_sit_1",
+      "enunciado": "Tu curso puede usar el dinero de la rifa para pintar el salón o para un paseo.",
+      "opcionA": {
+        "texto": "Pintar el salón",
+        "consecuencia": "El salón queda bonito todo el año, pero no hay paseo."
+      },
+      "opcionB": {
+        "texto": "Hacer el paseo",
+        "consecuencia": "Pasan un día feliz juntos, pero el salón sigue igual."
+      }
+    },
+    {
+      "id": "1_world_6_sit_2",
+      "enunciado": "En la huerta del colegio salieron muchas lechugas. Pueden llevarlas a casa o darlas al comedor.",
+      "opcionA": {
+        "texto": "Repartirlas entre las familias",
+        "consecuencia": "Cada familia come lechuga fresca, pero el comedor no recibe."
+      },
+      "opcionB": {
+        "texto": "Darlas al comedor del colegio",
+        "consecuencia": "Todos comen ensalada en el almuerzo, pero nadie lleva a casa."
+      }
+    },
+    {
+      "id": "1_world_6_sit_3",
+      "enunciado": "Tu barrio vota una regla: nada de música alta en la noche. Tu familia puede votar.",
+      "opcionA": {
+        "texto": "Votar sí a la regla",
+        "consecuencia": "Los vecinos duermen mejor, pero las fiestas terminan más temprano."
+      },
+      "opcionB": {
+        "texto": "Votar no a la regla",
+        "consecuencia": "Las fiestas siguen igual, pero algunos vecinos duermen mal."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

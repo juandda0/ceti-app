@@ -1,0 +1,173 @@
+{
+  "bancoId": "1_world_6_multiple_choice",
+  "grado": "1",
+  "worldId": "world_6",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "1_world_6_multiple_choice_1",
+      "enunciado": "¿Qué necesitamos todos para vivir?",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Comida, agua y casa son necesidades básicas de todas las personas.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-13-1",
+      "opciones": [
+        "Juguetes nuevos",
+        "Comida, agua y casa",
+        "Ropa de moda",
+        "Un celular"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "1_world_6_multiple_choice_2",
+      "enunciado": "Para aprender a leer, ¿a dónde van los niños?",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Estudiar es una necesidad básica, y el colegio ayuda a cubrirla.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-13-1",
+      "opciones": [
+        "A la tienda",
+        "Al mercado",
+        "A la panadería",
+        "Al colegio"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "1_world_6_multiple_choice_3",
+      "enunciado": "Un barrio tiene agua limpia. ¿Qué gana la gente?",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "El agua limpia ayuda a que las personas estén sanas.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-13-2",
+      "opciones": [
+        "Salud",
+        "Más basura",
+        "Más enfermedades",
+        "Más ruido"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "1_world_6_multiple_choice_4",
+      "enunciado": "¿Por qué algunos niños no tienen agua limpia en casa?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "A veces el agua no llega a algunos lugares; no es culpa de las personas.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-13-3",
+      "opciones": [
+        "No les gusta el agua",
+        "Porque no quieren",
+        "No llega el agua a su vereda",
+        "Porque ya tomaron"
+      ],
+      "correctIndex": 2,
+      "prueba": true
+    },
+    {
+      "id": "1_world_6_multiple_choice_5",
+      "enunciado": "Algunas familias no tienen para comer. ¿Cómo ayuda una comunidad?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Cuando alguien no tiene lo básico, compartir ayuda a que todos estén mejor.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-13-3",
+      "opciones": [
+        "Mirando para otro lado",
+        "Compartiendo comida",
+        "Esperando que pase solo",
+        "Botando lo que sobra"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "1_world_6_multiple_choice_6",
+      "enunciado": "¿Por qué cuidamos los árboles del parque?",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Los árboles nos dan bienestar: sombra y aire más limpio.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-13-1",
+      "opciones": [
+        "Porque lo dice la tele",
+        "Para cortarlos después",
+        "Solo porque son verdes",
+        "Nos dan sombra y aire limpio"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "1_world_6_multiple_choice_7",
+      "enunciado": "Un letrero dice: «No pisar el pasto». ¿Para qué sirve?",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Las normas sirven para cuidar lo que es de todos.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-13-2",
+      "opciones": [
+        "Para cuidar el pasto",
+        "Para que nadie vaya al parque",
+        "Para adornar el parque",
+        "Para castigar a los niños"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "1_world_6_multiple_choice_8",
+      "enunciado": "Hay una regla: no botar basura al río. ¿Qué cuida?",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Las reglas para el ambiente cuidan el agua, los animales y las plantas.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-13-3",
+      "opciones": [
+        "Los carros",
+        "Las tiendas",
+        "El agua y los peces",
+        "Los celulares"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "1_world_6_multiple_choice_9",
+      "enunciado": "En la huerta salieron pocas fresas y muchas hojas. ¿Qué es escaso?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Escaso es lo que hay poquito: aquí, las fresas.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-13-1",
+      "opciones": [
+        "Las hojas",
+        "Las fresas",
+        "La tierra",
+        "Las dos cosas"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "1_world_6_multiple_choice_10",
+      "enunciado": "¿Para qué hay una regla de cerrar la llave en el colegio?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "La regla ayuda a cuidar el agua para que alcance para todos.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-13-2",
+      "opciones": [
+        "Para no lavarse las manos",
+        "Para gastar más agua",
+        "Para que el agua alcance",
+        "Para que no jueguen"
+      ],
+      "correctIndex": 2,
+      "prueba": true
+    }
+  ]
+}

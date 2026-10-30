@@ -10,6 +10,8 @@
       "competencia": "ingreso",
       "dificultad": 3,
       "explicacion": "Primero se identifica si es necesidad o deseo, luego se revisa el ingreso disponible, después se evalúa el costo de oportunidad y por último se decide.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-1",
       "elementos": [
         "Identificar si se trata de una necesidad o de un deseo",
         "Revisar cuánto ingreso disponible se tiene",
@@ -24,6 +26,8 @@
       "competencia": "ingreso",
       "dificultad": 3,
       "explicacion": "El ingreso pasivo casi no requiere esfuerzo continuo; sigue una venta ocasional, luego un trabajo por tareas puntuales y, por último, un empleo de tiempo completo.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-1011-1",
       "elementos": [
         "Ingreso pasivo que fluye sin trabajo continuo",
         "Venta ocasional de un artículo propio",
@@ -38,6 +42,8 @@
       "competencia": "ingreso",
       "dificultad": 3,
       "explicacion": "Primero existió el trueque, luego se usaron objetos de valor común como medio, después surgió la moneda y finalmente el dinero digital.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-1011-1",
       "elementos": [
         "Trueque directo de bienes por otros bienes",
         "Uso de objetos de valor común como medio de intercambio",
@@ -52,6 +58,8 @@
       "competencia": "ingreso",
       "dificultad": 3,
       "explicacion": "Se recibe la mesada, se separan las necesidades, luego se asigna una parte al ahorro y por último se destina lo restante a deseos.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-1011-1",
       "elementos": [
         "Recibir la mesada",
         "Separar lo necesario para cubrir necesidades",
@@ -66,6 +74,8 @@
       "competencia": "ingreso",
       "dificultad": 3,
       "explicacion": "El dinero llega como ingreso, se administra mediante decisiones, se usa para intercambiar por bienes o servicios y finalmente aporta bienestar.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-1011-1",
       "elementos": [
         "El dinero llega como ingreso",
         "Se administra tomando decisiones de uso",
@@ -80,6 +90,8 @@
       "competencia": "ingreso",
       "dificultad": 3,
       "explicacion": "Se listan las alternativas posibles, se identifica la mejor opción no elegida, se compara con la opción preferida y se decide considerando lo que se sacrifica.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-1",
       "elementos": [
         "Listar las alternativas posibles de uso del dinero",
         "Identificar la mejor opción que no se elegiría",

@@ -1,0 +1,173 @@
+{
+  "bancoId": "8_world_2_multiple_choice",
+  "grado": "8",
+  "worldId": "world_2",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "8_world_2_multiple_choice_1",
+      "enunciado": "Camila recibe 50.000 pesos de mesada al mes y gasta 42.000. ¿Cuánto le queda?",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "A lo que entra se le resta lo que sale: 50.000 menos 42.000 da 8.000 pesos.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
+      "opciones": [
+        "2.000 pesos",
+        "8.000 pesos",
+        "12.000 pesos",
+        "92.000 pesos"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "8_world_2_multiple_choice_2",
+      "enunciado": "Andrés recibe 30.000 pesos al mes y gasta 36.000. ¿Cómo está su presupuesto?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Gasta más de lo que recibe, así que le faltan 6.000 pesos: eso es un déficit.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
+      "opciones": [
+        "Tiene un superávit de 6.000 pesos",
+        "Está equilibrado",
+        "Tiene un déficit: le faltan 6.000 pesos",
+        "Le sobran 36.000 pesos"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "8_world_2_multiple_choice_3",
+      "enunciado": "¿Cuál de estos es un gasto variable para un estudiante?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Las onces y las salidas cambian de una semana a otra; los demás gastos se repiten con el mismo valor.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
+      "opciones": [
+        "Las onces y salidas con amigos de cada semana",
+        "La ruta escolar, que cuesta lo mismo cada mes",
+        "La pensión del colegio",
+        "El plan mensual del celular"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "8_world_2_multiple_choice_4",
+      "enunciado": "Sofía gasta 15.000 pesos cada semana en dulces y gaseosa y no le alcanza para el regalo de cumpleaños de su hermano. ¿Qué mejora le conviene más?",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Recortar un gasto variable que no es necesario libera plata para su meta sin endeudarse.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
+      "opciones": [
+        "Pedirle prestado a un amigo para el regalo",
+        "Dejar de pagar los pasajes del colegio",
+        "Reducir el gasto en dulces y apartar esa plata para el regalo",
+        "Seguir igual y dar el regalo el próximo año"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "8_world_2_multiple_choice_5",
+      "enunciado": "¿Cuál de estos es un ingreso para el presupuesto de una familia?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Las ventas de las arepas son dinero que entra a la casa; lo demás son gastos.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-2",
+      "opciones": [
+        "El pago de la factura del agua",
+        "Lo que gana la familia vendiendo arepas los domingos",
+        "La cuota del arriendo",
+        "El mercado de la quincena"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "8_world_2_multiple_choice_6",
+      "enunciado": "Cada mes, en la casa de Valentina salen 100.000 pesos más de los que entran. ¿Qué mejora es la más sensata?",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Para cerrar el déficit hay que ajustar los gastos que sí se pueden recortar, no endeudarse cada mes.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-2",
+      "opciones": [
+        "Revisar gastos variables, como domicilios y salidas, y bajarlos al menos 100.000 pesos",
+        "Dejar de pagar el arriendo",
+        "Sacar un préstamo cada mes para cubrir lo que falta",
+        "Gastar igual y esperar a ver qué pasa"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "8_world_2_multiple_choice_7",
+      "enunciado": "La factura de la luz de tu casa subió mucho este mes. ¿Qué propuesta ayuda a bajar ese gasto?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Menos aparatos encendidos significa menos energía consumida y una factura más baja.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-2",
+      "opciones": [
+        "Dejar cargadores y televisor conectados toda la noche",
+        "Apagar luces y desconectar los aparatos que no se usan",
+        "Pagar la factura después de la fecha",
+        "Cambiar los bombillos por unos más potentes"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "8_world_2_multiple_choice_8",
+      "enunciado": "Tomás recibe 60.000 pesos al mes, sus gastos fijos son 30.000 y quiere ahorrar 20.000. ¿Cuánto puede gastar como máximo en gustos?",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "60.000 menos 30.000 de gastos fijos menos 20.000 de ahorro deja 10.000 pesos para gustos.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
+      "opciones": [
+        "30.000 pesos",
+        "20.000 pesos",
+        "40.000 pesos",
+        "10.000 pesos"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "8_world_2_multiple_choice_9",
+      "enunciado": "Lucía anota sus gastos y descubre que la mitad de su mesada se va en recargas del celular. ¿Qué paso es más útil para mejorar su presupuesto?",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Ponerle un tope al gasto que más pesa es una mejora concreta que deja plata para lo demás.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
+      "opciones": [
+        "Dejar de anotar sus gastos",
+        "Pedir que le adelanten la mesada del otro mes",
+        "Gastar más en recargas para aprovechar las promociones",
+        "Ponerse un tope de recargas y usar el wifi de la casa cuando pueda"
+      ],
+      "correctIndex": 3,
+      "prueba": true
+    },
+    {
+      "id": "8_world_2_multiple_choice_10",
+      "enunciado": "Una familia revisa su mes y ve que el mercado sale caro porque compran sin lista y repiten productos. ¿Qué mejora tiene más sentido?",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "La lista evita compras repetidas y por impulso, y así el mercado cuesta menos.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-2",
+      "opciones": [
+        "Hacer una lista antes de ir y revisar qué hay en la alacena",
+        "Ir a mercar todos los días",
+        "Comprar el doble para que sobre",
+        "Pagar el mercado con tarjeta de crédito"
+      ],
+      "correctIndex": 0,
+      "prueba": true
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "bancoId": "8_world_5_true_false",
+  "grado": "8",
+  "worldId": "world_5",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "8_world_5_true_false_1",
+      "enunciado": "Un riesgo es más alto cuando algo malo es muy probable y además sería muy grave.",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "Verdadero: el riesgo crece con la probabilidad y con el impacto.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-2",
+      "respuesta": true
+    },
+    {
+      "id": "8_world_5_true_false_2",
+      "enunciado": "Si nunca te ha pasado nada al cruzar la calle mirando el celular, ese riesgo no existe.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Falso: que no haya pasado no quiere decir que no pueda pasar; el riesgo sigue ahí.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-1",
+      "respuesta": false
+    },
+    {
+      "id": "8_world_5_true_false_3",
+      "enunciado": "Los riesgos solo tienen que ver con la plata; la salud, el estudio o los amigos no se cuidan como un riesgo.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Falso: todo lo que valoras, como tu salud, tu estudio, el ambiente o tus relaciones, puede estar en riesgo y se puede cuidar.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-2",
+      "respuesta": false
+    },
+    {
+      "id": "8_world_5_true_false_4",
+      "enunciado": "Antes de bañarte en un río que no conoces, conviene preguntar a la gente del lugar si es seguro.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Verdadero: conocer el contexto (corrientes, profundidad, crecientes) ayuda a decidir mejor.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-1",
+      "respuesta": true
+    },
+    {
+      "id": "8_world_5_true_false_5",
+      "enunciado": "Si tus ingresos cambian mucho de un mes a otro, es más riesgoso comprometerte con una cuota alta.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Verdadero: en un mes malo la cuota podría no caber en lo que ganas.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
+      "respuesta": true
+    },
+    {
+      "id": "8_world_5_true_false_6",
+      "enunciado": "Mientras pagas una deuda difícil, tomar otra nueva para darte un gusto ayuda a salir más rápido.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Falso: una deuda nueva suma cuotas y hace más difícil cumplir el plan.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
+      "respuesta": false
+    }
+  ]
+}

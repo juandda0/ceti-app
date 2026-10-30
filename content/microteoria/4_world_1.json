@@ -1,0 +1,23 @@
+{
+  "grado": "4",
+  "worldId": "world_1",
+  "cards": [
+    {
+      "titulo": "Los recursos de tu familia",
+      "cuerpo": "Un recurso es algo valioso que usamos para vivir bien: el agua, la luz, la comida, el tiempo y el dinero. Muchos recursos son escasos, es decir, no alcanzan para todo lo que queremos. Por eso la familia y la escuela deciden juntas qué es lo más importante.",
+      "ejemplo": "Si este mes hay poco dinero, primero va la comida y los servicios de la casa, y después los gustos."
+    },
+    {
+      "titulo": "El dinero sale del trabajo",
+      "cuerpo": "El dinero que entra a una casa se llama ingreso. Casi siempre viene del trabajo de los adultos: vender, cocinar, enseñar, manejar o cultivar. Con ese ingreso se paga lo que la familia necesita.",
+      "ejemplo": "La mamá de Camilo hornea pan, lo vende en la panadería y con lo que recibe pagan el arriendo y el mercado."
+    },
+    {
+      "titulo": "Buenos hábitos y facturas",
+      "cuerpo": "Un hábito es algo que haces casi siempre. Apagar la luz, cerrar la llave y pensar antes de comprar son hábitos responsables: cuidan los recursos y dejan dinero para lo importante. Revisar las facturas y los recibos también lo es, porque pueden traer errores.",
+      "ejemplo": "Al revisar la factura del agua, la familia de Lucía vio que gastó más que el mes pasado y encontró una llave goteando."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

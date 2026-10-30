@@ -1,0 +1,44 @@
+{
+  "bancoId": "4_world_5",
+  "grado": "4",
+  "worldId": "world_5",
+  "situaciones": [
+    {
+      "id": "4_world_5_sit_1",
+      "enunciado": "Tus amigos quieren meterse a un río cerca de la finca, pero el agua baja fuerte por la lluvia de ayer.",
+      "opcionA": {
+        "texto": "Meterte al río con ellos.",
+        "consecuencia": "Te diviertes y no te quedas por fuera del plan. Pero el agua fuerte puede arrastrarte, y un accidente en el río sería muy grave."
+      },
+      "opcionB": {
+        "texto": "Quedarte en la orilla y proponer otro juego.",
+        "consecuencia": "Te cuidas de un peligro serio. Pero algunos amigos se molestan y por un rato te sientes por fuera."
+      }
+    },
+    {
+      "id": "4_world_5_sit_2",
+      "enunciado": "Llevas semanas preparando una presentación para el colegio y ese mismo día es el cumpleaños de tu primo.",
+      "opcionA": {
+        "texto": "Ir al cumpleaños y practicar menos.",
+        "consecuencia": "Compartes con tu familia y la pasas muy bien. Pero llegas menos preparado y puede irte peor en la presentación."
+      },
+      "opcionB": {
+        "texto": "Quedarte practicando la presentación.",
+        "consecuencia": "Llegas seguro y con todo listo. Pero te pierdes la fiesta y tu primo te extraña."
+      }
+    },
+    {
+      "id": "4_world_5_sit_3",
+      "enunciado": "Le debes un poco de dinero a un compañero y hoy te dieron tu mesada. También quieres comprar algo en el recreo.",
+      "opcionA": {
+        "texto": "Pagarle todo hoy.",
+        "consecuencia": "Quedas sin deudas y tu compañero confía en ti. Pero esta semana no te queda para tus gustos del recreo."
+      },
+      "opcionB": {
+        "texto": "Pagarle una parte y guardar algo para el recreo.",
+        "consecuencia": "Avanzas en tu deuda y disfrutas algo en el recreo. Pero sigues debiendo y tienes que acordarte de pagar el resto."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

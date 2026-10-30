@@ -1,0 +1,71 @@
+{
+  "bancoId": "6_world_1_true_false",
+  "grado": "6",
+  "worldId": "world_1",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "6_world_1_true_false_1",
+      "enunciado": "Un recurso suele valer más cuando es escaso y mucha gente lo necesita.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Verdadero: la escasez y la necesidad hacen que la gente esté dispuesta a pagar más por un recurso.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-67-1",
+      "respuesta": true
+    },
+    {
+      "id": "6_world_1_true_false_2",
+      "enunciado": "Transformar una materia prima, como convertir madera en una silla, no cambia su valor económico.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Falso: el trabajo y el conocimiento que se le ponen a la madera le agregan valor.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-67-1",
+      "respuesta": false
+    },
+    {
+      "id": "6_world_1_true_false_3",
+      "enunciado": "Proteger un recurso solo vale la pena si ese recurso cuesta mucha plata.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Falso: también vale la pena proteger el agua, el aire o tu tiempo, aunque no tengan un precio alto.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-67-2",
+      "respuesta": false
+    },
+    {
+      "id": "6_world_1_true_false_4",
+      "enunciado": "Reparar algo dañado en vez de botarlo es una forma de proteger los recursos.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Verdadero: al repararlo, aprovechas lo que ya tienes y no gastas recursos en uno nuevo.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-67-2",
+      "respuesta": true
+    },
+    {
+      "id": "6_world_1_true_false_5",
+      "enunciado": "Comparar precios en varias tiendas antes de comprar es un buen hábito financiero.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Verdadero: comparar te ayuda a pagar lo justo y a que tu plata rinda.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-67-1",
+      "respuesta": true
+    },
+    {
+      "id": "6_world_1_true_false_6",
+      "enunciado": "Si compras algo en oferta, siempre ahorras, aunque no lo necesitaras.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Falso: si no lo necesitabas, gastaste plata que no ibas a gastar; la oferta no fue un ahorro.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-67-1",
+      "respuesta": false
+    }
+  ]
+}

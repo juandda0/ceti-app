@@ -1,0 +1,135 @@
+{
+  "bancoId": "6_world_4_ordenar",
+  "grado": "6",
+  "worldId": "world_4",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "6_world_4_ordenar_1",
+      "enunciado": "Ordena los pasos para pedir un préstamo de forma responsable.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Primero piensas si lo necesitas y cuánto puedes pagar; luego comparas y firmas sabiendo a qué te comprometes.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-67-1",
+      "elementos": [
+        "Decidir si de verdad lo necesitas",
+        "Firmar solo después de leer el contrato",
+        "Calcular cuánto puedes pagar cada mes",
+        "Comparar el costo total en varias entidades"
+      ],
+      "ordenCanonico": [
+        0,
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "id": "6_world_4_ordenar_2",
+      "enunciado": "Ordena lo que pasa con un préstamo, del primero al último.",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "El préstamo se pide, se estudia, se entrega y luego se paga con intereses.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-67-1",
+      "elementos": [
+        "Recibes el dinero",
+        "Pagas las cuotas con intereses hasta terminar",
+        "La entidad estudia si puedes pagarlo",
+        "Solicitas el préstamo"
+      ],
+      "ordenCanonico": [
+        3,
+        2,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "6_world_4_ordenar_3",
+      "enunciado": "Ordena los pasos para comparar un préstamo formal con uno informal antes de decidir.",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "Comparar el costo total y la protección de cada opción te ayuda a elegir sin sorpresas.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-67-2",
+      "elementos": [
+        "Averiguar cuánto pagarías en total con intereses",
+        "Preguntar en cada lugar cuánto prestan y a qué plazo",
+        "Revisar si quien presta está vigilado y te da contrato",
+        "Elegir la opción más clara que puedas pagar"
+      ],
+      "ordenCanonico": [
+        1,
+        0,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "6_world_4_ordenar_4",
+      "enunciado": "Ordena estas opciones de la que te deja usar tu plata más rápido a la que más tarda.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "El efectivo está a la mano, la cuenta se saca en un cajero o una app, y el CDT espera hasta el final del plazo.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-67-1",
+      "elementos": [
+        "Plata en un CDT a un año",
+        "Efectivo en tu billetera",
+        "Plata en una cuenta de ahorros"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "6_world_4_ordenar_5",
+      "enunciado": "Ordena los pasos para reclamar por un cobro que no reconoces en tu cuenta.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Primero confirmas el cobro, luego reclamas por un canal oficial, guardas el radicado y haces seguimiento.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-67-2",
+      "elementos": [
+        "Revisar el movimiento en el extracto o en la app oficial",
+        "Hacer seguimiento hasta que te respondan",
+        "Comunicarte por un canal oficial de la entidad",
+        "Explicar el caso y pedir un número de radicado"
+      ],
+      "ordenCanonico": [
+        0,
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "id": "6_world_4_ordenar_6",
+      "enunciado": "Ordena los pasos para hacer una transferencia segura desde la app oficial de una entidad.",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "Revisar antes de confirmar y guardar el comprobante te protege si algo sale mal.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-67-2",
+      "elementos": [
+        "Revisar el nombre y el valor antes de confirmar",
+        "Entrar a la app oficial con tu clave",
+        "Guardar el comprobante de la transferencia",
+        "Escribir los datos de la cuenta de destino"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        0,
+        2
+      ]
+    }
+  ]
+}

@@ -6,6 +6,9 @@
  * - `estudiantes/{uid}/resumen/clase`: sus totales en la clase y por mundo
  *   (intentos, respuestas, aciertos, tiempo, jefes, fechas). En transacción:
  *   es un solo estudiante, casi sin contención.
+ *   Desde la Fase 7 también por desempeño del MEN (`porDesempeno`), con el
+ *   desempeño que trae cada respuesta: así el panel dice qué porcentaje de un
+ *   grado logra cada desempeño.
  * - `cursos/{k}/agregados/preguntas_{worldId}`: por pregunta, cuántas veces se
  *   respondió, cuántas bien, el tiempo y las respuestas erradas más elegidas.
  *   Con incrementos: varios estudiantes escriben a la vez. Sin datos nominales.
@@ -21,6 +24,8 @@ export interface RespuestaIntento {
   ok: boolean;
   r: string;
   ms: number;
+  /** Desempeño del MEN (Fase 7), si la pregunta lo trae. */
+  d?: string;
 }
 
 export interface IntentoLeido {
@@ -53,6 +58,8 @@ export interface ResumenClase {
   primerIntentoAt: number | null;
   ultimoIntentoAt: number | null;
   porMundo: Record<string, ResumenMundo>;
+  /** Fase 7: respuestas y aciertos por desempeño del MEN. */
+  porDesempeno: Record<string, { respuestas: number; aciertos: number }>;
 }
 
 export const RESUMEN_VACIO: ResumenClase = {
@@ -66,7 +73,10 @@ export const RESUMEN_VACIO: ResumenClase = {
   primerIntentoAt: null,
   ultimoIntentoAt: null,
   porMundo: {},
+  porDesempeno: {},
 };
+
+const ID_DESEMPENO = /^[A-Z]{2}-\d{2,4}-\d$/;
 
 const MAX_RESPUESTAS = 40;
 const MAX_DURACION_MS = 2 * 60 * 60 * 1000;
@@ -89,6 +99,7 @@ export function leerIntento(d: Record<string, unknown> | undefined): IntentoLeid
       ok: r.ok === true,
       r: typeof r.r === 'string' ? r.r.slice(0, 80) : '',
       ms: num(r.ms, MAX_MS_RESPUESTA),
+      ...(typeof r.d === 'string' && ID_DESEMPENO.test(r.d) ? { d: r.d } : {}),
     }));
   return {
     worldId: d.worldId.slice(0, 60),
@@ -116,7 +127,14 @@ export function sumarIntento(resumen: ResumenClase, i: IntentoLeido): ResumenCla
     ultimoIntentoAt: null,
     conquistadoAt: null,
   };
+  const porDesempeno = { ...(resumen.porDesempeno ?? {}) };
+  for (const r of i.respuestas) {
+    if (!r.d) continue;
+    const a = porDesempeno[r.d] ?? { respuestas: 0, aciertos: 0 };
+    porDesempeno[r.d] = { respuestas: a.respuestas + 1, aciertos: a.aciertos + (r.ok ? 1 : 0) };
+  }
   return {
+    porDesempeno,
     intentos: resumen.intentos + 1,
     lecciones: resumen.lecciones + (i.tipo === 'leccion' ? 1 : 0),
     jefes: resumen.jefes + (i.tipo === 'jefe' ? 1 : 0),

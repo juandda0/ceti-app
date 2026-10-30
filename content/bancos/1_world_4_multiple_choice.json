@@ -1,0 +1,173 @@
+{
+  "bancoId": "1_world_4_multiple_choice",
+  "grado": "1",
+  "worldId": "world_4",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "1_world_4_multiple_choice_1",
+      "enunciado": "Le das tu lápiz a Pedro y él te lo devuelve mañana. ¿Qué hiciste?",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "Prestar es dar algo que luego te devuelven.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-13-1",
+      "opciones": [
+        "Se lo regalé",
+        "Se lo presté",
+        "Se lo cambié",
+        "Se lo vendí"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "1_world_4_multiple_choice_2",
+      "enunciado": "Le das un dulce a tu amiga para que se lo quede. ¿Qué hiciste?",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "Regalar es dar algo para siempre, sin que te lo devuelvan.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-13-1",
+      "opciones": [
+        "Se lo regalé",
+        "Se lo presté",
+        "Se lo vendí",
+        "Se lo cambié"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "1_world_4_multiple_choice_3",
+      "enunciado": "Partes tu arepa y se la comen los dos en el recreo. ¿Qué hiciste?",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "Compartir es usar o disfrutar algo juntos.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-13-1",
+      "opciones": [
+        "Prestar",
+        "Vender",
+        "Ahorrar",
+        "Compartir"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "1_world_4_multiple_choice_4",
+      "enunciado": "¿Cuál de estas cosas NO debes prestar?",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "El cepillo de dientes es de uso personal: prestarlo pasa gérmenes.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-13-2",
+      "opciones": [
+        "Un libro de cuentos",
+        "Un balón",
+        "Tu cepillo de dientes",
+        "Tus colores"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "1_world_4_multiple_choice_5",
+      "enunciado": "Te prestaron un libro. ¿Qué debes hacer?",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "Quien recibe algo prestado se compromete a cuidarlo y devolverlo.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-13-3",
+      "opciones": [
+        "Quedártelo",
+        "Cuidarlo y devolverlo",
+        "Rayarlo un poquito",
+        "Prestarlo a otro sin permiso"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "1_world_4_multiple_choice_6",
+      "enunciado": "Pediste prestado un borrador y lo perdiste. ¿Qué haces?",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Si pierdes algo prestado, lo correcto es contarlo y reponerlo.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-13-3",
+      "opciones": [
+        "Contar y devolver otro",
+        "No decir nada",
+        "Echarle la culpa a otro",
+        "Pedir otro prestado"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "1_world_4_multiple_choice_7",
+      "enunciado": "Antes del dinero, ¿cómo conseguía la gente las cosas?",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Antes se cambiaba una cosa por otra; eso se llama trueque.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-13-1",
+      "opciones": [
+        "Con tarjetas",
+        "Con el celular",
+        "Con billetes",
+        "Cambiando cosa por cosa"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "1_world_4_multiple_choice_8",
+      "enunciado": "¿Dónde se paga con dinero?",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "En la tienda se paga con dinero por lo que llevas.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-13-2",
+      "opciones": [
+        "Al jugar en el patio",
+        "Al subir al columpio",
+        "En la tienda del barrio",
+        "Al dormir en tu cama"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "1_world_4_multiple_choice_9",
+      "enunciado": "Juana quiere unos colores. ¿Qué la ayuda a comprarlos?",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Manejar bien el dinero, guardándolo con cuidado, ayuda a cumplir una meta.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-13-3",
+      "opciones": [
+        "Gastar todo en dulces",
+        "Cuidar y guardar su dinero",
+        "Comprar algo cada día",
+        "Pedir prestado y no pagar"
+      ],
+      "correctIndex": 1,
+      "prueba": true
+    },
+    {
+      "id": "1_world_4_multiple_choice_10",
+      "enunciado": "¿Cuál de estas cosas sí puedes prestar a un amigo?",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Un cuento se puede prestar; las cosas de higiene personal no.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-13-2",
+      "opciones": [
+        "Tu cepillo de dientes",
+        "Tu peinilla",
+        "Tu cuchara usada",
+        "Un libro de cuentos"
+      ],
+      "correctIndex": 3,
+      "prueba": true
+    }
+  ]
+}

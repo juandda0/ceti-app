@@ -1,0 +1,23 @@
+{
+  "grado": "1",
+  "worldId": "world_4",
+  "cards": [
+    {
+      "titulo": "Prestar, compartir y regalar",
+      "cuerpo": "Prestar es dar algo que te devuelven. Compartir es usarlo juntos. Regalar es darlo para siempre.",
+      "ejemplo": "Prestas tu lápiz, compartes tu arepa y regalas un dibujo."
+    },
+    {
+      "titulo": "Lo que te prestan",
+      "cuerpo": "Si te prestan algo, lo cuidas y lo devuelves a tiempo. Lo de higiene, como el cepillo de dientes, no se presta.",
+      "ejemplo": "Te prestan un cuento, lo lees con cuidado y lo devuelves el lunes."
+    },
+    {
+      "titulo": "Cómo cambió el dinero",
+      "cuerpo": "Antes la gente cambiaba cosa por cosa. Luego llegaron las monedas y los billetes, y ahora también las tarjetas.",
+      "ejemplo": "Hoy pagas en la tienda con monedas, y algunos adultos pagan con tarjeta."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

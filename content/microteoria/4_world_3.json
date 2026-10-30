@@ -1,0 +1,23 @@
+{
+  "grado": "4",
+  "worldId": "world_3",
+  "cards": [
+    {
+      "titulo": "Ahorrar para una meta",
+      "cuerpo": "Ahorrar es guardar una parte de tu dinero hoy para usarla después. Funciona mejor con una meta clara (qué quieres y cuánto cuesta) y con constancia: guardar un poco cada semana, sin sacarlo antes de tiempo.",
+      "ejemplo": "Juliana guarda una parte de su mesada cada viernes y en unos meses completa lo del libro que quería."
+    },
+    {
+      "titulo": "Ahorrar o invertir",
+      "cuerpo": "Invertir es usar tu dinero en algo que puede darte más dinero después, como materiales para hacer y vender algo. Al invertir puedes ganar, pero también perder. Al ahorrar tu dinero casi no crece, pero corres menos riesgo.",
+      "ejemplo": "Martina compró limones y vasos para vender limonada en el bazar: eso es invertir. Si vende poco, pierde parte de lo que puso."
+    },
+    {
+      "titulo": "Ahorro formal e informal",
+      "cuerpo": "El ahorro informal lo guardas tú: en una alcancía, un tarro o el bolsillo. Es fácil, pero se puede perder o gastar en un antojo. El ahorro formal se hace en un banco o una cooperativa: es más protegido y a veces te pagan un poco por guardarlo (el interés), pero piden requisitos.",
+      "ejemplo": "Leo y su abuela abrieron una cuenta de ahorros. Para abrirla llevaron sus documentos."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

@@ -1,0 +1,23 @@
+{
+  "grado": "4",
+  "worldId": "world_6",
+  "cards": [
+    {
+      "titulo": "Recursos de todos",
+      "cuerpo": "Algunos recursos son de toda la comunidad: el agua del río, el parque, la biblioteca y las vías. Cuando mejoran, la comunidad se desarrolla; cuando se dañan, todos pierden. Por eso se cuidan y se decide entre todos qué es lo más importante.",
+      "ejemplo": "Cuando llegó el acueducto a la vereda, los niños se enfermaron menos y faltaron menos al colegio."
+    },
+    {
+      "titulo": "El Estado y los impuestos",
+      "cuerpo": "El Estado es la organización de todo el país con sus autoridades. Su principal ingreso son los impuestos: el dinero que pagan las personas y las empresas. Con ese dinero se pagan colegios públicos, hospitales y vías.",
+      "ejemplo": "Parte de los impuestos que pagaron las familias y las empresas sirvió para construir el colegio nuevo del barrio."
+    },
+    {
+      "titulo": "¿Quién decide?",
+      "cuerpo": "El Gobierno propone el presupuesto de la nación. El Congreso lo aprueba, igual que los impuestos, y el Gobierno lo ejecuta en obras y servicios. El Banco de la República emite los billetes y las monedas y cuida el valor del dinero.",
+      "ejemplo": "Los billetes que usas en la tienda los emite el Banco de la República; el colegio público se paga con el presupuesto que aprobó el Congreso."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

@@ -1,0 +1,44 @@
+{
+  "bancoId": "6_world_4",
+  "grado": "6",
+  "worldId": "world_4",
+  "situaciones": [
+    {
+      "id": "6_world_4_sit_1",
+      "enunciado": "Tu familia necesita un computador para que tú y tu hermano hagan tareas. Pueden comprarlo hoy a crédito en cuotas, o ahorrar unos meses y comprarlo de contado.",
+      "opcionA": {
+        "texto": "Comprarlo hoy a crédito.",
+        "consecuencia": "Tienen el computador de una vez y las tareas se facilitan, pero durante meses parte del ingreso se va en cuotas y al final pagan más por los intereses."
+      },
+      "opcionB": {
+        "texto": "Ahorrar y comprarlo de contado.",
+        "consecuencia": "Pagan menos en total y no quedan con deudas, pero durante esos meses toca seguir haciendo tareas en el celular o en la biblioteca."
+      }
+    },
+    {
+      "id": "6_world_4_sit_2",
+      "enunciado": "Un vecino necesita plata urgente para una cita médica. Le ofrecen un préstamo «gota a gota» hoy mismo, o puede pedirlo en una cooperativa que le pide papeles y le responde en unos días.",
+      "opcionA": {
+        "texto": "Tomar el «gota a gota».",
+        "consecuencia": "Tiene la plata hoy y va a su cita, pero los cobros diarios con intereses muy altos pueden volverse una carga pesada y con presión de quien cobra."
+      },
+      "opcionB": {
+        "texto": "Esperar la respuesta de la cooperativa.",
+        "consecuencia": "Paga intereses más bajos y con reglas claras, pero tiene que esperar unos días y quizá mover la cita o pedir ayuda mientras tanto."
+      }
+    },
+    {
+      "id": "6_world_4_sit_3",
+      "enunciado": "Vas a pagarle a un compañero 15.000 pesos por la camiseta del equipo. Puedes darle efectivo o hacerle una transferencia desde la cuenta de un adulto de tu familia.",
+      "opcionA": {
+        "texto": "Pagarle en efectivo.",
+        "consecuencia": "Es inmediato y no necesitas a nadie más, pero no queda registro del pago y, si después hay dudas, es tu palabra contra la suya."
+      },
+      "opcionB": {
+        "texto": "Hacer la transferencia.",
+        "consecuencia": "Queda un comprobante del pago, pero dependes de que el adulto tenga tiempo y de que los datos de la cuenta estén bien escritos."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

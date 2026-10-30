@@ -10,6 +10,8 @@
       "competencia": "presupuesto",
       "dificultad": 3,
       "explicacion": "Verdadero: el equilibrio presupuestal ocurre cuando lo que se planea gastar cabe dentro de lo que se recibe.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-1",
       "respuesta": true
     },
     {
@@ -18,6 +20,8 @@
       "competencia": "presupuesto",
       "dificultad": 3,
       "explicacion": "Falso: el presupuesto es un plan que anticipa ingresos y egresos futuros, no únicamente un registro del pasado.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-1",
       "respuesta": false
     },
     {
@@ -26,6 +30,8 @@
       "competencia": "presupuesto",
       "dificultad": 3,
       "explicacion": "Verdadero: agrupar gastos por categorías hace visible el destino del dinero y facilita los ajustes.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-1",
       "respuesta": true
     },
     {
@@ -34,6 +40,8 @@
       "competencia": "presupuesto",
       "dificultad": 4,
       "explicacion": "Falso: las necesidades básicas y los compromisos ineludibles tienen prioridad sobre los gastos de ocio.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
       "respuesta": false
     },
     {
@@ -42,6 +50,8 @@
       "competencia": "presupuesto",
       "dificultad": 4,
       "explicacion": "Verdadero: vivir dentro de los medios es no gastar de manera continua más de lo que se recibe.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
       "respuesta": true
     },
     {
@@ -50,6 +60,8 @@
       "competencia": "presupuesto",
       "dificultad": 4,
       "explicacion": "Verdadero: el presupuesto es una herramienta dinámica que se actualiza ante cambios en ingresos o gastos.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
       "respuesta": true
     }
   ],

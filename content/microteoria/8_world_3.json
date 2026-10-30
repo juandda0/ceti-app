@@ -1,0 +1,23 @@
+{
+  "grado": "8",
+  "worldId": "world_3",
+  "cards": [
+    {
+      "titulo": "Consumir, ahorrar o invertir",
+      "cuerpo": "Con cada peso que recibes puedes hacer tres cosas: consumirlo (gastarlo ahora), ahorrarlo (guardarlo para después) o invertirlo (ponerlo a trabajar para que genere más). Lo que no consumes es lo que te queda para ahorrar o invertir.",
+      "ejemplo": "Con 30.000 pesos puedes comprar una camiseta (consumo), meterlos en la alcancía (ahorro) o comprar material para hacer y vender pulseras (inversión)."
+    },
+    {
+      "titulo": "Ahorrar no es lo mismo que invertir",
+      "cuerpo": "El ahorro guarda la plata con poco riesgo. La inversión busca que crezca, pero puede ganar o perder. Por eso primero se ahorra, y solo la plata que no necesitas pronto se pone a invertir.",
+      "ejemplo": "Si compras ingredientes para vender postres y nadie compra, pierdes parte de la plata; en una cuenta de ahorros crece poco, pero no la pierdes."
+    },
+    {
+      "titulo": "Un plan de ahorro en familia",
+      "cuerpo": "Un buen plan familiar tiene una meta, cuánto cuesta, para cuándo, cuánto aporta cada quien y una fecha para revisar cómo van. Si un mes falla, se ajusta el aporte o la fecha, no se abandona.",
+      "ejemplo": "Para un paseo de 600.000 pesos en 6 meses, la familia aparta 100.000 pesos al mes y revisa el avance cada quincena."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

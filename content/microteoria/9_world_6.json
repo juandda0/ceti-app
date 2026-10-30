@@ -1,0 +1,23 @@
+{
+  "grado": "9",
+  "worldId": "world_6",
+  "cards": [
+    {
+      "titulo": "Producir y consumir: sectores y escasez",
+      "cuerpo": "La economía se organiza en sectores. El primario obtiene recursos de la naturaleza (cultivar, pescar, extraer). El secundario los transforma (fábricas, construcción). El terciario presta servicios (comercio, transporte, salud). Como los recursos son escasos, cuando un bien escasea y la gente lo sigue queriendo, su precio tiende a subir. Consumir de forma responsable es comprar lo que necesitas, reducir residuos y pensar de dónde viene lo que usas.",
+      "ejemplo": "El café pasa por los tres sectores: se cultiva en la finca, se tuesta y empaca en una fábrica, y se vende en la tienda del barrio."
+    },
+    {
+      "titulo": "Inflación e indicadores",
+      "cuerpo": "La inflación es la subida generalizada y sostenida de los precios. Si los precios suben y tu ingreso no, tu poder de compra baja. En Colombia el DANE mide la inflación con el IPC, y el Banco de la República, que emite la moneda, busca que la inflación sea baja y estable. Otros indicadores, como la tasa de desempleo o la pobreza, también ayudan a entender cómo está la economía de tu región.",
+      "ejemplo": "Si con 10.000 pesos comprabas 5 empanadas a 2.000 y ahora cuestan 2.500, con la misma plata solo te alcanza para 4."
+    },
+    {
+      "titulo": "Impuestos: para qué y quién decide",
+      "cuerpo": "Los impuestos financian lo público: vías, colegios y hospitales públicos, seguridad. Los nacionales los aprueba el Congreso por ley y los recauda la DIAN; los departamentales y municipales, como el predial, los aprueban las asambleas y los concejos. La Constitución pide que sean equitativos, eficientes y progresivos. Formalizar un negocio es cumplir con sus registros e impuestos; evadir es ilegal y deja menos recursos para todos.",
+      "ejemplo": "Cuando compras un cuaderno, parte del precio es IVA: la papelería lo entrega a la DIAN y ese dinero ayuda a pagar, por ejemplo, la educación pública."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

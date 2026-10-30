@@ -10,6 +10,8 @@
       "competencia": "presupuesto",
       "dificultad": 1,
       "explicacion": "Un presupuesto es un plan que organiza tus ingresos y tus gastos para un periodo de tiempo.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
       "opciones": [
         "Una lista de deseos que quieres comprar algún día",
         "Un plan que organiza tus ingresos y tus gastos en un periodo",
@@ -24,6 +26,8 @@
       "competencia": "presupuesto",
       "dificultad": 1,
       "explicacion": "Los ingresos son el dinero que entra, por ejemplo lo que recibes o ganas.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
       "opciones": [
         "El dinero que sale para cubrir gastos",
         "El dinero que entra o recibes",
@@ -38,6 +42,8 @@
       "competencia": "presupuesto",
       "dificultad": 1,
       "explicacion": "Los egresos son las salidas de dinero, es decir, los gastos que realizas.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
       "opciones": [
         "El dinero que entra cada mes",
         "Las salidas de dinero o gastos que realizas",
@@ -52,6 +58,8 @@
       "competencia": "presupuesto",
       "dificultad": 2,
       "explicacion": "Categorizar es agrupar los gastos por tipo, como transporte o alimentación, para entender en qué se va el dinero.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
       "opciones": [
         "Eliminar todos los gastos innecesarios",
         "Agrupar los gastos por tipo, como transporte o alimentación",
@@ -66,6 +74,8 @@
       "competencia": "presupuesto",
       "dificultad": 2,
       "explicacion": "Cuando gastas más de lo que recibes, el presupuesto queda en déficit y debes ajustarlo.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
       "opciones": [
         "En equilibrio perfecto",
         "En superávit, te sobra dinero",
@@ -80,6 +90,8 @@
       "competencia": "presupuesto",
       "dificultad": 2,
       "explicacion": "Vivir dentro de tus medios es gastar igual o menos de lo que recibes, evitando endeudarte sin necesidad.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
       "opciones": [
         "Gastar igual o menos de lo que recibes",
         "Pedir prestado para comprar lo que quieras",
@@ -94,6 +106,8 @@
       "competencia": "presupuesto",
       "dificultad": 2,
       "explicacion": "Priorizar significa atender primero las necesidades básicas antes que los deseos o gustos.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
       "opciones": [
         "Los gustos y antojos del momento",
         "Las necesidades básicas antes que los deseos",
@@ -108,11 +122,47 @@
       "competencia": "presupuesto",
       "dificultad": 2,
       "explicacion": "Registrar los gastos te permite saber en qué usas el dinero y tomar mejores decisiones.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
       "opciones": [
         "Para gastar más rápido",
         "Para saber en qué usas el dinero y decidir mejor",
         "Para impresionar a los demás",
         "Para olvidar lo que compraste"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "9_world_2_multiple_choice_9",
+      "enunciado": "Martín recibe 40.000 pesos de mesada al mes. Gasta 25.000 en transporte, 10.000 en onces y 15.000 en salidas. ¿Qué muestra su presupuesto y qué le conviene?",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Sus gastos suman 50.000 y recibe 40.000: tiene un déficit de 10.000 y lo sensato es recortar un deseo, como las salidas.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-1",
+      "prueba": true,
+      "opciones": [
+        "Un superávit de 10.000, así que puede gastar más",
+        "Un déficit de 10.000, y le conviene dejar de pagar el transporte",
+        "Un equilibrio exacto, así que no debe cambiar nada",
+        "Un déficit de 10.000, y le conviene recortar las salidas"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "9_world_2_multiple_choice_10",
+      "enunciado": "En la casa de Laura subió el recibo de los servicios públicos y el ingreso de la familia no cambió. ¿Cuál es la mejor propuesta para mejorar el presupuesto familiar?",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Revisar juntos los gastos, ahorrar agua y luz y recortar deseos ajusta los egresos al ingreso sin endeudarse ni dejar de pagar lo básico.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-89-2",
+      "prueba": true,
+      "opciones": [
+        "Que cada uno gaste sin anotar nada para no discutir",
+        "Revisar juntos los gastos, ahorrar agua y luz y recortar algunos deseos",
+        "Pagar los servicios con una tarjeta de crédito todos los meses",
+        "Dejar de pagar uno de los servicios para que alcance"
       ],
       "correctIndex": 1
     }

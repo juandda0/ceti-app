@@ -10,6 +10,8 @@
       "competencia": "ahorro",
       "dificultad": 4,
       "explicacion": "Primero se define el objetivo, luego se fija el plazo, después se calcula el aporte periódico y finalmente se hace seguimiento al avance.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "elementos": [
         "Calcular cuánto aportar de forma periódica",
         "Definir el objetivo específico que se quiere lograr",
@@ -24,6 +26,8 @@
       "competencia": "ahorro",
       "dificultad": 4,
       "explicacion": "El criterio es el horizonte temporal: comprar un útil escolar es inmediato, un curso se planea en meses y la educación superior es un objetivo de varios años.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "elementos": [
         "Ahorrar para la educación superior en varios años",
         "Reunir dinero para un útil escolar esta semana",
@@ -37,6 +41,8 @@
       "competencia": "ahorro",
       "dificultad": 4,
       "explicacion": "Se decide separar el fondo, se elige dónde guardarlo aparte, se aporta de forma constante y se mantiene reservado solo para imprevistos.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "elementos": [
         "Aportar de manera constante hasta alcanzar la reserva deseada",
         "Decidir destinar una parte del ingreso al fondo",
@@ -51,6 +57,8 @@
       "competencia": "ahorro",
       "dificultad": 4,
       "explicacion": "Surge el deseo, se evalúa si compite con una meta, se decide esperar y aportar, y finalmente se logra el objetivo mayor.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "elementos": [
         "Decidir esperar y destinar ese dinero a la meta",
         "Surge el deseo de una compra inmediata",
@@ -65,6 +73,8 @@
       "competencia": "ahorro",
       "dificultad": 4,
       "explicacion": "Se decide ahorrar antes de gastar, se programa el aporte de forma automática, se repite cada periodo y con el tiempo se consolida como hábito.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-2",
       "elementos": [
         "Repetir el aporte en cada periodo de ingreso",
         "Decidir separar el ahorro antes de gastar",
@@ -79,6 +89,8 @@
       "competencia": "ahorro",
       "dificultad": 4,
       "explicacion": "Primero conviene cubrir la reserva para imprevistos, luego las metas de corto plazo y por último las metas de largo plazo.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "elementos": [
         "Aportar a metas de largo plazo",
         "Asegurar el fondo de emergencia para imprevistos",

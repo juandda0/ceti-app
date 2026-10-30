@@ -10,6 +10,8 @@
       "competencia": "credito",
       "dificultad": 2,
       "explicacion": "Primero se evalúa la necesidad y la capacidad de pago, luego se solicita el crédito y por último se pagan las cuotas a tiempo.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
       "elementos": [
         "Solicitar el crédito necesario",
         "Evaluar si se necesita y si se puede pagar",
@@ -23,6 +25,8 @@
       "competencia": "credito",
       "dificultad": 2,
       "explicacion": "El crédito se recibe, genera una deuda con intereses, se paga en cuotas y finalmente queda saldado.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
       "elementos": [
         "Recibir el dinero prestado",
         "Quedar la deuda completamente saldada",
@@ -37,6 +41,8 @@
       "competencia": "credito",
       "dificultad": 3,
       "explicacion": "Pedir poco y poder pagarlo es lo más seguro; pedir más de lo que se puede pagar es lo más riesgoso.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
       "elementos": [
         "Pedir prestado dentro de la capacidad de pago",
         "Pedir más de lo que se puede pagar",
@@ -50,6 +56,8 @@
       "competencia": "credito",
       "dificultad": 3,
       "explicacion": "Primero se identifican los ingresos, luego los gastos básicos, después se calcula lo que sobra y eso indica cuánto se puede destinar a la cuota.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
       "elementos": [
         "Identificar los ingresos disponibles",
         "Determinar cuánto se puede destinar a una cuota",
@@ -64,6 +72,8 @@
       "competencia": "credito",
       "dificultad": 3,
       "explicacion": "Al no pagar, primero crece la deuda, luego se acumulan cargos, después se complica el acceso a nuevos créditos y finalmente se llega al sobreendeudamiento.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
       "elementos": [
         "Dificultad para acceder a nuevos créditos",
         "La deuda empieza a crecer",
@@ -78,6 +88,8 @@
       "competencia": "credito",
       "dificultad": 2,
       "explicacion": "Primero está el monto que se pide, luego el interés que lo encarece, después las cuotas para pagarlo y al final la deuda saldada.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
       "elementos": [
         "El interés que se suma al monto",
         "El monto que se pide prestado",

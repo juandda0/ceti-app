@@ -1,0 +1,23 @@
+{
+  "grado": "1",
+  "worldId": "world_5",
+  "cards": [
+    {
+      "titulo": "Lo que valoras",
+      "cuerpo": "Valoras lo que te importa: tu familia, tus amigos, tu salud, la naturaleza y tus cosas. Tu cuerpo y tu salud van primero.",
+      "ejemplo": "Tu perro, tu abuela y el parque del barrio son cosas que valoras."
+    },
+    {
+      "titulo": "Tus acciones cuentan",
+      "cuerpo": "Lo que haces puede cuidar o dañar lo que valoras. Piensa antes de actuar.",
+      "ejemplo": "Si botas basura al río, el agua se ensucia; si la echas a la caneca, el río sigue limpio."
+    },
+    {
+      "titulo": "Lo prestado se devuelve",
+      "cuerpo": "Si te prestan algo, quedas debiendo. Devuélvelo a tiempo y en buen estado.",
+      "ejemplo": "Tu amigo te presta una moneda y se la devuelves al otro día."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

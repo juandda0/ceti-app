@@ -10,6 +10,8 @@
       "competencia": "ingreso",
       "dificultad": 2,
       "explicacion": "Muchas personas obtienen su ingreso a cambio de su trabajo, ya sea como empleados o de forma independiente.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-1011-1",
       "respuesta": true
     },
     {
@@ -18,6 +20,8 @@
       "competencia": "ingreso",
       "dificultad": 2,
       "explicacion": "Los deseos mejoran el bienestar pero no son indispensables; las necesidades sí lo son. Confundirlos lleva a gastar mal el ingreso.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-1",
       "respuesta": false
     },
     {
@@ -26,6 +30,8 @@
       "competencia": "ingreso",
       "dificultad": 2,
       "explicacion": "El valor del dinero proviene de la confianza y de su aceptación como medio de intercambio.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-1",
       "respuesta": true
     },
     {
@@ -34,6 +40,8 @@
       "competencia": "ingreso",
       "dificultad": 2,
       "explicacion": "Todo el dinero que se gasta proviene primero de un ingreso obtenido por trabajo u otra fuente.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-1011-1",
       "respuesta": false
     },
     {
@@ -42,6 +50,8 @@
       "competencia": "ingreso",
       "dificultad": 2,
       "explicacion": "Ofrecer un producto o servicio propio a cambio de un pago genera ingreso por emprendimiento.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-2",
       "respuesta": true
     },
     {
@@ -50,6 +60,8 @@
       "competencia": "ingreso",
       "dificultad": 2,
       "explicacion": "La mesada es un ingreso que se puede administrar; reservar una parte permite planear y tomar mejores decisiones.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-1011-1",
       "respuesta": false
     }
   ],

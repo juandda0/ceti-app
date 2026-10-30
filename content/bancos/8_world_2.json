@@ -1,0 +1,44 @@
+{
+  "bancoId": "8_world_2",
+  "grado": "8",
+  "worldId": "world_2",
+  "situaciones": [
+    {
+      "id": "8_world_2_sit_1",
+      "enunciado": "Te regalaron 50.000 pesos en tu cumpleaños. Puedes usarlos para tus gastos del mes y así pedir menos mesada en la casa, o guardarlos para tus propios planes.",
+      "opcionA": {
+        "texto": "Usar el regalo para tus gastos del mes y pedir menos mesada.",
+        "consecuencia": "En tu casa queda un poco más de plata ese mes y te sientes parte del presupuesto familiar, pero el regalo se va en gastos del día a día y no te queda para un gusto propio."
+      },
+      "opcionB": {
+        "texto": "Guardar el regalo para un plan tuyo.",
+        "consecuencia": "Tienes plata para algo que te ilusiona, como un curso o una salida, pero el presupuesto de la casa sigue igual de apretado ese mes."
+      }
+    },
+    {
+      "id": "8_world_2_sit_2",
+      "enunciado": "En tu familia hay que recortar gastos este mes. Hay dos propuestas: dejar de pedir domicilios los fines de semana o cancelar el plan de televisión por cable.",
+      "opcionA": {
+        "texto": "Dejar los domicilios del fin de semana.",
+        "consecuencia": "Se ahorra una buena parte y cocinan juntos, pero toca organizarse para cocinar y algunos extrañan ese gusto del sábado."
+      },
+      "opcionB": {
+        "texto": "Cancelar la televisión por cable.",
+        "consecuencia": "El ahorro llega fijo cada mes sin tener que acordarse, pero se pierden programas que la familia veía junta y toca buscar otros planes."
+      }
+    },
+    {
+      "id": "8_world_2_sit_3",
+      "enunciado": "Tienes 20.000 pesos para la semana. Tus amigos te invitan a comer hamburguesa el viernes, lo que se llevaría casi todo, y además tienes que comprar materiales para un trabajo del colegio.",
+      "opcionA": {
+        "texto": "Ir a la hamburguesa y pedir en casa la plata de los materiales.",
+        "consecuencia": "Compartes con tus amigos el viernes, pero le sumas al presupuesto de tu familia un gasto que no estaba en la cuenta y tienes que explicar por qué."
+      },
+      "opcionB": {
+        "texto": "Comprar los materiales y proponer a tus amigos un plan más barato.",
+        "consecuencia": "Cumples con el trabajo con tu propia plata, pero quizá no todos acepten el otro plan y te pierdas parte de la salida."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

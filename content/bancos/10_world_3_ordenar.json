@@ -10,6 +10,8 @@
       "competencia": "ahorro",
       "dificultad": 3,
       "explicacion": "Primero defines la meta, luego cuánto y cada cuánto separar, después reservas el dinero y por último revisas tu avance.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-2",
       "elementos": [
         "Definir una meta de ahorro clara y con plazo",
         "Decidir cuánto y cada cuánto vas a separar",
@@ -24,6 +26,8 @@
       "competencia": "ahorro",
       "dificultad": 3,
       "explicacion": "Va de lo más cercano (un gasto en semanas) a lo más lejano (un objetivo de muchos años).",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "elementos": [
         "Reunir para un regalo de cumpleaños de este mes",
         "Ahorrar para un viaje de fin de año escolar",
@@ -38,6 +42,8 @@
       "competencia": "ahorro",
       "dificultad": 3,
       "explicacion": "Se construye poco a poco, se mantiene intacto, se usa solo ante un imprevisto real y luego se repone.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "elementos": [
         "Construir el fondo aportando de forma constante",
         "Mantenerlo intacto mientras no haya imprevistos",
@@ -52,6 +58,8 @@
       "competencia": "ahorro",
       "dificultad": 3,
       "explicacion": "Reconoces el impulso, lo comparas con tu meta, decides esperar y mantienes tu ahorro intacto.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "elementos": [
         "Reconocer el impulso de comprar algo de inmediato",
         "Compararlo con la meta de ahorro que persigues",
@@ -66,6 +74,8 @@
       "competencia": "ahorro",
       "dificultad": 3,
       "explicacion": "Conviene asegurar primero el colchón ante imprevistos, luego las metas cercanas y al final las metas lejanas.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "elementos": [
         "Asegurar un fondo de emergencia básico",
         "Cumplir una meta de ahorro a corto plazo",
@@ -79,6 +89,8 @@
       "competencia": "ahorro",
       "dificultad": 3,
       "explicacion": "Empieza con una decisión, se repite con constancia, se vuelve rutina y termina siendo un hábito firme.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-2",
       "elementos": [
         "Tomar la decisión de empezar a ahorrar",
         "Repetir el aporte de forma constante",

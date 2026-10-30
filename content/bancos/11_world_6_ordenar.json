@@ -1,0 +1,139 @@
+{
+  "bancoId": "11_world_6_ordenar",
+  "grado": "11",
+  "worldId": "world_6",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "11_world_6_ordenar_1",
+      "enunciado": "Ordena la cadena de efectos esperados al construir una vía terciaria que conecta veredas productoras con el pueblo.",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "La vía baja los costos de transporte, eso mejora las ventas y, con ellas, crecen los ingresos y el empleo.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-1011-2",
+      "elementos": [
+        "Los productores venden más y en mejores condiciones",
+        "Se construye la vía entre las veredas y el pueblo",
+        "Crecen los ingresos y el empleo de la región",
+        "Sacar la cosecha cuesta menos y toma menos tiempo"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "11_world_6_ordenar_2",
+      "enunciado": "Ordena estas situaciones de la menos desigual a la más desigual.",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Mientras más ingreso se concentra en pocos hogares, mayor es la desigualdad (y más alto el Gini).",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-1011-1",
+      "elementos": [
+        "Un solo hogar recibe casi todo el ingreso",
+        "El 20 % más rico de los hogares recibe el 40 % del ingreso",
+        "Todos los hogares reciben el mismo ingreso",
+        "El 20 % más rico de los hogares recibe el 60 % del ingreso"
+      ],
+      "ordenCanonico": [
+        2,
+        1,
+        3,
+        0
+      ]
+    },
+    {
+      "id": "11_world_6_ordenar_3",
+      "enunciado": "Ordena los pasos de un análisis de costo-beneficio para decidir cómo usar el agua de un pozo comunitario.",
+      "competencia": "economia",
+      "dificultad": 4,
+      "explicacion": "Primero se conocen las opciones, luego se valoran, se comparan y al final se decide con reglas claras.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-1",
+      "elementos": [
+        "Estimar los beneficios y los costos de cada uso",
+        "Elegir el uso o la combinación de usos y fijar reglas",
+        "Listar los usos posibles: consumo, riego, animales",
+        "Comparar las alternativas, incluido el costo de oportunidad"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        3,
+        1
+      ]
+    },
+    {
+      "id": "11_world_6_ordenar_4",
+      "enunciado": "Ordena los pasos para montar un banco de herramientas compartidas en tu barrio.",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Se parte del inventario, se fijan reglas, se pone en marcha y se mejora con la experiencia.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-2",
+      "elementos": [
+        "Abrir el banco con un registro de préstamos",
+        "Identificar qué herramientas tienen los vecinos y cuáles se necesitan",
+        "Revisar cada cierto tiempo qué funciona y ajustar las reglas",
+        "Acordar reglas de préstamo, cuidado y reposición"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "11_world_6_ordenar_5",
+      "enunciado": "Ordena los pasos de una iniciativa popular normativa ante el concejo municipal.",
+      "competencia": "economia",
+      "dificultad": 4,
+      "explicacion": "La iniciativa se redacta e inscribe, se recogen y verifican las firmas, y solo entonces llega al concejo para el debate.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-1011-1",
+      "elementos": [
+        "La Registraduría verifica las firmas",
+        "Conformar el comité promotor y redactar el proyecto de acuerdo",
+        "El concejo debate el proyecto de acuerdo",
+        "Recoger las firmas de apoyo exigidas",
+        "Inscribir la iniciativa ante la Registraduría"
+      ],
+      "ordenCanonico": [
+        1,
+        4,
+        3,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "11_world_6_ordenar_6",
+      "enunciado": "Para saber en qué momento se pueden proponer cambios al presupuesto nacional, ordena su recorrido.",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "El Gobierno propone, el Congreso aprueba, el Gobierno ejecuta y la Contraloría ejerce el control fiscal.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-1011-2",
+      "elementos": [
+        "El Congreso lo debate y lo aprueba como ley",
+        "La Contraloría vigila cómo se usaron los recursos públicos",
+        "El Gobierno prepara y presenta el proyecto de presupuesto",
+        "El Gobierno ejecuta el gasto durante el año"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        3,
+        1
+      ]
+    }
+  ]
+}

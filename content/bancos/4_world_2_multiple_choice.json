@@ -1,0 +1,173 @@
+{
+  "bancoId": "4_world_2_multiple_choice",
+  "grado": "4",
+  "worldId": "world_2",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "4_world_2_multiple_choice_1",
+      "enunciado": "Un presupuesto es un plan para decidir cómo usar el dinero. ¿Qué se anota en un presupuesto?",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Un presupuesto junta lo que entra (ingresos) y lo que sale (gastos) para que lo uno alcance para lo otro.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-45-1",
+      "opciones": [
+        "Lo que te entra y lo que vas a gastar",
+        "Solo las cosas que quieres comprar",
+        "Solo el dinero de la alcancía",
+        "Los precios de todas las tiendas"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "4_world_2_multiple_choice_2",
+      "enunciado": "En un presupuesto, el dinero que te entra se llama ingreso. ¿Cuál de estos es un ingreso para Tomás?",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "La mesada es dinero que entra; el helado, el bus y el cuaderno son gastos.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-45-1",
+      "opciones": [
+        "El helado que compró en el recreo",
+        "El pasaje del bus",
+        "La mesada que le dan en casa",
+        "El cuaderno que pagó"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "4_world_2_multiple_choice_3",
+      "enunciado": "Si en un mes gastas más dinero del que te entra, ¿qué pasa?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Si sale más de lo que entra, el dinero no alcanza y aparece un faltante.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-45-1",
+      "opciones": [
+        "Te falta dinero y tienes que pedir o dejar algo sin pagar",
+        "Te sobra dinero para ahorrar",
+        "Nada, el dinero alcanza solo",
+        "Tu ingreso sube sin que hagas nada"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "4_world_2_multiple_choice_4",
+      "enunciado": "Ana recibe su mesada el lunes y ese mismo día la gasta toda en dulces. ¿En qué le ayudaría un presupuesto?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Con un presupuesto Ana reparte lo que recibe entre los días y los gastos de la semana.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-45-1",
+      "opciones": [
+        "En pedir más mesada cuando se le acabe",
+        "En comprar todos los dulces de la semana el lunes",
+        "En repartir la mesada para que le alcance toda la semana",
+        "En no volver a gastar nunca en nada"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "4_world_2_multiple_choice_5",
+      "enunciado": "Una necesidad es algo sin lo cual no podemos estar bien. ¿Cuál de estas es una necesidad?",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Comer cada día es necesario para la salud; lo demás son gustos.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-45-2",
+      "opciones": [
+        "Un juguete nuevo",
+        "Unos tenis de moda",
+        "Una gaseosa en el recreo",
+        "El almuerzo de cada día"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "4_world_2_multiple_choice_6",
+      "enunciado": "Un deseo es algo que nos gusta, pero podemos vivir sin él. ¿Cuál de estos gastos de una familia es un deseo?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Salir a comer pizza es un gusto; el agua, los útiles y el bus al trabajo son necesidades.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-45-2",
+      "opciones": [
+        "Pagar el agua de la casa",
+        "Ir a comer pizza el sábado",
+        "Comprar los útiles del colegio",
+        "Pagar el bus para ir a trabajar"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "4_world_2_multiple_choice_7",
+      "enunciado": "Isabella puede comprar unos zapatos para el colegio, porque los suyos están rotos, o una muñeca. ¿Qué es cada cosa?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Sin zapatos Isabella no puede ir bien al colegio; la muñeca le gusta, pero puede esperar.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-45-2",
+      "opciones": [
+        "Las dos cosas son necesidades",
+        "Las dos cosas son deseos",
+        "Los zapatos son necesidad y la muñeca es deseo",
+        "La muñeca es necesidad y los zapatos son deseo"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "4_world_2_multiple_choice_8",
+      "enunciado": "La familia de Samuel recibe lo mismo cada mes, pero este mes subió el arriendo. ¿Qué deben hacer con su presupuesto?",
+      "competencia": "presupuesto",
+      "dificultad": 3,
+      "explicacion": "Si un gasto sube y el ingreso no, hay que ajustar otros gastos para que el dinero alcance.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-45-1",
+      "opciones": [
+        "Seguir gastando igual en todo",
+        "Recortar algún gasto para no gastar más de lo que entra",
+        "Dejar de pagar el arriendo",
+        "Gastar más en gustos para animarse"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "4_world_2_multiple_choice_9",
+      "enunciado": "¿Para qué sirve hacer un presupuesto?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "El presupuesto ayuda a que los gastos no sean más grandes que los ingresos.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-45-1",
+      "opciones": [
+        "Para tener más dinero sin trabajar",
+        "Para que lo que gastas no pase de lo que te entra",
+        "Para no tener que pagar las facturas",
+        "Para gastar más rápido lo que entra"
+      ],
+      "correctIndex": 1,
+      "prueba": true
+    },
+    {
+      "id": "4_world_2_multiple_choice_10",
+      "enunciado": "¿Cuál de estas compras es un deseo y no una necesidad?",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "La gorra es un gusto; el jabón, la comida y el cuaderno son necesidades.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-45-2",
+      "opciones": [
+        "El jabón para bañarse",
+        "La comida de la semana",
+        "Un cuaderno para la clase",
+        "Una gorra igual a la de tu cantante favorito"
+      ],
+      "correctIndex": 3,
+      "prueba": true
+    }
+  ]
+}

@@ -1,0 +1,173 @@
+{
+  "bancoId": "8_world_3_multiple_choice",
+  "grado": "8",
+  "worldId": "world_3",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "8_world_3_multiple_choice_1",
+      "enunciado": "Laura usa su mesada para comprar un helado en el recreo. ¿Qué está haciendo con esa plata?",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Gastar en algo que disfrutas ahora es consumir.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-1",
+      "opciones": [
+        "Ahorrando",
+        "Invirtiendo",
+        "Consumiendo",
+        "Prestando"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "8_world_3_multiple_choice_2",
+      "enunciado": "Pedro compra hilos y chaquiras para hacer manillas y venderlas en el colegio. ¿Qué está haciendo con su plata?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Usar la plata en materiales para producir y vender es invertir: busca recuperarla y ganar algo.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-1",
+      "opciones": [
+        "Consumiendo, porque gastó la plata",
+        "Invirtiendo, porque espera que esa compra le genere más dinero",
+        "Ahorrando, porque guardó la plata",
+        "Pidiendo prestado"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "8_world_3_multiple_choice_3",
+      "enunciado": "¿Cuál es la principal diferencia entre ahorrar e invertir?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "El ahorro guarda la plata con poco riesgo; la inversión busca que crezca y por eso puede ganar o perder.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-1",
+      "opciones": [
+        "Ahorrar es gastar y invertir es guardar",
+        "Invertir no tiene riesgo y ahorrar sí",
+        "Ahorrar solo lo pueden hacer los adultos",
+        "Al invertir buscas que el dinero crezca, aunque puedes perder; al ahorrar lo guardas con poco riesgo"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "8_world_3_multiple_choice_4",
+      "enunciado": "Si una familia gasta todo lo que recibe cada mes, ¿qué pasa con su capacidad de ahorrar e invertir?",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Lo que se ahorra o se invierte sale de lo que no se consume; si se consume todo, no queda nada.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-1",
+      "opciones": [
+        "Aumenta, porque usan todo el dinero",
+        "Queda en cero, porque no sobra nada para guardar ni invertir",
+        "No cambia, porque ahorrar no depende del gasto",
+        "Mejora si compran cosas en oferta"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "8_world_3_multiple_choice_5",
+      "enunciado": "Valeria tiene 100.000 pesos ahorrados para pagar un curso en dos semanas. Su primo le propone invertirlos en un negocio de ropa que puede ganar o perder. ¿Qué es más prudente?",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "La plata que necesitas pronto no debe ponerse en riesgo; se invierte lo que puede esperar.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-1",
+      "opciones": [
+        "Guardar la plata del curso e invertir solo plata que no vaya a necesitar pronto",
+        "Invertir todo, porque puede ganar mucho",
+        "Gastarla en ropa para ella",
+        "Prestársela al primo sin acordar cuándo se la devuelve"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "8_world_3_multiple_choice_6",
+      "enunciado": "Tu familia quiere ahorrar para un paseo. ¿Qué es lo primero que deben definir en el plan?",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Sin saber cuánto cuesta y para cuándo, no se puede calcular cuánto ahorrar cada mes.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
+      "opciones": [
+        "Cuánto cuesta el paseo y para cuándo lo quieren",
+        "Cuánto van a gastar en recuerdos durante el viaje",
+        "Guardar lo que sobre, sin fijar una cifra",
+        "Pedir un préstamo para irse ya"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "8_world_3_multiple_choice_7",
+      "enunciado": "Una familia quiere reunir 300.000 pesos en 6 meses para arreglar la nevera. ¿Cuánto debe ahorrar cada mes?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "300.000 dividido entre 6 meses da 50.000 pesos al mes.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
+      "opciones": [
+        "30.000 pesos",
+        "50.000 pesos",
+        "60.000 pesos",
+        "100.000 pesos"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "8_world_3_multiple_choice_8",
+      "enunciado": "La familia de Samuel lleva tres meses ahorrando para un computador, pero un mes no pudo apartar nada. ¿Qué ayuda más a cumplir el plan?",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Un plan de ahorro se revisa y se ajusta; un mes malo no obliga a perder lo que ya se logró.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
+      "opciones": [
+        "Abandonar el plan, porque ya se incumplió una vez",
+        "Gastar lo que ya llevan ahorrado y empezar de cero",
+        "Revisar el plan y ajustar el aporte de los meses que siguen o mover un poco la fecha",
+        "Comprar el computador ya con un préstamo"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "8_world_3_multiple_choice_9",
+      "enunciado": "¿Cuál de estas decisiones es una inversión?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "El curso busca darte una habilidad que te genere ingresos más adelante: eso es invertir.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-1",
+      "opciones": [
+        "Comprar una gaseosa en el recreo",
+        "Guardar monedas en la alcancía",
+        "Pagar un curso de panadería para luego vender pan",
+        "Pagar el pasaje del bus"
+      ],
+      "correctIndex": 2,
+      "prueba": true
+    },
+    {
+      "id": "8_world_3_multiple_choice_10",
+      "enunciado": "En un plan de ahorro familiar, ¿para qué sirve revisar cada mes cuánto llevan?",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Revisar el avance muestra si van a llegar a tiempo y permite corregir antes de que sea tarde.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-89-2",
+      "opciones": [
+        "Para saber si van al ritmo de la meta y ajustar a tiempo",
+        "Para gastarse lo ahorrado si ya parece bastante",
+        "Para no tener que aportar más",
+        "Para cambiar de meta cada mes"
+      ],
+      "correctIndex": 0,
+      "prueba": true
+    }
+  ]
+}

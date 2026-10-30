@@ -1,0 +1,71 @@
+{
+  "bancoId": "4_world_4_true_false",
+  "grado": "4",
+  "worldId": "world_4",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "4_world_4_true_false_1",
+      "enunciado": "Si un amigo te presta su lápiz, ya puedes quedarte con él para siempre.",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "Falso: lo prestado se devuelve; si te lo regalara, sería tuyo.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-45-1",
+      "respuesta": false
+    },
+    {
+      "id": "4_world_4_true_false_2",
+      "enunciado": "Pagar con tarjeta de crédito es usar dinero prestado que luego se debe devolver.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Verdadero: la tarjeta de crédito es un préstamo y lo que se paga con ella se debe devolver.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-45-1",
+      "respuesta": true
+    },
+    {
+      "id": "4_world_4_true_false_3",
+      "enunciado": "Pedir prestado es buena idea cada vez que se te antoja algo.",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "Falso: para un antojo casi siempre es mejor esperar y ahorrar.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-45-2",
+      "respuesta": false
+    },
+    {
+      "id": "4_world_4_true_false_4",
+      "enunciado": "Los bancos y las cooperativas piden requisitos, como documentos, antes de prestar dinero.",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "Verdadero: así saben quién pide el préstamo y si podrá pagarlo.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-45-1",
+      "respuesta": true
+    },
+    {
+      "id": "4_world_4_true_false_5",
+      "enunciado": "Ahorrar en un banco puede tener costos, como cobros por algunos servicios.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Verdadero: algunas cuentas cobran por servicios; es una desventaja que se compara.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-45-2",
+      "respuesta": true
+    },
+    {
+      "id": "4_world_4_true_false_6",
+      "enunciado": "Solo los bancos prestan dinero; las cooperativas no pueden hacer préstamos.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Falso: las cooperativas de ahorro y crédito también reciben ahorros y prestan a sus asociados.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-45-1",
+      "respuesta": false
+    }
+  ]
+}

@@ -20,3 +20,4 @@ export * from './panelEntidad';
 export * from './facturaEntidad';
 export * from './biblioteca';
 export * from './normativa';
+export * from './desempenosMen';

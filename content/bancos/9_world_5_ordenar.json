@@ -10,6 +10,8 @@
       "competencia": "deuda",
       "dificultad": 3,
       "explicacion": "Primero se conoce lo que se debe, luego se organiza un plan y por último se cumple y se evita endeudarse de nuevo.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
       "elementos": [
         "Hacer una lista de todas las deudas que se tienen",
         "Organizar un plan de pago según el presupuesto",
@@ -23,6 +25,8 @@
       "competencia": "deuda",
       "dificultad": 3,
       "explicacion": "Es menos riesgosa la que cabe holgada en el presupuesto y más riesgosa la que no se puede pagar con los ingresos.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-2",
       "elementos": [
         "Una cuota pequeña que se paga fácil cada mes",
         "Una cuota que ajusta justo el presupuesto",
@@ -36,6 +40,8 @@
       "competencia": "deuda",
       "dificultad": 3,
       "explicacion": "Primero se evalúa la necesidad, luego la capacidad de pago y al final se decide y se compromete a pagar.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-1",
       "elementos": [
         "Evaluar si realmente se necesita aquello que se va a financiar",
         "Revisar si los ingresos alcanzan para pagar las cuotas",
@@ -49,6 +55,8 @@
       "competencia": "deuda",
       "dificultad": 3,
       "explicacion": "Tomar deudas sin control lleva a no alcanzar a pagar, pedir más prestado y terminar sobreendeudado.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
       "elementos": [
         "Tomar varias deudas sin revisar el presupuesto",
         "No alcanzar a pagar todas las cuotas del mes",
@@ -63,6 +71,8 @@
       "competencia": "deuda",
       "dificultad": 3,
       "explicacion": "Conviene atender primero lo esencial y las deudas que más crecen o más afectan si no se pagan.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
       "elementos": [
         "Cubrir primero las necesidades básicas del hogar",
         "Pagar la deuda que más rápido crece o más penaliza el atraso",
@@ -76,12 +86,45 @@
       "competencia": "deuda",
       "dificultad": 3,
       "explicacion": "Lo primero es reconocer el problema, luego buscar ayuda o negociar y por último ajustar los gastos para cumplir.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
       "elementos": [
         "Reconocer a tiempo que la deuda se está volviendo difícil",
         "Buscar orientación o hablar con quien prestó para negociar",
         "Ajustar los gastos para poder cumplir con el nuevo plan"
       ],
       "ordenCanonico": [0, 1, 2]
+    },
+    {
+      "id": "9_world_5_ordenar_7",
+      "enunciado": "Ordena los pasos para gestionar el riesgo de perder el trabajo en grupo antes de la entrega.",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Primero reconoces lo que valoras, luego qué lo amenaza, después qué tan probable y grave es, y al final actúas.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-1",
+      "elementos": [
+        "Valorar qué tan probable y qué tan grave sería perderlo",
+        "Reconocer qué valoras: el trabajo que hizo el grupo",
+        "Acordar guardar copias en varios lugares",
+        "Identificar qué lo amenaza, como que se dañe el único archivo"
+      ],
+      "ordenCanonico": [1, 3, 0, 2]
+    },
+    {
+      "id": "9_world_5_ordenar_8",
+      "enunciado": "Ordena estos riesgos para el agua de tu casa, del menor al mayor (probabilidad × impacto).",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "El corte anual es poco probable y leve; la gotera es frecuente pero leve; el tanque contaminado es frecuente y grave para la salud.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-2",
+      "elementos": [
+        "Que el tanque se contamine por no lavarlo: pasa seguido y enferma a la familia",
+        "Que se corte el agua unas horas: pasa una vez al año y molesta poco",
+        "Que una llave gotee: pasa seguido, pero se pierde poca agua"
+      ],
+      "ordenCanonico": [1, 2, 0]
     }
   ],
   "pendiente_validacion_docente": true,

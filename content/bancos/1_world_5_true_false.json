@@ -1,0 +1,71 @@
+{
+  "bancoId": "1_world_5_true_false",
+  "grado": "1",
+  "worldId": "world_5",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "1_world_5_true_false_1",
+      "enunciado": "Tu familia y tus amigos son muy valiosos.",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "Verdadero: las personas que quieres son de lo que más valoras.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-13-1",
+      "respuesta": true
+    },
+    {
+      "id": "1_world_5_true_false_2",
+      "enunciado": "Dormir poco no le hace nada a tu cuerpo.",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "Falso: si duermes poco te cansas y te enfermas más fácil.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-13-3",
+      "respuesta": false
+    },
+    {
+      "id": "1_world_5_true_false_3",
+      "enunciado": "Cuando juegas, ganar es más importante que cuidar a tus amigos.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Falso: tus amigos valen más que ganar un juego.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-13-2",
+      "respuesta": false
+    },
+    {
+      "id": "1_world_5_true_false_4",
+      "enunciado": "Compartir es dar algo para siempre.",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "Falso: dar algo para siempre es regalar; compartir es usarlo juntos.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-13-1",
+      "respuesta": false
+    },
+    {
+      "id": "1_world_5_true_false_5",
+      "enunciado": "Si rompes algo prestado, lo correcto es avisar.",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "Verdadero: avisar y buscar cómo reponerlo es cumplir tu compromiso.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-13-3",
+      "respuesta": true
+    },
+    {
+      "id": "1_world_5_true_false_6",
+      "enunciado": "Puedes prestar tus cuentos a un amigo.",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "Verdadero: los cuentos son tuyos y se pueden prestar.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-13-2",
+      "respuesta": true
+    }
+  ]
+}

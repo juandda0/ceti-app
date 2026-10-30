@@ -1,0 +1,173 @@
+{
+  "bancoId": "4_world_4_multiple_choice",
+  "grado": "4",
+  "worldId": "world_4",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "4_world_4_multiple_choice_1",
+      "enunciado": "Un préstamo es cuando alguien te da dinero o una cosa y tú te comprometes a devolverlo. ¿A qué te compromete?",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "Recibir un préstamo es aceptar el compromiso de devolverlo como se acordó.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-45-1",
+      "opciones": [
+        "A devolver lo prestado en el tiempo acordado",
+        "A nada, porque ya es tuyo",
+        "A devolverlo solo si te sobra",
+        "A prestarle algo igual a otra persona"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "4_world_4_multiple_choice_2",
+      "enunciado": "Cuando un banco presta dinero, cobra un interés. ¿Qué es el interés?",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "El interés es lo que pagas de más, además de lo prestado, por usar ese dinero un tiempo.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-45-1",
+      "opciones": [
+        "Un regalo que el banco te da por pedir prestado",
+        "La cantidad de dinero que te prestan",
+        "Un dinero extra que pagas por usar dinero prestado",
+        "Una multa por entrar al banco"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "4_world_4_multiple_choice_3",
+      "enunciado": "Felipe le pidió dinero prestado a su hermana para un balón y prometió pagarle el viernes. ¿Qué es lo responsable?",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Cumplir lo acordado, o avisar a tiempo si hay un problema, mantiene la confianza.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-45-1",
+      "opciones": [
+        "Esperar a que ella se olvide",
+        "Devolverle menos de lo que le prestó",
+        "Pedirle más prestado para pagarle",
+        "Pagarle el viernes, o avisarle antes si no puede"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "4_world_4_multiple_choice_4",
+      "enunciado": "¿En cuál de estos casos se justifica más pedir prestado?",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Pedir prestado tiene más sentido para algo importante que no puede esperar, no para un antojo.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-45-2",
+      "opciones": [
+        "Para comprar dulces que quieres hoy",
+        "Para arreglar la bicicleta con la que vas al colegio",
+        "Para tener el mismo juguete que tu amigo",
+        "Para invitar a todo el salón a helado"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "4_world_4_multiple_choice_5",
+      "enunciado": "Antes de pedir prestado, ¿qué es lo más importante que debes pensar?",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "Solo conviene pedir prestado si sabes con qué y cuándo lo vas a devolver.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-45-2",
+      "opciones": [
+        "Si te lo prestan rápido",
+        "Si alguien más se va a enterar",
+        "Si podrás devolverlo a tiempo",
+        "Si así puedes comprar algo más caro"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "4_world_4_multiple_choice_6",
+      "enunciado": "Los bancos y las cooperativas hacen préstamos. ¿Qué suelen pedir antes de prestar dinero?",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Las entidades piden requisitos para saber quién es la persona y si podrá pagar.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-45-1",
+      "opciones": [
+        "Solo decir el nombre",
+        "Documentos y mostrar que la persona podrá pagar",
+        "Nada, prestan sin preguntar",
+        "Una carta del colegio"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "4_world_4_multiple_choice_7",
+      "enunciado": "Una cooperativa de ahorro y crédito pertenece a sus asociados. ¿En qué se parece a un banco?",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Bancos y cooperativas de ahorro y crédito reciben ahorros y prestan dinero, con sus propios requisitos.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-45-1",
+      "opciones": [
+        "Las dos regalan dinero",
+        "Las dos guardan ahorros y hacen préstamos",
+        "Las dos son tiendas de barrio",
+        "Las dos son del Gobierno"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "4_world_4_multiple_choice_8",
+      "enunciado": "¿Cuál es una desventaja de ahorrar en un banco?",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Algunas cuentas tienen cobros por servicios; por eso conviene comparar antes de elegir.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-45-2",
+      "opciones": [
+        "Tu dinero se pierde muy fácil",
+        "Nadie protege tu dinero",
+        "Nunca puedes sacar tu dinero",
+        "Pueden cobrarte por algunos servicios"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "4_world_4_multiple_choice_9",
+      "enunciado": "Si pides dinero prestado a un banco, ¿qué tienes que devolver?",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Se devuelve todo lo prestado y, además, el interés que cobra el banco.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-45-1",
+      "opciones": [
+        "Lo que te prestaron más el interés",
+        "Solo la mitad de lo prestado",
+        "Nada, si pagas a tiempo",
+        "Solo el interés"
+      ],
+      "correctIndex": 0,
+      "prueba": true
+    },
+    {
+      "id": "4_world_4_multiple_choice_10",
+      "enunciado": "¿Cuál es una ventaja de ahorrar en un banco o una cooperativa?",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "En una entidad formal el dinero está más protegido de pérdidas y robos.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-45-2",
+      "opciones": [
+        "Te duplican el dinero cada mes",
+        "No piden ningún requisito",
+        "Tu dinero está más protegido que en la casa",
+        "Puedes sacar más de lo que guardaste"
+      ],
+      "correctIndex": 2,
+      "prueba": true
+    }
+  ]
+}

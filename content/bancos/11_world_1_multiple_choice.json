@@ -10,6 +10,8 @@
       "competencia": "ingreso",
       "dificultad": 3,
       "explicacion": "El ingreso pasivo no requiere intercambiar tiempo de trabajo de forma continua; el activo depende directamente del esfuerzo presente.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-1011-1",
       "opciones": [
         "El ingreso pasivo se genera sin requerir trabajo continuo de la persona",
         "El ingreso pasivo siempre proviene de un empleo formal",
@@ -24,6 +26,8 @@
       "competencia": "ingreso",
       "dificultad": 3,
       "explicacion": "Tener más de una entrada de dinero se llama diversificación de fuentes de ingreso, lo cual reduce la dependencia de una sola.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-1011-1",
       "opciones": [
         "Una sola fuente de ingreso",
         "Diversificación de fuentes de ingreso",
@@ -38,6 +42,8 @@
       "competencia": "ingreso",
       "dificultad": 3,
       "explicacion": "El dinero facilita intercambiar bienes y servicios sin necesidad de trueque, sirviendo como referencia común de valor.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-1",
       "opciones": [
         "Porque tiene valor solo cuando se guarda y nunca se usa",
         "Porque permite intercambiar bienes y servicios sin recurrir al trueque",
@@ -52,6 +58,8 @@
       "competencia": "ingreso",
       "dificultad": 3,
       "explicacion": "Las necesidades son indispensables para vivir; los deseos mejoran el bienestar pero pueden postergarse. La distinción depende del contexto de cada persona.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-1",
       "opciones": [
         "Todo lo que una persona quiere es una necesidad",
         "Las necesidades son indispensables, mientras que los deseos pueden postergarse",
@@ -66,6 +74,8 @@
       "competencia": "ingreso",
       "dificultad": 3,
       "explicacion": "Cada vez que se usa dinero en algo, se renuncia a la mejor alternativa no elegida; ese valor sacrificado es el costo de oportunidad.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-1",
       "opciones": [
         "El precio exacto que aparece en una etiqueta",
         "Lo que se deja de obtener al elegir una opción en lugar de otra",
@@ -80,6 +90,8 @@
       "competencia": "ingreso",
       "dificultad": 3,
       "explicacion": "El trabajo formal implica un vínculo laboral con condiciones acordadas y protecciones, a diferencia de un ingreso ocasional sin contrato.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-1011-1",
       "opciones": [
         "Dinero recibido de forma ocasional sin ningún acuerdo",
         "Dinero recibido por una relación laboral con condiciones y protecciones acordadas",
@@ -94,6 +106,8 @@
       "competencia": "ingreso",
       "dificultad": 3,
       "explicacion": "La pérdida de poder adquisitivo a lo largo del tiempo se asocia con la inflación, que afecta cuánto se puede comprar con la misma cantidad.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-1011-1",
       "opciones": [
         "El aumento permanente del poder adquisitivo",
         "La pérdida de poder adquisitivo del dinero en el tiempo",
@@ -108,6 +122,8 @@
       "competencia": "ingreso",
       "dificultad": 3,
       "explicacion": "Administrar una mesada permite practicar decisiones de gasto, ahorro y priorización con recursos limitados, una habilidad clave a cualquier edad.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-1011-1",
       "opciones": [
         "Permite practicar decisiones de gasto y priorización con recursos limitados",
         "Garantiza que nunca falte dinero",
@@ -115,6 +131,40 @@
         "Solo sirve para gastarla de inmediato"
       ],
       "correctIndex": 0
+    },
+    {
+      "id": "11_world_1_multiple_choice_9",
+      "enunciado": "Quieres ayudar a los vendedores de la plaza de tu pueblo a manejar mejor su dinero. ¿Qué propuesta es más útil?",
+      "competencia": "ingreso",
+      "dificultad": 4,
+      "explicacion": "Separar el dinero del negocio del de la casa y llevar registro de ventas y gastos es un hábito que mejora las finanzas de cualquier negocio.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-1011-2",
+      "prueba": true,
+      "opciones": [
+        "Recomendarles gastar las ganancias del día antes de que se pierdan",
+        "Sugerirles pedir un préstamo cada semana para surtir",
+        "Enseñarles a separar el dinero del negocio del de la casa y a registrar ventas y gastos",
+        "Decirles que no lleven cuentas porque les quita tiempo"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "11_world_1_multiple_choice_10",
+      "enunciado": "En un corregimiento se pierde mucho mango en cosecha porque no alcanza a venderse. ¿Qué estrategia aprovecha mejor ese recurso de la comunidad?",
+      "competencia": "ingreso",
+      "dificultad": 4,
+      "explicacion": "Organizarse para transformar el excedente en productos que duran más le da valor a un recurso que se perdía.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-2",
+      "prueba": true,
+      "opciones": [
+        "Sembrar menos mango para que nunca sobre",
+        "Botar lo que sobra para que suba el precio",
+        "Esperar a que un comprador de afuera ponga cualquier precio",
+        "Organizar a los productores para hacer pulpa o dulces y venderlos todo el año"
+      ],
+      "correctIndex": 3
     }
   ],
   "pendiente_validacion_docente": true,

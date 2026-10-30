@@ -1,0 +1,44 @@
+{
+  "bancoId": "4_world_4",
+  "grado": "4",
+  "worldId": "world_4",
+  "situaciones": [
+    {
+      "id": "4_world_4_sit_1",
+      "enunciado": "Se dañó la bicicleta con la que vas al colegio. Tu tío te ofrece prestarte para arreglarla y que le pagues un poco cada semana.",
+      "opcionA": {
+        "texto": "Aceptar el préstamo y arreglarla ya.",
+        "consecuencia": "Vuelves a ir en bicicleta desde mañana. Pero durante varias semanas una parte de tu mesada se va en pagarle a tu tío."
+      },
+      "opcionB": {
+        "texto": "Ahorrar hasta tener lo del arreglo.",
+        "consecuencia": "No le debes nada a nadie y tu mesada es solo tuya. Pero mientras ahorras, te toca caminar o ir en bus al colegio."
+      }
+    },
+    {
+      "id": "4_world_4_sit_2",
+      "enunciado": "En la feria del colegio venden un juego de mesa y no te alcanza. Una compañera te ofrece prestarte lo que te falta.",
+      "opcionA": {
+        "texto": "Pedirle prestado y comprarlo hoy.",
+        "consecuencia": "Te llevas el juego y lo estrenas con tus amigos. Pero ahora le debes a tu compañera y tienes que pagarle a tiempo."
+      },
+      "opcionB": {
+        "texto": "No comprarlo hoy y ahorrar.",
+        "consecuencia": "No quedas debiendo nada. Pero quizá el juego se acabe y no lo vuelvas a encontrar."
+      }
+    },
+    {
+      "id": "4_world_4_sit_3",
+      "enunciado": "Tu familia necesita una nevera. Puede pedir un préstamo en una cooperativa o ahorrar unos meses y pagarla toda de una vez.",
+      "opcionA": {
+        "texto": "Pedir el préstamo a la cooperativa.",
+        "consecuencia": "Tienen la nevera pronto y la comida dura más. Pero cada mes pagan una parte con interés y les queda menos dinero para otras cosas."
+      },
+      "opcionB": {
+        "texto": "Ahorrar y pagarla toda de una vez.",
+        "consecuencia": "Pagan solo el precio, sin interés. Pero pasan varios meses sin nevera y compran la comida en poca cantidad."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

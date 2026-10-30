@@ -1,0 +1,23 @@
+{
+  "grado": "4",
+  "worldId": "world_5",
+  "cards": [
+    {
+      "titulo": "Deudas que se pueden pagar",
+      "cuerpo": "Una deuda es lo que debes cuando alguien te prestó. Es manejable si puedes pagarla a tiempo con lo que recibes. Si debes más de lo que puedes pagar, la deuda se vuelve un problema y se pierde la confianza.",
+      "ejemplo": "Manuel no le pagó a tiempo a su prima. Hizo un plan para pagarle un poco cada semana y cumplió."
+    },
+    {
+      "titulo": "¿Qué es un riesgo?",
+      "cuerpo": "Un riesgo es la posibilidad de que algo que valoras se dañe: tu salud, tus amigos, lo que aprendes, el agua, la naturaleza o tu dinero. Un riesgo es más serio cuando es muy probable que pase y cuando el daño sería muy grave.",
+      "ejemplo": "Montar bicicleta en la calle sin casco es un riesgo serio: caerse puede pasar y un golpe en la cabeza sería grave."
+    },
+    {
+      "titulo": "Tus habilidades te protegen",
+      "cuerpo": "Frente a un riesgo puedes hacer mucho: pensar antes de actuar, decir que no, pedir ayuda a un adulto de confianza, hablar con calma o prepararte con tiempo.",
+      "ejemplo": "Antes del examen, Sara estudió primero y jugó después. Cuando se peleó con su amigo, esperó a calmarse y lo escuchó."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

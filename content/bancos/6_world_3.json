@@ -1,0 +1,44 @@
+{
+  "bancoId": "6_world_3",
+  "grado": "6",
+  "worldId": "world_3",
+  "situaciones": [
+    {
+      "id": "6_world_3_sit_1",
+      "enunciado": "Llevas 6 semanas ahorrando para unos audífonos y te faltan 2. Tus amigos te invitan a cine este fin de semana y la entrada te costaría justo una cuota de ahorro.",
+      "opcionA": {
+        "texto": "Ir a cine y pagar con esa cuota.",
+        "consecuencia": "Pasas un buen rato con tus amigos, pero tu meta se corre una semana más. Sigues teniendo el plan, solo que un poco más largo."
+      },
+      "opcionB": {
+        "texto": "No ir y seguir con tu plan.",
+        "consecuencia": "Llegas a tu meta a tiempo y compras los audífonos, pero te pierdes el plan con tus amigos y quizá te sientas por fuera ese fin de semana."
+      }
+    },
+    {
+      "id": "6_world_3_sit_2",
+      "enunciado": "Ya juntaste 100.000 pesos en tu alcancía. Un adulto de tu familia te propone abrir una cuenta de ahorros para jóvenes, con él o ella como acudiente.",
+      "opcionA": {
+        "texto": "Pasar la plata a la cuenta de ahorros.",
+        "consecuencia": "Tu dinero queda más protegido y es más difícil gastarlo por antojo, pero para sacarlo necesitas al adulto y un canal de la entidad, como un cajero o la app oficial."
+      },
+      "opcionB": {
+        "texto": "Seguir con la alcancía en la casa.",
+        "consecuencia": "Tienes la plata a la mano cuando la necesites, pero también es más fácil gastarla sin pensar y, si se pierde, no hay cómo recuperarla."
+      }
+    },
+    {
+      "id": "6_world_3_sit_3",
+      "enunciado": "Tu curso ahorra para la salida de fin de año. Faltan dos meses y van por la mitad. Unos proponen subir el aporte semanal; otros, hacer una venta de postres en la feria del colegio.",
+      "opcionA": {
+        "texto": "Subir el aporte semanal de cada uno.",
+        "consecuencia": "Es fácil de controlar y se sabe cuánto va a entrar, pero a algunas familias se les puede complicar pagar más y unos estudiantes podrían quedarse atrás."
+      },
+      "opcionB": {
+        "texto": "Hacer la venta de postres.",
+        "consecuencia": "Puede traer plata sin pedirle más a cada familia, pero da trabajo organizarla y no se sabe de antemano cuánto se va a recoger."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

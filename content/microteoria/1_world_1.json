@@ -1,0 +1,23 @@
+{
+  "grado": "1",
+  "worldId": "world_1",
+  "cards": [
+    {
+      "titulo": "El dinero sale del trabajo",
+      "cuerpo": "Las familias reciben dinero cuando trabajan. Con ese dinero cambian por lo que necesitan, como comida o útiles.",
+      "ejemplo": "Tu vecina cose ropa, le pagan y con eso compra el mercado."
+    },
+    {
+      "titulo": "Monedas y billetes",
+      "cuerpo": "En Colombia usamos el peso. Hay monedas de metal y billetes de papel. El número dice cuánto vale cada uno.",
+      "ejemplo": "Una moneda de 500 vale más que una de 100."
+    },
+    {
+      "titulo": "Lo que hay poco y lo que hay mucho",
+      "cuerpo": "Escaso es lo que hay poquito. Abundante es lo que hay mucho. Lo escaso se comparte y se cuida.",
+      "ejemplo": "Hay un solo balón para todo el curso: toca hacer turnos."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

@@ -1,0 +1,173 @@
+{
+  "bancoId": "6_world_4_multiple_choice",
+  "grado": "6",
+  "worldId": "world_4",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "6_world_4_multiple_choice_1",
+      "enunciado": "¿Qué son los intereses de un préstamo?",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "Los intereses son el costo de usar una plata prestada durante un tiempo.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-67-1",
+      "opciones": [
+        "El dinero que te regalan por pedir prestado",
+        "Lo que te descuentan si pagas a tiempo",
+        "Una multa por abrir una cuenta",
+        "Un pago extra por usar dinero que no es tuyo"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "6_world_4_multiple_choice_2",
+      "enunciado": "Te prestan 50.000 pesos y debes devolver 55.000. ¿Cuánto pagas de intereses?",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Los intereses son la diferencia: 55.000 menos 50.000 da 5.000 pesos.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-67-1",
+      "opciones": [
+        "55.000 pesos",
+        "5.000 pesos",
+        "50.000 pesos",
+        "105.000 pesos"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "6_world_4_multiple_choice_3",
+      "enunciado": "La familia de Sara pide un préstamo para arreglar el techo antes del invierno. ¿Qué implicación deben tener en cuenta?",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "Un préstamo resuelve hoy, pero compromete parte de los ingresos de los próximos meses.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-67-1",
+      "opciones": [
+        "Durante varios meses, parte de sus ingresos se irá en pagar las cuotas",
+        "Si arreglan el techo a tiempo, la deuda se perdona",
+        "El préstamo deja de cobrar intereses al primer mes",
+        "Solo tendrán que devolver lo que no gasten"
+      ],
+      "correctIndex": 0,
+      "prueba": true
+    },
+    {
+      "id": "6_world_4_multiple_choice_4",
+      "enunciado": "¿En cuál de estas situaciones tiene más sentido pedir un préstamo?",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "Un préstamo tiene más sentido cuando lo que compras ayuda a generar la plata para pagarlo.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-67-1",
+      "opciones": [
+        "Comprar el celular de moda porque todos lo tienen",
+        "Pagar una salida a comer con amigos",
+        "Comprar herramientas para un negocio familiar que ya da ingresos",
+        "Comprar ropa en una oferta de fin de semana"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "6_world_4_multiple_choice_5",
+      "enunciado": "¿Qué tiene un préstamo formal que no tiene uno informal?",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Las entidades formales están vigiladas por el Estado y deben explicarte el costo y las condiciones.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-67-2",
+      "opciones": [
+        "Siempre es gratis",
+        "Lo da una entidad vigilada, con contrato y reglas claras",
+        "Te lo dan sin preguntarte nada",
+        "No hay que devolverlo si no puedes"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "6_world_4_multiple_choice_6",
+      "enunciado": "A la tía de Kevin le ofrecen un préstamo «gota a gota»: le dan la plata en minutos, sin papeles, y le cobran todos los días. ¿Cuál es el mayor riesgo?",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "El «gota a gota» no está vigilado: suele cobrar intereses muy altos y presionar a quien debe.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-67-2",
+      "opciones": [
+        "Que la plata le llegue demasiado rápido",
+        "Que le pidan demasiados documentos",
+        "Que tenga que firmar un contrato",
+        "Intereses muy altos y cobros con presión o amenazas"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "6_world_4_multiple_choice_7",
+      "enunciado": "¿Cuál de estos productos sirve para guardar tu plata y tenerla disponible cuando la necesites?",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "La cuenta de ahorros guarda tu plata y te deja sacarla cuando la necesitas.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-67-1",
+      "opciones": [
+        "Un préstamo de consumo",
+        "Una tarjeta de crédito",
+        "Una cuenta de ahorros",
+        "Una deuda con un amigo"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "6_world_4_multiple_choice_8",
+      "enunciado": "Tu prima tiene una plata que no va a usar en un año. Puede dejarla en una cuenta de ahorros o en un CDT. ¿Qué dato la ayuda a elegir?",
+      "competencia": "credito",
+      "dificultad": 3,
+      "explicacion": "El CDT suele dar más rendimiento a cambio de dejar la plata quieta hasta que se cumpla el plazo.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-67-1",
+      "opciones": [
+        "El CDT suele pagar más, pero no puede sacar la plata antes del plazo",
+        "La cuenta de ahorros siempre paga más que el CDT",
+        "El CDT es un préstamo que le hace el banco",
+        "Las dos son iguales en todo"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "6_world_4_multiple_choice_9",
+      "enunciado": "Si pagas con tarjeta débito, ¿de dónde sale la plata?",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "La tarjeta débito descuenta la plata directamente de tu cuenta.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-67-2",
+      "opciones": [
+        "De un préstamo que te hace el banco",
+        "De tu propia cuenta",
+        "De la cuenta de la tienda",
+        "Del Banco de la República"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "6_world_4_multiple_choice_10",
+      "enunciado": "Te llega un mensaje que dice ser de tu banco y te pide la clave por un enlace. ¿Qué haces?",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Las entidades nunca piden tu clave por mensajes; ante la duda, usa sus canales oficiales.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-67-2",
+      "opciones": [
+        "Respondes rápido para que no te bloqueen la cuenta",
+        "Mandas la clave solo si el mensaje trae el logo del banco",
+        "No la das y te comunicas por los canales oficiales de la entidad",
+        "Le reenvías el mensaje a tus amigos para que estén atentos"
+      ],
+      "correctIndex": 2,
+      "prueba": true
+    }
+  ]
+}

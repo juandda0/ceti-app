@@ -1,0 +1,71 @@
+{
+  "bancoId": "1_world_6_true_false",
+  "grado": "1",
+  "worldId": "world_6",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "1_world_6_true_false_1",
+      "enunciado": "Todos los niños necesitan comida, agua, casa y estudio.",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Verdadero: son necesidades básicas de todas las personas.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-13-1",
+      "respuesta": true
+    },
+    {
+      "id": "1_world_6_true_false_2",
+      "enunciado": "Si el aire está sucio, la gente se puede enfermar.",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Verdadero: el aire limpio es un recurso que nos da salud.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-13-2",
+      "respuesta": true
+    },
+    {
+      "id": "1_world_6_true_false_3",
+      "enunciado": "Si alguien no tiene casa, siempre es porque no quiere.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Falso: hay muchas razones, como perder el trabajo o vivir lejos.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-13-3",
+      "respuesta": false
+    },
+    {
+      "id": "1_world_6_true_false_4",
+      "enunciado": "Cuidar el agua solo le sirve a los adultos.",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Falso: cuidar el agua nos da bienestar a todos, también a los niños.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-13-1",
+      "respuesta": false
+    },
+    {
+      "id": "1_world_6_true_false_5",
+      "enunciado": "Las reglas para cuidar la naturaleza ayudan a que haya agua y árboles.",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "Verdadero: esas normas conservan los recursos para todos.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-13-3",
+      "respuesta": true
+    },
+    {
+      "id": "1_world_6_true_false_6",
+      "enunciado": "Si hay poca agua, podemos gastar toda la que queramos.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Falso: cuando el agua es escasa hay que cuidarla más para que alcance.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-13-2",
+      "respuesta": false
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "bancoId": "4_world_5_ordenar",
+  "grado": "4",
+  "worldId": "world_5",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "4_world_5_ordenar_1",
+      "enunciado": "Ordena los pasos para cuidar algo que valoras.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Primero sabes qué valoras, luego qué lo amenaza, qué tan serio es y al final actúas.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-45-1",
+      "elementos": [
+        "Ver qué lo puede dañar",
+        "Hacer algo para protegerlo",
+        "Pensar qué es lo que valoras",
+        "Pensar qué tan probable y qué tan grave sería"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        3,
+        1
+      ]
+    },
+    {
+      "id": "4_world_5_ordenar_2",
+      "enunciado": "Te cortaste la mano jugando en el recreo. Ordena qué hacer.",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "Primero buscas ayuda de un adulto, luego se lava la herida con agua limpia y después se cubre.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-45-2",
+      "elementos": [
+        "El profesor te la cubre con una curita",
+        "Avisarle a un profesor",
+        "El profesor te ayuda a lavar la herida"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "4_world_5_ordenar_3",
+      "enunciado": "Ordena lo que pasa cuando tiran basura a la quebrada.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "La basura tapa la quebrada y con la lluvia el agua se desborda y daña las casas.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-45-1",
+      "elementos": [
+        "Con la lluvia, el agua se sale",
+        "Las casas cercanas se inundan",
+        "La basura tapa el paso del agua",
+        "Alguien tira basura a la quebrada"
+      ],
+      "ordenCanonico": [
+        3,
+        2,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "4_world_5_ordenar_4",
+      "enunciado": "Ordena los pasos para arreglar una pelea con un amigo.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Con calma, escuchando y hablando, es más fácil encontrar una solución y cuidar la amistad.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-45-2",
+      "elementos": [
+        "Contar lo que sentiste tú",
+        "Calmarte antes de hablar",
+        "Buscar juntos una solución",
+        "Escuchar lo que tu amigo siente"
+      ],
+      "ordenCanonico": [
+        1,
+        3,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "4_world_5_ordenar_5",
+      "enunciado": "Manuel no pagó a tiempo. Ordena lo que le pasó.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "No cumplir dañó la confianza; un plan de pago le ayudó a ponerse al día.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-45-1",
+      "elementos": [
+        "No le pagó el día acordado",
+        "Hizo un plan para pagarle por partes",
+        "Le pidió dinero prestado a su prima",
+        "Su prima dejó de confiar en él"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        3,
+        1
+      ]
+    },
+    {
+      "id": "4_world_5_ordenar_6",
+      "enunciado": "Ordena los pasos antes de aceptar una deuda.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Primero piensas si es necesario, luego si puedes pagar, acuerdas la fecha y solo aceptas si puedes cumplir.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-45-2",
+      "elementos": [
+        "Aceptar solo si puedes cumplir",
+        "Ver cuánto podrás pagar cada semana",
+        "Acordar la fecha de pago",
+        "Pensar si de verdad lo necesitas"
+      ],
+      "ordenCanonico": [
+        3,
+        1,
+        2,
+        0
+      ]
+    }
+  ]
+}

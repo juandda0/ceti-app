@@ -10,6 +10,8 @@
       "competencia": "ahorro",
       "dificultad": 4,
       "explicacion": "Una meta sólida es específica, medible y tiene un plazo definido; eso permite verificar el avance y mantener la disciplina.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "opciones": [
         "Un propósito específico, con una cantidad clara y un plazo definido para lograrlo",
         "Una intención general de gastar menos cuando se pueda",
@@ -24,6 +26,8 @@
       "competencia": "ahorro",
       "dificultad": 4,
       "explicacion": "Postergar la gratificación implica renunciar a un consumo inmediato para obtener un beneficio mayor o más importante en el futuro.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "opciones": [
         "Gastar de inmediato en lo que se desea para no perder la oportunidad",
         "Renunciar a un gusto inmediato para alcanzar un beneficio futuro mayor",
@@ -38,6 +42,8 @@
       "competencia": "ahorro",
       "dificultad": 4,
       "explicacion": "El fondo de emergencia está reservado para imprevistos, lo que evita recurrir a deudas costosas cuando ocurre algo inesperado.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "opciones": [
         "Financiar viajes y compras grandes planeadas con anticipación",
         "Invertir en proyectos de alto riesgo para crecer rápido",
@@ -52,6 +58,8 @@
       "competencia": "ahorro",
       "dificultad": 4,
       "explicacion": "Lo que distingue ambos tipos es el horizonte de tiempo en que se necesitará el dinero, lo que orienta qué tan disponible debe mantenerse.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "opciones": [
         "El horizonte de tiempo en el que se planea usar el dinero",
         "La cantidad exacta de dinero que se logra guardar",
@@ -66,6 +74,8 @@
       "competencia": "ahorro",
       "dificultad": 4,
       "explicacion": "Ahorrar de forma automática y constante, antes de gastar, convierte la conducta en hábito y reduce la dependencia de la fuerza de voluntad.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-2",
       "opciones": [
         "Espera a tener un ingreso muy alto para empezar a ahorrar",
         "Ahorra una parte de forma regular y automática antes de gastar",
@@ -80,6 +90,8 @@
       "competencia": "ahorro",
       "dificultad": 4,
       "explicacion": "Para metas lejanas conviene mantener un aporte constante y sostenido en el tiempo, sin necesidad de disponibilidad inmediata del dinero.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "opciones": [
         "Mantener el dinero disponible para retirarlo cualquier día",
         "Suspender los aportes apenas surja cualquier deseo de compra",
@@ -94,6 +106,8 @@
       "competencia": "ahorro",
       "dificultad": 4,
       "explicacion": "Separarlo reduce la tentación de usarlo para gastos cotidianos y asegura que esté disponible solo cuando ocurra un verdadero imprevisto.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-2",
       "opciones": [
         "Porque así genera más rendimiento que cualquier inversión",
         "Para evitar la tentación de gastarlo y reservarlo a imprevistos",
@@ -108,6 +122,8 @@
       "competencia": "ahorro",
       "dificultad": 4,
       "explicacion": "Empezar temprano, aunque sea con aportes pequeños, consolida el hábito y aprovecha el tiempo, que es un factor clave del ahorro a largo plazo.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-2",
       "opciones": [
         "Tiene razón: solo conviene ahorrar cuando se puede guardar mucho",
         "Empezar temprano consolida el hábito y aprovecha el factor tiempo",
@@ -115,6 +131,40 @@
         "El monto inicial es lo único que determina el éxito del ahorro"
       ],
       "correctIndex": 1
+    },
+    {
+      "id": "11_world_3_multiple_choice_9",
+      "enunciado": "Cuando el ahorro de los hogares de un país baja mucho, ¿qué suele pasar con la inversión?",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "explicacion": "El ahorro de los hogares es una fuente de recursos que se prestan para inversión; si baja, hay menos con qué financiar proyectos.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
+      "prueba": true,
+      "opciones": [
+        "Sube, porque la gente tiene más dinero para gastar",
+        "No cambia, porque el ahorro y la inversión no tienen relación",
+        "Puede bajar, porque hay menos recursos para prestar a empresas y proyectos",
+        "Sube, porque el Banco de la República reemplaza ese ahorro"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "11_world_3_multiple_choice_10",
+      "enunciado": "¿Qué medida subiría más el ahorro de largo plazo del país?",
+      "competencia": "ahorro",
+      "dificultad": 4,
+      "explicacion": "Que más personas, también las que trabajan de manera informal, coticen a pensión acumula ahorro de largo plazo que se invierte en la economía.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-2",
+      "prueba": true,
+      "opciones": [
+        "Facilitar que más trabajadores, también los informales, coticen a pensión",
+        "Promover compras a cuotas sin intereses en temporada de fiestas",
+        "Pedir que las familias guarden el efectivo debajo del colchón",
+        "Eliminar las cuentas de ahorro para que la gente consuma más"
+      ],
+      "correctIndex": 0
     }
   ],
   "pendiente_validacion_docente": true,

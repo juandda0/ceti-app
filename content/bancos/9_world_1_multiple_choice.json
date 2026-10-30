@@ -10,6 +10,8 @@
       "competencia": "ingreso",
       "dificultad": 1,
       "explicacion": "Una fuente de ingreso es cualquier actividad o circunstancia de la que recibes dinero de forma legítima.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-89-1",
       "opciones": [
         "El lugar donde guardas el dinero ahorrado",
         "Una actividad de la que recibes dinero, como un trabajo",
@@ -24,6 +26,8 @@
       "competencia": "ingreso",
       "dificultad": 1,
       "explicacion": "Una necesidad es algo indispensable para vivir, como los alimentos; los demás ejemplos son deseos.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-89-2",
       "opciones": [
         "La consola de videojuegos más reciente",
         "Ropa de una marca específica de moda",
@@ -38,6 +42,8 @@
       "competencia": "ingreso",
       "dificultad": 1,
       "explicacion": "La mesada es un ingreso recibido de forma periódica, aunque no provenga de un trabajo propio.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-89-1",
       "opciones": [
         "Un gasto fijo del estudiante",
         "Una fuente de ingreso del estudiante",
@@ -52,6 +58,8 @@
       "competencia": "ingreso",
       "dificultad": 1,
       "explicacion": "El dinero vale porque permite intercambiarlo por bienes y servicios que las personas necesitan o desean.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-1",
       "opciones": [
         "Porque sirve para intercambiarlo por bienes y servicios",
         "Porque el papel con que se hace es costoso",
@@ -66,6 +74,8 @@
       "competencia": "ingreso",
       "dificultad": 1,
       "explicacion": "El ingreso por trabajo se recibe a cambio de un esfuerzo o servicio prestado, como ayudar a un vecino por una paga.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-89-1",
       "opciones": [
         "Encontrar una moneda en la calle",
         "Recibir un regalo de cumpleaños",
@@ -80,6 +90,8 @@
       "competencia": "ingreso",
       "dificultad": 1,
       "explicacion": "Reconocer la diferencia permite priorizar lo indispensable y usar mejor el dinero disponible.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-89-2",
       "opciones": [
         "Gastar más rápido sin pensarlo",
         "Priorizar lo indispensable y decidir mejor",
@@ -94,6 +106,8 @@
       "competencia": "ingreso",
       "dificultad": 1,
       "explicacion": "El salario es el pago que recibe un trabajador por el empleo que desempeña.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-89-1",
       "opciones": ["Ahorro", "Salario", "Deuda", "Donación"],
       "correctIndex": 1
     },
@@ -103,6 +117,8 @@
       "competencia": "ingreso",
       "dificultad": 1,
       "explicacion": "El dinero familiar suele provenir del trabajo y de otras fuentes de ingreso legítimas, no aparece por sí solo.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-89-1",
       "opciones": [
         "Aparece solo dentro de la billetera con el tiempo",
         "Del trabajo y otras fuentes de ingreso de sus integrantes",
@@ -110,6 +126,40 @@
         "De pedirlo prestado siempre a los vecinos"
       ],
       "correctIndex": 1
+    },
+    {
+      "id": "9_world_1_multiple_choice_9",
+      "enunciado": "Si los precios de la comida suben y el ingreso de una familia sigue igual, ¿qué le pasa a su bienestar?",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Con el mismo ingreso y precios más altos se alcanza a comprar menos, y eso afecta el bienestar de la familia.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-2",
+      "prueba": true,
+      "opciones": [
+        "Mejora, porque los productos ahora valen más",
+        "No cambia mientras el ingreso sea el mismo",
+        "Se afecta, porque con el mismo dinero alcanza para comprar menos",
+        "Mejora, porque la tienda del barrio gana más"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "9_world_1_multiple_choice_10",
+      "enunciado": "Una sequía larga reduce la cosecha de papa en la región. ¿Qué suele pasar con el precio de la papa en la plaza de mercado?",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Cuando un bien se vuelve escaso y la gente lo sigue comprando, su precio tiende a subir.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-1",
+      "prueba": true,
+      "opciones": [
+        "Tiende a subir, porque hay menos papa para las mismas personas que la compran",
+        "Tiende a bajar, porque los campesinos quieren vender rápido lo poco que tienen",
+        "Queda igual, porque la escasez de un producto no cambia su precio",
+        "Tiende a bajar, porque la gente deja de comer papa de inmediato"
+      ],
+      "correctIndex": 0
     }
   ],
   "pendiente_validacion_docente": true,

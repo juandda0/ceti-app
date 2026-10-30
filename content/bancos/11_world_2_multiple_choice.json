@@ -10,6 +10,8 @@
       "competencia": "presupuesto",
       "dificultad": 3,
       "explicacion": "El presupuesto es un plan que anticipa ingresos y egresos para tomar decisiones, no un registro que solo mira el pasado.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-1",
       "opciones": [
         "Anticipar y planear cómo se usarán los ingresos frente a los egresos",
         "Registrar únicamente las compras ya realizadas el mes anterior",
@@ -24,6 +26,8 @@
       "competencia": "presupuesto",
       "dificultad": 3,
       "explicacion": "Cuando se gasta más de lo que se recibe, el resultado es un déficit; lo contrario sería un superávit.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-1",
       "opciones": [
         "Un equilibrio perfecto entre lo recibido y lo gastado",
         "Un superávit que puede destinarse al ahorro",
@@ -38,6 +42,8 @@
       "competencia": "presupuesto",
       "dificultad": 3,
       "explicacion": "Agrupar los gastos por categorías permite ver en qué se va el dinero e identificar dónde ajustar.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-1",
       "opciones": [
         "Hacer el presupuesto más largo sin ningún beneficio práctico",
         "Identificar en qué se concentra el dinero y dónde es posible ajustar",
@@ -52,6 +58,8 @@
       "competencia": "presupuesto",
       "dificultad": 4,
       "explicacion": "Vivir dentro de los medios implica que los egresos no superen de forma sostenida a los ingresos, evitando endeudarse para sostener el gasto.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
       "opciones": [
         "Gastar todo lo que se recibe sin dejar margen",
         "Pedir prestado siempre que se desee algo nuevo",
@@ -66,6 +74,8 @@
       "competencia": "presupuesto",
       "dificultad": 4,
       "explicacion": "Las necesidades básicas y compromisos ineludibles tienen prioridad sobre los gastos discrecionales o de ocio.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
       "opciones": [
         "Los gastos de ocio y entretenimiento del periodo",
         "Las necesidades básicas y los compromisos ya adquiridos",
@@ -80,6 +90,8 @@
       "competencia": "presupuesto",
       "dificultad": 4,
       "explicacion": "Los gastos fijos se mantienen relativamente constantes cada periodo (como una mensualidad), mientras los variables cambian según el consumo.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-1",
       "opciones": [
         "Cambia drásticamente cada periodo según el consumo",
         "Solo aparece una vez en la vida de la persona",
@@ -94,6 +106,8 @@
       "competencia": "presupuesto",
       "dificultad": 3,
       "explicacion": "El registro oportuno evita olvidos y permite comparar lo planeado con lo realmente gastado para corregir a tiempo.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
       "opciones": [
         "Permite comparar lo planeado con lo realmente gastado y corregir",
         "Hace que el dinero rinda más sin cambiar de hábitos",
@@ -108,11 +122,47 @@
       "competencia": "presupuesto",
       "dificultad": 4,
       "explicacion": "Verificar que el nuevo compromiso recurrente cabe dentro de los ingresos sin generar déficit es clave antes de asumirlo.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
       "opciones": [
         "Asumirlo de inmediato y revisar las consecuencias después",
         "Comprobar que cabe en los ingresos sin generar déficit sostenido",
         "Recortar primero las necesidades básicas para que quepa",
         "Ignorarlo porque los gastos pequeños no afectan el plan"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "11_world_2_multiple_choice_9",
+      "enunciado": "El presupuesto nacional tiene gastos de funcionamiento, de inversión y de servicio de la deuda. ¿Cuál es un ejemplo de gasto de inversión?",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "explicacion": "La inversión crea o mejora bienes para el futuro, como vías o colegios; los salarios y la papelería son funcionamiento y los intereses, servicio de la deuda.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-1",
+      "prueba": true,
+      "opciones": [
+        "Construir una vía o un colegio nuevo",
+        "Pagar el salario de los funcionarios de un ministerio",
+        "Pagar los intereses de un préstamo del país",
+        "Comprar papelería para una oficina pública"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "11_world_2_multiple_choice_10",
+      "enunciado": "Quieres proponer que el presupuesto nacional invierta más en educación rural. ¿Quién aprueba cada año ese presupuesto?",
+      "competencia": "presupuesto",
+      "dificultad": 4,
+      "explicacion": "El Gobierno presenta el proyecto de presupuesto y el Congreso lo discute y lo aprueba; por eso las propuestas se llevan a ese debate.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
+      "prueba": true,
+      "opciones": [
+        "El Banco de la República, que emite la moneda",
+        "El Congreso, a partir del proyecto que presenta el Gobierno",
+        "Cada colegio, según lo que necesite",
+        "La empresa que más impuestos paga"
       ],
       "correctIndex": 1
     }

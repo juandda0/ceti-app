@@ -1,0 +1,71 @@
+{
+  "bancoId": "11_world_6_true_false",
+  "grado": "11",
+  "worldId": "world_6",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "11_world_6_true_false_1",
+      "enunciado": "Si el PIB nominal de un país crece, eso siempre significa que produjo más bienes y servicios.",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Falso: el PIB nominal puede crecer solo porque subieron los precios; para saber si se produjo más se mira el PIB real.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-1011-2",
+      "respuesta": false
+    },
+    {
+      "id": "11_world_6_true_false_2",
+      "enunciado": "Un coeficiente de Gini cercano a 0 indica que el ingreso se reparte de manera muy pareja.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Verdadero: 0 sería que todos reciben lo mismo; cuanto más se acerca a 1, más concentrado está el ingreso.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-1011-1",
+      "respuesta": true
+    },
+    {
+      "id": "11_world_6_true_false_3",
+      "enunciado": "El costo de oportunidad de usar un lote como parqueadero es solo lo que costó construir el parqueadero.",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Falso: el costo de oportunidad es lo que se deja de ganar con la mejor alternativa, como usar el lote para una huerta o una cancha.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-1",
+      "respuesta": false
+    },
+    {
+      "id": "11_world_6_true_false_4",
+      "enunciado": "Para aprovechar mejor los recursos de una comunidad basta con que decida la alcaldía, sin escuchar a quienes los usan.",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Falso: las estrategias funcionan mejor cuando participan quienes usan y conocen los recursos.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-2",
+      "respuesta": false
+    },
+    {
+      "id": "11_world_6_true_false_5",
+      "enunciado": "La consulta popular permite que los ciudadanos decidan con su voto una pregunta de interés general que les formula el presidente, un gobernador o un alcalde.",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Verdadero: en la consulta popular la autoridad somete una pregunta a votación y, si vota la cantidad mínima de personas que exige la ley, la decisión es obligatoria.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-1011-1",
+      "respuesta": true
+    },
+    {
+      "id": "11_world_6_true_false_6",
+      "enunciado": "Una propuesta para aumentar el gasto público es más sólida si explica de dónde saldrá el dinero: más impuestos, recortes en otros gastos o más deuda.",
+      "competencia": "economia",
+      "dificultad": 4,
+      "explicacion": "Verdadero: todo gasto público se financia de alguna forma, y una buena propuesta muestra esa fuente y sus efectos.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-1011-2",
+      "respuesta": true
+    }
+  ]
+}

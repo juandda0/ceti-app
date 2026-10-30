@@ -1,0 +1,23 @@
+{
+  "grado": "8",
+  "worldId": "world_5",
+  "cards": [
+    {
+      "titulo": "¿Qué tan probable y qué tan grave?",
+      "cuerpo": "Un riesgo se mide con dos preguntas: qué tan probable es que pase algo malo y qué tan grave sería si pasa. Cuando las dos respuestas son altas, el riesgo es alto y vale la pena actuar antes.",
+      "ejemplo": "Cruzar una avenida mirando el celular: es probable que no veas un carro y el golpe sería muy grave, así que el riesgo es alto."
+    },
+    {
+      "titulo": "Todo lo que valoras se puede cuidar",
+      "cuerpo": "No solo la plata está en riesgo: también tu estudio, el ambiente (agua, aire, naturaleza), tu bienestar (salud del cuerpo y emocional) y tus relaciones con la familia y los amigos. Antes de decidir, mira tu contexto: qué valoras, qué lo amenaza y qué puedes hacer.",
+      "ejemplo": "Si en tu barrio se va el agua seguido, guardarla en recipientes tapados protege a tu familia sin criar zancudos."
+    },
+    {
+      "titulo": "Deudas que sí se pueden pagar",
+      "cuerpo": "Una deuda es manejable si la cuota cabe en lo que te sobra después de lo necesario. Si ya no cabe, se arma un plan: sumar lo que debes, hablar con quien te prestó, abonar primero a lo que cobra interés y no tomar deudas nuevas.",
+      "ejemplo": "Si debes 40.000 pesos y te sobran 10.000 al mes, un plan realista es pagar 10.000 durante cuatro meses sin pedir más prestado."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

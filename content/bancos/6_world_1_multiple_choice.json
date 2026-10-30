@@ -1,0 +1,173 @@
+{
+  "bancoId": "6_world_1_multiple_choice",
+  "grado": "6",
+  "worldId": "world_1",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "6_world_1_multiple_choice_1",
+      "enunciado": "Un vaso de jugo de naranja cuesta más que las naranjas con las que se hace. ¿Por qué?",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "El trabajo, el tiempo y los insumos que se usan para transformar un recurso le agregan valor económico.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-67-1",
+      "opciones": [
+        "Porque las naranjas del jugo son de mejor calidad",
+        "Porque prepararlo lleva trabajo, tiempo y otros insumos",
+        "Porque el jugo siempre es más saludable que la fruta",
+        "Porque el vendedor puede cobrar lo que quiera"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "6_world_1_multiple_choice_2",
+      "enunciado": "En un pueblo donde casi no llueve, el agua potable se vende más cara que en una ciudad con muchos ríos. ¿Qué explica la diferencia?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Cuando un recurso es escaso y muchas personas lo necesitan, su valor económico sube.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-67-1",
+      "opciones": [
+        "El agua del pueblo es de otro tipo",
+        "En la ciudad nadie compra agua",
+        "Allá el agua es escasa y mucha gente la necesita",
+        "El precio del agua lo pone cada familia"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "6_world_1_multiple_choice_3",
+      "enunciado": "Mateo encuentra en la casa de su abuela una bicicleta vieja y dañada. La arregla, la pinta y la vende. ¿Por qué le pagan más que si la vendiera dañada?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Al repararla, Mateo le puso trabajo y la volvió útil, y eso aumentó su valor.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-67-1",
+      "opciones": [
+        "Porque su trabajo la volvió útil otra vez",
+        "Porque las cosas viejas siempre valen más",
+        "Porque los precios suben solos con el tiempo",
+        "Porque venderla es más fácil que regalarla"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "6_world_1_multiple_choice_4",
+      "enunciado": "En la huerta del colegio cosechan muchos tomates. ¿Cuál de estas acciones le agrega más valor económico a la cosecha?",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Transformar los tomates en salsa les suma trabajo y conocimiento, y eso les da más valor que venderlos crudos.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-67-1",
+      "opciones": [
+        "Dejarlos en la mata hasta que se caigan",
+        "Convertir una parte en salsa y empacarla para venderla en la feria",
+        "Regalarlos todos el mismo día de la cosecha",
+        "Guardarlos sin nevera para venderlos el mes siguiente"
+      ],
+      "correctIndex": 1,
+      "prueba": true
+    },
+    {
+      "id": "6_world_1_multiple_choice_5",
+      "enunciado": "Tu familia valora mucho el agua de la casa. ¿Cuál es una buena forma de protegerla?",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Una gotera desperdicia agua todo el día; repararla protege un recurso que tu familia valora y paga.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-67-2",
+      "opciones": [
+        "Barrer el patio con el chorro de la manguera",
+        "Poner la lavadora todos los días aunque haya poca ropa",
+        "Dejar correr el agua un buen rato antes de usarla",
+        "Reparar pronto las goteras y las fugas"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "6_world_1_multiple_choice_6",
+      "enunciado": "Lucía usa los mismos colores y la misma calculadora desde 6°. ¿Qué hábito la ayudó más a proteger esos recursos?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Guardar y marcar los útiles evita que se pierdan o se dañen, y así le duran mucho más.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-67-2",
+      "opciones": [
+        "Prestarlos a cualquiera sin anotar a quién",
+        "Comprar repuestos cada mes por si acaso",
+        "Guardarlos en su estuche y marcarlos con su nombre",
+        "Llevarlos sueltos en la maleta para tenerlos a mano"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "6_world_1_multiple_choice_7",
+      "enunciado": "Tu tiempo también es un recurso valioso. ¿Cuál de estas acciones lo protege mejor en una semana de exámenes?",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Planear el tiempo evita desperdiciarlo y deja espacio para estudiar y para descansar.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-67-2",
+      "opciones": [
+        "Planear las horas de estudio y de descanso",
+        "Estudiar toda la noche antes de cada examen",
+        "Responder cada mensaje apenas llega",
+        "Dejar todas las tareas para el fin de semana"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "6_world_1_multiple_choice_8",
+      "enunciado": "¿Qué es un hábito financiero?",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Un hábito es una costumbre: lo que repites con tu dinero, como ahorrar o comparar precios.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-67-1",
+      "opciones": [
+        "Una compra grande que haces una sola vez",
+        "Un préstamo que te hace un banco",
+        "La cantidad de plata que recibes de mesada",
+        "Algo que haces con tu dinero una y otra vez"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "6_world_1_multiple_choice_9",
+      "enunciado": "Samuel quiere unos tenis y ve un anuncio que dice «¡Solo por hoy!». ¿Qué hábito lo ayuda a consumir mejor?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Esperar y comparar evita las compras por impulso que provocan los anuncios de urgencia.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-67-1",
+      "opciones": [
+        "Comprarlos ya para no perder la oferta",
+        "Pedir prestado para aprovechar el descuento",
+        "Esperar, comparar precios y revisar si le alcanza",
+        "Comprar dos pares porque están baratos"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "6_world_1_multiple_choice_10",
+      "enunciado": "Daniela anota cada semana en qué gasta su mesada. Después de un mes, ¿qué es lo más probable que logre?",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Anotar los gastos muestra en qué se va el dinero y ayuda a consumir con más cuidado.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-67-1",
+      "opciones": [
+        "Que su mesada aumente sola",
+        "Descubrir en qué se le va la plata y decidir mejor qué comprar",
+        "Gastar más porque ya sabe cuánto tiene",
+        "No volver a comprar nada que le guste"
+      ],
+      "correctIndex": 1,
+      "prueba": true
+    }
+  ]
+}

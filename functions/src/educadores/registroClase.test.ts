@@ -53,6 +53,21 @@ describe('leerIntento', () => {
 });
 
 describe('sumarIntento', () => {
+  it('suma por desempeño del MEN solo los ids válidos (Fase 7)', () => {
+    const i = leerIntento(
+      intento({
+        respuestas: [
+          { p: 'q1', t: 'multiple_choice', ok: true, r: 'a', ms: 1, d: 'PR-45-1' },
+          { p: 'q2', t: 'true_false', ok: false, r: 'b', ms: 1, d: 'PR-45-1' },
+          { p: 'q3', t: 'ordenar', ok: true, r: '0-1-2', ms: 1, d: '<script>' },
+        ],
+      })
+    )!;
+    expect(i.respuestas[2].d).toBeUndefined();
+    const r = sumarIntento(sumarIntento({ ...RESUMEN_VACIO, porDesempeno: undefined } as never, i), i);
+    expect(r.porDesempeno).toEqual({ 'PR-45-1': { respuestas: 4, aciertos: 2 } });
+  });
+
   it('acumula totales, fechas y el jefe ganado por mundo', () => {
     const a = leerIntento(intento())!;
     const b = leerIntento(

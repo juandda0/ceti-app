@@ -1,0 +1,44 @@
+{
+  "bancoId": "11_world_6",
+  "grado": "11",
+  "worldId": "world_6",
+  "situaciones": [
+    {
+      "id": "11_world_6_sit_1",
+      "enunciado": "Tu municipio está en recesión: cerraron negocios y subió el desempleo. En el Consejo Municipal de Juventud deben recomendar cómo usar unos recursos que alcanzan para una sola medida.",
+      "opcionA": {
+        "texto": "Recomendar un apoyo temporal en dinero para las familias más afectadas.",
+        "consecuencia": "La ayuda llega rápido y permite que esas familias sigan comprando lo básico, lo que también sostiene a las tiendas del barrio. Pero cuando el apoyo se acabe, el problema del empleo puede seguir ahí. Aprendes que aliviar de inmediato no siempre resuelve las causas."
+      },
+      "opcionB": {
+        "texto": "Recomendar obras públicas que contraten mano de obra del municipio.",
+        "consecuencia": "Las obras tardan en arrancar y no llegan a todas las familias, pero crean empleo y dejan algo útil, como un andén o un acueducto. Mientras tanto, algunos hogares pasan meses difíciles. Aprendes que las medidas que construyen a futuro suelen ser más lentas."
+      }
+    },
+    {
+      "id": "11_world_6_sit_2",
+      "enunciado": "Una empresa grande ofrece instalarse en tu municipio si no le cobran el impuesto de industria y comercio durante varios años. Otra propuesta es usar esos recursos para apoyar a los pequeños negocios locales con capacitación y crédito asociativo.",
+      "opcionA": {
+        "texto": "Darle el beneficio tributario a la empresa grande para que llegue.",
+        "consecuencia": "Llegan muchos empleos de una vez y otros negocios crecen alrededor de la empresa. Pero el municipio recauda menos por años y su economía depende mucho de una sola empresa. Aprendes que atraer inversión puede tener un costo fiscal y un riesgo de dependencia."
+      },
+      "opcionB": {
+        "texto": "Apoyar a los pequeños negocios locales.",
+        "consecuencia": "Los resultados son más lentos y menos visibles, y no todos los negocios van a crecer. A cambio, la economía queda más repartida entre muchas familias y el municipio no deja de recaudar. Aprendes que diversificar reduce riesgos, aunque el crecimiento llegue despacio."
+      }
+    },
+    {
+      "id": "11_world_6_sit_3",
+      "enunciado": "Con un grupo del colegio quieres que el municipio cree un programa de primer empleo para jóvenes. Están pensando por dónde mover la propuesta.",
+      "opcionA": {
+        "texto": "Recoger firmas para presentar una iniciativa popular normativa ante el concejo.",
+        "consecuencia": "Obligan a que el concejo debata la propuesta y el tema gana visibilidad. Pero deben cumplir requisitos, reunir muchas firmas y dedicarle meses, y el concejo puede no aprobarla. Aprendes que los mecanismos formales tienen fuerza y también exigencias."
+      },
+      "opcionB": {
+        "texto": "Llevar la propuesta a las mesas de participación del Plan de Desarrollo municipal.",
+        "consecuencia": "Es más rápido y pueden dialogar con quienes planean el municipio, pero la propuesta compite con muchas otras y quizá entre solo en parte. Aprendes que negociar dentro de la planeación puede dar resultados sin garantizar todo lo que pides."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

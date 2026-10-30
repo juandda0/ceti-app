@@ -10,6 +10,8 @@
       "competencia": "presupuesto",
       "dificultad": 2,
       "explicacion": "Primero se identifican los ingresos, luego se listan los gastos, después se comparan y al final se ajusta.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-1",
       "elementos": [
         "Identificar los ingresos del periodo",
         "Listar y categorizar los gastos esperados",
@@ -24,6 +26,8 @@
       "competencia": "presupuesto",
       "dificultad": 3,
       "explicacion": "Las necesidades básicas van primero; los deseos y caprichos quedan al final.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
       "elementos": [
         "Alimentación diaria",
         "Transporte para estudiar",
@@ -38,6 +42,8 @@
       "competencia": "presupuesto",
       "dificultad": 2,
       "explicacion": "Se anota el gasto, se le asigna una categoría y luego se compara con lo planeado.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-1",
       "elementos": [
         "Anotar el gasto apenas ocurre",
         "Asignarle una categoría",
@@ -51,6 +57,8 @@
       "competencia": "presupuesto",
       "dificultad": 3,
       "explicacion": "Se planea, se registra durante el periodo, se revisa el avance y se ajusta para el siguiente.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
       "elementos": [
         "Planear ingresos y gastos",
         "Registrar los movimientos del periodo",
@@ -65,6 +73,8 @@
       "competencia": "presupuesto",
       "dificultad": 3,
       "explicacion": "Primero se detecta el desbalance, luego se revisan los gastos, se recorta lo no esencial y se equilibra el plan.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-2",
       "elementos": [
         "Detectar que los egresos se acercan a los ingresos",
         "Revisar las categorías de gasto",
@@ -79,6 +89,8 @@
       "competencia": "presupuesto",
       "dificultad": 2,
       "explicacion": "Se identifica el gasto, se pregunta si es indispensable y según la respuesta se clasifica.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-1011-1",
       "elementos": [
         "Identificar el gasto a evaluar",
         "Preguntar si es indispensable para vivir o estudiar",

@@ -1,0 +1,173 @@
+{
+  "bancoId": "4_world_3_multiple_choice",
+  "grado": "4",
+  "worldId": "world_3",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "4_world_3_multiple_choice_1",
+      "enunciado": "Ahorrar es guardar una parte del dinero para usarla después. ¿Cuál de estos es un ejemplo de ahorro?",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "Ahorrar es apartar parte de lo que recibes para usarlo más adelante.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-45-1",
+      "opciones": [
+        "Gastar toda la mesada en el recreo",
+        "Pedirle dinero prestado a un amigo",
+        "Guardar cada semana una parte de la mesada",
+        "Comprar algo y pagarlo después"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "4_world_3_multiple_choice_2",
+      "enunciado": "Invertir es usar dinero en algo que puede darte más dinero después. ¿Cuál es un ejemplo de invertir?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Con las semillas se producen tomates que se pueden vender: el dinero se usa para buscar más dinero.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-45-1",
+      "opciones": [
+        "Comprar semillas para sembrar tomates y venderlos",
+        "Guardar billetes debajo del colchón",
+        "Comprar un helado para comértelo",
+        "Prestarle tu lápiz a un compañero"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "4_world_3_multiple_choice_3",
+      "enunciado": "¿Cuál es una diferencia entre ahorrar e invertir?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Invertir busca que el dinero crezca, pero tiene el riesgo de perder; ahorrar guarda el dinero con menos riesgo.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-45-1",
+      "opciones": [
+        "Ahorrar siempre da más dinero que invertir",
+        "Invertir es lo mismo que gastar en gustos",
+        "Al invertir puedes ganar más, pero también perder",
+        "Al ahorrar el dinero desaparece"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "4_world_3_multiple_choice_4",
+      "enunciado": "Mariana compró materiales para hacer pulseras y venderlas en el colegio, pero casi nadie le compró. ¿Qué aprendió?",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "Mariana invirtió en materiales y las ventas no salieron como esperaba: invertir tiene riesgo.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-45-1",
+      "opciones": [
+        "Que ahorrar es peligroso",
+        "Que debió gastar más en materiales",
+        "Que invertir siempre da ganancia",
+        "Que al invertir también se puede perder dinero"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "4_world_3_multiple_choice_5",
+      "enunciado": "El ahorro informal es guardar el dinero tú mismo, como en una alcancía. ¿Cuál es un ahorro formal?",
+      "competencia": "ahorro",
+      "dificultad": 1,
+      "explicacion": "El ahorro formal se hace en una entidad, como un banco o una cooperativa.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-45-2",
+      "opciones": [
+        "Un tarro escondido en el clóset",
+        "Una cuenta de ahorros en un banco o una cooperativa",
+        "Una media debajo del colchón",
+        "El bolsillo del uniforme"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "4_world_3_multiple_choice_6",
+      "enunciado": "¿Qué ventaja tiene guardar el dinero en una cuenta de ahorros en vez de en una alcancía?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "En una cuenta de ahorros el dinero está más protegido que guardado en la casa.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-45-2",
+      "opciones": [
+        "Lo puedes gastar sin pensarlo",
+        "No tiene ninguna regla ni requisito",
+        "Está más protegido de pérdidas y robos",
+        "El dinero se duplica cada semana"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "4_world_3_multiple_choice_7",
+      "enunciado": "¿Qué ventaja tiene la alcancía frente a una cuenta en el banco?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "La alcancía es sencilla y el dinero está cerca, aunque está menos protegido.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-45-2",
+      "opciones": [
+        "Te paga intereses cada mes",
+        "Es fácil de usar y tienes el dinero a la mano",
+        "Nadie se la puede robar",
+        "Está protegida por el banco"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "4_world_3_multiple_choice_8",
+      "enunciado": "Leo ahorra en una alcancía, pero cada vez que ve algo rico la abre. ¿Qué le ayudaría a cumplir su meta?",
+      "competencia": "ahorro",
+      "dificultad": 3,
+      "explicacion": "En una cuenta de ahorros el dinero no está a la mano y es más difícil gastarlo en un antojo.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-45-2",
+      "opciones": [
+        "Comprar una alcancía más grande",
+        "Guardar su ahorro en una cuenta, donde no lo tiene tan a la mano",
+        "Dejar de ahorrar porque no sirve",
+        "Ahorrar solo cuando le sobre algo"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "4_world_3_multiple_choice_9",
+      "enunciado": "Pedro guarda dinero en su alcancía. Luisa compra una máquina de palomitas para venderlas. ¿Qué hace cada uno?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "Pedro guarda su dinero (ahorra); Luisa lo usa en algo que puede darle más dinero (invierte).",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-45-1",
+      "opciones": [
+        "Los dos ahorran",
+        "Pedro invierte y Luisa ahorra",
+        "Los dos invierten",
+        "Pedro ahorra y Luisa invierte"
+      ],
+      "correctIndex": 3,
+      "prueba": true
+    },
+    {
+      "id": "4_world_3_multiple_choice_10",
+      "enunciado": "¿Cuál es un riesgo de ahorrar solo en una alcancía en la casa?",
+      "competencia": "ahorro",
+      "dificultad": 2,
+      "explicacion": "El ahorro en casa no tiene protección: se puede perder o gastar fácil.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-45-2",
+      "opciones": [
+        "Que se pierda, se dañe o te tientes a gastarlo",
+        "Que el banco te cobre por guardarlo",
+        "Que te pidan documentos para abrirla",
+        "Que el dinero gane demasiados intereses"
+      ],
+      "correctIndex": 0,
+      "prueba": true
+    }
+  ]
+}

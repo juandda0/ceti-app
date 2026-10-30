@@ -1,0 +1,133 @@
+{
+  "bancoId": "8_world_1_ordenar",
+  "grado": "8",
+  "worldId": "world_1",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "8_world_1_ordenar_1",
+      "enunciado": "Ordena el camino del chocolate de mesa, desde la finca hasta tu casa.",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Primero se cultiva (primario), luego se transforma (secundario), después se vende (terciario) y al final se consume.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-1",
+      "elementos": [
+        "La tienda del barrio vende la pastilla de chocolate",
+        "Un agricultor cosecha el cacao",
+        "Una fábrica muele el cacao y hace las pastillas",
+        "Tu familia lo compra para el desayuno"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0,
+        3
+      ]
+    },
+    {
+      "id": "8_world_1_ordenar_2",
+      "enunciado": "Ordena estos trabajos por sector: primero el primario, luego el secundario y al final el terciario.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "El pescador saca recursos de la naturaleza, la costurera transforma tela y la profesora presta un servicio.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-1",
+      "elementos": [
+        "Profesora de matemáticas",
+        "Pescador",
+        "Costurera en una fábrica de jeans"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "8_world_1_ordenar_3",
+      "enunciado": "Ordena lo que pasa cuando suben los precios y el ingreso de la casa no cambia.",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Suben los precios, el ingreso no se mueve, la plata alcanza para menos y la familia tiene que ajustarse.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-2",
+      "elementos": [
+        "La familia revisa qué gastos puede recortar",
+        "Suben los precios del mercado, pero el ingreso de la casa sigue igual",
+        "Con la misma plata, la familia alcanza a comprar menos cosas"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "8_world_1_ordenar_4",
+      "enunciado": "Ordena los pasos para que tu familia mejore sus hábitos con la plata.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Sin datos no se puede mejorar: primero se anota, luego se analiza, se propone un cambio y se revisa.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-89-1",
+      "elementos": [
+        "Mirar juntos en qué se fue más plata",
+        "Revisar al final si el cambio funcionó",
+        "Anotar los gastos durante un mes",
+        "Proponer un cambio concreto, como recortar un gasto"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        3,
+        1
+      ]
+    },
+    {
+      "id": "8_world_1_ordenar_5",
+      "enunciado": "Ordena los pasos de una compra responsable de unos tenis.",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Primero decides si los necesitas, luego comparas, compras lo que te alcanza y guardas la factura.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-89-2",
+      "elementos": [
+        "Comparar precios en varias tiendas",
+        "Pensar si de verdad los necesitas",
+        "Comprar los que mejor se ajustan a tu plata",
+        "Guardar la factura por si hay que cambiarlos"
+      ],
+      "ordenCanonico": [
+        1,
+        0,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "8_world_1_ordenar_6",
+      "enunciado": "Ordena lo que pasa cuando una helada daña los cultivos de papa.",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "La helada causa escasez, la escasez sube el precio y el precio alto cambia lo que compran las familias.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-1",
+      "elementos": [
+        "El precio de la papa sube en la plaza",
+        "Llega menos papa a los mercados",
+        "Una helada daña muchos cultivos",
+        "Algunas familias compran menos papa o la cambian por yuca"
+      ],
+      "ordenCanonico": [
+        2,
+        1,
+        0,
+        3
+      ]
+    }
+  ]
+}

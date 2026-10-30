@@ -10,6 +10,8 @@
       "competencia": "ahorro",
       "dificultad": 3,
       "explicacion": "Su función es protegerte ante lo inesperado, como una reparación o una urgencia.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "respuesta": true
     },
     {
@@ -18,6 +20,8 @@
       "competencia": "ahorro",
       "dificultad": 3,
       "explicacion": "Es más confiable separar el ahorro al inicio, porque al final casi nunca sobra.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-2",
       "respuesta": false
     },
     {
@@ -26,6 +30,8 @@
       "competencia": "ahorro",
       "dificultad": 3,
       "explicacion": "Esa capacidad de esperar es clave para alcanzar metas de ahorro.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "respuesta": true
     },
     {
@@ -34,6 +40,8 @@
       "competencia": "ahorro",
       "dificultad": 3,
       "explicacion": "Se diferencian por el horizonte de tiempo y por el tipo de objetivo que persiguen.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "respuesta": false
     },
     {
@@ -42,6 +50,8 @@
       "competencia": "ahorro",
       "dificultad": 3,
       "explicacion": "La repetición disciplinada reduce el esfuerzo y vuelve el ahorro algo natural.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-2",
       "respuesta": true
     },
     {
@@ -50,6 +60,8 @@
       "competencia": "ahorro",
       "dificultad": 3,
       "explicacion": "Una meta clara y con plazo facilita el seguimiento y aumenta la probabilidad de cumplirla.",
+      "ambito": "ahorroInversion",
+      "desempeno": "AI-1011-1",
       "respuesta": false
     }
   ],

@@ -1,0 +1,23 @@
+{
+  "grado": "4",
+  "worldId": "world_2",
+  "cards": [
+    {
+      "titulo": "¿Qué es un presupuesto?",
+      "cuerpo": "Un presupuesto es un plan para tu dinero. En él anotas lo que te entra (ingresos) y lo que vas a gastar (gastos). La regla de oro: lo que gastas no debe pasar de lo que te entra.",
+      "ejemplo": "Recibes tu mesada el lunes y la repartes entre el bus, la merienda y un ahorro. Así te alcanza hasta el viernes."
+    },
+    {
+      "titulo": "Necesidades y deseos",
+      "cuerpo": "Una necesidad es algo sin lo cual no puedes estar bien: comida, agua, techo, salud y estudio. Un deseo es algo que te gusta, pero puedes vivir sin él. Los deseos no son malos: se cumplen después de cubrir lo necesario.",
+      "ejemplo": "Unos zapatos para el colegio, porque los tuyos están rotos, son una necesidad. Unos tenis de marca para estrenar son un deseo."
+    },
+    {
+      "titulo": "Revisar y ajustar",
+      "cuerpo": "Anotar lo que gastas te muestra en qué se va tu dinero. Si gastaste más de lo que entró, toca ajustar: recortar un gusto o esperar para comprar. El presupuesto de la familia funciona igual.",
+      "ejemplo": "Pablo se gastó toda la mesada el lunes y el jueves no tenía para el bus. La semana siguiente separó primero lo del bus."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

@@ -1,0 +1,71 @@
+{
+  "bancoId": "6_world_5_true_false",
+  "grado": "6",
+  "worldId": "world_5",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "6_world_5_true_false_1",
+      "enunciado": "Si la cuota de una deuda se lleva casi todo lo que recibes, esa deuda es difícil de pagar.",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "Verdadero: si la cuota se come casi todo, no te queda para lo básico y es fácil atrasarte.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-67-1",
+      "respuesta": true
+    },
+    {
+      "id": "6_world_5_true_false_2",
+      "enunciado": "Pedirle a un prestamista informal para pagar una deuda formal suele resolver el problema.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Falso: cambias una deuda con reglas claras por otra más cara y sin protección.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-67-2",
+      "respuesta": false
+    },
+    {
+      "id": "6_world_5_true_false_3",
+      "enunciado": "Un riesgo es más alto cuando es muy probable que pase y su impacto sería grave.",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "Verdadero: el riesgo depende de la probabilidad y del impacto, y crece cuando los dos son altos.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-67-1",
+      "respuesta": true
+    },
+    {
+      "id": "6_world_5_true_false_4",
+      "enunciado": "Comer a toda hora paquetes y gaseosa no representa ningún riesgo para tu salud.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Falso: con el tiempo puede afectar tu salud, por ejemplo tus dientes y tu peso.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-67-2",
+      "respuesta": false
+    },
+    {
+      "id": "6_world_5_true_false_5",
+      "enunciado": "Lavarse las manos antes de comer reduce el riesgo de enfermarse.",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "Verdadero: es una acción sencilla que hace menos probable que te enfermes.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-67-3",
+      "respuesta": true
+    },
+    {
+      "id": "6_world_5_true_false_6",
+      "enunciado": "Los riesgos de un barrio, como la basura en la quebrada, solo los puede resolver la alcaldía.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Falso: los vecinos, el colegio y las familias también pueden organizarse para cuidar la quebrada, aunque las autoridades tengan su parte.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-67-4",
+      "respuesta": false
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "bancoId": "6_world_5_ordenar",
+  "grado": "6",
+  "worldId": "world_5",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "6_world_5_ordenar_1",
+      "enunciado": "Ordena los pasos para salir de una deuda que se está volviendo pesada.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Primero conoces la deuda, luego sabes cuánto puedes pagar, acuerdas un plan y lo cumples.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-67-1",
+      "elementos": [
+        "Pagar las cuotas acordadas hasta terminar",
+        "Hablar con quien te prestó si necesitas otro plan de pago",
+        "Revisar tu presupuesto para ver cuánto puedes pagar",
+        "Anotar cuánto debes, a quién y con qué interés"
+      ],
+      "ordenCanonico": [
+        3,
+        2,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "6_world_5_ordenar_2",
+      "enunciado": "En un paseo al río, ordena estos riesgos del más alto al más bajo (probabilidad × impacto).",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Ahogarse sería gravísimo; una quemadura de sol es probable y molesta; la toalla mojada casi no hace daño.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-67-1",
+      "elementos": [
+        "Quemarse con el sol por no usar bloqueador",
+        "Bañarse en una parte honda sin saber nadar",
+        "Que se moje la toalla"
+      ],
+      "ordenCanonico": [
+        1,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "6_world_5_ordenar_3",
+      "enunciado": "Ordena los pasos para evaluar un riesgo en tu vida.",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Primero sabes qué cuidas y qué lo amenaza; luego mides el riesgo y decides qué hacer.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-67-2",
+      "elementos": [
+        "Identificar qué lo puede amenazar",
+        "Decidir qué vas a hacer para cuidarlo",
+        "Estimar qué tan probable es y qué tan grave sería",
+        "Nombrar lo que valoras, por ejemplo tu salud"
+      ],
+      "ordenCanonico": [
+        3,
+        0,
+        2,
+        1
+      ]
+    },
+    {
+      "id": "6_world_5_ordenar_4",
+      "enunciado": "Un amigo te presiona para hacer algo que no quieres. Ordena lo que puedes hacer.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Reconocer lo que sientes, poner un límite, alejarte y pedir apoyo protege tu bienestar.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-67-3",
+      "elementos": [
+        "Decir que no con calma y claridad",
+        "Darte cuenta de que no te sientes bien con eso",
+        "Alejarte de la situación",
+        "Contarle a un adulto de confianza"
+      ],
+      "ordenCanonico": [
+        1,
+        0,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "6_world_5_ordenar_5",
+      "enunciado": "En la salida del colegio pasan carros muy rápido. Ordena los pasos para que el curso proponga una solución.",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Una decisión colectiva parte de conocer el problema, discutirlo, votarlo y revisar si sirvió.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-67-4",
+      "elementos": [
+        "Revisar después de un tiempo si funcionó",
+        "Discutir en el curso las posibles soluciones",
+        "Observar y anotar dónde y cuándo hay más peligro",
+        "Votar una propuesta y llevarla a las directivas del colegio"
+      ],
+      "ordenCanonico": [
+        2,
+        1,
+        3,
+        0
+      ]
+    },
+    {
+      "id": "6_world_5_ordenar_6",
+      "enunciado": "La quebrada del barrio se llena de basura. Ordena los pasos para que los vecinos la cuiden.",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Cuidar un recurso común empieza por reunirse, acordar, repartir tareas y hacer seguimiento.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-67-4",
+      "elementos": [
+        "Acordar acciones, como una jornada de limpieza",
+        "Repartir las tareas entre las familias",
+        "Revisar juntos cada mes cómo sigue la quebrada",
+        "Reunirse los vecinos y hablar del problema"
+      ],
+      "ordenCanonico": [
+        3,
+        0,
+        1,
+        2
+      ]
+    }
+  ]
+}

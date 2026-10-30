@@ -1,0 +1,23 @@
+{
+  "grado": "6",
+  "worldId": "world_1",
+  "cards": [
+    {
+      "titulo": "¿Por qué algo vale plata?",
+      "cuerpo": "Un recurso gana valor económico cuando la gente lo necesita o lo quiere y no alcanza para todos: eso es la escasez. También gana valor cuando alguien le pone trabajo, tiempo o conocimiento para transformarlo en algo más útil.",
+      "ejemplo": "Un vaso de jugo de mango cuesta más que el mango solo: el jugo lleva trabajo, agua, azúcar, un vaso y el tiempo de quien lo prepara."
+    },
+    {
+      "titulo": "Lo que vale, se cuida",
+      "cuerpo": "Los recursos que valoras, como el agua de tu casa, tus útiles, tu tiempo o tu plata, se pueden perder o dañar. Protegerlos es usarlos con cuidado, repararlos en vez de botarlos, no desperdiciarlos y ponerte de acuerdo con otros para cuidarlos.",
+      "ejemplo": "Cerrar la llave mientras te enjabonas las manos cuida el agua de tu casa y además ayuda a que la factura no suba."
+    },
+    {
+      "titulo": "Hábitos que cuidan tu bolsillo",
+      "cuerpo": "Un hábito financiero es algo que haces con tu dinero una y otra vez. Comparar precios, esperar antes de comprar por impulso y anotar en qué gastas te ayudan a consumir mejor y a que la plata te rinda más.",
+      "ejemplo": "Antes de comprar unos audífonos, Valeria espera una semana y compara en tres tiendas. Al final los consigue 10.000 pesos más baratos."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

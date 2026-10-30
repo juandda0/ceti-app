@@ -1,0 +1,71 @@
+{
+  "bancoId": "1_world_4_true_false",
+  "grado": "1",
+  "worldId": "world_4",
+  "tipo": "true_false",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "1_world_4_true_false_1",
+      "enunciado": "Si te regalan algo, tienes que devolverlo.",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "Falso: lo regalado es tuyo; lo que se devuelve es lo prestado.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-13-1",
+      "respuesta": false
+    },
+    {
+      "id": "1_world_4_true_false_2",
+      "enunciado": "Lo que te prestan se cuida y se devuelve.",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "Verdadero: ese es el compromiso de recibir algo prestado.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-13-3",
+      "respuesta": true
+    },
+    {
+      "id": "1_world_4_true_false_3",
+      "enunciado": "Puedes prestar algo que no es tuyo sin pedir permiso.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Falso: solo prestas lo tuyo; lo de otros, con su permiso.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-13-2",
+      "respuesta": false
+    },
+    {
+      "id": "1_world_4_true_false_4",
+      "enunciado": "Hace mucho tiempo, la gente cambiaba cosas en vez de usar dinero.",
+      "competencia": "credito",
+      "dificultad": 2,
+      "explicacion": "Verdadero: antes del dinero se hacía trueque.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-13-1",
+      "respuesta": true
+    },
+    {
+      "id": "1_world_4_true_false_5",
+      "enunciado": "Para subir al bus hay que pagar el pasaje.",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "Verdadero: el bus es un lugar donde se usa dinero.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-13-2",
+      "respuesta": true
+    },
+    {
+      "id": "1_world_4_true_false_6",
+      "enunciado": "Gastar todo de una vez ayuda a cumplir tus metas.",
+      "competencia": "credito",
+      "dificultad": 1,
+      "explicacion": "Falso: guardar y cuidar el dinero es lo que ayuda a cumplir metas.",
+      "ambito": "sistemaFinanciero",
+      "desempeno": "SF-13-3",
+      "respuesta": false
+    }
+  ]
+}

@@ -10,6 +10,8 @@
       "competencia": "deuda",
       "dificultad": 3,
       "explicacion": "Si las cuotas caben en el presupuesto sin sacrificar lo esencial, la deuda es manejable.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
       "respuesta": true
     },
     {
@@ -18,6 +20,8 @@
       "competencia": "deuda",
       "dificultad": 3,
       "explicacion": "Sobreendeudarse es deber más de lo que se puede pagar con los ingresos disponibles.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-1",
       "respuesta": true
     },
     {
@@ -26,6 +30,8 @@
       "competencia": "deuda",
       "dificultad": 3,
       "explicacion": "No pagar genera mal historial crediticio y dificulta acceder a crédito en el futuro.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
       "respuesta": false
     },
     {
@@ -34,6 +40,8 @@
       "competencia": "deuda",
       "dificultad": 3,
       "explicacion": "Endeudarse para pagar deudas crea una bola de nieve que agrava la situación.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-2",
       "respuesta": true
     },
     {
@@ -42,6 +50,8 @@
       "competencia": "deuda",
       "dificultad": 3,
       "explicacion": "Una deuda puede ser útil si es manejable y sirve para algo que aporta valor; no toda deuda es mala.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-2",
       "respuesta": false
     },
     {
@@ -50,7 +60,29 @@
       "competencia": "deuda",
       "dificultad": 3,
       "explicacion": "Conocer cuánto y a quién se debe es el punto de partida para un plan de pago realista.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-89-2",
       "respuesta": true
+    },
+    {
+      "id": "9_world_5_true_false_7",
+      "enunciado": "Un riesgo poco probable pero muy grave, como una lesión seria por montar bicicleta sin casco, merece medidas de prevención.",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Aunque sea poco probable, su impacto sobre tu salud es tan grande que vale la pena prevenirlo usando casco.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-2",
+      "respuesta": true
+    },
+    {
+      "id": "9_world_5_true_false_8",
+      "enunciado": "Compartir en el chat del curso una foto de un compañero sin su permiso no pone en riesgo la amistad si es en broma.",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Antes de decidir hay que mirar el contexto: la foto puede herir, circular sin control y dañar la confianza, aunque sea \"en broma\".",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-89-1",
+      "respuesta": false
     }
   ],
   "pendiente_validacion_docente": true,

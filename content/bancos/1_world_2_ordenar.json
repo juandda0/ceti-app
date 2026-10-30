@@ -1,0 +1,125 @@
+{
+  "bancoId": "1_world_2_ordenar",
+  "grado": "1",
+  "worldId": "world_2",
+  "tipo": "ordenar",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "1_world_2_ordenar_1",
+      "enunciado": "Ordena de lo que más necesitas a lo que menos.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Primero comer, luego lo que necesitas para estudiar y al final el juguete, que es un deseo.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-13-2",
+      "elementos": [
+        "Un juguete",
+        "El almuerzo",
+        "Un cuaderno para clase"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "1_world_2_ordenar_2",
+      "enunciado": "Ordena: así usa la familia su dinero.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Primero recibe el pago, luego cubre lo necesario y guarda lo que sobra.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-13-1",
+      "elementos": [
+        "Paga la comida y la casa",
+        "Recibe el pago del trabajo",
+        "Guarda lo que sobra"
+      ],
+      "ordenCanonico": [
+        1,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "1_world_2_ordenar_3",
+      "enunciado": "Ordena: vas a gastar tu mesada.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Primero miras cuánto tienes, piensas qué necesitas y luego compras.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-13-3",
+      "elementos": [
+        "Compras lo que elegiste",
+        "Piensas qué necesitas",
+        "Miras cuánto tienes"
+      ],
+      "ordenCanonico": [
+        2,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "1_world_2_ordenar_4",
+      "enunciado": "Ordena: la familia hace la lista del mercado.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Miran qué falta, lo escriben y compran solo lo de la lista.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-13-3",
+      "elementos": [
+        "Compran lo de la lista",
+        "Miran qué falta en casa",
+        "Escriben la lista"
+      ],
+      "ordenCanonico": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "id": "1_world_2_ordenar_5",
+      "enunciado": "Ordena: ves algo que te gusta en la tienda.",
+      "competencia": "presupuesto",
+      "dificultad": 2,
+      "explicacion": "Lo ves, piensas si es necesidad o deseo, y luego decides.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-13-2",
+      "elementos": [
+        "Piensas: ¿lo necesito o lo quiero?",
+        "Decides si lo compras hoy",
+        "Lo ves en la vitrina"
+      ],
+      "ordenCanonico": [
+        2,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "1_world_2_ordenar_6",
+      "enunciado": "Ordena: llega el recibo de la luz.",
+      "competencia": "presupuesto",
+      "dificultad": 1,
+      "explicacion": "Llega el recibo, miran cuánto es y lo pagan con el dinero de la familia.",
+      "ambito": "presupuesto",
+      "desempeno": "PR-13-1",
+      "elementos": [
+        "Llega el recibo a la casa",
+        "Pagan el recibo",
+        "Miran cuánto hay que pagar"
+      ],
+      "ordenCanonico": [
+        0,
+        2,
+        1
+      ]
+    }
+  ]
+}

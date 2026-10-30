@@ -1,0 +1,23 @@
+{
+  "grado": "8",
+  "worldId": "world_4",
+  "cards": [
+    {
+      "titulo": "¿Cuánto puedes deber?",
+      "cuerpo": "Tu capacidad de endeudamiento es lo que te queda después de cubrir lo necesario: es el tope de lo que podrías pagar en cuotas. Lo prudente es no comprometerlo todo, para tener margen si aparece un imprevisto.",
+      "ejemplo": "Si entran 100.000 pesos y lo necesario cuesta 80.000, te quedan 20.000: una cuota de 10.000 deja margen; una de 20.000 no deja nada."
+    },
+    {
+      "titulo": "Seguros y pensiones",
+      "cuerpo": "Un seguro es pagar una cuota para que, si pasa algo grave (un accidente, un robo), una aseguradora cubra el daño. La pensión es un ingreso para la vejez que se arma aportando a un fondo durante los años de trabajo.",
+      "ejemplo": "El SOAT, que deben tener las motos y los carros, paga la atención médica de los heridos si hay un accidente de tránsito."
+    },
+    {
+      "titulo": "La bolsa de valores",
+      "cuerpo": "En el mercado de valores las empresas venden acciones, que son pedacitos de la empresa. Si a la empresa le va bien, la acción puede subir; si le va mal, puede bajar. Se puede ganar más que en una cuenta de ahorros, pero también perder.",
+      "ejemplo": "Si compras una acción y la empresa vende mucho, podrías venderla luego más cara; si la empresa tiene problemas, podrías venderla por menos de lo que pagaste."
+    }
+  ],
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true
+}

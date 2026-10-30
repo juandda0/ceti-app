@@ -1,0 +1,173 @@
+{
+  "bancoId": "6_world_5_multiple_choice",
+  "grado": "6",
+  "worldId": "world_5",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "6_world_5_multiple_choice_1",
+      "enunciado": "Juan recibe 40.000 pesos al mes. ¿Cuál de estas cuotas mensuales de una deuda puede pagar sin descuadrarse?",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Una cuota de 5.000 pesos le deja la mayor parte de su plata para lo demás.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-67-1",
+      "opciones": [
+        "38.000 pesos",
+        "5.000 pesos",
+        "40.000 pesos",
+        "45.000 pesos"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "6_world_5_multiple_choice_2",
+      "enunciado": "Camila pide prestado para pagar una deuda que ya tenía, y luego lo vuelve a hacer. ¿Qué le está pasando?",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Pagar una deuda con otra no la elimina: la deuda y los intereses siguen creciendo.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-67-1",
+      "opciones": [
+        "Está ahorrando de una forma distinta",
+        "Está bajando sus intereses",
+        "Está pagando más rápido lo que debe",
+        "Está entrando en una cadena de deudas cada vez más difícil de pagar"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "6_world_5_multiple_choice_3",
+      "enunciado": "Un vecino le debe a un prestamista informal que le cobra intereses que crecen cada día. ¿Qué le conviene buscar?",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Una opción formal tiene costos más bajos y reglas claras, y lo saca de los cobros diarios.",
+      "ambito": "manejoDeudas",
+      "desempeno": "MD-67-2",
+      "opciones": [
+        "Apoyo de su familia y una opción formal, con reglas claras, para salir de esa deuda",
+        "Otro prestamista informal que le preste más rápido",
+        "Dejar de pagar y esperar que se olviden de él",
+        "Pedirle más plata al mismo prestamista para pagarle"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "6_world_5_multiple_choice_4",
+      "enunciado": "¿Qué dos preguntas te ayudan a medir un riesgo?",
+      "competencia": "deuda",
+      "dificultad": 1,
+      "explicacion": "El riesgo se mide por su probabilidad y por su impacto.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-67-1",
+      "opciones": [
+        "¿Cuánto cuesta? y ¿quién tiene la culpa?",
+        "¿Me da miedo? y ¿a mis amigos también?",
+        "¿Qué tan probable es que pase? y ¿qué tan grave sería?",
+        "¿Cuándo fue la última vez? y ¿dónde pasó?"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "6_world_5_multiple_choice_5",
+      "enunciado": "Tu familia vive junto a una quebrada que se crece casi todos los inviernos y podría inundar la casa. ¿Cómo es ese riesgo?",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Pasa casi todos los inviernos (muy probable) y una inundación dañaría mucho la casa (muy grave).",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-67-1",
+      "opciones": [
+        "Poco probable y poco grave",
+        "Probable, pero poco grave",
+        "Poco probable, pero muy grave",
+        "Muy probable y muy grave"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "6_world_5_multiple_choice_6",
+      "enunciado": "Sofía tiene un examen importante el viernes y quiere quedarse jugando hasta tarde el jueves. ¿Qué riesgo corren sus estudios?",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "Dormir poco antes de un examen hace más probable que le vaya peor.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-67-2",
+      "opciones": [
+        "Ninguno, porque jugar no afecta el estudio",
+        "Rendir menos en el examen por estar cansada",
+        "Gastar más plata en el juego",
+        "Perder a sus amigos del juego"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "6_world_5_multiple_choice_7",
+      "enunciado": "Diego evalúa dos riesgos: (A) que le roben el celular en el bus, que pasa a veces y le dolería mucho; (B) que se le moje la maleta un día de lluvia, que pasa seguido pero casi no daña nada. ¿Cuál debería atender primero?",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Se atiende primero el riesgo que combina una probabilidad real con un impacto alto.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-67-2",
+      "opciones": [
+        "El A, porque puede pasar y su impacto es alto",
+        "El B, porque pasa más seguido",
+        "Ninguno, porque no se pueden evitar",
+        "Los dos por igual, porque ambos pueden pasar"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "6_world_5_multiple_choice_8",
+      "enunciado": "En tu curso, un compañero publica fotos de otro para burlarse y eso daña la convivencia. ¿Qué puedes hacer?",
+      "competencia": "deuda",
+      "dificultad": 2,
+      "explicacion": "No difundir, apoyar a quien sufre la burla y avisar a un adulto reduce el daño a la convivencia.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-67-3",
+      "opciones": [
+        "Compartir las fotos para que todos se enteren",
+        "No hacer nada porque no es contigo",
+        "No compartirlas, apoyar al compañero y contarle a un profe",
+        "Responder con otra burla"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "6_world_5_multiple_choice_9",
+      "enunciado": "En la casa de Pablo se van seguido la luz y el agua. ¿Qué acción reduce el impacto de ese riesgo?",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Prepararse con linterna y agua guardada no evita el corte, pero hace que afecte menos.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-67-3",
+      "opciones": [
+        "Esperar a que no vuelva a pasar",
+        "Tener linterna con pilas y algo de agua guardada en recipientes tapados",
+        "Prender todos los aparatos apenas vuelva la luz",
+        "Dejar las llaves abiertas para saber cuándo vuelve el agua"
+      ],
+      "correctIndex": 1,
+      "prueba": true
+    },
+    {
+      "id": "6_world_5_multiple_choice_10",
+      "enunciado": "La huerta del colegio se está secando porque nadie la riega en vacaciones. ¿Cuál es una buena decisión colectiva?",
+      "competencia": "deuda",
+      "dificultad": 3,
+      "explicacion": "Un acuerdo en grupo reparte la tarea y protege un recurso que es de todos.",
+      "ambito": "analisisRiesgos",
+      "desempeno": "AR-67-4",
+      "opciones": [
+        "Que el profe de ciencias la riegue solo",
+        "Dejar que se seque y sembrar otra vez el próximo año",
+        "Que cada uno decida si quiere ir o no",
+        "Acordar en el curso turnos de riego entre estudiantes y familias"
+      ],
+      "correctIndex": 3,
+      "prueba": true
+    }
+  ]
+}

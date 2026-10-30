@@ -1,0 +1,44 @@
+{
+  "bancoId": "8_world_1",
+  "grado": "8",
+  "worldId": "world_1",
+  "situaciones": [
+    {
+      "id": "8_world_1_sit_1",
+      "enunciado": "Tu tío tiene una panadería y te ofrece atender el mostrador los sábados en la mañana. Te pagaría algo cada semana, pero los sábados son tu único rato para entrenar con tu equipo de fútbol.",
+      "opcionA": {
+        "texto": "Aceptar el trabajo de los sábados.",
+        "consecuencia": "Empiezas a tener tu propio ingreso y aprendes cómo funciona un negocio, pero te pierdes entrenamientos y tu puesto en el equipo puede cambiar. Ganar dinero también cuesta tiempo."
+      },
+      "opcionB": {
+        "texto": "Seguir entrenando y no aceptar por ahora.",
+        "consecuencia": "Mantienes tu deporte y tu grupo de amigos, pero sigues dependiendo solo de la mesada. Elegir el tiempo libre también tiene un costo: el ingreso que dejas de recibir."
+      }
+    },
+    {
+      "id": "8_world_1_sit_2",
+      "enunciado": "Este mes subió el precio del almuerzo en la cafetería del colegio y tu mesada no cambió. Puedes seguir comprando allá o empezar a llevar lonchera de la casa.",
+      "opcionA": {
+        "texto": "Seguir comprando el almuerzo en la cafetería.",
+        "consecuencia": "Sigues comiendo con tus amigos y no tienes que alistar nada la noche anterior, pero cada semana te queda menos plata para otras cosas."
+      },
+      "opcionB": {
+        "texto": "Llevar lonchera preparada en casa.",
+        "consecuencia": "Te queda más mesada para otras cosas, pero tienes que organizarte la noche anterior y a veces no te provoca lo que hay en la nevera."
+      }
+    },
+    {
+      "id": "8_world_1_sit_3",
+      "enunciado": "En tu casa pagan todo en efectivo y nadie anota nada. Tú propones anotar los gastos en un cuaderno durante un mes para ver en qué se va la plata.",
+      "opcionA": {
+        "texto": "Encargarte tú de llevar el cuaderno cada día.",
+        "consecuencia": "La familia descubre en qué gasta más y puede decidir qué cambiar, pero te toca preguntarles a todos y acordarte cada día, y a veces se vuelve pesado."
+      },
+      "opcionB": {
+        "texto": "Dejar la idea para cuando haya más tiempo.",
+        "consecuencia": "Nadie tiene que cambiar su rutina ni llevar cuentas, pero la familia sigue sin saber con claridad a dónde se va el dinero cada mes."
+      }
+    }
+  ],
+  "pendiente_validacion_docente": true
+}

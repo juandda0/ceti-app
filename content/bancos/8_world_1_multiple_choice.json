@@ -1,0 +1,173 @@
+{
+  "bancoId": "8_world_1_multiple_choice",
+  "grado": "8",
+  "worldId": "world_1",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "8_world_1_multiple_choice_1",
+      "enunciado": "Don Arturo cultiva papa en su finca de Boyacá. ¿A qué sector de la economía pertenece su trabajo?",
+      "competencia": "ingreso",
+      "dificultad": 1,
+      "explicacion": "Cultivar la tierra es sacar recursos de la naturaleza, y eso es el sector primario.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-1",
+      "opciones": [
+        "Al sector primario",
+        "Al sector secundario",
+        "Al sector terciario",
+        "Al sector financiero"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "8_world_1_multiple_choice_2",
+      "enunciado": "Una fábrica compra papa y la convierte en paquetes de papas fritas. ¿Qué está haciendo?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Convertir la papa en papas fritas es transformar una materia prima, que es lo propio del sector secundario.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-1",
+      "opciones": [
+        "Sacando un recurso directamente de la naturaleza",
+        "Transformando una materia prima en un producto nuevo",
+        "Prestando un servicio a las personas",
+        "Ahorrando papa para el futuro"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "8_world_1_multiple_choice_3",
+      "enunciado": "¿Cuál de estos trabajos pertenece al sector terciario o de servicios?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Llevar personas de un lugar a otro es un servicio; no se extrae ni se fabrica nada.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-1",
+      "opciones": [
+        "Pescar en el río Magdalena",
+        "Cultivar plátano en el Urabá",
+        "Fabricar ladrillos",
+        "Manejar el bus que te lleva al colegio"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "8_world_1_multiple_choice_4",
+      "enunciado": "Un verano largo seca los cultivos y llega poca naranja a la plaza de mercado. Si la gente sigue queriendo la misma cantidad, ¿qué es lo más probable?",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Cuando un bien escasea y la gente lo sigue buscando, su precio tiende a subir.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-1",
+      "opciones": [
+        "Que el precio de la naranja baje",
+        "Que el precio de la naranja suba",
+        "Que el precio no cambie",
+        "Que los vendedores traigan más naranja de la misma cosecha"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "8_world_1_multiple_choice_5",
+      "enunciado": "Con 10.000 pesos comprabas 5 empanadas de 2.000 pesos. Ahora cada empanada vale 2.500. ¿Cuántas compras con la misma plata?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "10.000 dividido entre 2.500 da 4: si el precio sube y tu plata no, compras menos.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-2",
+      "opciones": [
+        "6 empanadas",
+        "5 empanadas",
+        "4 empanadas",
+        "3 empanadas"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "8_world_1_multiple_choice_6",
+      "enunciado": "Los precios de lo que compra tu familia suben, pero el ingreso de la casa sigue igual. ¿Qué le pasa al bienestar de la familia?",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Si los precios suben y el ingreso no, la plata alcanza para menos cosas y eso afecta el bienestar.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-2",
+      "opciones": [
+        "Mejora, porque las cosas valen más",
+        "No cambia, porque siguen ganando lo mismo",
+        "Mejora, porque ahora gastan más plata",
+        "Puede bajar, porque con la misma plata compran menos"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "8_world_1_multiple_choice_7",
+      "enunciado": "Tu familia quiere saber en qué se le va la plata cada mes. ¿Qué hábito le sirve más para empezar?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Anotar los gastos muestra a dónde se va la plata, y con eso la familia puede planear qué mejorar.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-89-1",
+      "opciones": [
+        "Anotar todos los gastos durante el mes",
+        "Pedir prestado cuando falte plata",
+        "Comprar siempre en el mismo lugar sin mirar precios",
+        "Esperar a fin de mes y ver qué quedó"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "8_world_1_multiple_choice_8",
+      "enunciado": "Mariana siempre compara precios en dos papelerías antes de comprar los útiles. ¿Qué gana con ese hábito?",
+      "competencia": "ingreso",
+      "dificultad": 2,
+      "explicacion": "Comparar precios permite pagar menos por lo mismo, y lo que se ahorra queda para otras cosas.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-89-2",
+      "opciones": [
+        "Nada, solo pierde tiempo",
+        "Pagar menos por lo mismo y que la plata le alcance para más",
+        "Tener que pedir más mesada",
+        "Comprar más útiles de los que necesita"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "8_world_1_multiple_choice_9",
+      "enunciado": "En tu barrio suben los precios del arroz, la panela y el transporte, pero los sueldos siguen iguales. ¿Qué describe mejor la situación de las familias?",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Si los precios suben y los ingresos no, el mismo dinero alcanza para menos.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-89-2",
+      "opciones": [
+        "Tienen más dinero para ahorrar",
+        "Pagan menos impuestos",
+        "Pueden comprar lo mismo que antes",
+        "Pueden comprar menos cosas con el mismo dinero"
+      ],
+      "correctIndex": 3,
+      "prueba": true
+    },
+    {
+      "id": "8_world_1_multiple_choice_10",
+      "enunciado": "En la casa de Julián piden domicilios varias veces al mes y al final no les alcanza para el mercado. ¿Cuál es el mejor plan para mejorar ese hábito?",
+      "competencia": "ingreso",
+      "dificultad": 3,
+      "explicacion": "Un límite concreto convierte un hábito que desordena el presupuesto en plata para lo necesario.",
+      "ambito": "contextoFinanciero",
+      "desempeno": "CF-89-1",
+      "opciones": [
+        "Ponerse un límite de domicilios al mes y pasar esa plata al mercado",
+        "Dejar de anotar los gastos para no preocuparse",
+        "Pedir prestado cada fin de mes",
+        "Pedir más domicilios para aprovechar los descuentos"
+      ],
+      "correctIndex": 0,
+      "prueba": true
+    }
+  ]
+}

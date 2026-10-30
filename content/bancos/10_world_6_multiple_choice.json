@@ -1,0 +1,173 @@
+{
+  "bancoId": "10_world_6_multiple_choice",
+  "grado": "10",
+  "worldId": "world_6",
+  "tipo": "multiple_choice",
+  "version": 1,
+  "generadoPor": "ia",
+  "pendiente_validacion_docente": true,
+  "items": [
+    {
+      "id": "10_world_6_multiple_choice_1",
+      "enunciado": "¿Qué mide el Producto Interno Bruto (PIB) de un país?",
+      "competencia": "economia",
+      "dificultad": 1,
+      "explicacion": "El PIB suma el valor de los bienes y servicios finales que se producen en un país en un periodo, por ejemplo un año.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-1011-2",
+      "opciones": [
+        "El dinero que tiene guardado el Banco de la República",
+        "Lo que el Gobierno recauda en impuestos en un año",
+        "El valor de los bienes y servicios finales producidos en el país durante un periodo",
+        "El total de lo que ahorran las familias"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "10_world_6_multiple_choice_2",
+      "enunciado": "¿Cuál es la diferencia entre crecimiento económico y desarrollo económico?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Una región puede producir más sin que mejore la vida de la mayoría; el desarrollo mira también el bienestar de las personas.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-1011-2",
+      "opciones": [
+        "El crecimiento es producir más; el desarrollo además incluye mejoras en salud, educación y calidad de vida",
+        "Son lo mismo: si el PIB crece, siempre hay desarrollo",
+        "El crecimiento lo mide el DANE y el desarrollo lo decide el Congreso",
+        "El desarrollo es solo construir más vías y edificios"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "10_world_6_multiple_choice_3",
+      "enunciado": "El PIB por habitante (per cápita) de un departamento es alto. ¿Qué puedes concluir con seguridad?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "El PIB per cápita es un promedio: no muestra si la riqueza está concentrada en pocas personas o repartida.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-1011-1",
+      "opciones": [
+        "Que en ese departamento no hay pobreza",
+        "Que todos sus habitantes ganan más o menos lo mismo",
+        "Que allí la inflación es más baja que en el resto del país",
+        "Que en promedio se produce mucho por habitante, pero no sabes cómo se reparte"
+      ],
+      "correctIndex": 3,
+      "prueba": true
+    },
+    {
+      "id": "10_world_6_multiple_choice_4",
+      "enunciado": "El coeficiente de Gini va de 0 (todos reciben lo mismo) a 1 (una sola persona recibe todo). ¿Qué indica que el Gini de un municipio pase de 0,45 a 0,52?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Un Gini más cercano a 1 significa más concentración del ingreso, es decir, más desigualdad.",
+      "ambito": "desarrolloEconomico",
+      "desempeno": "DE-1011-1",
+      "opciones": [
+        "Que la economía del municipio creció un 7 %",
+        "Que el ingreso se volvió más desigual",
+        "Que el ingreso se repartió de forma más pareja",
+        "Que bajó la inflación del municipio"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "10_world_6_multiple_choice_5",
+      "enunciado": "En tu barrio se pierde mucha agua por fugas en los tubos del parque y del colegio. ¿Cuál es el uso más eficiente de ese recurso?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Usar bien un recurso es evitar que se desperdicie y aprovechar fuentes que ya existen, como la lluvia.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-1",
+      "opciones": [
+        "Reportar y arreglar las fugas, y recoger agua lluvia para regar las zonas verdes",
+        "Esperar a que la empresa de acueducto las descubra sola",
+        "Aprovechar el agua del parque mientras nadie la cobre",
+        "Racionar el agua de las casas y dejar las fugas como están"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "10_world_6_multiple_choice_6",
+      "enunciado": "Cada semana la plaza de mercado de tu municipio bota frutas y verduras que ya no se venden. ¿Qué estrategia aprovecha mejor ese recurso para la comunidad?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Donar lo comestible y convertir el resto en abono aprovecha casi todo el recurso y reduce la basura.",
+      "ambito": "contextoEconomico",
+      "desempeno": "CE-1011-2",
+      "opciones": [
+        "Bajar los precios al final del día y botar lo que sobre sin separar",
+        "Prohibir que lleguen más frutas a la plaza",
+        "Organizar con los vendedores la donación de lo que aún se puede comer y el compostaje del resto",
+        "Llevar todo más rápido al relleno sanitario"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "10_world_6_multiple_choice_7",
+      "enunciado": "¿Qué es un cabildo abierto?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "En el cabildo abierto los ciudadanos participan directamente en una sesión pública para discutir temas que les interesan.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-1011-1",
+      "opciones": [
+        "Una elección para escoger al alcalde",
+        "Una reunión pública del concejo o la junta administradora local en la que los habitantes discuten asuntos de la comunidad",
+        "Una votación para quitarle el cargo a un alcalde",
+        "Una reunión privada de los concejales para aprobar el presupuesto"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "10_world_6_multiple_choice_8",
+      "enunciado": "La alcaldía de tu ciudad deja que los habitantes de cada comuna decidan en qué invertir una parte del presupuesto. ¿Cómo se llama este mecanismo?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "En el presupuesto participativo la comunidad prioriza y vota en qué se gasta una parte del presupuesto local.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-1011-1",
+      "opciones": [
+        "Revocatoria del mandato",
+        "Referendo",
+        "Acción de tutela",
+        "Presupuesto participativo"
+      ],
+      "correctIndex": 3
+    },
+    {
+      "id": "10_world_6_multiple_choice_9",
+      "enunciado": "Un grupo de estudiantes quiere proponer una mejora para que más jóvenes de su región consigan empleo. ¿Cuál es el mejor primer paso?",
+      "competencia": "economia",
+      "dificultad": 3,
+      "explicacion": "Una propuesta de política económica empieza por un diagnóstico con datos confiables: sin entender el problema no se puede proponer bien.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-1011-2",
+      "opciones": [
+        "Escribir de una vez la ley que quieren que se apruebe",
+        "Revisar datos del desempleo juvenil de la región y entender sus causas",
+        "Pedirle al Banco de la República que contrate a los jóvenes",
+        "Preguntar solo a sus amigos y sacar conclusiones para toda la región"
+      ],
+      "correctIndex": 1,
+      "prueba": true
+    },
+    {
+      "id": "10_world_6_multiple_choice_10",
+      "enunciado": "Si quieres proponer un cambio en un impuesto nacional, ¿qué institución tiene que aprobarlo?",
+      "competencia": "economia",
+      "dificultad": 2,
+      "explicacion": "Los impuestos nacionales los aprueba el Congreso; el Gobierno puede proponerlos y la DIAN los recauda.",
+      "ambito": "politicaEconomica",
+      "desempeno": "PE-1011-2",
+      "opciones": [
+        "El Banco de la República",
+        "El DANE",
+        "El Congreso de la República, mediante una ley",
+        "La alcaldía de tu municipio"
+      ],
+      "correctIndex": 2
+    }
+  ]
+}
