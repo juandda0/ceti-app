@@ -1387,6 +1387,12 @@ export { publicarEnBiblioteca, usarDeBiblioteca, retirarDeBiblioteca } from './e
 export { operarClaseVivo } from './educadores/claseVivo';
 export { emitirCertificados, verCertificado, revocarCertificado } from './educadores/certificados';
 export {
+  publicarEnBibliotecaPublica,
+  usarDeBibliotecaPublica,
+  reportarPublicacion,
+  retirarDeBibliotecaPublica,
+} from './educadores/bibliotecaPublica';
+export {
   guardarDatosFacturacion,
   cotizarPlanEntidad,
   registrarOrdenCompra,

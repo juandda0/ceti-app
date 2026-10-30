@@ -671,6 +671,23 @@ await no('no las de otro', getDocs(collection(eMulti, `${K1}/estudiantes/eAct/in
 await no('no se editan', updateDoc(doc(pA, `${K1}/estudiantes/eAct/insignias/i1`), { motivo: 'otro' }));
 await si('el profe la quita', deleteDoc(doc(pA, `${K1}/estudiantes/eAct/insignias/i2`)));
 
+console.log('\nFase 8c · biblioteca pública');
+await env.withSecurityRulesDisabled(async (ctx) => {
+  const db = ctx.firestore();
+  await setDoc(doc(db, 'bibliotecaPublica/p1'), { titulo: 'Ahorro', autorUid: 'pB', oculto: false, usos: 0, publicadoAt: 1 });
+  await setDoc(doc(db, 'bibliotecaPublica/p2'), { titulo: 'Oculto', autorUid: 'pB', oculto: true, usos: 0, publicadoAt: 2 });
+  await setDoc(doc(db, 'bibliotecaPublica/p1/contenido/piezas'), { piezas: {} });
+});
+await si('un profe de otro colegio ve la ficha', getDoc(doc(pA2, 'bibliotecaPublica/p1')));
+await si('y lista las visibles', getDocs(query(collection(pA, 'bibliotecaPublica'), where('oculto', '==', false))));
+await no('sin filtrar las ocultas no lista', getDocs(collection(pA, 'bibliotecaPublica')));
+await no('una oculta no la ve otro profe', getDoc(doc(pA, 'bibliotecaPublica/p2')));
+await si('el autor sí ve la suya oculta', getDoc(doc(pB, 'bibliotecaPublica/p2')));
+await no('un estudiante no', getDoc(doc(eAct, 'bibliotecaPublica/p1')));
+await no('nadie lee las piezas', getDoc(doc(pA, 'bibliotecaPublica/p1/contenido/piezas')));
+await no('nadie publica desde el cliente', setDoc(doc(pA, 'bibliotecaPublica/p3'), { titulo: 'x', autorUid: 'pA', oculto: false }));
+await no('ni se quita reportes', updateDoc(doc(pB, 'bibliotecaPublica/p2'), { oculto: false, reportes: [] }));
+
 console.log('\nFase 8a · clase en vivo');
 const VIVO = `${K1}/vivo/actual`;
 const resp = (uid, n, over = {}) => ({ uid, n, r: 1, sesion: 's1', creadoAt: serverTimestamp(), ...over });

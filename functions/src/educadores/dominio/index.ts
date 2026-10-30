@@ -26,3 +26,4 @@ export * from './adaptaciones';
 export * from './grupos';
 export * from './claseVivo';
 export * from './certificados';
+export * from './bibliotecaPublica';

@@ -2628,6 +2628,33 @@
       "error": "No se pudo guardar la insignia",
       "tuProfe": "Tu profe",
       "misLogros": "Mis logros en esta clase"
+    },
+    "biblioteca": {
+      "sobre": "Ceti Educadores",
+      "titulo": "Biblioteca pública",
+      "subtitulo": "Mundos que comparten profes de todo el país. Cópialos a tu clase y ajústalos a tu grupo.",
+      "acceso": "Mundos de profes de todo el país, listos para copiar a tu clase.",
+      "buscar": "Buscar mundos: interés, ahorro, CDT…",
+      "todosLosGrados": "Todos los grados",
+      "todosLosAmbitos": "Todos los ámbitos",
+      "grados": "{{grupo}}°",
+      "autor": "Prof. {{nombre}}",
+      "enRevision": "En revisión",
+      "copiar": "Copiar a mi clase",
+      "copiarPiloto": "Copiar (Piloto)",
+      "reportar": "Reportar",
+      "reportarTitulo": "¿Reportar «{{mundo}}»?",
+      "reportarTexto": "Repórtalo si tiene errores, datos de estudiantes o algo que no va en clase. Con 3 reportes se oculta hasta que Ceti lo revise.",
+      "reportado": "Gracias. Ceti lo revisará.",
+      "vacio": "No hay mundos con esos filtros",
+      "vacioTexto": "Prueba con otro grado o ámbito, o comparte uno tuyo.",
+      "error": "No se pudo cargar la biblioteca",
+      "publicar": "Comparte tus mundos",
+      "publicarUno": "Publicar",
+      "publicarPlan": "Publicar en la biblioteca pública viene con Comandante o con el plan de tu institución. Copiar mundos a tu clase viene con Piloto.",
+      "verPlanes": "Ver planes",
+      "mostrarInstitucion": "Mostrar el nombre de mi institución",
+      "publicarNota": "Se publica una copia del mundo con su contenido, sin nada de tus estudiantes. Si lo cambias, vuelve a publicarlo para actualizarlo."
     }
   }
 }

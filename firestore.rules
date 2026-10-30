@@ -732,6 +732,17 @@ service cloud.firestore {
     match /certificados/{codigo} {
       allow read, write: if false;
     }
+    // Fase 8c — biblioteca pública de mundos: cualquier profe lee las fichas
+    // que no están ocultas (con 3 reportes) y las suyas; las piezas y los
+    // reportes son del servidor. Todo se escribe por callables.
+    match /bibliotecaPublica/{id} {
+      allow read: if isRole('profesor')
+        && (resource.data.oculto == false || resource.data.autorUid == request.auth.uid);
+      allow write: if false;
+      match /{sub=**} {
+        allow read, write: if false;
+      }
+    }
     match /mail/{id} {
       allow read, write: if false;
     }

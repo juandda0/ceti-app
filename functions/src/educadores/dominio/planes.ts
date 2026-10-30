@@ -117,7 +117,8 @@ export const PLANES: Record<PlanId, DefinicionPlan> = {
     id: 'nave',
     rango: 3,
     limites: { clases: ILIMITADO, estudiantesPorClase: 60, iaGeneracionesMes: 120, clasesVivoMes: ILIMITADO },
-    funciones: [...FUNCIONES_PILOTO, 'panelCapitan', 'prePostTest', 'resumenAcudientes'],
+    // Fase 8: los profes de un colegio también publican en la biblioteca pública.
+    funciones: [...FUNCIONES_PILOTO, 'panelCapitan', 'prePostTest', 'resumenAcudientes', 'bibliotecaPublicar'],
   },
 };
 

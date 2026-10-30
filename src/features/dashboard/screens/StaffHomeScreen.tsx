@@ -16,6 +16,7 @@ import { useMuro } from '@features/educadores/components/MuroPlan';
 import BannerPrueba from '@features/educadores/components/BannerPrueba';
 import BitacoraTarjeta from '@features/educadores/retencion/components/BitacoraTarjeta';
 import AvisosTarjeta from '@features/dashboard/components/AvisosTarjeta';
+import BibliotecaPublicaAcceso from '@features/educadores/biblioteca/components/BibliotecaPublicaAcceso';
 import InvitacionEntidadTarjeta from '@features/educadores/entidad/components/InvitacionEntidadTarjeta';
 import {
   BotonChunky,
@@ -148,6 +149,7 @@ export default function StaffHomeScreen() {
         />
         <InvitacionEntidadTarjeta />
         <AvisosTarjeta />
+        <BibliotecaPublicaAcceso />
         <BitacoraTarjeta />
 
         <BannerPrueba />
