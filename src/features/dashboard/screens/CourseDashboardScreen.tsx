@@ -18,6 +18,8 @@ import { buildWeaknessReport } from '@features/dashboard/data/weaknessReport';
 import { buildEarlyWarning, type RiskFlag } from '@features/dashboard/data/earlyWarning';
 import AssignmentsManager from '@features/dashboard/components/AssignmentsManager';
 import { useMiPlan } from '@features/educadores/hooks/useMiPlan';
+import AvisoSoloCalifica from '@features/educadores/permisos/AvisoSoloCalifica';
+import { usePermisoClase } from '@features/educadores/permisos/usePermisoClase';
 import TarjetaBloqueada from '@features/educadores/retencion/components/TarjetaBloqueada';
 import { showMessage } from '@shared/lib/dialogs';
 import { downloadTextFile, printPage } from '@shared/lib/export/downloadFile';
@@ -74,6 +76,7 @@ export default function CourseDashboardScreen() {
   const cursoId = params.cursoId;
   const cursoNombre = useNombreCurso(cursoId, params.nombre);
   const { puede, cargando: planCargando } = useMiPlan();
+  const { puede: puedeEnClase } = usePermisoClase(cursoId);
   // Mientras se lee el plan no se muestra ni la herramienta ni su adelanto.
   const conAlertas = !planCargando && puede('alertasTempranas');
   const conDebil = !planCargando && puede('competenciaDebil');
@@ -400,7 +403,12 @@ export default function CourseDashboardScreen() {
   const tareas =
     report && colegioId && cursoId && uid ? (
       <View style={styles.vista}>
-        <AssignmentsManager colegioId={colegioId} cursoId={cursoId} createdByUid={uid} />
+        <AssignmentsManager
+          colegioId={colegioId}
+          cursoId={cursoId}
+          createdByUid={uid}
+          soloLectura={!puedeEnClase('tareas')}
+        />
         {report.retoColumns.length > 0 ? (
           <>
             <Seccion texto={t('dashboard.retosTitle')} />
@@ -422,6 +430,7 @@ export default function CourseDashboardScreen() {
           titulo={cursoNombre}
           subtitulo={t('dashboard.courseReport')}
         />
+        <AvisoSoloCalifica cursoId={cursoId} />
 
         <View style={styles.exportar}>
           <BotonChunky
@@ -454,7 +463,9 @@ export default function CourseDashboardScreen() {
           icono={!planCargando && puede('analisisClase') ? 'analytics' : 'lock-closed-outline'}
           onPress={() => router.push(`/(staff)/analisis/${cursoId}` as Href)}
         />
-        {/* Fase 8: clase en vivo y grupos. */}
+        {/* Fase 8: clase en vivo y grupos (F9: solo quien edita la clase). */}
+        {puedeEnClase('claseVivo') ? (
+          <>
         <View style={styles.tiles}>
           <BotonChunky
             texto={t('diferenciales.vivo.entrada')}
@@ -476,6 +487,8 @@ export default function CourseDashboardScreen() {
             style={{ flex: 1 }}
           />
         </View>
+        {puedeEnClase('certificados') ? (
+          <>
         <BotonChunky
           texto={t('diferenciales.certificados.entrada')}
           icono={!planCargando && puede('certificados') ? 'ribbon' : 'lock-closed-outline'}
@@ -495,6 +508,10 @@ export default function CourseDashboardScreen() {
             )
           }
         />
+          </>
+        ) : null}
+          </>
+        ) : null}
         {/* Fase 7: evidencia de la educación económica y financiera. */}
         <View style={styles.tiles}>
           <BotonChunky

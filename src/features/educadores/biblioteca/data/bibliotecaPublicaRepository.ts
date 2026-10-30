@@ -6,7 +6,7 @@
 import { collection, getDocs, limit, query, where } from 'firebase/firestore';
 import { getFirebaseClients } from '@shared/lib/firebase/app';
 import { callFunction } from '@shared/lib/firebase/functions';
-import type { FichaPublica } from '@/functions/src/educadores/dominio';
+import type { FichaPublica, OcultoModeracion } from '@/functions/src/educadores/dominio';
 
 export type FichaConId = FichaPublica & { id: string };
 
@@ -36,4 +36,7 @@ export const bibliotecaPublicaRepository = {
   usar: (id: string, cursoId: string) => callFunction<{ ok: true; worldId: string }>('usarDeBibliotecaPublica', { id, cursoId }),
   reportar: (id: string, motivo: string) => callFunction<{ ok: true; oculto: boolean }>('reportarPublicacion', { id, motivo }),
   retirar: (id: string) => callFunction<{ ok: true }>('retirarDeBibliotecaPublica', { id }),
+  /** Fase 9: solo el admin de Ceti. */
+  ocultos: () => callFunction<{ ok: true; ocultos: OcultoModeracion[] }>('moderarBibliotecaPublica', { accion: 'listar' }),
+  mostrar: (id: string) => callFunction<{ ok: true }>('moderarBibliotecaPublica', { accion: 'mostrar', id }),
 };

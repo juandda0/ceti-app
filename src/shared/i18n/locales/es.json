@@ -1411,7 +1411,8 @@
         "ia": "Para que te ayude a escribir preguntas y mundos, pasa a {{plan}}.",
         "iaAgotada": "Ya usaste las {{count}} ayudas de este mes. Con {{plan}} tienes más.",
         "estudiantes": "Tu clase llegó a {{count}} estudiantes. Con {{plan}} caben más.",
-        "funcion": "{{funcion}} es de {{plan}}."
+        "funcion": "{{funcion}} es de {{plan}}.",
+        "vivo": "Ya usaste tus {{count}} clases en vivo del mes. Con {{plan}} son ilimitadas."
       },
       "nombre": {
         "cadete": "Cadete",
@@ -1500,7 +1501,8 @@
         "ia": "Te ayudo a escribir preguntas, teoría y mundos en segundos.",
         "iaAgotada": "Ya usaste las ayudas de este mes. Con {{plan}} tienes más.",
         "estudiantes": "Tu clase está llena. Con {{plan}} caben más estudiantes.",
-        "funcion": "{{funcion}}: lo tienes con {{plan}}."
+        "funcion": "{{funcion}}: lo tienes con {{plan}}.",
+        "vivo": "Ya usaste tus clases en vivo de este mes. Con {{plan}} son ilimitadas."
       },
       "anio": "Año escolar",
       "mensual": "Mensual",
@@ -2656,5 +2658,34 @@
       "mostrarInstitucion": "Mostrar el nombre de mi institución",
       "publicarNota": "Se publica una copia del mundo con su contenido, sin nada de tus estudiantes. Si lo cambias, vuelve a publicarlo para actualizarlo."
     }
+  },
+  "permisos": {
+    "aviso": "Ves y calificas esta clase: puedes abrir todo, calificar, dejar comentarios e insignias. Los cambios los hace quien la edita.",
+    "edita": "Edita",
+    "califica": "Ve y califica",
+    "veYCalifica": "Co-docente · ve y califica",
+    "ahoraEdita": "Ahora puede editar la clase",
+    "ahoraCalifica": "Ahora solo ve y califica",
+    "ayuda": "Toca «Edita» o «Ve y califica» para cambiar el permiso. Quien ve y califica no cambia contenido, tareas, la lista ni los ajustes."
+  },
+  "moderacion": {
+    "titulo": "Biblioteca pública · mundos ocultos",
+    "ayuda": "Un mundo se oculta solo con 3 reportes de profes distintos. Revísalo: si está bien, vuelve a mostrarlo (se borran los reportes); si no, retíralo. Las copias que ya hicieron los profes no cambian.",
+    "vacioTitulo": "Nada que revisar",
+    "vacioTexto": "No hay mundos ocultos en la biblioteca pública.",
+    "usos_one": "1 copia",
+    "usos_other": "{{count}} copias",
+    "reportes_one": "1 reporte",
+    "reportes_other": "{{count}} reportes",
+    "sinMotivo": "Sin motivo",
+    "mostrar": "Volver a mostrar",
+    "retirar": "Retirar",
+    "retirarTitulo": "¿Retirar «{{titulo}}»?",
+    "retirarTexto": "Sale de la biblioteca pública para todos. Las copias en las clases siguen igual.",
+    "cancelar": "Cancelar",
+    "guardando": "Guardando…",
+    "mostrado": "Volvió a la biblioteca",
+    "retirado": "Retirado de la biblioteca",
+    "error": "No se pudo moderar"
   }
 }

@@ -24,6 +24,7 @@ import {
   type CertificadoPublico,
 } from './dominio';
 import { planDeProfe } from './plan';
+import { exigirPermiso } from './permisos';
 
 function profeConColegio(auth: { uid: string; token: Record<string, unknown> } | undefined) {
   if (!auth) throw new HttpsError('unauthenticated', 'Sign in required.');
@@ -39,9 +40,7 @@ async function cursoDelProfe(db: Firestore, cid: string, cursoId: unknown, uid: 
     throw new HttpsError('invalid-argument', 'Falta la clase.');
   }
   const snap = await db.doc(`colegios/${cid}/cursos/${cursoId}`).get();
-  if (!snap.exists || !((snap.get('profesorUids') ?? []) as string[]).includes(uid)) {
-    throw new HttpsError('permission-denied', 'No es tu clase.');
-  }
+  exigirPermiso(snap, uid, 'certificados');
   return snap;
 }
 

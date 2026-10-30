@@ -97,6 +97,10 @@ export default function PlanesScreen() {
         ? t('educadores.planes.motivo.iaAgotada', { count: limites.iaGeneracionesMes, plan })
         : t('educadores.planes.motivo.ia', { plan });
     }
+    if (motivo === 'vivo') {
+      const tope = PLANES.cadete.limites.clasesVivoMes;
+      return t('educadores.planes.motivo.vivo', { count: tope, plan });
+    }
     return t('educadores.planes.motivo.estudiantes', { count: limites.estudiantesPorClase, plan });
   })();
 

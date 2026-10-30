@@ -28,6 +28,10 @@ import {
   MENSAJES_ERROR_CODOCENTE,
   MENSAJES_ERROR_ENTIDAD,
   cambiarCoDocente,
+  cambiarPermiso,
+  MENSAJES_ERROR_PERMISO,
+  permisoEnClase,
+  soloCalificarSin,
   esRolEntidad,
   esTipoEntidad,
   invitacionVigente,
@@ -440,7 +444,7 @@ export const sacarProfeEntidad = onCall(async (request) => {
   for (const c of cursos.docs) {
     const nuevos = profesTrasSalida((c.get('profesorUids') ?? []) as string[], uid, pasarA);
     if (nuevos.length === 0) sinProfe += 1;
-    await c.ref.update({ profesorUids: nuevos });
+    await c.ref.update({ profesorUids: nuevos, soloCalificar: soloCalificarSin(c.data(), uid) });
   }
   const miembro = await refProfe(db, p.colegioId, uid).get();
   const personal = await colegioPersonal(db, uid, miembro.get('colegioPersonal'));
@@ -473,7 +477,12 @@ export const gestionarCoDocente = onCall(async (request) => {
   const cursoId = request.data?.cursoId;
   const uid = request.data?.uid;
   const accion = request.data?.accion;
-  if (typeof cursoId !== 'string' || !cursoId || typeof uid !== 'string' || !uid || (accion !== 'agregar' && accion !== 'quitar')) {
+  const permiso = request.data?.permiso;
+  if (
+    typeof cursoId !== 'string' || !cursoId || typeof uid !== 'string' || !uid ||
+    (accion !== 'agregar' && accion !== 'quitar' && accion !== 'permiso') ||
+    (accion === 'permiso' && permiso !== 'edita' && permiso !== 'califica')
+  ) {
     throw new HttpsError('invalid-argument', 'Falta la clase, el profe o la acción.');
   }
   const db = getFirestore();
@@ -488,15 +497,25 @@ export const gestionarCoDocente = onCall(async (request) => {
     if (!snap.exists) throw new HttpsError('not-found', 'No encontramos la clase.');
     const actuales = (snap.get('profesorUids') ?? []) as string[];
     const esAdmin = e.profes.find((x) => x.uid === p.uid)?.rol === 'admin';
-    if (!actuales.includes(p.uid) && !esAdmin) {
-      throw new HttpsError('permission-denied', 'Solo un profe de la clase o un admin.');
+    // F9: cambia los profes quien edita la clase o un admin de la entidad.
+    if (permisoEnClase(snap.data(), p.uid) !== 'edita' && !esAdmin) {
+      throw new HttpsError('permission-denied', 'Solo un profe que edita la clase o un admin.');
+    }
+    if (accion === 'permiso') {
+      const r = cambiarPermiso(snap.data() ?? {}, uid, permiso);
+      if (!r.ok) throw new HttpsError('failed-precondition', MENSAJES_ERROR_PERMISO[r.error], { codigo: r.error });
+      tx.update(ref, { soloCalificar: r.soloCalificar });
+      return { profesorUids: actuales, soloCalificar: r.soloCalificar };
     }
     const r = cambiarCoDocente(actuales, new Set(e.profes.map((x) => x.uid)), uid, accion);
     if (!r.ok) {
       throw new HttpsError('failed-precondition', MENSAJES_ERROR_CODOCENTE[r.error], { codigo: r.error });
     }
-    tx.update(ref, { profesorUids: r.profesorUids });
-    return r.profesorUids;
+    let soloCalificar = soloCalificarSin(snap.data() ?? {}, accion === 'quitar' ? uid : '');
+    // Se puede sumar a alguien directamente como «ve y califica».
+    if (accion === 'agregar' && permiso === 'califica') soloCalificar = [...soloCalificar, uid];
+    tx.update(ref, { profesorUids: r.profesorUids, soloCalificar });
+    return { profesorUids: r.profesorUids, soloCalificar };
   });
-  return { ok: true, profesorUids: resultado };
+  return { ok: true, ...resultado };
 });

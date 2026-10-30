@@ -42,6 +42,8 @@ import {
 import ImportarLista from '@features/educadores/retencion/components/ImportarLista';
 import type { EstudianteEstado } from '@shared/types/tenancy';
 import { useNombreCurso } from '@features/dashboard/hooks/useNombreCurso';
+import { permisoEnClase } from '@/functions/src/educadores/dominio';
+import AvisoSoloCalifica from '@features/educadores/permisos/AvisoSoloCalifica';
 
 const POLICY_VERSION = 'v1';
 
@@ -81,7 +83,10 @@ export default function CourseManageScreen() {
   const soloLecturaPlan = useClaseSoloLectura(colegioId, cursoId);
   const archivada = curso?.archivada === true;
   // Una clase archivada se ve pero no se edita; se desarchiva en la vista Clase.
-  const soloLectura = soloLecturaPlan || archivada;
+  // Fase 9: quien solo ve y califica la clase ve todo esto sin poder cambiarlo.
+  const miUid = useAuthStore((s) => s.firebaseUid);
+  const soloCalifica = !!curso && !!miUid && permisoEnClase(curso, miUid) === 'califica';
+  const soloLectura = soloLecturaPlan || archivada || soloCalifica;
   const [codeBusy, setCodeBusy] = useState(false);
 
   const reload = useCallback(async () => {
@@ -304,7 +309,7 @@ export default function CourseManageScreen() {
           </Text>
           <Pill texto={t(`estados.${s.estado}`)} tono={TONO_ESTADO[s.estado]} />
         </View>
-        {s.estado !== 'suprimido' ? (
+        {s.estado !== 'suprimido' && !soloCalifica ? (
           <View style={styles.acciones}>
             {esta ? (
               <Bounceable
@@ -396,6 +401,8 @@ export default function CourseManageScreen() {
           subtitulo={t('profe.gestionarSub')}
         />
 
+        <AvisoSoloCalifica cursoId={cursoId} />
+
         {soloLecturaPlan ? (
           <Aviso icono="lock-closed-outline" tono="neutro" texto={t('educadores.muro.soloLectura')}>
             <View style={{ alignSelf: 'flex-start' }}>
@@ -431,13 +438,16 @@ export default function CourseManageScreen() {
                 colegioId={colegioId}
                 curso={curso}
                 estudiantesEnClase={enClase.length}
-                soloLectura={soloLecturaPlan}
+                soloLectura={soloLecturaPlan || soloCalifica}
                 onCambio={reload}
               />
-              <AccesibilidadClase colegioId={colegioId} cursoId={curso.id} grado={curso.grado} />
+              {soloCalifica ? null : (
+                <AccesibilidadClase colegioId={colegioId} cursoId={curso.id} grado={curso.grado} />
+              )}
               <CoDocentesClase
                 cursoId={curso.id}
                 profesorUids={curso.profesorUids ?? []}
+                soloCalificar={curso.soloCalificar ?? []}
                 creador={curso.createdByUid}
                 onCambio={reload}
               />

@@ -34,6 +34,7 @@ import {
   planDeCurso,
 } from './limites';
 import { sigueEnClase } from './gestionClase';
+import { exigirPermiso } from './permisos';
 
 export const COL_INVITACIONES_POR_CORREO = 'invitacionesPorCorreo';
 /** Tope del texto pegado (200 filas holgadas). */
@@ -121,10 +122,7 @@ export const invitarLista = onCall(async (request): Promise<ResultadoInvitarList
   const db = getFirestore();
   const cursoRef = db.doc(`colegios/${colegioId}/cursos/${cursoId}`);
   const curso = await cursoRef.get();
-  const profesorUids = (curso.data()?.profesorUids ?? []) as string[];
-  if (!curso.exists || !profesorUids.includes(caller.uid)) {
-    throw new HttpsError('permission-denied', 'Not a teacher of this course.');
-  }
+  exigirPermiso(curso, caller.uid, 'lista');
 
   const leida = leerLista(lista);
   const [{ plan }, roster, pendientes, correosRoster, yaInvitados, nave] = await Promise.all([

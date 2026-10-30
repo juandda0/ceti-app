@@ -87,3 +87,14 @@ export function filtrarBiblioteca<T extends Pick<FichaPublica, 'buscable' | 'gru
     .filter((x) => !f.ambito || (x.ambitosMen ?? []).includes(f.ambito))
     .sort((a, b) => b.usos - a.usos || b.publicadoAt - a.publicadoAt);
 }
+
+/** Fase 9 — lo que ve el admin de Ceti de un mundo oculto (sin las piezas). */
+export interface OcultoModeracion {
+  id: string;
+  titulo: string;
+  autorNombre: string;
+  institucion: string | null;
+  usos: number;
+  publicadoAt: number;
+  reportes: { motivo: string | null; reportadoAt: number }[];
+}

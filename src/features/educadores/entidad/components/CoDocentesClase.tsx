@@ -2,6 +2,7 @@
  * Gestionar clase → Ajustes (Fase 6): los profes de la clase. En una entidad
  * con plan se suman co-docentes de la misma entidad; cada uno ve y gestiona
  * toda la clase y recibe sus propias alertas. La clase nunca queda sin profe.
+ * Fase 9: cada co-docente edita o solo «ve y califica» (`soloCalificar`).
  */
 import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -9,7 +10,8 @@ import { useTranslation } from 'react-i18next';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { confirmAction, showMessage } from '@shared/lib/dialogs';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
-import { MAX_PROFES_POR_CLASE } from '@/functions/src/educadores/dominio';
+import { MAX_PROFES_POR_CLASE, permisoEnClase, type PermisoClase } from '@/functions/src/educadores/dominio';
+import { olvidarPermisoClase } from '@features/educadores/permisos/usePermisoClase';
 import { Avatar, Chip, Pill, Seccion, Tarjeta } from '@features/dashboard/components/profe/kit';
 import { entidadRepository } from '../data/entidadRepository';
 import { useMiEntidad } from '../hooks/useMiEntidad';
@@ -17,11 +19,13 @@ import { useMiEntidad } from '../hooks/useMiEntidad';
 export default function CoDocentesClase({
   cursoId,
   profesorUids,
+  soloCalificar = [],
   creador,
   onCambio,
 }: {
   cursoId: string;
   profesorUids: string[];
+  soloCalificar?: string[];
   creador?: string;
   onCambio: () => void;
 }) {
@@ -34,13 +38,27 @@ export default function CoDocentesClase({
   if (!vista?.entidad) return null;
   const nombre = new Map(vista.profes.map((p) => [p.uid, p.nombre]));
   const otros = vista.profes.filter((p) => !profesorUids.includes(p.uid));
-  const puedeGestionar = conLicencia && (profesorUids.includes(uid ?? '') || soyAdmin);
+  const permiso = (u: string) => permisoEnClase({ profesorUids, soloCalificar }, u);
+  const puedeGestionar = conLicencia && ((!!uid && permiso(uid) === 'edita') || soyAdmin);
 
-  const cambiar = async (otro: string, accion: 'agregar' | 'quitar') => {
+  const cambiar = async (otro: string, accion: 'agregar' | 'quitar' | 'permiso', nuevo?: PermisoClase) => {
     setOcupado(otro);
     try {
-      await entidadRepository.coDocente(cursoId, otro, accion);
-      showMessage(t(accion === 'agregar' ? 'entidad.coDocentes.agregado' : 'entidad.coDocentes.quitado'), undefined, 'success');
+      await entidadRepository.coDocente(cursoId, otro, accion, nuevo);
+      olvidarPermisoClase(cursoId);
+      showMessage(
+        t(
+          accion === 'agregar'
+            ? 'entidad.coDocentes.agregado'
+            : accion === 'quitar'
+              ? 'entidad.coDocentes.quitado'
+              : nuevo === 'califica'
+                ? 'permisos.ahoraCalifica'
+                : 'permisos.ahoraEdita'
+        ),
+        undefined,
+        'success'
+      );
       onCambio();
     } catch (e) {
       showMessage(t('entidad.error'), e instanceof Error ? e.message : String(e), 'error');
@@ -62,9 +80,21 @@ export default function CoDocentesClase({
                 {u === uid ? ` · ${t('entidad.tu')}` : ''}
               </Text>
               <Text style={[st.sub, { color: colors.text.tertiary }]}>
-                {u === creador ? t('entidad.coDocentes.creo') : t('entidad.coDocentes.coDocente')}
+                {u === creador || u === profesorUids[0]
+                  ? t('entidad.coDocentes.creo')
+                  : permiso(u) === 'califica'
+                    ? t('permisos.veYCalifica')
+                    : t('entidad.coDocentes.coDocente')}
               </Text>
             </View>
+            {puedeGestionar && u !== profesorUids[0] ? (
+              <Chip
+                texto={ocupado === u ? t('entidad.guardando') : permiso(u) === 'califica' ? t('permisos.califica') : t('permisos.edita')}
+                icono={permiso(u) === 'califica' ? 'eye-outline' : 'create-outline'}
+                seleccionado={permiso(u) === 'edita'}
+                onPress={() => void cambiar(u, 'permiso', permiso(u) === 'califica' ? 'edita' : 'califica')}
+              />
+            ) : null}
             {puedeGestionar && profesorUids.length > 1 ? (
               <Chip
                 texto={t('entidad.coDocentes.quitar')}
@@ -106,6 +136,7 @@ export default function CoDocentesClase({
             ))}
           </View>
           <Text style={[st.sub, { color: colors.text.tertiary }]}>{t('entidad.coDocentes.ayuda')}</Text>
+          <Text style={[st.sub, { color: colors.text.tertiary }]}>{t('permisos.ayuda')}</Text>
         </View>
       ) : null}
     </View>

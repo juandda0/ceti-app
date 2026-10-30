@@ -37,10 +37,20 @@ service cloud.firestore {
         && request.auth.uid in
           get(/databases/$(database)/documents/colegios/$(cid)/cursos/$(cursoId)).data.profesorUids;
     }
+    // Fase 9 — who may EDIT the course (content, config, assignments,
+    // accommodations): a teacher of the course who is not in `soloCalificar`
+    // (co-teachers who only view and grade). The creator (`profesorUids[0]`)
+    // always edits. Same document as isProfesorDe → one get().
+    function isEditorDe(cid, cursoId) {
+      let c = get(/databases/$(database)/documents/colegios/$(cid)/cursos/$(cursoId)).data;
+      return isProfesorDe(cid, cursoId)
+        && (c.profesorUids[0] == request.auth.uid
+          || !(request.auth.uid in c.get('soloCalificar', [])));
+    }
     // Who may OPERATE a course (assignments, codes, attestation, toggles): the
-    // course's teacher. Structural provisioning is Admin SDK only (backend).
+    // course's teacher who edits it. Structural provisioning is Admin SDK only.
     function canOperarCurso(cid, cursoId) {
-      return isProfesorDe(cid, cursoId);
+      return isEditorDe(cid, cursoId);
     }
     // Ley 1581 gate: a student only generates data once a staffer attested the
     // acudiente authorization and estado flipped to 'activo'. get() on a missing
@@ -192,7 +202,7 @@ service cloud.firestore {
           allow read: if isProfesorDe(cid, cursoId)
             || isEstudianteActivoEnCurso(cid, cursoId, request.auth.uid);
           allow create, update: if configId == 'mundos'
-            && isProfesorDe(cid, cursoId)
+            && isEditorDe(cid, cursoId)
             && tienePlanEdicion(cid)
             && request.resource.data.keys().hasOnly(['mundos', 'overrides', 'version', 'updatedAt', 'updatedByUid'])
             && (!('overrides' in request.resource.data) || request.resource.data.overrides is map)
@@ -205,30 +215,30 @@ service cloud.firestore {
           // Fase 5 — `comunicacion`: alertas al profe (on/off y N días) y el
           // resumen para acudientes. El servidor revisa el plan al usarla.
           allow create, update: if configId == 'comunicacion'
-            && isProfesorDe(cid, cursoId)
+            && isEditorDe(cid, cursoId)
             && request.resource.data.keys().hasOnly(['alertas', 'acudientes', 'actualizadoAt', 'actualizadoPor'])
             && (!('alertas' in request.resource.data) || request.resource.data.alertas is map)
             && (!('acudientes' in request.resource.data) || request.resource.data.acudientes is map)
             && request.resource.data.actualizadoAt is number
             && request.resource.data.actualizadoPor == request.auth.uid;
           // Fase 8 — `grupos` (hasta 12; un estudiante en uno) y `accesibilidad`
-          // (leer en voz alta para toda la clase). Cualquier profe de la clase,
+          // (leer en voz alta para toda la clase). Quien edita la clase (F9),
           // en todos los planes.
           allow create, update: if configId == 'grupos'
-            && isProfesorDe(cid, cursoId)
+            && isEditorDe(cid, cursoId)
             && request.resource.data.keys().hasOnly(['grupos', 'actualizadoAt', 'actualizadoPor'])
             && request.resource.data.grupos is list
             && request.resource.data.grupos.size() <= 12
             && request.resource.data.actualizadoAt is number
             && request.resource.data.actualizadoPor == request.auth.uid;
           allow create, update: if configId == 'accesibilidad'
-            && isProfesorDe(cid, cursoId)
+            && isEditorDe(cid, cursoId)
             && request.resource.data.keys().hasOnly(['leerEnVozAlta', 'actualizadoAt', 'actualizadoPor'])
             && request.resource.data.leerEnVozAlta is bool
             && request.resource.data.actualizadoAt is number
             && request.resource.data.actualizadoPor == request.auth.uid;
           // `prueba` (Fase 7) solo la escribe el callable gestionarPrueba.
-          allow delete: if isProfesorDe(cid, cursoId) && configId in ['mundos', 'comunicacion', 'grupos', 'accesibilidad'];
+          allow delete: if isEditorDe(cid, cursoId) && configId in ['mundos', 'comunicacion', 'grupos', 'accesibilidad'];
         }
 
         // Course-custom content (D-ORQ, RQ-PR11/PR12): copy-on-write copies of
@@ -240,7 +250,7 @@ service cloud.firestore {
         match /contenido/{docId} {
           allow read: if isProfesorDe(cid, cursoId)
             || isEstudianteActivoEnCurso(cid, cursoId, request.auth.uid);
-          allow create, update: if isProfesorDe(cid, cursoId)
+          allow create, update: if isEditorDe(cid, cursoId)
             && tienePlanEdicion(cid)
             && (
               (docId.matches('banco_.*')
@@ -266,7 +276,7 @@ service cloud.firestore {
                 && request.resource.data.situaciones.size() >= 1
                 && request.resource.data.situaciones.size() <= 30)
             );
-          allow delete: if isProfesorDe(cid, cursoId);
+          allow delete: if isEditorDe(cid, cursoId);
         }
 
         match /estudiantes/{uid} {
@@ -364,13 +374,13 @@ service cloud.firestore {
           }
 
           // Fase 8 — adaptaciones del estudiante (más tiempo, menos opciones, voz,
-          // letra grande). Las pone cualquier profe de la clase; las lee el
+          // letra grande). Las pone quien edita la clase (F9); las lee el
           // estudiante activo. No tocan su nota ni los informes.
           match /adaptaciones/{docId} {
             allow read: if isProfesorDe(cid, cursoId)
               || isEstudianteActivoEnCurso(cid, cursoId, uid);
             allow create, update: if docId == 'actual'
-              && isProfesorDe(cid, cursoId)
+              && isEditorDe(cid, cursoId)
               && request.resource.data.keys().hasOnly(['masTiempo', 'menosOpciones', 'leerEnVozAlta', 'letraGrande', 'actualizadoAt', 'actualizadoPor'])
               && request.resource.data.masTiempo is bool
               && request.resource.data.menosOpciones is bool
@@ -378,7 +388,7 @@ service cloud.firestore {
               && request.resource.data.letraGrande is bool
               && request.resource.data.actualizadoAt is number
               && request.resource.data.actualizadoPor == request.auth.uid;
-            allow delete: if isProfesorDe(cid, cursoId);
+            allow delete: if isEditorDe(cid, cursoId);
           }
 
           // Fase 8 — certificados (los escribe el callable emitirCertificados; la
@@ -458,7 +468,7 @@ service cloud.firestore {
           allow read: if isProfesorDe(cid, cursoId)
             || (isEstudianteActivoEnCurso(cid, cursoId, request.auth.uid)
               && resource.data.tipo == 'anuncio');
-          allow delete: if isProfesorDe(cid, cursoId) && resource.data.tipo == 'anuncio';
+          allow delete: if isEditorDe(cid, cursoId) && resource.data.tipo == 'anuncio';
           allow create, update: if false;
 
           // "Visto" de un anuncio: el estudiante deja una marca suya, una vez.
@@ -491,14 +501,14 @@ service cloud.firestore {
                 && resource.data.target.uid == request.auth.uid)));
         // Create/operate: the target course's teacher (matriz §1.3). Shape is now
         // validated so a reto brief cannot smuggle free text or montos (RQ-PR14).
-        allow create: if isProfesorDe(cid, request.resource.data.target.cursoId)
+        allow create: if isEditorDe(cid, request.resource.data.target.cursoId)
           && request.resource.data.createdByUid == request.auth.uid
           && asignacionShapeValida(request.resource.data);
-        allow update: if isProfesorDe(cid, resource.data.target.cursoId)
+        allow update: if isEditorDe(cid, resource.data.target.cursoId)
           && request.resource.data.target == resource.data.target
           && request.resource.data.createdByUid == resource.data.createdByUid
           && asignacionShapeValida(request.resource.data);
-        allow delete: if isProfesorDe(cid, resource.data.target.cursoId);
+        allow delete: if isEditorDe(cid, resource.data.target.cursoId);
       }
     }
 

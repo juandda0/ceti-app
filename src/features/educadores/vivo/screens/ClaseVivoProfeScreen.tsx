@@ -16,6 +16,10 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { showMessage } from '@shared/lib/dialogs';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { useMiPlan } from '@features/educadores/hooks/useMiPlan';
+import { useMuro } from '@features/educadores/components/MuroPlan';
+import { motivoDeError } from '@features/educadores/data/planUi';
+import AvisoSoloCalifica from '@features/educadores/permisos/AvisoSoloCalifica';
+import { usePermisoClase } from '@features/educadores/permisos/usePermisoClase';
 import { rosterRepository } from '@features/dashboard/data/rosterRepository';
 import { classConfigRepository } from '@features/dashboard/data/classConfigRepository';
 import { useNombreCurso } from '@features/dashboard/hooks/useNombreCurso';
@@ -65,6 +69,8 @@ export default function ClaseVivoProfeScreen() {
   const nombreCurso = useNombreCurso(cursoId, params.nombre);
   const colegioId = useAuthStore((s) => s.colegioId);
   const { plan, limites, cargando: planCargando } = useMiPlan();
+  const muro = useMuro();
+  const { puede: puedeEnClase } = usePermisoClase(cursoId);
 
   const [sesion, setSesion] = useState<SesionVivo | null | undefined>(undefined);
   const [nombres, setNombres] = useState<Record<string, string>>({});
@@ -184,7 +190,10 @@ export default function ClaseVivoProfeScreen() {
       const titulo = mundos.find((m) => m.worldId === worldId)?.nombre ?? '';
       await vivoRepository.crear(cursoId, { worldId, titulo, segundos, preguntas });
     } catch (e) {
-      showMessage(t('diferenciales.vivo.error'), e instanceof Error ? e.message : undefined, 'error');
+      // F9: al pasar el cupo del mes, el muro con los planes en vez del mensaje.
+      const motivo = motivoDeError(e);
+      if (motivo) muro.abrir(motivo);
+      else showMessage(t('diferenciales.vivo.error'), e instanceof Error ? e.message : undefined, 'error');
     } finally {
       setOcupado(false);
     }
@@ -206,10 +215,11 @@ export default function ClaseVivoProfeScreen() {
     <ScreenWrapper>
       <ContextScrollView contentContainerStyle={[st.page, { paddingTop: insets.top + 12 }]} showsVerticalScrollIndicator={false}>
         {encabezado}
+        <AvisoSoloCalifica cursoId={cursoId} />
 
         {sesion === undefined ? <Esqueleto filas={3} alto={80} /> : null}
 
-        {sesion === null ? (
+        {sesion === null && puedeEnClase('claseVivo') ? (
           <>
             <Tarjeta style={{ gap: 12 }}>
               <Text style={[st.cuerpo, { color: colors.text.secondary }]}>{t('diferenciales.vivo.intro')}</Text>
@@ -357,6 +367,7 @@ export default function ClaseVivoProfeScreen() {
           <Vacio icono="planet-outline" titulo={t('diferenciales.vivo.sinMundos')} />
         ) : null}
       </ContextScrollView>
+      {muro.hoja}
     </ScreenWrapper>
   );
 }

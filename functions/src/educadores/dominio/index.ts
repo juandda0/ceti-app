@@ -27,3 +27,4 @@ export * from './grupos';
 export * from './claseVivo';
 export * from './certificados';
 export * from './bibliotecaPublica';
+export * from './permisosClase';

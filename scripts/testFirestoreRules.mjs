@@ -724,6 +724,31 @@ await no('revelada: ya no se responde', setDoc(doc(eMulti, `${VIVO}/respuestas/0
 await si('el profe ve el historial', getDoc(doc(pA, `${K1}/sesionesVivo/s0`)));
 await no('el estudiante no', getDoc(doc(eAct, `${K1}/sesionesVivo/s0`)));
 
+console.log('\nFase 9a · docente que ve y califica');
+// k1: pA la creó; pEd edita y pCal solo ve y califica (cursos/k1.soloCalificar).
+const pEd = como('pEd', { role: 'profesor', colegioId: 'A' });
+const pCal = como('pCal', { role: 'profesor', colegioId: 'A' });
+await env.withSecurityRulesDisabled(async (ctx) => {
+  const db = ctx.firestore();
+  await updateDoc(doc(db, K1), { profesorUids: ['pA', 'pEd', 'pCal'], soloCalificar: ['pCal', 'pA'] });
+  // Con la licencia de la entidad, los co-docentes también tienen plan de edición.
+  await updateDoc(doc(db, 'colegios/A'), { licencia: { plan: 'colegio', hasta: LEJOS } });
+});
+await si('quien califica lee la clase', getDoc(doc(pCal, K1)));
+await si('y la ficha del estudiante', getDoc(doc(pCal, `${K1}/estudiantes/eAct`)));
+await si('y sus intentos', getDocs(intentos(pCal, 'eAct')));
+await si('quien edita configura mundos', setDoc(doc(pEd, `${K1}/config/mundos`), config('pEd')));
+await si('el creador edita aunque figure en soloCalificar', setDoc(doc(pA, `${K1}/config/mundos`), config('pA')));
+await no('quien califica no configura mundos', setDoc(doc(pCal, `${K1}/config/mundos`), config('pCal')));
+await no('ni los restaura', deleteDoc(doc(pCal, `${K1}/config/mundos`)));
+await no('ni edita contenido', setDoc(doc(pCal, `${K1}/contenido/banco_world_1_mc`), banco));
+await no('ni arma grupos', setDoc(doc(pCal, `${K1}/config/grupos`), grupos('pCal')));
+await no('ni pone adaptaciones', setDoc(doc(pCal, `${K1}/estudiantes/eAct/adaptaciones/actual`), adapt('pCal')));
+await no('ni crea tareas', setDoc(doc(pCal, 'colegios/A/asignaciones/deCal'), tarea({ tipo: 'curso', cursoId: 'k1' }, { createdByUid: 'pCal' })));
+await si('quien edita crea tareas', setDoc(doc(pEd, 'colegios/A/asignaciones/deEd'), tarea({ tipo: 'curso', cursoId: 'k1' }, { createdByUid: 'pEd' })));
+await si('quien califica da insignias', setDoc(doc(pCal, `${K1}/estudiantes/eAct/insignias/c1`), insignia({ dadaPor: 'pCal' })));
+await no('nadie se cambia el permiso desde el cliente', updateDoc(doc(pCal, K1), { soloCalificar: [] }));
+
 console.log('\nAgregados y otros');
 await si('profe del colegio lee el agregado', getDoc(doc(pA, `${K1}/agregados/resumen`)));
 await no('estudiante no', getDoc(doc(eAct, `${K1}/agregados/resumen`)));

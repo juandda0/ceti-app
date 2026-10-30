@@ -21,6 +21,7 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { showMessage } from '@shared/lib/dialogs';
 import { adminService } from '@features/dashboard/data/adminService';
 import { performLogoutAndGo } from '@features/auth/performLogout';
+import ModeracionBiblioteca from '@features/educadores/biblioteca/components/ModeracionBiblioteca';
 
 type Colegio = { id: string; nombre: string };
 /** Slug + short random suffix → a stable, collision-resistant colegio id. */
@@ -158,6 +159,9 @@ export default function AdminPanelScreen() {
                 <Text style={styles.smallBtnText}>{t('adminPanel.createColegio')}</Text>
               </TouchableOpacity>
             </View>
+
+            {/* Fase 9: mundos de la biblioteca pública ocultos por reportes. */}
+            <ModeracionBiblioteca />
           </>
         )}
       </ScrollView>

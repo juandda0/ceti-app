@@ -31,6 +31,7 @@ import {
 import { cursoPanel, leerRango } from './entidadPanel';
 import { leerEntidad } from './entidades';
 import { planDeProfe } from './plan';
+import { exigirPermiso } from './permisos';
 
 function profeConColegio(auth: { uid: string; token: Record<string, unknown> } | undefined): { uid: string; cid: string } {
   if (!auth) throw new HttpsError('unauthenticated', 'Sign in required.');
@@ -41,13 +42,12 @@ function profeConColegio(auth: { uid: string; token: Record<string, unknown> } |
   return { uid: auth.uid, cid };
 }
 
-async function cursoDelProfe(db: Firestore, cid: string, cursoId: unknown, uid: string) {
+async function cursoDelProfe(db: Firestore, cid: string, cursoId: unknown, uid: string, accion: 'prueba' | 'ver') {
   if (typeof cursoId !== 'string' || !cursoId || cursoId.includes('/')) {
     throw new HttpsError('invalid-argument', 'Falta la clase.');
   }
   const snap = await db.doc(`colegios/${cid}/cursos/${cursoId}`).get();
-  const profes = (snap.get('profesorUids') ?? []) as string[];
-  if (!snap.exists || !profes.includes(uid)) throw new HttpsError('permission-denied', 'No es tu clase.');
+  exigirPermiso(snap, uid, accion);
   return snap;
 }
 
@@ -64,7 +64,7 @@ export const gestionarPrueba = onCall(async (request) => {
   const { cursoId, fase, abrir } = (request.data ?? {}) as Record<string, unknown>;
   if (!esFasePrueba(fase) || typeof abrir !== 'boolean') throw new HttpsError('invalid-argument', 'Fase o acción inválida.');
   const db = getFirestore();
-  await cursoDelProfe(db, cid, cursoId, uid);
+  await cursoDelProfe(db, cid, cursoId, uid, 'prueba');
   await exigirFuncion(uid, cid, 'prePostTest', 'La prueba de entrada y salida viene con el plan de la institución.');
   const ref = db.doc(`colegios/${cid}/cursos/${cursoId as string}/config/prueba`);
   return db.runTransaction(async (tx) => {
@@ -80,7 +80,7 @@ export const gestionarPrueba = onCall(async (request) => {
 export const verCoberturaClase = onCall(async (request): Promise<PanelEntidad> => {
   const { uid, cid } = profeConColegio(request.auth);
   const db = getFirestore();
-  const curso = await cursoDelProfe(db, cid, request.data?.cursoId, uid);
+  const curso = await cursoDelProfe(db, cid, request.data?.cursoId, uid, 'ver');
   await exigirFuncion(uid, cid, 'informeCobertura', 'El informe de cobertura de tu clase viene con el plan Piloto.');
   const ahora = Date.now();
   const rango = leerRango(request.data);

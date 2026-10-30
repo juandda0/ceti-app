@@ -18,6 +18,7 @@ import {
   type PublicacionBiblioteca,
 } from './dominio';
 import { leerEntidad, type EstadoEntidad } from './entidades';
+import { exigirPermiso } from './permisos';
 
 interface Contexto {
   db: Firestore;
@@ -52,9 +53,8 @@ async function cursoDelProfe(c: Contexto, cursoId: unknown) {
   }
   const ref = c.db.doc(`colegios/${c.colegioId}/cursos/${cursoId}`);
   const snap = await ref.get();
-  if (!snap.exists || !((snap.get('profesorUids') ?? []) as string[]).includes(c.uid)) {
-    throw new HttpsError('permission-denied', 'No eres profe de esa clase.');
-  }
+  // F9: publicar o copiar un mundo cambia contenido: solo quien edita la clase.
+  exigirPermiso(snap, c.uid, 'publicar');
   return { ref, snap };
 }
 

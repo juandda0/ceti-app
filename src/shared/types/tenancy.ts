@@ -59,6 +59,8 @@ export type Curso = {
   sedeId?: string;
   /** Auth uids of teachers who manage this course. */
   profesorUids: string[];
+  /** Fase 9: co-teachers (subset of profesorUids) who only view and grade. */
+  soloCalificar?: string[];
   /** Class self-join code (set by the generateClassCode Function). */
   codigo?: string;
   /** false = the teacher turned the join code off (editarMiCurso). */

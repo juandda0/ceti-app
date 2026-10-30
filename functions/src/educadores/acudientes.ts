@@ -33,6 +33,7 @@ import { planDeProfe } from './plan';
 import { NOMBRES_MUNDOS_POR_DEFECTO, nombreDeMundo } from './bitacoraSemanal';
 import { encolarCorreo } from './correo';
 import { URL_APP } from './invitaciones';
+import { exigirPermiso } from './permisos';
 
 export const COL_ENLACES = 'enlacesAcudiente';
 const DIA_MS = 24 * 60 * 60 * 1000;
@@ -91,9 +92,7 @@ export async function gestionarAcudienteEnClase(
     db.doc(`${base}/estudiantes/${uid}`).get(),
     db.doc(rutaDatos(colegioId, cursoId, uid)).get(),
   ]);
-  if (!curso.exists || !((curso.get('profesorUids') ?? []) as string[]).includes(profeUid)) {
-    throw new HttpsError('permission-denied', 'Not a teacher of this course.');
-  }
+  exigirPermiso(curso, profeUid, 'acudientes');
   const datosRef = db.doc(rutaDatos(colegioId, cursoId, uid));
   const actual = {
     token: tokenConForma(datosSnap.get('token')) ? (datosSnap.get('token') as string) : null,

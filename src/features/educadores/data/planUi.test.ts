@@ -48,6 +48,9 @@ describe('errores de límite del servidor', () => {
     expect(motivoDeError(error({ codigo: 'limite_clases' }))).toBe('clases');
     expect(motivoDeError(error({ codigo: 'limite_estudiantes' }))).toBe('estudiantes');
     expect(motivoDeError(error({ codigo: 'limite_ia' }))).toBe('ia');
+    // F9: el tope de clases en vivo de Cadete abre el muro hacia Piloto.
+    expect(motivoDeError(error({ codigo: 'limite_vivo' }))).toBe('vivo');
+    expect(planParaMotivo('vivo', 'cadete')).toBe('piloto');
     expect(motivoDeError(error({ codigo: 'requiere_plan' }))).toBe('iaAuthoring');
     expect(motivoDeError(error({ codigo: 'requiere_plan' }), 'mundosPropios')).toBe(
       'mundosPropios'

@@ -29,6 +29,7 @@ import {
 } from './dominio';
 import { planDeProfe } from './plan';
 import { enviadorPorDefecto, notificar, type Enviador } from './notificaciones';
+import { exigirPermiso } from './permisos';
 
 const DIA_MS = 24 * 60 * 60 * 1000;
 
@@ -63,10 +64,9 @@ export async function enviarComunicadoEnClase(
   const ahora = deps.ahora ?? Date.now();
   const base = `colegios/${colegioId}/cursos/${cursoId}`;
   const curso = await db.doc(base).get();
-  const profesorUids = (curso.get('profesorUids') ?? []) as string[];
-  if (!curso.exists || !profesorUids.includes(profeUid)) {
-    throw new HttpsError('permission-denied', 'Not a teacher of this course.');
-  }
+  // F9: el comentario a un estudiante también lo deja quien ve y califica;
+  // anuncios y mensajes a la clase, solo quien la edita.
+  exigirPermiso(curso, profeUid, pedido.tipo === 'retro' ? 'retroalimentar' : 'comunicar');
 
   const funcion = funcionDeComunicado(pedido.tipo);
   if (funcion && !puede(deps.plan, funcion)) {

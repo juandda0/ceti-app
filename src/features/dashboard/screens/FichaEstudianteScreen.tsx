@@ -18,6 +18,8 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { showMessage } from '@shared/lib/dialogs';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { useMiPlan } from '@features/educadores/hooks/useMiPlan';
+import AvisoSoloCalifica from '@features/educadores/permisos/AvisoSoloCalifica';
+import { usePermisoClase } from '@features/educadores/permisos/usePermisoClase';
 import { useEvaluacion } from '@features/educadores/entidad/hooks/useEvaluacion';
 import TarjetaBloqueada from '@features/educadores/retencion/components/TarjetaBloqueada';
 import { FadeIn, GrowBar } from '@features/savings/charts/ChartParts';
@@ -73,6 +75,7 @@ export default function FichaEstudianteScreen() {
     nombre?: string;
   }>();
   const { puede, cargando: planCargando } = useMiPlan();
+  const { puede: puedeEnClase } = usePermisoClase(cursoId);
   const completa = !planCargando && puede('fichaCompleta');
   const { escala, cargando: escalaCargando } = useEvaluacion();
 
@@ -149,6 +152,7 @@ export default function FichaEstudianteScreen() {
                 : null
           }
         />
+        <AvisoSoloCalifica cursoId={cursoId} />
 
         {estado === 'cargando' ? <Esqueleto filas={4} alto={88} /> : null}
         {estado === 'error' ? (
@@ -445,15 +449,16 @@ export default function FichaEstudianteScreen() {
                   uid={uid}
                   nombre={nombreVisible}
                   mundos={datos?.mundos ?? []}
+                  soloRetro={!puedeEnClase('comunicar')}
                 />
               ) : null}
-              {colegioId && cursoId && uid && datos?.estudiante?.estado === 'activo' ? (
+              {colegioId && cursoId && uid && datos?.estudiante?.estado === 'activo' && puedeEnClase('adaptaciones') ? (
                 <AdaptacionesFicha colegioId={colegioId} cursoId={cursoId} uid={uid} nombre={nombreVisible} />
               ) : null}
               {colegioId && cursoId && uid && datos?.estudiante?.estado === 'activo' ? (
                 <InsigniasFicha colegioId={colegioId} cursoId={cursoId} uid={uid} nombre={nombreVisible} />
               ) : null}
-              {colegioId && cursoId && uid ? (
+              {colegioId && cursoId && uid && puedeEnClase('acudientes') ? (
                 <AcudienteFicha
                   colegioId={colegioId}
                   cursoId={cursoId}

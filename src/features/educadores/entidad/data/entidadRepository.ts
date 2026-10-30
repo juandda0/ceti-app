@@ -109,8 +109,13 @@ export const entidadRepository = {
   sacar: (uid: string | null, pasarA: string | null) =>
     callFunction<{ ok: true; clases: number; sinProfe: number }>('sacarProfeEntidad', { uid, pasarA }),
   cambiarRol: (uid: string, rol: RolEntidad) => callFunction<{ ok: true }>('cambiarRolProfeEntidad', { uid, rol }),
-  coDocente: (cursoId: string, uid: string, accion: 'agregar' | 'quitar') =>
-    callFunction<{ ok: true; profesorUids: string[] }>('gestionarCoDocente', { cursoId, uid, accion }),
+  coDocente: (cursoId: string, uid: string, accion: 'agregar' | 'quitar' | 'permiso', permiso?: 'edita' | 'califica') =>
+    callFunction<{ ok: true; profesorUids: string[]; soloCalificar: string[] }>('gestionarCoDocente', {
+      cursoId,
+      uid,
+      accion,
+      ...(permiso ? { permiso } : {}),
+    }),
   panel: (forzar = false, rango?: { desde: number; hasta: number }) =>
     callFunction<PanelEntidad>('verPanelEntidad', { forzar, ...(rango ?? {}) }),
   guardarEvaluacion: (config: ConfigEvaluacion) =>

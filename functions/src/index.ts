@@ -68,6 +68,7 @@ import {
 } from './educadores/gestionClase';
 import { rutaVivo } from './educadores/claseVivo';
 import { borrarCertificados } from './educadores/certificados';
+import { exigirPermiso } from './educadores/permisos';
 
 initializeApp();
 
@@ -141,17 +142,19 @@ async function applyClaims(uid: string, payload: ClaimsPayload): Promise<void> {
     .set({ ...claims, claimsUpdatedAt: FieldValue.serverTimestamp() });
 }
 
-/** Verify the caller is a teacher listed on the course. */
+/**
+ * Verify the caller is a teacher listed on the course who may EDIT it (F9: a
+ * co-teacher in `soloCalificar` only views and grades). Every caller of this
+ * operates the class (roster, codes, content, AI authoring, suppression).
+ */
 async function assertProfesorDeCurso(
   uid: string,
   colegioId: string,
   cursoId: string
 ): Promise<void> {
   const snap = await getFirestore().doc(`colegios/${colegioId}/cursos/${cursoId}`).get();
-  const profesorUids = (snap.data()?.profesorUids ?? []) as string[];
-  if (!snap.exists || !profesorUids.includes(uid)) {
-    throw new HttpsError('permission-denied', 'Not a teacher of this course.');
-  }
+  if (!snap.exists) throw new HttpsError('permission-denied', 'Not a teacher of this course.');
+  exigirPermiso(snap, uid, 'contenido');
 }
 
 /**
@@ -1391,6 +1394,7 @@ export {
   usarDeBibliotecaPublica,
   reportarPublicacion,
   retirarDeBibliotecaPublica,
+  moderarBibliotecaPublica,
 } from './educadores/bibliotecaPublica';
 export {
   guardarDatosFacturacion,

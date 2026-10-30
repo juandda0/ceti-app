@@ -9,6 +9,9 @@
  *   en borrador (`mundosPropios`, Piloto o más).
  * - `reportarPublicacion`: un reporte por profe; con 3 se oculta.
  * - `retirarDeBibliotecaPublica`: el autor o un admin de Ceti.
+ * - `moderarBibliotecaPublica` (F9): el admin de Ceti lista los ocultos con sus
+ *   reportes y vuelve a mostrar uno (limpia los reportes). Retirar es
+ *   `retirarDeBibliotecaPublica`. Los mundos ya copiados a clases no se tocan.
  */
 import { randomBytes } from 'node:crypto';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
@@ -26,10 +29,12 @@ import {
   type ConfigMundosDoc,
   type EntradaMundo,
   type FichaPublica,
+  type OcultoModeracion,
   type Funcion,
   type PublicacionBiblioteca,
 } from './dominio';
 import { planDeProfe } from './plan';
+import { exigirPermiso } from './permisos';
 
 function profe(auth: { uid: string; token: Record<string, unknown> } | undefined) {
   if (!auth) throw new HttpsError('unauthenticated', 'Sign in required.');
@@ -51,9 +56,8 @@ async function cursoDelProfe(db: Firestore, cid: string, cursoId: unknown, uid: 
   }
   const ref = db.doc(`colegios/${cid}/cursos/${cursoId}`);
   const snap = await ref.get();
-  if (!snap.exists || !((snap.get('profesorUids') ?? []) as string[]).includes(uid)) {
-    throw new HttpsError('permission-denied', 'No eres profe de esa clase.');
-  }
+  // F9: publicar o copiar un mundo cambia contenido: solo quien edita la clase.
+  exigirPermiso(snap, uid, 'publicar');
   return { ref, snap };
 }
 
@@ -167,4 +171,46 @@ export const retirarDeBibliotecaPublica = onCall(async (request) => {
   }
   await db.recursiveDelete(ref);
   return { ok: true };
+});
+
+export const moderarBibliotecaPublica = onCall(async (request) => {
+  const auth = request.auth;
+  if (!auth) throw new HttpsError('unauthenticated', 'Sign in required.');
+  if (auth.token.role !== 'admin') throw new HttpsError('permission-denied', 'Solo el equipo de Ceti modera la biblioteca.');
+  const db = getFirestore();
+  const accion = request.data?.accion;
+  if (accion === 'listar') {
+    const ocultos = await db.collection('bibliotecaPublica').where('oculto', '==', true).limit(100).get();
+    const lista: OcultoModeracion[] = await Promise.all(
+      ocultos.docs.map(async (d) => {
+        const reportes = await d.ref.collection('reportes').get();
+        return {
+          id: d.id,
+          titulo: String(d.get('titulo') ?? ''),
+          autorNombre: String(d.get('autorNombre') ?? ''),
+          institucion: typeof d.get('institucion') === 'string' ? (d.get('institucion') as string) : null,
+          usos: Number(d.get('usos') ?? 0),
+          publicadoAt: Number(d.get('publicadoAt') ?? 0),
+          reportes: reportes.docs
+            .map((r) => ({ motivo: (r.get('motivo') as string | null) ?? null, reportadoAt: Number(r.get('reportadoAt') ?? 0) }))
+            .sort((a, b) => b.reportadoAt - a.reportadoAt),
+        };
+      })
+    );
+    return { ok: true, ocultos: lista.sort((a, b) => b.reportes.length - a.reportes.length) };
+  }
+  if (accion === 'mostrar') {
+    const id = request.data?.id;
+    if (!idValido(id)) throw new HttpsError('invalid-argument', 'Falta el mundo.');
+    const ref = db.doc(`bibliotecaPublica/${id}`);
+    const s = await ref.get();
+    if (!s.exists) throw new HttpsError('not-found', 'Ese mundo ya no está en la biblioteca.');
+    const reportes = await ref.collection('reportes').get();
+    const lote = db.batch();
+    reportes.docs.forEach((r) => lote.delete(r.ref));
+    lote.update(ref, { oculto: false, reportes: [], revisadoAt: Date.now(), revisadoPor: auth.uid });
+    await lote.commit();
+    return { ok: true };
+  }
+  throw new HttpsError('invalid-argument', 'Acción inválida.');
 });

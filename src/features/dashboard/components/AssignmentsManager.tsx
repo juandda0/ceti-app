@@ -54,10 +54,13 @@ export default function AssignmentsManager({
   colegioId,
   cursoId,
   createdByUid,
+  soloLectura = false,
 }: {
   colegioId: string;
   cursoId: string;
   createdByUid: string;
+  /** Fase 9: quien solo ve y califica ve las tareas sin crearlas ni cambiarlas. */
+  soloLectura?: boolean;
 }) {
   const { t } = useTranslation();
   const colors = useThemeColors();
@@ -220,6 +223,7 @@ export default function AssignmentsManager({
 
   return (
     <View style={styles.wrap}>
+      {soloLectura ? null : (
       <Tarjeta style={{ gap: 14 }}>
         <View style={styles.cabeza}>
           <View style={[styles.cabezaIcono, { backgroundColor: colors.fill.brandSubtle }]}>
@@ -320,6 +324,7 @@ export default function AssignmentsManager({
           onPress={() => void onCreate()}
         />
       </Tarjeta>
+      )}
 
       <Seccion texto={t('profe.tareasAsignadas', { count: sorted.length })} />
 
@@ -391,6 +396,7 @@ export default function AssignmentsManager({
                             : 'neutro'
                       }
                     />
+                    {soloLectura ? null : (
                     <View style={styles.itemAcciones}>
                       <Bounceable
                         onPress={() => void extender(a)}
@@ -416,6 +422,7 @@ export default function AssignmentsManager({
                         <Ionicons name="trash-outline" size={16} color={colors.system.red} />
                       </Bounceable>
                     </View>
+                    )}
                   </View>
                 </Tarjeta>
               </Animated.View>

@@ -12,13 +12,14 @@ import {
 } from '@/functions/src/educadores/dominio';
 
 /** Razón por la que se abre el muro o la pantalla de planes. */
-export type Motivo = Funcion | 'clases' | 'ia' | 'estudiantes';
+export type Motivo = Funcion | 'clases' | 'ia' | 'estudiantes' | 'vivo';
 
 export function esMotivo(v: unknown): v is Motivo {
   return (
     typeof v === 'string' &&
     (v === 'clases' ||
       v === 'ia' ||
+      v === 'vivo' ||
       v === 'estudiantes' ||
       (FUNCIONES as readonly string[]).includes(v))
   );
@@ -35,7 +36,7 @@ export function esFuncion(v: Motivo): v is Funcion {
  */
 export function planParaMotivo(motivo: Motivo, actual: PlanId): PlanId {
   if (esFuncion(motivo)) return planMinimoPara(motivo);
-  if (motivo === 'clases') return 'piloto';
+  if (motivo === 'clases' || motivo === 'vivo') return 'piloto';
   if (motivo === 'ia') {
     return PLANES[actual].limites.iaGeneracionesMes > 0 ? 'comandante' : 'piloto';
   }
@@ -49,6 +50,7 @@ export const CODIGOS_LIMITE = [
   'limite_estudiantes',
   'requiere_plan',
   'limite_ia',
+  'limite_vivo',
 ] as const;
 export type CodigoLimite = (typeof CODIGOS_LIMITE)[number];
 
@@ -70,6 +72,7 @@ export function motivoDeError(e: unknown, siRequierePlan: Motivo = 'iaAuthoring'
   if (codigo === 'limite_clases') return 'clases';
   if (codigo === 'limite_estudiantes') return 'estudiantes';
   if (codigo === 'limite_ia') return 'ia';
+  if (codigo === 'limite_vivo') return 'vivo';
   // requiere_plan puede traer la función exacta en details.funcion.
   const funcion = (e as { details?: { funcion?: unknown } }).details?.funcion;
   return typeof funcion === 'string' && esMotivo(funcion) ? funcion : siRequierePlan;

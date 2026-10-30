@@ -29,6 +29,7 @@ import {
 } from './dominio';
 import { mesBogota, planDeProfe } from './plan';
 import { refUsoIa } from './limites';
+import { exigirPermiso } from './permisos';
 
 const ACCIONES = ['crear', 'siguiente', 'revelar', 'terminar', 'cerrar'] as const;
 type Accion = (typeof ACCIONES)[number];
@@ -87,9 +88,8 @@ export const operarClaseVivo = onCall(async (request) => {
   const db = getFirestore();
   const cursoPath = `colegios/${cid}/cursos/${cursoId}`;
   const curso = await db.doc(cursoPath).get();
-  if (!curso.exists || !((curso.get('profesorUids') ?? []) as string[]).includes(auth.uid)) {
-    throw new HttpsError('permission-denied', 'No es tu clase.');
-  }
+  // F9: quien ve y califica no abre ni opera la clase en vivo.
+  exigirPermiso(curso, auth.uid, 'claseVivo');
   const ref = db.doc(rutaVivo(cid, cursoId));
   const refClave = ref.collection('privado').doc('clave');
   const ahora = Date.now();

@@ -35,12 +35,15 @@ export default function MensajesFicha({
   uid,
   nombre,
   mundos,
+  soloRetro = false,
 }: {
   colegioId: string;
   cursoId: string;
   uid: string;
   nombre: string;
   mundos: MundoDeLaClase[];
+  /** Fase 9: quien solo ve y califica deja comentarios, no mensajes sueltos. */
+  soloRetro?: boolean;
 }) {
   const { t } = useTranslation();
   const colors = useThemeColors();
@@ -97,7 +100,7 @@ export default function MensajesFicha({
       ) : null}
       {conMensajes ? (
         <Tarjeta style={st.tarjeta}>
-          <Segmented options={modos} value={modo} onChange={setModo} />
+          {soloRetro ? null : <Segmented options={modos} value={modo} onChange={setModo} />}
           {modo === 'retro' ? (
             <>
               <Text style={[st.ayuda, { color: colors.text.secondary }]}>
