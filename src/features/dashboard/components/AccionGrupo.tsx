@@ -1,7 +1,7 @@
 /**
- * "Los que…" (Fase 3): actuar sobre un grupo de estudiantes de una vez. Hoy:
- * asignarles un mundo a cada uno (tarea individual de una semana) y copiar sus
- * nombres. Los mensajes llegan en la Fase 5.
+ * "Los que…" (Fase 3): actuar sobre un grupo de estudiantes de una vez:
+ * asignarles un mundo a cada uno (tarea individual de una semana), escribirles
+ * un mensaje (Fase 5, plan Piloto; no pueden responder) y copiar sus nombres.
  */
 import { useState } from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
@@ -12,6 +12,7 @@ import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { asignacionRepository } from '@features/dashboard/data/asignacionRepository';
 import type { MundoDeLaClase } from '@features/dashboard/data/fichaEstudiante';
 import { BotonChunky, Chip, Tarjeta } from '@features/dashboard/components/profe/kit';
+import RedactarMensaje from '@features/dashboard/components/RedactarMensaje';
 
 const DIA_MS = 24 * 60 * 60 * 1000;
 
@@ -33,7 +34,7 @@ export default function AccionGrupo({
   const { t } = useTranslation();
   const colors = useThemeColors();
   const profeUid = useAuthStore((s) => s.firebaseUid);
-  const [abierto, setAbierto] = useState(false);
+  const [abierto, setAbierto] = useState<'asignar' | 'escribir' | null>(null);
   const [mundo, setMundo] = useState<string | null>(mundoSugerido ?? null);
   const [ocupado, setOcupado] = useState(false);
 
@@ -57,7 +58,7 @@ export default function AccionGrupo({
         )
       );
       showMessage(t('analisis.grupoAsignado', { count: estudiantes.length }), undefined, 'success');
-      setAbierto(false);
+      setAbierto(null);
     } catch (e) {
       showMessage(t('admin.error'), e instanceof Error ? e.message : String(e), 'error');
     } finally {
@@ -87,7 +88,25 @@ export default function AccionGrupo({
       >
         {estudiantes.map((e) => e.nombre).join(' · ')}
       </Text>
-      {abierto ? (
+      {abierto === 'escribir' ? (
+        <>
+          <RedactarMensaje
+            colegioId={colegioId}
+            cursoId={cursoId}
+            tipo="mensaje"
+            para={estudiantes.map((e) => e.uid)}
+            placeholder={t('comunicacion.grupoPlaceholder')}
+            textoBoton={t('comunicacion.grupoEnviar', { count: estudiantes.length })}
+            onEnviado={() => setAbierto(null)}
+          />
+          <BotonChunky
+            texto={t('admin.cancel')}
+            variante="secundario"
+            compacto
+            onPress={() => setAbierto(null)}
+          />
+        </>
+      ) : abierto === 'asignar' ? (
         <>
           <Text style={[st.ayuda, { color: colors.text.secondary }]}>
             {t('analisis.grupoAyuda')}
@@ -118,7 +137,14 @@ export default function AccionGrupo({
             icono="flag"
             variante="secundario"
             compacto
-            onPress={() => setAbierto(true)}
+            onPress={() => setAbierto('asignar')}
+          />
+          <BotonChunky
+            texto={t('comunicacion.grupoAccion')}
+            icono="chatbubble-ellipses"
+            variante="secundario"
+            compacto
+            onPress={() => setAbierto('escribir')}
           />
           {Platform.OS === 'web' ? (
             <BotonChunky

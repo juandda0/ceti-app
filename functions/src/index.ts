@@ -1324,6 +1324,9 @@ export { bitacoraSemanal } from './educadores/bitacoraSemanal';
 // Ceti Educadores · Fase 1: resumen de cada intento en la clase.
 export { onIntentoClase } from './educadores/registroClase';
 
+// Ceti Educadores · Fase 5: comunicación del profe con su clase.
+export { enviarComunicado } from './educadores/comunicacion';
+
 // Ceti Educadores · cobros (Wompi, ciclo diario de suscripciones).
 export {
   cotizarPlan,

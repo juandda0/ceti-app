@@ -35,6 +35,7 @@ import { planetaDeMundo } from '@features/learning/data/planetas';
 import { ESPACIO, FondoEstrellas } from '@features/learning/components/galaxia/espacio';
 import AuthorizationPendingBanner from '@features/dashboard/components/AuthorizationPendingBanner';
 import StudentAssignmentsBanner from '@features/dashboard/components/StudentAssignmentsBanner';
+import TableroClase from '@features/dashboard/components/TableroClase';
 import SelectorEspacio from '@features/learning/components/galaxia/SelectorEspacio';
 import { claveProgreso } from '@features/learning/data/espacio';
 import { useVisitaClase } from '@features/dashboard/hooks/useVisitaClase';
@@ -244,6 +245,7 @@ export default function WorldsScreen() {
         <SelectorEspacio />
         <View style={estilos.avisos}>
           <AuthorizationPendingBanner />
+          <TableroClase />
           <StudentAssignmentsBanner
             nombreDeMundo={(id) => mundos.find((m) => m.id === id)?.nombre ?? null}
             mundoHecho={(id) => isWorldComplete(uid, id as WorldId)}

@@ -454,6 +454,16 @@ export default function CourseDashboardScreen() {
           icono={!planCargando && puede('analisisClase') ? 'analytics' : 'lock-closed-outline'}
           onPress={() => router.push(`/(staff)/analisis/${cursoId}` as Href)}
         />
+        <BotonChunky
+          texto={t('comunicacion.entrada')}
+          icono="megaphone"
+          variante="secundario"
+          onPress={() =>
+            router.push(
+              `/(staff)/comunicacion/${cursoId}?nombre=${encodeURIComponent(cursoNombre)}` as Href
+            )
+          }
+        />
 
         {status === 'ready' && report ? (
           <Segmented options={vistas} value={vista} onChange={setVista} />

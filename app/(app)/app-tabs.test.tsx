@@ -4,6 +4,7 @@ const mockTabNames: string[] = [];
 const mockTabOptions: Record<string, unknown> = {};
 
 jest.mock('@features/avatar/hooks/useProgresoAvatar', () => ({ useVigilarDesbloqueos: () => {} }));
+jest.mock('@features/dashboard/hooks/usePushCeti', () => ({ usePushCeti: () => {} }));
 jest.mock('expo-router', () => ({
   Tabs: Object.assign(({ children }: { children: React.ReactNode }) => <>{children}</>, {
     Screen: ({ name, options }: { name: string; options?: unknown }) => {

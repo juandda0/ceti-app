@@ -1,7 +1,7 @@
 /**
  * Firestore en memoria para los tests de límites, invitaciones, Bitácora y gestión
  * de clases. Cubre solo lo que usan esos módulos: doc/collection/collectionGroup,
- * where (==, !=, array-contains, in), select, orderBy(documentId), limit, startAfter, count, getAll,
+ * where (==, !=, array-contains, in, >=, <=, <), select, orderBy(documentId), limit, startAfter, count, getAll,
  * batch y runTransaction. `FieldValue.increment` se representa con
  * `{__incremento: n}` (ver el mock de firebase-admin/firestore en cada test).
  */
@@ -188,6 +188,9 @@ class ColeccionFalsa {
       if (op === '!=') return x !== undefined && x !== v;
       if (op === 'array-contains') return Array.isArray(x) && x.includes(v);
       if (op === 'in') return Array.isArray(v) && v.includes(x);
+      if (op === '>=') return typeof x === 'number' && x >= (v as number);
+      if (op === '<=') return typeof x === 'number' && x <= (v as number);
+      if (op === '<') return typeof x === 'number' && x < (v as number);
       throw new Error(`op no soportada: ${op}`);
     };
     return this.con({ filtro });

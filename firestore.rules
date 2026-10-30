@@ -296,6 +296,42 @@ service cloud.firestore {
             allow delete: if false;
           }
 
+          // Fase 5 — buzón: mensajes y comentarios del profe para este estudiante.
+          // Los escribe solo el callable enviarComunicado. El estudiante activo
+          // los lee y solo puede marcarlos como vistos (una vez); no responde.
+          match /buzon/{mensajeId} {
+            allow read: if isProfesorDe(cid, cursoId)
+              || isEstudianteActivoEnCurso(cid, cursoId, uid);
+            allow update: if isEstudianteActivoEnCurso(cid, cursoId, uid)
+              && resource.data.leidoAt == null
+              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['leidoAt'])
+              && request.resource.data.leidoAt is number;
+            allow create, delete: if false;
+          }
+
+        }
+
+        // Fase 5 — lo que el profe le mandó a la clase (callable enviarComunicado).
+        // Los estudiantes activos leen solo los anuncios; los mensajes con
+        // destinatarios (`para`, `nombres`) son del profe. El profe puede borrar
+        // un anuncio; nada más se escribe desde el cliente.
+        match /comunicados/{comunicadoId} {
+          allow read: if isProfesorDe(cid, cursoId)
+            || (isEstudianteActivoEnCurso(cid, cursoId, request.auth.uid)
+              && resource.data.tipo == 'anuncio');
+          allow delete: if isProfesorDe(cid, cursoId) && resource.data.tipo == 'anuncio';
+          allow create, update: if false;
+
+          // "Visto" de un anuncio: el estudiante deja una marca suya, una vez.
+          match /vistos/{uid} {
+            allow read: if isProfesorDe(cid, cursoId)
+              || isEstudianteActivoEnCurso(cid, cursoId, uid);
+            allow create: if isEstudianteActivoEnCurso(cid, cursoId, uid)
+              && get(/databases/$(database)/documents/colegios/$(cid)/cursos/$(cursoId)/comunicados/$(comunicadoId)).data.tipo == 'anuncio'
+              && request.resource.data.keys().hasOnly(['vistoAt'])
+              && request.resource.data.vistoAt is number;
+            allow update, delete: if false;
+          }
         }
 
         // Per-course aggregates (RQ-FN09): NO individual minor data. Readable by
@@ -586,6 +622,26 @@ service cloud.firestore {
           && request.time.toMillis() < get(subRef).data.get('vigenteHasta', 0))
         || (licencia.get('plan', '') == 'nave'
           && request.time.toMillis() < licencia.get('hasta', 0));
+    }
+    // Fase 5 — avisos de la app (functions/src/educadores/notificaciones.ts).
+    // El doc raíz guarda los tokens de push del celular del usuario; los avisos
+    // los escribe solo el servidor y el usuario solo los marca como leídos o los
+    // borra.
+    match /notificaciones/{uid} {
+      allow read, delete: if isSelf(uid);
+      allow create, update: if isSelf(uid)
+        && request.resource.data.keys().hasOnly(['expoTokens', 'actualizadoAt'])
+        && request.resource.data.expoTokens is list
+        && request.resource.data.expoTokens.size() <= 5
+        && request.resource.data.actualizadoAt is number;
+
+      match /items/{itemId} {
+        allow read, delete: if isSelf(uid);
+        allow update: if isSelf(uid)
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['leidaAt'])
+          && request.resource.data.leidaAt is number;
+        allow create: if false;
+      }
     }
     // Mi banco de preguntas (Fase 4): preguntas que el profe reutiliza entre
     // clases y mundos. Solo su dueño, y solo con forma válida.

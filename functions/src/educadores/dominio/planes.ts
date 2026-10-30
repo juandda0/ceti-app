@@ -42,6 +42,8 @@ export const FUNCIONES = [
   'prePostTest',
   'fichaCompleta',
   'analisisClase',
+  'mensajesProfe',
+  'resumenAcudientes',
 ] as const;
 export type Funcion = (typeof FUNCIONES)[number];
 
@@ -77,6 +79,9 @@ const FUNCIONES_PILOTO: readonly Funcion[] = [
   'fichaCompleta',
   // Análisis de la clase: mapa de calor, preguntas, actividad y tareas.
   'analisisClase',
+  // Mensajes a un estudiante o a un grupo y comentarios en la ficha (Fase 5).
+  // Los anuncios a toda la clase son de todos los planes.
+  'mensajesProfe',
 ];
 
 export const PLANES: Record<PlanId, DefinicionPlan> = {
@@ -96,13 +101,14 @@ export const PLANES: Record<PlanId, DefinicionPlan> = {
     id: 'comandante',
     rango: 2,
     limites: { clases: ILIMITADO, estudiantesPorClase: 60, iaGeneracionesMes: 300 },
-    funciones: [...FUNCIONES_PILOTO, 'bibliotecaPublicar', 'aulasConMarca'],
+    // El resumen para acudientes es el gancho del tutor (Fase 5).
+    funciones: [...FUNCIONES_PILOTO, 'bibliotecaPublicar', 'aulasConMarca', 'resumenAcudientes'],
   },
   nave: {
     id: 'nave',
     rango: 3,
     limites: { clases: ILIMITADO, estudiantesPorClase: 60, iaGeneracionesMes: 120 },
-    funciones: [...FUNCIONES_PILOTO, 'panelCapitan', 'prePostTest'],
+    funciones: [...FUNCIONES_PILOTO, 'panelCapitan', 'prePostTest', 'resumenAcudientes'],
   },
 };
 

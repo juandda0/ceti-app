@@ -61,6 +61,15 @@ describe('planes', () => {
     expect(planMinimoPara('alertasTempranas')).toBe('piloto');
     expect(planMinimoPara('panelCapitan')).toBe('nave');
   });
+  it('Fase 5: mensajes desde Piloto; resumen para acudientes en Comandante y Nave', () => {
+    expect(puede('cadete', 'mensajesProfe')).toBe(false);
+    expect(puede('piloto', 'mensajesProfe')).toBe(true);
+    expect(puede('piloto', 'resumenAcudientes')).toBe(false);
+    expect(puede('comandante', 'resumenAcudientes')).toBe(true);
+    expect(puede('nave', 'resumenAcudientes')).toBe(true);
+    expect(planMinimoPara('mensajesProfe')).toBe('piloto');
+    expect(planMinimoPara('resumenAcudientes')).toBe('comandante');
+  });
   it('Cadete tiene una clase; Piloto ilimitadas', () => {
     expect(puedeCrearClase('cadete', 0)).toBe(true);
     expect(puedeCrearClase('cadete', 1)).toBe(false);

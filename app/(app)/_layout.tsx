@@ -13,6 +13,7 @@ import FloatingVoiceButton from '@features/savings/components/FloatingVoiceButto
 import { useVigilarDesbloqueos } from '@features/avatar/hooks/useProgresoAvatar';
 import { useAperturaOrbita } from '@features/orbita/hooks/useOrbita';
 import { useInvitacionPendiente } from '@features/dashboard/hooks/useInvitacionPendiente';
+import { usePushCeti } from '@features/dashboard/hooks/usePushCeti';
 
 const TAB_ICON_SIZE = 24;
 const TAB_HEIGHT = 90;
@@ -46,6 +47,7 @@ export default function AppTabLayout() {
   useVigilarDesbloqueos();
   useAperturaOrbita();
   useInvitacionPendiente();
+  usePushCeti();
 
   const mode = useThemeStore((s) => s.mode);
   const isLight = mode === 'light';
@@ -125,6 +127,7 @@ export default function AppTabLayout() {
         />
         <Tabs.Screen name="vestidor" options={{ href: null }} />
         <Tabs.Screen name="unirme" options={{ href: null }} />
+        <Tabs.Screen name="mensajes" options={{ href: null }} />
         <Tabs.Screen name="boveda" options={{ href: null }} />
         <Tabs.Screen name="dinero" options={{ href: null }} />
         <Tabs.Screen name="savings" options={{ href: null }} />

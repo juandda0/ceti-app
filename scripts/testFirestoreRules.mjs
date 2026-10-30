@@ -105,6 +105,22 @@ await env.withSecurityRulesDisabled(async (ctx) => {
   await setDoc(doc(db, 'classCodes/ABC234'), { colegioId: 'A', cursoId: 'k1' });
   await setDoc(doc(db, 'membership/eAct'), { role: 'estudiante' });
   await setDoc(doc(db, `${K1}/estudiantes/eAct/resumen/clase`), { intentos: 1 });
+  // Fase 5
+  await setDoc(doc(db, `${K1}/comunicados/anuncio1`), { tipo: 'anuncio', texto: 'Hola', creadoAt: 1 });
+  await setDoc(doc(db, `${K1}/comunicados/msg1`), {
+    tipo: 'mensaje',
+    texto: 'Te extraño',
+    para: ['eAct'],
+    nombres: ['eAct'],
+    creadoAt: 1,
+  });
+  await setDoc(doc(db, `${K1}/estudiantes/eAct/buzon/msg1`), {
+    tipo: 'mensaje',
+    texto: 'Te extraño',
+    creadoAt: 1,
+    leidoAt: null,
+  });
+  await setDoc(doc(db, 'notificaciones/eAct/items/n1'), { tipo: 'anuncio', titulo: 't', leidaAt: null });
 });
 
 // ── Quién llama ────────────────────────────────────────────────────────────
@@ -420,6 +436,80 @@ await si(
 );
 await no('no lee la individual de otro', getDoc(doc(eAct, 'colegios/A/asignaciones/aPend')));
 await no('pendiente todavía no las lee', getDoc(doc(ePend, 'colegios/A/asignaciones/aPend')));
+
+console.log('\nFase 5 · comunicación');
+await si('el profe lee lo que mandó', getDoc(doc(pA, `${K1}/comunicados/msg1`)));
+await si(
+  'estudiante activo lista los anuncios',
+  getDocs(query(collection(eAct, `${K1}/comunicados`), where('tipo', '==', 'anuncio')))
+);
+await no('pero no los mensajes con destinatarios', getDoc(doc(eAct, `${K1}/comunicados/msg1`)));
+await no(
+  'ni una lista sin filtrar',
+  getDocs(collection(eAct, `${K1}/comunicados`))
+);
+await no('pendiente no lee anuncios', getDoc(doc(ePend, `${K1}/comunicados/anuncio1`)));
+await no('otro profe no', getDoc(doc(pA2, `${K1}/comunicados/anuncio1`)));
+await no(
+  'nadie escribe comunicados desde el cliente',
+  setDoc(doc(pA, `${K1}/comunicados/nuevo`), { tipo: 'anuncio', texto: 'x', creadoAt: 1 })
+);
+await si(
+  'estudiante marca visto un anuncio',
+  setDoc(doc(eAct, `${K1}/comunicados/anuncio1/vistos/eAct`), { vistoAt: 5 })
+);
+await no(
+  'no a nombre de otro',
+  setDoc(doc(eAct, `${K1}/comunicados/anuncio1/vistos/ePend`), { vistoAt: 5 })
+);
+await no(
+  'ni un mensaje que no es anuncio',
+  setDoc(doc(eAct, `${K1}/comunicados/msg1/vistos/eAct`), { vistoAt: 5 })
+);
+await si('el profe ve quién lo vio', getDocs(collection(pA, `${K1}/comunicados/anuncio1/vistos`)));
+await si('estudiante lee su buzón', getDoc(doc(eAct, `${K1}/estudiantes/eAct/buzon/msg1`)));
+await no('no el de otro', getDoc(doc(eAct, `${K1}/estudiantes/ePend/buzon/msg1`)));
+await si('el profe ve el buzón del estudiante', getDoc(doc(pA, `${K1}/estudiantes/eAct/buzon/msg1`)));
+await no(
+  'el estudiante no cambia el texto',
+  updateDoc(doc(eAct, `${K1}/estudiantes/eAct/buzon/msg1`), { texto: 'otro', leidoAt: 5 })
+);
+await no(
+  'ni le responde al profe',
+  setDoc(doc(eAct, `${K1}/estudiantes/eAct/buzon/resp`), { tipo: 'mensaje', texto: 'hola profe' })
+);
+await si(
+  'lo marca como visto',
+  updateDoc(doc(eAct, `${K1}/estudiantes/eAct/buzon/msg1`), { leidoAt: 5 })
+);
+await no(
+  'una sola vez',
+  updateDoc(doc(eAct, `${K1}/estudiantes/eAct/buzon/msg1`), { leidoAt: 9 })
+);
+await si('el profe borra un anuncio', deleteDoc(doc(pA, `${K1}/comunicados/anuncio1`)));
+await no('pero no un mensaje', deleteDoc(doc(pA, `${K1}/comunicados/msg1`)));
+await si('cada uno lee sus avisos', getDoc(doc(eAct, 'notificaciones/eAct/items/n1')));
+await no('no los de otro', getDoc(doc(pA, 'notificaciones/eAct/items/n1')));
+await si(
+  'marca un aviso como leído',
+  updateDoc(doc(eAct, 'notificaciones/eAct/items/n1'), { leidaAt: 5 })
+);
+await no(
+  'sin cambiar el aviso',
+  updateDoc(doc(eAct, 'notificaciones/eAct/items/n1'), { titulo: 'x' })
+);
+await no(
+  'nadie crea avisos desde el cliente',
+  setDoc(doc(eAct, 'notificaciones/eAct/items/n2'), { titulo: 'x' })
+);
+await si(
+  'guarda el token de su celular',
+  setDoc(doc(eAct, 'notificaciones/eAct'), { expoTokens: ['ExpoPushToken[x]'], actualizadoAt: 1 })
+);
+await no(
+  'no en la cuenta de otro',
+  setDoc(doc(pA, 'notificaciones/eAct'), { expoTokens: [], actualizadoAt: 1 })
+);
 
 console.log('\nAgregados y otros');
 await si('profe del colegio lee el agregado', getDoc(doc(pA, `${K1}/agregados/resumen`)));
