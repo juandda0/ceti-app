@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, Platform } from 'react-native';
+import { View, Text, StyleSheet, Platform, Linking } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -284,7 +284,20 @@ export default function CourseManageScreen() {
         <Aviso icono="pause-circle" tono="naranja" texto={t('profe.clase.codigoApagado')} />
       ) : null}
       <Aviso icono="people" tono="azul" texto={t('admin.rosterSelfJoinHint')} />
-      {colegioId && cursoId ? <ImportarLista colegioId={colegioId} cursoId={cursoId} /> : null}
+      {/* Fase 9: el enlace de la clase en Google Classroom (botón público de compartir). */}
+      {inviteUrl ? (
+        <Tarjeta style={{ gap: 8 }}>
+          <Text style={[styles.codigoAyuda, { color: colors.text.secondary, textAlign: 'left' }]}>{t('integraciones.classroomAyuda')}</Text>
+          <BotonChunky
+            texto={t('integraciones.classroom')}
+            icono="logo-google"
+            variante="secundario"
+            compacto
+            onPress={() => void Linking.openURL(urlCompartirClassroom(inviteUrl, cursoNombre))}
+          />
+        </Tarjeta>
+      ) : null}
+      {colegioId && cursoId && !soloCalifica ? <ImportarLista colegioId={colegioId} cursoId={cursoId} /> : null}
     </View>
   );
 
@@ -459,6 +472,11 @@ export default function CourseManageScreen() {
       </ContextScrollView>
     </ScreenWrapper>
   );
+}
+
+/** Botón público de Google Classroom: el profe elige la clase y publica el enlace. */
+export function urlCompartirClassroom(url: string, titulo: string): string {
+  return `https://classroom.google.com/share?url=${encodeURIComponent(url)}&title=${encodeURIComponent(`Ceti · ${titulo}`)}`;
 }
 
 const styles = StyleSheet.create({

@@ -60,6 +60,8 @@ export function desempenoDeNota(nota: number, escala: EscalaSiee = ESCALA_POR_DE
 }
 
 export interface EntradaNota {
+  /** Fase 9: para cruzar la fila con la lista (planilla con correo). */
+  uid?: string;
   nombre: string;
   /** competenciaId → maestría 0..1 (solo las que tienen datos). */
   maestriaPorCompetencia: Record<string, number>;
@@ -67,6 +69,7 @@ export interface EntradaNota {
 }
 
 export interface FilaNota {
+  uid?: string;
   nombre: string;
   /** null = sin evaluar (no hay datos en el periodo). */
   nota: number | null;
@@ -120,6 +123,7 @@ export function construirNotas(entradas: EntradaNota[], opciones: OpcionesNotas)
       Object.entries(e.maestriaPorCompetencia).map(([k, v]) => [k, notaDesdeMaestria(v, escala)])
     );
     return {
+      ...(e.uid ? { uid: e.uid } : {}),
       nombre: e.nombre,
       nota,
       desempeno: nota === null ? null : desempenoDeNota(nota, escala),

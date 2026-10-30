@@ -47,13 +47,14 @@ export function configureGoogleSignIn(): void {
  * Web: usa el flujo OAuth del JS SDK (popup; fallback a redirect si el navegador
  * lo bloquea). No requiere @react-native-google-signin ni Play Services.
  */
-async function signInWithGoogleWeb(): Promise<void> {
+async function signInWithGoogleWeb(dominio?: string): Promise<void> {
   const clients = getFirebaseClients();
   if (!clients) throw new Error('Configura Firebase (EXPO_PUBLIC_FIREBASE_*)');
 
   const provider = new GoogleAuthProvider();
   // Fuerza el selector de cuentas en cada inicio (paridad con el flujo nativo).
-  provider.setCustomParameters({ prompt: 'select_account' });
+  // Fase 9: `hd` sugiere las cuentas de Google Workspace de la institución.
+  provider.setCustomParameters(dominio ? { prompt: 'select_account', hd: dominio } : { prompt: 'select_account' });
 
   try {
     await signInWithPopup(clients.auth, provider);
@@ -84,9 +85,9 @@ async function signInWithGoogleWeb(): Promise<void> {
   }
 }
 
-export async function signInWithGoogle(): Promise<void> {
+export async function signInWithGoogle(dominio?: string): Promise<void> {
   if (Platform.OS === 'web') {
-    return signInWithGoogleWeb();
+    return signInWithGoogleWeb(dominio);
   }
   const clients = getFirebaseClients();
   if (!clients) throw new Error('Configura Firebase (EXPO_PUBLIC_FIREBASE_*)');
@@ -181,6 +182,45 @@ export async function signInWithGoogle(): Promise<void> {
       throw new Error('Sin conexión o error de red al contactar con Google.');
     }
 
+    throw e instanceof Error ? e : new Error(String(e));
+  }
+}
+
+/**
+ * Fase 9 — Microsoft 365 / Entra ID de la institución. Solo web por ahora (el
+ * SDK de Firebase hace el popup); en el celular necesita su propia
+ * configuración nativa (pendiente para una build de EAS).
+ */
+export function isMicrosoftSignInAvailable(): boolean {
+  return Platform.OS === 'web' && !!getFirebaseClients();
+}
+
+export async function signInWithMicrosoft(dominio?: string): Promise<void> {
+  if (Platform.OS !== 'web') throw new Error('Por ahora entra con Microsoft desde la web.');
+  const clients = getFirebaseClients();
+  if (!clients) throw new Error('Configura Firebase (EXPO_PUBLIC_FIREBASE_*)');
+  const provider = new OAuthProvider('microsoft.com');
+  provider.addScope('email');
+  provider.addScope('profile');
+  // `domain_hint` lleva directo al inicio de sesión de la organización.
+  provider.setCustomParameters(dominio ? { prompt: 'select_account', domain_hint: dominio } : { prompt: 'select_account' });
+  try {
+    await signInWithPopup(clients.auth, provider);
+  } catch (e) {
+    const code = e && typeof e === 'object' && 'code' in e ? String((e as { code?: string }).code) : '';
+    if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+      throw new Error('Inicio de sesión con Microsoft cancelado');
+    }
+    if (code === 'auth/popup-blocked' || code === 'auth/operation-not-supported-in-this-environment') {
+      await signInWithRedirect(clients.auth, provider);
+      return;
+    }
+    if (code === 'auth/operation-not-allowed') {
+      throw new Error('Microsoft no está habilitado. Actívalo en Firebase → Authentication → Sign-in method → Microsoft.');
+    }
+    if (code === 'auth/account-exists-with-different-credential') {
+      throw new Error('Ya tienes una cuenta en Ceti con ese correo. Entra con Google y después podrás usar Microsoft.');
+    }
     throw e instanceof Error ? e : new Error(String(e));
   }
 }

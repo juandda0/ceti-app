@@ -60,7 +60,7 @@ export function entradasNotaDesdeReporte(
       const mundosCompletados = suyos.filter(
         (p) => p.completed && enPeriodo(p.completedAt ?? p.updatedAt)
       ).length;
-      return { nombre: s.nombre, maestriaPorCompetencia, mundosCompletados };
+      return { uid: s.uid, nombre: s.nombre, maestriaPorCompetencia, mundosCompletados };
     })
     .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
 }

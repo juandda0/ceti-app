@@ -133,6 +133,9 @@ export default function EntidadTarjeta({ mi }: { mi: MiEntidad }) {
         <Acceso icono="library" tono="morado" titulo={t('entidad.acceso.biblioteca')} texto={t('entidad.acceso.bibliotecaTexto')} ruta="/(staff)/entidad/biblioteca" />
       ) : null}
       {soyAdmin ? (
+        <Acceso icono="link" tono="azul" titulo={t('conexiones.titulo')} texto={t('conexiones.acceso')} ruta="/(staff)/entidad/conexiones" />
+      ) : null}
+      {soyAdmin ? (
         <Acceso icono="receipt" tono="neutro" titulo={t('entidad.acceso.facturacion')} texto={t('entidad.acceso.facturacionTexto')} ruta="/(staff)/entidad/facturacion" />
       ) : null}
       {!soloYo ? (

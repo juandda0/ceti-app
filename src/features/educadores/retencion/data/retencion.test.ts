@@ -157,17 +157,19 @@ describe('Notas desde el reporte', () => {
     const e = entradasNotaDesdeReporte(estudiantes, p, p4);
     expect(e.map((x) => x.nombre)).toEqual(['Álvaro', 'Nadie', 'Zoe']);
     expect(e[2]).toEqual({
+      uid: 'z',
       nombre: 'Zoe',
       maestriaPorCompetencia: { ingreso: 0.6, presupuesto: 1 },
       mundosCompletados: 2,
     });
     // Completó el mundo en el periodo 1: no cuenta como completado en el 4.
     expect(e[0]).toEqual({
+      uid: 'a',
       nombre: 'Álvaro',
       maestriaPorCompetencia: { ingreso: 0.9 },
       mundosCompletados: 0,
     });
-    expect(e[1]).toEqual({ nombre: 'Nadie', maestriaPorCompetencia: {}, mundosCompletados: 0 });
+    expect(e[1]).toEqual({ uid: 'n', nombre: 'Nadie', maestriaPorCompetencia: {}, mundosCompletados: 0 });
 
     const enPrimero = entradasNotaDesdeReporte(estudiantes, p, p1);
     expect(enPrimero.find((x) => x.nombre === 'Zoe')?.maestriaPorCompetencia).toEqual({

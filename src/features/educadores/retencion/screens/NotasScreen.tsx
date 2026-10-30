@@ -46,6 +46,7 @@ import {
   type Tono,
 } from '@features/dashboard/components/profe/kit';
 import { useNombreCurso } from '@features/dashboard/hooks/useNombreCurso';
+import PlanillaNotas from '@features/educadores/integraciones/components/PlanillaNotas';
 
 /** Orden del resumen: de mayor a menor desempeño, y al final quienes no tienen datos. */
 const ORDEN_RESUMEN: Desempeno[] = ['superior', 'alto', 'basico', 'bajo'];
@@ -238,6 +239,14 @@ export default function NotasScreen() {
           icono="download-outline"
           onPress={onDescargar}
         />
+        {colegioId && cursoId && detalle ? (
+          <PlanillaNotas
+            colegioId={colegioId}
+            cursoId={cursoId}
+            filas={filas}
+            nombreArchivo={`planilla-${slug(cursoNombre)}-p${periodo.numero}`}
+          />
+        ) : null}
 
         <Seccion
           texto={t('educadores.notas.estudiantesSeccion')}

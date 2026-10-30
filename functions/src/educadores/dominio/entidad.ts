@@ -36,6 +36,8 @@ export interface DatosEntidad {
   tipo: TipoEntidad;
   creadaAt: number;
   creadaPor: string;
+  /** Fase 9: dominios de correo de la institución (ver ssoEntidad.ts). */
+  dominios?: string[];
 }
 
 /** `colegios/{cid}/profes/{uid}`. */

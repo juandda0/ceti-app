@@ -1390,6 +1390,7 @@ export {
   sacarProfeEntidad,
   cambiarRolProfeEntidad,
   gestionarCoDocente,
+  gestionarDominiosEntidad,
 } from './educadores/entidades';
 export { verPanelEntidad, guardarEvaluacionEntidad } from './educadores/entidadPanel';
 export { gestionarPrueba, verCoberturaClase, cerrarPeriodoEntidad } from './educadores/cumplimiento';
@@ -1410,6 +1411,7 @@ export {
   sugerirCalificacion,
   muroClase,
 } from './educadores/claseAbierta';
+export { gestionarPlataformaLti, ltiLogin, ltiLaunch } from './integraciones/lti';
 export {
   guardarDatosFacturacion,
   cotizarPlanEntidad,

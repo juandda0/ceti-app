@@ -776,6 +776,19 @@ await si('el profe lee todo el muro', getDocs(collection(pCal, `${K1}/muro`)));
 await no('nadie escribe en el muro desde el cliente', setDoc(doc(eAct, `${K1}/muro/m4`), { uid: 'eAct', estado: 'publicada' }));
 await no('ni enciende el muro', setDoc(doc(pEd, `${K1}/config/muro`), { activo: true }));
 
+console.log('\nFase 9d · conexiones (solo servidor)');
+await env.withSecurityRulesDisabled(async (ctx) => {
+  const db = ctx.firestore();
+  await setDoc(doc(db, 'dominiosEntidad/colegio-a.edu.co'), { colegioId: 'A' });
+  await setDoc(doc(db, 'ltiPlataformas/p1'), { colegioId: 'A', issuer: 'https://moodle.x' });
+  await setDoc(doc(db, 'ltiEstados/s1'), { nonce: 'n' });
+});
+await no('nadie lee los dominios desde el cliente', getDoc(doc(pA, 'dominiosEntidad/colegio-a.edu.co')));
+await no('ni registra uno', setDoc(doc(pA, 'dominiosEntidad/otro.edu.co'), { colegioId: 'A' }));
+await no('ni lee plataformas LTI', getDoc(doc(pA, 'ltiPlataformas/p1')));
+await no('ni los state de LTI', getDoc(doc(anon, 'ltiEstados/s1')));
+await no('ni marca rechazos', setDoc(doc(pA, 'rechazosDominio/A:x@y.co'), { rechazadaAt: 1 }));
+
 console.log('\nAgregados y otros');
 await si('profe del colegio lee el agregado', getDoc(doc(pA, `${K1}/agregados/resumen`)));
 await no('estudiante no', getDoc(doc(eAct, `${K1}/agregados/resumen`)));

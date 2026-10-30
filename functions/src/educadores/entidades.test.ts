@@ -22,7 +22,7 @@ jest.mock('firebase-admin/auth', () => ({ getAuth: () => ({}) }));
 // eslint-disable-next-line import/first
 import type { Firestore } from 'firebase-admin/firestore';
 // eslint-disable-next-line import/first
-import { claimsTrasMudanza, leerEntidad } from './entidades';
+import { claimsTrasMudanza, invitarPorDominio, leerEntidad } from './entidades';
 // eslint-disable-next-line import/first
 import { calcularPanelDeEntidad } from './entidadPanel';
 // eslint-disable-next-line import/first
@@ -103,5 +103,33 @@ describe('panel de la entidad desde Firestore', () => {
     expect(panel.periodo).toEqual(rango);
     // Solo e0..e2 avanzaron en los últimos 10 días: 3 < 5, sin dominio.
     expect(panel.cobertura[0].ambitos.ahorroInversion).toEqual({ estudiantes: 3, dominio: null });
+  });
+});
+
+describe('invitación por dominio (Fase 9)', () => {
+  const base = () =>
+    new FirestoreFalso({
+      'colegios/sm': { entidad: { nombre: 'San Mateo', tipo: 'colegio', creadaAt: 1, creadaPor: 'diana', dominios: ['sanmateo.edu.co'] }, licencia: { plan: 'colegio', hasta: AHORA + 300 * DIA } },
+      'colegios/sm/profes/diana': { nombre: 'Diana', correo: 'diana@sanmateo.edu.co', rol: 'admin' },
+      'dominiosEntidad/sanmateo.edu.co': { colegioId: 'sm' },
+    });
+  const profe = { uid: 'jorge', colegioId: 'personal', correo: 'jorge@sanmateo.edu.co', nombre: 'Jorge' };
+
+  it('crea la invitación una vez, solo con correo verificado', async () => {
+    const f = base();
+    const db = f as unknown as Firestore;
+    expect(await invitarPorDominio(db, profe, false, AHORA)).toBe(false);
+    expect(await invitarPorDominio(db, profe, true, AHORA)).toBe(true);
+    expect(f.datos('invitacionesProfe/sm:jorge@sanmateo.edu.co')).toMatchObject({ colegioId: 'sm', rol: 'profe', porDominio: true, invitadoPorNombre: 'San Mateo' });
+    expect(await invitarPorDominio(db, profe, true, AHORA)).toBe(false);
+  });
+
+  it('no a un dominio sin entidad, ni a quien ya es de ella o la rechazó', async () => {
+    const f = base();
+    const db = f as unknown as Firestore;
+    expect(await invitarPorDominio(db, { ...profe, correo: 'jorge@otro.edu.co' }, true, AHORA)).toBe(false);
+    expect(await invitarPorDominio(db, { ...profe, colegioId: 'sm' }, true, AHORA)).toBe(false);
+    await f.doc('rechazosDominio/sm:jorge@sanmateo.edu.co').set({ rechazadaAt: 1 });
+    expect(await invitarPorDominio(db, profe, true, AHORA)).toBe(false);
   });
 });

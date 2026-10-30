@@ -32,3 +32,5 @@ export * from './requisitosMundo';
 export * from './calendarioClase';
 export * from './rubricas';
 export * from './muroClase';
+export * from './ssoEntidad';
+export * from './planillaNotas';

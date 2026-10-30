@@ -1,7 +1,7 @@
 // app/(auth)/welcome.tsx — Bienvenida de marca: fondo naranja y Ceti saliendo del portal
 import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, type Href } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import Animated, {
   useSharedValue,
@@ -116,6 +116,14 @@ export default function WelcomeScreen() {
               disabled={entrando === 'estudiante'}
               style={{ marginTop: Spacing.md }}
             />
+            <Pressable
+              onPress={() => router.push('/(auth)/institucion' as Href)}
+              accessibilityRole="button"
+              hitSlop={8}
+              style={styles.correo}
+            >
+              <Text style={styles.correoTexto}>{t('welcome.ctaInstitucion')}</Text>
+            </Pressable>
             <Pressable
               onPress={() => router.push('/(auth)/login')}
               accessibilityRole="button"

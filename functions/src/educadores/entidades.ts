@@ -29,6 +29,11 @@ import {
   MENSAJES_ERROR_ENTIDAD,
   cambiarCoDocente,
   cambiarPermiso,
+  dominioDeCorreo,
+  limpiarDominio,
+  MENSAJES_ERROR_DOMINIO,
+  puedeAgregarDominio,
+  tocaInvitacionPorDominio,
   MENSAJES_ERROR_PERMISO,
   permisoEnClase,
   soloCalificarSin,
@@ -333,6 +338,9 @@ export const misInvitacionesEntidad = onCall(async (request): Promise<{ invitaci
   if (!p.correo) return { invitaciones: [] };
   const db = getFirestore();
   const ahora = Date.now();
+  // Fase 9: quien entra con un correo verificado de un dominio registrado por
+  // una entidad recibe aquí su invitación (no entra solo).
+  await invitarPorDominio(db, p, request.auth?.token.email_verified === true, ahora);
   const [q, mias] = await Promise.all([
     db.collection(COL_INVITACIONES_PROFE).where('correo', '==', p.correo).get(),
     db.collection(`colegios/${p.colegioId}/cursos`).where('profesorUids', 'array-contains', p.uid).count().get(),
@@ -375,6 +383,10 @@ export const responderInvitacionEntidad = onCall(async (request) => {
   const cerrar = () => Promise.all([busqueda.delete(), refInvitacion(db, destino, p.correo as string).delete()]);
   if (request.data?.aceptar !== true) {
     await cerrar();
+    // Una invitación por dominio rechazada no se vuelve a crear sola.
+    if ((inv as { porDominio?: boolean }).porDominio) {
+      await db.doc(`${COL_RECHAZOS_DOMINIO}/${destino}:${p.correo}`).set({ rechazadaAt: Date.now() });
+    }
     return { ok: true, aceptada: false };
   }
   if (destino === p.colegioId) throw new HttpsError('already-exists', 'Ya estás en esa entidad.');
@@ -518,4 +530,81 @@ export const gestionarCoDocente = onCall(async (request) => {
     return { profesorUids: r.profesorUids, soloCalificar };
   });
   return { ok: true, ...resultado };
+});
+
+// ---------------------------------------------------------------------------
+// Fase 9 — dominios de la institución (entrar con Google o Microsoft)
+// ---------------------------------------------------------------------------
+
+export const COL_DOMINIOS_ENTIDAD = 'dominiosEntidad';
+export const COL_RECHAZOS_DOMINIO = 'rechazosDominio';
+
+/** Crea la invitación por dominio si le toca (ver dominio/ssoEntidad.ts). */
+export async function invitarPorDominio(db: Firestore, p: Profe, verificado: boolean, ahora: number): Promise<boolean> {
+  const dominio = dominioDeCorreo(p.correo);
+  if (!dominio || !p.correo) return false;
+  const dueno = await db.doc(`${COL_DOMINIOS_ENTIDAD}/${dominio}`).get();
+  const cid = (dueno.get('colegioId') as string | undefined) ?? null;
+  if (!cid) return false;
+  const [busqueda, rechazo] = await Promise.all([
+    refBusqueda(db, cid, p.correo).get(),
+    db.doc(`${COL_RECHAZOS_DOMINIO}/${cid}:${p.correo}`).get(),
+  ]);
+  const yaInvitado = busqueda.exists && invitacionVigente(busqueda.data() as InvitacionProfe, ahora);
+  if (!tocaInvitacionPorDominio({ correo: p.correo, verificado, colegioActual: p.colegioId, entidadDelDominio: cid, yaInvitado, rechazada: rechazo.exists })) {
+    return false;
+  }
+  const e = await leerEntidad(db, cid);
+  if (!e.entidad) return false;
+  const pendientes = await db.collection(`colegios/${cid}/invitacionesProfe`).get();
+  const vigentes = pendientes.docs.map((d) => d.data() as InvitacionProfe).filter((i) => invitacionVigente(i, ahora));
+  const r = puedeInvitar(p.correo, e.profes, vigentes, e.licencia, ahora);
+  if (!r.ok) return false;
+  const inv: InvitacionProfe & { porDominio: true } = {
+    correo: r.valor,
+    rol: 'profe',
+    invitadoPor: 'dominio',
+    invitadoPorNombre: e.entidad.nombre,
+    creadaAt: ahora,
+    porDominio: true,
+  };
+  await refInvitacion(db, cid, r.valor).set(inv);
+  await refBusqueda(db, cid, r.valor).set({ ...inv, colegioId: cid });
+  return true;
+}
+
+/** El admin de la entidad lista, agrega (el de su propio correo) o quita dominios. */
+export const gestionarDominiosEntidad = onCall(async (request) => {
+  const p = exigirProfe(request);
+  const db = getFirestore();
+  const e = await leerEntidad(db, p.colegioId);
+  exigirAdmin(e, p.uid);
+  const ref = db.doc(`colegios/${p.colegioId}`);
+  const actuales = ((e.entidad as { dominios?: string[] } | null)?.dominios ?? []).filter((d) => typeof d === 'string');
+  const accion = request.data?.accion;
+  if (accion === 'agregar') {
+    const d = limpiarDominio(request.data?.dominio);
+    const dueno = d ? await db.doc(`${COL_DOMINIOS_ENTIDAD}/${d}`).get() : null;
+    const r = puedeAgregarDominio(
+      request.data?.dominio,
+      { correo: p.correo, verificado: request.auth?.token.email_verified === true },
+      actuales,
+      (dueno?.get('colegioId') as string | undefined) ?? null,
+      p.colegioId
+    );
+    if (!r.ok) throw new HttpsError('failed-precondition', MENSAJES_ERROR_DOMINIO[r.error], { codigo: r.error });
+    const dominios = [...actuales, r.dominio];
+    await db.doc(`${COL_DOMINIOS_ENTIDAD}/${r.dominio}`).set({ colegioId: p.colegioId, agregadoPor: p.uid, agregadoAt: Date.now() });
+    await ref.update({ 'entidad.dominios': dominios });
+    return { ok: true, dominios };
+  }
+  if (accion === 'quitar') {
+    const d = limpiarDominio(request.data?.dominio);
+    if (!d || !actuales.includes(d)) throw new HttpsError('not-found', 'Ese dominio no está en tu entidad.');
+    const dominios = actuales.filter((x) => x !== d);
+    await db.doc(`${COL_DOMINIOS_ENTIDAD}/${d}`).delete();
+    await ref.update({ 'entidad.dominios': dominios });
+    return { ok: true, dominios };
+  }
+  return { ok: true, dominios: actuales };
 });
