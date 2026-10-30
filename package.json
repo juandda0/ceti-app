@@ -11,6 +11,7 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
+    "test:rules": "firebase emulators:exec --only firestore --project demo-ceti \"node scripts/testFirestoreRules.mjs\"",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "jest",

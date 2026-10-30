@@ -53,7 +53,7 @@ export function msDe(v: unknown): number | null {
 }
 
 /**
- * - estudiantes: la lista del curso sin los suprimidos (incluye a los que aún
+ * - estudiantes: la lista del curso sin suprimidos ni retirados (incluye a los que aún
  *   esperan la atestación: son parte de la meta).
  * - estudiantesActivos: los de esa lista con algún mundo actualizado en los
  *   últimos 30 días.
@@ -63,7 +63,9 @@ export function msDe(v: unknown): number | null {
  */
 export function cursoAdopcionDesdeDatos(d: DatosCursoAdopcion, ahora: number): CursoAdopcion {
   const desde = ahora - DIAS_ACTIVO * DIA_MS;
-  const enLista = new Set(d.roster.filter((e) => e.estado !== 'suprimido').map((e) => e.uid));
+  const enLista = new Set(
+    d.roster.filter((e) => e.estado !== 'suprimido' && e.estado !== 'retirado').map((e) => e.uid)
+  );
   const activos = new Set<string>();
   let ultimaActividad: number | null = null;
   for (const p of d.progreso) {
