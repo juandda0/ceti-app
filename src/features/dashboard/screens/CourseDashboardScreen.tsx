@@ -4,6 +4,8 @@ import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ScreenWrapper from '@shared/components/ScreenWrapper';
+import Bounceable from '@shared/components/Bounceable';
+import { Ionicons } from '@expo/vector-icons';
 import ContextScrollView from '@shared/components/motion/ContextScrollView';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
@@ -348,8 +350,16 @@ export default function CourseDashboardScreen() {
             const p = pct(s.overallMastery);
             const sinDatos = Object.keys(s.masteryByCompetencia).length === 0;
             return (
-              <View
+              <Bounceable
                 key={s.uid}
+                onPress={() =>
+                  router.push(
+                    `/(staff)/estudiante/${cursoId}/${s.uid}?nombre=${encodeURIComponent(s.nombre)}` as Href
+                  )
+                }
+                activeScale={0.98}
+                accessibilityRole="button"
+                accessibilityLabel={t('ficha.abrir', { nombre: s.nombre })}
                 style={[
                   styles.estudiante,
                   i > 0 && { borderTopWidth: 1, borderTopColor: colors.materials.border },
@@ -378,7 +388,8 @@ export default function CourseDashboardScreen() {
                     {t(`estados.${s.estado}`)}
                   </Text>
                 </View>
-              </View>
+                <Ionicons name="chevron-forward" size={18} color={colors.text.quaternary} />
+              </Bounceable>
             );
           })}
         </Tarjeta>

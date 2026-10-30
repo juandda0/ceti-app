@@ -159,6 +159,30 @@ export const registroClaseRepository = {
     return snap.exists() ? (snap.data() as ResumenOrbitaClase) : null;
   },
 
+  /** Estadísticas por pregunta de un mundo en la clase (las arma la Function). */
+  async preguntasDeMundo(
+    colegioId: string,
+    cursoId: string,
+    worldId: string
+  ): Promise<Record<string, { vistas?: number; aciertos?: number }>> {
+    const clients = getFirebaseClients();
+    if (!clients?.firestore) return {};
+    const snap = await getDoc(
+      doc(
+        clients.firestore,
+        'colegios',
+        colegioId,
+        'cursos',
+        cursoId,
+        'agregados',
+        `preguntas_${worldId.replace(/\//g, '_')}`
+      )
+    );
+    return (
+      (snap.data()?.porPregunta as Record<string, { vistas?: number; aciertos?: number }>) ?? {}
+    );
+  },
+
   async resumenClase(
     colegioId: string,
     cursoId: string,

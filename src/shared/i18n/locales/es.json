@@ -1412,7 +1412,8 @@
         "bibliotecaPublicar": "Publicar en la Biblioteca",
         "aulasConMarca": "Aulas con tu marca",
         "panelCapitan": "Panel del colegio",
-        "prePostTest": "Prueba de entrada y de salida"
+        "prePostTest": "Prueba de entrada y de salida",
+        "fichaCompleta": "Historial completo de cada estudiante"
       },
       "base": {
         "clasesUna": "1 clase",
@@ -1672,5 +1673,58 @@
   },
   "espacios": {
     "miGalaxia": "Mi galaxia"
+  },
+  "ficha": {
+    "abrir": "Ver la ficha de {{nombre}}",
+    "sobre": "Ficha",
+    "titulo": "Estudiante",
+    "ultimaActividad": "Última actividad: {{fecha}}",
+    "sinActividad": "Todavía no ha jugado en esta clase",
+    "error": "No pudimos cargar la ficha. Revisa tu conexión.",
+    "reintentar": "Intentar de nuevo",
+    "pendiente": "Aún no confirmas la autorización de sus datos: hasta entonces su avance no llega a la clase.",
+    "historialTitulo": "Todo su historial",
+    "historialValor": "Con Cadete ves sus últimos 7 días. Con Piloto ves todo, desde que entró a la clase.",
+    "nota": "Nota del periodo",
+    "aciertos_one": "Aciertos en {{count}} respuesta",
+    "aciertos_other": "Aciertos en {{count}} respuestas",
+    "diasActivos": "Días activo esta semana",
+    "minutosSemana": "Esta semana · {{total}} min en total",
+    "visitas": "Entradas a la clase esta semana · {{total}} en total",
+    "racha": "Días de racha · {{xp}} XP · mejor racha {{mejor}}",
+    "rachaSinDatos": "Racha (aún sin datos)",
+    "comparacion": "Acierta el {{estudiante}} % de sus respuestas. La clase, el {{clase}} % en esas mismas preguntas.",
+    "competencias": "En qué va bien y en qué no",
+    "mundosPropios": "Mundos propios",
+    "respuestasN_one": "{{count}} respuesta",
+    "respuestasN_other": "{{count}} respuestas",
+    "vaBien": "Va bien en {{tema}}",
+    "reforzar": "Reforzar {{tema}}",
+    "sinRespuestas": "Todavía no hay respuestas en esta clase.",
+    "preguntasQueFalla": "Preguntas que más falla",
+    "sinFallas": "No ha fallado ninguna pregunta. ¡Va muy bien!",
+    "respondio": "Respondió: {{respuesta}}",
+    "semanas": "Semana a semana",
+    "semanasA11y": "Porcentaje de aciertos en las últimas 8 semanas",
+    "semanasAyuda": "% de aciertos por semana (desde el lunes). Las semanas sin barra no jugó.",
+    "mundos": "Mundos",
+    "estadoMundo": {
+      "conquistado": "Conquistado",
+      "en_curso": "En curso",
+      "sin_empezar": "Sin empezar"
+    },
+    "empezo": "Empezó el {{fecha}}",
+    "conquisto": "Conquistado el {{fecha}}",
+    "lecciones_one": "{{count}} lección",
+    "lecciones_other": "{{count}} lecciones",
+    "jefe": "jefe {{ganados}}/{{intentos}}",
+    "aciertoMundo": "{{pct}} % de aciertos",
+    "acciones": "Qué puedes hacer",
+    "asignarAyuda": "Asígnale un mundo que le falta, para la próxima semana:",
+    "asignar": "Asignarle este mundo",
+    "tareaCreada": "Le asignaste el mundo a {{nombre}}",
+    "todoConquistado": "Ya conquistó todos los mundos de la clase.",
+    "verNotas": "Ver notas del periodo",
+    "sinDetalle": "sin detalle de respuestas (antes del registro de la clase)"
   }
 }

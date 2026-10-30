@@ -40,6 +40,7 @@ export const FUNCIONES = [
   'aulasConMarca',
   'panelCapitan',
   'prePostTest',
+  'fichaCompleta',
 ] as const;
 export type Funcion = (typeof FUNCIONES)[number];
 
@@ -71,6 +72,8 @@ const FUNCIONES_PILOTO: readonly Funcion[] = [
   'notasPeriodo',
   'exportarCsv',
   'configurarMundos',
+  // Ficha del estudiante con todo su historial (Cadete ve los últimos 7 días).
+  'fichaCompleta',
 ];
 
 export const PLANES: Record<PlanId, DefinicionPlan> = {
