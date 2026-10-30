@@ -193,7 +193,8 @@ export async function mudarClase(
   if (typeof codigo === 'string' && codigo) {
     await db.doc(`classCodes/${codigo}`).set({ colegioId: destino }, { merge: true });
   }
-  for (const col of ['invitacionesPorCorreo', 'enlacesAcudiente']) {
+  // Fase 8: la verificación pública de los certificados guarda el colegio.
+  for (const col of ['invitacionesPorCorreo', 'enlacesAcudiente', 'certificados']) {
     const q = await db.collection(col).where('colegioId', '==', origen).where('cursoId', '==', cursoId).get();
     await Promise.all(q.docs.map((d) => d.ref.update({ colegioId: destino })));
   }

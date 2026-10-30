@@ -91,3 +91,14 @@ test('la supresión también borra lo de la Fase 5: buzón, acudiente, su enlace
   );
   expect((enlace?.value as { delete: jest.Mock }).delete).toHaveBeenCalled();
 });
+
+test('la supresión también borra lo de la Fase 8: adaptaciones e insignias', async () => {
+  mockRecursiveDelete.mockClear();
+  await (suppressStudentData as unknown as (request: unknown) => Promise<unknown>)({
+    auth: { uid: 'admin', token: { role: 'admin' } },
+    data: { colegioId: 'school', cursoId: 'course', uid: 'student_1' },
+  });
+  const borrados = mockRecursiveDelete.mock.calls.map(([ref]) => (ref as { path?: string }).path);
+  const est = 'colegios/school/cursos/course/estudiantes/student_1';
+  expect(borrados).toEqual(expect.arrayContaining([`${est}/adaptaciones`, `${est}/insignias`]));
+});

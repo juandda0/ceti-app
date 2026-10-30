@@ -32,6 +32,7 @@ import { asignacionRepository } from '@features/dashboard/data/asignacionReposit
 import MensajesFicha from '@features/dashboard/components/MensajesFicha';
 import AcudienteFicha from '@features/dashboard/components/AcudienteFicha';
 import AdaptacionesFicha from '@features/educadores/adaptaciones/components/AdaptacionesFicha';
+import InsigniasFicha from '@features/educadores/certificados/components/InsigniasFicha';
 import {
   Aviso,
   BotonChunky,
@@ -448,6 +449,9 @@ export default function FichaEstudianteScreen() {
               ) : null}
               {colegioId && cursoId && uid && datos?.estudiante?.estado === 'activo' ? (
                 <AdaptacionesFicha colegioId={colegioId} cursoId={cursoId} uid={uid} nombre={nombreVisible} />
+              ) : null}
+              {colegioId && cursoId && uid && datos?.estudiante?.estado === 'activo' ? (
+                <InsigniasFicha colegioId={colegioId} cursoId={cursoId} uid={uid} nombre={nombreVisible} />
               ) : null}
               {colegioId && cursoId && uid ? (
                 <AcudienteFicha

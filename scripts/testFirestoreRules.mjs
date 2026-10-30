@@ -646,6 +646,31 @@ await no('solo el doc actual', setDoc(doc(pA, `${K1}/estudiantes/eAct/adaptacion
 await si('el estudiante ve las suyas', getDoc(doc(eAct, `${K1}/estudiantes/eAct/adaptaciones/actual`)));
 await no('no las de otro', getDoc(doc(eMulti, `${K1}/estudiantes/eAct/adaptaciones/actual`)));
 
+console.log('\nFase 8 · certificados e insignias');
+const insignia = (over = {}) => ({ insignia: 'constancia', motivo: 'Entró todos los días', dadaPor: 'pA', dadaPorNombre: 'Profe A', dadaAt: 1, ...over });
+await env.withSecurityRulesDisabled(async (ctx) => {
+  const db = ctx.firestore();
+  await setDoc(doc(db, 'certificados/CETI-AAAA-BBBB'), { uid: 'eAct', colegioId: 'A', cursoId: 'k1' });
+  await setDoc(doc(db, `${K1}/estudiantes/eAct/certificados/CETI-AAAA-BBBB`), { nombre: 'eAct' });
+});
+await no('nadie lee la verificación desde el cliente', getDoc(doc(pA, 'certificados/CETI-AAAA-BBBB')));
+await no('ni la escribe', setDoc(doc(pA, 'certificados/CETI-ZZZZ-ZZZZ'), { uid: 'eAct' }));
+await si('el estudiante ve su certificado', getDoc(doc(eAct, `${K1}/estudiantes/eAct/certificados/CETI-AAAA-BBBB`)));
+await si('el profe lo ve', getDoc(doc(pA, `${K1}/estudiantes/eAct/certificados/CETI-AAAA-BBBB`)));
+await no('el profe no lo escribe directo', setDoc(doc(pA, `${K1}/estudiantes/eAct/certificados/CETI-CCCC-DDDD`), { nombre: 'x' }));
+await si('el profe da una insignia', setDoc(doc(pA, `${K1}/estudiantes/eAct/insignias/i1`), insignia()));
+await si('sin motivo también', setDoc(doc(pA, `${K1}/estudiantes/eAct/insignias/i2`), insignia({ motivo: null })));
+await no('una que no existe no', setDoc(doc(pA, `${K1}/estudiantes/eAct/insignias/i3`), insignia({ insignia: 'mejor_de_todos' })));
+await no('motivo largo no', setDoc(doc(pA, `${K1}/estudiantes/eAct/insignias/i4`), insignia({ motivo: 'x'.repeat(121) })));
+await no('a nombre de otro profe no', setDoc(doc(pA, `${K1}/estudiantes/eAct/insignias/i5`), insignia({ dadaPor: 'pA2' })));
+await no('otro profe no', setDoc(doc(pA2, `${K1}/estudiantes/eAct/insignias/i6`), insignia({ dadaPor: 'pA2' })));
+await no('a un pendiente no', setDoc(doc(pA, `${K1}/estudiantes/ePend/insignias/i7`), insignia()));
+await no('el estudiante no se la da', setDoc(doc(eAct, `${K1}/estudiantes/eAct/insignias/i8`), insignia({ dadaPor: 'eAct' })));
+await si('el estudiante ve las suyas', getDocs(collection(eAct, `${K1}/estudiantes/eAct/insignias`)));
+await no('no las de otro', getDocs(collection(eMulti, `${K1}/estudiantes/eAct/insignias`)));
+await no('no se editan', updateDoc(doc(pA, `${K1}/estudiantes/eAct/insignias/i1`), { motivo: 'otro' }));
+await si('el profe la quita', deleteDoc(doc(pA, `${K1}/estudiantes/eAct/insignias/i2`)));
+
 console.log('\nFase 8a · clase en vivo');
 const VIVO = `${K1}/vivo/actual`;
 const resp = (uid, n, over = {}) => ({ uid, n, r: 1, sesion: 's1', creadoAt: serverTimestamp(), ...over });

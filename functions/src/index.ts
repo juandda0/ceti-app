@@ -67,6 +67,7 @@ import {
   sacarDeGrupos,
 } from './educadores/gestionClase';
 import { rutaVivo } from './educadores/claseVivo';
+import { borrarCertificados } from './educadores/certificados';
 
 initializeApp();
 
@@ -556,8 +557,11 @@ export const suppressStudentData = onCall(async (request) => {
   }
   await db.recursiveDelete(estRef.collection('acudiente'));
   await db.recursiveDelete(db.doc(`notificaciones/${uid}`));
-  // Fase 8: adaptaciones, su grupo y su puntaje de una clase en vivo abierta.
+  // Fase 8: adaptaciones, insignias, certificados (con su verificación
+  // pública), su grupo y su puntaje de una clase en vivo abierta.
   await db.recursiveDelete(estRef.collection('adaptaciones'));
+  await db.recursiveDelete(estRef.collection('insignias'));
+  await borrarCertificados(db, colegioId, cursoId, uid);
   await sacarDeGrupos(db, colegioId, cursoId, uid);
   const vivo = db.doc(rutaVivo(colegioId, cursoId));
   if ((await vivo.get()).exists) {
@@ -1381,6 +1385,7 @@ export { verPanelEntidad, guardarEvaluacionEntidad } from './educadores/entidadP
 export { gestionarPrueba, verCoberturaClase, cerrarPeriodoEntidad } from './educadores/cumplimiento';
 export { publicarEnBiblioteca, usarDeBiblioteca, retirarDeBiblioteca } from './educadores/bibliotecaEntidad';
 export { operarClaseVivo } from './educadores/claseVivo';
+export { emitirCertificados, verCertificado, revocarCertificado } from './educadores/certificados';
 export {
   guardarDatosFacturacion,
   cotizarPlanEntidad,

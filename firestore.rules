@@ -381,6 +381,31 @@ service cloud.firestore {
             allow delete: if isProfesorDe(cid, cursoId);
           }
 
+          // Fase 8 — certificados (los escribe el callable emitirCertificados; la
+          // verificación pública está en /certificados, sin acceso) e insignias
+          // que da cualquier profe de la clase. Los lee el estudiante activo.
+          match /certificados/{codigo} {
+            allow read: if isProfesorDe(cid, cursoId)
+              || isEstudianteActivoEnCurso(cid, cursoId, uid);
+            allow write: if false;
+          }
+          match /insignias/{insigniaId} {
+            allow read: if isProfesorDe(cid, cursoId)
+              || isEstudianteActivoEnCurso(cid, cursoId, uid);
+            allow create: if isProfesorDe(cid, cursoId)
+              && estudianteActivo(cid, cursoId, uid)
+              && request.resource.data.keys().hasOnly(['insignia', 'motivo', 'dadaPor', 'dadaPorNombre', 'dadaAt'])
+              && request.resource.data.insignia in ['ahorro_estrella', 'constancia', 'gran_pregunta', 'ayudo_companero', 'gran_avance', 'pensamiento_critico', 'lider_grupo', 'clase_en_vivo']
+              && (request.resource.data.motivo == null
+                || (request.resource.data.motivo is string && request.resource.data.motivo.size() <= 120))
+              && request.resource.data.dadaPor == request.auth.uid
+              && request.resource.data.dadaPorNombre is string
+              && request.resource.data.dadaPorNombre.size() <= 80
+              && request.resource.data.dadaAt is number;
+            allow delete: if isProfesorDe(cid, cursoId);
+            allow update: if false;
+          }
+
           // Fase 5 — enlace y correo del acudiente (callable gestionarAcudiente).
           // Lo ve solo el profe de la clase: ni el estudiante ni nadie más. El
           // token se resuelve en el servidor (`enlacesAcudiente`, sin acceso).
@@ -700,6 +725,11 @@ service cloud.firestore {
       allow read, write: if false;
     }
     match /fundadores/{id} {
+      allow read, write: if false;
+    }
+    // Fase 8 — verificación pública de certificados: solo el servidor
+    // (callables emitirCertificados / verCertificado / revocarCertificado).
+    match /certificados/{codigo} {
       allow read, write: if false;
     }
     match /mail/{id} {

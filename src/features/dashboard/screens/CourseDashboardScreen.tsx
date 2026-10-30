@@ -477,6 +477,15 @@ export default function CourseDashboardScreen() {
           />
         </View>
         <BotonChunky
+          texto={t('diferenciales.certificados.entrada')}
+          icono={!planCargando && puede('certificados') ? 'ribbon' : 'lock-closed-outline'}
+          variante="secundario"
+          compacto
+          onPress={() =>
+            router.push(`/(staff)/certificados/${cursoId}?nombre=${encodeURIComponent(cursoNombre)}` as Href)
+          }
+        />
+        <BotonChunky
           texto={t('comunicacion.entrada')}
           icono="megaphone"
           variante="secundario"

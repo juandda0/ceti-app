@@ -25,3 +25,4 @@ export * from './pruebaEntradaSalida';
 export * from './adaptaciones';
 export * from './grupos';
 export * from './claseVivo';
+export * from './certificados';
