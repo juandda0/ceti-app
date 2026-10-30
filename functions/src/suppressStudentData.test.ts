@@ -17,6 +17,13 @@ mockUsageQuery.startAt.mockReturnValue(mockUsageQuery);
 mockUsageQuery.endAt.mockReturnValue(mockUsageQuery);
 mockUsageQuery.limit.mockReturnValue(mockUsageQuery);
 
+// Fase 9: tareas abiertas y muro de la clase (aquí, vacíos).
+const mockClaseVacia: { where: jest.Mock; get: jest.Mock } = {
+  where: jest.fn(),
+  get: jest.fn().mockResolvedValue({ docs: [], size: 0 }),
+};
+mockClaseVacia.where.mockReturnValue(mockClaseVacia);
+
 const mockFirestore = {
   doc: jest.fn((path: string) => ({
     path,
@@ -25,7 +32,9 @@ const mockFirestore = {
     delete: jest.fn().mockResolvedValue(undefined),
     get: jest.fn().mockResolvedValue({ get: () => (path.endsWith('/acudiente/datos') ? 'tok' : undefined) }),
   })),
-  collection: jest.fn(() => mockUsageQuery),
+  collection: jest.fn((path: string) =>
+    path.endsWith('/tareasAbiertas') || path.endsWith('/muro') ? mockClaseVacia : mockUsageQuery
+  ),
   recursiveDelete: mockRecursiveDelete,
   batch: jest.fn(() => ({ delete: mockBatchDelete, commit: mockBatchCommit })),
 };
@@ -101,4 +110,18 @@ test('la supresión también borra lo de la Fase 8: adaptaciones e insignias', a
   const borrados = mockRecursiveDelete.mock.calls.map(([ref]) => (ref as { path?: string }).path);
   const est = 'colegios/school/cursos/course/estudiantes/student_1';
   expect(borrados).toEqual(expect.arrayContaining([`${est}/adaptaciones`, `${est}/insignias`]));
+});
+
+test('la supresión también busca lo de la Fase 9: entregas de tareas abiertas y preguntas del muro', async () => {
+  mockFirestore.collection.mockClear();
+  mockClaseVacia.where.mockClear();
+  await (suppressStudentData as unknown as (request: unknown) => Promise<unknown>)({
+    auth: { uid: 'admin', token: { role: 'admin' } },
+    data: { colegioId: 'school', cursoId: 'course', uid: 'student_1' },
+  });
+  const rutas = mockFirestore.collection.mock.calls.map(([p]) => p);
+  expect(rutas).toEqual(
+    expect.arrayContaining(['colegios/school/cursos/course/tareasAbiertas', 'colegios/school/cursos/course/muro'])
+  );
+  expect(mockClaseVacia.where).toHaveBeenCalledWith('uid', '==', 'student_1');
 });

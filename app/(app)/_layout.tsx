@@ -131,6 +131,8 @@ export default function AppTabLayout() {
         <Tabs.Screen name="prueba" options={{ href: null }} />
         <Tabs.Screen name="vivo" options={{ href: null }} />
         <Tabs.Screen name="calendario" options={{ href: null }} />
+        <Tabs.Screen name="tareas-abiertas" options={{ href: null }} />
+        <Tabs.Screen name="muro" options={{ href: null }} />
         <Tabs.Screen name="boveda" options={{ href: null }} />
         <Tabs.Screen name="dinero" options={{ href: null }} />
         <Tabs.Screen name="savings" options={{ href: null }} />

@@ -458,7 +458,7 @@ export default function CourseDashboardScreen() {
             style={{ flex: 1 }}
           />
         </View>
-        {/* Fase 9: calendario de la clase. */}
+        {/* Fase 9: calendario, tareas abiertas con rúbrica y muro de preguntas. */}
         <BotonChunky
           texto={t('calendario.entrada')}
           icono="calendar"
@@ -468,6 +468,26 @@ export default function CourseDashboardScreen() {
             router.push(`/(staff)/calendario/${cursoId}?nombre=${encodeURIComponent(cursoNombre)}` as Href)
           }
         />
+        <View style={styles.tiles}>
+          <BotonChunky
+            texto={t('rubricas.entrada')}
+            icono={!planCargando && !puede('rubricas') && puedeEnClase('tareas') ? 'lock-closed-outline' : 'create'}
+            variante="secundario"
+            compacto
+            onPress={() =>
+              router.push(`/(staff)/tareas-abiertas/${cursoId}?nombre=${encodeURIComponent(cursoNombre)}` as Href)
+            }
+            style={{ flex: 1 }}
+          />
+          <BotonChunky
+            texto={t('muro.entrada')}
+            icono="chatbubbles"
+            variante="secundario"
+            compacto
+            onPress={() => router.push(`/(staff)/muro/${cursoId}?nombre=${encodeURIComponent(cursoNombre)}` as Href)}
+            style={{ flex: 1 }}
+          />
+        </View>
         <BotonChunky
           texto={t('analisis.entrada')}
           icono={!planCargando && puede('analisisClase') ? 'analytics' : 'lock-closed-outline'}

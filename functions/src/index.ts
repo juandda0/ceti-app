@@ -574,6 +574,13 @@ export const suppressStudentData = onCall(async (request) => {
     const suyas = await vivo.collection('respuestas').where('uid', '==', uid).get();
     await Promise.all([...suyas.docs.map((d) => d.ref.delete()), vivo.collection('presentes').doc(uid).delete()]);
   }
+  // Fase 9: sus respuestas a tareas abiertas (con la calificación) y sus
+  // preguntas del muro de la clase.
+  const cursoPath = `colegios/${colegioId}/cursos/${cursoId}`;
+  const tareasAbiertas = await db.collection(`${cursoPath}/tareasAbiertas`).get();
+  await Promise.all(tareasAbiertas.docs.map((t) => t.ref.collection('entregas').doc(uid).delete()));
+  const preguntas = await db.collection(`${cursoPath}/muro`).where('uid', '==', uid).get();
+  await Promise.all(preguntas.docs.map((d) => d.ref.delete()));
   // Account-scoped data under users/{uid}: the pocket-money diary (RQ-ES10 CA7),
   // the budgets config (RQ-ES11 CA10), and the simulated savings goals/deposits
   // that the prior suppression left behind (goals/deposits also derive the diary
@@ -1396,6 +1403,13 @@ export {
   retirarDeBibliotecaPublica,
   moderarBibliotecaPublica,
 } from './educadores/bibliotecaPublica';
+export {
+  gestionarTareaAbierta,
+  entregarTareaAbierta,
+  calificarEntrega,
+  sugerirCalificacion,
+  muroClase,
+} from './educadores/claseAbierta';
 export {
   guardarDatosFacturacion,
   cotizarPlanEntidad,

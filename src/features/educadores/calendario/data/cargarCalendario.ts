@@ -17,6 +17,7 @@ import { classConfigRepository } from '@features/dashboard/data/classConfigRepos
 import { displayWorldDef } from '@features/learning/data/worldMeta';
 import { cumplimientoRepository } from '@features/educadores/cumplimiento/data/cumplimientoRepository';
 import { vivoRepository, type ResumenSesionVivo } from '@features/educadores/vivo/data/vivoRepository';
+import { tareasAbiertasRepository, type TareaConId } from '@features/educadores/tareasAbiertas/data/tareasAbiertasRepository';
 
 export async function cargarCalendario(p: {
   colegioId: string;
@@ -27,7 +28,7 @@ export async function cargarCalendario(p: {
   ahora: number;
 }): Promise<EventoClase[]> {
   const { colegioId, cursoId, estudianteUid, ahora } = p;
-  const [config, tareas, prueba, vivo] = await Promise.all([
+  const [config, tareas, prueba, vivo, abiertas] = await Promise.all([
     classConfigRepository.get(colegioId, cursoId).catch(() => null),
     (estudianteUid
       ? asignacionRepository.listForStudent(colegioId, cursoId, estudianteUid)
@@ -37,6 +38,7 @@ export async function cargarCalendario(p: {
     estudianteUid
       ? Promise.resolve([] as ResumenSesionVivo[])
       : vivoRepository.historial(colegioId, cursoId).catch(() => [] as ResumenSesionVivo[]),
+    tareasAbiertasRepository.listar(colegioId, cursoId).catch(() => [] as TareaConId[]),
   ]);
   const entradas = config?.mundos ?? [];
   const nombre = (worldId: string) => displayWorldDef(worldId, entradas.find((e) => e.worldId === worldId))?.name ?? worldId;
@@ -47,6 +49,7 @@ export async function cargarCalendario(p: {
       titulo: 'worldId' in t && t.worldId ? nombre(t.worldId) : 'un reto de plata',
       deadline: t.deadline,
     })),
+    tareasAbiertas: abiertas.filter((t) => t.estado === 'abierta').map((t) => ({ id: t.id, titulo: t.titulo, deadline: t.deadline })),
     mundosConFecha: entradas
       .filter((e) => e.activo)
       .map((e) => ({ e, r: leerRequisitos(e.requisitos) }))

@@ -1,0 +1,2 @@
+import TareasAbiertasEstudianteScreen from '@features/educadores/tareasAbiertas/screens/TareasAbiertasEstudianteScreen';
+export default TareasAbiertasEstudianteScreen;

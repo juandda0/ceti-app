@@ -30,3 +30,5 @@ export * from './bibliotecaPublica';
 export * from './permisosClase';
 export * from './requisitosMundo';
 export * from './calendarioClase';
+export * from './rubricas';
+export * from './muroClase';

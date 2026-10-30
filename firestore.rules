@@ -454,6 +454,26 @@ service cloud.firestore {
             allow update, delete: if false;
           }
         }
+        // Fase 9 — tareas abiertas con rúbrica y muro de preguntas. Todo se
+        // escribe por callables (claseAbierta.ts). La tarea la leen la clase y
+        // sus profes; cada entrega, su estudiante y los profes. Del muro, el
+        // estudiante activo lee las publicadas y las suyas (dos consultas).
+        match /tareasAbiertas/{tareaId} {
+          allow read: if isProfesorDe(cid, cursoId)
+            || isEstudianteActivoEnCurso(cid, cursoId, request.auth.uid);
+          allow write: if false;
+          match /entregas/{uid} {
+            allow read: if isProfesorDe(cid, cursoId)
+              || isEstudianteActivoEnCurso(cid, cursoId, uid);
+            allow write: if false;
+          }
+        }
+        match /muro/{preguntaId} {
+          allow read: if isProfesorDe(cid, cursoId)
+            || (isEstudianteActivoEnCurso(cid, cursoId, request.auth.uid)
+              && (resource.data.estado == 'publicada' || resource.data.uid == request.auth.uid));
+          allow write: if false;
+        }
         // Historial de clases en vivo: cifras de grupo, sin nombres (servidor).
         match /sesionesVivo/{sesionId} {
           allow read: if isProfesorDe(cid, cursoId);

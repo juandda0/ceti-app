@@ -19,6 +19,7 @@ import { showMessage } from '@shared/lib/dialogs';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { useMiPlan } from '@features/educadores/hooks/useMiPlan';
 import AvisoSoloCalifica from '@features/educadores/permisos/AvisoSoloCalifica';
+import TareasAbiertasFicha from '@features/educadores/tareasAbiertas/components/TareasAbiertasFicha';
 import { usePermisoClase } from '@features/educadores/permisos/usePermisoClase';
 import { useEvaluacion } from '@features/educadores/entidad/hooks/useEvaluacion';
 import TarjetaBloqueada from '@features/educadores/retencion/components/TarjetaBloqueada';
@@ -458,6 +459,7 @@ export default function FichaEstudianteScreen() {
               {colegioId && cursoId && uid && datos?.estudiante?.estado === 'activo' ? (
                 <InsigniasFicha colegioId={colegioId} cursoId={cursoId} uid={uid} nombre={nombreVisible} />
               ) : null}
+              {colegioId && cursoId && uid ? <TareasAbiertasFicha colegioId={colegioId} cursoId={cursoId} uid={uid} /> : null}
               {colegioId && cursoId && uid && puedeEnClase('acudientes') ? (
                 <AcudienteFicha
                   colegioId={colegioId}

@@ -749,6 +749,33 @@ await si('quien edita crea tareas', setDoc(doc(pEd, 'colegios/A/asignaciones/deE
 await si('quien califica da insignias', setDoc(doc(pCal, `${K1}/estudiantes/eAct/insignias/c1`), insignia({ dadaPor: 'pCal' })));
 await no('nadie se cambia el permiso desde el cliente', updateDoc(doc(pCal, K1), { soloCalificar: [] }));
 
+console.log('\nFase 9c · tareas abiertas y muro');
+const TA = `${K1}/tareasAbiertas/t1`;
+await env.withSecurityRulesDisabled(async (ctx) => {
+  const db = ctx.firestore();
+  await setDoc(doc(db, TA), { titulo: 'Presupuesto', estado: 'abierta' });
+  await setDoc(doc(db, `${TA}/entregas/eAct`), { uid: 'eAct', texto: 'Mi respuesta', calificada: false });
+  await setDoc(doc(db, `${TA}/entregas/eMulti`), { uid: 'eMulti', texto: 'Otra', calificada: false });
+  await setDoc(doc(db, `${K1}/muro/m1`), { uid: 'eMulti', estado: 'publicada', texto: '¿CDT?', creadoAt: 1 });
+  await setDoc(doc(db, `${K1}/muro/m2`), { uid: 'eMulti', estado: 'pendiente', texto: 'Pendiente', creadoAt: 2 });
+  await setDoc(doc(db, `${K1}/muro/m3`), { uid: 'eAct', estado: 'pendiente', texto: 'La mía', creadoAt: 3 });
+});
+await si('el estudiante activo ve la tarea abierta', getDoc(doc(eAct, TA)));
+await no('un pendiente no', getDoc(doc(ePend, TA)));
+await si('ve su entrega', getDoc(doc(eAct, `${TA}/entregas/eAct`)));
+await no('no la de otro', getDoc(doc(eAct, `${TA}/entregas/eMulti`)));
+await si('quien solo califica ve las entregas', getDocs(collection(pCal, `${TA}/entregas`)));
+await no('nadie entrega desde el cliente', setDoc(doc(eAct, `${TA}/entregas/eAct`), { uid: 'eAct', texto: 'x' }));
+await no('ni el profe califica directo', updateDoc(doc(pEd, `${TA}/entregas/eAct`), { calificada: true }));
+await no('ni crea tareas directo', setDoc(doc(pEd, `${K1}/tareasAbiertas/t2`), { titulo: 'x' }));
+await si('el estudiante lee las publicadas del muro', getDocs(query(collection(eAct, `${K1}/muro`), where('estado', '==', 'publicada'))));
+await si('y las suyas', getDocs(query(collection(eAct, `${K1}/muro`), where('uid', '==', 'eAct'))));
+await no('no la pendiente de otro', getDoc(doc(eAct, `${K1}/muro/m2`)));
+await no('ni el muro entero sin filtro', getDocs(collection(eAct, `${K1}/muro`)));
+await si('el profe lee todo el muro', getDocs(collection(pCal, `${K1}/muro`)));
+await no('nadie escribe en el muro desde el cliente', setDoc(doc(eAct, `${K1}/muro/m4`), { uid: 'eAct', estado: 'publicada' }));
+await no('ni enciende el muro', setDoc(doc(pEd, `${K1}/config/muro`), { activo: true }));
+
 console.log('\nAgregados y otros');
 await si('profe del colegio lee el agregado', getDoc(doc(pA, `${K1}/agregados/resumen`)));
 await no('estudiante no', getDoc(doc(eAct, `${K1}/agregados/resumen`)));

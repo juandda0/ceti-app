@@ -46,6 +46,7 @@ export const FUNCIONES = [
   'resumenAcudientes',
   'informeCobertura',
   'certificados',
+  'rubricas',
 ] as const;
 export type Funcion = (typeof FUNCIONES)[number];
 
@@ -91,6 +92,8 @@ const FUNCIONES_PILOTO: readonly Funcion[] = [
   'informeCobertura',
   // Fase 8: certificados de participación con código de verificación.
   'certificados',
+  // Fase 9: tareas abiertas con rúbrica (calificarlas es de cualquier plan).
+  'rubricas',
 ];
 
 export const PLANES: Record<PlanId, DefinicionPlan> = {
