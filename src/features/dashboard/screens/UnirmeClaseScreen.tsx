@@ -1,8 +1,7 @@
 /**
  * Ajustes → Mi clase → Unirme a una clase. El estudiante escribe el código de
  * su profe, o llega aquí desde el enlace /join/{código} con el código ya puesto.
- * Fase 0: un estudiante está en una sola clase, así que unirse a otra lo saca
- * de la anterior (se le avisa antes).
+ * Puede estar en hasta 5 clases a la vez; unirse a otra no lo saca de ninguna.
  */
 import { useCallback } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
@@ -21,7 +20,8 @@ import {
 } from '@features/dashboard/components/profe/kit';
 import { joinClass } from '@features/dashboard/data/joinClass';
 import { rosterRepository } from '@features/dashboard/data/rosterRepository';
-import { useMiClase } from '@features/dashboard/hooks/useMiClase';
+import { MAX_CLASES_ESTUDIANTE } from '@features/dashboard/hooks/useMiClase';
+import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { pendingInvite } from '@features/dashboard/data/pendingInvite';
 import { useUserStore } from '@features/auth/store/useUserStore';
 
@@ -30,7 +30,8 @@ export default function UnirmeClaseScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ codigo?: string; auto?: string }>();
-  const { clase, cargando } = useMiClase();
+  const enClases = useAuthStore((s) => Object.keys(s.clases).length);
+  const lleno = enClases >= MAX_CLASES_ESTUDIANTE;
 
   const nombreInicial = useUserStore((s) => s.fullName || s.nickname);
 
@@ -65,24 +66,24 @@ export default function UnirmeClaseScreen() {
           titulo={t('miClase.unirmeTitulo')}
           subtitulo={t('miClase.unirmeTexto')}
         />
-        {clase ? (
+        {lleno ? (
           <Aviso
-            icono="swap-horizontal"
+            icono="alert-circle"
             tono="naranja"
-            texto={t('miClase.cambiarAviso', { nombre: clase.nombre || t('miClase.tuClase') })}
+            texto={t('miClase.lleno', { max: MAX_CLASES_ESTUDIANTE })}
           />
-        ) : null}
-        <Tarjeta style={st.tarjeta}>
-          <ClassCodeForm
-            initialCode={params.codigo ?? ''}
-            nombreInicial={nombreInicial}
-            // Con el enlace se une solo, pero no si ya está en otra clase: ahí
-            // primero lee el aviso y confirma con el botón.
-            autoSubmit={params.auto === '1' && !cargando && !clase}
-            sinEncabezado
-            onJoin={onJoin}
-          />
-        </Tarjeta>
+        ) : (
+          <Tarjeta style={st.tarjeta}>
+            <ClassCodeForm
+              initialCode={params.codigo ?? ''}
+              nombreInicial={nombreInicial}
+              // Con el enlace se une solo si ya tiene su nombre completo.
+              autoSubmit={params.auto === '1'}
+              sinEncabezado
+              onJoin={onJoin}
+            />
+          </Tarjeta>
+        )}
         <View style={st.pie}>
           <Aviso icono="sparkles" tono="azul" texto={t('miClase.gratis')} />
         </View>

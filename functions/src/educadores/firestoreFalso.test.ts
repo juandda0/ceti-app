@@ -19,6 +19,14 @@ function aplicar(previo: Datos | undefined, nuevo: Datos, merge: boolean): Datos
   for (const [k, v] of Object.entries(nuevo)) {
     if (v && typeof v === 'object' && INCREMENTO in (v as Datos)) {
       base[k] = ((previo?.[k] as number | undefined) ?? 0) + ((v as Datos)[INCREMENTO] as number);
+    } else if (merge && v && typeof v === 'object' && !Array.isArray(v)) {
+      // Como Firestore: con merge, los mapas anidados también se mezclan.
+      const antes = previo?.[k];
+      base[k] = aplicar(
+        antes && typeof antes === 'object' && !Array.isArray(antes) ? (antes as Datos) : undefined,
+        v as Datos,
+        true
+      );
     } else {
       base[k] = v;
     }

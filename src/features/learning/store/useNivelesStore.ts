@@ -12,7 +12,9 @@ import { armarNiveles, type NivelesMundo } from '@features/orbita/domain/niveles
 export type EstadoCarga = 'cargando' | 'listo' | 'error';
 
 type NivelesState = {
-  porMundo: Partial<Record<WorldId, { clave: string; estado: EstadoCarga; niveles?: NivelesMundo }>>;
+  porMundo: Partial<
+    Record<WorldId, { clave: string; estado: EstadoCarga; niveles?: NivelesMundo }>
+  >;
   cargar: (
     grado: Grado,
     worldId: WorldId,
@@ -25,7 +27,8 @@ type NivelesState = {
 export const useNivelesStore = create<NivelesState>()((set, get) => ({
   porMundo: {},
   cargar: async (grado, worldId, semilla, courseContent = null) => {
-    const clave = `${grado}:${semilla}:v${courseContent?.version ?? 0}`;
+    // La clase va en la clave: dos clases con la misma versión tienen contenido distinto.
+    const clave = `${grado}:${semilla}:${courseContent?.cursoId ?? '-'}:v${courseContent?.version ?? 0}`;
     const actual = get().porMundo[worldId];
     if (actual?.clave === clave && actual.estado !== 'error') return;
     // Mientras recarga (p. ej. el profe guardó la clase) se conservan los niveles
@@ -53,7 +56,10 @@ export const useNivelesStore = create<NivelesState>()((set, get) => ({
     } catch (err) {
       if (__DEV__) console.warn('[niveles] cargar:', err);
       set((s) => ({
-        porMundo: { ...s.porMundo, [worldId]: { clave, estado: 'error', niveles: actual?.niveles } },
+        porMundo: {
+          ...s.porMundo,
+          [worldId]: { clave, estado: 'error', niveles: actual?.niveles },
+        },
       }));
     }
   },

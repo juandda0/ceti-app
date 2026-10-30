@@ -92,7 +92,18 @@ export default function Index() {
         // Educadores: crea la prueba de Piloto a profes que ya existían antes de
         // los planes. No bloquea la entrada ni cambia los claims.
         void adminService.resolveMyAccess(null).catch(() => undefined);
-      } else if (claims.role === 'estudiante' && !claims.cursoId) {
+      } else if (claims.role === 'estudiante' && Object.keys(claims.clases ?? {}).length > 0) {
+        // Ya está en alguna clase: otra invitación por correo se recoge sin frenar la entrada.
+        void adminService
+          .resolveMyAccess(null)
+          .then(async (access) => {
+            const nuevas = Object.keys(access.clases ?? {}).length;
+            if (nuevas > Object.keys(claims?.clases ?? {}).length) {
+              useAuthStore.getState().setClaims(await readCetiClaims(u, true));
+            }
+          })
+          .catch(() => undefined);
+      } else if (claims.role === 'estudiante') {
         // Un estudiante sin clase pudo ser invitado por correo desde la lista del
         // profe: el servidor lo une y aquí se recogen los claims nuevos.
         // Máximo 3 s: la entrada de los estudiantes B2C no se frena por esto.

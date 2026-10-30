@@ -36,15 +36,22 @@ jest.mock('firebase-functions/v2/https', () => ({
     }
   },
 }));
-jest.mock('firebase-functions/v2/firestore', () => ({ onDocumentWritten: jest.fn() }));
+jest.mock('firebase-functions/v2/firestore', () => ({
+  onDocumentWritten: jest.fn(),
+  onDocumentCreated: jest.fn(),
+}));
 jest.mock('firebase-functions/v2/scheduler', () => ({ onSchedule: jest.fn() }));
 jest.mock('firebase-functions/params', () => ({
   defineSecret: () => ({ value: () => 'test' }),
   defineString: () => ({ value: () => '' }),
 }));
 jest.mock('firebase-admin/app', () => ({ initializeApp: jest.fn() }));
+const mockClaimsActuales: { valor: Record<string, unknown> } = { valor: {} };
 jest.mock('firebase-admin/auth', () => ({
-  getAuth: () => ({ setCustomUserClaims: mockSetCustomUserClaims }),
+  getAuth: () => ({
+    setCustomUserClaims: mockSetCustomUserClaims,
+    getUser: async () => ({ customClaims: mockClaimsActuales.valor }),
+  }),
 }));
 jest.mock('firebase-admin/firestore', () => ({
   getFirestore: () => ({
@@ -172,27 +179,31 @@ describe('Ceti Educadores', () => {
     );
     expect(mockSetCustomUserClaims).toHaveBeenCalledWith('ana', {
       role: 'estudiante',
-      colegioId: 'col',
-      cursoId: 'c1',
+      clases: { c1: 'col' },
     });
     expect(mockCerrarInvitacion).toHaveBeenCalledWith(INV, 'ana');
   });
 
-  test('un estudiante sin clase que ya tenía cuenta también usa la invitación', async () => {
+  test('un estudiante con cuenta usa la invitación, tenga o no otras clases', async () => {
     mockInvitacionDeCorreo.mockResolvedValue(INV);
     const r = await call(resolveMyAccess, {
       auth: { uid: 'ana', token: { role: 'estudiante', email: 'ana@x.co' } },
     });
-    expect(r).toEqual({ role: 'estudiante', colegioId: 'col', cursoId: 'c1' });
+    expect(r).toEqual({
+      role: 'estudiante',
+      colegioId: 'col',
+      cursoId: 'c1',
+      clases: { c1: 'col' },
+    });
 
-    mockInvitacionDeCorreo.mockClear();
-    await call(resolveMyAccess, {
+    // Ya estaba en otra clase (token de antes): se suma la nueva.
+    const r2 = await call(resolveMyAccess, {
       auth: {
         uid: 'ana',
-        token: { role: 'estudiante', email: 'ana@x.co', colegioId: 'col', cursoId: 'c1' },
+        token: { role: 'estudiante', email: 'ana@x.co', colegioId: 'otro', cursoId: 'c0' },
       },
     });
-    expect(mockInvitacionDeCorreo).not.toHaveBeenCalled();
+    expect(r2).toMatchObject({ clases: { c0: 'otro', c1: 'col' } });
   });
 
   test('si la clase está llena entra como invitado y la invitación queda pendiente', async () => {
@@ -223,28 +234,39 @@ describe('Ceti Educadores', () => {
     expect(await call(joinByCode, req)).toEqual({ ok: true, colegioId: 'col', cursoId: 'c1' });
     expect(mockSetCustomUserClaims).toHaveBeenCalledWith('e1', {
       role: 'estudiante',
-      colegioId: 'col',
-      cursoId: 'c1',
+      clases: { c1: 'col' },
     });
   });
 
-  test('joinByCode a otra clase saca al estudiante de la anterior', async () => {
+  test('joinByCode suma la clase sin sacarlo de las que ya tenía (hasta 5)', async () => {
     mockDocs['classCodes/ABC123'] = { colegioId: 'col', cursoId: 'c1' };
-    mockDocs['colegios/col/cursos/c0/estudiantes/e1'] = { estado: 'activo' };
+    mockClaimsActuales.valor = { role: 'estudiante', clases: { c0: 'otro' } };
     const req = {
-      auth: { uid: 'e1', token: { email: 'e1@x.co', colegioId: 'col', cursoId: 'c0' } },
-      data: { code: 'ABC123' },
+      auth: { uid: 'e1', token: { email: 'e1@x.co', role: 'estudiante' } },
+      data: { code: 'ABC123', nombre: '  Ana   Pérez ' },
     };
     expect(await call(joinByCode, req)).toEqual({ ok: true, colegioId: 'col', cursoId: 'c1' });
-    expect(mockSet).toHaveBeenCalledWith(
-      'colegios/col/cursos/c0/estudiantes/e1',
-      expect.objectContaining({ estado: 'retirado', retiradoPor: 'estudiante' })
-    );
     expect(mockSetCustomUserClaims).toHaveBeenCalledWith('e1', {
       role: 'estudiante',
-      colegioId: 'col',
-      cursoId: 'c1',
+      clases: { c0: 'otro', c1: 'col' },
     });
+    expect(mockSet).toHaveBeenCalledWith(
+      'colegios/col/cursos/c1/estudiantes/e1',
+      expect.objectContaining({ nombre: 'Ana Pérez', estado: 'pendiente_atestacion' })
+    );
+    expect(mockSet).not.toHaveBeenCalledWith(expect.stringContaining('/c0/'), expect.anything());
+
+    // Con 5 clases ya no entra a una sexta.
+    mockSetCustomUserClaims.mockClear();
+    mockClaimsActuales.valor = {
+      role: 'estudiante',
+      clases: { a: 'x', b: 'x', c: 'x', d: 'x', e: 'x' },
+    };
+    await expect(call(joinByCode, req)).rejects.toMatchObject({
+      details: { codigo: 'limite_clases_estudiante' },
+    });
+    expect(mockSetCustomUserClaims).not.toHaveBeenCalled();
+    mockClaimsActuales.valor = {};
   });
 
   test('joinByCode cierra la invitación por correo a la misma clase', async () => {

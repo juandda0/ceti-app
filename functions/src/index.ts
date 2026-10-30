@@ -48,6 +48,13 @@ import {
 import { cerrarInvitacion, invitacionDeCorreo } from './educadores/invitaciones';
 import { recalcularAdopcionSiToca } from './educadores/adopcionColegio';
 import {
+  clasesActuales,
+  clasesDeClaims,
+  conClase,
+  sinClase,
+  type ClasesEstudiante,
+} from './educadores/clasesEstudiante';
+import {
   borrarClase,
   editarClase,
   estadoAlVolver,
@@ -97,11 +104,10 @@ function isAllowlistedAdminEmail(email: string | undefined): boolean {
   return !!email && CETI_ADMIN_EMAILS.has(email.toLowerCase());
 }
 
-type ClaimsPayload = {
-  role: Role;
-  colegioId?: string;
-  cursoId?: string;
-};
+type ClaimsPayload =
+  | { role: 'admin' | 'profesor'; colegioId?: string }
+  /** Hasta 5 clases {cursoId: colegioId}; vacío = estudiante sin clase (B2C). */
+  | { role: 'estudiante'; clases?: ClasesEstudiante };
 
 /** Sets auth custom claims + mirrors them into membership/{uid}. Sole writer (R2). */
 async function applyClaims(uid: string, payload: ClaimsPayload): Promise<void> {
@@ -109,24 +115,24 @@ async function applyClaims(uid: string, payload: ClaimsPayload): Promise<void> {
   if (payload.role === 'admin') {
     // admin is global — no colegioId/cursoId (R3).
     claims = { role: 'admin' };
-  } else if (payload.role === 'estudiante' && !payload.colegioId && !payload.cursoId) {
-    // Invitados del evento usan las funciones personales sin pertenecer a una clase.
-    claims = { role: 'estudiante' };
+  } else if (payload.role === 'estudiante') {
+    // Sin clases = estudiante por su cuenta (B2C y visitantes del evento).
+    const clases = payload.clases ?? {};
+    claims =
+      Object.keys(clases).length > 0 ? { role: 'estudiante', clases } : { role: 'estudiante' };
   } else {
     if (!payload.colegioId) {
       throw new HttpsError('invalid-argument', `Role '${payload.role}' requires a colegioId.`);
     }
-    if (payload.role === 'estudiante' && !payload.cursoId) {
-      throw new HttpsError('invalid-argument', "Role 'estudiante' requires a cursoId.");
-    }
     claims = { role: payload.role, colegioId: payload.colegioId };
-    if (payload.cursoId) claims.cursoId = payload.cursoId;
   }
 
   await getAuth().setCustomUserClaims(uid, claims);
+  // Sin merge: el espejo debe quedar igual a los claims (un estudiante de antes
+  // traía colegioId/cursoId y ahora trae `clases`).
   await getFirestore()
     .doc(`membership/${uid}`)
-    .set({ ...claims, claimsUpdatedAt: FieldValue.serverTimestamp() }, { merge: true });
+    .set({ ...claims, claimsUpdatedAt: FieldValue.serverTimestamp() });
 }
 
 /** Verify the caller is a teacher listed on the course. */
@@ -335,15 +341,26 @@ export const resolveMyAccess = onCall(async (request) => {
     if (caller.token.role === 'profesor') {
       await asegurarPruebaDeProfe(caller.uid);
     }
-    // Estudiante sin clase (se registró antes de que su profe subiera la lista).
-    if (caller.token.role === 'estudiante' && !caller.token.cursoId) {
+    if (caller.token.role === 'estudiante') {
+      // Un profe pudo invitarlo por correo después de que se registró (también
+      // si ya está en otras clases): si hay invitación, queda unido aquí.
       const unido = await unirPorInvitacion(caller, email);
-      if (unido) return unido;
+      const clases = unido
+        ? { ...clasesDeClaims(caller.token), [unido.cursoId]: unido.colegioId }
+        : clasesDeClaims(caller.token);
+      // colegioId/cursoId: la primera clase, para las apps de antes.
+      const [primera] = Object.entries(clases);
+      return {
+        role: 'estudiante',
+        colegioId: primera?.[1] ?? null,
+        cursoId: primera?.[0] ?? null,
+        clases,
+      };
     }
     return {
       role: caller.token.role,
       colegioId: (caller.token.colegioId as string | undefined) ?? null,
-      cursoId: (caller.token.cursoId as string | undefined) ?? null,
+      cursoId: null,
     };
   }
 
@@ -521,6 +538,10 @@ export const suppressStudentData = onCall(async (request) => {
   await db.recursiveDelete(estRef.collection('impactTest'));
   // Reto signals (RQ-PR14 CA9) — derived from the diary, live under the student.
   await db.recursiveDelete(estRef.collection('retos'));
+  // Fase 1: registro de clase (intentos, visitas, resúmenes).
+  await db.recursiveDelete(estRef.collection('intentos'));
+  await db.recursiveDelete(estRef.collection('visitas'));
+  await db.recursiveDelete(estRef.collection('resumen'));
   // Account-scoped data under users/{uid}: the pocket-money diary (RQ-ES10 CA7),
   // the budgets config (RQ-ES11 CA10), and the simulated savings goals/deposits
   // that the prior suppression left behind (goals/deposits also derive the diary
@@ -697,8 +718,10 @@ async function unirEstudianteACurso(
   nombrePreferido?: string | null
 ): Promise<boolean> {
   const db = getFirestore();
+  // Claims vigentes en Auth: el token de la llamada puede no traer una clase recién unida.
+  const actuales = await clasesActuales(caller.uid);
   // Already linked to this exact course → no-op (idempotent), salvo corregir el nombre.
-  if (caller.token.colegioId === colegioId && caller.token.cursoId === cursoId) {
+  if (actuales[cursoId] === colegioId) {
     if (nombrePreferido) {
       await db
         .doc(`colegios/${colegioId}/cursos/${cursoId}/estudiantes/${caller.uid}`)
@@ -706,6 +729,9 @@ async function unirEstudianteACurso(
     }
     return false;
   }
+
+  // Hasta 5 clases: se valida antes de tocar el roster.
+  const clases = conClase(actuales, cursoId, colegioId);
 
   const email = (caller.token.email as string | undefined) ?? '';
   const nombre =
@@ -742,17 +768,8 @@ async function unirEstudianteACurso(
       { merge: true }
     );
   }
-  // Fase 0: un estudiante está en una sola clase. Al cambiarse, sale de la
-  // anterior para que no siga ocupando cupo ni apareciendo en ese reporte.
-  const anteriorColegio = caller.token.colegioId as string | undefined;
-  const anteriorCurso = caller.token.cursoId as string | undefined;
-  if (anteriorColegio && anteriorCurso) {
-    await retirarDeClase(db, anteriorColegio, anteriorCurso, caller.uid, {
-      quien: 'estudiante',
-      uid: caller.uid,
-    });
-  }
-  await applyClaims(caller.uid, { role: 'estudiante', colegioId, cursoId });
+  // Fase 1: puede estar en varias clases a la vez; las demás no se tocan.
+  await applyClaims(caller.uid, { role: 'estudiante', clases });
   return true;
 }
 
@@ -768,22 +785,28 @@ function leerNombreCompleto(v: unknown): string | null {
   return limpio.length >= 2 && limpio.length <= 80 ? limpio : null;
 }
 
-/** El estudiante sale de su clase y sigue usando la app por su cuenta. */
+/**
+ * El estudiante sale de una de sus clases ({cursoId}) y sigue con las demás y
+ * con su galaxia. Sin cursoId (app de antes) sale de todas.
+ */
 export const salirDeMiClase = onCall(async (request) => {
   const caller = request.auth;
   requireAuth(caller);
   if (caller.token.role !== 'estudiante') {
     throw new HttpsError('failed-precondition', 'Solo un estudiante sale de una clase.');
   }
-  const colegioId = caller.token.colegioId as string | undefined;
-  const cursoId = caller.token.cursoId as string | undefined;
-  if (colegioId && cursoId) {
-    await retirarDeClase(getFirestore(), colegioId, cursoId, caller.uid, {
+  const pedido = typeof request.data?.cursoId === 'string' ? request.data.cursoId : null;
+  const actuales = await clasesActuales(caller.uid);
+  const salir = pedido ? (actuales[pedido] ? [pedido] : []) : Object.keys(actuales);
+  let quedan = actuales;
+  for (const cursoId of salir) {
+    await retirarDeClase(getFirestore(), actuales[cursoId], cursoId, caller.uid, {
       quien: 'estudiante',
       uid: caller.uid,
     });
+    quedan = sinClase(quedan, cursoId);
   }
-  await applyClaims(caller.uid, { role: 'estudiante' });
+  await applyClaims(caller.uid, { role: 'estudiante', clases: quedan });
   return { ok: true };
 });
 
@@ -800,11 +823,11 @@ export const retirarEstudiante = onCall(async (request) => {
     quien: 'profesor',
     uid: caller.uid,
   });
-  // Solo se le quita el acceso si sus claims todavía apuntan a esta clase.
+  // Pierde el acceso a esta clase; sus otras clases siguen igual.
   try {
-    const claims = (await getAuth().getUser(uid)).customClaims ?? {};
-    if (claims.colegioId === colegioId && claims.cursoId === cursoId) {
-      await applyClaims(uid, { role: 'estudiante' });
+    const actuales = await clasesActuales(uid);
+    if (actuales[cursoId] === colegioId) {
+      await applyClaims(uid, { role: 'estudiante', clases: sinClase(actuales, cursoId) });
     }
   } catch (e) {
     console.error('retirarEstudiante: no se pudieron quitar los claims', { uid, error: String(e) });
@@ -1078,12 +1101,25 @@ type ResumenAgregado = {
   estudiantesActivos: number;
   /** Course-wide mastery promedio across all progress docs (0..1). */
   masteryPromedio: number;
-  /** % of (estudiantesActivos × 5 worlds) progress slots marked completed, 0..1. */
+  /** % of (estudiantesActivos × mundos visibles) progress slots marked completed, 0..1. */
   porcentajeCompletado: number;
   actualizadoAt: FieldValue;
 };
 
-const WORLDS_POR_CURSO = 5; // 5 worlds = 5 CONPES competencies (see competencias.ts).
+// Sin configuración la clase ve los 5 mundos por defecto (5 competencias CONPES).
+const WORLDS_POR_CURSO = 5;
+
+/** Mundos que la clase ve hoy: los activos de su configuración, o los 5 por defecto. */
+export function mundosVisiblesDeConfig(config: unknown): Set<string> | null {
+  const mundos = (config as { mundos?: unknown } | undefined)?.mundos;
+  if (!Array.isArray(mundos) || mundos.length === 0) return null;
+  return new Set(
+    mundos
+      .filter((m) => m && (m as { activo?: unknown }).activo === true)
+      .map((m) => (m as { worldId?: unknown }).worldId)
+      .filter((w): w is string => typeof w === 'string')
+  );
+}
 
 function promedio(values: number[]): number {
   if (values.length === 0) return 0;
@@ -1099,11 +1135,17 @@ async function recomputeCursoAgregado(colegioId: string, cursoId: string): Promi
   const db = getFirestore();
   // Scope a collection-group read to this one course (denormalized keys on each
   // progress doc, written under the rules' guard).
-  const snap = await db
-    .collectionGroup('progress')
-    .where('colegioId', '==', colegioId)
-    .where('cursoId', '==', cursoId)
-    .get();
+  const [snap, config] = await Promise.all([
+    db
+      .collectionGroup('progress')
+      .where('colegioId', '==', colegioId)
+      .where('cursoId', '==', cursoId)
+      .get(),
+    db.doc(`colegios/${colegioId}/cursos/${cursoId}/config/mundos`).get(),
+  ]);
+  // Mundos propios y ocultos cuentan: el % se mide sobre lo que la clase ve hoy.
+  const visibles = mundosVisiblesDeConfig(config.data());
+  const mundosDeLaClase = visibles ? visibles.size : WORLDS_POR_CURSO;
 
   const porCompetencia: Record<
     string,
@@ -1130,7 +1172,7 @@ async function recomputeCursoAgregado(colegioId: string, cursoId: string): Promi
 
     activeUids.add(uid);
     allMasteries.push(mastery);
-    if (completed) completedSlots += 1;
+    if (completed && (!visibles || visibles.has(worldId))) completedSlots += 1;
 
     const c = (porCompetencia[comp] ??= { masteries: [], uids: new Set(), done: new Set() });
     c.masteries.push(mastery);
@@ -1180,7 +1222,9 @@ async function recomputeCursoAgregado(colegioId: string, cursoId: string): Promi
     estudiantesActivos: activeUids.size,
     masteryPromedio: promedio(allMasteries),
     porcentajeCompletado:
-      activeUids.size === 0 ? 0 : completedSlots / (activeUids.size * WORLDS_POR_CURSO),
+      activeUids.size === 0 || mundosDeLaClase === 0
+        ? 0
+        : Math.min(1, completedSlots / (activeUids.size * mundosDeLaClase)),
     actualizadoAt: FieldValue.serverTimestamp(),
   };
 
@@ -1212,6 +1256,9 @@ export { adopcionDiaria } from './educadores/adopcionColegio';
 export { activarLicenciaNave } from './educadores/limites';
 export { invitarLista } from './educadores/invitaciones';
 export { bitacoraSemanal } from './educadores/bitacoraSemanal';
+
+// Ceti Educadores · Fase 1: resumen de cada intento en la clase.
+export { onIntentoClase } from './educadores/registroClase';
 
 // Ceti Educadores · cobros (Wompi, ciclo diario de suscripciones).
 export {

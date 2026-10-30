@@ -37,8 +37,11 @@ interface QuestionBankState {
    * Per-world mastery (0..1) hydrated from the Firestore tenant tree on app load.
    * Lets unlock/progress survive logout and new devices, where the local `answers`
    * cache is empty. Combined with local answers via max() (never summed).
+   * It belongs to one progress key (a class space: `uid@cursoId`) and only
+   * counts for that key, so a class's mastery never leaks into Mi galaxia.
    */
   remoteProgress: Partial<Record<WorldId, number>>;
+  remoteProgressDe: string | null;
 }
 
 interface QuestionBankActions {
@@ -60,7 +63,8 @@ interface QuestionBankActions {
   getAnsweredIds: (uid: string, worldId: WorldId) => Set<string>;
   isWorldComplete: (uid: string, worldId: WorldId) => boolean;
   /** Replace remote mastery snapshot (authoritative for the session). */
-  setRemoteProgress: (byWorld: Partial<Record<WorldId, number>>) => void;
+  /** `clave`: the progress key (see learning/data/espacio) the mastery belongs to. */
+  setRemoteProgress: (byWorld: Partial<Record<WorldId, number>>, clave: string | null) => void;
   resetUserProgress: () => void;
 }
 
@@ -75,6 +79,7 @@ const initialState: QuestionBankState = {
   fetchStatus: {},
   answers: [],
   remoteProgress: {},
+  remoteProgressDe: null,
 };
 
 export const useQuestionBankStore = create<QuestionBankStore>()(
@@ -86,7 +91,8 @@ export const useQuestionBankStore = create<QuestionBankStore>()(
         // Cache key = grade + student + config version: a change of grade or
         // student re-fetches, and a professor content save (which bumps the
         // config version, RQ-PR11 CA4) invalidates for the next attempt.
-        const key = `${grado}:${seedKey}:v${courseContent?.version ?? 0}`;
+        // La clase va en la clave: dos clases con la misma versión tienen contenido distinto.
+        const key = `${grado}:${seedKey}:${courseContent?.cursoId ?? '-'}:v${courseContent?.version ?? 0}`;
         if (get().fetchedKeyByWorld[worldId] === key) return;
 
         set((s) => ({ fetchStatus: { ...s.fetchStatus, [worldId]: 'loading' } }));
@@ -152,7 +158,8 @@ export const useQuestionBankStore = create<QuestionBankStore>()(
         ).length;
         // Remote mastery (0..1) reconstructs the correct-answer count.
         // max() keeps progress monotonic without double-counting.
-        const remoteMastery = get().remoteProgress[worldId];
+        const remoteMastery =
+          get().remoteProgressDe === uid ? get().remoteProgress[worldId] : undefined;
         const remoteDone =
           remoteMastery != null && total > 0 ? Math.round(remoteMastery * total) : 0;
         const done = Math.min(total, Math.max(localDone, remoteDone));
@@ -171,12 +178,19 @@ export const useQuestionBankStore = create<QuestionBankStore>()(
         return isMastered(done, total);
       },
 
-      setRemoteProgress: (byWorld) => set({ remoteProgress: byWorld }),
+      setRemoteProgress: (byWorld, clave) =>
+        set({ remoteProgress: byWorld, remoteProgressDe: clave }),
 
       // Reset on user switch (e.g. demo role swap): also drop the content cache so
       // the next student re-assembles their own (grado, seedKey) set.
       resetUserProgress: () =>
-        set({ answers: [], remoteProgress: {}, questionsByWorld: {}, fetchedKeyByWorld: {} }),
+        set({
+          answers: [],
+          remoteProgress: {},
+          remoteProgressDe: null,
+          questionsByWorld: {},
+          fetchedKeyByWorld: {},
+        }),
     }),
     {
       name: 'question-bank-store',

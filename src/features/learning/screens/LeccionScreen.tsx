@@ -223,8 +223,17 @@ function QuizHeader({
             accessible
             accessibilityLabel={xpLabel}
           >
-            <Ionicons name="flash" size={13} color={enCombo ? colors.brand.primary : colors.system.purple} />
-            <Text style={[headerSt.xpText, { color: enCombo ? colors.brand.primary : colors.text.primary }]}>
+            <Ionicons
+              name="flash"
+              size={13}
+              color={enCombo ? colors.brand.primary : colors.system.purple}
+            />
+            <Text
+              style={[
+                headerSt.xpText,
+                { color: enCombo ? colors.brand.primary : colors.text.primary },
+              ]}
+            >
               {enCombo ? `x${combo}` : xp}
             </Text>
           </View>
@@ -702,6 +711,25 @@ export interface ResultadoLeccion {
   idsAcertadas: string[];
 }
 
+/** Una respuesta tal como la dio el estudiante (lo que ve su profe en la clase). */
+export interface RespuestaRegistrada {
+  pregunta: string;
+  tipo: QuizItem['tipo'];
+  correcta: boolean;
+  /** La opción elegida (texto), "verdadero"/"falso", o el orden elegido ("2-0-1"). */
+  respuesta: string;
+  /** Tiempo desde que vio la pregunta hasta que comprobó. */
+  ms: number;
+}
+
+/** Todo lo que pasó en una lección o un intento de jefe, ganado o perdido. */
+export interface RegistroLeccion {
+  resultado: 'completado' | 'perdido';
+  inicioAt: number;
+  finAt: number;
+  respuestas: RespuestaRegistrada[];
+}
+
 /** Velocidad (px/s) a partir de la cual un deslizamiento corto ya cambia de pregunta. */
 const SWIPE_VELOCITY = 500;
 
@@ -714,6 +742,7 @@ export default function LeccionScreen({
   nivel = 0,
   onSalir,
   onTerminar,
+  onRegistro,
 }: {
   items: QuizItem[];
   modo: ModoLeccion;
@@ -724,6 +753,8 @@ export default function LeccionScreen({
   nivel?: number;
   onSalir: () => void;
   onTerminar: (resultado: ResultadoLeccion) => void;
+  /** Cada intento terminado o perdido, respuesta por respuesta (para la clase). */
+  onRegistro?: (registro: RegistroLeccion) => void;
 }) {
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
@@ -758,6 +789,21 @@ export default function LeccionScreen({
     // Solo al montar: un intento nuevo del jefe no es una lección nueva.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Registro respuesta por respuesta, con el tiempo de cada pregunta.
+  const inicioIntento = useRef(Date.now());
+  const inicioPregunta = useRef(Date.now());
+  const respuestas = useRef<RespuestaRegistrada[]>([]);
+  useEffect(() => {
+    inicioPregunta.current = Date.now();
+  }, [intento.pos]);
+  const cerrarRegistro = (resultado: RegistroLeccion['resultado']) =>
+    onRegistro?.({
+      resultado,
+      inicioAt: inicioIntento.current,
+      finAt: Date.now(),
+      respuestas: respuestas.current,
+    });
 
   // Respuesta de la pregunta actual (se reinicia en cada pregunta).
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -848,6 +894,19 @@ export default function LeccionScreen({
       chosenOrder,
       hasSubmitted,
     });
+    respuestas.current = [
+      ...respuestas.current,
+      {
+        pregunta: currentQuestion.id,
+        tipo: currentQuestion.tipo,
+        correcta: correct,
+        respuesta:
+          currentQuestion.tipo === 'ordenar'
+            ? chosenOrder.join('-')
+            : String(selectedOption ?? '').slice(0, 80),
+        ms: Math.max(0, Date.now() - inicioPregunta.current),
+      },
+    ];
     const nuevoCombo = correct ? combo + 1 : 0;
     setXp((x) => x + xpRespuesta(correct, combo));
     setCombo(nuevoCombo);
@@ -866,6 +925,7 @@ export default function LeccionScreen({
     setHasSubmitted(true);
     if (estadoIntento(despues) === 'perdido') {
       eventos.jefePerdido({ mundo });
+      cerrarRegistro('perdido');
       sinVidasTimer.current = setTimeout(() => setSinVidas(true), SIN_VIDAS_DELAY_MS);
     }
   };
@@ -879,6 +939,7 @@ export default function LeccionScreen({
     if (estado === 'completado') {
       if (terminado.current) return;
       terminado.current = true;
+      cerrarRegistro('completado');
       const falladas = new Set(intento.falladas);
       onTerminar({
         total: questions.length,
@@ -906,6 +967,8 @@ export default function LeccionScreen({
   /** Sin vidas: el jefe empieza otra vez desde la primera pregunta, con 3 vidas. */
   const handleRestart = () => {
     setSinVidas(false);
+    respuestas.current = [];
+    inicioIntento.current = Date.now();
     setIntento(nuevoIntento(questions.length, vidasIniciales));
     setXp(0);
     setCombo(0);
@@ -1018,7 +1081,9 @@ export default function LeccionScreen({
               },
             ]}
           >
-            <Text style={[styles.actionBtnText, { color: hasAnswer ? '#fff' : colors.text.tertiary }]}>
+            <Text
+              style={[styles.actionBtnText, { color: hasAnswer ? '#fff' : colors.text.tertiary }]}
+            >
               {t('quiz.check')}
             </Text>
           </TouchableOpacity>
@@ -1040,7 +1105,6 @@ export default function LeccionScreen({
     </ScreenWrapper>
   );
 }
-
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 

@@ -19,6 +19,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { useUserStore } from '@features/auth/store/useUserStore';
 import { useStudentGrado } from '@features/learning/hooks/useStudentGrado';
+import { claveNivel, claveProgreso } from '@features/learning/data/espacio';
 import { useClassConfig } from '@features/learning/hooks/useClassConfig';
 import { isWorldVisible } from '@features/learning/data/classConfig';
 import { displayWorldDef } from '@features/learning/data/worldMeta';
@@ -27,7 +28,10 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { Typography } from '@shared/constants/typography';
 import MicroteoriaView from '@features/learning/components/MicroteoriaView';
 import EligeCaminoView from '@features/learning/components/EligeCaminoView';
-import LeccionScreen, { type ResultadoLeccion } from '@features/learning/screens/LeccionScreen';
+import LeccionScreen, {
+  type RegistroLeccion,
+  type ResultadoLeccion,
+} from '@features/learning/screens/LeccionScreen';
 import MapaPlaneta from '@features/learning/components/galaxia/MapaPlaneta';
 import StreakCelebration from '@features/learning/components/StreakCelebration';
 import FinLeccion from '@features/orbita/components/FinLeccion';
@@ -36,7 +40,12 @@ import { useNivelesStore } from '@features/learning/store/useNivelesStore';
 import { useQuestionBankStore } from '@features/learning/store/useQuestionBankStore';
 import { buildWorldProgress } from '@features/learning/data/worldProgress';
 import { worldProgressRepository } from '@features/dashboard/data/worldProgressRepository';
-import { ganaCofre, nodosMapa, type NodoMapa, type TipoNivel } from '@features/orbita/domain/niveles';
+import {
+  ganaCofre,
+  nodosMapa,
+  type NodoMapa,
+  type TipoNivel,
+} from '@features/orbita/domain/niveles';
 import type { RecompensaPractica } from '@features/orbita/domain/orbita';
 import { useOrbitaStore } from '@features/orbita/store/useOrbitaStore';
 import { refrescarAvisos } from '@features/orbita/hooks/useOrbita';
@@ -44,6 +53,10 @@ import { eventos } from '@features/orbita/data/eventos';
 import type { QuizItem, WorldId } from '@features/learning/data/quiz.types';
 import Despegue from '@features/learning/components/galaxia/Despegue';
 import { planetaDeMundo } from '@features/learning/data/planetas';
+import { construirIntento } from '@features/dashboard/data/registroClase';
+import { registroClaseRepository } from '@features/dashboard/data/registroClaseRepository';
+import { dayKey } from '@features/orbita/domain/tiempo';
+import { calcularRacha } from '@features/orbita/domain/racha';
 
 // ─── World metadata (mirrors WorldQuizScreen) ─────────────────────────────────
 
@@ -75,9 +88,13 @@ export default function WorldSagaScreen() {
 
   const firebaseUid = useAuthStore((s) => s.firebaseUid);
   const localProfileId = useUserStore((s) => s.id);
+  // `uid` es la cuenta (racha, XP, semilla del contenido); el avance del mundo
+  // es del espacio abierto (learning/data/espacio).
   const uid = firebaseUid ?? localProfileId ?? 'demo';
   const colegioId = useAuthStore((s) => s.colegioId);
   const cursoId = useAuthStore((s) => s.cursoId);
+  const uidProgreso = claveProgreso(uid, cursoId);
+  const claveDelNivel = claveNivel(worldId ?? '', cursoId);
   const grado = useStudentGrado();
 
   // Soft-exit guard (D-ORQ, RQ-PR10 CA4). The class config is live: if the
@@ -115,8 +132,9 @@ export default function WorldSagaScreen() {
         }
       : null;
 
+  // Por espacio: la teoría de una clase puede ser distinta a la de Mi galaxia.
   const { phase, situacion, microteoriaBank, handleECFinish, handleMTFinish } = useWorldFlow(
-    uid,
+    uidProgreso,
     grado,
     worldId,
     courseContent
@@ -150,12 +168,12 @@ export default function WorldSagaScreen() {
   // Los últimos niveles buenos, aunque esté recargando: una actualización remota
   // nunca desmonta el mapa ni la lección.
   const niveles = carga?.niveles;
-  const hechas = useOrbitaStore((s) => s.porUid[uid]?.niveles[worldId ?? ''] ?? 0);
+  const hechas = useOrbitaStore((s) => s.porUid[uid]?.niveles[claveDelNivel] ?? 0);
   // Suscripción a respuestas y progreso remoto para que "conquistado" se recalcule.
   useQuestionBankStore((s) => s.answers);
   useQuestionBankStore((s) => s.remoteProgress);
   const isWorldComplete = useQuestionBankStore((s) => s.isWorldComplete);
-  const conquistado = !!worldId && isWorldComplete(uid, worldId as WorldId);
+  const conquistado = !!worldId && isWorldComplete(uidProgreso, worldId as WorldId);
   const totalLecciones = niveles?.lecciones.length ?? 0;
   const nodos = niveles ? nodosMapa(totalLecciones, hechas, conquistado) : [];
 
@@ -192,6 +210,37 @@ export default function WorldSagaScreen() {
     setJugando({ tipo: n.tipo, nivel: n.indice, items });
   };
 
+  // Fase 1: en el espacio de una clase, cada intento (ganado o perdido) y la
+  // racha/XP le llegan al profe. En Mi galaxia no se manda nada. Si todavía no
+  // está autorizado, las reglas lo niegan y el juego sigue igual.
+  const enClase = role === 'estudiante' && !!colegioId && !!cursoId && !!firebaseUid;
+  const registrarEnClase = (tipo: TipoNivel, nivel: number, registro: RegistroLeccion) => {
+    if (!enClase || !worldId || !colegioId || !cursoId || !firebaseUid) return;
+    void registroClaseRepository
+      .registrarIntento(
+        colegioId,
+        cursoId,
+        firebaseUid,
+        construirIntento({ worldId, tipo, nivel, registro })
+      )
+      .catch(() => undefined);
+  };
+  const enviarResumenOrbita = () => {
+    if (!enClase || !colegioId || !cursoId || !firebaseUid) return;
+    const e = useOrbitaStore.getState().porUid[uid];
+    if (!e) return;
+    const hoy = dayKey(Date.now());
+    void registroClaseRepository
+      .guardarResumenOrbita(colegioId, cursoId, firebaseUid, {
+        xpTotal: Math.round(e.progreso.xpTotal),
+        racha: calcularRacha(e.racha, hoy),
+        mejorRacha: e.racha.mejor,
+        diasAprendiendo: e.racha.dias.length,
+        actualizadoAt: Date.now(),
+      })
+      .catch(() => undefined);
+  };
+
   const alTerminar = (resultado: ResultadoLeccion) => {
     if (!jugando || !worldId) return;
     const { tipo, nivel } = jugando;
@@ -201,10 +250,13 @@ export default function WorldSagaScreen() {
       // La maestría sale del jefe, con lo acertado a la primera (antes siempre era 10/10).
       const { recordAnswer, getWorldProgress } = useQuestionBankStore.getState();
       const acertadas = new Set(resultado.idsAcertadas);
-      for (const q of jugando.items) recordAnswer(uid, q.id, worldId as WorldId, acertadas.has(q.id));
-      ganoPlaneta = useQuestionBankStore.getState().isWorldComplete(uid, worldId as WorldId);
+      for (const q of jugando.items)
+        recordAnswer(uidProgreso, q.id, worldId as WorldId, acertadas.has(q.id));
+      ganoPlaneta = useQuestionBankStore
+        .getState()
+        .isWorldComplete(uidProgreso, worldId as WorldId);
       if (role === 'estudiante' && colegioId && cursoId && firebaseUid) {
-        const { done, total } = getWorldProgress(uid, worldId as WorldId);
+        const { done, total } = getWorldProgress(uidProgreso, worldId as WorldId);
         const progress = buildWorldProgress({
           colegioId,
           cursoId,
@@ -225,11 +277,13 @@ export default function WorldSagaScreen() {
 
     const r = useOrbitaStore.getState().completar(uid, {
       tipo,
-      worldId,
+      // Las lecciones hechas se cuentan por espacio; la racha y los XP, por cuenta.
+      worldId: claveDelNivel,
       nivel: tipo === 'leccion' ? nivel : undefined,
       xpRespuestas: resultado.xpRespuestas,
       perfecta: resultado.perfecta,
     });
+    enviarResumenOrbita();
     eventos.leccionFin({
       mundo: worldId,
       tipo,
@@ -240,7 +294,8 @@ export default function WorldSagaScreen() {
     });
     eventos.cetisGanados({ cantidad: r.cetis + r.cetisHito + r.cetisMeta, origen: tipo });
     if (r.primeroHoy) eventos.rachaExtendida({ racha: r.racha, reparada: r.reparada });
-    if (r.metaCumplida) eventos.metaCumplida({ meta: r.estado.ajustes.meta, lecciones: r.leccionesHoy });
+    if (r.metaCumplida)
+      eventos.metaCumplida({ meta: r.estado.ajustes.meta, lecciones: r.leccionesHoy });
     if (r.hito) eventos.hitoRacha({ hito: r.hito });
     refrescarAvisos(r.estado);
 
@@ -347,6 +402,7 @@ export default function WorldSagaScreen() {
         color={meta.color}
         mundo={worldId ?? ''}
         nivel={jugando.nivel}
+        onRegistro={(registro) => registrarEnClase(jugando.tipo, jugando.nivel, registro)}
         onSalir={() => setJugando(null)}
         onTerminar={alTerminar}
       />
@@ -355,8 +411,12 @@ export default function WorldSagaScreen() {
     content = (
       <View style={[styles.centro, { backgroundColor: colors.background.base }]}>
         <Ionicons name="cloud-offline" size={48} color={colors.text.quaternary} />
-        <Text style={[styles.centroTitulo, { color: colors.text.secondary }]}>{t('quiz.offline')}</Text>
-        <Text style={[styles.centroTexto, { color: colors.text.tertiary }]}>{t('quiz.offlineHint')}</Text>
+        <Text style={[styles.centroTitulo, { color: colors.text.secondary }]}>
+          {t('quiz.offline')}
+        </Text>
+        <Text style={[styles.centroTexto, { color: colors.text.tertiary }]}>
+          {t('quiz.offlineHint')}
+        </Text>
       </View>
     );
   } else if (!niveles) {

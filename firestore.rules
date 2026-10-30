@@ -50,20 +50,63 @@ service cloud.firestore {
         /databases/$(database)/documents/colegios/$(cid)/cursos/$(cursoId)/estudiantes/$(uid)
       ).data.estado == 'activo';
     }
+    // A student can be in up to 5 classes: the token carries `clases`, a map
+    // {cursoId: colegioId}. Tokens minted before that carry a single
+    // colegioId/cursoId pair, still honored until they refresh.
+    function clasesDelToken() {
+      return request.auth.token.get('clases', {});
+    }
+    function enClaseSegunToken(cid, cursoId) {
+      return clasesDelToken().get(cursoId, '') == cid
+        || (request.auth.token.get('colegioId', '') == cid
+          && request.auth.token.get('cursoId', '') == cursoId);
+    }
     // The student's claims point to this course, whatever their estado. Lets a
     // student who still waits for the attestation see their class name and
     // their own roster status (never progress or classmates).
     function isMiembroDeCurso(cid, cursoId) {
-      return isRole('estudiante')
-        && sameColegio(cid)
-        && request.auth.token.cursoId == cursoId;
+      return isRole('estudiante') && enClaseSegunToken(cid, cursoId);
+    }
+    // Member of some class of this colegio (to read its name/logo).
+    function isEstudianteDeColegio(cid) {
+      return isRole('estudiante') && cid in clasesDelToken().values();
     }
     function isEstudianteActivoEnCurso(cid, cursoId, uid) {
       return isRole('estudiante')
         && request.auth.uid == uid
-        && sameColegio(cid)
-        && request.auth.token.cursoId == cursoId
+        && enClaseSegunToken(cid, cursoId)
         && estudianteActivo(cid, cursoId, uid);
+    }
+    // Fase 1 — un intento de lección o de jefe con sus respuestas (≤ 40).
+    function intentoValido(d, uid) {
+      return d.keys().hasOnly(['worldId', 'tipo', 'nivel', 'resultado', 'inicioAt', 'finAt',
+          'duracionMs', 'total', 'aciertos', 'respuestas', 'uid', 'creadoAt'])
+        && d.uid == uid
+        && d.worldId is string && d.worldId.size() > 0 && d.worldId.size() <= 60
+        && d.tipo in ['leccion', 'jefe']
+        && (d.nivel == null || (d.nivel is int && d.nivel >= 0 && d.nivel < 50))
+        && d.resultado in ['completado', 'perdido']
+        && d.inicioAt is number && d.finAt is number && d.finAt >= d.inicioAt
+        && d.duracionMs is number && d.duracionMs >= 0 && d.duracionMs <= 7200000
+        && d.total is int && d.total >= 0 && d.total <= 40
+        && d.aciertos is int && d.aciertos >= 0 && d.aciertos <= d.total
+        && d.respuestas is list && d.respuestas.size() == d.total
+        && d.creadoAt == request.time;
+    }
+    // Una visita más del día `dia` (el contador solo sube de a uno).
+    function visitaValida(dia, visitas) {
+      return request.resource.data.keys().hasOnly(['dia', 'visitas', 'ultimaAt'])
+        && request.resource.data.dia == dia
+        && request.resource.data.visitas == visitas
+        && request.resource.data.ultimaAt is number;
+    }
+    function resumenOrbitaValido(d) {
+      return d.keys().hasOnly(['xpTotal', 'racha', 'mejorRacha', 'diasAprendiendo', 'actualizadoAt'])
+        && d.xpTotal is int && d.xpTotal >= 0
+        && d.racha is int && d.racha >= 0
+        && d.mejorRacha is int && d.mejorRacha >= 0
+        && d.diasAprendiendo is int && d.diasAprendiendo >= 0
+        && d.actualizadoAt is number;
     }
     // Shape of an assignment doc (RQ-PR04 mundo, or RQ-PR14 reto). A reto brief
     // can ONLY carry {tipo, cantidad} — a teacher cannot attach free text or
@@ -97,7 +140,7 @@ service cloud.firestore {
     match /colegios/{cid} {
       // Any member of the colegio reads its identity (nombre/logo for headers).
       // Structure (create/edit/delete) is Admin SDK only (backend).
-      allow read: if sameColegio(cid);
+      allow read: if sameColegio(cid) || isEstudianteDeColegio(cid);
       allow create, update, delete: if false;
 
       // Dormant entity (RQ-FN01): readable by the profesor if it ever existed; never written.
@@ -212,6 +255,37 @@ service cloud.firestore {
               && request.resource.data.score is number
               && request.resource.data.total is number
               && request.resource.data.takenAt is number;
+            allow delete: if false;
+          }
+
+          // Fase 1 — registro de clase (src/features/dashboard/data/registroClase.ts).
+          // Solo lo escribe el estudiante activo en ESTA clase (su app solo lo hace
+          // desde el espacio de la clase), así el profe ve lo que pasó desde que se
+          // unió. Nada se edita ni se borra desde el cliente; el resumen de la
+          // clase lo calcula una Function.
+          match /intentos/{intentoId} {
+            allow read: if isProfesorDe(cid, cursoId)
+              || isEstudianteActivoEnCurso(cid, cursoId, uid);
+            allow create: if isEstudianteActivoEnCurso(cid, cursoId, uid)
+              && intentoValido(request.resource.data, uid);
+            allow update, delete: if false;
+          }
+          match /visitas/{dia} {
+            allow read: if isProfesorDe(cid, cursoId)
+              || isEstudianteActivoEnCurso(cid, cursoId, uid);
+            allow create: if isEstudianteActivoEnCurso(cid, cursoId, uid)
+              && visitaValida(dia, 1);
+            allow update: if isEstudianteActivoEnCurso(cid, cursoId, uid)
+              && visitaValida(dia, resource.data.visitas + 1);
+            allow delete: if false;
+          }
+          match /resumen/{resumenId} {
+            allow read: if isProfesorDe(cid, cursoId)
+              || isEstudianteActivoEnCurso(cid, cursoId, uid);
+            // `orbita` lo escribe el estudiante; `clase`, solo la Function.
+            allow create, update: if resumenId == 'orbita'
+              && isEstudianteActivoEnCurso(cid, cursoId, uid)
+              && resumenOrbitaValido(request.resource.data);
             allow delete: if false;
           }
 

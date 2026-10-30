@@ -26,6 +26,8 @@ export async function joinClass(
 
   const res = await adminService.joinByCode(code, nombreCompleto);
   await refrescarClaims();
+  // Abre el espacio de la clase nueva en Aprender.
+  useAuthStore.getState().setEspacio(res.cursoId);
   if (nombreCompleto) guardarNombreCompleto(nombreCompleto);
   return { colegioId: res.colegioId, cursoId: res.cursoId };
 }
@@ -38,8 +40,8 @@ function guardarNombreCompleto(fullName: string): void {
   if (uid) void userRepository.updateFullName(uid, fullName).catch(() => undefined);
 }
 
-/** The student leaves their class; their streak, XP and avatar stay theirs. */
-export async function leaveClass(): Promise<void> {
-  await adminService.salirDeMiClase();
+/** The student leaves one class; their galaxy, streak, XP and avatar stay theirs. */
+export async function leaveClass(cursoId: string): Promise<void> {
+  await adminService.salirDeMiClase(cursoId);
   await refrescarClaims();
 }

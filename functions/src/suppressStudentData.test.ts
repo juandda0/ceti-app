@@ -34,7 +34,10 @@ jest.mock('firebase-functions/v2/https', () => ({
   onRequest: jest.fn(),
   HttpsError: class HttpsError extends Error {},
 }));
-jest.mock('firebase-functions/v2/firestore', () => ({ onDocumentWritten: jest.fn() }));
+jest.mock('firebase-functions/v2/firestore', () => ({
+  onDocumentWritten: jest.fn(),
+  onDocumentCreated: jest.fn(),
+}));
 jest.mock('firebase-functions/v2/scheduler', () => ({ onSchedule: jest.fn() }));
 jest.mock('firebase-functions/params', () => ({
   defineSecret: () => ({ value: () => 'test' }),

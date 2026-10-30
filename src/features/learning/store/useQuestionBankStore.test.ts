@@ -130,7 +130,7 @@ describe('useQuestionBankStore', () => {
   describe('getWorldProgress — remote progress only', () => {
     it('done = round(mastery * total)', () => {
       seedQuestions(4);
-      useQuestionBankStore.getState().setRemoteProgress({ [WORLD]: 0.5 });
+      useQuestionBankStore.getState().setRemoteProgress({ [WORLD]: 0.5 }, UID);
       expect(useQuestionBankStore.getState().getWorldProgress(UID, WORLD)).toEqual({
         done: 2,
         total: 4,
@@ -140,13 +140,13 @@ describe('useQuestionBankStore', () => {
     it('rounds mastery to nearest whole question', () => {
       seedQuestions(3);
       // 0.5 * 3 = 1.5 -> rounds to 2
-      useQuestionBankStore.getState().setRemoteProgress({ [WORLD]: 0.5 });
+      useQuestionBankStore.getState().setRemoteProgress({ [WORLD]: 0.5 }, UID);
       expect(useQuestionBankStore.getState().getWorldProgress(UID, WORLD).done).toBe(2);
     });
 
     it('full remote mastery yields done = total', () => {
       seedQuestions(5);
-      useQuestionBankStore.getState().setRemoteProgress({ [WORLD]: 1 });
+      useQuestionBankStore.getState().setRemoteProgress({ [WORLD]: 1 }, UID);
       expect(useQuestionBankStore.getState().getWorldProgress(UID, WORLD)).toEqual({
         done: 5,
         total: 5,
@@ -154,7 +154,7 @@ describe('useQuestionBankStore', () => {
     });
 
     it('remote mastery counts against the fixed quiz size before questions are fetched', () => {
-      useQuestionBankStore.getState().setRemoteProgress({ [WORLD]: 1 });
+      useQuestionBankStore.getState().setRemoteProgress({ [WORLD]: 1 }, UID);
       expect(useQuestionBankStore.getState().getWorldProgress(UID, WORLD)).toEqual({
         done: QUESTIONS_PER_WORLD,
         total: QUESTIONS_PER_WORLD,
@@ -169,7 +169,7 @@ describe('useQuestionBankStore', () => {
       // local: 1 correct
       store.recordAnswer(UID, 'q1', WORLD, true);
       // remote: 0.75 * 4 = 3
-      useQuestionBankStore.getState().setRemoteProgress({ [WORLD]: 0.75 });
+      useQuestionBankStore.getState().setRemoteProgress({ [WORLD]: 0.75 }, UID);
       const { done, total } = useQuestionBankStore.getState().getWorldProgress(UID, WORLD);
       expect(total).toBe(4);
       expect(done).toBe(3); // max(1, 3), NOT 1 + 3 = 4
@@ -182,7 +182,7 @@ describe('useQuestionBankStore', () => {
       store.recordAnswer(UID, 'q2', WORLD, true);
       store.recordAnswer(UID, 'q3', WORLD, true);
       // remote: 0.25 * 4 = 1
-      useQuestionBankStore.getState().setRemoteProgress({ [WORLD]: 0.25 });
+      useQuestionBankStore.getState().setRemoteProgress({ [WORLD]: 0.25 }, UID);
       const { done } = useQuestionBankStore.getState().getWorldProgress(UID, WORLD);
       expect(done).toBe(3); // max(3, 1)
     });
@@ -192,7 +192,7 @@ describe('useQuestionBankStore', () => {
       const store = useQuestionBankStore.getState();
       store.recordAnswer(UID, 'q1', WORLD, true);
       store.recordAnswer(UID, 'q2', WORLD, true);
-      useQuestionBankStore.getState().setRemoteProgress({ [WORLD]: 1 });
+      useQuestionBankStore.getState().setRemoteProgress({ [WORLD]: 1 }, UID);
       expect(useQuestionBankStore.getState().getWorldProgress(UID, WORLD).done).toBe(2);
     });
   });
@@ -234,7 +234,7 @@ describe('useQuestionBankStore', () => {
 
     it('true via remote progress alone', () => {
       seedQuestions(3);
-      useQuestionBankStore.getState().setRemoteProgress({ [WORLD]: 1 });
+      useQuestionBankStore.getState().setRemoteProgress({ [WORLD]: 1 }, UID);
       expect(useQuestionBankStore.getState().isWorldComplete(UID, WORLD)).toBe(true);
     });
   });
@@ -242,11 +242,18 @@ describe('useQuestionBankStore', () => {
   describe('setRemoteProgress', () => {
     it('replaces the snapshot rather than merging', () => {
       const store = useQuestionBankStore.getState();
-      store.setRemoteProgress({ world_1: 0.5, world_2: 0.5 });
-      store.setRemoteProgress({ world_1: 1 });
+      store.setRemoteProgress({ world_1: 0.5, world_2: 0.5 }, UID);
+      store.setRemoteProgress({ world_1: 1 }, UID);
       const { remoteProgress } = useQuestionBankStore.getState();
       expect(remoteProgress).toEqual({ world_1: 1 });
       expect(remoteProgress.world_2).toBeUndefined();
+    });
+
+    it('only counts for the progress key it belongs to (one class space)', () => {
+      seedQuestions(4);
+      useQuestionBankStore.getState().setRemoteProgress({ [WORLD]: 1 }, `${UID}@k1`);
+      expect(useQuestionBankStore.getState().getWorldProgress(`${UID}@k1`, WORLD).done).toBe(4);
+      expect(useQuestionBankStore.getState().getWorldProgress(UID, WORLD).done).toBe(0);
     });
   });
 
@@ -255,7 +262,7 @@ describe('useQuestionBankStore', () => {
       seedQuestions(2);
       const store = useQuestionBankStore.getState();
       store.recordAnswer(UID, 'q1', WORLD, true);
-      store.setRemoteProgress({ [WORLD]: 1 });
+      store.setRemoteProgress({ [WORLD]: 1 }, UID);
       useQuestionBankStore.getState().resetUserProgress();
       const s = useQuestionBankStore.getState();
       expect(s.answers).toEqual([]);

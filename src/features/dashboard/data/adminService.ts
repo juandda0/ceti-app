@@ -45,9 +45,9 @@ export const adminService = {
     return callFunction('generateClassCode', { colegioId, cursoId, regenerate });
   },
 
-  /** Student leaves their class and keeps using the app on their own. */
-  async salirDeMiClase(): Promise<{ ok: boolean }> {
-    return callFunction('salirDeMiClase', {});
+  /** Student leaves one of their classes; the others and Mi galaxia stay. */
+  async salirDeMiClase(cursoId: string): Promise<{ ok: boolean }> {
+    return callFunction('salirDeMiClase', { cursoId });
   },
 
   /** Teacher removes a student from the class without deleting their progress. */
@@ -90,6 +90,8 @@ export const adminService = {
     role: 'admin' | 'profesor' | 'estudiante' | null;
     colegioId: string | null;
     cursoId: string | null;
+    /** Student only: all their classes {cursoId: colegioId}. */
+    clases?: Record<string, string>;
   }> {
     return callFunction('resolveMyAccess', requestedRole === 'profesor' ? { requestedRole } : {});
   },

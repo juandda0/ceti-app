@@ -1637,21 +1637,19 @@
     }
   },
   "miClase": {
-    "titulo": "Mi clase",
+    "titulo": "Mis clases",
     "tuClase": "tu clase",
     "grado": "Grado {{grado}}°",
     "pendiente": "Por autorizar",
     "activo": "Activa",
-    "cambiar": "Cambiar de clase",
     "salir": "Salir de la clase",
     "salirTitulo": "¿Salir de {{nombre}}?",
-    "salirTexto": "Tu profe deja de ver tu avance desde hoy. Tu racha, tus XP y tu avatar siguen siendo tuyos.",
+    "salirTexto": "Tu profe deja de ver tu avance desde hoy. Tu galaxia, tu racha, tus XP y tu avatar siguen siendo tuyos.",
     "salirOk": "Saliste de la clase",
     "sinClaseTexto": "Si tu profe o tu tutor te dio un código, únete a su clase. Ceti sigue siendo gratis con o sin clase.",
     "unirme": "Unirme a una clase",
     "unirmeTitulo": "Unirme a una clase",
     "unirmeTexto": "Escribe el código de 6 letras que te dio tu profe, o abre el enlace que te compartió.",
-    "cambiarAviso": "Ya estás en {{nombre}}. Si te unes a otra clase, sales de esa.",
     "unidoTitulo": "¡Estás en {{nombre}}!",
     "unidoTexto": "Tu profe confirma tu autorización y desde ahí ve tu avance. Mientras tanto, juega normal.",
     "gratis": "Unirte a una clase no cuesta nada. Tu profe paga su plan; tú no.",
@@ -1666,6 +1664,13 @@
     "qrNoEsDeCeti": "Ese QR no es de una clase de Ceti",
     "qrPermiso": "Para leer el QR, Ceti necesita usar la cámara.",
     "qrSinPermiso": "La cámara está bloqueada para Ceti. Actívala en los ajustes del teléfono o escribe el código.",
-    "qrDarPermiso": "Usar la cámara"
+    "qrDarPermiso": "Usar la cámara",
+    "cuenta": "{{n}} de {{max}}",
+    "salirDe": "Salir de {{nombre}}",
+    "unirmeOtra": "Unirme a otra clase",
+    "lleno": "Ya estás en {{max}} clases. Sal de una para unirte a otra."
+  },
+  "espacios": {
+    "miGalaxia": "Mi galaxia"
   }
 }

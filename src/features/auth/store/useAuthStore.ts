@@ -16,8 +16,18 @@ interface AuthState {
   // Tenancy/role mirrored from the Auth token (see lib/firebase/claims.ts).
   // Authoritative source is always the token; these are for routing/UI only.
   role: Role | null;
+  /**
+   * Teacher: their colegio. Student: the class of the active space (null in
+   * "Mi galaxia"), so every student screen reads the space it is showing.
+   */
   colegioId: string | null;
   cursoId: string | null;
+  /** Student only: their classes {cursoId: colegioId} (up to 5). */
+  clases: Record<string, string>;
+  /** Student only: the class whose space is open in Aprender; null = Mi galaxia. */
+  espacio: string | null;
+  /** The student picked a space at least once (else a class opens by default). */
+  espacioElegido: boolean;
 }
 
 interface AuthActions {
@@ -27,6 +37,8 @@ interface AuthActions {
   markAuthReady: () => void;
   setFirebaseUid: (uid: string | null) => void;
   setClaims: (claims: CetiClaims | null) => void;
+  /** Opens a class space (cursoId) or "Mi galaxia" (null). Ignores unknown classes. */
+  setEspacio: (cursoId: string | null) => void;
 }
 
 type AuthStore = AuthState & AuthActions;
@@ -39,7 +51,21 @@ const initialState: AuthState = {
   role: null,
   colegioId: null,
   cursoId: null,
+  clases: {},
+  espacio: null,
+  espacioElegido: false,
 };
+
+/** colegioId/cursoId a student screen should read for the given space. */
+function aulaDelEspacio(
+  clases: Record<string, string>,
+  espacio: string | null
+): Pick<AuthState, 'colegioId' | 'cursoId' | 'espacio'> {
+  if (espacio && clases[espacio]) {
+    return { colegioId: clases[espacio], cursoId: espacio, espacio };
+  }
+  return { colegioId: null, cursoId: null, espacio: null };
+}
 
 export const useAuthStore = create<AuthStore>()(
   persist(
@@ -57,11 +83,27 @@ export const useAuthStore = create<AuthStore>()(
       setFirebaseUid: (uid) => set({ firebaseUid: uid }),
 
       setClaims: (claims) =>
-        set({
-          role: claims?.role ?? null,
-          colegioId: claims?.colegioId ?? null,
-          cursoId: claims?.cursoId ?? null,
+        set((s) => {
+          if (claims?.role === 'estudiante') {
+            const clases = claims.clases ?? {};
+            // Sin elección previa, Aprender abre en su (primera) clase.
+            const espacio = s.espacioElegido ? s.espacio : (Object.keys(clases)[0] ?? null);
+            return { role: 'estudiante', clases, ...aulaDelEspacio(clases, espacio) };
+          }
+          return {
+            role: claims?.role ?? null,
+            colegioId: claims?.colegioId ?? null,
+            cursoId: claims?.cursoId ?? null,
+            clases: {},
+          };
         }),
+
+      setEspacio: (cursoId) =>
+        set((s) =>
+          s.role === 'estudiante'
+            ? { ...aulaDelEspacio(s.clases, cursoId), espacioElegido: true }
+            : {}
+        ),
 
       resetSessionFlagsFromFirebase: () =>
         set({
@@ -71,6 +113,7 @@ export const useAuthStore = create<AuthStore>()(
           role: null,
           colegioId: null,
           cursoId: null,
+          clases: {},
         }),
 
       logout: async () => {
@@ -114,6 +157,9 @@ export const useAuthStore = create<AuthStore>()(
       storage: createJSONStorage(() => createZustandMmkvStorage()),
       partialize: (state) => ({
         lastLogin: state.lastLogin,
+        // El último espacio abierto en Aprender (se valida contra las clases del token).
+        espacio: state.espacio,
+        espacioElegido: state.espacioElegido,
       }),
       merge: (persisted, current) => ({
         ...current,
@@ -124,6 +170,7 @@ export const useAuthStore = create<AuthStore>()(
         role: null,
         colegioId: null,
         cursoId: null,
+        clases: {},
       }),
     }
   )

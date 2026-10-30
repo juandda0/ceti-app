@@ -28,8 +28,10 @@ export type CetiClaims = {
   role: Role;
   /** Absent for `admin` (global scope). */
   colegioId?: string;
-  /** Only for `estudiante`: the course their roster slot lives under. */
+  /** Legacy single-class student tokens only; new ones use `clases`. */
   cursoId?: string;
+  /** Only for `estudiante`: up to 5 classes, {cursoId: colegioId}. */
+  clases?: Record<string, string>;
 };
 
 export type Colegio = {

@@ -35,6 +35,9 @@ import { planetaDeMundo } from '@features/learning/data/planetas';
 import { ESPACIO, FondoEstrellas } from '@features/learning/components/galaxia/espacio';
 import AuthorizationPendingBanner from '@features/dashboard/components/AuthorizationPendingBanner';
 import StudentAssignmentsBanner from '@features/dashboard/components/StudentAssignmentsBanner';
+import SelectorEspacio from '@features/learning/components/galaxia/SelectorEspacio';
+import { claveProgreso } from '@features/learning/data/espacio';
+import { useVisitaClase } from '@features/dashboard/hooks/useVisitaClase';
 import CarruselPlanetas, {
   PuntosCarrusel,
 } from '@features/learning/components/galaxia/CarruselPlanetas';
@@ -60,6 +63,7 @@ export default function WorldsScreen() {
   const colegioId = useAuthStore((s) => s.colegioId);
   const cursoId = useAuthStore((s) => s.cursoId);
   const hasAccess = hasClassAccess(colegioId, cursoId);
+  useVisitaClase();
   const cargarNiveles = useNivelesStore((s) => s.cargar);
   const nivelesPorMundo = useNivelesStore((s) => s.porMundo);
   const isWorldComplete = useQuestionBankStore((s) => s.isWorldComplete);
@@ -76,8 +80,22 @@ export default function WorldsScreen() {
 
   // seedKey = Firebase uid (stable per-account); fallback to local id in demo/offline.
   const seedKey = userId ?? 'demo';
-  const uid = userId ?? '';
-  const leccionesHechas = useOrbitaStore((s) => s.porUid[uid]?.niveles);
+  // Racha y XP son de la cuenta (uid); el avance de cada mundo es del espacio
+  // abierto: Mi galaxia o una de sus clases (learning/data/espacio).
+  const cuenta = userId ?? '';
+  const uid = claveProgreso(cuenta, cursoId);
+  const niveles = useOrbitaStore((s) => s.porUid[cuenta]?.niveles);
+  const leccionesHechas = useMemo(() => {
+    if (!niveles) return undefined;
+    const porMundo: Record<string, number> = {};
+    for (const [k, v] of Object.entries(niveles)) {
+      const prefijo = cursoId ? `${cursoId}/` : null;
+      if (prefijo ? k.startsWith(prefijo) : !k.includes('/')) {
+        porMundo[prefijo ? k.slice(prefijo.length) : k] = v;
+      }
+    }
+    return porMundo;
+  }, [niveles, cursoId]);
 
   // Class config (D-ORQ, RQ-PR10): which worlds this class sees and in which
   // order. Live via onSnapshot; null → defaults.
@@ -149,7 +167,11 @@ export default function WorldsScreen() {
   // Rehydrate per-world mastery from the tenant tree so unlock/progress survive
   // logout and new devices (the local answers cache is empty there).
   useEffect(() => {
-    if (!hasAccess || !colegioId || !cursoId || !firebaseUid) return;
+    // En Mi galaxia no hay avance remoto: solo el local de la cuenta.
+    if (!hasAccess || !colegioId || !cursoId || !firebaseUid) {
+      setRemoteProgress({}, null);
+      return;
+    }
     let cancelled = false;
     void (async () => {
       // Un estudiante aún no activo (pendiente de atestación) no puede leer el
@@ -163,7 +185,7 @@ export default function WorldsScreen() {
       if (cancelled) return;
       const byWorld: Partial<Record<WorldId, number>> = {};
       for (const d of docs) byWorld[d.worldId as WorldId] = d.mastery;
-      setRemoteProgress(byWorld);
+      setRemoteProgress(byWorld, claveProgreso(firebaseUid, cursoId));
     })();
     return () => {
       cancelled = true;
@@ -174,6 +196,10 @@ export default function WorldsScreen() {
   const [activo, setActivo] = useState(0);
   const [fichaAbierta, setFichaAbierta] = useState(false);
   const iniciado = useRef(false);
+  // Al cambiar de espacio, vuelve a ubicarse en el mundo que toca de ese espacio.
+  useEffect(() => {
+    iniciado.current = false;
+  }, [cursoId]);
   useEffect(() => {
     if (mundos.length === 0) return;
     if (!iniciado.current) {
@@ -215,6 +241,7 @@ export default function WorldsScreen() {
             <Text style={estilos.subtitulo}>{t('galaxia.desliza')}</Text>
           </View>
         </View>
+        <SelectorEspacio />
         <View style={estilos.avisos}>
           <AuthorizationPendingBanner />
           <StudentAssignmentsBanner
