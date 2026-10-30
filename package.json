@@ -24,7 +24,8 @@
     "salon:simular": "node ./scripts/salon/correr.cjs simular",
     "salon:alertas": "node ./scripts/salon/correr.cjs alertas",
     "salon:acudientes": "node ./scripts/salon/correr.cjs acudientes",
-    "salon:web": "node ./scripts/salon/web.mjs"
+    "salon:web": "node ./scripts/salon/web.mjs",
+    "produccion:sembrar": "node ./scripts/produccion/sembrarContenido.cjs"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
