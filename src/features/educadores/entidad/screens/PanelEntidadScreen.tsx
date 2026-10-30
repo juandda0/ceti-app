@@ -14,16 +14,10 @@ import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { competenciaLabel } from '@features/learning/data/competencias';
 import { FadeIn, GrowBar } from '@features/savings/charts/ChartParts';
 import {
-  AMBITOS_MEN,
-  COMPETENCIAS_MEN,
   DIA_MS,
-  EJES_MEN,
   MIN_GRUPO,
-  NOMBRE_COMPETENCIA_MEN,
-  NOMBRE_EJE_MEN,
   fechaBogota,
   inicioDiaBogota,
-  type CeldaCobertura,
   type EstadoAdopcionProfe,
   type PanelEntidad,
 } from '@/functions/src/educadores/dominio';
@@ -50,6 +44,8 @@ import {
 import { entidadRepository } from '../data/entidadRepository';
 import { useMiEntidad } from '../hooks/useMiEntidad';
 import { fechaCorta } from '../components/EntidadTarjeta';
+import CoberturaCurricular from '../components/CoberturaCurricular';
+import { ImpactoEntidad, PeiYCierres } from '../components/EvidenciaEntidad';
 
 const pct = (x: number) => Math.round(x * 100);
 const TONO_ESTADO: Record<EstadoAdopcionProfe, Tono> = { activo: 'verde', bajo: 'naranja', sinEmpezar: 'rojo' };
@@ -96,13 +92,6 @@ export default function PanelEntidadScreen() {
       setExportando(null);
     }
   };
-
-  const textoCelda = (c: CeldaCobertura) =>
-    c.estudiantes === 0
-      ? t('entidad.cobertura.sinTrabajar')
-      : c.dominio == null
-        ? t('entidad.cobertura.est', { count: c.estudiantes })
-        : t('entidad.cobertura.estDominio', { count: c.estudiantes, pct: pct(c.dominio) });
 
   const cargar = useCallback(async (forzar = false) => {
     setEstado('cargando');
@@ -252,50 +241,13 @@ export default function PanelEntidadScreen() {
                 ))}
               </Tarjeta>
 
-              <Seccion texto={t('entidad.cobertura.titulo')} />
-              <Tarjeta style={{ gap: 8 }}>
-                <Text style={[st.nombre, { color: colors.text.primary }]}>
-                  {t('entidad.cobertura.resumen', { n: panel.ambitosCubiertos.length, total: AMBITOS_MEN.length })}
-                </Text>
-                <Text style={[st.sub, { color: colors.text.tertiary }]}>{t('entidad.cobertura.fuente')}</Text>
-              </Tarjeta>
-              {panel.cobertura.map((f) => (
-                <Tarjeta key={f.clave} style={{ gap: 8 }}>
-                  <View style={st.fila}>
-                    <Text style={[st.nombre, { flex: 1, color: colors.text.primary }]}>{f.etiqueta}</Text>
-                    {f.grupoMen ? <Pill tono="neutro" texto={t('entidad.cobertura.grupo', { g: f.grupoMen })} /> : null}
-                    <Pill tono={f.cubiertos > 0 ? 'verde' : 'rojo'} texto={t('entidad.cobertura.cubiertos', { n: f.cubiertos, total: AMBITOS_MEN.length })} />
-                  </View>
-                  {EJES_MEN.map((eje) => (
-                    <View key={eje} style={{ gap: 4 }}>
-                      <Text style={[st.eje, { color: colors.text.tertiary }]}>{NOMBRE_EJE_MEN[eje].toUpperCase()}</Text>
-                      {AMBITOS_MEN.filter((a) => a.eje === eje).map((a) => {
-                        const c = f.ambitos[a.id];
-                        return (
-                          <View key={a.id} style={st.fila}>
-                            <Text style={[st.sub, { flex: 1, color: c.estudiantes > 0 ? colors.text.primary : colors.text.quaternary }]} numberOfLines={1}>
-                              {a.nombre}
-                            </Text>
-                            <Text style={[st.sub, { color: c.estudiantes > 0 ? colors.text.secondary : colors.text.quaternary }]}>
-                              {textoCelda(c)}
-                            </Text>
-                          </View>
-                        );
-                      })}
-                    </View>
-                  ))}
-                  <Text style={[st.eje, { color: colors.text.tertiary }]}>{t('entidad.cobertura.competencias').toUpperCase()}</Text>
-                  <View style={st.chipsFila}>
-                    {COMPETENCIAS_MEN.map((c) => (
-                      <Pill
-                        key={c}
-                        tono={f.competencias[c].estudiantes > 0 ? 'azul' : 'neutro'}
-                        texto={`${NOMBRE_COMPETENCIA_MEN[c]} · ${textoCelda(f.competencias[c])}`}
-                      />
-                    ))}
-                  </View>
-                </Tarjeta>
-              ))}
+              <CoberturaCurricular
+                cobertura={panel.cobertura}
+                ambitosCubiertos={panel.ambitosCubiertos.length}
+                fuente={t('entidad.cobertura.fuente')}
+              />
+
+              <ImpactoEntidad panel={panel} />
 
               <Seccion texto={t('entidad.cobertura.informe')} />
               <Tarjeta style={{ gap: 10 }}>
@@ -311,6 +263,15 @@ export default function PanelEntidadScreen() {
                   <BotonChunky style={{ flex: 1 }} texto={t('entidad.cobertura.xlsx')} icono="grid" variante="secundario" compacto cargando={exportando === 'xlsx'} deshabilitado={exportando !== null} onPress={() => void exportar('xlsx')} />
                 </View>
               </Tarjeta>
+
+              <PeiYCierres
+                panel={panel}
+                entidad={vista?.entidad?.nombre ?? ''}
+                tipoId={vista?.entidad?.tipo ?? null}
+                tipoNombre={t(`entidad.tipo.${vista?.entidad?.tipo ?? 'colegio'}`)}
+                periodos={periodos}
+                anio={anio}
+              />
 
               <Seccion texto={t('entidad.panel.comunicacion')} />
               <Tarjeta style={{ gap: 8 }}>

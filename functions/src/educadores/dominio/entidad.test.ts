@@ -6,6 +6,11 @@ import {
   AMBITOS_MEN,
   NORMAS_EEF,
   normasPara,
+  DESEMPENOS_MEN,
+  alineacionDeMundosPropios,
+  desempenosDeCurso,
+  filasDesempeno,
+  dominiosDeCurso,
   armarPublicacion,
   dominioPor,
   grupoGradoMen,
@@ -415,9 +420,48 @@ describe('marco normativo y alineación con el MEN', () => {
         { uid: 'x', competencia: 'deuda', mastery: 1, updatedAt: 1 },
       ],
       enLista,
-      (c) => ALINEACION_MEN[c]?.ambitos ?? []
+      (p) => ALINEACION_MEN[p.competencia]?.ambitos ?? []
     );
     expect(r.manejoDeudas).toEqual({ masteryPromedio: 0.5, estudiantes: 2 });
     expect(r.sistemaFinanciero).toEqual({ masteryPromedio: 1, estudiantes: 1 });
+  });
+
+  it('un mundo propio con ámbitos del MEN suma en la cobertura (Fase 7)', () => {
+    const propios = alineacionDeMundosPropios([
+      { worldId: 'cw_pais', competencia: 'personalizada', ambitosMen: ['politicaEconomica', 'inventado'] },
+      { worldId: 'cw_sin', ambitosMen: [] },
+      { worldId: 'world_1' },
+    ]);
+    expect(propios).toEqual({ cw_pais: { ambitos: ['politicaEconomica'], competencias: ['decidir'] } });
+    const d = dominiosDeCurso(
+      [
+        { uid: 'a', worldId: 'cw_pais', competencia: 'personalizada', mastery: 0.8, updatedAt: 1 },
+        { uid: 'a', worldId: 'world_2', competencia: 'presupuesto', mastery: 0.4, updatedAt: 1 },
+      ],
+      new Set(['a']),
+      null,
+      propios
+    );
+    expect(d.porAmbitoMen?.politicaEconomica).toEqual({ masteryPromedio: 0.8, estudiantes: 1 });
+    expect(d.porAmbitoMen?.presupuesto).toEqual({ masteryPromedio: 0.4, estudiantes: 1 });
+    expect(d.porCompetencia.personalizada).toBeDefined();
+  });
+
+  it('desempeños: logra con 60 % y al menos 2 respuestas; el grupo chico no muestra porcentaje', () => {
+    const resumenes: { uid: string; porDesempeno: Record<string, { respuestas: number; aciertos: number }> }[] = [
+      { uid: 'a', porDesempeno: { 'PR-45-1': { respuestas: 5, aciertos: 4 }, 'XX-1-1': { respuestas: 9, aciertos: 9 } } },
+      { uid: 'b', porDesempeno: { 'PR-45-1': { respuestas: 3, aciertos: 1 } } },
+      { uid: 'c', porDesempeno: { 'PR-45-1': { respuestas: 1, aciertos: 1 } } },
+      { uid: 'fuera', porDesempeno: { 'PR-45-1': { respuestas: 5, aciertos: 5 } } },
+    ];
+    const conteo = desempenosDeCurso(resumenes, new Set(['a', 'b', 'c']));
+    expect(conteo).toEqual({ 'PR-45-1': { estudiantes: 2, logran: 1 } });
+    const filas = filasDesempeno([{ porDesempeno: conteo }, { porDesempeno: { 'PR-45-1': { estudiantes: 4, logran: 3 }, 'PR-1011-1': { estudiantes: 9, logran: 9 } } }], '4-5');
+    expect(filas).toEqual([
+      expect.objectContaining({ id: 'PR-45-1', ambito: 'presupuesto', estudiantes: 6, logran: 4, logro: 4 / 6 }),
+    ]);
+    expect(filasDesempeno([{ porDesempeno: conteo }], '4-5')[0].logro).toBeNull();
+    expect(DESEMPENOS_MEN).toHaveLength(101);
+    expect(new Set(DESEMPENOS_MEN.map((x) => x.id)).size).toBe(101);
   });
 });

@@ -63,8 +63,9 @@ export class FirestoreFalso {
     return `auto${this.autoId}`;
   }
 
-  async getAll(...refs: RefFalsa[]) {
-    return Promise.all(refs.map((r) => r.get()));
+  async getAll(...refs: (RefFalsa | { fieldMask?: string[] })[]) {
+    // El último argumento puede ser { fieldMask } (lo ignora: devuelve el doc entero).
+    return Promise.all(refs.filter((r): r is RefFalsa => 'get' in r).map((r) => r.get()));
   }
 
   batch() {

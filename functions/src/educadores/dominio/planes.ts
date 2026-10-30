@@ -44,6 +44,7 @@ export const FUNCIONES = [
   'analisisClase',
   'mensajesProfe',
   'resumenAcudientes',
+  'informeCobertura',
 ] as const;
 export type Funcion = (typeof FUNCIONES)[number];
 
@@ -82,6 +83,9 @@ const FUNCIONES_PILOTO: readonly Funcion[] = [
   // Mensajes a un estudiante o a un grupo y comentarios en la ficha (Fase 5).
   // Los anuncios a toda la clase son de todos los planes.
   'mensajesProfe',
+  // Fase 7: el informe de cobertura de la EEF de su propia clase, la puerta
+  // de entrada al plan Colegio (el de toda la institución es de la entidad).
+  'informeCobertura',
 ];
 
 export const PLANES: Record<PlanId, DefinicionPlan> = {

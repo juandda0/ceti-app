@@ -17,7 +17,7 @@ require('ts-node').register({
 });
 require('tsconfig-paths').register({
   baseUrl: raiz,
-  paths: { '@features/*': ['src/features/*'], '@shared/*': ['src/shared/*'] },
+  paths: { '@/*': ['*'], '@features/*': ['src/features/*'], '@shared/*': ['src/shared/*'] },
 });
 
 const [, , comando, ...resto] = process.argv;

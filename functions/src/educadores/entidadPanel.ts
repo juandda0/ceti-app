@@ -18,8 +18,11 @@ import { getFirestore, type Firestore } from 'firebase-admin/firestore';
 import {
   DIA_MS,
   MENSAJES_ERROR_EVALUACION,
+  alineacionDeMundosPropios,
   calcularPanelEntidad,
+  desempenosDeCurso,
   dominiosDeCurso,
+  sumasImpacto,
   leerEvaluacion,
   licenciaVigente,
   type CursoPanel,
@@ -42,7 +45,8 @@ async function porTandas<T, R>(items: T[], n: number, f: (x: T) => Promise<R>): 
 
 type Rango = { desde: number; hasta: number } | null;
 
-async function cursoPanel(
+/** Las cifras de grupo de una clase (también la usa el informe de la clase del profe, Fase 7). */
+export async function cursoPanel(
   db: Firestore,
   cid: string,
   c: FirebaseFirestore.QueryDocumentSnapshot,
@@ -50,7 +54,7 @@ async function cursoPanel(
   rango: Rango
 ): Promise<CursoPanel> {
   const base = `colegios/${cid}/cursos/${c.id}`;
-  const [roster, progresoSnap, comunicados] = await Promise.all([
+  const [roster, progresoSnap, comunicados, configMundos] = await Promise.all([
     db.collection(`${base}/estudiantes`).select('estado').get(),
     // Mismo índice (colegioId, cursoId) que el agregado por curso.
     db
@@ -60,9 +64,12 @@ async function cursoPanel(
       .select('uid', 'updatedAt', 'competencia', 'mastery')
       .get(),
     db.collection(`${base}/comunicados`).where('creadoAt', '>=', ahora - 7 * DIA_MS).count().get(),
+    // Fase 7: los mundos propios con ámbitos del MEN suman en la cobertura.
+    db.doc(`${base}/config/mundos`).get(),
   ]);
   const progreso: ProgresoPanel[] = progresoSnap.docs.map((s) => ({
     uid: String(s.get('uid') ?? s.ref.parent.parent?.id ?? ''),
+    worldId: s.id,
     competencia: typeof s.get('competencia') === 'string' ? s.get('competencia') : 'desconocida',
     mastery: typeof s.get('mastery') === 'number' ? s.get('mastery') : 0,
     updatedAt: msDe(s.get('updatedAt')),
@@ -75,6 +82,24 @@ async function cursoPanel(
       ? []
       : await db.getAll(...enClase.map((e) => db.doc(`${base}/estudiantes/${e.uid}/acudiente/datos`)));
   const familiasConResumen = acudientes.filter((a) => a.exists && (!!a.get('token') || a.get('correoActivo') === true)).length;
+  // Fase 7: el logro por desempeño sale del resumen de clase de cada estudiante.
+  const [resumenes, pruebas] =
+    enClase.length === 0
+      ? [[], []]
+      : await Promise.all([
+          db.getAll(...enClase.map((e) => db.doc(`${base}/estudiantes/${e.uid}/resumen/clase`)), {
+            fieldMask: ['porDesempeno'],
+          }),
+          // Fase 7: prueba de entrada y salida de cada estudiante (solo sumas salen de aquí).
+          db.getAll(
+            ...enClase.flatMap((e) => [
+              db.doc(`${base}/estudiantes/${e.uid}/impactTest/pre`),
+              db.doc(`${base}/estudiantes/${e.uid}/impactTest/post`),
+            ])
+          ),
+        ]);
+  const enLista = new Set(enClase.map((e) => e.uid));
+  const mundos = configMundos.exists ? configMundos.get('mundos') : null;
   return {
     id: c.id,
     nombre: String(c.get('nombre') ?? c.id),
@@ -85,7 +110,15 @@ async function cursoPanel(
     estudiantes: adopcion.estudiantes,
     estudiantesActivos: adopcion.estudiantesActivos,
     ultimaActividad: adopcion.ultimaActividad,
-    ...dominiosDeCurso(progreso, new Set(enClase.map((e) => e.uid)), rango),
+    ...dominiosDeCurso(progreso, enLista, rango, alineacionDeMundosPropios(Array.isArray(mundos) ? mundos : null)),
+    impacto: sumasImpacto(
+      enClase.map((e, i) => ({ uid: e.uid, pre: pruebas[2 * i]?.data(), post: pruebas[2 * i + 1]?.data() })),
+      enLista
+    ),
+    porDesempeno: desempenosDeCurso(
+      resumenes.map((r) => ({ uid: r.ref.parent.parent?.id ?? '', porDesempeno: r.get('porDesempeno') ?? null })),
+      enLista
+    ),
     comunicados7d: comunicados.data().count,
     familiasConResumen,
   };
@@ -150,8 +183,10 @@ export const verPanelEntidad = onCall(async (request): Promise<PanelEntidad> => 
   if (request.data?.forzar !== true) {
     const cache = await ref.get();
     const at = cache.get('calculadoAt');
-    // Un caché de antes de la cobertura (Fase 6, normativa) se recalcula.
-    if (cache.exists && typeof at === 'number' && ahora - at < CACHE_PANEL_MS && Array.isArray(cache.get('cobertura'))) {
+    // Un caché de antes de la cobertura (Fase 6) o de los desempeños (Fase 7) se recalcula.
+    const cobertura = cache.get('cobertura');
+    const alDia = Array.isArray(cobertura) && cobertura.every((f) => Array.isArray(f?.desempenos)) && !!cache.get('impacto');
+    if (cache.exists && typeof at === 'number' && ahora - at < CACHE_PANEL_MS && alDia) {
       return cache.data() as PanelEntidad;
     }
   }

@@ -78,6 +78,12 @@ service cloud.firestore {
         && estudianteActivo(cid, cursoId, uid);
     }
     // Fase 1 — un intento de lección o de jefe con sus respuestas (≤ 40).
+    function pruebaAbierta(cid, cursoId, fase) {
+      let cfg = get(/databases/$(database)/documents/colegios/$(cid)/cursos/$(cursoId)/config/prueba).data;
+      return cfg.get(fase, null) != null
+        && cfg.get(fase, {}).get('abiertaAt', null) is number
+        && cfg.get(fase, {}).get('cerradaAt', null) == null;
+    }
     function intentoValido(d, uid) {
       return d.keys().hasOnly(['worldId', 'tipo', 'nivel', 'resultado', 'inicioAt', 'finAt',
           'duracionMs', 'total', 'aciertos', 'respuestas', 'uid', 'creadoAt'])
@@ -191,7 +197,8 @@ service cloud.firestore {
             && (!('acudientes' in request.resource.data) || request.resource.data.acudientes is map)
             && request.resource.data.actualizadoAt is number
             && request.resource.data.actualizadoPor == request.auth.uid;
-          allow delete: if isProfesorDe(cid, cursoId);
+          // `prueba` (Fase 7) solo la escribe el callable gestionarPrueba.
+          allow delete: if isProfesorDe(cid, cursoId) && configId in ['mundos', 'comunicacion'];
         }
 
         // Course-custom content (D-ORQ, RQ-PR11/PR12): copy-on-write copies of
@@ -261,17 +268,25 @@ service cloud.firestore {
             allow delete: if false;
           }
 
-          // Impact pre/post test (RQ-TS01..TS04). The student writes their own
-          // result while active; the course teacher reads it.
+          // Prueba de entrada y salida (Fase 7). El estudiante activo guarda su
+          // resultado UNA vez y solo mientras su profe tiene esa fase abierta
+          // (config/prueba, que escribe el callable gestionarPrueba); el profe
+          // de la clase lo lee. No se rehace ni se borra desde el cliente.
           match /impactTest/{fase} {
             allow read: if isProfesorDe(cid, cursoId)
               || isEstudianteActivoEnCurso(cid, cursoId, uid);
-            allow create, update: if isEstudianteActivoEnCurso(cid, cursoId, uid)
+            allow create: if isEstudianteActivoEnCurso(cid, cursoId, uid)
               && (fase == 'pre' || fase == 'post')
-              && request.resource.data.score is number
-              && request.resource.data.total is number
-              && request.resource.data.takenAt is number;
-            allow delete: if false;
+              && pruebaAbierta(cid, cursoId, fase)
+              && request.resource.data.keys().hasOnly(['score', 'total', 'takenAt', 'breakdown', 'totales'])
+              && request.resource.data.score is int && request.resource.data.score >= 0
+              && request.resource.data.total is int && request.resource.data.total > 0
+              && request.resource.data.total <= 60
+              && request.resource.data.score <= request.resource.data.total
+              && request.resource.data.takenAt is number
+              && request.resource.data.breakdown is map
+              && request.resource.data.totales is map;
+            allow update, delete: if false;
           }
 
           // Fase 1 — registro de clase (src/features/dashboard/data/registroClase.ts).
@@ -664,6 +679,12 @@ service cloud.firestore {
       allow write: if false;
     }
     match /colegios/{cid}/cotizaciones/{id} {
+      allow read: if esAdminEntidad(cid);
+      allow write: if false;
+    }
+    // Fase 7 — cierres de periodo: copia fija del informe de cobertura para
+    // auditorías. La escribe una vez el callable cerrarPeriodoEntidad.
+    match /colegios/{cid}/cierres/{id} {
       allow read: if esAdminEntidad(cid);
       allow write: if false;
     }

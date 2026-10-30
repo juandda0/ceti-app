@@ -14,10 +14,14 @@ import {
   COMPETENCIAS_MEN,
   alineacionDe,
   grupoGradoMen,
+  type AlineacionMen,
   type AmbitoMen,
   type CompetenciaMen,
+  type EjeMen,
   type GrupoGradoMen,
 } from './normativa';
+import { DESEMPENOS_MEN, desempenoMen, lograDesempeno } from './desempenosMen';
+import { impactoDe, sumarImpactos, type Impacto, type SumasImpacto } from './pruebaEntradaSalida';
 
 export const MIN_GRUPO = 5;
 /** Un profe con clases y menos de este % de estudiantes activos sale en "bajo". */
@@ -44,6 +48,10 @@ export interface CursoPanel {
   /** Lo mismo por ámbito conceptual y por competencia del MEN (estudiantes distintos). */
   porAmbitoMen?: Partial<Record<AmbitoMen, CompetenciaCurso>>;
   porCompetenciaMen?: Partial<Record<CompetenciaMen, CompetenciaCurso>>;
+  /** Fase 7: por desempeño del MEN, estudiantes con datos suficientes y cuántos lo logran. */
+  porDesempeno?: Record<string, ConteoDesempeno>;
+  /** Fase 7: prueba de entrada y salida, en sumas (sin nombres). */
+  impacto?: SumasImpacto;
   /** Anuncios y mensajes de los últimos 7 días (conteo). */
   comunicados7d: number;
   /** Estudiantes con resumen para acudientes activo (conteo). */
@@ -102,6 +110,22 @@ export interface CeldaCobertura {
   dominio: number | null;
 }
 
+export interface ConteoDesempeno {
+  estudiantes: number;
+  logran: number;
+}
+
+export interface FilaDesempeno {
+  id: string;
+  ambito: AmbitoMen;
+  resumen: string;
+  ref: string;
+  estudiantes: number;
+  logran: number;
+  /** 0..1, null si hay menos de MIN_GRUPO estudiantes con datos. */
+  logro: number | null;
+}
+
 export interface FilaCobertura {
   clave: string;
   etiqueta: string;
@@ -112,6 +136,12 @@ export interface FilaCobertura {
   competencias: Record<CompetenciaMen, CeldaCobertura>;
   /** Ámbitos con al menos un estudiante con datos. */
   cubiertos: number;
+  /**
+   * Fase 7: desempeños del MEN del grupo de grados con datos (en programas
+   * universitarios, todos los que tengan datos). Acumulado de la clase, no del
+   * periodo: el resumen por desempeño no guarda fechas.
+   */
+  desempenos: FilaDesempeno[];
 }
 
 export interface PanelEntidad {
@@ -134,6 +164,8 @@ export interface PanelEntidad {
   cobertura: FilaCobertura[];
   /** Ámbitos que la entidad ya trabaja en algún grado. */
   ambitosCubiertos: AmbitoMen[];
+  /** Fase 7: impacto de la prueba de entrada y salida, de toda la entidad y por grado o programa. */
+  impacto: { total: Impacto; grupos: (Impacto & { clave: string; etiqueta: string })[] };
   /** Periodo de los datos de dominio y cobertura (null = desde el principio). */
   periodo: { desde: number; hasta: number } | null;
   calculadoAt: number;
@@ -141,6 +173,8 @@ export interface PanelEntidad {
 
 export interface ProgresoPanel {
   uid: string;
+  /** El id del doc de avance (Fase 7: para los ámbitos de un mundo propio). */
+  worldId?: string;
   competencia: string;
   mastery: number;
   updatedAt: number | null;
@@ -155,7 +189,7 @@ export interface ProgresoPanel {
 export function dominioPor(
   progreso: readonly ProgresoPanel[],
   enLista: ReadonlySet<string>,
-  claves: (competencia: string) => readonly string[],
+  claves: (p: ProgresoPanel) => readonly string[],
   rango?: { desde: number; hasta: number } | null
 ): Record<string, CompetenciaCurso> {
   const acc = new Map<string, { suma: number; n: number; uids: Set<string> }>();
@@ -163,7 +197,7 @@ export function dominioPor(
     if (!enLista.has(p.uid)) continue;
     if (rango && (p.updatedAt === null || p.updatedAt < rango.desde || p.updatedAt > rango.hasta)) continue;
     const m = Math.min(1, Math.max(0, Number.isFinite(p.mastery) ? p.mastery : 0));
-    for (const k of claves(p.competencia)) {
+    for (const k of claves(p)) {
       const a = acc.get(k) ?? { suma: 0, n: 0, uids: new Set<string>() };
       a.suma += m;
       a.n += 1;
@@ -176,17 +210,102 @@ export function dominioPor(
   );
 }
 
+/**
+ * Competencias del MEN que se le suponen a un ámbito cuando el profe solo
+ * eligió ámbitos para su mundo propio (lectura de Ceti, por eje).
+ */
+const COMPETENCIAS_POR_EJE: Record<EjeMen, readonly CompetenciaMen[]> = {
+  economia: ['decidir'],
+  finanzas: ['administrar', 'planear'],
+  riesgo: ['gestionar'],
+};
+
+/**
+ * Alineación de los mundos propios de una clase (Fase 7): los ámbitos que el
+ * profe les puso (`ambitosMen` en config/mundos). Sin ámbitos, el mundo sigue
+ * con la alineación de su competencia de Ceti.
+ */
+export function alineacionDeMundosPropios(
+  mundos: readonly { worldId?: unknown; competencia?: unknown; ambitosMen?: unknown }[] | null | undefined
+): Record<string, AlineacionMen> {
+  const out: Record<string, AlineacionMen> = {};
+  for (const m of mundos ?? []) {
+    if (typeof m?.worldId !== 'string' || !Array.isArray(m.ambitosMen)) continue;
+    const ambitos = AMBITOS_MEN.filter((a) => (m.ambitosMen as unknown[]).includes(a.id));
+    if (ambitos.length === 0) continue;
+    const base = typeof m.competencia === 'string' ? alineacionDe(m.competencia) : null;
+    const competencias = base?.competencias.length
+      ? base.competencias
+      : COMPETENCIAS_MEN.filter((c) => ambitos.some((a) => COMPETENCIAS_POR_EJE[a.eje].includes(c)));
+    out[m.worldId] = { ambitos: ambitos.map((a) => a.id), competencias };
+  }
+  return out;
+}
+
 /** Las tres vistas de dominio de un curso: competencia de Ceti, ámbito y competencia del MEN. */
 export function dominiosDeCurso(
   progreso: readonly ProgresoPanel[],
   enLista: ReadonlySet<string>,
-  rango?: { desde: number; hasta: number } | null
+  rango?: { desde: number; hasta: number } | null,
+  propios: Readonly<Record<string, AlineacionMen>> = {}
 ): Pick<CursoPanel, 'porCompetencia' | 'porAmbitoMen' | 'porCompetenciaMen'> {
+  const alineacion = (p: ProgresoPanel) => (p.worldId && propios[p.worldId]) || alineacionDe(p.competencia);
   return {
-    porCompetencia: dominioPor(progreso, enLista, (c) => [c], rango),
-    porAmbitoMen: dominioPor(progreso, enLista, (c) => alineacionDe(c)?.ambitos ?? [], rango),
-    porCompetenciaMen: dominioPor(progreso, enLista, (c) => alineacionDe(c)?.competencias ?? [], rango),
+    porCompetencia: dominioPor(progreso, enLista, (p) => [p.competencia], rango),
+    porAmbitoMen: dominioPor(progreso, enLista, (p) => alineacion(p)?.ambitos ?? [], rango),
+    porCompetenciaMen: dominioPor(progreso, enLista, (p) => alineacion(p)?.competencias ?? [], rango),
   };
+}
+
+/**
+ * Por desempeño del MEN, cuántos estudiantes de la lista tienen datos
+ * suficientes (ver lograDesempeno) y cuántos lo logran. Lee el resumen de clase
+ * de cada estudiante (`porDesempeno`, Fase 7).
+ */
+export function desempenosDeCurso(
+  resumenes: readonly { uid: string; porDesempeno?: Record<string, { respuestas: number; aciertos: number }> | null }[],
+  enLista: ReadonlySet<string>
+): Record<string, ConteoDesempeno> {
+  const out: Record<string, ConteoDesempeno> = {};
+  for (const r of resumenes) {
+    if (!enLista.has(r.uid)) continue;
+    for (const [id, c] of Object.entries(r.porDesempeno ?? {})) {
+      if (!desempenoMen(id)) continue;
+      const logra = lograDesempeno(c);
+      if (logra === null) continue;
+      const a = out[id] ?? { estudiantes: 0, logran: 0 };
+      out[id] = { estudiantes: a.estudiantes + 1, logran: a.logran + (logra ? 1 : 0) };
+    }
+  }
+  return out;
+}
+
+/** Las filas de desempeños de un grupo: los del grupo de grados (o todos si es un programa) con datos. */
+export function filasDesempeno(
+  cursos: readonly Pick<CursoPanel, 'porDesempeno'>[],
+  grupoMen: GrupoGradoMen | null
+): FilaDesempeno[] {
+  const suma = new Map<string, ConteoDesempeno>();
+  for (const c of cursos) {
+    for (const [id, v] of Object.entries(c.porDesempeno ?? {})) {
+      const a = suma.get(id) ?? { estudiantes: 0, logran: 0 };
+      suma.set(id, { estudiantes: a.estudiantes + v.estudiantes, logran: a.logran + v.logran });
+    }
+  }
+  return DESEMPENOS_MEN.filter((d) => (grupoMen ? d.grupo === grupoMen : true) && (suma.get(d.id)?.estudiantes ?? 0) > 0).map(
+    (d) => {
+      const v = suma.get(d.id)!;
+      return {
+        id: d.id,
+        ambito: d.ambito,
+        resumen: d.resumen,
+        ref: d.ref,
+        estudiantes: v.estudiantes,
+        logran: v.logran,
+        logro: v.estudiantes >= MIN_GRUPO ? v.logran / v.estudiantes : null,
+      };
+    }
+  );
 }
 
 function sumarCeldas<K extends string>(
@@ -331,10 +450,12 @@ export function calcularPanelEntidad(
     .map(([clave, g]) => {
       const ambitos = sumarCeldas(g.cursos, idsAmbitos, (c) => c.porAmbitoMen);
       const grados = new Set(g.cursos.map((c) => grupoGradoMen(c.programa?.trim() ? null : c.grado)));
+      const grupoMen = grados.size === 1 ? [...grados][0] : null;
       return {
         clave,
         etiqueta: g.etiqueta,
-        grupoMen: grados.size === 1 ? [...grados][0] : null,
+        grupoMen,
+        desempenos: filasDesempeno(g.cursos, grupoMen),
         estudiantes: g.cursos.reduce((t, c) => t + c.estudiantes, 0),
         ambitos,
         competencias: sumarCeldas(g.cursos, COMPETENCIAS_MEN, (c) => c.porCompetenciaMen),
@@ -343,6 +464,13 @@ export function calcularPanelEntidad(
     })
     .sort((a, b) => a.etiqueta.localeCompare(b.etiqueta, 'es', { numeric: true }));
   const ambitosCubiertos = idsAmbitos.filter((a) => cobertura.some((f) => f.ambitos[a].estudiantes > 0));
+  const impacto = {
+    total: impactoDe(sumarImpactos(cursos.map((c) => c.impacto)), MIN_GRUPO),
+    grupos: [...porGrupo.entries()]
+      .map(([clave, g]) => ({ clave, etiqueta: g.etiqueta, ...impactoDe(sumarImpactos(g.cursos.map((c) => c.impacto)), MIN_GRUPO) }))
+      .filter((f) => f.conEntrada > 0)
+      .sort((a, b) => a.etiqueta.localeCompare(b.etiqueta, 'es', { numeric: true })),
+  };
 
   const estudiantes = cursos.reduce((s, c) => s + c.estudiantes, 0);
   const estudiantesActivos = cursos.reduce((s, c) => s + c.estudiantesActivos, 0);
@@ -368,6 +496,7 @@ export function calcularPanelEntidad(
     },
     cobertura,
     ambitosCubiertos,
+    impacto,
     periodo,
     calculadoAt: ahora,
   };

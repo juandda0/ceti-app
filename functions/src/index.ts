@@ -1365,6 +1365,7 @@ export {
   gestionarCoDocente,
 } from './educadores/entidades';
 export { verPanelEntidad, guardarEvaluacionEntidad } from './educadores/entidadPanel';
+export { gestionarPrueba, verCoberturaClase, cerrarPeriodoEntidad } from './educadores/cumplimiento';
 export { publicarEnBiblioteca, usarDeBiblioteca, retirarDeBiblioteca } from './educadores/bibliotecaEntidad';
 export {
   guardarDatosFacturacion,

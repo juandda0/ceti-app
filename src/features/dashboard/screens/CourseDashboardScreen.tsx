@@ -464,6 +464,25 @@ export default function CourseDashboardScreen() {
             )
           }
         />
+        {/* Fase 7: evidencia de la educación económica y financiera. */}
+        <View style={styles.tiles}>
+          <BotonChunky
+            texto={t('cumplimiento.prueba.entrada')}
+            icono={!planCargando && puede('prePostTest') ? 'clipboard-outline' : 'lock-closed-outline'}
+            variante="secundario"
+            compacto
+            onPress={() => router.push(`/(staff)/prueba/${cursoId}` as Href)}
+            style={{ flex: 1 }}
+          />
+          <BotonChunky
+            texto={t('cumplimiento.informe.entrada')}
+            icono={!planCargando && puede('informeCobertura') ? 'ribbon-outline' : 'lock-closed-outline'}
+            variante="secundario"
+            compacto
+            onPress={() => router.push(`/(staff)/cobertura/${cursoId}` as Href)}
+            style={{ flex: 1 }}
+          />
+        </View>
 
         {status === 'ready' && report ? (
           <Segmented options={vistas} value={vista} onChange={setVista} />

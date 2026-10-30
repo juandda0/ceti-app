@@ -601,6 +601,30 @@ await no('nadie toca la licencia', updateDoc(doc(pA, 'colegios/A'), { licencia: 
 await si('licencia Equipo: su profe configura mundos', setDoc(doc(pC, 'colegios/C/cursos/kc/config/mundos'), config('pC')));
 await no('licencia vencida: no', setDoc(doc(pD, 'colegios/D/cursos/kd/config/mundos'), config('pD')));
 
+console.log('\nFase 7 · prueba de entrada y salida, cierres');
+const prueba = (over = {}) => ({ score: 3, total: 12, takenAt: 1, breakdown: { presupuesto: 1 }, totales: { presupuesto: 2 }, ...over });
+await no('sin la fase abierta el estudiante no responde', setDoc(doc(eAct, `${K1}/estudiantes/eAct/impactTest/pre`), prueba()));
+await env.withSecurityRulesDisabled(async (ctx) => {
+  const db = ctx.firestore();
+  await setDoc(doc(db, `${K1}/config/prueba`), { pre: { abiertaAt: 1, cerradaAt: null, abiertaPor: 'pA' }, post: { abiertaAt: 1, cerradaAt: 2, abiertaPor: 'pA' } });
+  await setDoc(doc(db, 'colegios/A/cierres/2026-p1'), { anio: 2026, huella: 'abc' });
+});
+await si('con la entrada abierta el estudiante activo la responde', setDoc(doc(eAct, `${K1}/estudiantes/eAct/impactTest/pre`), prueba()));
+await no('una sola vez', setDoc(doc(eAct, `${K1}/estudiantes/eAct/impactTest/pre`), prueba({ score: 12 })));
+await no('la salida está cerrada', setDoc(doc(eAct, `${K1}/estudiantes/eAct/impactTest/post`), prueba()));
+await no('un pendiente de autorización no', setDoc(doc(ePend, `${K1}/estudiantes/ePend/impactTest/pre`), prueba()));
+await no('ni por otro estudiante', setDoc(doc(eAct, `${K1}/estudiantes/eMulti/impactTest/pre`), prueba()));
+await no('más aciertos que preguntas no', setDoc(doc(eMulti, `${K1}/estudiantes/eMulti/impactTest/pre`), prueba({ score: 13 })));
+await no('campos de más no', setDoc(doc(eMulti, `${K1}/estudiantes/eMulti/impactTest/pre`), prueba({ nota: 5 })));
+await si('el profe de la clase ve el resultado', getDoc(doc(pA, `${K1}/estudiantes/eAct/impactTest/pre`)));
+await no('otro profe no', getDoc(doc(pA2, `${K1}/estudiantes/eAct/impactTest/pre`)));
+await no('el profe no la abre directo (es del callable)', setDoc(doc(pA, `${K1}/config/prueba`), { pre: { abiertaAt: 9, cerradaAt: null } }));
+await no('ni la borra', deleteDoc(doc(pA, `${K1}/config/prueba`)));
+await si('la clase lee si la prueba está abierta', getDoc(doc(eAct, `${K1}/config/prueba`)));
+await si('el admin lee los cierres de periodo', getDoc(doc(pA, 'colegios/A/cierres/2026-p1')));
+await no('un profe que no es admin no', getDoc(doc(pA2, 'colegios/A/cierres/2026-p1')));
+await no('nadie reescribe un cierre', setDoc(doc(pA, 'colegios/A/cierres/2026-p1'), { anio: 2026, huella: 'otra' }));
+
 console.log('\nAgregados y otros');
 await si('profe del colegio lee el agregado', getDoc(doc(pA, `${K1}/agregados/resumen`)));
 await no('estudiante no', getDoc(doc(eAct, `${K1}/agregados/resumen`)));

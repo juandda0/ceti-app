@@ -1,4 +1,4 @@
-import { calcularPanelEntidad, dominiosDeCurso } from '@/functions/src/educadores/dominio';
+import { calcularPanelEntidad, dominiosDeCurso, sumasImpacto } from '@/functions/src/educadores/dominio';
 import { hojasInformeCobertura, informeCoberturaHtml, nombrePeriodo } from './informeCobertura';
 
 const AHORA = Date.parse('2026-10-30T12:00:00-05:00');
@@ -18,6 +18,15 @@ function panel() {
         comunicados7d: 0,
         familiasConResumen: 0,
         ...dominiosDeCurso(progreso, new Set(progreso.map((p) => p.uid))),
+        porDesempeno: { 'PR-1011-1': { estudiantes: 6, logran: 5 } },
+        impacto: sumasImpacto(
+          progreso.map((p) => ({
+            uid: p.uid,
+            pre: { score: 4, total: 10, takenAt: 1, breakdown: {}, totales: {} },
+            post: { score: 7, total: 10, takenAt: 2, breakdown: {}, totales: {} },
+          })),
+          new Set(progreso.map((p) => p.uid))
+        ),
       },
     ],
     [{ uid: 'p', nombre: 'Laura', rol: 'admin' }],
@@ -38,6 +47,17 @@ describe('informe de cobertura', () => {
     expect(html).not.toMatch(/e[0-5]\b/);
   });
 
+  it('trae desempeños, impacto, la clase y el sello del cierre (Fase 7)', () => {
+    const html = informeCoberturaHtml(panel(), {
+      ...ctx,
+      clase: '10°A',
+      sello: { cerradoAt: AHORA, cerradoPorNombre: 'Diana', huella: 'abc123' },
+    });
+    for (const t of ['Identifica los componentes del presupuesto', 'PR-1011-1', '5 · 83 %', '40 % → 70 % (+30 puntos)', 'Clase 10°A', 'Informe de una sola clase', 'Huella SHA-256: <code>abc123</code>']) {
+      expect(html).toContain(t);
+    }
+  });
+
   it('a una universidad no le cita las orientaciones de la básica', () => {
     const html = informeCoberturaHtml(panel(), { ...ctx, tipo: 'Universidad', tipoId: 'universidad' });
     expect(html).not.toContain('Ley 1450');
@@ -46,7 +66,15 @@ describe('informe de cobertura', () => {
 
   it('el xlsx trae resumen, ámbitos y competencias por grado', () => {
     const hojas = hojasInformeCobertura(panel(), ctx);
-    expect(hojas.map((h) => h.nombre)).toEqual(['Resumen', 'Ámbitos por grado', 'Competencias por grado']);
+    expect(hojas.map((h) => h.nombre)).toEqual([
+      'Resumen',
+      'Ámbitos por grado',
+      'Competencias por grado',
+      'Desempeños por grado',
+      'Prueba entrada y salida',
+    ]);
+    expect(hojas[3].filas[1]).toEqual(['10°', 'Presupuesto', 'PR-1011-1 · Identifica los componentes del presupuesto departamental y nacional', 'Tabla 10, p. 61', 6, 5, '83 %']);
+    expect(hojas[4].filas[1].slice(0, 3)).toEqual(['Toda la entidad', 6, 6]);
     expect(hojas[1].filas[1].slice(0, 3)).toEqual(['10°', '10-11', 6]);
   });
 

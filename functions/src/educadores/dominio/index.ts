@@ -21,3 +21,4 @@ export * from './facturaEntidad';
 export * from './biblioteca';
 export * from './normativa';
 export * from './desempenosMen';
+export * from './pruebaEntradaSalida';
