@@ -171,6 +171,19 @@ Qué hacer al recibir el aviso: habla con el colegio para ampliar o renovar y vu
 
 El tope por clase de cada plan (60 en Nave) sigue aplicando aparte.
 
+## 7b. Entidades: Equipo, Colegio y Universidad (Fase 6)
+
+Una entidad es un colegio de Ceti compartido por varios profes. Un profe la crea desde Colegio → "Crear la entidad" y queda como su primer admin; invita a sus colegas por correo y, al aceptar, las clases de cada uno se mudan a la entidad (estudiantes, avance, contenido, comunicados, claims de los estudiantes, código de la clase, enlaces de acudiente).
+
+Cobro, siempre por fuera de la app:
+
+1. El admin de la entidad pide la cotización en Colegio → Plan y facturación (`cotizarPlanEntidad`, numerada `COT-AAAA-NNNN`, válida 30 días) y llena los datos para la factura electrónica (razón social, NIT con DV, correo de facturación, responsabilidad fiscal).
+2. La entidad registra el número de su orden de compra (`registrarOrdenCompra`). A `CETI_OPS_EMAIL` llega el correo "Orden de compra de …" con la cotización, el NIT y el total.
+3. Cuando el pago entre (transferencia o PSE), un **admin** de Ceti llama `activarLicenciaEntidad({colegioId, cotizacionId})`. Activa `colegios/{cid}.licencia` por 6 o 12 meses (si ya tenía el mismo plan vigente, el periodo nuevo empieza cuando termina el actual) y deja `facturas/ent_{cotizacionId}` en estado `pendiente` con `error: 'emision_manual'` y los datos del cliente.
+4. Emite esa factura a mano en Alegra a nombre del NIT (crea el contacto si no existe) y marca el doc como `emitida` con el número. La emisión automática a nombre de una entidad no está hecha: Alegra necesita el contacto con NIT y no se ha probado en vivo.
+
+Precios (propuesta del 30-oct-2026, en `dominio/precios.ts`, + IVA): Equipo $21.900 por profe al mes, mínimo 3 (todo Comandante para cada profe); Colegio $35.000 por estudiante al año, mínimo 150; Universidad $19.000 por estudiante activo al semestre, mínimo 300. Las licencias Nave de antes (`plan: 'nave'`) siguen valiendo como plan Colegio.
+
 ## 8. Parámetros, en resumen
 
 | Nombre | Tipo | Por defecto |
