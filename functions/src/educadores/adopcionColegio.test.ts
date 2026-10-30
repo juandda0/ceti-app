@@ -19,6 +19,7 @@ import {
   agregadoAdopcion,
   correrAdopcionDiaria,
   cursoAdopcionDesdeDatos,
+  listaCursosDe,
   msDe,
   recalcularAdopcionColegio,
   recalcularAdopcionSiToca,
@@ -64,7 +65,10 @@ describe('cursoAdopcionDesdeDatos', () => {
 
   it('un curso sin progreso no tiene actividad', () => {
     expect(
-      cursoAdopcionDesdeDatos({ profesorUids: undefined, roster: [{ uid: 'a' }], progreso: [] }, AHORA)
+      cursoAdopcionDesdeDatos(
+        { profesorUids: undefined, roster: [{ uid: 'a' }], progreso: [] },
+        AHORA
+      )
     ).toEqual({ profesorUids: [], estudiantes: 1, estudiantesActivos: 0, ultimaActividad: null });
   });
 });
@@ -122,9 +126,9 @@ function colegioDemo(): FirestoreFalso {
   });
   return new FirestoreFalso({
     'colegios/col1': { nombre: 'Colegio' },
-    'colegios/col1/cursos/9a': { nombre: '9A', profesorUids: ['p1'] },
-    'colegios/col1/cursos/9b': { nombre: '9B', profesorUids: ['p2', 'p3'] },
-    'colegios/col1/cursos/10a': { nombre: '10A', profesorUids: ['p4'] },
+    'colegios/col1/cursos/9a': { nombre: '9A', grado: '9', codigo: 'COD9A', profesorUids: ['p1'] },
+    'colegios/col1/cursos/9b': { nombre: '9B', grado: '9', profesorUids: ['p2', 'p3'] },
+    'colegios/col1/cursos/10a': { nombre: '10A', grado: '10', profesorUids: ['p4'] },
     'colegios/col1/cursos/9a/estudiantes/ana': { nombre: 'Ana', estado: 'activo' },
     'colegios/col1/cursos/9a/estudiantes/luis': { nombre: 'Luis', estado: 'activo' },
     'colegios/col1/cursos/9b/estudiantes/sol': { nombre: 'Sol', estado: 'activo' },
@@ -141,8 +145,22 @@ function colegioDemo(): FirestoreFalso {
   });
 }
 
+describe('listaCursosDe', () => {
+  it('deja solo id, nombre y grado, con respaldos si faltan', () => {
+    expect(
+      listaCursosDe([
+        { id: '9a', nombre: '9A', grado: '9', codigo: 'X1', profesorUids: ['p1'] } as never,
+        { id: 'sin-datos', nombre: 7, grado: null },
+      ])
+    ).toEqual([
+      { id: '9a', nombre: '9A', grado: '9' },
+      { id: 'sin-datos', nombre: 'sin-datos', grado: '' },
+    ]);
+  });
+});
+
 describe('recalcularAdopcionColegio', () => {
-  it('guarda solo cifras del colegio entero', async () => {
+  it('guarda solo cifras del colegio entero y la lista de clases sin códigos', async () => {
     const db = colegioDemo();
     const a = await recalcularAdopcionColegio('col1', AHORA, db as never);
     expect(a).toEqual({
@@ -156,10 +174,19 @@ describe('recalcularAdopcionColegio', () => {
       senalNave: true,
     });
     const doc = db.datos(rutaAgregadoAdopcion('col1'));
-    expect(doc).toEqual({ ...a, actualizadoAt: 'ts' });
-    // Nada nominal: ningún uid, nombre ni correo.
+    expect(doc).toEqual({
+      ...a,
+      listaCursos: [
+        { id: '10a', nombre: '10A', grado: '10' },
+        { id: '9a', nombre: '9A', grado: '9' },
+        { id: '9b', nombre: '9B', grado: '9' },
+      ],
+      actualizadoAt: 'ts',
+    });
+    // Nada nominal: ningún uid, nombre de persona, correo ni código de ingreso.
     const texto = JSON.stringify(doc);
-    for (const nominal of ['ana', 'Ana', 'p1', 'sol', '@']) expect(texto).not.toContain(nominal);
+    for (const nominal of ['ana', 'Ana', 'p1', 'sol', '@', 'COD9A'])
+      expect(texto).not.toContain(nominal);
   });
 });
 

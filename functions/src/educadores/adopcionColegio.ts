@@ -4,7 +4,9 @@
  * Las reglas solo dejan al profe leer sus propias clases, así que el panel de la
  * pestaña Colegio no puede calcular la adopción del colegio entero en el
  * cliente. Este agregado lo hace con el Admin SDK y guarda SOLO cifras: ni
- * uids, ni nombres, ni correos (cualquier profe del colegio lo lee).
+ * uids, ni nombres, ni correos (cualquier profe del colegio lo lee). Además
+ * guarda la lista de clases (id, nombre y grado, sin el código de ingreso) para
+ * que el reporte de dominio del colegio sepa qué agregados por curso leer.
  *
  * Se recalcula:
  * - al escribir progreso (encadenado a `onProgressWriteAggregate`), como mucho
@@ -15,7 +17,13 @@
  */
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { FieldValue, getFirestore, type Firestore } from 'firebase-admin/firestore';
-import { calcularAdopcion, DIAS_ACTIVO, DIA_MS, type Adopcion, type CursoAdopcion } from './dominio';
+import {
+  calcularAdopcion,
+  DIAS_ACTIVO,
+  DIA_MS,
+  type Adopcion,
+  type CursoAdopcion,
+} from './dominio';
 
 export const AGREGADO_ADOPCION_ID = 'adopcion';
 /** Mínimo entre dos recálculos disparados por progreso, por colegio. */
@@ -100,6 +108,26 @@ export function agregadoAdopcion(a: Adopcion): Adopcion {
   };
 }
 
+export interface CursoListado {
+  id: string;
+  nombre: string;
+  grado: string;
+}
+
+/**
+ * La lista de clases que ve cualquier profe del colegio: solo id, nombre y
+ * grado. Nunca el código de ingreso ni los profesorUids.
+ */
+export function listaCursosDe(
+  docs: { id: string; nombre?: unknown; grado?: unknown }[]
+): CursoListado[] {
+  return docs.map((d) => ({
+    id: d.id,
+    nombre: typeof d.nombre === 'string' ? d.nombre.slice(0, 80) : d.id,
+    grado: typeof d.grado === 'string' ? d.grado : '',
+  }));
+}
+
 /** ¿Ya pasó el mínimo desde el último recálculo? */
 export function tocaRecalcular(actualizadoAt: unknown, ahora: number): boolean {
   const ultimo = msDe(actualizadoAt);
@@ -142,7 +170,10 @@ export async function recalcularAdopcionColegio(
   ahora = Date.now(),
   db: Firestore = getFirestore()
 ): Promise<Adopcion> {
-  const cursos = await db.collection(`colegios/${colegioId}/cursos`).select('profesorUids').get();
+  const cursos = await db
+    .collection(`colegios/${colegioId}/cursos`)
+    .select('profesorUids', 'nombre', 'grado')
+    .get();
   const datos = await Promise.all(
     cursos.docs.map((c) => datosDeCurso(db, colegioId, c.id, c.get('profesorUids')))
   );
@@ -153,9 +184,13 @@ export async function recalcularAdopcionColegio(
     )
   );
   // Reemplazo completo: recalculado desde la fuente.
-  await db
-    .doc(rutaAgregadoAdopcion(colegioId))
-    .set({ ...adopcion, actualizadoAt: FieldValue.serverTimestamp() });
+  await db.doc(rutaAgregadoAdopcion(colegioId)).set({
+    ...adopcion,
+    listaCursos: listaCursosDe(
+      cursos.docs.map((c) => ({ id: c.id, nombre: c.get('nombre'), grado: c.get('grado') }))
+    ),
+    actualizadoAt: FieldValue.serverTimestamp(),
+  });
   return adopcion;
 }
 

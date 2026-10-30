@@ -40,6 +40,7 @@ export default function SchoolReportScreen() {
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
   const colegioId = useAuthStore((s) => s.colegioId);
+  const uid = useAuthStore((s) => s.firebaseUid);
   // Built purely from per-course aggregates (nominal progress outside the
   // profesor's own courses is denied by rules). Sedes are dormant (RQ-FN01).
 
@@ -57,7 +58,7 @@ export default function SchoolReportScreen() {
     void rosterRepository.getColegioNombre(colegioId).then((n) => {
       if (!cancelled) setColegioNombre(n);
     });
-    void loadSchoolReport(colegioId, Date.now())
+    void loadSchoolReport(colegioId, Date.now(), uid)
       .then((r) => {
         if (!cancelled) {
           setReport(r);
@@ -70,7 +71,7 @@ export default function SchoolReportScreen() {
     return () => {
       cancelled = true;
     };
-  }, [colegioId]);
+  }, [colegioId, uid]);
 
   const onExportCsv = useCallback(() => {
     if (!report) return;
