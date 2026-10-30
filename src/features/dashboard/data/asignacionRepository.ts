@@ -1,6 +1,7 @@
-import { addDoc, getDocs } from 'firebase/firestore';
+import { addDoc, deleteDoc, getDocs, updateDoc } from 'firebase/firestore';
 import { getFirebaseClients } from '@shared/lib/firebase/app';
 import {
+  asignacionDocRef,
   asignacionesByCursoQuery,
   asignacionesCollectionRef,
   asignacionesDeCursoParaEstudianteQuery,
@@ -19,9 +20,23 @@ function mapAsignaciones(snaps: Awaited<ReturnType<typeof getDocs>>[]): Asignaci
 
 /**
  * Assignments: a mundo brief ("complete World X before date Y") or a reto
- * financiero (RQ-PR14). Staff create; members read. `kind` discriminates.
+ * financiero (RQ-PR14). Staff create, move the deadline and delete; members
+ * read. `kind` discriminates.
  */
 export const asignacionRepository = {
+  /** Moves the deadline (rules keep the target and author unchanged). */
+  async setDeadline(colegioId: string, id: string, deadline: number): Promise<void> {
+    const clients = getFirebaseClients();
+    if (!clients?.firestore) return;
+    await updateDoc(asignacionDocRef(clients.firestore, colegioId, id), { deadline });
+  },
+
+  async remove(colegioId: string, id: string): Promise<void> {
+    const clients = getFirebaseClients();
+    if (!clients?.firestore) return;
+    await deleteDoc(asignacionDocRef(clients.firestore, colegioId, id));
+  },
+
   async create(colegioId: string, asignacion: AsignacionAny): Promise<boolean> {
     const clients = getFirebaseClients();
     if (!clients?.firestore) return false;

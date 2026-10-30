@@ -45,9 +45,40 @@ export const adminService = {
     return callFunction('generateClassCode', { colegioId, cursoId, regenerate });
   },
 
+  /** Student leaves their class and keeps using the app on their own. */
+  async salirDeMiClase(): Promise<{ ok: boolean }> {
+    return callFunction('salirDeMiClase', {});
+  },
+
+  /** Teacher removes a student from the class without deleting their progress. */
+  async retirarEstudiante(input: {
+    colegioId: string;
+    cursoId: string;
+    uid: string;
+  }): Promise<{ ok: boolean; retirado: boolean }> {
+    return callFunction('retirarEstudiante', input);
+  },
+
+  /** Rename, change the grade, archive, or turn the join code on/off. */
+  async editarMiCurso(input: {
+    colegioId: string;
+    cursoId: string;
+    cambios: { nombre?: string; grado?: string; archivada?: boolean; codigoActivo?: boolean };
+  }): Promise<{ ok: boolean; codigo: string | null }> {
+    return callFunction('editarMiCurso', input);
+  },
+
+  /** Deletes a class nobody is in anymore. */
+  async borrarMiCurso(input: { colegioId: string; cursoId: string }): Promise<{ ok: boolean }> {
+    return callFunction('borrarMiCurso', input);
+  },
+
   /** Student self-joins a course by code — Cloud Function. */
-  async joinByCode(code: string): Promise<{ ok: boolean; colegioId: string; cursoId: string }> {
-    return callFunction('joinByCode', { code });
+  async joinByCode(
+    code: string,
+    nombre?: string
+  ): Promise<{ ok: boolean; colegioId: string; cursoId: string }> {
+    return callFunction('joinByCode', nombre ? { code, nombre } : { code });
   },
 
   /**

@@ -15,11 +15,26 @@ export type EstudianteWithId = { uid: string } & Estudiante;
 
 /** Reads the institutional roster (courses a teacher manages, students in a course). */
 export const rosterRepository = {
-  async getCursosByProfesor(colegioId: string, uid: string): Promise<CursoWithId[]> {
+  /** The teacher's classes. Archived ones are left out unless asked for. */
+  async getCursosByProfesor(
+    colegioId: string,
+    uid: string,
+    { incluirArchivadas = false }: { incluirArchivadas?: boolean } = {}
+  ): Promise<CursoWithId[]> {
     const clients = getFirebaseClients();
     if (!clients?.firestore) return [];
     const snap = await getDocs(cursosByProfesorQuery(clients.firestore, colegioId, uid));
-    return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Curso) }));
+    const cursos = snap.docs.map((d) => ({ id: d.id, ...(d.data() as Curso) }));
+    return incluirArchivadas ? cursos : cursos.filter((c) => c.archivada !== true);
+  },
+
+  /** A whole course doc (the teacher's, or the student's own class). */
+  async getCurso(colegioId: string, cursoId: string): Promise<CursoWithId | null> {
+    const clients = getFirebaseClients();
+    if (!clients?.firestore) return null;
+    const snap = await getDoc(cursoDocRef(clients.firestore, colegioId, cursoId));
+    if (!snap.exists()) return null;
+    return { id: snap.id, ...(snap.data() as Curso) };
   },
 
   /** All courses in the colegio (profesor school-wide report). */

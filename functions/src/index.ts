@@ -47,6 +47,14 @@ import {
 } from './educadores/limites';
 import { cerrarInvitacion, invitacionDeCorreo } from './educadores/invitaciones';
 import { recalcularAdopcionSiToca } from './educadores/adopcionColegio';
+import {
+  borrarClase,
+  editarClase,
+  estadoAlVolver,
+  isGradoValido,
+  leerCambiosClase,
+  retirarDeClase,
+} from './educadores/gestionClase';
 
 initializeApp();
 
@@ -64,15 +72,6 @@ function requireString(value: unknown, field: string): string {
     throw new HttpsError('invalid-argument', `Missing or invalid '${field}'.`);
   }
   return value.trim();
-}
-
-// Grados válidos para un curso: 1° a 11°. (El contenido default sembrado solo
-// cubre 9–11; los grados menores reutilizan el banco de 9° hasta que el profesor
-// autore contenido propio — ver QuestionBankRepository.)
-const GRADOS_VALIDOS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'] as const;
-
-function isGradoValido(grado: string): boolean {
-  return (GRADOS_VALIDOS as readonly string[]).includes(grado);
 }
 
 type Caller = NonNullable<Parameters<Parameters<typeof onCall>[0]>[0]['auth']>;
@@ -611,8 +610,12 @@ export const generateClassCode = onCall(async (request) => {
   const db = getFirestore();
   const cursoRef = db.doc(`colegios/${colegioId}/cursos/${cursoId}`);
   const regenerate = request.data?.regenerate === true;
-  const existing = (await cursoRef.get()).data()?.codigo as string | undefined;
+  const curso = (await cursoRef.get()).data();
+  const existing = curso?.codigo as string | undefined;
   if (existing && !regenerate) return { code: existing };
+  if (curso?.archivada === true) {
+    throw new HttpsError('failed-precondition', 'La clase está archivada.');
+  }
 
   const code = await mintUniqueCode(db);
   // Invalidate the old code so it can no longer be used to join.
@@ -621,11 +624,14 @@ export const generateClassCode = onCall(async (request) => {
       .doc(`classCodes/${existing}`)
       .delete()
       .catch(() => undefined);
-  await db.doc(`classCodes/${code}`).set({
-    colegioId,
-    cursoId,
-    createdAt: FieldValue.serverTimestamp(),
-  });
+  // Con el código apagado (editarMiCurso) el nuevo queda guardado pero no une.
+  if (curso?.codigoActivo !== false) {
+    await db.doc(`classCodes/${code}`).set({
+      colegioId,
+      cursoId,
+      createdAt: FieldValue.serverTimestamp(),
+    });
+  }
   await cursoRef.set({ codigo: code }, { merge: true });
   return { code };
 });
@@ -649,13 +655,15 @@ export const joinByCode = onCall(async (request) => {
     );
   }
   const code = requireString(request.data?.code, 'code').toUpperCase();
+  // Nombre completo para la lista del profe (lo pide la app al unirse).
+  const nombre = leerNombreCompleto(request.data?.nombre);
 
   const db = getFirestore();
   const codeSnap = await db.doc(`classCodes/${code}`).get();
   if (!codeSnap.exists) throw new HttpsError('not-found', 'Código de clase inválido.');
   const { colegioId, cursoId } = codeSnap.data() as { colegioId: string; cursoId: string };
 
-  const nuevo = await unirEstudianteACurso(caller, colegioId, cursoId);
+  const nuevo = await unirEstudianteACurso(caller, colegioId, cursoId, nombre);
   // Si también estaba invitado por correo a esta clase, la invitación ya no ocupa cupo.
   if (nuevo) {
     try {
@@ -688,10 +696,17 @@ async function unirEstudianteACurso(
   cursoId: string,
   nombrePreferido?: string | null
 ): Promise<boolean> {
-  // Already linked to this exact course → no-op (idempotent).
-  if (caller.token.colegioId === colegioId && caller.token.cursoId === cursoId) return false;
-
   const db = getFirestore();
+  // Already linked to this exact course → no-op (idempotent), salvo corregir el nombre.
+  if (caller.token.colegioId === colegioId && caller.token.cursoId === cursoId) {
+    if (nombrePreferido) {
+      await db
+        .doc(`colegios/${colegioId}/cursos/${cursoId}/estudiantes/${caller.uid}`)
+        .set({ nombre: nombrePreferido }, { merge: true });
+    }
+    return false;
+  }
+
   const email = (caller.token.email as string | undefined) ?? '';
   const nombre =
     nombrePreferido ||
@@ -711,10 +726,121 @@ async function unirEstudianteACurso(
       atestado: false,
       joinedAt: FieldValue.serverTimestamp(),
     });
+  } else if (existing.data()?.estado === 'retirado') {
+    // Vuelve a una clase de la que se había ido: ocupa cupo otra vez y el profe
+    // ve su avance desde este regreso.
+    await asegurarCupoEstudiante(colegioId, cursoId, db);
+    await estRef.set(
+      {
+        ...(nombrePreferido ? { nombre: nombrePreferido } : {}),
+        estado: estadoAlVolver(existing.data()?.atestado),
+        joinedAt: FieldValue.serverTimestamp(),
+        retiradoAt: FieldValue.delete(),
+        retiradoPor: FieldValue.delete(),
+        retiradoPorUid: FieldValue.delete(),
+      },
+      { merge: true }
+    );
+  }
+  // Fase 0: un estudiante está en una sola clase. Al cambiarse, sale de la
+  // anterior para que no siga ocupando cupo ni apareciendo en ese reporte.
+  const anteriorColegio = caller.token.colegioId as string | undefined;
+  const anteriorCurso = caller.token.cursoId as string | undefined;
+  if (anteriorColegio && anteriorCurso) {
+    await retirarDeClase(db, anteriorColegio, anteriorCurso, caller.uid, {
+      quien: 'estudiante',
+      uid: caller.uid,
+    });
   }
   await applyClaims(caller.uid, { role: 'estudiante', colegioId, cursoId });
   return true;
 }
+
+// ---------------------------------------------------------------------------
+// Gestión de la clase (Fase 0 del módulo profesor). Retirar no borra datos:
+// eso sigue siendo suppressStudentData (Ley 1581).
+// ---------------------------------------------------------------------------
+
+/** Nombre completo opcional: 2 a 80 caracteres sin espacios de sobra; si no sirve, null. */
+function leerNombreCompleto(v: unknown): string | null {
+  if (typeof v !== 'string') return null;
+  const limpio = v.trim().replace(/\s+/g, ' ');
+  return limpio.length >= 2 && limpio.length <= 80 ? limpio : null;
+}
+
+/** El estudiante sale de su clase y sigue usando la app por su cuenta. */
+export const salirDeMiClase = onCall(async (request) => {
+  const caller = request.auth;
+  requireAuth(caller);
+  if (caller.token.role !== 'estudiante') {
+    throw new HttpsError('failed-precondition', 'Solo un estudiante sale de una clase.');
+  }
+  const colegioId = caller.token.colegioId as string | undefined;
+  const cursoId = caller.token.cursoId as string | undefined;
+  if (colegioId && cursoId) {
+    await retirarDeClase(getFirestore(), colegioId, cursoId, caller.uid, {
+      quien: 'estudiante',
+      uid: caller.uid,
+    });
+  }
+  await applyClaims(caller.uid, { role: 'estudiante' });
+  return { ok: true };
+});
+
+/** El profe saca a un estudiante de su clase, sin borrar su avance. */
+export const retirarEstudiante = onCall(async (request) => {
+  const caller = request.auth;
+  requireAuth(caller);
+  const colegioId = requireString(request.data?.colegioId, 'colegioId');
+  const cursoId = requireString(request.data?.cursoId, 'cursoId');
+  const uid = requireString(request.data?.uid, 'uid');
+  await assertStaffOfCurso(caller, colegioId, cursoId);
+
+  const retirado = await retirarDeClase(getFirestore(), colegioId, cursoId, uid, {
+    quien: 'profesor',
+    uid: caller.uid,
+  });
+  // Solo se le quita el acceso si sus claims todavía apuntan a esta clase.
+  try {
+    const claims = (await getAuth().getUser(uid)).customClaims ?? {};
+    if (claims.colegioId === colegioId && claims.cursoId === cursoId) {
+      await applyClaims(uid, { role: 'estudiante' });
+    }
+  } catch (e) {
+    console.error('retirarEstudiante: no se pudieron quitar los claims', { uid, error: String(e) });
+  }
+  return { ok: true, retirado };
+});
+
+/** Renombrar, cambiar el grado, archivar o desactivar el código de una clase. */
+export const editarMiCurso = onCall(async (request) => {
+  const caller = request.auth;
+  requireAuth(caller);
+  const colegioId = requireString(request.data?.colegioId, 'colegioId');
+  const cursoId = requireString(request.data?.cursoId, 'cursoId');
+  await assertStaffOfCurso(caller, colegioId, cursoId);
+  const cambios = leerCambiosClase(request.data?.cambios);
+
+  const db = getFirestore();
+  // Desarchivar vuelve a contar para el límite de clases del plan.
+  if (cambios.archivada === false) {
+    const actual = await db.doc(`colegios/${colegioId}/cursos/${cursoId}`).get();
+    if (actual.get('archivada') === true) await asegurarPuedeCrearClase(caller.uid, colegioId);
+  }
+  const { codigo } = await editarClase(db, colegioId, cursoId, cambios, () => mintUniqueCode(db));
+  return { ok: true, codigo };
+});
+
+/** Borra una clase vacía (sin estudiantes que sigan en ella). */
+export const borrarMiCurso = onCall(async (request) => {
+  const caller = request.auth;
+  requireAuth(caller);
+  const colegioId = requireString(request.data?.colegioId, 'colegioId');
+  const cursoId = requireString(request.data?.cursoId, 'cursoId');
+  await assertStaffOfCurso(caller, colegioId, cursoId);
+  await borrarClase(getFirestore(), colegioId, cursoId);
+  return { ok: true };
+});
 
 const GROQ_API_KEY = defineSecret('GROQ_API_KEY');
 function financialAssistantUsageRef(uid: string) {

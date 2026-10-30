@@ -6,6 +6,7 @@
 import { rosterRepository } from '@features/dashboard/data/rosterRepository';
 import { worldProgressRepository } from '@features/dashboard/data/worldProgressRepository';
 import { asignacionRepository } from '@features/dashboard/data/asignacionRepository';
+import { sigueEnClase } from '@features/dashboard/data/estadoRoster';
 import {
   buildCourseReport,
   type CourseReport,
@@ -30,7 +31,10 @@ export async function loadCourseReport(
   cursoNombre: string,
   now: number
 ): Promise<CourseReportWithRetos> {
-  const roster = await rosterRepository.getRoster(colegioId, cursoId);
+  // Solo quienes siguen en la clase: los retirados y suprimidos no entran al reporte.
+  const roster = (await rosterRepository.getRoster(colegioId, cursoId)).filter((s) =>
+    sigueEnClase(s.estado)
+  );
   const progressArrays = await Promise.all(
     roster.map((s) => worldProgressRepository.getStudentProgress(colegioId, cursoId, s.uid))
   );

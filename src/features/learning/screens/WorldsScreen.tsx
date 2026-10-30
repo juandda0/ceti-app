@@ -33,6 +33,8 @@ import { hasClassAccess } from '@features/learning/data/classAccess';
 import { displayWorldDef } from '@features/learning/data/worldMeta';
 import { planetaDeMundo } from '@features/learning/data/planetas';
 import { ESPACIO, FondoEstrellas } from '@features/learning/components/galaxia/espacio';
+import AuthorizationPendingBanner from '@features/dashboard/components/AuthorizationPendingBanner';
+import StudentAssignmentsBanner from '@features/dashboard/components/StudentAssignmentsBanner';
 import CarruselPlanetas, {
   PuntosCarrusel,
 } from '@features/learning/components/galaxia/CarruselPlanetas';
@@ -213,6 +215,14 @@ export default function WorldsScreen() {
             <Text style={estilos.subtitulo}>{t('galaxia.desliza')}</Text>
           </View>
         </View>
+        <View style={estilos.avisos}>
+          <AuthorizationPendingBanner />
+          <StudentAssignmentsBanner
+            nombreDeMundo={(id) => mundos.find((m) => m.id === id)?.nombre ?? null}
+            mundoHecho={(id) => isWorldComplete(uid, id as WorldId)}
+            onAbrirMundo={(id) => router.push(`/saga/${id}` as never)}
+          />
+        </View>
         <View style={estilos.puente}>
           <PuenteDeMando />
         </View>
@@ -286,6 +296,7 @@ const estilos = StyleSheet.create({
   subtitulo: { fontSize: 16, fontWeight: '700', color: ESPACIO.textoSuave },
   tarjetaZona: { paddingHorizontal: 20, marginTop: 8 },
   puente: { paddingHorizontal: 20 },
+  avisos: { paddingHorizontal: 20, gap: 10 },
   vacio: { alignItems: 'center', gap: 12, paddingVertical: 64, paddingHorizontal: 32 },
   vacioTexto: { fontSize: 15, fontWeight: '700', textAlign: 'center', color: ESPACIO.textoSuave },
 });

@@ -18,6 +18,9 @@ import { logEvent } from '@shared/lib/analytics/logEvent';
 import { getFirebaseClients, isFirebaseConfigured } from '@shared/lib/firebase/app';
 import { userRepository } from '@features/auth/data/userRepository';
 import AvatarView from '@features/avatar/components/AvatarView';
+import ClassCodeForm from '@features/dashboard/components/ClassCodeForm';
+import { joinClass } from '@features/dashboard/data/joinClass';
+import { pendingInvite } from '@features/dashboard/data/pendingInvite';
 import { SelectorColor, SelectorPersonaje } from '@features/avatar/components/Selectores';
 import {
   AVATAR_POR_DEFECTO,
@@ -39,8 +42,16 @@ import { HORA_MAX, HORA_MIN, HORA_POR_DEFECTO } from '@features/orbita/domain/av
 import type { MetaDiaria } from '@features/orbita/domain/progreso';
 import type { RecompensaPractica } from '@features/orbita/domain/orbita';
 
-const PASO = { nombre: 0, tripulante: 1, meta: 2, hora: 3, vuelo: 4, bienvenida: 5 } as const;
-const PASOS = 6;
+const PASO = {
+  nombre: 0,
+  tripulante: 1,
+  meta: 2,
+  hora: 3,
+  vuelo: 4,
+  clase: 5,
+  bienvenida: 6,
+} as const;
+const PASOS = 7;
 
 /** Mismo id de juego que useUidJuego: uid de Firebase o id local (se crea si aún no hay). */
 function resolverUid(): string {
@@ -68,6 +79,18 @@ export default function UserSetupScreen() {
   const [avisos, setAvisos] = useState<'pendiente' | 'pidiendo' | 'activos' | 'no'>('pendiente');
   const [fin, setFin] = useState<{ r: RecompensaPractica; res: ResultadoLeccion } | null>(null);
   const [celebrando, setCelebrando] = useState(false);
+  const [claseUnida, setClaseUnida] = useState(false);
+
+  // Unirse a una clase es opcional y necesita sesión en Firebase; sin ella se salta.
+  const irDespuesDelVuelo = () => setStep(isFirebaseConfigured() ? PASO.clase : PASO.bienvenida);
+
+  const unirmeEnOnboarding = async (codigo: string, nombreCompleto: string) => {
+    pendingInvite.consume();
+    await joinClass(codigo, nombreCompleto);
+    setClaseUnida(true);
+    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    setStep(PASO.bienvenida);
+  };
 
   const canAdvance = useCallback(() => {
     if (step === PASO.nombre) return name.trim().length >= 2;
@@ -107,7 +130,9 @@ export default function UserSetupScreen() {
   const guardarAjustes = () => {
     const uid = resolverUid();
     if (uid) {
-      useOrbitaStore.getState().configurar(uid, { meta, horaAviso: hora, avisos: avisos === 'activos' });
+      useOrbitaStore
+        .getState()
+        .configurar(uid, { meta, horaAviso: hora, avisos: avisos === 'activos' });
     }
     return uid;
   };
@@ -115,7 +140,7 @@ export default function UserSetupScreen() {
   const terminarPrimerVuelo = (res: ResultadoLeccion) => {
     const uid = guardarAjustes();
     if (!uid) {
-      setStep(PASO.bienvenida);
+      irDespuesDelVuelo();
       return;
     }
     const r = useOrbitaStore.getState().completar(uid, {
@@ -130,7 +155,7 @@ export default function UserSetupScreen() {
 
   const saltarPrimerVuelo = () => {
     guardarAjustes();
-    setStep(PASO.bienvenida);
+    irDespuesDelVuelo();
   };
 
   const finishSetup = async () => {
@@ -205,7 +230,7 @@ export default function UserSetupScreen() {
           color={colors.brand.primary}
           aciertos={fin.res.acertadasALaPrimera}
           total={fin.res.total}
-          onContinuar={() => setStep(PASO.bienvenida)}
+          onContinuar={() => irDespuesDelVuelo()}
         />
       );
     }
@@ -356,11 +381,17 @@ export default function UserSetupScreen() {
                 disabled={hora <= HORA_MIN}
                 accessibilityRole="button"
                 accessibilityLabel={t('orbita.onboarding.horaMenos')}
-                style={[styles.relojBoton, { borderColor: colors.materials.border, opacity: hora <= HORA_MIN ? 0.35 : 1 }]}
+                style={[
+                  styles.relojBoton,
+                  { borderColor: colors.materials.border, opacity: hora <= HORA_MIN ? 0.35 : 1 },
+                ]}
               >
                 <Ionicons name="remove" size={24} color={colors.text.primary} />
               </TouchableOpacity>
-              <Text style={[styles.relojHora, { color: colors.text.primary }]} accessibilityLiveRegion="polite">
+              <Text
+                style={[styles.relojHora, { color: colors.text.primary }]}
+                accessibilityLiveRegion="polite"
+              >
                 {formatoHora(hora)}
               </Text>
               <TouchableOpacity
@@ -368,7 +399,10 @@ export default function UserSetupScreen() {
                 disabled={hora >= HORA_MAX}
                 accessibilityRole="button"
                 accessibilityLabel={t('orbita.onboarding.horaMas')}
-                style={[styles.relojBoton, { borderColor: colors.materials.border, opacity: hora >= HORA_MAX ? 0.35 : 1 }]}
+                style={[
+                  styles.relojBoton,
+                  { borderColor: colors.materials.border, opacity: hora >= HORA_MAX ? 0.35 : 1 },
+                ]}
               >
                 <Ionicons name="add" size={24} color={colors.text.primary} />
               </TouchableOpacity>
@@ -403,6 +437,28 @@ export default function UserSetupScreen() {
           </Animated.View>
         )}
 
+        {step === PASO.clase && (
+          <Animated.View
+            key="clase"
+            entering={motion.stepEnter}
+            exiting={motion.stepExit}
+            style={styles.stepContainer}
+          >
+            <PageHeader
+              overline={t('onboarding.stepClaseOverline')}
+              title={t('onboarding.stepClaseTitle')}
+              subtitle={t('onboarding.stepClaseSubtitle')}
+              style={{ alignItems: 'center' }}
+            />
+            <ClassCodeForm
+              initialCode={pendingInvite.peek() ?? ''}
+              nombreInicial={name.trim()}
+              sinEncabezado
+              onJoin={unirmeEnOnboarding}
+            />
+          </Animated.View>
+        )}
+
         {step === PASO.bienvenida && (
           <Animated.View
             key="welcome"
@@ -413,7 +469,9 @@ export default function UserSetupScreen() {
             <PageHeader
               overline={t('onboarding.stepWelcomeOverline')}
               title={t('onboarding.stepWelcomeTitle')}
-              subtitle={t('onboarding.stepWelcomeSubtitle')}
+              subtitle={
+                claseUnida ? t('onboarding.stepWelcomeClase') : t('onboarding.stepWelcomeSubtitle')
+              }
               style={{ alignItems: 'center' }}
             />
             <View
@@ -429,7 +487,6 @@ export default function UserSetupScreen() {
             </View>
           </Animated.View>
         )}
-
       </ScrollView>
 
       <View style={styles.footer}>
@@ -443,11 +500,19 @@ export default function UserSetupScreen() {
                 ? t('onboarding.start')
                 : step === PASO.hora
                   ? t('orbita.onboarding.despegar')
-                  : t('onboarding.next')
+                  : step === PASO.clase
+                    ? t('onboarding.claseAhoraNo')
+                    : t('onboarding.next')
             }
-            onPress={step === PASO.bienvenida ? () => void finishSetup() : handleNext}
+            variant={step === PASO.clase ? 'secondary' : 'primary'}
+            onPress={
+              step === PASO.bienvenida
+                ? () => void finishSetup()
+                : step === PASO.clase
+                  ? () => setStep(PASO.bienvenida)
+                  : handleNext
+            }
             disabled={!canAdvance() || finishing}
-            variant="primary"
             size="large"
             style={{ width: '100%' }}
             isLoading={finishing}

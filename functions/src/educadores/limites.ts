@@ -32,6 +32,7 @@ import {
   type LicenciaColegio,
 } from './plan';
 import { COL_MAIL, construirCorreo } from './correo';
+import { ESTADOS_EN_CLASE, contarClasesActivas } from './gestionClase';
 
 /**
  * Buzón de operaciones. Es el mismo parámetro que declara suscripciones.ts
@@ -134,18 +135,13 @@ function lanzarSi(b: Bloqueo | null): void {
 // Clases por profe.
 // ---------------------------------------------------------------------------
 
-/** Clases del colegio donde el profe figura en `profesorUids`. */
+/** Clases sin archivar del colegio donde el profe figura en `profesorUids`. */
 export async function contarClasesDeProfe(
   uid: string,
   colegioId: string,
   db: Firestore = getFirestore()
 ): Promise<number> {
-  const snap = await db
-    .collection(`colegios/${colegioId}/cursos`)
-    .where('profesorUids', 'array-contains', uid)
-    .count()
-    .get();
-  return snap.data().count;
+  return contarClasesActivas(db, uid, colegioId);
 }
 
 /** Lanza `limite_clases` si el plan del profe no admite otra clase. */
@@ -165,7 +161,10 @@ export async function asegurarPuedeCrearClase(
 // Estudiantes por clase.
 // ---------------------------------------------------------------------------
 
-/** Estudiantes que ocupan cupo: todo el roster menos los suprimidos (Ley 1581). */
+/**
+ * Estudiantes que ocupan cupo: los que siguen en la clase (activos o
+ * pendientes). Los suprimidos (Ley 1581) y los retirados no cuentan.
+ */
 export async function contarRoster(
   colegioId: string,
   cursoId: string,
@@ -173,7 +172,7 @@ export async function contarRoster(
 ): Promise<number> {
   const snap = await db
     .collection(`colegios/${colegioId}/cursos/${cursoId}/estudiantes`)
-    .where('estado', '!=', 'suprimido')
+    .where('estado', 'in', [...ESTADOS_EN_CLASE])
     .count()
     .get();
   return snap.data().count;
@@ -331,7 +330,7 @@ export async function naveDeColegio(
 }
 
 /**
- * Estudiantes que ocupan cupo en todo el colegio: el roster sin suprimidos de
+ * Estudiantes que ocupan cupo en todo el colegio: los que siguen en
  * cada clase y, con `conPendientes`, también las invitaciones pendientes (así
  * invitarLista no reparte más cupos de los que hay).
  */

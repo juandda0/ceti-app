@@ -207,7 +207,7 @@ export async function recopilarDatosProfe(
 ): Promise<EntradaExportacion> {
   const { uid, colegioId } = params;
   const [cursos, colegioNombre] = await Promise.all([
-    rosterRepository.getCursosByProfesor(colegioId, uid),
+    rosterRepository.getCursosByProfesor(colegioId, uid, { incluirArchivadas: true }),
     rosterRepository.getColegioNombre(colegioId),
   ]);
 

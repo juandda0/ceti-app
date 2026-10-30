@@ -211,7 +211,9 @@ describe('recopilarDatosProfe', () => {
       ahora: AHORA,
     });
 
-    expect(rosterRepository.getCursosByProfesor).toHaveBeenCalledWith('col1', 'p1');
+    expect(rosterRepository.getCursosByProfesor).toHaveBeenCalledWith('col1', 'p1', {
+      incluirArchivadas: true,
+    });
     expect(courseContentRepository.loadResolvedBanco).toHaveBeenCalledTimes(2);
     expect(courseContentRepository.loadResolvedBanco).toHaveBeenCalledWith(
       'col1',

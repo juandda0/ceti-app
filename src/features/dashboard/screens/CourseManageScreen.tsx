@@ -10,7 +10,13 @@ import Bounceable from '@shared/components/Bounceable';
 import ContextScrollView from '@shared/components/motion/ContextScrollView';
 import { useThemeColors } from '@shared/hooks/useThemeColors';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
-import { rosterRepository, type EstudianteWithId } from '@features/dashboard/data/rosterRepository';
+import {
+  rosterRepository,
+  type CursoWithId,
+  type EstudianteWithId,
+} from '@features/dashboard/data/rosterRepository';
+import { sigueEnClase } from '@features/dashboard/data/estadoRoster';
+import AjustesClase from '@features/dashboard/components/AjustesClase';
 import { adminService } from '@features/dashboard/data/adminService';
 import ClassWorldsManager from '@features/dashboard/components/ClassWorldsManager';
 import { useClaseSoloLectura } from '@features/educadores/components/useClaseSoloLectura';
@@ -37,20 +43,21 @@ import { useNombreCurso } from '@features/dashboard/hooks/useNombreCurso';
 
 const POLICY_VERSION = 'v1';
 
-type Vista = 'invitar' | 'mundos' | 'estudiantes';
+type Vista = 'invitar' | 'mundos' | 'estudiantes' | 'clase';
 
 const TONO_ESTADO: Record<EstudianteEstado, Tono> = {
   activo: 'verde',
   pendiente_atestacion: 'naranja',
+  retirado: 'neutro',
   suprimido: 'neutro',
 };
 
 /**
  * Per-course operations screen for the profesor (D-PIVOT): class code, class
- * worlds, roster with Ley 1581 attestation, and suppression. The profesor
- * operates ONLY their own course (firestore.rules + the Cloud Functions enforce
- * it). Assigning teachers / creating structure is Admin SDK only (backend).
- * Tres vistas con el control segmentado: Invitar · Mundos · Estudiantes.
+ * worlds, roster with Ley 1581 attestation, removal and suppression, and the
+ * class settings. The profesor operates ONLY their own course (firestore.rules +
+ * the Cloud Functions enforce it). Assigning teachers is Admin SDK only.
+ * Cuatro vistas con el control segmentado: Invitar · Mundos · Estudiantes · Clase.
  */
 export default function CourseManageScreen() {
   const { t } = useTranslation();
@@ -63,19 +70,28 @@ export default function CourseManageScreen() {
 
   const [vista, setVista] = useState<Vista>('invitar');
   const [roster, setRoster] = useState<EstudianteWithId[]>([]);
+  const [curso, setCurso] = useState<CursoWithId | null>(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [code, setCode] = useState<string | null>(null);
   // Al bajar de plan, las clases que pasan del límite se ven pero no se editan (nada se borra).
   const router = useRouter();
-  const soloLectura = useClaseSoloLectura(colegioId, cursoId);
+  const soloLecturaPlan = useClaseSoloLectura(colegioId, cursoId);
+  const archivada = curso?.archivada === true;
+  // Una clase archivada se ve pero no se edita; se desarchiva en la vista Clase.
+  const soloLectura = soloLecturaPlan || archivada;
   const [codeBusy, setCodeBusy] = useState(false);
 
   const reload = useCallback(async () => {
     if (!colegioId || !cursoId) return;
     setLoading(true);
-    const r = await rosterRepository.getRoster(colegioId, cursoId);
+    const [r, c] = await Promise.all([
+      rosterRepository.getRoster(colegioId, cursoId),
+      rosterRepository.getCurso(colegioId, cursoId),
+    ]);
     setRoster(r);
+    setCurso(c);
+    if (c?.codigo) setCode((actual) => (actual ? (c.codigo ?? actual) : actual));
     setLoading(false);
   }, [colegioId, cursoId]);
 
@@ -105,6 +121,20 @@ export default function CourseManageScreen() {
         atestado: !activo,
         politicaVersion: POLICY_VERSION,
       });
+    });
+
+  const onRetirar = (s: EstudianteWithId) =>
+    confirmAction({
+      title: t('profe.retirarTitulo', { nombre: s.nombre }),
+      body: t('profe.retirarTexto'),
+      cancelLabel: t('admin.cancel'),
+      confirmLabel: t('profe.retirar'),
+      onConfirm: () =>
+        guard(async () => {
+          if (!colegioId || !cursoId) return;
+          await adminService.retirarEstudiante({ colegioId, cursoId, uid: s.uid });
+          showMessage(t('profe.retirarOk', { nombre: s.nombre }), undefined, 'success');
+        }),
     });
 
   const onSuppress = (uid: string) =>
@@ -159,6 +189,7 @@ export default function CourseManageScreen() {
       { key: 'invitar' as const, label: t('profe.vistaInvitar') },
       { key: 'mundos' as const, label: t('profe.vistaMundos') },
       { key: 'estudiantes' as const, label: t('profe.vistaEstudiantes') },
+      { key: 'clase' as const, label: t('profe.vistaClase') },
     ],
     [t]
   );
@@ -242,87 +273,110 @@ export default function CourseManageScreen() {
           onPress={() => void onGenerateCode()}
         />
       </Tarjeta>
+      {curso?.codigoActivo === false && !archivada ? (
+        <Aviso icono="pause-circle" tono="naranja" texto={t('profe.clase.codigoApagado')} />
+      ) : null}
       <Aviso icono="people" tono="azul" texto={t('admin.rosterSelfJoinHint')} />
       {colegioId && cursoId ? <ImportarLista colegioId={colegioId} cursoId={cursoId} /> : null}
     </View>
   );
 
+  const enClase = roster.filter((s) => sigueEnClase(s.estado));
+  const yaNoEstan = roster.filter((s) => !sigueEnClase(s.estado));
+
+  const filaAlumno = (s: EstudianteWithId, i: number) => {
+    const activo = s.estado === 'activo';
+    const esta = sigueEnClase(s.estado);
+    return (
+      <View
+        key={s.uid}
+        style={[
+          styles.alumno,
+          i > 0 && { borderTopWidth: 1, borderTopColor: colors.materials.border },
+        ]}
+      >
+        <Avatar nombre={s.nombre} />
+        <View style={{ flex: 1, gap: 4 }}>
+          <Text style={[styles.alumnoNombre, { color: colors.text.primary }]} numberOfLines={1}>
+            {s.nombre}
+          </Text>
+          <Pill texto={t(`estados.${s.estado}`)} tono={TONO_ESTADO[s.estado]} />
+        </View>
+        {s.estado !== 'suprimido' ? (
+          <View style={styles.acciones}>
+            {esta ? (
+              <Bounceable
+                onPress={() => onToggleAuth(s.uid, activo)}
+                disabled={busy}
+                activeScale={0.94}
+                accessibilityRole="button"
+                accessibilityLabel={activo ? t('admin.revoke') : t('admin.authorize')}
+                style={[
+                  styles.accion,
+                  {
+                    borderColor: activo ? colors.materials.border : colors.system.green,
+                    backgroundColor: activo ? colors.materials.base : colors.fill.greenSubtle,
+                  },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.accionTexto,
+                    { color: activo ? colors.text.secondary : colors.system.green },
+                  ]}
+                >
+                  {activo ? t('admin.revoke') : t('admin.authorize')}
+                </Text>
+              </Bounceable>
+            ) : null}
+            {esta ? (
+              <Bounceable
+                onPress={() => onRetirar(s)}
+                disabled={busy}
+                activeScale={0.9}
+                accessibilityRole="button"
+                accessibilityLabel={t('profe.retirar')}
+                style={[styles.icono, { backgroundColor: colors.materials.highlight }]}
+              >
+                <Ionicons name="exit-outline" size={17} color={colors.text.secondary} />
+              </Bounceable>
+            ) : null}
+            <Bounceable
+              onPress={() => onSuppress(s.uid)}
+              disabled={busy}
+              activeScale={0.9}
+              accessibilityRole="button"
+              accessibilityLabel={t('admin.suppress')}
+              style={[styles.icono, { backgroundColor: colors.fill.redSubtle }]}
+            >
+              <Ionicons name="trash-outline" size={17} color={colors.system.red} />
+            </Bounceable>
+          </View>
+        ) : null}
+      </View>
+    );
+  };
+
   const estudiantes = (
     <View style={styles.vista}>
-      <Seccion texto={t('dashboard.students', { count: roster.length })} />
+      <Seccion texto={t('dashboard.students', { count: enClase.length })} />
       {loading ? (
         <Esqueleto filas={3} alto={64} />
-      ) : roster.length === 0 ? (
+      ) : enClase.length === 0 ? (
         <Vacio
           icono="people-outline"
           titulo={t('admin.emptyRoster')}
           texto={t('profe.invitaTexto')}
         />
       ) : (
-        <Tarjeta style={{ gap: 0, paddingVertical: 4 }}>
-          {roster.map((s, i) => {
-            const activo = s.estado === 'activo';
-            const suprimido = s.estado === 'suprimido';
-            return (
-              <View
-                key={s.uid}
-                style={[
-                  styles.alumno,
-                  i > 0 && { borderTopWidth: 1, borderTopColor: colors.materials.border },
-                ]}
-              >
-                <Avatar nombre={s.nombre} />
-                <View style={{ flex: 1, gap: 4 }}>
-                  <Text
-                    style={[styles.alumnoNombre, { color: colors.text.primary }]}
-                    numberOfLines={1}
-                  >
-                    {s.nombre}
-                  </Text>
-                  <Pill texto={t(`estados.${s.estado}`)} tono={TONO_ESTADO[s.estado]} />
-                </View>
-                {!suprimido ? (
-                  <View style={styles.acciones}>
-                    <Bounceable
-                      onPress={() => onToggleAuth(s.uid, activo)}
-                      disabled={busy}
-                      activeScale={0.94}
-                      accessibilityRole="button"
-                      accessibilityLabel={activo ? t('admin.revoke') : t('admin.authorize')}
-                      style={[
-                        styles.accion,
-                        {
-                          borderColor: activo ? colors.materials.border : colors.system.green,
-                          backgroundColor: activo ? colors.materials.base : colors.fill.greenSubtle,
-                        },
-                      ]}
-                    >
-                      <Text
-                        style={[
-                          styles.accionTexto,
-                          { color: activo ? colors.text.secondary : colors.system.green },
-                        ]}
-                      >
-                        {activo ? t('admin.revoke') : t('admin.authorize')}
-                      </Text>
-                    </Bounceable>
-                    <Bounceable
-                      onPress={() => onSuppress(s.uid)}
-                      disabled={busy}
-                      activeScale={0.9}
-                      accessibilityRole="button"
-                      accessibilityLabel={t('admin.suppress')}
-                      style={[styles.icono, { backgroundColor: colors.fill.redSubtle }]}
-                    >
-                      <Ionicons name="trash-outline" size={17} color={colors.system.red} />
-                    </Bounceable>
-                  </View>
-                ) : null}
-              </View>
-            );
-          })}
-        </Tarjeta>
+        <Tarjeta style={{ gap: 0, paddingVertical: 4 }}>{enClase.map(filaAlumno)}</Tarjeta>
       )}
+      {!loading && yaNoEstan.length > 0 ? (
+        <>
+          <Seccion texto={t('profe.yaNoEstan', { count: yaNoEstan.length })} />
+          <Tarjeta style={{ gap: 0, paddingVertical: 4 }}>{yaNoEstan.map(filaAlumno)}</Tarjeta>
+        </>
+      ) : null}
     </View>
   );
 
@@ -340,7 +394,7 @@ export default function CourseManageScreen() {
           subtitulo={t('profe.gestionarSub')}
         />
 
-        {soloLectura ? (
+        {soloLecturaPlan ? (
           <Aviso icono="lock-closed-outline" tono="neutro" texto={t('educadores.muro.soloLectura')}>
             <View style={{ alignSelf: 'flex-start' }}>
               <BotonChunky
@@ -367,8 +421,18 @@ export default function CourseManageScreen() {
                 soloLectura={soloLectura}
               />
             ) : null
-          ) : (
+          ) : vista === 'estudiantes' ? (
             estudiantes
+          ) : colegioId && curso ? (
+            <AjustesClase
+              colegioId={colegioId}
+              curso={curso}
+              estudiantesEnClase={enClase.length}
+              soloLectura={soloLecturaPlan}
+              onCambio={reload}
+            />
+          ) : (
+            <Esqueleto filas={3} alto={64} />
           )}
         </FadeIn>
       </ContextScrollView>

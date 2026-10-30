@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { useRouter, type Href } from 'expo-router';
+import { useFocusEffect, useRouter, type Href } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -24,6 +24,7 @@ import {
   Tarjeta,
   Vacio,
   tonoDeClase,
+  type Tono,
 } from '@features/dashboard/components/profe/kit';
 
 /**
@@ -39,7 +40,10 @@ export default function StaffHomeScreen() {
   const colegioId = useAuthStore((s) => s.colegioId);
   const uid = useAuthStore((s) => s.firebaseUid);
 
-  const [cursos, setCursos] = useState<CursoWithId[]>([]);
+  const [todas, setTodas] = useState<CursoWithId[]>([]);
+  const [verArchivadas, setVerArchivadas] = useState(false);
+  const cursos = todas.filter((c) => c.archivada !== true);
+  const archivadas = todas.filter((c) => c.archivada === true);
   const [colegioNombre, setColegioNombre] = useState<string | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
 
@@ -54,31 +58,69 @@ export default function StaffHomeScreen() {
     };
   }, [colegioId]);
 
-  useEffect(() => {
-    let cancelled = false;
-    if (!colegioId || !uid) {
-      setStatus('ready');
-      return;
-    }
-    setStatus('loading');
-    void rosterRepository
-      .getCursosByProfesor(colegioId, uid)
-      .then((list) => {
-        if (!cancelled) {
-          setCursos(list);
-          setStatus('ready');
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setStatus('error');
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [colegioId, uid]);
+  // Al volver de Gestionar la lista se relee: la clase pudo cambiar de nombre,
+  // archivarse o borrarse.
+  useFocusEffect(
+    useCallback(() => {
+      let cancelled = false;
+      if (!colegioId || !uid) {
+        setStatus('ready');
+        return;
+      }
+      setStatus((s) => (s === 'ready' ? s : 'loading'));
+      void rosterRepository
+        .getCursosByProfesor(colegioId, uid, { incluirArchivadas: true })
+        .then((list) => {
+          if (!cancelled) {
+            setTodas(list);
+            setStatus('ready');
+          }
+        })
+        .catch(() => {
+          if (!cancelled) setStatus('error');
+        });
+      return () => {
+        cancelled = true;
+      };
+    }, [colegioId, uid])
+  );
 
   const abrirClase = (c: CursoWithId) =>
     router.push(`/(staff)/curso/${c.id}?nombre=${encodeURIComponent(c.nombre)}` as Href);
+  const tarjetaClase = (c: CursoWithId, tono: Tono) => {
+    const archivada = c.archivada === true;
+    return (
+      <Tarjeta
+        key={c.id}
+        onPress={() => abrirClase(c)}
+        accessibilityLabel={t('profe.abrirClase', { nombre: c.nombre })}
+        style={archivada ? { opacity: 0.75 } : undefined}
+      >
+        <View style={styles.claseFila}>
+          <InsigniaGrado grado={c.grado} tono={archivada ? 'neutro' : tono} />
+          <View style={styles.claseTexto}>
+            <Text style={[styles.claseNombre, { color: colors.text.primary }]} numberOfLines={2}>
+              {c.nombre}
+            </Text>
+            <View style={styles.claseMeta}>
+              <Text style={[styles.claseSub, { color: colors.text.tertiary }]}>
+                {t('profe.grado', { grado: c.grado })}
+              </Text>
+              {archivada ? (
+                <Pill texto={t('profe.clase.archivadaPill')} icono="archive" tono="neutro" />
+              ) : c.codigo && c.codigoActivo !== false ? (
+                <Pill texto={c.codigo} icono="key" tono="neutro" />
+              ) : null}
+            </View>
+          </View>
+          <View style={[styles.flecha, { backgroundColor: colors.materials.highlight }]}>
+            <Ionicons name="chevron-forward" size={18} color={colors.text.secondary} />
+          </View>
+        </View>
+      </Tarjeta>
+    );
+  };
+
   const { plan, cargando: cargandoPlan } = useMiPlan();
   const muro = useMuro();
   // Con Cadete se abre 1 clase; la que sigue abre el muro (el servidor lo hace cumplir igual).
@@ -128,37 +170,7 @@ export default function StaffHomeScreen() {
           />
         ) : null}
 
-        {cursos.map((c, i) => {
-          const tono = tonoDeClase(i);
-          return (
-            <Tarjeta
-              key={c.id}
-              onPress={() => abrirClase(c)}
-              accessibilityLabel={t('profe.abrirClase', { nombre: c.nombre })}
-            >
-              <View style={styles.claseFila}>
-                <InsigniaGrado grado={c.grado} tono={tono} />
-                <View style={styles.claseTexto}>
-                  <Text
-                    style={[styles.claseNombre, { color: colors.text.primary }]}
-                    numberOfLines={2}
-                  >
-                    {c.nombre}
-                  </Text>
-                  <View style={styles.claseMeta}>
-                    <Text style={[styles.claseSub, { color: colors.text.tertiary }]}>
-                      {t('profe.grado', { grado: c.grado })}
-                    </Text>
-                    {c.codigo ? <Pill texto={c.codigo} icono="key" tono="neutro" /> : null}
-                  </View>
-                </View>
-                <View style={[styles.flecha, { backgroundColor: colors.materials.highlight }]}>
-                  <Ionicons name="chevron-forward" size={18} color={colors.text.secondary} />
-                </View>
-              </View>
-            </Tarjeta>
-          );
-        })}
+        {cursos.map((c, i) => tarjetaClase(c, tonoDeClase(i)))}
 
         {status === 'ready' && cursos.length > 0 ? (
           <Bounceable
@@ -180,6 +192,29 @@ export default function StaffHomeScreen() {
               </Text>
             </View>
           </Bounceable>
+        ) : null}
+
+        {status === 'ready' && archivadas.length > 0 ? (
+          <>
+            <Bounceable
+              onPress={() => setVerArchivadas((v) => !v)}
+              activeScale={0.98}
+              accessibilityRole="button"
+              accessibilityState={{ expanded: verArchivadas }}
+              style={styles.archivadas}
+            >
+              <Ionicons name="archive-outline" size={18} color={colors.text.secondary} />
+              <Text style={[styles.claseSub, { color: colors.text.secondary, flex: 1 }]}>
+                {t('profe.clase.archivadas', { count: archivadas.length })}
+              </Text>
+              <Ionicons
+                name={verArchivadas ? 'chevron-up' : 'chevron-down'}
+                size={18}
+                color={colors.text.secondary}
+              />
+            </Bounceable>
+            {verArchivadas ? archivadas.map((c) => tarjetaClase(c, 'neutro')) : null}
+          </>
         ) : null}
       </ContextScrollView>
       {muro.hoja}
@@ -218,4 +253,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   crearTitulo: { fontSize: 17, fontWeight: '900' },
+  archivadas: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8 },
 });

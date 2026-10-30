@@ -52,6 +52,14 @@
         {
           "color": "#FF8A1F"
         }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Ceti usa la cámara solo para leer el código QR de la clase de tu profe.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
+        }
       ]
     ],
     "experiments": {

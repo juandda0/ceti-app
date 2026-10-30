@@ -228,6 +228,25 @@ describe('Ceti Educadores', () => {
     });
   });
 
+  test('joinByCode a otra clase saca al estudiante de la anterior', async () => {
+    mockDocs['classCodes/ABC123'] = { colegioId: 'col', cursoId: 'c1' };
+    mockDocs['colegios/col/cursos/c0/estudiantes/e1'] = { estado: 'activo' };
+    const req = {
+      auth: { uid: 'e1', token: { email: 'e1@x.co', colegioId: 'col', cursoId: 'c0' } },
+      data: { code: 'ABC123' },
+    };
+    expect(await call(joinByCode, req)).toEqual({ ok: true, colegioId: 'col', cursoId: 'c1' });
+    expect(mockSet).toHaveBeenCalledWith(
+      'colegios/col/cursos/c0/estudiantes/e1',
+      expect.objectContaining({ estado: 'retirado', retiradoPor: 'estudiante' })
+    );
+    expect(mockSetCustomUserClaims).toHaveBeenCalledWith('e1', {
+      role: 'estudiante',
+      colegioId: 'col',
+      cursoId: 'c1',
+    });
+  });
+
   test('joinByCode cierra la invitación por correo a la misma clase', async () => {
     mockDocs['classCodes/ABC123'] = { colegioId: 'col', cursoId: 'c1' };
     mockInvitacionDeCorreo.mockResolvedValue(INV);

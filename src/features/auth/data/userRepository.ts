@@ -108,4 +108,13 @@ export const userRepository = {
     );
     return true;
   },
+
+  /** Guarda solo el nombre completo (lo pide la app al unirse a una clase). */
+  async updateFullName(uid: string, fullName: string): Promise<boolean> {
+    const clients = getFirebaseClients();
+    if (!clients?.firestore) return false;
+    const ref = doc(clients.firestore, FIRESTORE_COLLECTIONS.users, uid);
+    await setDoc(ref, { profile: { fullName }, updatedAt: serverTimestamp() }, { merge: true });
+    return true;
+  },
 };

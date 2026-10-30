@@ -18,6 +18,7 @@ import AvatarView from '@features/avatar/components/AvatarView';
 import { AVATAR_POR_DEFECTO } from '@features/avatar/domain/catalogo';
 import TarjetaOrbita from '@features/orbita/components/perfil/TarjetaOrbita';
 import AjustesOrbitaPerfil from '@features/orbita/components/perfil/AjustesOrbitaPerfil';
+import MiClasePerfil from '@features/dashboard/components/MiClasePerfil';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -71,10 +72,14 @@ export default function ProfileScreen() {
         </Animated.View>
 
         <Animated.View entering={motion.enterFadeUp(3)}>
-          <AjustesOrbitaPerfil />
+          <MiClasePerfil />
         </Animated.View>
 
         <Animated.View entering={motion.enterFadeUp(4)}>
+          <AjustesOrbitaPerfil />
+        </Animated.View>
+
+        <Animated.View entering={motion.enterFadeUp(5)}>
           <TouchableOpacity
             style={styles.logoutBtn}
             onPress={() => void performLogoutAndGo(router, '/(auth)/welcome')}

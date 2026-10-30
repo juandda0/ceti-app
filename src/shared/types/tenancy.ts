@@ -59,11 +59,20 @@ export type Curso = {
   profesorUids: string[];
   /** Class self-join code (set by the generateClassCode Function). */
   codigo?: string;
+  /** false = the teacher turned the join code off (editarMiCurso). */
+  codigoActivo?: boolean;
+  /** Archived classes take no students and don't count toward the plan limit. */
+  archivada?: boolean;
+  archivadaAt?: number | null;
   createdAt?: number;
   createdByUid?: string;
 };
 
-export type EstudianteEstado = 'pendiente_atestacion' | 'activo' | 'suprimido';
+/**
+ * `retirado`: left the class (or the teacher removed them); their progress is
+ * kept but they no longer take a seat. `suprimido`: Ley 1581 deletion.
+ */
+export type EstudianteEstado = 'pendiente_atestacion' | 'activo' | 'retirado' | 'suprimido';
 
 /**
  * Student roster doc, keyed by Auth `uid` (R1). Stores only `email` + `nombre`
@@ -82,6 +91,8 @@ export type Estudiante = {
   atestadoAt?: number;
   politicaVersion?: string;
   joinedAt: number;
+  retiradoAt?: number;
+  retiradoPor?: 'estudiante' | 'profesor';
 };
 
 /**

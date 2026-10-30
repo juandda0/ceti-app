@@ -67,13 +67,17 @@ jest.mock('react-i18next', () => ({
       })[key] ?? key,
   }),
 }));
-jest.mock('@shared/lib/firebase/app', () => ({ isFirebaseConfigured: () => false }));
+const mockFirebase = { configurado: false };
+jest.mock('@shared/lib/firebase/app', () => ({
+  isFirebaseConfigured: () => mockFirebase.configurado,
+  getFirebaseClients: () => ({ auth: { currentUser: { uid: 'local-1' } } }),
+}));
 jest.mock('@features/auth/data/userRepository', () => ({
   userRepository: { upsertProfile: jest.fn() },
 }));
 jest.mock('@features/dashboard/data/joinClass', () => ({ joinClass: jest.fn() }));
 jest.mock('@features/dashboard/data/pendingInvite', () => ({
-  pendingInvite: { consume: jest.fn() },
+  pendingInvite: { consume: jest.fn(), peek: () => null },
 }));
 jest.mock('@features/auth/store/useUserStore', () => ({
   useUserStore: Object.assign(
@@ -222,13 +226,12 @@ jest.mock('@shared/components/Bounceable', () => {
     return <Pressable {...props}>{children}</Pressable>;
   };
 });
-jest.mock(
-  '@features/dashboard/components/ClassCodeForm',
-  () =>
-    function MockClassCodeForm() {
-      return <>Código de clase</>;
-    }
-);
+jest.mock('@features/dashboard/components/ClassCodeForm', () => {
+  const { Text } = require('react-native');
+  return function MockClassCodeForm() {
+    return <Text>Código de clase</Text>;
+  };
+});
 jest.mock(
   '@features/avatar/components/AvatarView',
   () =>
@@ -314,4 +317,22 @@ test('se puede saltar el primer vuelo sin avisos ni recompensa', async () => {
 
   fireEvent.press(screen.getByRole('button', { name: 'Comenzar' }));
   await waitFor(() => expect(mockReplace).toHaveBeenCalledWith('/'));
+});
+
+test('con sesión ofrece unirse a una clase, y se puede seguir sin unirse', async () => {
+  mockFirebase.configurado = true;
+  try {
+    render(<UserSetupScreen />);
+    hastaElVuelo();
+    fireEvent.press(screen.getByRole('button', { name: 'Siguiente' }));
+    fireEvent.press(screen.getByRole('button', { name: '¡A volar!' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Salir del vuelo' }));
+
+    expect(screen.getByText('Código de clase')).toBeTruthy();
+    fireEvent.press(screen.getByRole('button', { name: 'onboarding.claseAhoraNo' }));
+    expect(screen.queryByText('Código de clase')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Comenzar' })).toBeTruthy();
+  } finally {
+    mockFirebase.configurado = false;
+  }
 });

@@ -2,27 +2,32 @@ import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
-import { useThemeColors } from '@shared/hooks/useThemeColors';
+import Bounceable from '@shared/components/Bounceable';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
-import type { WorldId } from '@features/learning/data/quiz.types';
+import { ESPACIO } from '@features/learning/components/galaxia/espacio';
 import {
   asignacionRepository,
   type AsignacionWithId,
 } from '@features/dashboard/data/asignacionRepository';
 import { assignmentStatus } from '@features/dashboard/data/assignmentStatus';
 
-function worldNumber(worldId: string): number {
-  return Number(worldId.replace('world_', ''));
-}
+const MAX_VISIBLES = 3;
 
 /**
- * Muestra al estudiante sus tareas activas: mundos ("completa el mundo X") y
- * retos financieros (RQ-PR14). No renderiza nada si no está aprovisionado o no
- * hay tareas activas.
+ * Tareas de la clase en Aprender: mundos ("completa X antes del…") y retos
+ * financieros (RQ-PR14). Las de mundo se abren con un toque. No muestra las ya
+ * hechas ni las que todavía no empiezan, y no renderiza nada sin clase.
  */
-export default function StudentAssignmentsBanner() {
+export default function StudentAssignmentsBanner({
+  nombreDeMundo,
+  mundoHecho,
+  onAbrirMundo,
+}: {
+  nombreDeMundo: (worldId: string) => string | null;
+  mundoHecho: (worldId: string) => boolean;
+  onAbrirMundo: (worldId: string) => void;
+}) {
   const { t } = useTranslation();
-  const colors = useThemeColors();
   const role = useAuthStore((s) => s.role);
   const colegioId = useAuthStore((s) => s.colegioId);
   const cursoId = useAuthStore((s) => s.cursoId);
@@ -32,61 +37,122 @@ export default function StudentAssignmentsBanner() {
 
   useEffect(() => {
     let cancelled = false;
-    if (role !== 'estudiante' || !colegioId || !cursoId || !uid) return;
-    void asignacionRepository.listForStudent(colegioId, cursoId, uid).then((list) => {
-      if (!cancelled) setItems(list);
-    });
+    if (role !== 'estudiante' || !colegioId || !cursoId || !uid) {
+      setItems([]);
+      return;
+    }
+    // Un estudiante pendiente de autorización no puede leer las tareas: no hay nada que mostrar.
+    void asignacionRepository
+      .listForStudent(colegioId, cursoId, uid)
+      .then((list) => {
+        if (!cancelled) setItems(list);
+      })
+      .catch(() => undefined);
     return () => {
       cancelled = true;
     };
   }, [role, colegioId, cursoId, uid]);
 
   const now = Date.now();
-  const active = items
-    .filter((a) => assignmentStatus(a, now, false) !== 'upcoming')
-    .sort((a, b) => a.deadline - b.deadline);
+  const visibles = items
+    .map((a) => {
+      const hecha = a.kind !== 'reto' && mundoHecho(a.worldId);
+      return { a, status: assignmentStatus(a, now, hecha) };
+    })
+    .filter(({ a, status }) => {
+      if (status === 'upcoming' || status === 'done') return false;
+      // Una tarea de un mundo que la clase ya no ve no se puede hacer.
+      return a.kind === 'reto' || nombreDeMundo(a.worldId) !== null;
+    })
+    .sort((x, y) => x.a.deadline - y.a.deadline);
 
-  if (active.length === 0) return null;
+  if (visibles.length === 0) return null;
 
-  const hayReto = active.some((a) => a.kind === 'reto');
+  // Las más urgentes primero; el resto se resume para no tapar la galaxia.
+  const mostradas = visibles.slice(0, MAX_VISIBLES);
+  const ocultas = visibles.length - mostradas.length;
+
+  const hayReto = visibles.some(({ a }) => a.kind === 'reto');
 
   return (
-    <View style={[styles.wrap, { backgroundColor: colors.background.elevated }]}>
-      <View style={styles.header}>
-        <Ionicons name="flag" size={16} color={colors.brand.primary} />
-        <Text style={[styles.title, { color: colors.text.primary }]}>
-          {t('assignments.studentTitle')}
-        </Text>
+    <View style={st.wrap}>
+      <View style={st.header}>
+        <Ionicons name="flag" size={16} color={ESPACIO.oro} />
+        <Text style={st.title}>{t('assignments.studentTitle')}</Text>
       </View>
-      {active.map((a) => {
-        const overdue = assignmentStatus(a, now, false) === 'overdue';
-        const fecha = new Date(a.deadline).toLocaleDateString('es-CO');
-        const label =
-          a.kind === 'reto'
-            ? `${t(`assignments.retoItem_${a.reto.tipo}`, { n: a.reto.cantidad })} · ${fecha}`
-            : t('assignments.studentItem', { n: worldNumber(a.worldId as WorldId), date: fecha });
+      {mostradas.map(({ a, status }) => {
+        const vencida = status === 'overdue';
+        const fecha = new Date(a.deadline).toLocaleDateString('es-CO', {
+          day: 'numeric',
+          month: 'short',
+        });
+        const cuando = vencida
+          ? t('assignments.studentOverdue', { date: fecha })
+          : t('assignments.studentDue', { date: fecha });
+        if (a.kind === 'reto') {
+          return (
+            <View key={a.id} style={st.item}>
+              <Ionicons name="wallet" size={18} color={ESPACIO.textoSuave} />
+              <View style={st.flex}>
+                <Text style={st.itemTitulo}>
+                  {t(`assignments.retoItem_${a.reto.tipo}`, { n: a.reto.cantidad })}
+                </Text>
+                <Text style={[st.itemFecha, vencida && st.vencida]}>{cuando}</Text>
+              </View>
+            </View>
+          );
+        }
         return (
-          <Text
+          <Bounceable
             key={a.id}
-            style={[styles.item, { color: overdue ? colors.system.red : colors.text.secondary }]}
+            onPress={() => onAbrirMundo(a.worldId)}
+            activeScale={0.97}
+            accessibilityRole="button"
+            style={st.item}
           >
-            {label}
-          </Text>
+            <Ionicons name="planet" size={18} color={ESPACIO.naranja} />
+            <View style={st.flex}>
+              <Text style={st.itemTitulo}>
+                {t('assignments.studentWorld', { mundo: nombreDeMundo(a.worldId) })}
+              </Text>
+              <Text style={[st.itemFecha, vencida && st.vencida]}>{cuando}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={16} color={ESPACIO.textoApagado} />
+          </Bounceable>
         );
       })}
-      {hayReto && (
-        <Text style={[styles.privacy, { color: colors.text.tertiary }]}>
-          {t('assignments.retoPrivacidad')}
-        </Text>
-      )}
+      {ocultas > 0 ? (
+        <Text style={st.mas}>{t('assignments.studentMore', { count: ocultas })}</Text>
+      ) : null}
+      {hayReto ? <Text style={st.privacy}>{t('assignments.retoPrivacidad')}</Text> : null}
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  wrap: { borderRadius: 14, padding: 14, gap: 6, marginBottom: 8 },
+const st = StyleSheet.create({
+  wrap: {
+    borderRadius: 20,
+    padding: 14,
+    gap: 8,
+    backgroundColor: ESPACIO.superficie,
+    borderWidth: 1,
+    borderColor: ESPACIO.linea,
+  },
   header: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  title: { fontSize: 14, fontWeight: '700' },
-  item: { fontSize: 13, lineHeight: 18 },
-  privacy: { fontSize: 12, fontStyle: 'italic', marginTop: 2 },
+  title: { fontSize: 15, fontWeight: '900', color: ESPACIO.texto },
+  item: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderRadius: 14,
+    backgroundColor: ESPACIO.superficieBaja,
+  },
+  flex: { flex: 1, gap: 2 },
+  itemTitulo: { fontSize: 14, fontWeight: '800', color: ESPACIO.texto },
+  itemFecha: { fontSize: 12, fontWeight: '700', color: ESPACIO.textoSuave },
+  vencida: { color: '#FF8A80' },
+  mas: { fontSize: 13, fontWeight: '800', color: ESPACIO.textoSuave, paddingHorizontal: 4 },
+  privacy: { fontSize: 12, fontStyle: 'italic', color: ESPACIO.textoApagado },
 });

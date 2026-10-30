@@ -5,6 +5,7 @@
  * curso y, de las clases propias, el tamaño de la lista. Solo agregados; de las
  * clases ajenas nunca se lee la lista.
  */
+import { sigueEnClase } from '@features/dashboard/data/estadoRoster';
 import { rosterRepository, type CursoWithId } from '@features/dashboard/data/rosterRepository';
 import { agregadosRepository } from '@features/dashboard/data/agregadosRepository';
 import { calcularAdopcion } from '@/functions/src/educadores/dominio';
@@ -40,7 +41,7 @@ export async function cargarAdopcion(
         id: c.id,
         profesorUids: c.profesorUids ?? [],
         resumen: resumen as ResumenAdopcion | null,
-        totalLista: lista ? lista.filter((e) => e.estado !== 'suprimido').length : null,
+        totalLista: lista ? lista.filter((e) => sigueEnClase(e.estado)).length : null,
       };
     })
   );

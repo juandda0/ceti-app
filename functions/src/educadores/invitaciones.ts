@@ -33,6 +33,7 @@ import {
   pasaLicencia,
   planDeCurso,
 } from './limites';
+import { sigueEnClase } from './gestionClase';
 
 export const COL_INVITACIONES_POR_CORREO = 'invitacionesPorCorreo';
 /** Tope del texto pegado (200 filas holgadas). */
@@ -141,7 +142,7 @@ export const invitarLista = onCall(async (request): Promise<ResultadoInvitarList
       .get()
       .then((s) =>
         s.docs
-          .filter((d) => d.get('estado') !== 'suprimido')
+          .filter((d) => sigueEnClase(d.get('estado')))
           .map((d) => d.get('email'))
           .filter((e): e is string => typeof e === 'string')
           .map((e) => e.toLowerCase())
@@ -293,7 +294,12 @@ export async function invitacionDeCorreo(
       refInvitado(db, colegioId, cursoId, clave),
       db.doc(`colegios/${colegioId}/cursos/${cursoId}`)
     );
-    if (invitado.exists && curso.exists && invitado.get('estado') === 'pendiente') {
+    if (
+      invitado.exists &&
+      curso.exists &&
+      curso.get('archivada') !== true &&
+      invitado.get('estado') === 'pendiente'
+    ) {
       const nombre = invitado.get('nombre');
       return {
         correo: clave,

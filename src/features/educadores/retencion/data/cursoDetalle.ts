@@ -4,6 +4,7 @@
  * mundo de la clase (con los cambios del profe). Reusa los repositorios del
  * tablero sin cambiarlos.
  */
+import { sigueEnClase } from '@features/dashboard/data/estadoRoster';
 import { rosterRepository } from '@features/dashboard/data/rosterRepository';
 import { worldProgressRepository } from '@features/dashboard/data/worldProgressRepository';
 import { asignacionRepository } from '@features/dashboard/data/asignacionRepository';
@@ -26,11 +27,13 @@ export async function cargarCursoDetalle(
   cursoNombre: string,
   ahora: number
 ): Promise<CursoDetalle> {
-  const [roster, asignaciones, config] = await Promise.all([
+  const [lista, asignaciones, config] = await Promise.all([
     rosterRepository.getRoster(colegioId, cursoId),
     asignacionRepository.listByCurso(colegioId, cursoId).catch(() => []),
     classConfigRepository.get(colegioId, cursoId).catch(() => null),
   ]);
+  // Los retirados y suprimidos ya no son parte de la clase.
+  const roster = lista.filter((s) => sigueEnClase(s.estado));
   const progreso = (
     await Promise.all(
       roster.map((s) => worldProgressRepository.getStudentProgress(colegioId, cursoId, s.uid))

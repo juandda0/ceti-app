@@ -25,6 +25,7 @@ import {
 } from './dominio';
 import { asegurarSuscripcion, refSuscripcion } from './plan';
 import { encolarCorreo } from './correo';
+import { sigueEnClase } from './gestionClase';
 
 export const PROFES_POR_PAGINA = 100;
 export const MAX_PROFES_POR_CORRIDA = 2000;
@@ -75,11 +76,11 @@ export function nombreDeMundo(worldId: string, mundosConfig?: DatosCurso['mundos
  * Arma el curso para `construirBitacora`. Quices de la semana: progreso del
  * mundo actualizado en los últimos 7 días (cada quiz terminado reescribe el doc
  * del mundo; dos quices del mismo mundo en la semana cuentan como uno, así que
- * es una cota inferior). Los estudiantes suprimidos no aparecen.
+ * es una cota inferior). Los suprimidos y los retirados no aparecen.
  */
 export function cursoParaBitacora(d: DatosCurso, ahora: number): CursoBitacora {
   const desde = ahora - 7 * DIA_MS;
-  const roster = d.roster.filter((e) => e.estado !== 'suprimido');
+  const roster = d.roster.filter((e) => sigueEnClase(e.estado));
   const enRoster = new Set(roster.map((e) => e.uid));
 
   const porUid = new Map<string, { ultima: number | null; masteries: number[] }>();
