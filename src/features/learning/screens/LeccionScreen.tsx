@@ -20,6 +20,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Platform,
+  TextInput,
   useWindowDimensions,
   type LayoutChangeEvent,
 } from 'react-native';
@@ -73,7 +74,17 @@ import type {
   MultipleChoiceItem,
   TrueFalseItem,
   OrdenarItem,
+  EmparejarItem,
 } from '@features/learning/data/quiz.types';
+import {
+  emparejarCompleto,
+  esCompletarCorrecto,
+  esEmparejarCorrecto,
+  esNumericaCorrecta,
+  formatoNumero,
+  fraseCompletada,
+  ordenDerecha,
+} from '@features/learning/data/tiposExtra';
 import type { ThemeColors } from '@shared/constants/colors';
 
 /** Rojo de las vidas (el mismo del corazón de lives.corazon). */
@@ -102,7 +113,11 @@ function isOrdenarCorrect(item: OrdenarItem, chosen: number[]): boolean {
   return chosen.every((v, i) => v === item.ordenCanonico[i]);
 }
 
-/** Respuesta de una pregunta: opción elegida (MC / VF) u orden construido. */
+/**
+ * Respuesta de una pregunta: opción elegida (MC / VF / completar), el número
+ * escrito (numérica, en `selectedOption`), el orden construido (ordenar) o la
+ * pareja de cada concepto (emparejar, en `chosenOrder`; -1 = sin elegir).
+ */
 type AnswerState = {
   selectedOption: string | null;
   chosenOrder: number[];
@@ -119,6 +134,15 @@ function isAnswerCorrect(item: QuizItem, answer: AnswerState): boolean {
       return answer.selectedOption !== null && isTFCorrect(item, answer.selectedOption === 'true');
     case 'ordenar':
       return isOrdenarCorrect(item, answer.chosenOrder);
+    case 'completar':
+      return (
+        answer.selectedOption !== null &&
+        esCompletarCorrecto(item, parseInt(answer.selectedOption, 10))
+      );
+    case 'numerica':
+      return answer.selectedOption !== null && esNumericaCorrecta(item, answer.selectedOption);
+    case 'emparejar':
+      return esEmparejarCorrecto(item, answer.chosenOrder);
     default:
       return false;
   }
@@ -350,6 +374,7 @@ function FeedbackBanner({
   isCorrect,
   explanation,
   ordenCorrecto,
+  solucion,
   colors,
   t,
 }: {
@@ -357,6 +382,8 @@ function FeedbackBanner({
   explanation: string;
   /** Solo en ordenar, al fallar: el orden correcto. */
   ordenCorrecto?: string[];
+  /** Al fallar en emparejar o numérica: la respuesta correcta, en líneas. */
+  solucion?: string[];
   colors: ThemeColors;
   t: (key: string, options?: Record<string, unknown>) => string;
 }) {
@@ -384,6 +411,18 @@ function FeedbackBanner({
           {ordenCorrecto.map((el, i) => (
             <Text key={i} style={[feedbackSt.text, { color: colors.text.primary }]}>
               {i + 1}. {el}
+            </Text>
+          ))}
+        </View>
+      ) : null}
+      {!isCorrect && solucion ? (
+        <View style={feedbackSt.orden}>
+          <Text style={[feedbackSt.text, feedbackSt.ordenTitulo, { color: colors.text.primary }]}>
+            {t('quiz.respuestaCorrecta')}
+          </Text>
+          {solucion.map((linea, i) => (
+            <Text key={i} style={[feedbackSt.text, { color: colors.text.primary }]}>
+              {linea}
             </Text>
           ))}
         </View>
@@ -549,6 +588,126 @@ function OrdenarWidget({
  * un solo bloque, para que se deslice como una pieza. Lo fijo (cabecera,
  * progreso, botón de abajo) vive fuera.
  */
+// ─── Emparejar UI ─────────────────────────────────────────────────────────────
+
+/**
+ * Emparejar: se toca un concepto de la izquierda y después su pareja de la
+ * derecha (barajada). Tocar un concepto ya emparejado lo deja elegir otra vez.
+ * Tras comprobar no se marca par por par (revelaría parte de la respuesta);
+ * la solución completa sale en el aviso si falló.
+ */
+function EmparejarWidget({
+  item,
+  elegidos,
+  submitted,
+  isCorrect,
+  onChange,
+  colors,
+  t,
+}: {
+  item: EmparejarItem;
+  elegidos: number[];
+  submitted: boolean;
+  isCorrect: boolean;
+  onChange: (elegidos: number[]) => void;
+  colors: ThemeColors;
+  t: (key: string, options?: Record<string, unknown>) => string;
+}) {
+  const [activo, setActivo] = useState<number | null>(null);
+  const actuales = item.pares.map((_, i) => elegidos[i] ?? -1);
+  const derecha = useMemo(() => ordenDerecha(item), [item]);
+  const marco = submitted
+    ? isCorrect
+      ? colors.system.green
+      : colors.system.red
+    : colors.materials.border;
+
+  const asignar = (par: number) => {
+    if (submitted || activo == null) return;
+    const siguiente = actuales.map((v) => (v === par ? -1 : v));
+    siguiente[activo] = par;
+    onChange(siguiente);
+    void Haptics.selectionAsync();
+    const libre = siguiente.findIndex((v, i) => v < 0 && i !== activo);
+    setActivo(libre >= 0 ? libre : null);
+  };
+
+  return (
+    <View style={{ gap: 10 }}>
+      {item.pares.map((p, i) => {
+        const elegido = actuales[i];
+        const esActivo = activo === i && !submitted;
+        return (
+          <TouchableOpacity
+            key={i}
+            disabled={submitted}
+            onPress={() => setActivo(i)}
+            accessibilityRole="button"
+            accessibilityState={{ selected: esActivo }}
+            style={[
+              optSt.btn,
+              {
+                backgroundColor: esActivo ? colors.materials.highlight : colors.background.elevated,
+                borderColor: esActivo ? colors.materials.borderFocus : marco,
+              },
+            ]}
+          >
+            <Text style={[optSt.label, { color: colors.text.primary, fontWeight: '800' }]}>
+              {p.izquierda}
+            </Text>
+            <Text
+              style={[
+                optSt.label,
+                { color: elegido >= 0 ? colors.text.secondary : colors.text.quaternary },
+              ]}
+            >
+              {elegido >= 0 ? `→ ${item.pares[elegido].derecha}` : t('quiz.emparejarToca')}
+            </Text>
+          </TouchableOpacity>
+        );
+      })}
+      {!submitted ? (
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+          {derecha.map((par) => {
+            const usado = actuales.includes(par);
+            return (
+              <TouchableOpacity
+                key={par}
+                disabled={activo == null}
+                onPress={() => asignar(par)}
+                accessibilityRole="button"
+                style={[
+                  {
+                    paddingVertical: 10,
+                    paddingHorizontal: 14,
+                    borderRadius: 14,
+                    borderWidth: 2,
+                    borderColor: usado ? colors.materials.border : colors.materials.borderFocus,
+                    backgroundColor: usado
+                      ? colors.materials.highlight
+                      : colors.background.elevated,
+                    opacity: activo == null ? 0.6 : 1,
+                  },
+                ]}
+              >
+                <Text
+                  style={{
+                    color: usado ? colors.text.tertiary : colors.text.primary,
+                    fontWeight: '700',
+                    fontSize: 15,
+                  }}
+                >
+                  {item.pares[par].derecha}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      ) : null}
+    </View>
+  );
+}
+
 function QuestionPage({
   question,
   answer,
@@ -568,7 +727,7 @@ function QuestionPage({
   const isCorrect = hasSubmitted && isAnswerCorrect(question, answer);
   // Tras fallar se muestra cuál era la correcta: el error es el mejor momento para aprender.
   const correctValue =
-    question.tipo === 'multiple_choice'
+    question.tipo === 'multiple_choice' || question.tipo === 'completar'
       ? String(question.correctIndex)
       : question.tipo === 'true_false'
         ? String(question.respuesta)
@@ -591,18 +750,25 @@ function QuestionPage({
       <View style={styles.badgeRow}>
         <View style={[styles.badge, { backgroundColor: colors.materials.highlight }]}>
           <Text style={[styles.badgeText, { color: colors.text.tertiary }]}>
-            {question.tipo === 'multiple_choice'
-              ? t('quiz.tipoMC')
-              : question.tipo === 'true_false'
-                ? t('quiz.tipoVF')
-                : t('quiz.tipoOrdenar')}
+            {t(
+              {
+                multiple_choice: 'quiz.tipoMC',
+                true_false: 'quiz.tipoVF',
+                ordenar: 'quiz.tipoOrdenar',
+                emparejar: 'quiz.tipoEmparejar',
+                completar: 'quiz.tipoCompletar',
+                numerica: 'quiz.tipoNumerica',
+              }[question.tipo]
+            )}
           </Text>
         </View>
       </View>
 
       {/* Question text */}
       <Text style={[styles.questionText, { color: colors.text.primary }]}>
-        {question.enunciado}
+        {question.tipo === 'completar'
+          ? fraseCompletada(question, selectedOption === null ? null : Number(selectedOption))
+          : question.enunciado}
       </Text>
 
       {/* ── Answer area per tipo ── */}
@@ -620,6 +786,64 @@ function QuestionPage({
               colors={colors}
             />
           ))}
+
+        {question.tipo === 'completar' &&
+          stableShuffle(
+            question.opciones.map((opt, idx) => ({ opt, idx })),
+            hashStr(question.id)
+          ).map(({ opt, idx }) => (
+            <OptionButton
+              key={idx}
+              label={opt}
+              state={optionState(String(idx))}
+              onPress={() => onSelect(String(idx))}
+              colors={colors}
+            />
+          ))}
+
+        {question.tipo === 'numerica' && (
+          <View style={styles.numericaFila}>
+            <TextInput
+              value={selectedOption ?? ''}
+              onChangeText={onSelect}
+              editable={!hasSubmitted}
+              keyboardType="decimal-pad"
+              inputMode="decimal"
+              placeholder={t('quiz.numericaPlaceholder')}
+              placeholderTextColor={colors.text.quaternary}
+              accessibilityLabel={t('quiz.numericaPlaceholder')}
+              style={[
+                styles.numericaInput,
+                {
+                  color: colors.text.primary,
+                  backgroundColor: colors.background.elevated,
+                  borderColor: hasSubmitted
+                    ? isCorrect
+                      ? colors.system.green
+                      : colors.system.red
+                    : colors.materials.border,
+                },
+              ]}
+            />
+            {question.unidad ? (
+              <Text style={[styles.numericaUnidad, { color: colors.text.secondary }]}>
+                {question.unidad}
+              </Text>
+            ) : null}
+          </View>
+        )}
+
+        {question.tipo === 'emparejar' && (
+          <EmparejarWidget
+            item={question}
+            elegidos={chosenOrder}
+            submitted={hasSubmitted}
+            isCorrect={isCorrect}
+            onChange={onChosen}
+            colors={colors}
+            t={t}
+          />
+        )}
 
         {question.tipo === 'true_false' &&
           (['true', 'false'] as const).map((val) => (
@@ -654,6 +878,15 @@ function QuestionPage({
             question.tipo === 'ordenar'
               ? question.ordenCanonico.map((i) => question.elementos[i])
               : undefined
+          }
+          solucion={
+            question.tipo === 'numerica'
+              ? [
+                  `${formatoNumero(question.respuesta)}${question.unidad ? ` ${question.unidad}` : ''}`,
+                ]
+              : question.tipo === 'emparejar'
+                ? question.pares.map((p) => `${p.izquierda} → ${p.derecha}`)
+                : undefined
           }
           colors={colors}
           t={t}
@@ -817,6 +1050,9 @@ export default function LeccionScreen({
     if (currentQuestion.tipo === 'ordenar') {
       return chosenOrder.length === currentQuestion.elementos.length;
     }
+    if (currentQuestion.tipo === 'emparejar')
+      return emparejarCompleto(currentQuestion, chosenOrder);
+    if (currentQuestion.tipo === 'numerica') return (selectedOption ?? '').trim().length > 0;
     return selectedOption !== null;
   }, [currentQuestion, selectedOption, chosenOrder]);
 
@@ -901,7 +1137,7 @@ export default function LeccionScreen({
         tipo: currentQuestion.tipo,
         correcta: correct,
         respuesta:
-          currentQuestion.tipo === 'ordenar'
+          currentQuestion.tipo === 'ordenar' || currentQuestion.tipo === 'emparejar'
             ? chosenOrder.join('-')
             : String(selectedOption ?? '').slice(0, 80),
         ms: Math.max(0, Date.now() - inicioPregunta.current),
@@ -1109,6 +1345,17 @@ export default function LeccionScreen({
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
+  numericaFila: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  numericaInput: {
+    flex: 1,
+    borderWidth: 2,
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    fontSize: 22,
+    fontWeight: '800',
+  },
+  numericaUnidad: { fontSize: 18, fontWeight: '800' },
   pager: {
     flex: 1,
     overflow: 'hidden',

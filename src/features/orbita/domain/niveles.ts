@@ -29,6 +29,8 @@ export interface PoolMundo {
   mc: MultipleChoiceItem[];
   vf: TrueFalseItem[];
   ordenar: OrdenarItem[];
+  /** Emparejar, completar y numérica (Fase 4): solo en lecciones, nunca en el jefe. */
+  otros?: QuizItem[];
 }
 
 export interface NivelesMundo {
@@ -67,7 +69,9 @@ export type ErrorMapa =
  */
 export function validarMapa(mapa: MapaMundo, pool: PoolMundo): ErrorMapa | null {
   const tipoDe = new Map<string, string>();
-  for (const q of [...pool.mc, ...pool.vf, ...pool.ordenar]) tipoDe.set(q.id, q.tipo);
+  for (const q of [...pool.mc, ...pool.vf, ...pool.ordenar, ...(pool.otros ?? [])]) {
+    tipoDe.set(q.id, q.tipo);
+  }
   if (mapa.lecciones.length === 0) return 'sin_lecciones';
   if (mapa.lecciones.length > MAX_LECCIONES_MAPA) return 'demasiadas_lecciones';
   const vistas = new Set<string>();
@@ -124,7 +128,7 @@ export function armarNiveles(
   if (!poolSuficiente(pool)) return { lecciones: [], jefe: [] };
   if (mapa && validarMapa(mapa, pool) === null) {
     const porId = new Map<string, QuizItem>(
-      [...pool.mc, ...pool.vf, ...pool.ordenar].map((q) => [q.id, q])
+      [...pool.mc, ...pool.vf, ...pool.ordenar, ...(pool.otros ?? [])].map((q) => [q.id, q])
     );
     const tomar = (ids: string[]) =>
       ids.map((id) => porId.get(id)).filter((q): q is QuizItem => !!q);
@@ -141,7 +145,8 @@ export function armarNiveles(
   ];
 
   // Orden estable por dificultad: las primeras lecciones son las más amables.
-  const todas = intercalar([mc, vf, ord])
+  const otros = stableShuffle(pool.otros ?? [], hashStr(`${semilla}:otros`));
+  const todas = intercalar([mc, vf, ord, otros])
     .map((item, i) => ({ item, i }))
     .sort((a, b) => (a.item.dificultad ?? 1) - (b.item.dificultad ?? 1) || a.i - b.i)
     .map(({ item }) => item);

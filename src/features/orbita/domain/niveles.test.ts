@@ -148,3 +148,45 @@ describe('mapa del profe', () => {
     expect(armarNiveles(pool, 'ana', viejo)).toEqual(armarNiveles(pool, 'ana'));
   });
 });
+
+describe('tipos del profe en el mapa', () => {
+  const otros = [
+    {
+      id: 'em1',
+      tipo: 'emparejar' as const,
+      enunciado: '',
+      competencia: '',
+      dificultad: 1,
+      pares: [],
+    },
+    {
+      id: 'nu1',
+      tipo: 'numerica' as const,
+      enunciado: '',
+      competencia: '',
+      dificultad: 1,
+      respuesta: 1,
+      tolerancia: 0,
+    },
+  ];
+  const pool: PoolMundo = { mc: mc(4), vf: vf(3), ordenar: ord(3), otros };
+
+  it('van en las lecciones y nunca en el jefe', () => {
+    const n = armarNiveles(pool, 'ana');
+    const enLecciones = n.lecciones.flat().map((q) => q.id);
+    expect(enLecciones).toEqual(expect.arrayContaining(['em1', 'nu1']));
+    expect(n.jefe.map((q) => q.tipo)).not.toContain('emparejar');
+    expect(n.jefe).toHaveLength(10);
+  });
+
+  it('el mapa del profe puede usarlas en una lección', () => {
+    const mapa: MapaMundo = {
+      lecciones: [{ preguntas: ['em1', 'nu1', 'mc0'] }],
+      jefe: ['mc0', 'mc1', 'mc2', 'mc3', 'vf0', 'vf1', 'vf2', 'or0', 'or1', 'or2'],
+    };
+    expect(validarMapa(mapa, pool)).toBeNull();
+    expect(validarMapa({ ...mapa, jefe: [...mapa.jefe.slice(1), 'em1'] }, pool)).toBe(
+      'jefe_incompleto'
+    );
+  });
+});

@@ -1,4 +1,11 @@
-import { buildOrdenarElements, canonicalElements, validateQuizItem } from './courseContentSchemas';
+import {
+  buildOrdenarElements,
+  canonicalElements,
+  newCompletarItem,
+  newEmparejarItem,
+  newNumericaItem,
+  validateQuizItem,
+} from './courseContentSchemas';
 import type { OrdenarItem } from '@features/learning/data/quiz.types';
 
 describe('buildOrdenarElements', () => {
@@ -75,6 +82,20 @@ describe('validateQuizItem', () => {
         dificultad: 1,
         respuesta: true,
       })
+    ).toBeNull();
+  });
+});
+
+describe('tipos del profe', () => {
+  it('validateQuizItem usa los mensajes en español de cada tipo', () => {
+    expect(validateQuizItem(newEmparejarItem('e', 'c'))).toBe(
+      'Completa los dos lados de cada par.'
+    );
+    expect(validateQuizItem({ ...newCompletarItem('c', 'c'), enunciado: 'Sin espacio' })).toBe(
+      'Marca con ___ dónde va la palabra que falta.'
+    );
+    expect(
+      validateQuizItem({ ...newNumericaItem('n', 'c'), enunciado: '¿Cuánto?', respuesta: 1500 })
     ).toBeNull();
   });
 });

@@ -18,16 +18,29 @@ import {
 } from '@shared/lib/firebase/paths';
 import { stripUndefinedValues } from '@shared/lib/firebase/sanitizeForFirestore';
 import { WORLD_ORDER } from '@features/learning/data/competencias';
-import type { BancoDoc, Grado, QuizTipo } from '@features/learning/data/quiz.types';
+import type { BancoDoc, Grado, QuizTipo, QuizTipoExtra } from '@features/learning/data/quiz.types';
 import type { MicroteoriaBank } from '@features/learning/data/content.types';
 import type { CursoConfigMundos, WorldContentOverrides } from '@shared/types/tenancy';
 
-export type ContentPiece = 'mc' | 'vf' | 'ordenar' | 'teoria' | 'eligeCamino' | 'mapa';
+export type ContentPiece =
+  | 'mc'
+  | 'vf'
+  | 'ordenar'
+  | 'emparejar'
+  | 'completar'
+  | 'numerica'
+  | 'teoria'
+  | 'eligeCamino'
+  | 'mapa';
+export type QuizPiece = 'mc' | 'vf' | 'ordenar' | 'emparejar' | 'completar' | 'numerica';
 
-export const PIECE_TO_TIPO: Record<'mc' | 'vf' | 'ordenar', QuizTipo> = {
+export const PIECE_TO_TIPO: Record<QuizPiece, QuizTipo | QuizTipoExtra> = {
   mc: 'multiple_choice',
   vf: 'true_false',
   ordenar: 'ordenar',
+  emparejar: 'emparejar',
+  completar: 'completar',
+  numerica: 'numerica',
 };
 
 function docIdForPiece(worldId: string, piece: ContentPiece): string {
@@ -98,7 +111,7 @@ export const courseContentRepository = {
     cursoId: string,
     grado: Grado,
     worldId: string,
-    piece: 'mc' | 'vf' | 'ordenar',
+    piece: QuizPiece,
     isCustom: boolean
   ): Promise<{ doc: BancoDoc | null; source: 'custom' | 'default' }> {
     const clients = getFirebaseClients();

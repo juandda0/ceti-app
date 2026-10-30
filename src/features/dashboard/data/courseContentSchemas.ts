@@ -8,13 +8,39 @@
 import { z } from 'zod';
 import { hashStr, stableShuffle } from '@shared/lib/quizUtils';
 import type {
+  CompletarItem,
+  EmparejarItem,
   MultipleChoiceItem,
+  NumericaItem,
   OrdenarItem,
   QuizItem,
   TrueFalseItem,
 } from '@features/learning/data/quiz.types';
+import { errorItemExtra } from '@features/learning/data/tiposExtra';
 
-export const QUIZ_MINIMUMS = { mc: 4, vf: 3, ordenar: 3, teoria: 1 } as const;
+export const QUIZ_MINIMUMS = {
+  mc: 4,
+  vf: 3,
+  ordenar: 3,
+  // Tipos del profe (Fase 4): opcionales, solo van en las lecciones.
+  emparejar: 0,
+  completar: 0,
+  numerica: 0,
+  teoria: 1,
+} as const;
+
+/** Mensaje en español para cada error de `errorItemExtra`. */
+const ERROR_EXTRA: Record<string, string> = {
+  sin_enunciado: 'Escribe el enunciado.',
+  pares: 'Emparejar necesita de 3 a 5 pares.',
+  par_vacio: 'Completa los dos lados de cada par.',
+  par_repetido: 'Dos pares tienen la misma pareja.',
+  sin_espacio: 'Marca con ___ dónde va la palabra que falta.',
+  opciones: 'Escribe al menos 2 opciones, todas con texto.',
+  correcta: 'Elige cuál opción es la correcta.',
+  numero: 'Escribe la respuesta como número.',
+  tolerancia: 'La diferencia aceptada no puede ser negativa.',
+};
 
 const baseItem = {
   id: z.string().min(1),
@@ -49,6 +75,10 @@ export const microteoriaCardSchema = z.object({
 
 /** Validates one quiz item by its tipo; returns an error message or null. */
 export function validateQuizItem(item: QuizItem): string | null {
+  if (item.tipo === 'emparejar' || item.tipo === 'completar' || item.tipo === 'numerica') {
+    const error = errorItemExtra(item);
+    return error ? (ERROR_EXTRA[error] ?? error) : null;
+  }
   const schema =
     item.tipo === 'multiple_choice'
       ? mcItemSchema
@@ -252,5 +282,44 @@ export function newOrdenarItem(id: string, competencia: string): OrdenarItem {
     dificultad: 2,
     elementos: ['', '', ''],
     ordenCanonico: [0, 1, 2],
+  };
+}
+
+export function newEmparejarItem(id: string, competencia: string): EmparejarItem {
+  return {
+    id,
+    tipo: 'emparejar',
+    enunciado: 'Une cada concepto con su significado.',
+    competencia,
+    dificultad: 2,
+    pares: [
+      { izquierda: '', derecha: '' },
+      { izquierda: '', derecha: '' },
+      { izquierda: '', derecha: '' },
+    ],
+  };
+}
+
+export function newCompletarItem(id: string, competencia: string): CompletarItem {
+  return {
+    id,
+    tipo: 'completar',
+    enunciado: '',
+    competencia,
+    dificultad: 2,
+    opciones: ['', '', ''],
+    correctIndex: 0,
+  };
+}
+
+export function newNumericaItem(id: string, competencia: string): NumericaItem {
+  return {
+    id,
+    tipo: 'numerica',
+    enunciado: '',
+    competencia,
+    dificultad: 2,
+    respuesta: 0,
+    tolerancia: 0,
   };
 }

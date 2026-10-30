@@ -143,11 +143,19 @@ const minutos = (ms: number) => Math.round(ms / 60000);
 /** Lo que respondió, en palabras: la opción, verdadero/falso o el orden elegido. */
 export function respuestaEnTexto(r: string, texto: TextoPregunta | undefined): string {
   if (!texto) return r;
-  if (texto.tipo === 'multiple_choice' && texto.opciones) {
+  if ((texto.tipo === 'multiple_choice' || texto.tipo === 'completar') && texto.opciones) {
     const i = Number(r);
     return Number.isInteger(i) && texto.opciones[i] != null ? texto.opciones[i] : r;
   }
   if (texto.tipo === 'true_false') return r === 'true' ? 'Verdadero' : r === 'false' ? 'Falso' : r;
+  if (texto.tipo === 'emparejar' && texto.elementos) {
+    // Para cada concepto, la pareja que eligió (los elementos van como "izq → der").
+    const elegidas = r.split('-').map(Number);
+    const pares = texto.elementos.map((e) => e.split(' → '));
+    if (elegidas.length === pares.length && elegidas.every((j) => pares[j] != null)) {
+      return pares.map((p, i) => `${p[0]} → ${pares[elegidas[i]][1]}`).join('; ');
+    }
+  }
   if (texto.tipo === 'ordenar' && texto.elementos) {
     const orden = r.split('-').map(Number);
     if (orden.every((i) => Number.isInteger(i) && texto.elementos?.[i] != null)) {

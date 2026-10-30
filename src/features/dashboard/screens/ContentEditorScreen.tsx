@@ -31,6 +31,7 @@ import { classConfigRepository } from '@features/dashboard/data/classConfigRepos
 import {
   courseContentRepository,
   PIECE_TO_TIPO,
+  type QuizPiece,
   type ContentPiece,
 } from '@features/dashboard/data/courseContentRepository';
 import {
@@ -38,7 +39,10 @@ import {
   buildOrdenarElements,
   canonicalElements,
   microteoriaCardSchema,
+  newCompletarItem,
+  newEmparejarItem,
   newMcItem,
+  newNumericaItem,
   newOrdenarItem,
   newVfItem,
   validateQuizItem,
@@ -47,6 +51,7 @@ import {
   type BorradorTeoriaCard,
   type BorradorVfItem,
 } from '@features/dashboard/data/courseContentSchemas';
+import CamposItemExtra from '@features/dashboard/components/CamposItemExtra';
 import EditorMapa from '@features/dashboard/components/EditorMapa';
 import EditorEligeCamino from '@features/dashboard/components/EditorEligeCamino';
 import GenerateContentSheet from '@features/dashboard/components/GenerateContentSheet';
@@ -82,13 +87,26 @@ import {
   tapsConTeclado,
 } from '@features/dashboard/components/profe/kit';
 
-type QuizPiece = 'mc' | 'vf' | 'ordenar';
 type Tab = QuizPiece | 'teoria' | 'camino' | 'mapa' | 'info';
-const TABS: Tab[] = ['mc', 'vf', 'ordenar', 'teoria', 'camino', 'mapa', 'info'];
+const TABS: Tab[] = [
+  'mc',
+  'vf',
+  'ordenar',
+  'emparejar',
+  'completar',
+  'numerica',
+  'teoria',
+  'camino',
+  'mapa',
+  'info',
+];
+/** Tipos de Ceti (4 + 3 + 3 del jefe): la IA por pregunta y los mínimos aplican aquí. */
+const esClasica = (tab: Tab): tab is 'mc' | 'vf' | 'ordenar' =>
+  tab === 'mc' || tab === 'vf' || tab === 'ordenar';
 /** Pestañas que traen su propia carga y su propio botón de guardar (Fase 4). */
 const esAutonoma = (tab: Tab): tab is 'camino' | 'mapa' => tab === 'camino' || tab === 'mapa';
 const esPreguntas = (tab: Tab): tab is QuizPiece =>
-  tab === 'mc' || tab === 'vf' || tab === 'ordenar';
+  esClasica(tab) || tab === 'emparejar' || tab === 'completar' || tab === 'numerica';
 
 // Editing shape for ordenar: elements kept in CORRECT order while editing;
 // shuffled deterministically on save (buildOrdenarElements).
@@ -365,7 +383,13 @@ export default function ContentEditorScreen() {
         ? newMcItem(id, competenciaId)
         : piece === 'vf'
           ? newVfItem(id, competenciaId)
-          : { ...newOrdenarItem(id, competenciaId), elementosCanonicos: ['', '', ''] };
+          : piece === 'emparejar'
+            ? newEmparejarItem(id, competenciaId)
+            : piece === 'completar'
+              ? newCompletarItem(id, competenciaId)
+              : piece === 'numerica'
+                ? newNumericaItem(id, competenciaId)
+                : { ...newOrdenarItem(id, competenciaId), elementosCanonicos: ['', '', ''] };
     setItems((prev) => ({ ...prev, [piece]: [...(prev[piece] ?? []), item] }));
   };
 
@@ -375,6 +399,7 @@ export default function ContentEditorScreen() {
 
   const runGenerate = async (detalle: string) => {
     if (!grado || tab === 'info' || esAutonoma(tab)) return;
+    if (tab !== 'teoria' && !esClasica(tab)) return;
     setGenBusy(true);
     try {
       const nombre = (metaDraft.nombre || entry?.nombre || def?.name || worldId).trim();
@@ -720,6 +745,15 @@ export default function ContentEditorScreen() {
                     </View>
                   </View>
                 )}
+                {(item.tipo === 'emparejar' ||
+                  item.tipo === 'completar' ||
+                  item.tipo === 'numerica') && (
+                  <CamposItemExtra
+                    item={item}
+                    acento={accent}
+                    onChange={(patch) => updateItem(tab, i, patch as Partial<EditingItem>)}
+                  />
+                )}
                 {item.tipo === 'ordenar' && (
                   <OrdenarFields
                     elements={item.elementosCanonicos ?? []}
@@ -741,20 +775,24 @@ export default function ContentEditorScreen() {
           </Animated.View>
         ))}
         <Text style={[styles.helpText, { color: colors.text.tertiary }]}>
-          {t('contentEditor.quizMinHint', { n: QUIZ_MINIMUMS[tab] })}
+          {esClasica(tab)
+            ? t('contentEditor.quizMinHint', { n: QUIZ_MINIMUMS[tab] })
+            : t('contentEditor.extraHint')}
         </Text>
         <AddButton
           label={t('contentEditor.addItem')}
           colors={colors}
           onPress={() => addItem(tab)}
         />
-        <BotonChunky
-          texto={t('contentEditor.generateItem')}
-          icono="sparkles"
-          variante="secundario"
-          color={accent}
-          onPress={() => muro.exigir('iaAuthoring') && setSheetOpen(true)}
-        />
+        {esClasica(tab) ? (
+          <BotonChunky
+            texto={t('contentEditor.generateItem')}
+            icono="sparkles"
+            variante="secundario"
+            color={accent}
+            onPress={() => muro.exigir('iaAuthoring') && setSheetOpen(true)}
+          />
+        ) : null}
       </View>
     );
   }
@@ -868,6 +906,9 @@ const TAB_ICON: Record<Tab, keyof typeof Ionicons.glyphMap> = {
   mc: 'list',
   vf: 'checkmark-done',
   ordenar: 'swap-vertical',
+  emparejar: 'git-compare',
+  completar: 'text',
+  numerica: 'calculator',
   teoria: 'book',
   camino: 'git-branch',
   mapa: 'map',

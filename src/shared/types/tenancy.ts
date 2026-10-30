@@ -130,6 +130,10 @@ export type WorldContentOverrides = {
   eligeCamino?: boolean;
   /** The teacher arranged which questions go in each map node (Fase 4). */
   mapa?: boolean;
+  /** Teacher-only question types (Fase 4): lessons only. */
+  emparejar?: boolean;
+  completar?: boolean;
+  numerica?: boolean;
 };
 
 /**

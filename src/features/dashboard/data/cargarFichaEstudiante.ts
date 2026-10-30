@@ -79,6 +79,19 @@ export async function textosDeMundos(
     for (const q of pool.ordenar) {
       textos.set(q.id, { enunciado: q.enunciado, tipo: q.tipo, elementos: q.elementos });
     }
+    for (const q of pool.otros ?? []) {
+      if (q.tipo === 'completar') {
+        textos.set(q.id, { enunciado: q.enunciado, tipo: q.tipo, opciones: q.opciones });
+      } else if (q.tipo === 'emparejar') {
+        textos.set(q.id, {
+          enunciado: q.enunciado,
+          tipo: q.tipo,
+          elementos: q.pares.map((p) => `${p.izquierda} → ${p.derecha}`),
+        });
+      } else {
+        textos.set(q.id, { enunciado: q.enunciado, tipo: q.tipo });
+      }
+    }
   }
   return textos;
 }

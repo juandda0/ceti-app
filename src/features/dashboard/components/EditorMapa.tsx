@@ -39,6 +39,9 @@ const ICONO_TIPO: Record<string, keyof typeof Ionicons.glyphMap> = {
   multiple_choice: 'list',
   true_false: 'checkmark-done',
   ordenar: 'swap-vertical',
+  emparejar: 'git-compare',
+  completar: 'text',
+  numerica: 'calculator',
 };
 
 export default function EditorMapa({
@@ -110,7 +113,9 @@ export default function EditorMapa({
   const porId = useMemo(
     () =>
       new Map<string, QuizItem>(
-        pool ? [...pool.mc, ...pool.vf, ...pool.ordenar].map((q) => [q.id, q]) : []
+        pool
+          ? [...pool.mc, ...pool.vf, ...pool.ordenar, ...(pool.otros ?? [])].map((q) => [q.id, q])
+          : []
       ),
     [pool]
   );

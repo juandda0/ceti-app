@@ -113,7 +113,11 @@
     "generating": "Generando…",
     "generateError": "No se pudo generar ahora. Intenta de nuevo en un momento.",
     "tab_camino": "Elige camino",
-    "tab_mapa": "Mapa"
+    "tab_mapa": "Mapa",
+    "tab_emparejar": "Emparejar",
+    "tab_completar": "Completar",
+    "tab_numerica": "Numérica",
+    "extraHint": "Opcional. Estas preguntas aparecen en las lecciones del mapa; el jefe sigue siendo de opción múltiple, verdadero/falso y ordenar."
   },
   "classWorlds": {
     "title": "Mundos de la clase",
@@ -334,7 +338,13 @@
     "ordenCorrecto": "El orden correcto:",
     "salir": "Salir de la lección",
     "xpA11y": "{{xp}} XP, combo de {{combo}}",
-    "terminar": "Terminar"
+    "terminar": "Terminar",
+    "tipoEmparejar": "Emparejar",
+    "tipoCompletar": "Completa la frase",
+    "tipoNumerica": "Respuesta numérica",
+    "emparejarToca": "Toca y elige su pareja",
+    "numericaPlaceholder": "Escribe el número",
+    "respuestaCorrecta": "La respuesta correcta:"
   },
   "goals": {
     "pageTitle": "Mis metas",
@@ -1826,5 +1836,24 @@
     "restaurarTexto": "Se borran las situaciones que escribiste para esta clase.",
     "error_incompleta": "Completa la situación y las dos opciones con su consecuencia.",
     "error_larga": "Cada texto puede tener máximo 300 caracteres."
+  },
+  "camposExtra": {
+    "pares": "Pares (concepto → su pareja)",
+    "concepto": "Concepto",
+    "pareja": "Su pareja",
+    "quitarPar": "Quitar par",
+    "agregarPar": "Agregar par",
+    "paresAyuda": "De 3 a 5 pares. El estudiante ve la columna de la derecha en desorden.",
+    "espacioAyuda": "Escribe ___ (tres guiones bajos) en el enunciado donde va la palabra que falta.",
+    "opciones": "Opciones (marca la correcta)",
+    "opcionN": "Opción {{n}}",
+    "marcarCorrecta": "Marcar como correcta",
+    "quitarOpcion": "Quitar opción",
+    "agregarOpcion": "Agregar opción",
+    "respuesta": "Respuesta",
+    "unidad": "Unidad (opcional)",
+    "unidadEjemplo": "pesos, %, meses…",
+    "tolerancia": "Diferencia aceptada",
+    "toleranciaAyuda": "0 = debe ser exacta. Por ejemplo, 50 acepta de 1.450 a 1.550 si la respuesta es 1.500."
   }
 }

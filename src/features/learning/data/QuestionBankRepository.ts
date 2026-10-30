@@ -98,10 +98,13 @@ async function fetchPool(
     ? { colegioId: courseContent.colegioId, cursoId: courseContent.cursoId }
     : null;
   const ov = courseContent?.overrides;
-  const [mcDoc, vfDoc, ordDoc] = await Promise.all([
+  // Los tipos del profe (Fase 4) solo existen en la clase: sin su bandera no se leen.
+  const extras = (['emparejar', 'completar', 'numerica'] as const).filter((t) => ov?.[t] && pin);
+  const [mcDoc, vfDoc, ordDoc, ...extraDocs] = await Promise.all([
     fetchBancoDoc(grado, worldId, 'multiple_choice', ov?.mc ? pin : null),
     fetchBancoDoc(grado, worldId, 'true_false', ov?.vf ? pin : null),
     fetchBancoDoc(grado, worldId, 'ordenar', ov?.ordenar ? pin : null),
+    ...extras.map((t) => fetchBancoDoc(grado, worldId, t, pin)),
   ]);
 
   // Stamp the discriminator `tipo` onto each item — it lives on the banco doc,
@@ -113,6 +116,9 @@ async function fetchPool(
     })) as MultipleChoiceItem[],
     vf: (vfDoc?.items ?? []).map((it) => ({ ...it, tipo: 'true_false' })) as TrueFalseItem[],
     ordenar: (ordDoc?.items ?? []).map((it) => ({ ...it, tipo: 'ordenar' })) as OrdenarItem[],
+    otros: extraDocs.flatMap((d, k) =>
+      (d?.items ?? []).map((it) => ({ ...it, tipo: extras[k] }) as QuizItem)
+    ),
   };
   if (
     pool.mc.length < REQUIRED_MC ||

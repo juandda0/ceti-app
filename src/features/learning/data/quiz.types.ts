@@ -24,6 +24,8 @@ export type Grado = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' |
 export const SEEDED_GRADOS: readonly Grado[] = ['9', '10', '11'];
 
 export type QuizTipo = 'multiple_choice' | 'true_false' | 'ordenar';
+/** Tipos que solo escribe el profe (Fase 4); van en las lecciones, nunca en el jefe. */
+export type QuizTipoExtra = 'emparejar' | 'completar' | 'numerica';
 
 // ─── Item interfaces ───────────────────────────────────────────────────────────
 
@@ -60,7 +62,32 @@ export interface OrdenarItem extends BaseItem {
   ordenCanonico: number[];
 }
 
-export type QuizItem = MultipleChoiceItem | TrueFalseItem | OrdenarItem;
+/** Emparejar: cada concepto de la izquierda con su pareja de la derecha (3 a 5 pares). */
+export interface EmparejarItem extends BaseItem {
+  tipo: 'emparejar';
+  /** En el orden correcto; la columna derecha se baraja al mostrarla. */
+  pares: { izquierda: string; derecha: string }[];
+}
+
+/** Completar: el enunciado lleva "___" donde va la palabra; se elige entre opciones. */
+export interface CompletarItem extends BaseItem {
+  tipo: 'completar';
+  opciones: string[];
+  correctIndex: number;
+}
+
+/** Respuesta numérica: el estudiante escribe un número (acepta "1.500" y "2,5"). */
+export interface NumericaItem extends BaseItem {
+  tipo: 'numerica';
+  respuesta: number;
+  /** Diferencia aceptada (0 = exacta). */
+  tolerancia: number;
+  /** Lo que se muestra al lado: "pesos", "%", "meses"… */
+  unidad?: string;
+}
+
+export type QuizItemExtra = EmparejarItem | CompletarItem | NumericaItem;
+export type QuizItem = MultipleChoiceItem | TrueFalseItem | OrdenarItem | QuizItemExtra;
 
 // ─── Banco document shape ──────────────────────────────────────────────────────
 
@@ -72,7 +99,7 @@ export interface BancoDoc {
   bancoId: string;
   grado: Grado;
   worldId: WorldId;
-  tipo: QuizTipo;
+  tipo: QuizTipo | QuizTipoExtra;
   version: number;
   generadoPor: string;
   pendiente_validacion_docente: boolean;

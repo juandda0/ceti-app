@@ -277,7 +277,8 @@ export function activarDemoProfe(): void {
       version: 1,
       generadoPor: 'demo',
       pendiente_validacion_docente: false,
-      items: itemsDe(piece),
+      // Los tipos del profe (Fase 4) empiezan vacíos en la demo.
+      items: piece === 'mc' || piece === 'vf' || piece === 'ordenar' ? itemsDe(piece) : [],
     };
     return { doc, source: isCustom ? 'custom' : 'default' };
   };
