@@ -2,7 +2,8 @@
  * Comunicación de la clase (Fase 5). El profe publica anuncios para toda la
  * clase y ve lo que mandó: anuncios (con cuántos los vieron), mensajes a grupos
  * y comentarios. Los estudiantes no pueden responder (son menores). Los anuncios
- * son de todos los planes; los mensajes y comentarios, de Piloto.
+ * son de todos los planes; los mensajes y comentarios, de Piloto. En Alertas
+ * elige qué avisos de la clase le llegan.
  */
 import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -18,6 +19,7 @@ import { FadeIn } from '@features/savings/charts/ChartParts';
 import Segmented from '@features/savings/components/Segmented';
 import { useNombreCurso } from '@features/dashboard/hooks/useNombreCurso';
 import RedactarMensaje from '@features/dashboard/components/RedactarMensaje';
+import AjustesAlertas from '@features/dashboard/components/AjustesAlertas';
 import { comunicacionRepository } from '@features/dashboard/data/comunicacionRepository';
 import { resumenDestinatarios, type Comunicado } from '@features/dashboard/data/comunicacion';
 import {
@@ -33,7 +35,8 @@ import {
   type Tono,
 } from '@features/dashboard/components/profe/kit';
 
-type Vista = 'anuncios';
+type Vista = 'anuncios' | 'alertas';
+const VISTAS: readonly Vista[] = ['anuncios', 'alertas'];
 
 const TONO_TIPO: Record<Comunicado['tipo'], Tono> = {
   anuncio: 'azul',
@@ -58,7 +61,9 @@ export default function ComunicacionClaseScreen() {
   const params = useLocalSearchParams<{ cursoId: string; nombre?: string; vista?: string }>();
   const cursoId = params.cursoId;
   const cursoNombre = useNombreCurso(cursoId, params.nombre);
-  const [vista, setVista] = useState<Vista>('anuncios');
+  const [vista, setVista] = useState<Vista>(
+    VISTAS.includes(params.vista as Vista) ? (params.vista as Vista) : 'anuncios'
+  );
 
   const [enviados, setEnviados] = useState<Comunicado[]>([]);
   const [vistos, setVistos] = useState<Record<string, number>>({});
@@ -107,7 +112,10 @@ export default function ComunicacionClaseScreen() {
       },
     });
 
-  const vistas = [{ key: 'anuncios' as const, label: t('comunicacion.vistaAnuncios') }];
+  const vistas = [
+    { key: 'anuncios' as const, label: t('comunicacion.vistaAnuncios') },
+    { key: 'alertas' as const, label: t('comunicacion.vistaAlertas') },
+  ];
 
   const anuncios =
     colegioId && cursoId ? (
@@ -206,7 +214,12 @@ export default function ComunicacionClaseScreen() {
           subtitulo={t('comunicacion.subtitulo')}
         />
         {vistas.length > 1 ? <Segmented options={vistas} value={vista} onChange={setVista} /> : null}
-        <FadeIn key={vista}>{anuncios}</FadeIn>
+        <FadeIn key={vista}>
+          {vista === 'anuncios' ? anuncios : null}
+          {vista === 'alertas' && colegioId && cursoId ? (
+            <AjustesAlertas colegioId={colegioId} cursoId={cursoId} />
+          ) : null}
+        </FadeIn>
       </ContextScrollView>
     </ScreenWrapper>
   );

@@ -1957,6 +1957,46 @@
       "vacio": "Cuando tu profe publique un anuncio o te escriba, lo verás aquí.",
       "errorTitulo": "Todavía no puedes ver los mensajes",
       "error": "Aparecen cuando tu profe confirme tu autorización. Si ya la confirmó, revisa tu conexión."
+    },
+    "vistaAlertas": "Alertas",
+    "alertas": {
+      "inactividad": "No entra a la clase",
+      "inactividadAyuda_one": "Te aviso si un estudiante lleva {{count}} día sin entrar.",
+      "inactividadAyuda_other": "Te aviso si un estudiante lleva {{count}} días sin entrar.",
+      "dias_one": "{{count}} día",
+      "dias_other": "{{count}} días",
+      "tarea": "No hizo una tarea",
+      "tareaAyuda": "Cuando vence una tarea, quién no conquistó el mundo.",
+      "promedio": "Bajó su promedio",
+      "promedioAyuda": "Si en sus últimas 10 respuestas o más acierta 15 puntos menos que antes.",
+      "cuando": "Las revisamos cada mañana a las 7 y solo te avisamos lo nuevo: nunca repetimos la misma alerta. Las ves en Clases → Avisos.",
+      "push": "Recibir las alertas en este celular",
+      "pushOk": "Listo: te llegarán a este celular",
+      "pushNo": "No se pudo: revisa el permiso de notificaciones de Ceti en tu celular",
+      "restaurar": "Volver a lo recomendado",
+      "bloqueadoTitulo": "Alertas de tu clase",
+      "bloqueadoValor": "Con Piloto te avisamos cada mañana quién no entra, quién no hizo la tarea y a quién le bajó el promedio."
     }
+  },
+  "avisos": {
+    "sobre": "Para ti",
+    "titulo": "Avisos",
+    "subtitulo": "Lo que pasó en tus clases y merece un mensaje.",
+    "error": "No pudimos cargar tus avisos. Revisa tu conexión.",
+    "vacioTitulo": "Sin avisos por ahora",
+    "vacio": "Cada mañana revisamos tus clases. Elige qué alertas quieres en cada clase → Anuncios, mensajes y alertas.",
+    "nuevo": "Nuevo",
+    "nuevos_one": "{{count}} nuevo",
+    "nuevos_other": "{{count}} nuevos",
+    "abrir_one": "Avisos, {{count}} nuevo",
+    "abrir_other": "Avisos, {{count}} nuevos",
+    "tipo": {
+      "inactividad": "No entra",
+      "tarea": "Tarea",
+      "promedio": "Promedio"
+    },
+    "escribirle": "Escribirle",
+    "escribirles_one": "Escribirle",
+    "escribirles_other": "Escribirles a los {{count}}"
   }
 }

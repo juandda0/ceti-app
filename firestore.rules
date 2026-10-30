@@ -182,6 +182,15 @@ service cloud.firestore {
             && request.resource.data.version is number
             && request.resource.data.updatedAt is number
             && request.resource.data.updatedByUid == request.auth.uid;
+          // Fase 5 — `comunicacion`: alertas al profe (on/off y N días) y el
+          // resumen para acudientes. El servidor revisa el plan al usarla.
+          allow create, update: if configId == 'comunicacion'
+            && isProfesorDe(cid, cursoId)
+            && request.resource.data.keys().hasOnly(['alertas', 'acudientes', 'actualizadoAt', 'actualizadoPor'])
+            && (!('alertas' in request.resource.data) || request.resource.data.alertas is map)
+            && (!('acudientes' in request.resource.data) || request.resource.data.acudientes is map)
+            && request.resource.data.actualizadoAt is number
+            && request.resource.data.actualizadoPor == request.auth.uid;
           allow delete: if isProfesorDe(cid, cursoId);
         }
 

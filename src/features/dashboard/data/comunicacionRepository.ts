@@ -9,6 +9,7 @@ import {
   deleteDoc,
   doc,
   getCountFromServer,
+  getDoc,
   getDocs,
   limit,
   orderBy,
@@ -27,6 +28,12 @@ import type {
 import type { Comunicado, MensajeBuzon } from '@features/dashboard/data/comunicacion';
 
 const LIMITE = 30;
+
+/** `config/comunicacion` de la clase, tal como está guardado. */
+export interface ConfigComunicacionGuardada {
+  alertas?: unknown;
+  acudientes?: unknown;
+}
 
 function cursoPath(colegioId: string, cursoId: string): [string, ...string[]] {
   return ['colegios', colegioId, 'cursos', cursoId];
@@ -86,6 +93,29 @@ export const comunicacionRepository = {
     const db = getFirebaseClients()?.firestore;
     if (!db) return;
     await deleteDoc(doc(db, ...cursoPath(colegioId, cursoId), 'comunicados', id));
+  },
+
+  async config(colegioId: string, cursoId: string): Promise<ConfigComunicacionGuardada> {
+    const db = getFirebaseClients()?.firestore;
+    if (!db) return {};
+    const snap = await getDoc(doc(db, ...cursoPath(colegioId, cursoId), 'config', 'comunicacion'));
+    return (snap.data() as ConfigComunicacionGuardada | undefined) ?? {};
+  },
+
+  /** Cambia una parte (alertas o acudientes) sin tocar la otra. */
+  async guardarConfig(
+    colegioId: string,
+    cursoId: string,
+    profeUid: string,
+    parte: { alertas: object } | { acudientes: object }
+  ): Promise<void> {
+    const db = getFirebaseClients()?.firestore;
+    if (!db) return;
+    await setDoc(
+      doc(db, ...cursoPath(colegioId, cursoId), 'config', 'comunicacion'),
+      { ...parte, actualizadoAt: Date.now(), actualizadoPor: profeUid },
+      { merge: true }
+    );
   },
 
   // ── Estudiante (y el profe en la ficha) ────────────────────────────────────

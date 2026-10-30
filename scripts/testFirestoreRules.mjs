@@ -35,10 +35,14 @@ import {
 // Los "no" esperados llenan la consola de PERMISSION_DENIED: solo errores reales.
 setLogLevel('silent');
 
+// Proyecto propio, no el del Salón demo (demo-ceti): así se puede correr con el
+// salón prendido sin tocar sus datos, y cada corrida empieza de cero (si no,
+// las marcas de una corrida anterior convierten los "create" en "update").
 const env = await initializeTestEnvironment({
-  projectId: 'demo-ceti',
+  projectId: 'demo-ceti-reglas',
   firestore: { rules: readFileSync('firestore.rules', 'utf8') },
 });
+await env.clearFirestore();
 
 let passed = 0;
 let failed = 0;
@@ -509,6 +513,37 @@ await si(
 await no(
   'no en la cuenta de otro',
   setDoc(doc(pA, 'notificaciones/eAct'), { expoTokens: [], actualizadoAt: 1 })
+);
+
+const comunicacion = (uid, extra = {}) => ({
+  alertas: { inactividad: { activa: true, dias: 5 }, tarea: { activa: false }, promedio: { activa: true } },
+  actualizadoAt: 1,
+  actualizadoPor: uid,
+  ...extra,
+});
+await si(
+  'el profe configura sus alertas',
+  setDoc(doc(pA, `${K1}/config/comunicacion`), comunicacion('pA'))
+);
+await si(
+  'aunque no tenga plan (el servidor lo revisa al usarla)',
+  setDoc(doc(pA2, 'colegios/A/cursos/k2/config/comunicacion'), comunicacion('pA2'))
+);
+await no(
+  'otro profe no',
+  setDoc(doc(pA2, `${K1}/config/comunicacion`), comunicacion('pA2'))
+);
+await no(
+  'el estudiante no',
+  setDoc(doc(eAct, `${K1}/config/comunicacion`), comunicacion('eAct'))
+);
+await no(
+  'ni con campos de más',
+  setDoc(doc(pA, `${K1}/config/comunicacion`), comunicacion('pA', { correoAcudiente: 'x@y.co' }))
+);
+await no(
+  'nadie lee el estado de las alertas',
+  getDoc(doc(pA, 'notificaciones/pA/estadoAlertas/k1'))
 );
 
 console.log('\nAgregados y otros');

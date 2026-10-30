@@ -15,6 +15,7 @@ import { useMiPlan } from '@features/educadores/hooks/useMiPlan';
 import { useMuro } from '@features/educadores/components/MuroPlan';
 import BannerPrueba from '@features/educadores/components/BannerPrueba';
 import BitacoraTarjeta from '@features/educadores/retencion/components/BitacoraTarjeta';
+import AvisosTarjeta from '@features/dashboard/components/AvisosTarjeta';
 import {
   BotonChunky,
   Encabezado,
@@ -144,6 +145,7 @@ export default function StaffHomeScreen() {
             colegioNombre ? t('profe.saludoColegio', { colegio: colegioNombre }) : t('profe.saludo')
           }
         />
+        <AvisosTarjeta />
         <BitacoraTarjeta />
 
         <BannerPrueba />

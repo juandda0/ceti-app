@@ -22,6 +22,7 @@
     "salon:emuladores": "node ./scripts/salon/emuladores.mjs",
     "salon:sembrar": "node ./scripts/salon/correr.cjs sembrar",
     "salon:simular": "node ./scripts/salon/correr.cjs simular",
+    "salon:alertas": "node ./scripts/salon/correr.cjs alertas",
     "salon:web": "node ./scripts/salon/web.mjs"
   },
   "dependencies": {

@@ -1326,6 +1326,7 @@ export { onIntentoClase } from './educadores/registroClase';
 
 // Ceti Educadores · Fase 5: comunicación del profe con su clase.
 export { enviarComunicado } from './educadores/comunicacion';
+export { alertasProfe } from './educadores/alertasProfe';
 
 // Ceti Educadores · cobros (Wompi, ciclo diario de suscripciones).
 export {

@@ -12,3 +12,4 @@ export * from './bitacora';
 export * from './listaCsv';
 export * from './adopcion';
 export * from './comunicacion';
+export * from './alertas';
