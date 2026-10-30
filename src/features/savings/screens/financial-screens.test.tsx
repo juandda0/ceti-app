@@ -29,9 +29,17 @@ jest.mock('@shared/hooks/useThemeColors', () => ({
 jest.mock(
   '@shared/components/ScreenWrapper',
   () =>
-    ({ children }: { children: React.ReactNode }) => <>{children}</>
+    function ScreenWrapper({ children }: { children: React.ReactNode }) {
+      return <>{children}</>;
+    }
 );
-jest.mock('@shared/components/CetiButton', () => ({ label }: { label: string }) => <>{label}</>);
+jest.mock(
+  '@shared/components/CetiButton',
+  () =>
+    function CetiButton({ label }: { label: string }) {
+      return <>{label}</>;
+    }
+);
 jest.mock('@features/savings/components/InsightCards', () => () => null);
 jest.mock('@features/savings/components/PresupuestosSheet', () => () => null);
 jest.mock('@features/savings/components/Segmented', () => () => null);

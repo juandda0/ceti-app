@@ -14,11 +14,15 @@ jest.mock('@shared/hooks/useThemeColors', () => ({
 jest.mock('@shared/lib/dialogs', () => ({ confirmAction: jest.fn() }));
 jest.mock('@shared/components/ScreenWrapper', () => {
   const { View } = require('react-native');
-  return ({ children }: { children: React.ReactNode }) => <View>{children}</View>;
+  return function ScreenWrapper({ children }: { children: React.ReactNode }) {
+    return <View>{children}</View>;
+  };
 });
 jest.mock('@shared/components/CetiButton', () => {
   const { Text } = require('react-native');
-  return ({ label }: { label: string }) => <Text>{label}</Text>;
+  return function CetiButton({ label }: { label: string }) {
+    return <Text>{label}</Text>;
+  };
 });
 jest.mock('@features/savings/components/Segmented', () => () => null);
 jest.mock('@features/savings/components/ActivityList', () => () => null);
