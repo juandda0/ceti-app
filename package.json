@@ -25,6 +25,7 @@
     "salon:alertas": "node ./scripts/salon/correr.cjs alertas",
     "salon:acudientes": "node ./scripts/salon/correr.cjs acudientes",
     "salon:web": "node ./scripts/salon/web.mjs",
+    "manual:sembrar": "node ./scripts/salon/correr.cjs manual",
     "produccion:sembrar": "node ./scripts/produccion/sembrarContenido.cjs"
   },
   "dependencies": {

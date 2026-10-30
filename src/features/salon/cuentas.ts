@@ -4,6 +4,8 @@
  * siembra, /dev/entrar y la vista del salón.
  */
 import datos from '../../../scripts/salon/cuentas.json';
+// Institución Educativa Ceti del manual interactivo (npm run manual:sembrar).
+import manual from '../../../scripts/manual/cuentas.json';
 
 export type RolSalon = 'admin' | 'profesor' | 'estudiante';
 
@@ -20,7 +22,10 @@ export interface CuentaSalon {
   ir?: string;
 }
 
-export const CUENTAS_SALON = datos as {
+export const CUENTAS_SALON = {
+  ...datos,
+  cuentas: [...datos.cuentas, ...manual.cuentas],
+} as {
   proyecto: string;
   password: string;
   cuentas: CuentaSalon[];
@@ -63,6 +68,12 @@ export const GRUPOS_CUENTAS: { titulo: string; cuentas: CuentaSalon[] }[] = [
   {
     titulo: 'COLEGIO SAN MATEO · 9°A',
     cuentas: CUENTAS_SALON.cuentas.filter((c) => c.curso === '9a'),
+  },
+  {
+    titulo: 'INSTITUCIÓN EDUCATIVA CETI (MANUAL)',
+    cuentas: (manual.cuentas as CuentaSalon[]).filter(
+      (c) => c.rol !== 'estudiante' || !c.id.match(/-\d\d$/)
+    ),
   },
   {
     titulo: 'OTROS COLEGIOS',

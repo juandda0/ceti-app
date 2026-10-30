@@ -78,3 +78,4 @@ functions/.secret.local
 
 # Cuentas de prueba locales (antes .env.cuentas-prueba.local: Expo bundleaba ese nombre como JS)
 cuentas-prueba*.env
+scripts/manual/.ultima-siembra.json

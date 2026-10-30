@@ -1,0 +1,841 @@
+{
+  "proyecto": "demo-ceti",
+  "password": "salon-ceti-2026",
+  "institucion": "Institución Educativa Ceti",
+  "cuentas": [
+    {
+      "id": "ceti-admin",
+      "rol": "admin",
+      "nombre": "Equipo Ceti",
+      "email": "equipo@ceti.test",
+      "descripcion": "Admin de Ceti: panel y moderación de la biblioteca pública.",
+      "ir": "/(admin)"
+    },
+    {
+      "id": "ie-admin",
+      "rol": "profesor",
+      "nombre": "Patricia Gómez Restrepo",
+      "email": "patricia.gomez@ieceti.edu.co",
+      "colegio": "ie-ceti",
+      "f": true,
+      "descripcion": "Coordinadora académica, admin de la entidad (sin clases).",
+      "ir": "/entidad"
+    },
+    {
+      "id": "ie-carlos",
+      "rol": "profesor",
+      "nombre": "Carlos Andrés Petro Díaz",
+      "email": "carlos.petro@ieceti.edu.co",
+      "colegio": "ie-ceti",
+      "descripcion": "Profe de 11°A y 9°B (licencia Colegio).",
+      "ir": "/clases"
+    },
+    {
+      "id": "ie-luz",
+      "rol": "profesor",
+      "nombre": "Luz Marina Hoyos Arrieta",
+      "email": "luz.hoyos@ieceti.edu.co",
+      "colegio": "ie-ceti",
+      "f": true,
+      "descripcion": "Profe de 7°A y co-docente editora de 9°B.",
+      "ir": "/clases"
+    },
+    {
+      "id": "ie-yolanda",
+      "rol": "profesor",
+      "nombre": "Yolanda Martínez Paternina",
+      "email": "yolanda.martinez@ieceti.edu.co",
+      "colegio": "ie-ceti",
+      "f": true,
+      "descripcion": "Profe de 3°A (primaria).",
+      "ir": "/clases"
+    },
+    {
+      "id": "ie-jhon",
+      "rol": "profesor",
+      "nombre": "Jhon Jairo Ramos Vergara",
+      "email": "jhon.ramos@ieceti.edu.co",
+      "colegio": "ie-ceti",
+      "descripcion": "Docente de apoyo: ve y califica en 11°A.",
+      "ir": "/clases"
+    },
+    {
+      "id": "ie-daniela",
+      "rol": "profesor",
+      "nombre": "Daniela Suárez Cogollo",
+      "email": "daniela.suarez@ieceti.edu.co",
+      "colegio": "refuerzo-daniela",
+      "f": true,
+      "descripcion": "Plan Cadete (prueba vencida), clase Refuerzo 8°; invitación pendiente a la IE Ceti.",
+      "ir": "/clases"
+    },
+    {
+      "id": "ie-sebastian",
+      "rol": "profesor",
+      "nombre": "Sebastián Lora Pineda",
+      "email": "sebastian.lora@tutoriaslora.test",
+      "colegio": "tutorias-lora",
+      "descripcion": "Plan Piloto mensual, tutor de Preicfes 11°.",
+      "ir": "/clases"
+    },
+    {
+      "id": "ie-natalia",
+      "rol": "profesor",
+      "nombre": "Natalia Banda Cárdenas",
+      "email": "natalia.banda@academiasinu.test",
+      "colegio": "academia-sinu",
+      "f": true,
+      "descripcion": "Plan Comandante semestral, Academia Sinú, Finanzas 10°.",
+      "ir": "/clases"
+    },
+    {
+      "id": "ie-juan",
+      "rol": "estudiante",
+      "nombre": "Juan David Montes Ruiz",
+      "email": "juandavid.montes@correo.test",
+      "perfil": "galaxia",
+      "descripcion": "Estudiante independiente en Mi galaxia, sin clase."
+    },
+    {
+      "id": "ie-matias",
+      "rol": "estudiante",
+      "nombre": "Matías Pérez Lozano",
+      "email": "matias.perez90@ieceti.edu.co",
+      "curso": "3a",
+      "perfil": "estrella",
+      "f": false,
+      "alias": "matias",
+      "descripcion": "3°A con adaptaciones (voz y letra grande)."
+    },
+    {
+      "id": "ie-3a-02",
+      "rol": "estudiante",
+      "nombre": "Isabella Martínez Mestra",
+      "email": "isabella.martinez22@ieceti.edu.co",
+      "curso": "3a",
+      "perfil": "medio",
+      "f": true
+    },
+    {
+      "id": "ie-3a-03",
+      "rol": "estudiante",
+      "nombre": "Luis Carlos Galeano Negrete",
+      "email": "luis.galeano94@ieceti.edu.co",
+      "curso": "3a",
+      "perfil": "medio",
+      "f": false
+    },
+    {
+      "id": "ie-3a-04",
+      "rol": "estudiante",
+      "nombre": "Salomé Begambre Polo",
+      "email": "salome.begambre21@ieceti.edu.co",
+      "curso": "3a",
+      "perfil": "medio",
+      "f": true
+    },
+    {
+      "id": "ie-3a-05",
+      "rol": "estudiante",
+      "nombre": "Samuel Arrieta Espitia",
+      "email": "samuel.arrieta16@ieceti.edu.co",
+      "curso": "3a",
+      "perfil": "medio",
+      "f": false
+    },
+    {
+      "id": "ie-3a-06",
+      "rol": "estudiante",
+      "nombre": "Lina Marcela Rhenals Agámez",
+      "email": "lina.rhenals60@ieceti.edu.co",
+      "curso": "3a",
+      "perfil": "flojo",
+      "f": true
+    },
+    {
+      "id": "ie-3a-07",
+      "rol": "estudiante",
+      "nombre": "Jerónimo Montes Banda",
+      "email": "jeronimo.montes58@ieceti.edu.co",
+      "curso": "3a",
+      "perfil": "flojo",
+      "f": false
+    },
+    {
+      "id": "ie-3a-08",
+      "rol": "estudiante",
+      "nombre": "Keila Pacheco Simanca",
+      "email": "keila.pacheco10@ieceti.edu.co",
+      "curso": "3a",
+      "perfil": "medio",
+      "f": true
+    },
+    {
+      "id": "ie-3a-09",
+      "rol": "estudiante",
+      "nombre": "Nicolás Causil Suárez",
+      "email": "nicolas.causil63@ieceti.edu.co",
+      "curso": "3a",
+      "perfil": "fuerte",
+      "f": false
+    },
+    {
+      "id": "ie-3a-10",
+      "rol": "estudiante",
+      "nombre": "Julián Guzmán Díaz",
+      "email": "julian.guzman69@ieceti.edu.co",
+      "curso": "3a",
+      "perfil": "dormido",
+      "f": false
+    },
+    {
+      "id": "ie-3a-11",
+      "rol": "estudiante",
+      "nombre": "Sofía Villadiego Negrete",
+      "email": "sofia.villadiego72@ieceti.edu.co",
+      "curso": "3a",
+      "perfil": "medio",
+      "f": true
+    },
+    {
+      "id": "ie-3a-12",
+      "rol": "estudiante",
+      "nombre": "Antonella Berrío Sáez",
+      "email": "antonella.berrio92@ieceti.edu.co",
+      "curso": "3a",
+      "perfil": "flojo",
+      "f": true
+    },
+    {
+      "id": "ie-3a-13",
+      "rol": "estudiante",
+      "nombre": "Iván Doria Ortega",
+      "email": "ivan.doria60@ieceti.edu.co",
+      "curso": "3a",
+      "perfil": "medio",
+      "f": false
+    },
+    {
+      "id": "ie-3a-14",
+      "rol": "estudiante",
+      "nombre": "Jerónimo Agámez Pacheco",
+      "email": "jeronimo.agamez29@ieceti.edu.co",
+      "curso": "3a",
+      "perfil": "pendiente",
+      "f": false
+    },
+    {
+      "id": "ie-isabella",
+      "rol": "estudiante",
+      "nombre": "Isabella Montes Ruiz",
+      "email": "isabella.montes33@ieceti.edu.co",
+      "curso": "7a",
+      "perfil": "estrella",
+      "f": true,
+      "alias": "isabella",
+      "descripcion": "7°A."
+    },
+    {
+      "id": "ie-7a-02",
+      "rol": "estudiante",
+      "nombre": "Luis Ángel Tuirán Lora",
+      "email": "luis.tuiran74@ieceti.edu.co",
+      "curso": "7a",
+      "perfil": "medio",
+      "f": false
+    },
+    {
+      "id": "ie-7a-03",
+      "rol": "estudiante",
+      "nombre": "Dayana Causil Montes",
+      "email": "dayana.causil59@ieceti.edu.co",
+      "curso": "7a",
+      "perfil": "medio",
+      "f": true
+    },
+    {
+      "id": "ie-7a-04",
+      "rol": "estudiante",
+      "nombre": "Brayan Madera Agámez",
+      "email": "brayan.madera19@ieceti.edu.co",
+      "curso": "7a",
+      "perfil": "medio",
+      "f": false
+    },
+    {
+      "id": "ie-7a-05",
+      "rol": "estudiante",
+      "nombre": "Camila Negrete Garcés",
+      "email": "camila.negrete46@ieceti.edu.co",
+      "curso": "7a",
+      "perfil": "medio",
+      "f": true
+    },
+    {
+      "id": "ie-7a-06",
+      "rol": "estudiante",
+      "nombre": "Jorge Luis Garcés Polo",
+      "email": "jorge.garces32@ieceti.edu.co",
+      "curso": "7a",
+      "perfil": "flojo",
+      "f": false
+    },
+    {
+      "id": "ie-7a-07",
+      "rol": "estudiante",
+      "nombre": "Sara Díaz Banda",
+      "email": "sara.diaz29@ieceti.edu.co",
+      "curso": "7a",
+      "perfil": "flojo",
+      "f": true
+    },
+    {
+      "id": "ie-7a-08",
+      "rol": "estudiante",
+      "nombre": "Edwin Villadiego Durango",
+      "email": "edwin.villadiego31@ieceti.edu.co",
+      "curso": "7a",
+      "perfil": "medio",
+      "f": false
+    },
+    {
+      "id": "ie-7a-09",
+      "rol": "estudiante",
+      "nombre": "Matías Hoyos Herrera",
+      "email": "matias.hoyos98@ieceti.edu.co",
+      "curso": "7a",
+      "perfil": "fuerte",
+      "f": false
+    },
+    {
+      "id": "ie-7a-10",
+      "rol": "estudiante",
+      "nombre": "Emily Pérez Cogollo",
+      "email": "emily.perez47@ieceti.edu.co",
+      "curso": "7a",
+      "perfil": "dormido",
+      "f": true
+    },
+    {
+      "id": "ie-7a-11",
+      "rol": "estudiante",
+      "nombre": "Ana Sofía Ricardo Martínez",
+      "email": "ana.ricardo89@ieceti.edu.co",
+      "curso": "7a",
+      "perfil": "medio",
+      "f": true
+    },
+    {
+      "id": "ie-7a-12",
+      "rol": "estudiante",
+      "nombre": "Sebastián Sáez Lora",
+      "email": "sebastian.saez50@ieceti.edu.co",
+      "curso": "7a",
+      "perfil": "flojo",
+      "f": false
+    },
+    {
+      "id": "ie-7a-13",
+      "rol": "estudiante",
+      "nombre": "Isabella Villadiego Humánez",
+      "email": "isabella.villadiego66@ieceti.edu.co",
+      "curso": "7a",
+      "perfil": "medio",
+      "f": true
+    },
+    {
+      "id": "ie-7a-14",
+      "rol": "estudiante",
+      "nombre": "Keila Pineda Polo",
+      "email": "keila.pineda29@ieceti.edu.co",
+      "curso": "7a",
+      "perfil": "fuerte",
+      "f": true
+    },
+    {
+      "id": "ie-7a-15",
+      "rol": "estudiante",
+      "nombre": "Manuela Pérez Arrieta",
+      "email": "manuela.perez28@ieceti.edu.co",
+      "curso": "7a",
+      "perfil": "medio",
+      "f": true
+    },
+    {
+      "id": "ie-7a-16",
+      "rol": "estudiante",
+      "nombre": "Ana Sofía Madera Hoyos",
+      "email": "ana.madera44@ieceti.edu.co",
+      "curso": "7a",
+      "perfil": "pendiente",
+      "f": true
+    },
+    {
+      "id": "ie-santiago",
+      "rol": "estudiante",
+      "nombre": "Santiago Álvarez Doria",
+      "email": "santiago.alvarez35@ieceti.edu.co",
+      "curso": "9b",
+      "perfil": "estrella",
+      "f": false,
+      "alias": "santiago",
+      "descripcion": "9°B: muro, requisitos y calendario."
+    },
+    {
+      "id": "ie-9b-02",
+      "rol": "estudiante",
+      "nombre": "Yeimy Galeano Humánez",
+      "email": "yeimy.galeano18@ieceti.edu.co",
+      "curso": "9b",
+      "perfil": "medio",
+      "f": true
+    },
+    {
+      "id": "ie-9b-03",
+      "rol": "estudiante",
+      "nombre": "Rafael Simanca Cogollo",
+      "email": "rafael.simanca87@ieceti.edu.co",
+      "curso": "9b",
+      "perfil": "medio",
+      "f": false
+    },
+    {
+      "id": "ie-9b-04",
+      "rol": "estudiante",
+      "nombre": "Dayana Ricardo Fuentes",
+      "email": "dayana.ricardo25@ieceti.edu.co",
+      "curso": "9b",
+      "perfil": "medio",
+      "f": true
+    },
+    {
+      "id": "ie-9b-05",
+      "rol": "estudiante",
+      "nombre": "Camilo Burgos Salgado",
+      "email": "camilo.burgos77@ieceti.edu.co",
+      "curso": "9b",
+      "perfil": "medio",
+      "f": false
+    },
+    {
+      "id": "ie-9b-06",
+      "rol": "estudiante",
+      "nombre": "Samuel Pérez Guzmán",
+      "email": "samuel.perez37@ieceti.edu.co",
+      "curso": "9b",
+      "perfil": "flojo",
+      "f": false
+    },
+    {
+      "id": "ie-9b-07",
+      "rol": "estudiante",
+      "nombre": "Keila Villadiego Arrieta",
+      "email": "keila.villadiego82@ieceti.edu.co",
+      "curso": "9b",
+      "perfil": "flojo",
+      "f": true
+    },
+    {
+      "id": "ie-9b-08",
+      "rol": "estudiante",
+      "nombre": "Thiago Ramos Banda",
+      "email": "thiago.ramos68@ieceti.edu.co",
+      "curso": "9b",
+      "perfil": "medio",
+      "f": false
+    },
+    {
+      "id": "ie-9b-09",
+      "rol": "estudiante",
+      "nombre": "Juliana Vergara Cuadrado",
+      "email": "juliana.vergara96@ieceti.edu.co",
+      "curso": "9b",
+      "perfil": "fuerte",
+      "f": true
+    },
+    {
+      "id": "ie-9b-10",
+      "rol": "estudiante",
+      "nombre": "Dayana Vergara Ortega",
+      "email": "dayana.vergara45@ieceti.edu.co",
+      "curso": "9b",
+      "perfil": "dormido",
+      "f": true
+    },
+    {
+      "id": "ie-9b-11",
+      "rol": "estudiante",
+      "nombre": "Mariana Pérez Pineda",
+      "email": "mariana.perez44@ieceti.edu.co",
+      "curso": "9b",
+      "perfil": "medio",
+      "f": true
+    },
+    {
+      "id": "ie-9b-12",
+      "rol": "estudiante",
+      "nombre": "Gabriela Ricardo Espitia",
+      "email": "gabriela.ricardo40@ieceti.edu.co",
+      "curso": "9b",
+      "perfil": "flojo",
+      "f": true
+    },
+    {
+      "id": "ie-9b-13",
+      "rol": "estudiante",
+      "nombre": "Santiago Fuentes Ricardo",
+      "email": "santiago.fuentes48@ieceti.edu.co",
+      "curso": "9b",
+      "perfil": "medio",
+      "f": false
+    },
+    {
+      "id": "ie-9b-14",
+      "rol": "estudiante",
+      "nombre": "Sofía Arrieta Benítez",
+      "email": "sofia.arrieta77@ieceti.edu.co",
+      "curso": "9b",
+      "perfil": "fuerte",
+      "f": true
+    },
+    {
+      "id": "ie-9b-15",
+      "rol": "estudiante",
+      "nombre": "Alejandro Suárez Cogollo",
+      "email": "alejandro.suarez30@ieceti.edu.co",
+      "curso": "9b",
+      "perfil": "medio",
+      "f": false
+    },
+    {
+      "id": "ie-9b-16",
+      "rol": "estudiante",
+      "nombre": "Camila Humánez Cogollo",
+      "email": "camila.humanez14@ieceti.edu.co",
+      "curso": "9b",
+      "perfil": "pendiente",
+      "f": true
+    },
+    {
+      "id": "ie-valentina",
+      "rol": "estudiante",
+      "nombre": "Valentina Herrera Polo",
+      "email": "valentina.herrera54@ieceti.edu.co",
+      "curso": "11a",
+      "perfil": "estrella",
+      "f": true,
+      "alias": "valentina",
+      "cursos": [
+        "11a",
+        "preicfes11"
+      ],
+      "descripcion": "11°A y Preicfes 11°: destacada, certificados, insignias, acudiente."
+    },
+    {
+      "id": "ie-11a-02",
+      "rol": "estudiante",
+      "nombre": "Matías Villadiego Sáez",
+      "email": "matias.villadiego34@ieceti.edu.co",
+      "curso": "11a",
+      "perfil": "medio",
+      "f": false
+    },
+    {
+      "id": "ie-11a-03",
+      "rol": "estudiante",
+      "nombre": "Manuela Villadiego Simanca",
+      "email": "manuela.villadiego90@ieceti.edu.co",
+      "curso": "11a",
+      "perfil": "medio",
+      "f": true
+    },
+    {
+      "id": "ie-11a-04",
+      "rol": "estudiante",
+      "nombre": "Isabella Garcés Mestra",
+      "email": "isabella.garces18@ieceti.edu.co",
+      "curso": "11a",
+      "perfil": "medio",
+      "f": true
+    },
+    {
+      "id": "ie-11a-05",
+      "rol": "estudiante",
+      "nombre": "Alejandro Paternina Villadiego",
+      "email": "alejandro.paternina71@ieceti.edu.co",
+      "curso": "11a",
+      "perfil": "flojo",
+      "f": false
+    },
+    {
+      "id": "ie-11a-06",
+      "rol": "estudiante",
+      "nombre": "Luis Ángel Negrete Banda",
+      "email": "luis.negrete78@ieceti.edu.co",
+      "curso": "11a",
+      "perfil": "flojo",
+      "f": false
+    },
+    {
+      "id": "ie-11a-07",
+      "rol": "estudiante",
+      "nombre": "Luisa Fernanda Contreras Sierra",
+      "email": "luisa.contreras44@ieceti.edu.co",
+      "curso": "11a",
+      "perfil": "medio",
+      "f": true
+    },
+    {
+      "id": "ie-11a-08",
+      "rol": "estudiante",
+      "nombre": "Laura Cuadrado Negrete",
+      "email": "laura.cuadrado56@ieceti.edu.co",
+      "curso": "11a",
+      "perfil": "fuerte",
+      "f": true
+    },
+    {
+      "id": "ie-11a-09",
+      "rol": "estudiante",
+      "nombre": "Sofía Humánez Begambre",
+      "email": "sofia.humanez34@ieceti.edu.co",
+      "curso": "11a",
+      "perfil": "dormido",
+      "f": true
+    },
+    {
+      "id": "ie-11a-10",
+      "rol": "estudiante",
+      "nombre": "Carlos Mario Cogollo Ramos",
+      "email": "carlos.cogollo39@ieceti.edu.co",
+      "curso": "11a",
+      "perfil": "medio",
+      "f": false
+    },
+    {
+      "id": "ie-11a-11",
+      "rol": "estudiante",
+      "nombre": "María José Guzmán Ricardo",
+      "email": "maria.guzman78@ieceti.edu.co",
+      "curso": "11a",
+      "perfil": "flojo",
+      "f": true
+    },
+    {
+      "id": "ie-11a-12",
+      "rol": "estudiante",
+      "nombre": "Daniela Causil Sáez",
+      "email": "daniela.causil31@ieceti.edu.co",
+      "curso": "11a",
+      "perfil": "medio",
+      "f": true
+    },
+    {
+      "id": "ie-11a-13",
+      "rol": "estudiante",
+      "nombre": "Luciana Sierra Galeano",
+      "email": "luciana.sierra95@ieceti.edu.co",
+      "curso": "11a",
+      "perfil": "fuerte",
+      "f": true
+    },
+    {
+      "id": "ie-11a-14",
+      "rol": "estudiante",
+      "nombre": "Brayan Agámez Guzmán",
+      "email": "brayan.agamez11@ieceti.edu.co",
+      "curso": "11a",
+      "perfil": "medio",
+      "f": false
+    },
+    {
+      "id": "ie-11a-15",
+      "rol": "estudiante",
+      "nombre": "Salomé Díaz Martínez",
+      "email": "salome.diaz19@ieceti.edu.co",
+      "curso": "11a",
+      "perfil": "dormido",
+      "f": true
+    },
+    {
+      "id": "ie-11a-16",
+      "rol": "estudiante",
+      "nombre": "Luisa Fernanda Salgado Garcés",
+      "email": "luisa.salgado39@ieceti.edu.co",
+      "curso": "11a",
+      "perfil": "medio",
+      "f": true
+    },
+    {
+      "id": "ie-11a-17",
+      "rol": "estudiante",
+      "nombre": "Julián Herrera Garcés",
+      "email": "julian.herrera45@ieceti.edu.co",
+      "curso": "11a",
+      "perfil": "fuerte",
+      "f": false
+    },
+    {
+      "id": "ie-11a-18",
+      "rol": "estudiante",
+      "nombre": "Natalia Negrete Ortega",
+      "email": "natalia.negrete93@ieceti.edu.co",
+      "curso": "11a",
+      "perfil": "pendiente",
+      "f": true
+    },
+    {
+      "id": "ie-refuerzo8-01",
+      "rol": "estudiante",
+      "nombre": "Luis Carlos Tuirán Hoyos",
+      "email": "luis.tuiran54@correo.test",
+      "curso": "refuerzo8",
+      "perfil": "medio",
+      "f": false
+    },
+    {
+      "id": "ie-refuerzo8-02",
+      "rol": "estudiante",
+      "nombre": "Valeria Paternina Cogollo",
+      "email": "valeria.paternina20@correo.test",
+      "curso": "refuerzo8",
+      "perfil": "fuerte",
+      "f": true
+    },
+    {
+      "id": "ie-refuerzo8-03",
+      "rol": "estudiante",
+      "nombre": "Rafael Contreras Berrío",
+      "email": "rafael.contreras45@correo.test",
+      "curso": "refuerzo8",
+      "perfil": "dormido",
+      "f": false
+    },
+    {
+      "id": "ie-refuerzo8-04",
+      "rol": "estudiante",
+      "nombre": "Lina Marcela Tuirán Pacheco",
+      "email": "lina.tuiran19@correo.test",
+      "curso": "refuerzo8",
+      "perfil": "medio",
+      "f": true
+    },
+    {
+      "id": "ie-refuerzo8-05",
+      "rol": "estudiante",
+      "nombre": "Laura Petro Guzmán",
+      "email": "laura.petro59@correo.test",
+      "curso": "refuerzo8",
+      "perfil": "flojo",
+      "f": true
+    },
+    {
+      "id": "ie-refuerzo8-06",
+      "rol": "estudiante",
+      "nombre": "Emily Salgado Lozano",
+      "email": "emily.salgado90@correo.test",
+      "curso": "refuerzo8",
+      "perfil": "pendiente",
+      "f": true
+    },
+    {
+      "id": "ie-preicfes11-01",
+      "rol": "estudiante",
+      "nombre": "Luciana Berrío Herrera",
+      "email": "luciana.berrio30@correo.test",
+      "curso": "preicfes11",
+      "perfil": "fuerte",
+      "f": true
+    },
+    {
+      "id": "ie-preicfes11-02",
+      "rol": "estudiante",
+      "nombre": "Santiago Pérez Humánez",
+      "email": "santiago.perez15@correo.test",
+      "curso": "preicfes11",
+      "perfil": "dormido",
+      "f": false
+    },
+    {
+      "id": "ie-preicfes11-03",
+      "rol": "estudiante",
+      "nombre": "Karen Humánez Causil",
+      "email": "karen.humanez33@correo.test",
+      "curso": "preicfes11",
+      "perfil": "medio",
+      "f": true
+    },
+    {
+      "id": "ie-preicfes11-04",
+      "rol": "estudiante",
+      "nombre": "Rafael Lora Martínez",
+      "email": "rafael.lora95@correo.test",
+      "curso": "preicfes11",
+      "perfil": "flojo",
+      "f": false
+    },
+    {
+      "id": "ie-preicfes11-05",
+      "rol": "estudiante",
+      "nombre": "Santiago Villadiego Negrete",
+      "email": "santiago.villadiego17@correo.test",
+      "curso": "preicfes11",
+      "perfil": "pendiente",
+      "f": false
+    },
+    {
+      "id": "ie-finanzas10-01",
+      "rol": "estudiante",
+      "nombre": "Mariana Ortega Ramos",
+      "email": "mariana.ortega13@academiasinu.test",
+      "curso": "finanzas10",
+      "perfil": "fuerte",
+      "f": true
+    },
+    {
+      "id": "ie-finanzas10-02",
+      "rol": "estudiante",
+      "nombre": "Isabella Galeano Cogollo",
+      "email": "isabella.galeano48@academiasinu.test",
+      "curso": "finanzas10",
+      "perfil": "dormido",
+      "f": true
+    },
+    {
+      "id": "ie-finanzas10-03",
+      "rol": "estudiante",
+      "nombre": "Emmanuel Cogollo Martínez",
+      "email": "emmanuel.cogollo26@academiasinu.test",
+      "curso": "finanzas10",
+      "perfil": "medio",
+      "f": false
+    },
+    {
+      "id": "ie-finanzas10-04",
+      "rol": "estudiante",
+      "nombre": "Kevin Durango Arrieta",
+      "email": "kevin.durango50@academiasinu.test",
+      "curso": "finanzas10",
+      "perfil": "flojo",
+      "f": false
+    },
+    {
+      "id": "ie-finanzas10-05",
+      "rol": "estudiante",
+      "nombre": "Karen Arrieta Petro",
+      "email": "karen.arrieta42@academiasinu.test",
+      "curso": "finanzas10",
+      "perfil": "medio",
+      "f": true
+    },
+    {
+      "id": "ie-finanzas10-06",
+      "rol": "estudiante",
+      "nombre": "Sebastián Pérez Burgos",
+      "email": "sebastian.perez36@academiasinu.test",
+      "curso": "finanzas10",
+      "perfil": "pendiente",
+      "f": false
+    }
+  ]
+}
