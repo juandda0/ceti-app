@@ -1,24 +1,33 @@
 /**
- * World ↔ CONPES 4005 competency mapping. This is the data link behind the
- * product's core selling point: the teacher sees "world = competency".
+ * Mundo ↔ competencia de Ceti, y su alineación con las orientaciones del MEN
+ * para la educación económica y financiera (Documento 26 de 2014, versión 4 de
+ * 2022): los ámbitos conceptuales y las competencias (Decidir, Administrar,
+ * Planear, Gestionar) que trabaja cada mundo. Es el dato detrás del panel y el
+ * informe de cobertura de la entidad (Fase 6).
  *
- * IMPORTANT: the labels/domains below are **PROVISIONAL working values**. The
- * authoritative CONPES 4005 / MEN descriptors come from the curricular mapping
- * document (owner: product). Once that exists, refine `label`/`conpesDominio`
- * and fill `conpesCodigo` — but keep `id` stable, since it is persisted on every
- * `WorldProgress.competencia` and used in reports.
+ * - `id`: estable. Se guarda en cada `WorldProgress.competencia` y en los
+ *   reportes. No se renombra.
+ * - `label`: el nombre corto de Ceti en la app ("mundo = competencia").
+ * - `men`: verificado contra el texto oficial; la alineación es lectura de Ceti
+ *   (ver functions/src/educadores/dominio/normativa.ts).
+ * - `conpesDominio`: agrupación de trabajo de Ceti, PROVISIONAL. El CONPES 4005
+ *   es política pública y no trae un listado de competencias con códigos, así
+ *   que `conpesCodigo` queda vacío a propósito: no inventarlo.
  */
 import type { DefaultWorldId } from '@features/learning/data/quiz.types';
+import { ALINEACION_MEN, type AlineacionMen } from '@/functions/src/educadores/dominio';
 
 export interface Competencia {
   /** Stable id stored on WorldProgress.competencia and in reports. Do not rename. */
   id: string;
   /** Short human label shown in UI ("world = competency"). */
   label: string;
-  /** CONPES 4005 / MEN domain (provisional). */
+  /** Agrupación de trabajo de Ceti (PROVISIONAL; ver arriba). */
   conpesDominio: string;
-  /** Official competency code from the curricular mapping doc (to be filled). */
+  /** Sin código oficial: el CONPES 4005 no los define. */
   conpesCodigo?: string;
+  /** Ámbitos y competencias de las orientaciones del MEN que trabaja este mundo. */
+  men: AlineacionMen;
 }
 
 /** Competency id used when a custom world has no assigned CONPES competency. */
@@ -27,26 +36,31 @@ export const COMPETENCIA_PERSONALIZADA = 'personalizada';
 export const WORLD_COMPETENCIAS: Record<DefaultWorldId, Competencia> = {
   world_1: {
     id: 'ingreso',
+    men: ALINEACION_MEN.ingreso,
     label: 'Ingreso y dinero',
     conpesDominio: 'Ingreso y manejo del dinero',
   },
   world_2: {
     id: 'presupuesto',
+    men: ALINEACION_MEN.presupuesto,
     label: 'Presupuesto',
     conpesDominio: 'Planeación y presupuesto',
   },
   world_3: {
     id: 'ahorro',
+    men: ALINEACION_MEN.ahorro,
     label: 'Ahorro',
     conpesDominio: 'Ahorro',
   },
   world_4: {
     id: 'credito',
+    men: ALINEACION_MEN.credito,
     label: 'Crédito',
     conpesDominio: 'Crédito y endeudamiento responsable',
   },
   world_5: {
     id: 'deuda',
+    men: ALINEACION_MEN.deuda,
     label: 'Deuda y riesgo',
     conpesDominio: 'Manejo de deudas y riesgo',
   },

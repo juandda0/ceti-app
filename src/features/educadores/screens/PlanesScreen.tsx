@@ -144,13 +144,27 @@ export default function PlanesScreen() {
       );
     }
     if (p === 'nave') {
+      // Fase 6: a la institución le resuelve la política de educación económica y
+      // financiera. Urgencia sí; obligación o sanciones no (no las hay).
       return (
-        <BotonChunky
-          texto={t('educadores.planes.nave.cta')}
-          icono="logo-whatsapp"
-          variante={planQuery === 'nave' ? 'primario' : 'secundario'}
-          onPress={() => abrirWhatsApp(t('educadores.planes.nave.mensaje'))}
-        />
+        <View style={{ gap: 10 }}>
+          <Text style={[styles.actualNota, { color: colors.text.secondary }]}>
+            {t('educadores.planes.nave.urgencia')}
+          </Text>
+          <BotonChunky
+            texto={t('educadores.planes.nave.cotizar')}
+            icono="business"
+            variante={planQuery === 'nave' ? 'primario' : 'secundario'}
+            onPress={() => router.push('/(staff)/colegio' as Href)}
+          />
+          <BotonChunky
+            texto={t('educadores.planes.nave.cta')}
+            icono="logo-whatsapp"
+            variante="secundario"
+            compacto
+            onPress={() => abrirWhatsApp(t('educadores.planes.nave.mensaje'))}
+          />
+        </View>
       );
     }
     // Cadete no se "elige": se vuelve a él cancelando desde Tu plan. Tampoco se

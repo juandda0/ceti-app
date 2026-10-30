@@ -2,7 +2,12 @@ import {
   DIA_MS,
   ahorroCiclo,
   aplicarPagoAprobado,
+  ALINEACION_MEN,
+  AMBITOS_MEN,
+  NORMAS_EEF,
   armarPublicacion,
+  dominioPor,
+  grupoGradoMen,
   calcularPanelEntidad,
   cambiarCoDocente,
   cicloDiario,
@@ -363,5 +368,48 @@ describe('biblioteca de la entidad', () => {
     expect(sinConfig).toMatchObject({ overrides: { cw_z: { mc: true } }, version: 1, updatedByUid: 'beto' });
     const llena = { mundos: Array.from({ length: 30 }, (_, i) => ({ worldId: `w${i}`, activo: true })), version: 3 };
     expect(configConMundo(llena, pub, 'cw_z', 'beto', AHORA)).toBeNull();
+  });
+});
+
+describe('marco normativo y alineación con el MEN', () => {
+  it('los 9 ámbitos conceptuales y las 4 competencias de las orientaciones', () => {
+    expect(AMBITOS_MEN.map((a) => a.nombre)).toEqual([
+      'Contextualización económica',
+      'Desarrollo económico',
+      'Política económica',
+      'Contextualización financiera',
+      'Presupuesto',
+      'Ahorro e inversión',
+      'Manejo de deudas',
+      'Sistema financiero',
+      'Análisis de riesgos',
+    ]);
+    expect(NORMAS_EEF.map((n) => n.id)).toEqual(['ley1450', 'doc26', 'decreto457', 'conpes4005']);
+  });
+
+  it('cada competencia de Ceti (id estable) tiene alineación', () => {
+    expect(Object.keys(ALINEACION_MEN).sort()).toEqual(['ahorro', 'credito', 'deuda', 'ingreso', 'presupuesto']);
+  });
+
+  it('grupos de grados de los Estándares Básicos', () => {
+    expect(['1', '3', '4', '6', '9', '10', '11'].map(grupoGradoMen)).toEqual(['1-3', '1-3', '4-5', '6-7', '8-9', '10-11', '10-11']);
+    expect(grupoGradoMen('12')).toBeNull();
+    expect(grupoGradoMen(null)).toBeNull();
+  });
+
+  it('dominio por ámbito cuenta estudiantes distintos', () => {
+    const enLista = new Set(['a', 'b']);
+    const r = dominioPor(
+      [
+        { uid: 'a', competencia: 'credito', mastery: 1, updatedAt: 1 },
+        { uid: 'a', competencia: 'deuda', mastery: 0.5, updatedAt: 1 },
+        { uid: 'b', competencia: 'deuda', mastery: 0, updatedAt: 1 },
+        { uid: 'x', competencia: 'deuda', mastery: 1, updatedAt: 1 },
+      ],
+      enLista,
+      (c) => ALINEACION_MEN[c]?.ambitos ?? []
+    );
+    expect(r.manejoDeudas).toEqual({ masteryPromedio: 0.5, estudiantes: 2 });
+    expect(r.sistemaFinanciero).toEqual({ masteryPromedio: 1, estudiantes: 1 });
   });
 });

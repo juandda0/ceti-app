@@ -55,13 +55,19 @@ describe('panel de la entidad desde Firestore', () => {
       [`${C}/profes/ana`]: { nombre: 'Ana', rol: 'admin' },
       [`${C}/profes/beto`]: { nombre: 'Beto', rol: 'profe' },
       [`${C}/cursos/k1`]: { nombre: '10°A', grado: '10', profesorUids: ['beto'] },
-      [`${C}/cursos/k1/agregados/resumen`]: { porCompetencia: { ahorro: { masteryPromedio: 0.7, estudiantes: 6 } } },
       [`${C}/cursos/k1/comunicados/c1`]: { tipo: 'anuncio', texto: 'secreto', creadoAt: AHORA - DIA },
       [`${C}/cursos/k1/comunicados/c0`]: { tipo: 'anuncio', creadoAt: AHORA - 9 * DIA },
     };
     for (let i = 0; i < 6; i++) {
       d[`${C}/cursos/k1/estudiantes/e${i}`] = { nombre: `Estudiante ${i}`, estado: i === 5 ? 'retirado' : 'activo' };
-      d[`estudiantes/e${i}/progress/world_1`] = { uid: `e${i}`, colegioId: 'ent', cursoId: 'k1', updatedAt: AHORA - (i < 3 ? 1 : 40) * DIA };
+      d[`estudiantes/e${i}/progress/world_3`] = {
+        uid: `e${i}`,
+        colegioId: 'ent',
+        cursoId: 'k1',
+        competencia: 'ahorro',
+        mastery: i === 5 ? 0 : 0.7,
+        updatedAt: AHORA - (i < 3 ? 1 : 40) * DIA,
+      };
     }
     d[`${C}/cursos/k1/estudiantes/e0/acudiente/datos`] = { token: 'tok', correo: 'mama@x.co', correoActivo: true };
     return new FirestoreFalso(d);
@@ -78,7 +84,24 @@ describe('panel de la entidad desde Firestore', () => {
     expect(panel.comunicacion).toEqual({ comunicados7d: 1, familiasConResumen: 1, clasesQueEscriben: 1 });
     expect(panel.grupos[0].etiqueta).toBe('10°');
     expect(panel.grupos[0].competencias.ahorro).toBeCloseTo(0.7);
+    // Cobertura de las orientaciones del MEN: el mundo de ahorro → "Ahorro e inversión" / Planear.
+    expect(panel.cobertura[0]).toMatchObject({ grupoMen: '10-11', cubiertos: 1 });
+    expect(panel.cobertura[0].ambitos.ahorroInversion.estudiantes).toBe(5);
+    expect(panel.cobertura[0].ambitos.ahorroInversion.dominio).toBeCloseTo(0.7);
+    expect(panel.cobertura[0].ambitos.presupuesto).toEqual({ estudiantes: 0, dominio: null });
+    expect(panel.cobertura[0].competencias.planear.estudiantes).toBe(5);
+    expect(panel.ambitosCubiertos).toEqual(['ahorroInversion']);
+    expect(panel.periodo).toBeNull();
     const texto = JSON.stringify(panel);
     expect(texto).not.toMatch(/secreto|mama@x\.co|Estudiante \d/);
+  });
+
+  it('con periodo solo cuenta el avance de esas fechas (y oculta grupos chicos)', async () => {
+    const db = base() as unknown as Firestore;
+    const rango = { desde: AHORA - 10 * DIA, hasta: AHORA };
+    const panel = await calcularPanelDeEntidad(db, await leerEntidad(db, 'ent'), AHORA, rango);
+    expect(panel.periodo).toEqual(rango);
+    // Solo e0..e2 avanzaron en los últimos 10 días: 3 < 5, sin dominio.
+    expect(panel.cobertura[0].ambitos.ahorroInversion).toEqual({ estudiantes: 3, dominio: null });
   });
 });

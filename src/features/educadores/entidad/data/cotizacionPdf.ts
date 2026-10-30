@@ -43,6 +43,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}.total td{font-weig
 <tr class="total"><td colspan="3">Total</td><td class="n">${formatoCop(c.total)}</td></tr></tbody></table>
 ${c.solicitada < c.cantidad ? `<p>Incluye el mínimo del plan (${c.cantidad}); pidieron ${c.solicitada}.</p>` : ''}
 ${c.ordenCompra ? `<p><b>Orden de compra:</b> ${esc(c.ordenCompra)}</p>` : ''}
+<p>Incluye el panel de la entidad y el informe de cobertura de educación económica y financiera por grado o programa, alineado con los ámbitos y competencias del Documento 26 del MEN, como evidencia para el PEI (Ley 1450 de 2011, art. 145; CONPES 4005 de 2020).</p>
 <p class="nota">Pago por transferencia o PSE. Cuando confirmemos el pago activamos la licencia por ${c.meses} meses y emitimos la factura electrónica a nombre de la entidad. El IVA del 19 % está pendiente de confirmar con un tributarista.</p>
 </body></html>`;
 }

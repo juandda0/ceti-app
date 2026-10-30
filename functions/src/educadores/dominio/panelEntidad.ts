@@ -9,6 +9,15 @@
  */
 import { DIA_MS } from './calendario';
 import { DIAS_ACTIVO, META_ADOPCION } from './adopcion';
+import {
+  AMBITOS_MEN,
+  COMPETENCIAS_MEN,
+  alineacionDe,
+  grupoGradoMen,
+  type AmbitoMen,
+  type CompetenciaMen,
+  type GrupoGradoMen,
+} from './normativa';
 
 export const MIN_GRUPO = 5;
 /** Un profe con clases y menos de este % de estudiantes activos sale en "bajo". */
@@ -30,8 +39,11 @@ export interface CursoPanel {
   estudiantes: number;
   estudiantesActivos: number;
   ultimaActividad: number | null;
-  /** `agregados/resumen.porCompetencia` del curso. */
+  /** Dominio por competencia de Ceti (del avance, en el periodo pedido). */
   porCompetencia: Record<string, CompetenciaCurso>;
+  /** Lo mismo por ámbito conceptual y por competencia del MEN (estudiantes distintos). */
+  porAmbitoMen?: Partial<Record<AmbitoMen, CompetenciaCurso>>;
+  porCompetenciaMen?: Partial<Record<CompetenciaMen, CompetenciaCurso>>;
   /** Anuncios y mensajes de los últimos 7 días (conteo). */
   comunicados7d: number;
   /** Estudiantes con resumen para acudientes activo (conteo). */
@@ -84,6 +96,24 @@ export interface FilaGrupo {
   masDebil: string | null;
 }
 
+export interface CeldaCobertura {
+  estudiantes: number;
+  /** 0..1, null si hay menos de MIN_GRUPO estudiantes con datos. */
+  dominio: number | null;
+}
+
+export interface FilaCobertura {
+  clave: string;
+  etiqueta: string;
+  /** Grupo de grados de las orientaciones (null en programas universitarios). */
+  grupoMen: GrupoGradoMen | null;
+  estudiantes: number;
+  ambitos: Record<AmbitoMen, CeldaCobertura>;
+  competencias: Record<CompetenciaMen, CeldaCobertura>;
+  /** Ámbitos con al menos un estudiante con datos. */
+  cubiertos: number;
+}
+
 export interface PanelEntidad {
   resumen: {
     profes: number;
@@ -100,7 +130,83 @@ export interface PanelEntidad {
   clases: FilaClase[];
   grupos: FilaGrupo[];
   comunicacion: { comunicados7d: number; familiasConResumen: number; clasesQueEscriben: number };
+  /** Cobertura de las orientaciones del MEN por grado o programa (Documento 26). */
+  cobertura: FilaCobertura[];
+  /** Ámbitos que la entidad ya trabaja en algún grado. */
+  ambitosCubiertos: AmbitoMen[];
+  /** Periodo de los datos de dominio y cobertura (null = desde el principio). */
+  periodo: { desde: number; hasta: number } | null;
   calculadoAt: number;
+}
+
+export interface ProgresoPanel {
+  uid: string;
+  competencia: string;
+  mastery: number;
+  updatedAt: number | null;
+}
+
+/**
+ * Dominio por una clave (competencia de Ceti, ámbito o competencia del MEN) a
+ * partir del avance de los estudiantes que siguen en la clase, en el rango
+ * pedido. `estudiantes` cuenta personas distintas; el promedio es por registro
+ * (un mundo = un registro), como el agregado por curso.
+ */
+export function dominioPor(
+  progreso: readonly ProgresoPanel[],
+  enLista: ReadonlySet<string>,
+  claves: (competencia: string) => readonly string[],
+  rango?: { desde: number; hasta: number } | null
+): Record<string, CompetenciaCurso> {
+  const acc = new Map<string, { suma: number; n: number; uids: Set<string> }>();
+  for (const p of progreso) {
+    if (!enLista.has(p.uid)) continue;
+    if (rango && (p.updatedAt === null || p.updatedAt < rango.desde || p.updatedAt > rango.hasta)) continue;
+    const m = Math.min(1, Math.max(0, Number.isFinite(p.mastery) ? p.mastery : 0));
+    for (const k of claves(p.competencia)) {
+      const a = acc.get(k) ?? { suma: 0, n: 0, uids: new Set<string>() };
+      a.suma += m;
+      a.n += 1;
+      a.uids.add(p.uid);
+      acc.set(k, a);
+    }
+  }
+  return Object.fromEntries(
+    [...acc].map(([k, a]) => [k, { masteryPromedio: a.suma / a.n, estudiantes: a.uids.size }])
+  );
+}
+
+/** Las tres vistas de dominio de un curso: competencia de Ceti, ámbito y competencia del MEN. */
+export function dominiosDeCurso(
+  progreso: readonly ProgresoPanel[],
+  enLista: ReadonlySet<string>,
+  rango?: { desde: number; hasta: number } | null
+): Pick<CursoPanel, 'porCompetencia' | 'porAmbitoMen' | 'porCompetenciaMen'> {
+  return {
+    porCompetencia: dominioPor(progreso, enLista, (c) => [c], rango),
+    porAmbitoMen: dominioPor(progreso, enLista, (c) => alineacionDe(c)?.ambitos ?? [], rango),
+    porCompetenciaMen: dominioPor(progreso, enLista, (c) => alineacionDe(c)?.competencias ?? [], rango),
+  };
+}
+
+function sumarCeldas<K extends string>(
+  cursos: readonly CursoPanel[],
+  claves: readonly K[],
+  de: (c: CursoPanel) => Partial<Record<K, CompetenciaCurso>> | undefined
+): Record<K, CeldaCobertura> {
+  const out = {} as Record<K, CeldaCobertura>;
+  for (const k of claves) {
+    let suma = 0;
+    let n = 0;
+    for (const c of cursos) {
+      const v = de(c)?.[k];
+      if (!v || !(v.estudiantes > 0)) continue;
+      suma += v.masteryPromedio * v.estudiantes;
+      n += v.estudiantes;
+    }
+    out[k] = { estudiantes: n, dominio: n >= MIN_GRUPO ? suma / n : null };
+  }
+  return out;
 }
 
 function proporcion(a: number, b: number): number {
@@ -122,7 +228,8 @@ function maxNull(a: number | null, b: number | null): number | null {
 export function calcularPanelEntidad(
   cursosEntrada: readonly CursoPanel[],
   profesEntrada: readonly ProfePanelEntrada[],
-  ahora: number
+  ahora: number,
+  periodo: { desde: number; hasta: number } | null = null
 ): PanelEntidad {
   const cursos = cursosEntrada.filter((c) => c.archivada !== true);
   const nombres = new Map(profesEntrada.map((p) => [p.uid, p.nombre]));
@@ -219,6 +326,24 @@ export function calcularPanelEntidad(
     })
     .sort((a, b) => a.etiqueta.localeCompare(b.etiqueta, 'es', { numeric: true }));
 
+  const idsAmbitos = AMBITOS_MEN.map((a) => a.id);
+  const cobertura: FilaCobertura[] = [...porGrupo.entries()]
+    .map(([clave, g]) => {
+      const ambitos = sumarCeldas(g.cursos, idsAmbitos, (c) => c.porAmbitoMen);
+      const grados = new Set(g.cursos.map((c) => grupoGradoMen(c.programa?.trim() ? null : c.grado)));
+      return {
+        clave,
+        etiqueta: g.etiqueta,
+        grupoMen: grados.size === 1 ? [...grados][0] : null,
+        estudiantes: g.cursos.reduce((t, c) => t + c.estudiantes, 0),
+        ambitos,
+        competencias: sumarCeldas(g.cursos, COMPETENCIAS_MEN, (c) => c.porCompetenciaMen),
+        cubiertos: idsAmbitos.filter((a) => ambitos[a].estudiantes > 0).length,
+      };
+    })
+    .sort((a, b) => a.etiqueta.localeCompare(b.etiqueta, 'es', { numeric: true }));
+  const ambitosCubiertos = idsAmbitos.filter((a) => cobertura.some((f) => f.ambitos[a].estudiantes > 0));
+
   const estudiantes = cursos.reduce((s, c) => s + c.estudiantes, 0);
   const estudiantesActivos = cursos.reduce((s, c) => s + c.estudiantesActivos, 0);
   const adopcion = proporcion(estudiantesActivos, estudiantes);
@@ -241,6 +366,9 @@ export function calcularPanelEntidad(
       familiasConResumen: cursos.reduce((s, c) => s + c.familiasConResumen, 0),
       clasesQueEscriben: cursos.filter((c) => c.comunicados7d > 0).length,
     },
+    cobertura,
+    ambitosCubiertos,
+    periodo,
     calculadoAt: ahora,
   };
 }

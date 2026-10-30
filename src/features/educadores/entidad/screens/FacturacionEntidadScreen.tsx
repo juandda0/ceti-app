@@ -152,6 +152,7 @@ export default function FacturacionEntidadScreen() {
               />
             ) : null}
 
+            <Aviso icono="time-outline" tono="naranja" texto={t('entidad.factura.porQue')} />
             <Seccion texto={t('entidad.factura.cotizar')} />
             <View style={st.chips}>
               {PLANES_ENTIDAD.map((p) => (

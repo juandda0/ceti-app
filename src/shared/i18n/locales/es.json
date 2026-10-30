@@ -1477,10 +1477,12 @@
       "elegir": "Elegir {{plan}}",
       "seguirCadete": "Sigues gratis",
       "nave": {
-        "precio": "Se cotiza por colegio",
-        "texto": "Todos los profes del colegio con todo, más el panel del colegio.",
+        "precio": "Se cotiza por institución",
+        "texto": "Todos los profes de la institución con todo, el panel de la entidad y el informe de cobertura de educación económica y financiera para el PEI.",
         "cta": "Hablar con Ceti",
-        "mensaje": "Hola, Ceti. Quiero Nave para mi colegio."
+        "mensaje": "Hola, Ceti. Quiero Nave para mi colegio.",
+        "urgencia": "La educación económica y financiera ya está en la política educativa del país: la Ley 1450 de 2011, el Documento 26 del MEN y el CONPES 4005 de 2020. ¿Van a quedarse atrás? Mejor llegar con la evidencia lista que salir a buscarla cuando se la pidan.",
+        "cotizar": "Cotizar para mi institución"
       },
       "legal": "Se renueva automáticamente. Cancelas en un toque desde Perfil → Tu plan. Tienes 5 días hábiles de retracto con devolución completa.",
       "ahoraNo": "Ahora no",
@@ -2095,7 +2097,7 @@
     "nueva": {
       "pill": "Para colegios, universidades y academias",
       "titulo": "¿Más profes de tu institución usan Ceti?",
-      "texto": "Crea la entidad, invita a tus colegas y tengan un solo plan, la misma escala de notas, una biblioteca de mundos y un panel con la adopción de todos.",
+      "texto": "La educación económica y financiera ya está en la política educativa del país (Ley 1450 de 2011, Documento 26 del MEN, CONPES 4005 de 2020). Con la entidad, sus profes la trabajan con un solo plan y la institución tiene el informe de cobertura por grado listo para su PEI. Mejor empezar ahora que resolver a última hora.",
       "cta": "Crear la entidad"
     },
     "acceso": {
@@ -2327,9 +2329,29 @@
       "responsabilidad": "Responsabilidad fiscal (RUT)",
       "guardarDatos": "Guardar datos",
       "datosGuardados": "Datos de facturación guardados",
-      "comoPagar": "La entidad paga por transferencia o PSE contra la orden de compra. Cuando confirmamos el pago, activamos la licencia y emitimos la factura electrónica a nombre del NIT. Aquí no se cobra con tarjeta."
+      "comoPagar": "La entidad paga por transferencia o PSE contra la orden de compra. Cuando confirmamos el pago, activamos la licencia y emitimos la factura electrónica a nombre del NIT. Aquí no se cobra con tarjeta.",
+      "porQue": "¿Por qué ahora? El Ministerio orienta trabajar la educación económica y financiera como proyecto pedagógico del PEI (Documento 26), y el CONPES 4005 de 2020 la volvió política nacional. Las instituciones que empiezan hoy llegan con la evidencia de cobertura; las demás la arman a última hora."
     },
     "programa": "Programa o facultad",
-    "programaEjemplo": "Contaduría Pública"
+    "programaEjemplo": "Contaduría Pública",
+    "cobertura": {
+      "titulo": "Cobertura curricular · orientaciones del MEN",
+      "resumen": "La entidad trabaja {{n}} de {{total}} ámbitos de la educación económica y financiera.",
+      "fuente": "Ámbitos y competencias del Documento 26 del MEN (versión 2022). La alineación con los mundos es de Ceti. Cada fila: estudiantes con avance y su dominio.",
+      "grupo": "Grados {{g}}",
+      "cubiertos": "{{n}} de {{total}} ámbitos",
+      "sinTrabajar": "Sin trabajar",
+      "est_one": "1 est.",
+      "est_other": "{{count}} est.",
+      "estDominio_one": "1 est. · {{pct}} %",
+      "estDominio_other": "{{count}} est. · {{pct}} %",
+      "competencias": "Competencias",
+      "informe": "Informe de cobertura",
+      "informeTexto": "La evidencia para el PEI, la Secretaría de Educación o una auditoría: cita la Ley 1450 de 2011, el Documento 26 del MEN, el Decreto 457 de 2014 y el CONPES 4005 de 2020, con el periodo, los grados y las competencias. Solo cifras de grupo.",
+      "todo": "Todo el historial",
+      "pdf": "PDF",
+      "xlsx": "Excel",
+      "exportarError": "No se pudo generar el informe."
+    }
   }
 }
