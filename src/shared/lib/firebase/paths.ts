@@ -46,6 +46,7 @@ export const contenidoDocId = {
   banco: (worldId: string, tipo: string) => `banco_${worldId}_${tipo}`,
   microteoria: (worldId: string) => `microteoria_${worldId}`,
   eligeCamino: (worldId: string) => `eligeCamino_${worldId}`,
+  mapa: (worldId: string) => `mapa_${worldId}`,
 };
 
 export function userDocPath(uid: string): string {

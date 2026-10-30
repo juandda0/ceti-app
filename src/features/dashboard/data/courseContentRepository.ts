@@ -22,7 +22,7 @@ import type { BancoDoc, Grado, QuizTipo } from '@features/learning/data/quiz.typ
 import type { MicroteoriaBank } from '@features/learning/data/content.types';
 import type { CursoConfigMundos, WorldContentOverrides } from '@shared/types/tenancy';
 
-export type ContentPiece = 'mc' | 'vf' | 'ordenar' | 'teoria' | 'eligeCamino';
+export type ContentPiece = 'mc' | 'vf' | 'ordenar' | 'teoria' | 'eligeCamino' | 'mapa';
 
 export const PIECE_TO_TIPO: Record<'mc' | 'vf' | 'ordenar', QuizTipo> = {
   mc: 'multiple_choice',
@@ -33,6 +33,7 @@ export const PIECE_TO_TIPO: Record<'mc' | 'vf' | 'ordenar', QuizTipo> = {
 function docIdForPiece(worldId: string, piece: ContentPiece): string {
   if (piece === 'teoria') return contenidoDocId.microteoria(worldId);
   if (piece === 'eligeCamino') return contenidoDocId.eligeCamino(worldId);
+  if (piece === 'mapa') return contenidoDocId.mapa(worldId);
   return contenidoDocId.banco(worldId, PIECE_TO_TIPO[piece]);
 }
 
@@ -295,7 +296,14 @@ export const courseContentRepository = {
     const clients = getFirebaseClients();
     if (!clients?.firestore) return false;
     const batch = writeBatch(clients.firestore);
-    for (const piece of ['mc', 'vf', 'ordenar', 'teoria', 'eligeCamino'] as ContentPiece[]) {
+    for (const piece of [
+      'mc',
+      'vf',
+      'ordenar',
+      'teoria',
+      'eligeCamino',
+      'mapa',
+    ] as ContentPiece[]) {
       batch.delete(
         cursoContenidoDocRef(clients.firestore, colegioId, cursoId, docIdForPiece(worldId, piece))
       );
@@ -341,7 +349,7 @@ export const courseContentRepository = {
     const toConfig = toConfigSnap.exists() ? (toConfigSnap.data() as CursoConfigMundos) : null;
     if (toConfig?.mundos.some((m) => m.worldId === worldId)) return false; // already there
 
-    const pieces: ContentPiece[] = ['mc', 'vf', 'ordenar', 'teoria', 'eligeCamino'];
+    const pieces: ContentPiece[] = ['mc', 'vf', 'ordenar', 'teoria', 'eligeCamino', 'mapa'];
     const docs = await Promise.all(
       pieces.map(async (piece) => {
         const snap = await getDoc(

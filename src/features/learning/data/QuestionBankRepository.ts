@@ -13,7 +13,7 @@ import { getFirebaseClients } from '@shared/lib/firebase/app';
 import { bancoDocRef, contenidoDocId, cursoContenidoDocRef } from '@shared/lib/firebase/paths';
 import { hashStr, stableShuffle } from '@shared/lib/quizUtils';
 import type { CourseContentRef } from '@shared/types/tenancy';
-import type { PoolMundo } from '@features/orbita/domain/niveles';
+import type { MapaMundo, PoolMundo } from '@features/orbita/domain/niveles';
 import {
   SEEDED_GRADOS,
   type QuizItem,
@@ -107,7 +107,10 @@ async function fetchPool(
   // Stamp the discriminator `tipo` onto each item — it lives on the banco doc,
   // not on the items (S5 schema), but the UI renders by item.tipo.
   const pool: PoolMundo = {
-    mc: (mcDoc?.items ?? []).map((it) => ({ ...it, tipo: 'multiple_choice' })) as MultipleChoiceItem[],
+    mc: (mcDoc?.items ?? []).map((it) => ({
+      ...it,
+      tipo: 'multiple_choice',
+    })) as MultipleChoiceItem[],
     vf: (vfDoc?.items ?? []).map((it) => ({ ...it, tipo: 'true_false' })) as TrueFalseItem[],
     ordenar: (ordDoc?.items ?? []).map((it) => ({ ...it, tipo: 'ordenar' })) as OrdenarItem[],
   };
@@ -121,8 +124,37 @@ async function fetchPool(
   return pool;
 }
 
+/**
+ * El mapa que armó el profe para el mundo (Fase 4), si la clase lo tiene.
+ * Solo se lee con la bandera `mapa` de la clase: sin ella no hay lectura.
+ */
+async function fetchMapa(
+  worldId: WorldId,
+  courseContent?: CourseContentRef | null
+): Promise<MapaMundo | null> {
+  if (!courseContent?.overrides?.mapa) return null;
+  const clients = getFirebaseClients();
+  if (!clients?.firestore) return null;
+  try {
+    const snap = await getDoc(
+      cursoContenidoDocRef(
+        clients.firestore,
+        courseContent.colegioId,
+        courseContent.cursoId,
+        contenidoDocId.mapa(worldId)
+      )
+    );
+    const d = snap.data() as Partial<MapaMundo> | undefined;
+    if (!d || !Array.isArray(d.lecciones) || !Array.isArray(d.jefe)) return null;
+    return { lecciones: d.lecciones, jefe: d.jefe };
+  } catch {
+    return null;
+  }
+}
+
 export const questionBankRepository = {
   fetchPool,
+  fetchMapa,
 
   async fetchAssembledQuiz(
     grado: Grado,

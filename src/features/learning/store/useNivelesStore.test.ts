@@ -3,7 +3,10 @@ import type { PoolMundo } from '@features/orbita/domain/niveles';
 
 const mockFetchPool = jest.fn<Promise<PoolMundo | null>, unknown[]>();
 jest.mock('@features/learning/data/QuestionBankRepository', () => ({
-  questionBankRepository: { fetchPool: (...args: unknown[]) => mockFetchPool(...args) },
+  questionBankRepository: {
+    fetchPool: (...args: unknown[]) => mockFetchPool(...args),
+    fetchMapa: async () => null,
+  },
 }));
 
 const item = (tipo: string, i: number) => ({
@@ -38,7 +41,10 @@ describe('useNivelesStore', () => {
       .getState()
       .cargar('9', 'world_1', 'uid', { colegioId: 'c', cursoId: 'k', version: 2 });
     // Mientras carga, el mapa y la lección siguen teniendo sus niveles.
-    expect(useNivelesStore.getState().porMundo.world_1).toMatchObject({ estado: 'cargando', niveles: antes });
+    expect(useNivelesStore.getState().porMundo.world_1).toMatchObject({
+      estado: 'cargando',
+      niveles: antes,
+    });
     resolver(pool);
     await recarga;
     expect(useNivelesStore.getState().porMundo.world_1?.estado).toBe('listo');

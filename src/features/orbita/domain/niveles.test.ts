@@ -1,5 +1,18 @@
-import { armarNiveles, ganaCofre, maestriaJefe, tieneCofre, nodosMapa, type PoolMundo } from './niveles';
-import type { MultipleChoiceItem, OrdenarItem, TrueFalseItem } from '@features/learning/data/quiz.types';
+import {
+  armarNiveles,
+  ganaCofre,
+  maestriaJefe,
+  tieneCofre,
+  nodosMapa,
+  validarMapa,
+  type MapaMundo,
+  type PoolMundo,
+} from './niveles';
+import type {
+  MultipleChoiceItem,
+  OrdenarItem,
+  TrueFalseItem,
+} from '@features/learning/data/quiz.types';
 
 const mc = (n: number): MultipleChoiceItem[] =>
   Array.from({ length: n }, (_, i) => ({
@@ -92,5 +105,46 @@ describe('niveles', () => {
     expect(ganaCofre('jefe', 4, 4, 4, false, false)).toBe(false);
     expect(ganaCofre('jefe', 4, 4, 4, true, true)).toBe(false);
     expect(ganaCofre('leccion', 1, 4, 1, true, true)).toBe(false);
+  });
+});
+
+describe('mapa del profe', () => {
+  const pool: PoolMundo = { mc: mc(8), vf: vf(6), ordenar: ord(6) };
+  const jefe = ['mc0', 'mc1', 'mc2', 'mc3', 'vf0', 'vf1', 'vf2', 'or0', 'or1', 'or2'];
+  const mapa: MapaMundo = {
+    lecciones: [{ preguntas: ['mc7', 'vf5', 'or5'] }, { preguntas: ['mc6', 'mc5', 'vf4', 'or4'] }],
+    jefe,
+  };
+
+  it('usa las lecciones y el jefe del profe, en su orden', () => {
+    const n = armarNiveles(pool, 'ana', mapa);
+    expect(n.lecciones.map((l) => l.map((q) => q.id))).toEqual([
+      ['mc7', 'vf5', 'or5'],
+      ['mc6', 'mc5', 'vf4', 'or4'],
+    ]);
+    expect(n.jefe.map((q) => q.id)).toEqual(jefe);
+  });
+
+  it('valida: lecciones cortas, repetidas, preguntas que ya no existen y el jefe 4+3+3', () => {
+    expect(validarMapa(mapa, pool)).toBeNull();
+    expect(validarMapa({ ...mapa, lecciones: [] }, pool)).toBe('sin_lecciones');
+    expect(validarMapa({ ...mapa, lecciones: [{ preguntas: ['mc7', 'vf5'] }] }, pool)).toBe(
+      'leccion_corta'
+    );
+    expect(validarMapa({ ...mapa, lecciones: [{ preguntas: ['mc7', 'mc7', 'vf5'] }] }, pool)).toBe(
+      'pregunta_repetida'
+    );
+    expect(
+      validarMapa({ ...mapa, lecciones: [{ preguntas: ['mc7', 'vf5', 'borrada'] }] }, pool)
+    ).toBe('pregunta_desconocida');
+    expect(validarMapa({ ...mapa, jefe: jefe.slice(1) }, pool)).toBe('jefe_incompleto');
+    expect(validarMapa({ ...mapa, jefe: [...jefe.slice(0, 9), 'mc4'] }, pool)).toBe(
+      'jefe_incompleto'
+    );
+  });
+
+  it('un mapa que ya no calza con el banco cae al armado automático', () => {
+    const viejo = { ...mapa, lecciones: [{ preguntas: ['borrada', 'mc7', 'vf5'] }] };
+    expect(armarNiveles(pool, 'ana', viejo)).toEqual(armarNiveles(pool, 'ana'));
   });
 });

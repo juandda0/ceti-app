@@ -111,7 +111,9 @@
     "generateSheetSubtitle": "Se crea a partir del nombre y la descripción de este mundo, y de lo que ya escribiste. Puedes darle un enfoque si quieres.",
     "generateDetallePlaceholder": "Enfoque o detalle (opcional). P. ej. sobre el ahorro para emergencias",
     "generating": "Generando…",
-    "generateError": "No se pudo generar ahora. Intenta de nuevo en un momento."
+    "generateError": "No se pudo generar ahora. Intenta de nuevo en un momento.",
+    "tab_camino": "Elige camino",
+    "tab_mapa": "Mapa"
   },
   "classWorlds": {
     "title": "Mundos de la clase",
@@ -1778,5 +1780,51 @@
     "nombresCopiados": "Nombres copiados",
     "respondieron_one": "{{count}} estudiante · {{respuestas}} respuestas",
     "respondieron_other": "{{count}} estudiantes · {{respuestas}} respuestas"
+  },
+  "editorMapa": {
+    "ayuda": "Elige qué preguntas van en cada lección del mapa, en qué orden, y cuáles en el jefe. Si no lo cambias, el mapa se arma solo.",
+    "propio": "Mapa armado por ti",
+    "automatico": "Mapa automático",
+    "sinBanco": "Este mundo todavía no tiene preguntas suficientes para armar el mapa (el jefe necesita 4 de opción múltiple, 3 de verdadero o falso y 3 de ordenar).",
+    "leccionN": "Lección {{n}}",
+    "preguntasN_one": "{{count}} pregunta",
+    "preguntasN_other": "{{count}} preguntas",
+    "quitarLeccion": "Quitar esta lección",
+    "leccionVacia": "Sin preguntas. Mueve aquí algunas desde otra lección o desde \"Sin usar\".",
+    "agregarLeccion": "Agregar lección",
+    "jefe": "Jefe",
+    "conteoJefe": "Opción múltiple {{mc}}/{{mcN}} · V o F {{vf}}/{{vfN}} · Ordenar {{or}}/{{orN}}",
+    "sinUsar": "Sin usar",
+    "subir": "Subir",
+    "bajar": "Bajar",
+    "mover": "Mover a otra lección",
+    "guardar": "Guardar mapa",
+    "guardado": "Mapa guardado. Tus estudiantes lo ven en su próxima entrada.",
+    "restaurar": "Volver al mapa automático",
+    "restaurarTitulo": "¿Volver al mapa automático?",
+    "restaurarTexto": "Se borra el orden que armaste y el mapa se vuelve a armar solo con las preguntas del mundo.",
+    "error_sin_lecciones": "El mapa necesita al menos una lección.",
+    "error_demasiadas_lecciones": "Máximo 8 lecciones.",
+    "error_leccion_corta": "Cada lección necesita al menos 3 preguntas.",
+    "error_leccion_larga": "Cada lección puede tener máximo 10 preguntas.",
+    "error_pregunta_desconocida": "Hay una pregunta que ya no existe en el mundo. Quítala del mapa.",
+    "error_pregunta_repetida": "Una pregunta está dos veces en las lecciones.",
+    "error_jefe_incompleto": "El jefe necesita exactamente 4 de opción múltiple, 3 de verdadero o falso y 3 de ordenar."
+  },
+  "editorCamino": {
+    "ayuda": "Situaciones de la vida real con dos caminos. El estudiante elige uno y ve su consecuencia; no hay respuesta correcta.",
+    "vacio": "Este mundo todavía no tiene situaciones.",
+    "situacionN": "Situación {{n}}",
+    "quitar": "Quitar situación",
+    "enunciado": "La situación",
+    "opcion": "Qué hace",
+    "consecuencia": "Qué pasa después",
+    "agregar": "Agregar situación",
+    "guardar": "Guardar situaciones",
+    "guardado": "Situaciones guardadas",
+    "restaurarTitulo": "¿Volver a las situaciones de Ceti?",
+    "restaurarTexto": "Se borran las situaciones que escribiste para esta clase.",
+    "error_incompleta": "Completa la situación y las dos opciones con su consecuencia.",
+    "error_larga": "Cada texto puede tener máximo 300 caracteres."
   }
 }

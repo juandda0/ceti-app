@@ -42,8 +42,11 @@ export const useNivelesStore = create<NivelesState>()((set, get) => ({
     try {
       const { questionBankRepository } =
         await import('@features/learning/data/QuestionBankRepository');
-      const pool = await questionBankRepository.fetchPool(grado, worldId, courseContent);
-      const niveles = pool ? armarNiveles(pool, semilla) : null;
+      const [pool, mapa] = await Promise.all([
+        questionBankRepository.fetchPool(grado, worldId, courseContent),
+        questionBankRepository.fetchMapa(worldId, courseContent),
+      ]);
+      const niveles = pool ? armarNiveles(pool, semilla, mapa) : null;
       set((s) => ({
         porMundo: {
           ...s.porMundo,

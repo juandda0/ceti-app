@@ -47,6 +47,8 @@ import {
   type BorradorTeoriaCard,
   type BorradorVfItem,
 } from '@features/dashboard/data/courseContentSchemas';
+import EditorMapa from '@features/dashboard/components/EditorMapa';
+import EditorEligeCamino from '@features/dashboard/components/EditorEligeCamino';
 import GenerateContentSheet from '@features/dashboard/components/GenerateContentSheet';
 import { useMuro } from '@features/educadores/components/MuroPlan';
 import { motivoDeError } from '@features/educadores/data/planUi';
@@ -81,8 +83,12 @@ import {
 } from '@features/dashboard/components/profe/kit';
 
 type QuizPiece = 'mc' | 'vf' | 'ordenar';
-type Tab = QuizPiece | 'teoria' | 'info';
-const TABS: Tab[] = ['mc', 'vf', 'ordenar', 'teoria', 'info'];
+type Tab = QuizPiece | 'teoria' | 'camino' | 'mapa' | 'info';
+const TABS: Tab[] = ['mc', 'vf', 'ordenar', 'teoria', 'camino', 'mapa', 'info'];
+/** Pestañas que traen su propia carga y su propio botón de guardar (Fase 4). */
+const esAutonoma = (tab: Tab): tab is 'camino' | 'mapa' => tab === 'camino' || tab === 'mapa';
+const esPreguntas = (tab: Tab): tab is QuizPiece =>
+  tab === 'mc' || tab === 'vf' || tab === 'ordenar';
 
 // Editing shape for ordenar: elements kept in CORRECT order while editing;
 // shuffled deterministically on save (buildOrdenarElements).
@@ -194,7 +200,7 @@ export default function ContentEditorScreen() {
   useEffect(() => {
     if (!grado || !configLoaded) return;
     if (tab === 'teoria') void loadTeoria();
-    else if (tab !== 'info') void loadQuizPiece(tab);
+    else if (esPreguntas(tab)) void loadQuizPiece(tab);
   }, [tab, grado, configLoaded, loadQuizPiece, loadTeoria]);
 
   const guard = async (fn: () => Promise<void>) => {
@@ -368,7 +374,7 @@ export default function ContentEditorScreen() {
   const [genBusy, setGenBusy] = useState(false);
 
   const runGenerate = async (detalle: string) => {
-    if (!grado || tab === 'info') return;
+    if (!grado || tab === 'info' || esAutonoma(tab)) return;
     setGenBusy(true);
     try {
       const nombre = (metaDraft.nombre || entry?.nombre || def?.name || worldId).trim();
@@ -501,23 +507,54 @@ export default function ContentEditorScreen() {
         )
   );
   const accent = planeta.acento;
-  const currentSource = tab === 'info' ? null : (pieceSource[tab] ?? null);
+  const currentSource = tab === 'info' || esAutonoma(tab) ? null : (pieceSource[tab] ?? null);
   const cargando = !configLoaded || !grado;
   const tabListo =
-    tab === 'info' ? true : tab === 'teoria' ? cards !== null : items[tab] !== undefined;
+    tab === 'info' || esAutonoma(tab)
+      ? true
+      : tab === 'teoria'
+        ? cards !== null
+        : items[tab] !== undefined;
 
   const onSave = () => {
     if (!muro.exigir('editarContenido')) return;
     if (tab === 'info') void saveMeta();
     else if (tab === 'teoria') void saveTeoria();
-    else void saveQuizPiece(tab);
+    else if (esPreguntas(tab)) void saveQuizPiece(tab);
   };
 
-  const quizCount = tab !== 'info' && tab !== 'teoria' ? (items[tab]?.length ?? 0) : 0;
+  const quizCount = esPreguntas(tab) ? (items[tab]?.length ?? 0) : 0;
+  const puedeEditar = () => muro.exigir('editarContenido');
 
   let body: ReactNode;
   if (cargando || !tabListo) {
     body = <Esqueleto filas={3} alto={150} />;
+  } else if (tab === 'mapa' && grado) {
+    body = (
+      <EditorMapa
+        colegioId={colegioId}
+        cursoId={cursoId}
+        uid={firebaseUid}
+        config={config}
+        grado={grado}
+        worldId={worldId}
+        acento={accent}
+        puedeEditar={puedeEditar}
+      />
+    );
+  } else if (tab === 'camino' && grado) {
+    body = (
+      <EditorEligeCamino
+        colegioId={colegioId}
+        cursoId={cursoId}
+        uid={firebaseUid}
+        config={config}
+        grado={grado}
+        worldId={worldId}
+        acento={accent}
+        puedeEditar={puedeEditar}
+      />
+    );
   } else if (tab === 'info') {
     body = (
       <View style={styles.section}>
@@ -621,7 +658,7 @@ export default function ContentEditorScreen() {
         />
       </View>
     );
-  } else {
+  } else if (esPreguntas(tab)) {
     body = (
       <View style={styles.section}>
         <Pill
@@ -769,7 +806,7 @@ export default function ContentEditorScreen() {
               tono={currentSource === 'custom' ? 'marca' : 'neutro'}
               icono={currentSource === 'custom' ? 'create' : 'library'}
             />
-            {currentSource === 'custom' && tab !== 'info' ? (
+            {currentSource === 'custom' && tab !== 'info' && !esAutonoma(tab) ? (
               <Pressable
                 onPress={() => restorePiece(tab)}
                 accessibilityRole="button"
@@ -789,28 +826,30 @@ export default function ContentEditorScreen() {
         <FadeIn key={tab}>{body}</FadeIn>
       </ContextScrollView>
 
-      <View
-        style={[
-          styles.footer,
-          {
-            paddingBottom: Math.max(insets.bottom, 12) + 4,
-            backgroundColor: colors.background.base,
-            borderTopColor: colors.materials.border,
-          },
-        ]}
-      >
-        <BotonChunky
-          texto={t('contentEditor.save')}
-          icono="checkmark"
-          color={accent}
-          colorOscuro={planeta.acentoOscuro}
-          cargando={busy}
-          deshabilitado={cargando || !tabListo}
-          onPress={onSave}
-        />
-      </View>
+      {esAutonoma(tab) ? null : (
+        <View
+          style={[
+            styles.footer,
+            {
+              paddingBottom: Math.max(insets.bottom, 12) + 4,
+              backgroundColor: colors.background.base,
+              borderTopColor: colors.materials.border,
+            },
+          ]}
+        >
+          <BotonChunky
+            texto={t('contentEditor.save')}
+            icono="checkmark"
+            color={accent}
+            colorOscuro={planeta.acentoOscuro}
+            cargando={busy}
+            deshabilitado={cargando || !tabListo}
+            onPress={onSave}
+          />
+        </View>
+      )}
 
-      {tab !== 'info' && (
+      {tab !== 'info' && !esAutonoma(tab) && (
         <GenerateContentSheet
           visible={sheetOpen}
           kind={tab === 'teoria' ? 'teoria' : 'quiz'}
@@ -830,6 +869,8 @@ const TAB_ICON: Record<Tab, keyof typeof Ionicons.glyphMap> = {
   vf: 'checkmark-done',
   ordenar: 'swap-vertical',
   teoria: 'book',
+  camino: 'git-branch',
+  mapa: 'map',
   info: 'information-circle',
 };
 

@@ -38,8 +38,69 @@ export interface NivelesMundo {
 
 export type TipoNivel = 'leccion' | 'jefe';
 
+/**
+ * Mapa que arma el profe (Fase 4): qué preguntas van en cada lección, en su
+ * orden, y cuáles en el jefe. Vive en `cursos/{k}/contenido/mapa_{worldId}`.
+ * Firestore no guarda listas de listas, por eso cada lección es un objeto.
+ */
+export interface MapaMundo {
+  lecciones: { preguntas: string[] }[];
+  jefe: string[];
+}
+
+export const MIN_PREGUNTAS_LECCION = 3;
+export const MAX_PREGUNTAS_LECCION = 10;
+export const MAX_LECCIONES_MAPA = 8;
+
+export type ErrorMapa =
+  | 'sin_lecciones'
+  | 'demasiadas_lecciones'
+  | 'leccion_corta'
+  | 'leccion_larga'
+  | 'pregunta_desconocida'
+  | 'pregunta_repetida'
+  | 'jefe_incompleto';
+
+/**
+ * ¿El mapa sirve con este banco? El jefe conserva su forma (4 MC + 3 VF +
+ * 3 ordenar) porque es el que da la maestría del mundo. null = sirve.
+ */
+export function validarMapa(mapa: MapaMundo, pool: PoolMundo): ErrorMapa | null {
+  const tipoDe = new Map<string, string>();
+  for (const q of [...pool.mc, ...pool.vf, ...pool.ordenar]) tipoDe.set(q.id, q.tipo);
+  if (mapa.lecciones.length === 0) return 'sin_lecciones';
+  if (mapa.lecciones.length > MAX_LECCIONES_MAPA) return 'demasiadas_lecciones';
+  const vistas = new Set<string>();
+  for (const l of mapa.lecciones) {
+    if (l.preguntas.length < MIN_PREGUNTAS_LECCION) return 'leccion_corta';
+    if (l.preguntas.length > MAX_PREGUNTAS_LECCION) return 'leccion_larga';
+    for (const id of l.preguntas) {
+      if (!tipoDe.has(id)) return 'pregunta_desconocida';
+      if (vistas.has(id)) return 'pregunta_repetida';
+      vistas.add(id);
+    }
+  }
+  const jefe = { multiple_choice: 0, true_false: 0, ordenar: 0 } as Record<string, number>;
+  for (const id of mapa.jefe) {
+    const tipo = tipoDe.get(id);
+    if (!tipo) return 'pregunta_desconocida';
+    jefe[tipo] = (jefe[tipo] ?? 0) + 1;
+  }
+  if (
+    new Set(mapa.jefe).size !== mapa.jefe.length ||
+    jefe.multiple_choice !== JEFE_MC ||
+    jefe.true_false !== JEFE_VF ||
+    jefe.ordenar !== JEFE_ORDENAR
+  ) {
+    return 'jefe_incompleto';
+  }
+  return null;
+}
+
 export function poolSuficiente(pool: PoolMundo): boolean {
-  return pool.mc.length >= JEFE_MC && pool.vf.length >= JEFE_VF && pool.ordenar.length >= JEFE_ORDENAR;
+  return (
+    pool.mc.length >= JEFE_MC && pool.vf.length >= JEFE_VF && pool.ordenar.length >= JEFE_ORDENAR
+  );
 }
 
 /** Intercala los tipos (mc, vf, ordenar, mc…) para que cada lección tenga variedad. */
@@ -50,8 +111,25 @@ function intercalar(listas: QuizItem[][]): QuizItem[] {
   return out;
 }
 
-export function armarNiveles(pool: PoolMundo, semilla: string): NivelesMundo {
+/**
+ * Con el mapa del profe (si sirve con el banco actual) las lecciones y el jefe
+ * son exactamente los suyos; si no, se arman solos como siempre. Un mapa viejo
+ * que ya no calza (el profe borró una pregunta) cae al armado automático.
+ */
+export function armarNiveles(
+  pool: PoolMundo,
+  semilla: string,
+  mapa?: MapaMundo | null
+): NivelesMundo {
   if (!poolSuficiente(pool)) return { lecciones: [], jefe: [] };
+  if (mapa && validarMapa(mapa, pool) === null) {
+    const porId = new Map<string, QuizItem>(
+      [...pool.mc, ...pool.vf, ...pool.ordenar].map((q) => [q.id, q])
+    );
+    const tomar = (ids: string[]) =>
+      ids.map((id) => porId.get(id)).filter((q): q is QuizItem => !!q);
+    return { lecciones: mapa.lecciones.map((l) => tomar(l.preguntas)), jefe: tomar(mapa.jefe) };
+  }
   const mc = stableShuffle(pool.mc, hashStr(`${semilla}:multiple_choice`));
   const vf = stableShuffle(pool.vf, hashStr(`${semilla}:true_false`));
   const ord = stableShuffle(pool.ordenar, hashStr(`${semilla}:ordenar`));
@@ -89,7 +167,11 @@ export interface NodoMapa {
  * Nodos del mapa. `hechas` = lecciones terminadas (en orden); `conquistado` =
  * el jefe ya se ganó (o el mundo ya estaba dominado antes de existir los niveles).
  */
-export function nodosMapa(totalLecciones: number, hechas: number, conquistado: boolean): NodoMapa[] {
+export function nodosMapa(
+  totalLecciones: number,
+  hechas: number,
+  conquistado: boolean
+): NodoMapa[] {
   const listas = conquistado ? totalLecciones : Math.min(hechas, totalLecciones);
   const nodos: NodoMapa[] = Array.from({ length: totalLecciones }, (_, i) => ({
     indice: i,

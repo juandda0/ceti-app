@@ -207,6 +207,13 @@ service cloud.firestore {
                 && request.resource.data.cards is list
                 && request.resource.data.cards.size() >= 1
                 && request.resource.data.cards.size() <= 20)
+              || (docId.matches('mapa_.*')
+                && request.resource.data.keys().hasOnly(['worldId', 'lecciones', 'jefe', 'actualizadoAt'])
+                && request.resource.data.lecciones is list
+                && request.resource.data.lecciones.size() >= 1
+                && request.resource.data.lecciones.size() <= 8
+                && request.resource.data.jefe is list
+                && request.resource.data.jefe.size() <= 15)
               || (docId.matches('eligeCamino_.*')
                 && request.resource.data.keys().hasOnly(['bancoId', 'grado', 'worldId', 'situaciones', 'generadoPor', 'pendiente_validacion_docente'])
                 && request.resource.data.situaciones is list

@@ -311,6 +311,44 @@ await si(
 );
 await no('el estudiante no', setDoc(doc(eAct, `${K1}/contenido/banco_world_1_mc`), banco));
 await si('restaurar (borrar) siempre se puede', deleteDoc(doc(pA, `${K1}/config/mundos`)));
+const mapa = {
+  worldId: 'world_1',
+  lecciones: [{ preguntas: ['a', 'b', 'c'] }],
+  jefe: ['a'],
+  actualizadoAt: 1,
+};
+await si(
+  'profe con plan guarda el mapa de un mundo',
+  setDoc(doc(pA, `${K1}/contenido/mapa_world_1`), mapa)
+);
+await no(
+  'el mapa no lleva campos de más',
+  setDoc(doc(pA, `${K1}/contenido/mapa_world_1`), { ...mapa, extra: 1 })
+);
+await no(
+  'mapa sin lecciones',
+  setDoc(doc(pA, `${K1}/contenido/mapa_world_1`), { ...mapa, lecciones: [] })
+);
+await no(
+  'profe sin plan no guarda mapa',
+  setDoc(doc(pA2, 'colegios/A/cursos/k2/contenido/mapa_world_1'), mapa)
+);
+await no('el estudiante no guarda mapa', setDoc(doc(eAct, `${K1}/contenido/mapa_world_1`), mapa));
+const camino = {
+  bancoId: 'eligeCamino_world_1',
+  grado: '9',
+  worldId: 'world_1',
+  situaciones: [{ id: 's' }],
+  pendiente_validacion_docente: false,
+};
+await si(
+  'profe con plan guarda Elige camino',
+  setDoc(doc(pA, `${K1}/contenido/eligeCamino_world_1`), camino)
+);
+await si(
+  'estudiante activo lee el contenido de su clase',
+  getDoc(doc(eAct, `${K1}/contenido/mapa_world_1`))
+);
 
 console.log('\nTareas');
 const tarea = (target, extra = {}) => ({
