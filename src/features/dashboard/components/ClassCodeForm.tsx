@@ -200,7 +200,8 @@ const styles = StyleSheet.create({
   label: { fontSize: 14, fontWeight: '800', marginTop: 4 },
   codeRow: { flexDirection: 'row', gap: 10 },
   input: { borderWidth: 1, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14 },
-  code: { flex: 1, fontSize: 18, letterSpacing: 2, textAlign: 'center' },
+  // minWidth 0: en web el TextInput no se encoge por debajo de su ancho propio y empujaba el botón del QR fuera de la tarjeta.
+  code: { flex: 1, minWidth: 0, fontSize: 18, letterSpacing: 2, textAlign: 'center' },
   nombre: { fontSize: 16 },
   qr: {
     width: 56,

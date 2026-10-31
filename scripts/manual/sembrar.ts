@@ -83,7 +83,7 @@ interface CuentaManual {
   perfil?: Perfil;
   f?: boolean;
 }
-type Perfil = 'estrella' | 'fuerte' | 'medio' | 'flojo' | 'dormido' | 'pendiente' | 'galaxia';
+type Perfil = 'estrella' | 'fuerte' | 'medio' | 'flojo' | 'dormido' | 'pendiente' | 'galaxia' | 'nuevo' | 'invitada' | 'volvio';
 
 const CUENTAS = cuentasJson.cuentas as CuentaManual[];
 const cuenta = (id: string) => {
@@ -199,6 +199,7 @@ function cursosDe(c: CuentaManual): string[] {
 }
 
 function claimsDe(c: CuentaManual): Record<string, unknown> {
+  if (c.perfil === 'nuevo') return {}; // recién creada: aún no pasa por el primer ingreso
   if (c.rol === 'admin') return { role: 'admin' };
   if (c.rol === 'profesor') return { role: 'profesor', colegioId: c.colegio };
   const cursos = cursosDe(c);
@@ -237,7 +238,7 @@ async function crearCuentas(): Promise<void> {
       createdAt: Timestamp.fromMillis(AHORA - 90 * DIA),
       updatedAt: FieldValue.serverTimestamp(),
     };
-    if (c.rol === 'estudiante') {
+    if (c.rol === 'estudiante' && c.perfil !== 'nuevo') {
       const avatar = avatarDe(c, i);
       user.profile = {
         nickname: c.nombre.split(' ')[0],
@@ -728,6 +729,14 @@ function sembrarEstudiantes(): void {
       todas.push(...practicas.map((p) => ({ tipo: p.tipo, worldId: p.worldId, nivel: p.nivel ?? undefined, aciertos: Math.round((p.aciertos / p.total) * 5) })));
       diasJuego = [...diasJuego, ...plan.dias];
     }
+    if (c.perfil === 'volvio') {
+      poner(rutaJuego(c.id), docJuego(estadoQueVuelve()));
+      continue;
+    }
+    if (c.perfil === 'invitada') {
+      diasJuego = [9, 8, 7, 6].map((h) => dia(h, 18));
+      for (let n = 0; n < 4; n++) todas.push({ tipo: 'leccion', worldId: 'world_1', nivel: n, aciertos: 4 });
+    }
     if (c.perfil === 'galaxia') {
       // Juan David: sin clase, practica en su galaxia.
       diasJuego = [0, 1, 2, 3, 4, 5, 6, 8, 9, 12, 15, 19, 23].map((h) => dia(h, 19));
@@ -758,6 +767,36 @@ function sembrarEstudiantes(): void {
       });
     }
   }
+}
+
+/**
+ * Kevin vuelve después de unos días: practicó a diario hasta el domingo
+ * anterior, dejó Cetis en la Bóveda y un CDT a una semana, y tiene dos
+ * escudos. Su último ingreso fue ese domingo, así que al abrir hoy la app
+ * (alAbrir) le pasan cosas: la Bóveda paga interés, el CDT venció y los
+ * escudos cubren lo que pueden de la racha («Lo que pasó mientras no estabas»).
+ */
+function estadoQueVuelve(): EstadoOrbita {
+  // dia() cuenta en fecha UTC: el domingo pasado está a getUTCDay() días (7 si hoy es domingo).
+  const ultimo = new Date(AHORA).getUTCDay() || 7;
+  // Mediodía en Bogotá: así el día UTC coincide con el local y el último ingreso cae en domingo.
+  const dias = Array.from({ length: 16 }, (_, k) => dia(ultimo + 15 - k, 12));
+  const practicas: PracticaPlan[] = [];
+  for (let w = 0; w < 2; w++) {
+    for (let n = 0; n < 4; n++) practicas.push({ tipo: 'leccion', worldId: MUNDOS[w], nivel: n, aciertos: 5 });
+    practicas.push({ tipo: 'jefe', worldId: MUNDOS[w], aciertos: 5 });
+  }
+  const finUltimo = dias[dias.length - 1] + 2 * HORA;
+  let e = reproducirJuego(dias, practicas, finUltimo, (est, diaClave, _ms, idx) => {
+    // El CDT a 2 semanas se abre dos semanas menos un día antes del último ingreso: vence ya ausente.
+    if (idx !== dias.length - 14) return est;
+    const d = depositar(est.boveda, Math.floor(est.boveda.bolsillo * 0.8));
+    if (!d.ok) return est;
+    const cdt = abrirCdt(d.estado, Math.min(Math.floor(d.estado.boveda * 0.4), 1500), 2, diaClave, 'cdt-kevin-1');
+    return { ...est, boveda: cdt.ok ? cdt.estado : d.estado };
+  });
+  e = { ...e, racha: { ...e.racha, escudos: 2 } };
+  return e;
 }
 
 function progreso(k: Clase, uid: string, worldId: string, correct: number, now: number) {

@@ -97,6 +97,33 @@
       "descripcion": "Estudiante independiente en Mi galaxia, sin clase."
     },
     {
+      "id": "ie-nueva",
+      "rol": "estudiante",
+      "nombre": "Sara Lucía Espitia Negrete",
+      "email": "saralucia.espitia@ieceti.edu.co",
+      "perfil": "nuevo",
+      "f": true,
+      "descripcion": "Cuenta recién creada: entra al primer ingreso (onboarding).",
+      "ir": "/onboarding/user-setup"
+    },
+    {
+      "id": "ie-invitada",
+      "rol": "estudiante",
+      "nombre": "Mariana Tuirán Burgos",
+      "email": "mariana.tuiran@ieceti.edu.co",
+      "perfil": "invitada",
+      "f": true,
+      "descripcion": "Sin clase; el profe la invita por lista a 9°B y queda unida al entrar."
+    },
+    {
+      "id": "ie-volvio",
+      "rol": "estudiante",
+      "nombre": "Kevin Andrés Doria Sierra",
+      "email": "kevin.doria@correo.test",
+      "perfil": "volvio",
+      "descripcion": "Vuelve tras días sin entrar: escudos, interés de la Bóveda y CDT vencido al abrir."
+    },
+    {
       "id": "ie-matias",
       "rol": "estudiante",
       "nombre": "Matías Pérez Lozano",
